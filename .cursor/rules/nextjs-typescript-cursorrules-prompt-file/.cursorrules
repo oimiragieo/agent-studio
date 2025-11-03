@@ -7,15 +7,18 @@ You may ask about stack assumptions if writing code
 TECHNOLOGY STACK
 
 Frontend:
-- Framework: Next.js (React)
-- Language: TypeScript
+- Framework: Next.js 15+ (App Router required, React 19)
+- Language: TypeScript 5.0+
 - UI Components: shadcn/ui (based on Radix UI primitives)
 - Styling: Tailwind CSS
 - Icons: Lucide React
+- **IMPORTANT**: Use App Router (`app/` directory), not Pages Router (`pages/` directory)
+- Use React Server Components by default, add 'use client' only when needed
 
 Backend:
-- Framework: Next.js API Routes (for serverless functions)
-- Language: TypeScript (for API routes)
+- Framework: Next.js 15+ API Routes (App Router route handlers in `app/api/`)
+- Language: TypeScript 5.0+ (for API routes)
+- **DEPRECATED**: Avoid `getServerSideProps`, `getStaticProps` (Pages Router only)
 
 LLM Integration:
 - Python wrapper for LLM interaction

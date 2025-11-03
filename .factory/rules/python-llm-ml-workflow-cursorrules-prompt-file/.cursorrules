@@ -9,16 +9,16 @@
 
 # Technology Stack
 
-- **Python Version:** Python 3.10+
+- **Python Version:** Python 3.12+ (3.13+ preferred if dependencies support)
 - **Dependency Management:** Poetry / Rye
 - **Code Formatting:** Ruff (replaces `black`, `isort`, `flake8`)
-- **Type Hinting:** Strictly use the `typing` module. All functions, methods, and class members must have type annotations.
+- **Type Hinting:** Use modern Python 3.10+ syntax (`str | None` instead of `Union[str, None]`). All functions, methods, and class members must have type annotations. For Python 3.9 and below, use `typing` module.
 - **Testing Framework:** `pytest`
 - **Documentation:** Google style docstring
 - **Environment Management:** `conda` / `venv`
 - **Containerization:** `docker`, `docker-compose`
 - **Asynchronous Programming:** Prefer `async` and `await`
-- **Web Framework:** `fastapi`
+- **Web Framework:** `fastapi` >= 0.116.0 (with Pydantic >= 2.7.0, < 3.0.0)
 - **Demo Framework:** `gradio`, `streamlit`
 - **LLM Framework:** `langchain`, `transformers`
 - **Vector Database:** `faiss`, `chroma` (optional)
