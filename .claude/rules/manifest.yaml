@@ -12,6 +12,8 @@ stack_profiles:
     include:
       - ".claude/rules/cursorrules-file-cursor-ai-python-fastapi-api/**/*.mdc"
       - ".claude/rules/python-projects-guide-cursorrules-prompt-file/**/*.mdc"
+      - ".claude/rules/python-cursorrules-prompt-file-best-practices/**/*.mdc"
+      - ".claude/rules/python-llm-ml-workflow-cursorrules-prompt-file/**/*.mdc"
       - ".claude/rules/jest-unit-testing-cursorrules-prompt-file/**/*.mdc"
     exclude:
       - ".claude/rules/kotlin-*/**"

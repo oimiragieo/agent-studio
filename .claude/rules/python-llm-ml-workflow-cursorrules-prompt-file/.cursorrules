@@ -92,7 +92,7 @@
 
 # Others
 
-- **Prioritize new features in Python 3.10+.**
+- **Prioritize new features in Python 3.12+.**
 - **When explaining code, provide clear logical explanations and code comments.**
 - **When making suggestions, explain the rationale and potential trade-offs.**
 - **If code examples span multiple files, clearly indicate the file name.**
