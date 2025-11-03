@@ -1,0 +1,29 @@
+stack_profiles:
+  react_next_ts:
+    include:
+      - ".claude/rules/nextjs-typescript-*/**/*.mdc"
+      - ".claude/rules/tailwind-*/**/*.mdc"
+      - ".claude/rules/javascript-typescript-code-quality-cursorrules-pro*/**/*.mdc"
+    exclude:
+      - ".claude/rules/android-*/**"
+      - ".claude/rules/swift-*/**"
+
+  fastapi_python:
+    include:
+      - ".claude/rules/cursorrules-file-cursor-ai-python-fastapi-api/**/*.mdc"
+      - ".claude/rules/python-projects-guide-cursorrules-prompt-file/**/*.mdc"
+      - ".claude/rules/jest-unit-testing-cursorrules-prompt-file/**/*.mdc"
+    exclude:
+      - ".claude/rules/kotlin-*/**"
+      - ".claude/rules/java-*/**"
+
+  node_api:
+    include:
+      - ".claude/rules/javascript-*/**/*.mdc"
+      - ".claude/rules/github-code-quality-cursorrules-prompt-file/**/*.mdc"
+    exclude:
+      - ".claude/rules/flutter-*/**"
+
+loading_policy:
+  max_rules_files: 3
+  selection: "most_relevant"

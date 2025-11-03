@@ -1,0 +1,258 @@
+# BMAD-Spec Orchestrator Configuration
+# Defines agent routing, model assignments, and workflow selection
+
+# Agent Routing Configuration
+agent_routing:
+  analyst:
+    trigger_words:
+      - "market research"
+      - "competitive analysis"
+      - "project brief"
+      - "requirements gathering"
+      - "feasibility"
+      - "stakeholder analysis"
+      - "brainstorming"
+      - "discovery"
+      - "brownfield"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.7
+
+  pm:
+    trigger_words:
+      - "prd"
+      - "product requirements"
+      - "user stories"
+      - "epic"
+      - "backlog"
+      - "roadmap"
+      - "prioritization"
+      - "feature specification"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.7
+
+  architect:
+    trigger_words:
+      - "architecture"
+      - "system design"
+      - "technology stack"
+      - "api design"
+      - "infrastructure"
+      - "scalability"
+      - "security architecture"
+      - "integration"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.5
+
+  developer:
+    trigger_words:
+      - "implement"
+      - "code"
+      - "development"
+      - "debug"
+      - "refactor"
+      - "feature"
+      - "bug fix"
+      - "write tests"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.3
+
+  qa:
+    trigger_words:
+      - "test"
+      - "quality"
+      - "testing"
+      - "test plan"
+      - "qa"
+      - "quality gate"
+      - "test coverage"
+      - "regression"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.4
+
+  ux-expert:
+    trigger_words:
+      - "ux"
+      - "ui"
+      - "design"
+      - "wireframe"
+      - "prototype"
+      - "user experience"
+      - "interface"
+      - "accessibility"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.7
+
+  product-owner:
+    trigger_words:
+      - "product owner"
+      - "backlog management"
+      - "sprint planning"
+      - "epic management"
+      - "product vision"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.7
+
+  scrum-master:
+    trigger_words:
+      - "scrum"
+      - "sprint"
+      - "standup"
+      - "retrospective"
+      - "agile"
+      - "ceremony"
+    complexity: low
+    model: claude-3-5-haiku
+    temperature: 0.5
+
+  bmad-orchestrator:
+    trigger_words:
+      - "workflow"
+      - "orchestrate"
+      - "coordinate"
+      - "multi-agent"
+      - "bmad"
+      - "project planning"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.6
+
+  bmad-master:
+    trigger_words:
+      - "master"
+      - "expert"
+      - "consultant"
+      - "best practice"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.6
+
+# Workflow Selection Configuration
+workflow_selection:
+  greenfield_fullstack:
+    keywords:
+      - "new project"
+      - "greenfield"
+      - "from scratch"
+      - "full stack"
+      - "fullstack"
+    workflow_file: .claude/workflows/greenfield-fullstack.yaml
+    agents_sequence:
+      - analyst
+      - pm
+      - ux-expert
+      - architect
+      - qa
+      - developer
+      - qa
+
+  brownfield_fullstack:
+    keywords:
+      - "enhance"
+      - "brownfield"
+      - "existing system"
+      - "legacy"
+      - "migration"
+    workflow_file: .claude/workflows/brownfield-fullstack.yaml
+    agents_sequence:
+      - analyst
+      - pm
+      - architect
+      - ux-expert
+      - architect
+      - qa
+      - developer
+      - qa
+
+# Model Configuration by Complexity
+model_config:
+  high_complexity:
+    model: claude-opus-4
+    temperature: 0.4
+    max_tokens: 8192
+    use_extended_thinking: true
+
+  medium_complexity:
+    model: claude-sonnet-4
+    temperature: 0.7
+    max_tokens: 8192
+    use_extended_thinking: false
+
+  low_complexity:
+    model: claude-3-5-haiku
+    temperature: 0.5
+    max_tokens: 4096
+    use_extended_thinking: false
+
+# Tool Restrictions by Agent
+tool_restrictions:
+  analyst:
+    allowed_tools:
+      - Read
+      - Search
+      - MCP (search_knowledge, search_agent_context, crawl_website)
+    restricted_tools:
+      - Edit
+      - Bash (dangerous commands)
+
+  architect:
+    allowed_tools:
+      - Read
+      - Search
+      - Edit (documentation only)
+      - MCP (search_code, search_knowledge)
+    restricted_tools:
+      - Bash (execution)
+
+  developer:
+    allowed_tools:
+      - Read
+      - Edit
+      - Bash (safe commands)
+      - MCP (search_code, execute_tests)
+    restricted_tools:
+      - Bash (dangerous: rm, format, etc.)
+
+  qa:
+    allowed_tools:
+      - Read
+      - Search
+      - Bash (test commands)
+      - MCP (execute_tests, security_scan)
+    restricted_tools:
+      - Edit (code)
+      - Bash (execution of untested code)
+
+# Session Management
+session:
+  context_file: .claude/context/session.json
+  artifacts_dir: .claude/context/artifacts
+  reasoning_dir: .claude/context/history/reasoning
+  gates_dir: .claude/context/history/gates
+  auto_save: true
+  max_context_length: 100000
+
+# Quality Gates Configuration
+quality_gates:
+  enabled: true
+  validation_schemas_dir: .claude/schemas
+  gate_script: node .claude/tools/gates/gate.mjs
+  auto_fix: true
+  strict_mode: false
+
+# Template Configuration
+templates:
+  base_dir: .claude/templates
+  project_brief: project-brief.md
+  prd: prd.md
+  architecture: architecture.md
+  implementation_plan: implementation-plan.md
+  test_plan: test-plan.md
+  ui_spec: ui-spec.md
+

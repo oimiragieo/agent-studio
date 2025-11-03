@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Route Decision",
+  "description": "Schema for workflow routing decisions by BMAD Orchestrator",
+  "required": ["workflow_type", "project_type", "selected_workflow"],
+  "properties": {
+    "workflow_type": {
+      "type": "string",
+      "enum": ["greenfield", "brownfield"],
+      "description": "Type of project workflow"
+    },
+    "project_type": {
+      "type": "string",
+      "enum": ["ui", "service", "fullstack"],
+      "description": "Type of project"
+    },
+    "selected_workflow": {
+      "type": "string",
+      "description": "Path to selected workflow file"
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Rationale for workflow selection"
+    },
+    "keywords_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keywords that triggered workflow selection"
+    }
+  }
+}
+

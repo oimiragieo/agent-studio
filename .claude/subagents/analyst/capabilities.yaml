@@ -1,0 +1,23 @@
+agent: analyst
+capabilities:
+  - market_research
+  - requirements_analysis
+  - feasibility_study
+  - risk_assessment
+  - stakeholder_analysis
+  - business_case_creation
+  - competitive_analysis
+  - user_research
+  - brainstorming_facilitation
+  - strategic_ideation
+  - project_briefing
+  - elicitation_techniques
+primary_outputs:
+  - project_brief
+  - market_research_report
+  - requirements_document
+  - feasibility_study
+  - risk_matrix
+  - competitive_analysis
+  - brainstorming_summary
+  - research_prompts

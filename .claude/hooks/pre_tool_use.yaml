@@ -1,0 +1,21 @@
+name: plan-and-scan
+trigger: PreToolUse
+priority: high
+conditions:
+  - applies_to_tools: ['apply_diff', 'create_file', 'run_tool']
+  - requires_confirmation: false
+steps:
+  - action: create_plan_artifact
+    options:
+      prompt: |
+        Generate a step-by-step implementation plan referencing impacted files, tests, and dependencies.
+        Confirm alignment with Claude Projects instructions and mark unknowns as questions.
+  - action: repo_search
+    options:
+      query: TODO|FIXME|@deprecated
+      max_results: 40
+      store_in_memory: true
+  - action: risk_check
+    options:
+      checklist: ../instructions/validation-rules.md
+      block_on_failure: true

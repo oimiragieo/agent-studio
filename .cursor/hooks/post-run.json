@@ -1,0 +1,16 @@
+{
+  "name": "post-run-summary",
+  "trigger": "afterRun",
+  "actions": [
+    {
+      "type": "collectLogs",
+      "tests": true,
+      "lint": true
+    },
+    {
+      "type": "publishArtifact",
+      "target": "Claude",
+      "title": "Cursor Execution Summary"
+    }
+  ]
+}

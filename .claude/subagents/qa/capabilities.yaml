@@ -1,0 +1,23 @@
+agent: qa
+capabilities:
+  - test_architecture_design
+  - quality_gate_assessment
+  - risk_based_testing
+  - requirements_traceability
+  - test_strategy_development
+  - nfr_validation
+  - code_quality_review
+  - testability_assessment
+  - gate_governance
+  - technical_debt_analysis
+  - quality_metrics_analysis
+  - test_scenario_design
+primary_outputs:
+  - quality_gate_decisions
+  - test_strategies
+  - risk_assessment_matrices
+  - requirements_traceability_maps
+  - test_scenarios
+  - quality_improvement_recommendations
+  - nfr_validation_reports
+  - technical_debt_assessments

@@ -1,0 +1,23 @@
+{
+  "name": "preflight-plan",
+  "trigger": "beforeRun",
+  "conditions": {
+    "minFiles": 2
+  },
+  "actions": [
+    {
+      "type": "openPlanMode",
+      "message": "Large change detected. Generating plan..."
+    },
+    {
+      "type": "addContext",
+      "files": "auto",
+      "plans": "latest"
+    },
+    {
+      "type": "notify",
+      "channel": "activity",
+      "text": "Plan Mode launched for multi-file update."
+    }
+  ]
+}

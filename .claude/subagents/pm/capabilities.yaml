@@ -1,0 +1,23 @@
+agent: pm
+capabilities:
+  - prd_creation
+  - user_story_writing
+  - epic_creation
+  - feature_prioritization
+  - roadmap_planning
+  - stakeholder_communication
+  - mvp_definition
+  - risk_identification
+  - product_strategy
+  - market_analysis
+  - competitive_research
+  - requirements_documentation
+primary_outputs:
+  - product_requirements_document
+  - user_stories
+  - epics
+  - feature_specifications
+  - product_roadmap
+  - mvp_definition
+  - risk_assessment
+  - stakeholder_communication_plan

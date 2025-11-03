@@ -1,0 +1,26 @@
+{
+  "name": "security-blocker",
+  "trigger": "beforeRun",
+  "conditions": {
+    "tools": ["terminal"],
+    "commandPatterns": [
+      "rm -rf",
+      "sudo rm",
+      "format",
+      "dd",
+      "mkfs"
+    ]
+  },
+  "actions": [
+    {
+      "type": "block",
+      "message": "Dangerous command blocked for security. This command is in the security blocklist."
+    },
+    {
+      "type": "log",
+      "level": "warn",
+      "message": "Security hook blocked potentially dangerous command"
+    }
+  ]
+}
+

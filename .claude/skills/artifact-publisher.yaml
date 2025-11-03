@@ -1,0 +1,12 @@
+name: artifact-publisher
+summary: Publish Claude Artifacts to Projects and downstream agents
+mcp:
+  server: artifacts
+  tools:
+    - name: create
+      description: Create or update Claude Artifacts with rendered markdown/code
+    - name: share
+      description: Broadcast artifact updates to registered integrations
+workflow:
+  - Run after PostToolUse hook to push latest changes.
+  - Attach plan metadata so Factory Droid and Cursor Cloud Agents can resume the task.

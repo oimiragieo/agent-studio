@@ -1,0 +1,23 @@
+agent: ux-expert
+capabilities:
+  - user_experience_design
+  - ui_wireframing
+  - prototyping
+  - interaction_design
+  - user_flow_creation
+  - accessibility_design
+  - visual_design
+  - design_systems
+  - ai_ui_prompt_generation
+  - frontend_specification
+  - usability_testing
+  - user_research
+primary_outputs:
+  - user_experience_designs
+  - ui_wireframes_prototypes
+  - interaction_specifications
+  - user_flows
+  - accessibility_guidelines
+  - visual_design_systems
+  - ai_generation_prompts
+  - frontend_specifications

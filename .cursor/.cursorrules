@@ -1,0 +1,154 @@
+---
+description: Root rules file for Cursor agents - references framework-specific rules
+alwaysApply: true
+---
+
+# Cursor Agent Rules
+
+This file provides high-level guidance for Cursor agents working in this codebase. Framework-specific rules are located in `.cursor/rules/` and are automatically applied based on file patterns.
+
+## Universal Principles
+
+### Code Quality
+- Write clean, maintainable, and well-tested code
+- Follow framework-specific conventions (see `.cursor/rules/`)
+- Include comprehensive error handling
+- Document complex logic and business rules
+
+### Testing
+- Write tests alongside implementation
+- Achieve meaningful test coverage for business logic
+- Use descriptive test names that explain behavior
+- Focus on user behavior over implementation details
+
+### Security
+- Never commit secrets, tokens, or credentials
+- Validate and sanitize all user inputs
+- Use secure authentication patterns
+- Review security implications of all changes
+
+### Performance
+- Optimize for performance (bundle size, render cycles, query efficiency)
+- Use appropriate caching strategies
+- Profile before optimizing
+- Consider scalability implications
+
+## Agent-Specific Guidelines
+
+### Developer Agent
+- Use Plan Mode (`Shift+Tab`) before modifying multiple files
+- Create implementation plans for complex features
+- Write comprehensive tests for all new functionality
+- Follow established patterns from existing code
+
+### Architect Agent
+- Create detailed architecture documentation
+- Include Mermaid diagrams for system flows
+- Reference existing architectural decisions
+- Consider scalability, security, and maintainability
+
+### QA Agent
+- Use Gherkin format (Given-When-Then) for test scenarios
+- Perform risk-based testing prioritization
+- Validate requirements traceability
+- Provide clear PASS/CONCERNS/FAIL quality gate decisions
+
+## Rules Loading
+
+Framework-specific rules are automatically loaded from `.cursor/rules/` based on:
+- File extensions (e.g., `.ts`, `.tsx`, `.py`)
+- Directory patterns (e.g., `apps/`, `packages/`)
+- Stack profiles defined in manifest
+
+See `.cursor/rules/manifest.yaml` for stack profile configuration.
+
+## Quick Find Commands (JIT Index)
+
+### Codebase Navigation
+```bash
+# Find function definitions
+rg -n "function\s+\w+" --type ts --type js --type tsx
+
+# Find React components
+rg -n "export\s+(function|const)\s+\w+\s*[:=]" --type tsx --type jsx
+
+# Find API routes/handlers
+rg -n "export\s+(async\s+)?function\s+(GET|POST|PUT|DELETE|PATCH)" --type ts --type js
+
+# Find test files
+find . -name "*.test.*" -o -name "*.spec.*" | grep -v node_modules
+
+# Find configuration files
+find . -name "*.config.*" -o -name "*.json" -o -name "*.yaml" | grep -v node_modules | head -20
+
+# Search for specific patterns
+rg -n "pattern-to-find" --type ts --type tsx --type js
+```
+
+### File Organization
+- Agent definitions: `.cursor/subagents/*.mdc`
+- Rules: `.cursor/rules/`
+- Hooks: `.cursor/hooks/`
+- Instructions: `.cursor/instructions/`
+- Skills: `.cursor/skills/`
+
+## Definition of Done
+
+Before marking work as complete, verify:
+
+- [ ] Code follows project coding standards (check `.cursor/rules/`)
+- [ ] Tests written and passing (unit, integration as applicable)
+- [ ] No linting errors (`pnpm lint` or equivalent)
+- [ ] Type checking passes (`pnpm typecheck` or equivalent)
+- [ ] Security review completed (no secrets, proper validation)
+- [ ] Documentation updated (README, inline comments, JSDoc)
+- [ ] Plan Mode plan reviewed and approved (for multi-file changes)
+- [ ] Agent prompt references checked (if modifying agent behavior)
+
+## Common Gotchas
+
+### When Adding New Agents
+- Ensure `.mdc` file has proper YAML frontmatter
+- Icon must be single emoji in quotes: `icon: '📊'`
+- Tool list must use array format, not `all: true`
+- Actions must be boolean values, not strings
+
+### When Modifying Rules
+- Rules are loaded based on file patterns (globs)
+- Manifest file defines stack profiles
+- Always test rule changes in isolation
+
+### When Using Plan Mode
+- Plans are saved to `.cursor/plans/`
+- Always review plan before approval
+- Update plan if requirements change
+
+## Touch Points / Key Files
+
+### Agent Configuration
+- Agent definitions: `.cursor/subagents/*.mdc`
+- Agent coordination: `.cursor/instructions/agent-coordination.md`
+- Constitution: `.cursor/instructions/constitution.md`
+
+### Rules & Standards
+- Root rules: `.cursorrules` (this file)
+- Rules directory: `.cursor/rules/`
+- Manifest: `.cursor/rules/manifest.yaml`
+
+### Workflow
+- Plan Mode: `.cursor/instructions/plan-mode.md`
+- Composer: `.cursor/instructions/composer.md`
+- Hooks: `.cursor/hooks/*.json`
+
+### Security
+- Security guide: `.cursor/instructions/security.md`
+- Security hook: `.cursor/hooks/security.json`
+- Ignore patterns: `.cursorignore`
+
+## References
+
+- Framework rules: `.cursor/rules/`
+- Agent definitions: `.cursor/subagents/`
+- Plan Mode: `.cursor/plans/`
+- Instructions: `.cursor/instructions/`
+

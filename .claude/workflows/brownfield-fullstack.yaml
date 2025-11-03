@@ -1,0 +1,116 @@
+name: Brownfield Full-Stack Enhancement Workflow
+description: Workflow for enhancing existing full-stack applications
+type: brownfield
+project_type: fullstack
+
+steps:
+  - step: 1
+    name: "System Analysis"
+    agent: analyst
+    inputs:
+      - existing_system_documentation
+      - enhancement_requirements
+    outputs:
+      - project_brief.json
+      - current_system_analysis.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/project_brief.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
+
+  - step: 2
+    name: "Enhancement Requirements"
+    agent: pm
+    inputs:
+      - project_brief.json (from step 1)
+      - current_system_analysis.json (from step 1)
+    outputs:
+      - brownfield-prd.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/product_requirements.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/02-pm.json
+
+  - step: 3
+    name: "Impact Analysis"
+    agent: architect
+    inputs:
+      - brownfield-prd.json (from step 2)
+      - current_system_analysis.json (from step 1)
+    outputs:
+      - impact-analysis.json
+      - migration-strategy.json
+      - reasoning.json
+
+  - step: 4
+    name: "UX Updates"
+    agent: ux-expert
+    inputs:
+      - brownfield-prd.json (from step 2)
+      - current_system_analysis.json (from step 1)
+    outputs:
+      - ux-spec.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/ux_spec.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/03-ux-expert.json
+
+  - step: 5
+    name: "Architecture Updates"
+    agent: architect
+    inputs:
+      - impact-analysis.json (from step 3)
+      - ux-spec.json (from step 4)
+    outputs:
+      - updated-architecture.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/system_architecture.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-architect.json
+
+  - step: 6
+    name: "Test Planning"
+    agent: qa
+    inputs:
+      - updated-architecture.json (from step 5)
+      - migration-strategy.json (from step 3)
+    outputs:
+      - test-plan.json
+      - regression-test-plan.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/test_plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/08-qa.json
+
+  - step: 7
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - updated-architecture.json (from step 5)
+      - migration-strategy.json (from step 3)
+      - test-plan.json (from step 6)
+    outputs:
+      - dev-manifest.json
+      - code_artifacts
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/artifact_manifest.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/06-developer.json
+
+  - step: 8
+    name: "Quality Assurance & Regression"
+    agent: qa
+    inputs:
+      - dev-manifest.json (from step 7)
+      - regression-test-plan.json (from step 6)
+    outputs:
+      - quality_report.json
+      - regression_results.json
+
+completion_criteria:
+  - All artifacts validated against schemas
+  - Quality gates passed
+  - Regression tests passed
+  - Migration strategy verified
+  - Code follows project constitution
+

@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Epic",
+  "description": "Schema for epic artifacts",
+  "required": ["id", "name", "description"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique epic identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Epic name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Epic description and scope"
+    },
+    "user_stories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of user stories in this epic"
+    },
+    "business_value": {
+      "type": "string",
+      "description": "Business value delivered by this epic"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["backlog", "in-progress", "done"],
+      "description": "Current epic status"
+    }
+  }
+}
+

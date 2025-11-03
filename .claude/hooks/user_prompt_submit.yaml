@@ -1,0 +1,17 @@
+name: normalize-intent
+trigger: UserPromptSubmit
+priority: medium
+steps:
+  - action: enrich_prompt
+    options:
+      prepend: |
+        You are operating inside Claude Projects with synchronized Cursor and Factory Droid agents.
+        Confirm whether Plan Mode artifacts already exist. If not, ask the user to generate one.
+      append: |
+        Respond in concise, implementation-focused language. Offer to open an Artifact when returning multi-file output.
+  - action: tag_activity
+    options:
+      project_tag: plan-required
+      metadata:
+        source: claude
+        workspace: production-pack

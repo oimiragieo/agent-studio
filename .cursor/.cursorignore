@@ -1,0 +1,62 @@
+# Cursor Codebase Indexing Exclusions
+# Files and directories excluded from Cursor's codebase indexing
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+.yarn/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+.nuxt/
+.output/
+.vite/
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.log
+*.pem
+secrets/
+
+# Git
+.git/
+.gitignore
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Cursor-specific
+.cursor/
+.cursor/plans/
+.cursor/context/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Coverage reports
+coverage/
+.nyc_output/
+*.lcov
+
+# Lock files (optional - include if you want indexing)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+

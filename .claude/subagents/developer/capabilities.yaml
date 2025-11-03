@@ -1,0 +1,23 @@
+agent: developer
+capabilities:
+  - fullstack_implementation
+  - test_driven_development
+  - code_debugging
+  - performance_optimization
+  - refactoring
+  - integration_testing
+  - deployment_implementation
+  - story_execution
+  - code_review
+  - standards_compliance
+  - regression_testing
+  - build_automation
+primary_outputs:
+  - implemented_features
+  - comprehensive_tests
+  - optimized_code
+  - bug_fixes
+  - refactored_components
+  - integration_solutions
+  - deployment_scripts
+  - development_documentation

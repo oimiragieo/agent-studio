@@ -1,0 +1,25 @@
+agent: architect
+capabilities:
+  - system_architecture_design
+  - technology_stack_selection
+  - api_design
+  - infrastructure_planning
+  - performance_optimization
+  - security_architecture
+  - scalability_planning
+  - integration_design
+  - deployment_architecture
+  - database_design
+  - microservices_architecture
+  - frontend_architecture
+  - backend_architecture
+  - fullstack_architecture
+primary_outputs:
+  - system_architecture_document
+  - technology_selection_rationale
+  - api_specifications
+  - infrastructure_plan
+  - deployment_strategy
+  - security_architecture
+  - performance_optimization_plan
+  - integration_specifications

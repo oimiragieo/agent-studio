@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json.schemastore.org/claude-settings",
+  "version": "1.0",
+  "tool_permissions": {
+    "always_allow": [
+      "Read",
+      "Search"
+    ],
+    "require_confirmation": [
+      "Edit",
+      "Bash"
+    ],
+    "always_deny": [
+      "Bash(rm -rf *)",
+      "Bash(format *)",
+      "Bash(dd *)",
+      "Bash(mkfs *)"
+    ]
+  },
+  "bash_commands": {
+    "safe_patterns": [
+      "npm run *",
+      "pnpm *",
+      "yarn *",
+      "python -m pytest *",
+      "git status",
+      "git diff",
+      "git log",
+      "npm test",
+      "npm run lint",
+      "npm run typecheck"
+    ],
+    "require_confirmation": [
+      "git commit",
+      "git push",
+      "npm install",
+      "npm uninstall"
+    ],
+    "blocked_patterns": [
+      "rm -rf",
+      "sudo *",
+      "format *",
+      "dd *",
+      "mkfs *"
+    ]
+  },
+  "mcp_servers": {
+    "enabled": [
+      "repo",
+      "artifacts"
+    ],
+    "repo": {
+      "description": "Repository RAG for codebase search",
+      "used_by_skill": "repo-rag"
+    },
+    "artifacts": {
+      "description": "Artifact publishing to Claude Projects",
+      "used_by_skill": "artifact-publisher"
+    }
+  },
+  "hooks": {
+    "enabled": true,
+    "hooks_dir": ".claude/hooks",
+    "hooks": [
+      {
+        "name": "plan-and-scan",
+        "file": "pre_tool_use.yaml",
+        "trigger": "PreToolUse",
+        "enabled": true
+      },
+      {
+        "name": "summarize-and-publish",
+        "file": "post_tool_use.yaml",
+        "trigger": "PostToolUse",
+        "enabled": true
+      },
+      {
+        "name": "normalize-intent",
+        "file": "user_prompt_submit.yaml",
+        "trigger": "UserPromptSubmit",
+        "enabled": true
+      }
+    ]
+  },
+  "session": {
+    "auto_save": true,
+    "context_file": ".claude/context/session.json",
+    "max_context_tokens": 100000
+  },
+  "claude_projects": {
+    "enabled": true,
+    "artifacts_enabled": true,
+    "auto_publish_artifacts": true
+  },
+  "extended_thinking": {
+    "enabled": true,
+    "use_for_agents": [
+      "architect",
+      "qa",
+      "bmad-orchestrator"
+    ]
+  }
+}
+
