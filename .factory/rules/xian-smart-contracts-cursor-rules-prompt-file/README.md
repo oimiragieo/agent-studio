@@ -24,7 +24,7 @@ Xian is a modern blockchain platform that enables developers to write smart cont
 
 To start developing on Xian:
 
-1. Set up a development environment with Python 3.11+
+1. Set up a development environment with Python 3.12+ (3.13+ preferred if Xian supports it)
 2. 
    1. Clone [xian-contracting](https://github.com/xian-network/xian-contracting)
    2. Install Xian Contracting `cd xian-contracting && pip install -e ./`

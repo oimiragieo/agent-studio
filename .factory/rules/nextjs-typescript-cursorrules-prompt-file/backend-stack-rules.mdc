@@ -3,5 +3,5 @@ description: Specifies the backend technology stack including Next.js API Routes
 globs: backend/**/*.*
 ---
 - Framework: Next.js 15+ API Routes (App Router route handlers in `app/api/`)
-- Language: TypeScript 5.0+ (for API routes)
+- Language: TypeScript 5.6+ (for API routes)
 - **DEPRECATED**: Avoid `getServerSideProps`, `getStaticProps` (Pages Router only)

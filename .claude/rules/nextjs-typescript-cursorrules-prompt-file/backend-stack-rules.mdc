@@ -2,5 +2,5 @@
 description: Specifies the backend technology stack including Next.js API Routes and TypeScript, applying to all backend files.
 globs: backend/**/*.*
 ---
-- Framework: Next.js API Routes (for serverless functions)
-- Language: TypeScript (for API routes)
+- Framework: Next.js 15+ API Routes (App Router route handlers in `app/api/`)
+- Language: TypeScript 5.6+ (for API routes)

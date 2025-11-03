@@ -5,7 +5,7 @@ This prompt file is designed for senior Python AI/ML engineers specializing in L
 
 ## Tech Stack
 
-- Python 3.10+
+- Python 3.12+ (3.13+ preferred)
 - Poetry / Rye
 - Ruff
 - `typing` module

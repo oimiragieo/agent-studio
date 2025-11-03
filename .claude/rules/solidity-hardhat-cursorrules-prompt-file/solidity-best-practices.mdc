@@ -13,7 +13,7 @@ globs: **/*.sol
 - Implement timelocks and multisig controls for sensitive operations in production.
 - Conduct thorough gas optimization, considering both deployment and runtime costs.
 - Use OpenZeppelin's AccessControl for fine-grained permissions.
-- Use Solidity 0.8.0+ for built-in overflow/underflow protection.
+- Use Solidity 0.8.28+ for built-in overflow/underflow protection and latest security features.
 - Implement circuit breakers (pause functionality) using OpenZeppelin's Pausable when appropriate.
 - Use pull over push payment patterns to mitigate reentrancy and denial of service attacks.
 - Implement rate limiting for sensitive functions to prevent abuse.
