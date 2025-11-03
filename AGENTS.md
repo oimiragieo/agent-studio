@@ -182,6 +182,13 @@ production-dropin/
 - Hooks in `.cursor/hooks/`, `.claude/hooks/`, and `.factory/hooks/`
 - Instructions in `.cursor/instructions/` and `.factory/instructions/`
 
+### Data Format
+- **TOON format** for token-efficient LLM prompts - Use for uniform tabular data
+  - Claude: `.claude/rules/toon-format.md`
+  - Cursor: `.cursor/rules/toon-format.md`
+  - Factory: `.factory/instructions/toon-format.md`
+- **JSON** for APIs, storage, and non-uniform structures
+
 ### File Naming
 - Agent definitions: `agent-name.mdc` (Cursor) or `agent-name.md` (Droid)
 - Hook files: `hook-name.yaml` or `hook-name.json`
@@ -213,6 +220,7 @@ production-dropin/
 - Claude Code: https://docs.claude.com/
 - Cursor IDE: https://cursor.com/docs
 - Factory Droid: https://docs.factory.ai/
+- TOON Format: https://github.com/toon-format/toon (Spec: [SPEC.md](https://github.com/toon-format/toon/blob/main/SPEC.md))
 
 ### Integration Platforms
 - GitHub: Issues, PRs, and repository context
