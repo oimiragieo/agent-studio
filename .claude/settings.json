@@ -97,8 +97,16 @@
     "use_for_agents": [
       "architect",
       "qa",
-      "bmad-orchestrator"
-    ]
+      "security-architect",
+      "orchestrator"
+    ],
+    "budget": "medium",
+    "interleaved": true
+  },
+  "agent_config": {
+    "agent_directory": ".claude/agents",
+    "custom_agents_directory": ".claude/_cfg/agents",
+    "precedence": ["custom", "project", "user"]
   }
 }
 

@@ -1,0 +1,161 @@
+name: Enterprise Track Development Workflow
+description: Comprehensive workflow for greenfield projects, major features, and security-critical systems
+type: enterprise
+project_type: fullstack
+
+# Enterprise Track: Full team + Security + DevOps
+# Use for: Greenfield apps, major architectural changes, security-critical features, production migrations
+
+steps:
+  - step: 1
+    name: "Project Discovery & Analysis"
+    agent: analyst
+    inputs:
+      - user_requirements
+      - business_objectives
+      - market_context
+    outputs:
+      - project_brief.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/project_brief.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
+
+  - step: 2
+    name: "Product Requirements"
+    agent: pm
+    inputs:
+      - project_brief.json (from step 1)
+    outputs:
+      - prd.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/product_requirements.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/02-pm.json
+
+  - step: 3
+    name: "UX Design"
+    agent: ux-expert
+    inputs:
+      - prd.json (from step 2)
+    outputs:
+      - ux-spec.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/ux_spec.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/03-ux-expert.json
+
+  - step: 4
+    name: "System Architecture"
+    agent: architect
+    inputs:
+      - prd.json (from step 2)
+      - ux-spec.json (from step 3)
+    outputs:
+      - system-architecture.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/system_architecture.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-architect.json
+
+  - step: 5
+    name: "Security Architecture"
+    agent: security-architect
+    inputs:
+      - system-architecture.json (from step 4)
+      - prd.json (from step 2)
+    outputs:
+      - security-architecture.json
+      - threat-model.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/05-security.json
+
+  - step: 6
+    name: "Infrastructure Architecture"
+    agent: devops
+    inputs:
+      - system-architecture.json (from step 4)
+      - security-architecture.json (from step 5)
+    outputs:
+      - infrastructure-architecture.json
+      - cicd-pipeline.yaml
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/06-devops.json
+
+  - step: 7
+    name: "Test Planning"
+    agent: qa
+    inputs:
+      - system-architecture.json (from step 4)
+      - prd.json (from step 2)
+      - security-architecture.json (from step 5)
+    outputs:
+      - test-plan.json
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/test_plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/07-qa.json
+
+  - step: 8
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - system-architecture.json (from step 4)
+      - ux-spec.json (from step 3)
+      - test-plan.json (from step 7)
+      - security-architecture.json (from step 5)
+    outputs:
+      - dev-manifest.json
+      - code_artifacts
+      - reasoning.json
+    validation:
+      schema: .claude/schemas/artifact_manifest.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/08-developer.json
+
+  - step: 9
+    name: "Security Review"
+    agent: security-architect
+    inputs:
+      - dev-manifest.json (from step 8)
+      - code_artifacts (from step 8)
+      - security-architecture.json (from step 5)
+    outputs:
+      - security-review.json
+      - vulnerability-report.json
+
+  - step: 10
+    name: "Quality Assurance"
+    agent: qa
+    inputs:
+      - dev-manifest.json (from step 8)
+      - test-plan.json (from step 7)
+      - security-review.json (from step 9)
+    outputs:
+      - quality_report.json
+      - test_results.json
+
+completion_criteria:
+  - All artifacts validated against schemas
+  - Quality gates passed
+  - Security review approved
+  - Test coverage meets threshold (80%+)
+  - Code follows project constitution
+  - Infrastructure ready for deployment
+  - Compliance requirements met
+
+triggers:
+  keywords:
+    - greenfield
+    - new project
+    - from scratch
+    - enterprise
+    - production
+    - security-critical
+    - compliance
+    - migration
+  estimated_time: >40 hours
+  complexity: high
+
+includes_all_agents: true
