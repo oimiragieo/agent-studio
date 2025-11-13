@@ -107,6 +107,43 @@
     "agent_directory": ".claude/agents",
     "custom_agents_directory": ".claude/_cfg/agents",
     "precedence": ["custom", "project", "user"]
+  },
+  "streaming": {
+    "enabled": true,
+    "fine_grained_tool_streaming": {
+      "enabled": true,
+      "beta_header": "fine-grained-tool-streaming-2025-05-14",
+      "description": "Streams tool parameters without buffering JSON validation, reducing latency for large parameters",
+      "error_handling": {
+        "invalid_json_wrapper": "INVALID_JSON",
+        "retry_on_incomplete": true,
+        "max_retries": 2,
+        "log_malformed_params": true
+      },
+      "performance": {
+        "chunk_size": "auto",
+        "buffer_timeout_ms": 100,
+        "enable_for_agents": [
+          "architect",
+          "developer",
+          "qa",
+          "security-architect",
+          "devops",
+          "orchestrator"
+        ],
+        "disable_for_simple_tools": true
+      },
+      "monitoring": {
+        "track_latency": true,
+        "log_chunk_sizes": false,
+        "alert_on_incomplete_json": true
+      }
+    },
+    "real_time_feedback": {
+      "show_tool_progress": true,
+      "display_parameter_streaming": true,
+      "show_chunk_indicators": false
+    }
   }
 }
 
