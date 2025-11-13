@@ -1,0 +1,1 @@
+export { PermissionManager, checkPermission, createPermissionRule } from './permission-manager.js';

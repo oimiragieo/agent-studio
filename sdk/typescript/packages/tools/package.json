@@ -1,0 +1,87 @@
+{
+  "name": "@anthropic-ai/claude-agent-sdk-tools",
+  "version": "1.0.0",
+  "description": "Built-in tools for Claude Agent SDK with enterprise security",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./bash": {
+      "import": "./dist/bash/index.js",
+      "types": "./dist/bash/index.d.ts"
+    },
+    "./computer-use": {
+      "import": "./dist/computer-use/index.js",
+      "types": "./dist/computer-use/index.d.ts"
+    },
+    "./text-editor": {
+      "import": "./dist/text-editor/index.js",
+      "types": "./dist/text-editor/index.d.ts"
+    },
+    "./web-fetch": {
+      "import": "./dist/web-fetch/index.js",
+      "types": "./dist/web-fetch/index.d.ts"
+    },
+    "./web-search": {
+      "import": "./dist/web-search/index.js",
+      "types": "./dist/web-search/index.d.ts"
+    },
+    "./memory": {
+      "import": "./dist/memory/index.js",
+      "types": "./dist/memory/index.d.ts"
+    },
+    "./code-execution": {
+      "import": "./dist/code-execution/index.js",
+      "types": "./dist/code-execution/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "workspace:*",
+    "node-fetch": "^3.3.2",
+    "turndown": "^7.1.2",
+    "cheerio": "^1.0.0-rc.12",
+    "robotjs": "^0.6.0",
+    "screenshot-desktop": "^1.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/turndown": "^5.0.4",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "claude",
+    "anthropic",
+    "tools",
+    "bash",
+    "computer-use",
+    "text-editor",
+    "web-fetch",
+    "web-search",
+    "memory"
+  ],
+  "author": "Anthropic",
+  "license": "MIT"
+}
