@@ -133,15 +133,102 @@ agent_routing:
     model: claude-opus-4
     temperature: 0.6
 
-# Workflow Selection Configuration
+  orchestrator:
+    trigger_words:
+      - "orchestrate"
+      - "coordinate"
+      - "multi-agent"
+      - "complex workflow"
+      - "end-to-end"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.6
+    extended_thinking: true
+
+  security-architect:
+    trigger_words:
+      - "security"
+      - "authentication"
+      - "authorization"
+      - "compliance"
+      - "threat"
+      - "vulnerability"
+      - "encryption"
+      - "zero-trust"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.4
+    extended_thinking: true
+
+  devops:
+    trigger_words:
+      - "infrastructure"
+      - "deployment"
+      - "ci/cd"
+      - "kubernetes"
+      - "docker"
+      - "terraform"
+      - "monitoring"
+      - "scalability"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.4
+
+# Workflow Selection Configuration (Scale-Adaptive Intelligence)
 workflow_selection:
+  # Quick Flow: Minimal overhead for simple tasks
+  quick_flow:
+    priority: 1  # Highest priority - check first
+    keywords:
+      - "bug fix"
+      - "hotfix"
+      - "quick fix"
+      - "small feature"
+      - "documentation"
+      - "refactor"
+      - "minor change"
+    complexity: low
+    workflow_file: .claude/workflows/quick-flow.yaml
+    agents_sequence:
+      - developer
+      - qa
+
+  # Enterprise Track: Comprehensive for critical systems
+  enterprise_track:
+    priority: 2  # Check before standard workflows
+    keywords:
+      - "enterprise"
+      - "production"
+      - "security-critical"
+      - "compliance"
+      - "SOC2"
+      - "HIPAA"
+      - "GDPR"
+      - "zero-trust"
+      - "mission-critical"
+    complexity: high
+    workflow_file: .claude/workflows/enterprise-track.yaml
+    agents_sequence:
+      - analyst
+      - pm
+      - ux-expert
+      - architect
+      - security-architect
+      - devops
+      - qa
+      - developer
+      - security-architect
+      - qa
+
   greenfield_fullstack:
+    priority: 3
     keywords:
       - "new project"
       - "greenfield"
       - "from scratch"
       - "full stack"
       - "fullstack"
+    complexity: medium
     workflow_file: .claude/workflows/greenfield-fullstack.yaml
     agents_sequence:
       - analyst
@@ -153,12 +240,14 @@ workflow_selection:
       - qa
 
   brownfield_fullstack:
+    priority: 4
     keywords:
       - "enhance"
       - "brownfield"
       - "existing system"
       - "legacy"
-      - "migration"
+      - "add feature"
+    complexity: medium
     workflow_file: .claude/workflows/brownfield-fullstack.yaml
     agents_sequence:
       - analyst
@@ -169,6 +258,13 @@ workflow_selection:
       - qa
       - developer
       - qa
+
+# Intelligent Routing Configuration
+intelligent_routing:
+  enabled: true
+  orchestrator_agent: orchestrator
+  auto_select_workflow: true
+  default_workflow: greenfield_fullstack
 
 # Model Configuration by Complexity
 model_config:

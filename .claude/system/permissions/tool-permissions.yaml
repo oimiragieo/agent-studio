@@ -1,0 +1,406 @@
+# Tool-Level Permissions Configuration
+# Defines which tools each agent can access (Principle of Least Privilege)
+
+# ==============================================================================
+# Agent Tool Permissions (Principle of Least Privilege)
+# ==============================================================================
+
+agents:
+  # ============================================================================
+  # Core Development Agents
+  # ============================================================================
+
+  developer:
+    description: "Full-stack development with comprehensive tool access"
+    allowed_tools:
+      - Read              # Read files
+      - Write             # Create new files
+      - Edit              # Modify existing files
+      - Grep              # Search code
+      - Glob              # Find files by pattern
+      - Bash              # Execute shell commands
+      - NotebookEdit      # Jupyter notebook editing
+      - MCP_search_code   # Code search via MCP
+      - MCP_execute_tests # Run tests
+      - Task              # Delegate to subagents
+    restricted_tools:
+      - WebFetch          # Blocked: No internet access during development
+      - WebSearch         # Blocked: No internet access during development
+    security_constraints:
+      bash_allowed_commands:
+        - "git *"         # Git operations
+        - "npm *"         # Package management
+        - "pnpm *"        # Package management
+        - "yarn *"        # Package management
+        - "node *"        # Node execution
+        - "python *"      # Python execution
+        - "pytest *"      # Test execution
+        - "tsc *"         # TypeScript compilation
+        - "eslint *"      # Linting
+      bash_blocked_patterns:
+        - "rm -rf"        # Destructive operations
+        - "format *"      # Disk formatting
+        - "dd *"          # Low-level disk operations
+        - "mkfs *"        # Filesystem creation
+        - "> /dev/*"      # Device access
+        - "curl *"        # No external downloads
+        - "wget *"        # No external downloads
+    risk_level: "medium"
+
+  architect:
+    description: "System design and analysis - read-only with extended thinking"
+    allowed_tools:
+      - Read              # Read files and documentation
+      - Grep              # Search codebase
+      - Glob              # File discovery
+      - Edit              # Limited editing for documentation
+      - MCP_search_code   # Codebase analysis
+      - MCP_search_knowledge # Knowledge base access
+      - Task              # Delegate analysis tasks
+    restricted_tools:
+      - Write             # Blocked: Should not create new files
+      - Bash              # Blocked: Analysis only, no execution
+      - NotebookEdit      # Blocked: Not needed for architecture
+      - WebFetch          # Allowed for research
+      - WebSearch         # Allowed for research
+    extended_thinking: true
+    risk_level: "low"
+
+  qa:
+    description: "Quality assurance with testing capabilities"
+    allowed_tools:
+      - Read              # Read code and tests
+      - Grep              # Search for issues
+      - Glob              # Find test files
+      - Bash              # Execute tests and linters
+      - MCP_execute_tests # Test execution
+      - MCP_search_code   # Code analysis
+      - MCP_security_scan # Security scanning
+      - Task              # Delegate validation tasks
+    restricted_tools:
+      - Write             # Blocked: Should not create files (except test reports)
+      - Edit              # Blocked: Should not modify code
+      - NotebookEdit      # Blocked: Not needed for QA
+    security_constraints:
+      bash_allowed_commands:
+        - "pnpm test *"   # Test execution
+        - "pnpm run lint" # Linting
+        - "pnpm run typecheck" # Type checking
+        - "git diff"      # Review changes
+        - "git status"    # Check status
+      bash_blocked_patterns:
+        - "rm *"          # No file deletion
+        - "git commit"    # No commits from QA
+        - "git push"      # No pushes from QA
+    extended_thinking: true
+    risk_level: "low"
+
+  # ============================================================================
+  # Analysis & Planning Agents
+  # ============================================================================
+
+  analyst:
+    description: "Business analysis and research with internet access"
+    allowed_tools:
+      - Read              # Read documents
+      - Grep              # Search content
+      - Glob              # Find files
+      - WebFetch          # Fetch web pages and PDFs
+      - WebSearch         # Internet research
+      - MCP_search_knowledge # Knowledge base access
+      - MCP_crawl_website # Website analysis
+      - Task              # Delegate research tasks
+    restricted_tools:
+      - Write             # Blocked: Analysis only
+      - Edit              # Blocked: Analysis only
+      - Bash              # Blocked: No command execution
+      - NotebookEdit      # Blocked: Not needed
+    risk_level: "low"
+
+  pm:
+    description: "Product management with documentation capabilities"
+    allowed_tools:
+      - Read              # Read requirements and docs
+      - Edit              # Edit documentation
+      - Grep              # Search documents
+      - Glob              # Find files
+      - MCP_search_knowledge # Knowledge access
+      - Task              # Delegate tasks
+    restricted_tools:
+      - Write             # Limited: Use Edit for existing docs
+      - Bash              # Blocked: No execution needed
+      - WebFetch          # Blocked: No internet needed
+      - WebSearch         # Blocked: No internet needed
+    risk_level: "low"
+
+  ux-expert:
+    description: "UX design with documentation and editing"
+    allowed_tools:
+      - Read              # Read designs and specs
+      - Edit              # Edit design docs
+      - Grep              # Search designs
+      - Glob              # Find design files
+      - MCP_search_knowledge # Access design systems
+      - Task              # Delegate design tasks
+    restricted_tools:
+      - Write             # Limited: Use Edit for existing
+      - Bash              # Blocked: No execution
+      - WebFetch          # Blocked: No internet
+      - WebSearch         # Blocked: No internet
+    risk_level: "low"
+
+  # ============================================================================
+  # Enterprise Security & Infrastructure Agents
+  # ============================================================================
+
+  security-architect:
+    description: "Security analysis and threat modeling"
+    allowed_tools:
+      - Read              # Read code for security review
+      - Grep              # Search for vulnerabilities
+      - Glob              # Find security-relevant files
+      - Edit              # Edit security docs
+      - MCP_search_code   # Code security analysis
+      - MCP_security_scan # Security scanning
+      - Task              # Delegate security tasks
+    restricted_tools:
+      - Write             # Blocked: Should not create files
+      - Bash              # Blocked: Analysis only
+      - NotebookEdit      # Blocked: Not needed
+      - WebFetch          # Allowed for threat intelligence
+      - WebSearch         # Allowed for CVE research
+    extended_thinking: true
+    security_constraints:
+      require_approval_for:
+        - "Editing security configuration files"
+        - "Modifying authentication code"
+        - "Changing authorization logic"
+    risk_level: "low"
+
+  devops:
+    description: "Infrastructure and CI/CD with Bash access"
+    allowed_tools:
+      - Read              # Read infrastructure code
+      - Write             # Create infrastructure files
+      - Edit              # Modify infrastructure
+      - Grep              # Search configs
+      - Glob              # Find infrastructure files
+      - Bash              # Execute infrastructure commands
+      - MCP_search_code   # Code analysis
+      - Task              # Delegate infrastructure tasks
+    restricted_tools:
+      - NotebookEdit      # Blocked: Not infrastructure-related
+      - WebFetch          # Limited: Security concern
+      - WebSearch         # Limited: Security concern
+    security_constraints:
+      bash_allowed_commands:
+        - "docker *"      # Container operations
+        - "kubectl *"     # Kubernetes operations
+        - "terraform *"   # Infrastructure as code
+        - "ansible *"     # Configuration management
+        - "helm *"        # Kubernetes package manager
+        - "git *"         # Version control
+      bash_blocked_patterns:
+        - "rm -rf /"      # System destruction
+        - "dd *"          # Disk operations
+        - "mkfs *"        # Filesystem operations
+        - "> /dev/*"      # Device access
+      require_approval_for:
+        - "Production deployments"
+        - "Infrastructure destruction"
+        - "Database migrations"
+    risk_level: "high"
+
+  # ============================================================================
+  # Orchestration Agent
+  # ============================================================================
+
+  orchestrator:
+    description: "Task routing and multi-agent coordination"
+    allowed_tools:
+      - Task              # Primary function: delegate to specialists
+      - Read              # Read context for routing decisions
+      - Grep              # Search for relevant agents
+      - Glob              # Find agent definitions
+    restricted_tools:
+      - Write             # Blocked: No file creation
+      - Edit              # Blocked: No file modification
+      - Bash              # Blocked: No execution
+      - NotebookEdit      # Blocked: Not needed
+      - WebFetch          # Blocked: Delegates to analyst
+      - WebSearch         # Blocked: Delegates to analyst
+      - MCP tools         # Blocked: Delegates to specialists
+    extended_thinking: true
+    risk_level: "low"
+
+# ==============================================================================
+# Global Tool Security Policies
+# ==============================================================================
+
+global_policies:
+  # Bash Tool Security
+  bash:
+    max_timeout_ms: 600000  # 10 minutes max
+    default_timeout_ms: 120000  # 2 minutes default
+    blocked_commands:
+      - regex: "rm\\s+-rf\\s+/"
+        reason: "Prevents system destruction"
+      - regex: "(format|mkfs|dd)\\s+"
+        reason: "Prevents destructive disk operations"
+      - regex: ":\\(\\)\\{\\s*:\\|:\\&\\s*\\};:"
+        reason: "Prevents fork bombs"
+      - regex: ">/dev/(sd|hd|nvme)"
+        reason: "Prevents direct device access"
+      - regex: "curl.*\\|.*bash"
+        reason: "Prevents remote code execution"
+      - regex: "wget.*&&.*chmod"
+        reason: "Prevents remote code execution"
+    require_approval:
+      - regex: "git\\s+(push|commit)"
+        reason: "Version control operations need confirmation"
+      - regex: "(npm|yarn|pnpm)\\s+(install|update|upgrade)"
+        reason: "Dependency changes need confirmation"
+      - regex: "docker\\s+(rm|rmi|prune)"
+        reason: "Container destruction needs confirmation"
+    audit_all_commands: true
+
+  # File Operations Security
+  file_operations:
+    blocked_paths:
+      - "/etc/**"         # System configuration
+      - "/sys/**"         # System interface
+      - "/proc/**"        # Process information
+      - "/dev/**"         # Device files
+      - "/.env"           # Environment secrets
+      - "/.env.*"         # Environment secrets
+      - "/secrets/**"     # Secrets directory
+      - "~/.ssh/**"       # SSH keys
+      - "~/.aws/**"       # AWS credentials
+      - "~/.config/gcloud/**"  # GCloud credentials
+    require_approval_paths:
+      - "**/package.json"       # Dependency changes
+      - "**/Dockerfile"         # Container changes
+      - "**/docker-compose.yml" # Container orchestration
+      - "**/.github/workflows/**" # CI/CD changes
+      - "**/terraform/**"       # Infrastructure as code
+      - "**/ansible/**"         # Configuration management
+    max_file_size_mb: 10      # Prevent huge files
+    audit_all_writes: true
+    audit_all_edits: true
+
+  # Web Access Security
+  web_access:
+    allowed_domains:
+      - "*.anthropic.com"
+      - "*.github.com"
+      - "docs.*.com"
+      - "*.wikipedia.org"
+    blocked_domains:
+      - "*.onion"         # Tor sites
+      - "*.i2p"           # I2P sites
+      - "localhost"       # Local access
+      - "127.0.0.1"       # Local access
+      - "0.0.0.0"         # Wildcard binding
+      - "192.168.*"       # Private networks
+      - "10.*"            # Private networks
+      - "172.16.*"        # Private networks
+    max_fetches_per_session: 50
+    timeout_seconds: 30
+    require_approval_for_download: true
+
+  # MCP Tool Security
+  mcp_tools:
+    require_server_allowlist: true
+    block_untrusted_servers: true
+    audit_all_invocations: true
+    timeout_seconds: 60
+
+# ==============================================================================
+# Approval Workflows
+# ==============================================================================
+
+approval_workflows:
+  # Standard approval for sensitive operations
+  standard:
+    required_for:
+      - "git push to protected branches"
+      - "Production database operations"
+      - "Infrastructure destruction"
+      - "Secrets management"
+    approval_method: "interactive_prompt"
+    timeout_seconds: 300
+    allow_override: false
+
+  # Quick approval for known-safe operations
+  quick:
+    required_for:
+      - "git commit to feature branches"
+      - "npm install for development"
+      - "File edits in project directory"
+    approval_method: "one_click"
+    timeout_seconds: 60
+    allow_override: true
+
+  # No approval for read-only operations
+  readonly:
+    required_for: []
+    approval_method: "none"
+    always_allowed:
+      - Read
+      - Grep
+      - Glob
+
+# ==============================================================================
+# Risk-Based Tool Access
+# ==============================================================================
+
+risk_levels:
+  low:
+    description: "Read-only or analysis tools with minimal risk"
+    default_permission: "allow"
+    audit_frequency: "weekly"
+
+  medium:
+    description: "File modification and safe execution"
+    default_permission: "ask"
+    audit_frequency: "daily"
+
+  high:
+    description: "Destructive operations or external access"
+    default_permission: "deny"
+    audit_frequency: "real-time"
+    require_secondary_approval: true
+
+  critical:
+    description: "Production or infrastructure-impacting operations"
+    default_permission: "deny"
+    audit_frequency: "real-time"
+    require_secondary_approval: true
+    require_admin_approval: true
+
+# ==============================================================================
+# Audit & Compliance
+# ==============================================================================
+
+audit:
+  enabled: true
+  log_location: ".claude/context/audit/tool-usage.log"
+  log_format: "json"
+  include_fields:
+    - timestamp
+    - agent
+    - tool
+    - action
+    - input_summary
+    - approval_status
+    - risk_level
+    - user
+  retention_days: 90
+  export_to_siem: false  # Set to true for SIEM integration
+
+compliance:
+  enforce_principle_of_least_privilege: true
+  require_justification_for_elevated_access: true
+  periodic_access_review: true
+  review_frequency_days: 30
+  auto_revoke_unused_permissions_days: 60

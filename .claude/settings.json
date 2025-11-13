@@ -63,6 +63,13 @@
     "hooks_dir": ".claude/hooks",
     "hooks": [
       {
+        "name": "security-validation",
+        "file": "security_validation.yaml",
+        "trigger": "PreToolUse",
+        "enabled": true,
+        "priority": "highest"
+      },
+      {
         "name": "plan-and-scan",
         "file": "pre_tool_use.yaml",
         "trigger": "PreToolUse",
@@ -75,12 +82,54 @@
         "enabled": true
       },
       {
+        "name": "streaming-monitor",
+        "file": "streaming_monitor.yaml",
+        "trigger": "PostToolUse",
+        "enabled": true
+      },
+      {
         "name": "normalize-intent",
         "file": "user_prompt_submit.yaml",
         "trigger": "UserPromptSubmit",
         "enabled": true
       }
     ]
+  },
+  "permissions": {
+    "enabled": true,
+    "mode": "default",
+    "config_location": ".claude/system/permissions/",
+    "files": {
+      "modes": "permission-modes.yaml",
+      "tool_permissions": "tool-permissions.yaml",
+      "security_policies": "security-policies.yaml"
+    },
+    "enforcement": {
+      "principle_of_least_privilege": true,
+      "audit_all_operations": true,
+      "require_approval_for_sensitive_ops": true
+    }
+  },
+  "guardrails": {
+    "enabled": true,
+    "config_location": ".claude/system/guardrails/",
+    "modules": {
+      "jailbreak_mitigation": {
+        "enabled": true,
+        "file": "jailbreak-mitigation.yaml",
+        "screening_model": "claude-haiku-3-5"
+      },
+      "hallucination_prevention": {
+        "enabled": true,
+        "file": "hallucination-prevention.yaml",
+        "require_citations": true
+      },
+      "prompt_leak_prevention": {
+        "enabled": true,
+        "file": "prompt-leak-prevention.yaml",
+        "output_filtering": true
+      }
+    }
   },
   "session": {
     "auto_save": true,
@@ -97,8 +146,53 @@
     "use_for_agents": [
       "architect",
       "qa",
-      "bmad-orchestrator"
-    ]
+      "security-architect",
+      "orchestrator"
+    ],
+    "budget": "medium",
+    "interleaved": true
+  },
+  "agent_config": {
+    "agent_directory": ".claude/agents",
+    "custom_agents_directory": ".claude/_cfg/agents",
+    "precedence": ["custom", "project", "user"]
+  },
+  "streaming": {
+    "enabled": true,
+    "fine_grained_tool_streaming": {
+      "enabled": true,
+      "beta_header": "fine-grained-tool-streaming-2025-05-14",
+      "description": "Streams tool parameters without buffering JSON validation, reducing latency for large parameters",
+      "error_handling": {
+        "invalid_json_wrapper": "INVALID_JSON",
+        "retry_on_incomplete": true,
+        "max_retries": 2,
+        "log_malformed_params": true
+      },
+      "performance": {
+        "chunk_size": "auto",
+        "buffer_timeout_ms": 100,
+        "enable_for_agents": [
+          "architect",
+          "developer",
+          "qa",
+          "security-architect",
+          "devops",
+          "orchestrator"
+        ],
+        "disable_for_simple_tools": true
+      },
+      "monitoring": {
+        "track_latency": true,
+        "log_chunk_sizes": false,
+        "alert_on_incomplete_json": true
+      }
+    },
+    "real_time_feedback": {
+      "show_tool_progress": true,
+      "display_parameter_streaming": true,
+      "show_chunk_indicators": false
+    }
   }
 }
 
