@@ -163,6 +163,37 @@ npx depcheck
 - `.claude/context/history/reasoning/`: Extended thinking and reasoning outputs
 - `.claude/context/history/gates/`: Quality gate validation results
 - `.claude/context/session.json`: Current workflow session state
+- **NOTE**: The `.claude/context/` directory is created at runtime. It is gitignored to prevent committing session state.
+
+### Available Slash Commands
+Custom slash commands in `.claude/commands/`:
+- `/review` - Comprehensive code review (5-step systematic review process)
+- `/fix-issue <number>` - Automatically fix GitHub issues by number
+- `/quick-ship` - Fast iteration workflow for bug fixes, hotfixes, and small features
+
+### Documentation
+Comprehensive guides in `.claude/docs/`:
+- **ENTERPRISE-FEATURES.md** (12,447 lines) - Enterprise security, permissions, guardrails - **START HERE**
+- **IMPLEMENTATION-MATRIX.md** (16,644 lines) - Complete feature implementation status
+- **MEMORY-MANAGEMENT.md** (8,600 lines) - Context optimization strategies
+- **FINE-GRAINED-STREAMING.md** (9,879 lines) - Advanced streaming implementation
+- **STREAMING-QUICKSTART.md** (3,383 lines) - Quick start for streaming features
+- **STREAMING-EXAMPLES.md** (13,975 lines) - Practical streaming examples
+
+### Operational Instructions
+Step-by-step guides in `.claude/instructions/`:
+- **agent-coordination.md** - Multi-agent orchestration patterns
+- **artifacts-playbook.md** - Creating and publishing artifacts
+- **constitution.md** - System design principles and constraints
+- **context-manager.md** - Managing conversation context efficiently
+- **error-handling.md** - Error recovery strategies
+- **error-recovery.md** - Graceful degradation patterns
+- **improvement-roadmap.md** - Planned enhancements and features
+- **performance-optimization.md** - Performance tuning guidelines
+- **projects-setup.md** - Claude Projects integration guide
+- **sdd-principles.md** - Specification-Driven Development methodology
+- **validation-rules.md** - Input validation and sanitization
+- **validation-schemas.md** - JSON schema validation patterns
 
 ## Developer Environment Setup
 

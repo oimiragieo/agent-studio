@@ -1,0 +1,32 @@
+# Context Directory - Runtime Data
+# Keep structure, ignore runtime data
+
+# Session state (regenerated on each run)
+session.json
+*.log
+
+# Artifacts (user-generated, may be large)
+artifacts/*.json
+artifacts/*.md
+artifacts/*.txt
+
+# Reasoning history (can be regenerated)
+history/**/*.json
+history/**/*.md
+
+# Quality gates (ephemeral)
+history/gates/**/*.json
+
+# Audit logs (can grow large)
+audit/**/*.json
+audit/**/*.log
+
+# Keep directory structure
+!.gitkeep
+!artifacts/.gitkeep
+!history/reasoning/.gitkeep
+!history/gates/.gitkeep
+!audit/.gitkeep
+
+# Optional: Keep specific important artifacts
+# !artifacts/important-artifact.json
