@@ -180,6 +180,16 @@ Comprehensive guides in `.claude/docs/`:
 - **STREAMING-QUICKSTART.md** (3,383 lines) - Quick start for streaming features
 - **STREAMING-EXAMPLES.md** (13,975 lines) - Practical streaming examples
 
+#### Setup Guides
+Platform-specific setup guides in `.claude/docs/setup-guides/`:
+- **CLAUDE_SETUP_GUIDE.md** - Complete setup guide for Claude Code
+- **CURSOR_SETUP_GUIDE.md** - Complete setup guide for Cursor IDE
+- **FACTORY_SETUP_GUIDE.md** - Complete setup guide for Factory Droid
+
+#### Archive
+Historical documentation and audit reports in `.claude/docs/archive/`:
+- **CODEBASE-AUDIT-2025-11-19.md** - Comprehensive codebase audit from November 2025
+
 ### Operational Instructions
 Step-by-step guides in `.claude/instructions/`:
 - **agent-coordination.md** - Multi-agent orchestration patterns

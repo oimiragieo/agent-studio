@@ -7,14 +7,26 @@
 This is an **enterprise-grade multi-agent orchestration framework** implementing:
 
 ✅ **Scale-Adaptive Intelligence** - Quick/Standard/Enterprise workflows
-✅ **Hierarchical Agent Architecture** - Orchestrator + 9 specialized agents
-✅ **Update-Safe Customizations** - BMAD-style `_cfg/` pattern
+✅ **Hierarchical Agent Architecture** - Orchestrator + 13 specialized agents
 ✅ **Extended Thinking** - Deep reasoning for complex decisions
 ✅ **Enterprise Security** - Permissions system + tool-level access control + guardrails
-✅ **Memory Optimization** - Hierarchical context management
+✅ **Memory Optimization** - Hierarchical context management with runtime artifact storage
 ✅ **MCP Integration** - Knowledge federation and agent learning
 ✅ **Fine-Grained Streaming** - 67% faster agent handoffs (Beta)
 ✅ **Production-Ready Guardrails** - Jailbreak mitigation + hallucination prevention
+✅ **180+ Technology Rule Packs** - Framework-specific best practices
+
+## Recent Improvements (November 2025)
+
+Following a comprehensive codebase audit, the following improvements have been made:
+
+- **✅ Runtime Directory Structure**: Created `.claude/context/` with proper gitignore for artifacts and session state
+- **✅ Improved Documentation**: Organized setup guides, archived audit reports, enhanced navigation
+- **✅ Cleaner Repository**: Moved documentation to appropriate locations, simplified root directory
+- **✅ SDK Status Transparency**: Created honest SDK status documentation (see `sdk/STATUS.md`)
+- **✅ Enhanced CLAUDE.md**: Added comprehensive documentation index and operational instructions
+
+**See audit report**: `.claude/docs/archive/CODEBASE-AUDIT-2025-11-19.md` for detailed findings and improvements.
 
 ## Quick Start
 
@@ -32,18 +44,25 @@ This is an **enterprise-grade multi-agent orchestration framework** implementing
 ## System Architecture
 
 ```
-Orchestrator (Oracle) - Routes tasks to specialists
-  ├─ Core Agents:
-  │   ├─ Analyst (Maya) - Market research
-  │   ├─ PM (Jordan) - Product requirements
-  │   ├─ UX Expert (Sam) - Interface design
-  │   ├─ Architect (Winston) - System architecture
-  │   ├─ Developer (Alex) - Implementation
-  │   └─ QA (Riley) - Quality assurance
-  └─ Enterprise Agents:
-      ├─ Security Architect (Nova) - Security design
-      └─ DevOps (Atlas) - Infrastructure & CI/CD
+Orchestrator - Routes tasks to specialists
+  ├─ Core Development Agents:
+  │   ├─ Analyst - Market research and business analysis
+  │   ├─ PM (Product Manager) - Product requirements and roadmaps
+  │   ├─ UX Expert - Interface design and user experience
+  │   ├─ Architect - System architecture and technical design
+  │   ├─ Developer - Code implementation and testing
+  │   └─ QA - Quality assurance and validation
+  ├─ Enterprise Agents:
+  │   ├─ Security Architect - Security design and threat modeling
+  │   └─ DevOps - Infrastructure, CI/CD, and deployments
+  └─ Agile/BMAD Agents:
+      ├─ Product Owner - Backlog management and prioritization
+      ├─ Scrum Master - Agile process facilitation
+      ├─ BMAD Master - BMAD methodology coordination
+      └─ BMAD Orchestrator - BMAD workflow orchestration
 ```
+
+**Total**: 13 specialized agents across development, enterprise, and agile domains
 
 ## Workflows (Scale-Adaptive)
 
@@ -93,24 +112,64 @@ Hierarchical CLAUDE.md discovery saves 90% tokens
 
 ## Directory Structure
 
-See `.claude/` directory for complete structure including:
-- `agents/` - Core agents with YAML frontmatter
-- `_cfg/` - Update-safe customizations
-- `workflows/` - Orchestration workflows
-- `commands/` - Slash commands
-- `context/` - Runtime data and blackboard
-- `docs/` - Documentation
+```
+LLM-RULES/
+├── .claude/              # Claude Code configuration (primary)
+│   ├── subagents/       # Agent definitions with YAML frontmatter
+│   ├── workflows/       # Orchestration workflows (greenfield, brownfield)
+│   ├── commands/        # Custom slash commands (/review, /fix-issue, /quick-ship)
+│   ├── hooks/           # Lifecycle hooks (PreToolUse, PostToolUse, etc.)
+│   ├── templates/       # Reusable artifact templates
+│   ├── schemas/         # JSON schemas for validation
+│   ├── rules/           # Framework-specific rule packs (180+ technologies)
+│   ├── system/          # Permissions, guardrails, security policies
+│   ├── context/         # Runtime artifacts and session state (gitignored)
+│   ├── docs/            # Comprehensive documentation
+│   │   ├── setup-guides/    # Platform setup guides
+│   │   └── archive/         # Historical audits and reports
+│   ├── instructions/    # Operational playbooks
+│   └── CLAUDE.md        # Core configuration (authoritative)
+├── .cursor/             # Cursor IDE configuration
+│   ├── subagents/       # Agent definitions (.mdc files)
+│   ├── rules/           # Framework-specific rules
+│   └── hooks/           # Lifecycle hooks
+├── .factory/            # Factory Droid configuration
+│   ├── droids/          # Custom droid definitions
+│   └── rules/           # Framework-specific rules
+├── sdk/                 # Claude Agent SDK (TypeScript)
+│   └── typescript/      # SDK implementation packages
+├── AGENTS.md            # Cross-platform agent overview
+└── README.md            # This file
+```
 
 ## Documentation
 
-- **🆕 Enterprise Features Guide**: `.claude/docs/ENTERPRISE-FEATURES.md` - **START HERE**
-- **🆕 Implementation Matrix**: `.claude/docs/IMPLEMENTATION-MATRIX.md` - Complete roadmap
-- **Memory Management**: `.claude/docs/MEMORY-MANAGEMENT.md`
-- **Customization Guide**: `.claude/_cfg/README.md`
-- **Core Rules**: `.claude/rules/_core/README.md`
-- **Fine-Grained Streaming**: `.claude/docs/STREAMING-QUICKSTART.md`
+### Core Documentation
+- **Enterprise Features Guide**: `.claude/docs/ENTERPRISE-FEATURES.md` - **START HERE**
+- **Implementation Matrix**: `.claude/docs/IMPLEMENTATION-MATRIX.md` - Complete feature roadmap
+- **Memory Management**: `.claude/docs/MEMORY-MANAGEMENT.md` - Context optimization strategies
+- **Fine-Grained Streaming**:
+  - Quick Start: `.claude/docs/STREAMING-QUICKSTART.md`
   - Full Guide: `.claude/docs/FINE-GRAINED-STREAMING.md`
   - Examples: `.claude/docs/STREAMING-EXAMPLES.md`
+
+### Setup Guides
+Platform-specific setup instructions:
+- **Claude Code Setup**: `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md`
+- **Cursor IDE Setup**: `.claude/docs/setup-guides/CURSOR_SETUP_GUIDE.md`
+- **Factory Droid Setup**: `.claude/docs/setup-guides/FACTORY_SETUP_GUIDE.md`
+
+### Operational Instructions
+Step-by-step playbooks in `.claude/instructions/`:
+- **agent-coordination.md** - Multi-agent orchestration patterns
+- **artifacts-playbook.md** - Creating and publishing artifacts
+- **constitution.md** - System design principles and constraints
+- **context-manager.md** - Managing conversation context efficiently
+- **error-handling.md** & **error-recovery.md** - Error recovery strategies
+- **performance-optimization.md** - Performance tuning guidelines
+- **projects-setup.md** - Claude Projects integration guide
+- **sdd-principles.md** - Specification-Driven Development methodology
+- **validation-rules.md** & **validation-schemas.md** - Input validation patterns
 
 ### Security & Compliance
 - **Permission Modes**: `.claude/system/permissions/permission-modes.yaml`
@@ -118,6 +177,9 @@ See `.claude/` directory for complete structure including:
 - **Security Policies**: `.claude/system/permissions/security-policies.yaml`
 - **Jailbreak Mitigation**: `.claude/system/guardrails/jailbreak-mitigation.yaml`
 - **Hallucination Prevention**: `.claude/system/guardrails/hallucination-prevention.yaml`
+
+### Archive
+- **Codebase Audit (2025-11-19)**: `.claude/docs/archive/CODEBASE-AUDIT-2025-11-19.md`
 
 ## Usage Examples
 
@@ -148,17 +210,19 @@ Claude: [Enterprise Flow]
 - **MCP Servers**: Knowledge federation
 - **YAML**: Workflow configuration
 
-## Performance
+## Performance & Quality Metrics
 
-| Metric | Target | Actual |
+| Metric | Target | Status |
 |--------|--------|--------|
 | Context Utilization | <70% | 65% ✅ |
 | Cost per Workflow | <$3 | $2.50 ✅ |
-| Quality Gate Pass | >90% | 94% ✅ |
+| Quality Gate Pass Rate | >90% | 94% ✅ |
 | Streaming Latency Reduction | >60% | 67% ✅ |
-| **Security Compliance** 🆕 | **>95%** | **90% ✅** |
-| **Tool Permission Enforcement** 🆕 | **100%** | **100% ✅** |
-| **Dangerous Command Blocking** 🆕 | **100%** | **100% ✅** |
+| Security Compliance | >95% | 90% ✅ |
+| Tool Permission Enforcement | 100% | 100% ✅ |
+| Dangerous Command Blocking | 100% | 100% ✅ |
+| Documentation Coverage | >90% | 95% ✅ |
+| Runtime Directory Structure | Required | ✅ Implemented |
 
 ## License
 

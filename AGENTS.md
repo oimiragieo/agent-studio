@@ -2,6 +2,8 @@
 
 This is a multi-platform agent configuration bundle supporting Claude Code, Cursor IDE, and Factory Droid with shared rule base.
 
+> **Recent Updates (November 2025)**: Documentation has been reorganized for better discoverability. Setup guides moved to `.claude/docs/setup-guides/`, audit reports archived in `.claude/docs/archive/`, and comprehensive documentation index added to `.claude/CLAUDE.md`.
+
 ## Core Principles
 
 This AGENTS.md follows a **hierarchical, token-efficient approach**:
@@ -102,22 +104,38 @@ This project provides drop-in agent configurations for three platforms:
 ### Directory Structure
 
 ```
-production-dropin/
-├── .claude/          # Claude Code configuration
-│   ├── subagents/    # Specialized agent prompts
-│   ├── hooks/        # Lifecycle hooks
-│   ├── rules/        # Framework-specific rules
-│   └── schemas/      # JSON schemas for validation
-├── .cursor/          # Cursor IDE configuration
-│   ├── subagents/    # Agent definitions (.mdc)
-│   ├── hooks/        # Pre/post execution hooks
-│   ├── instructions/ # Platform-specific guides
-│   └── rules/        # Technology-specific rules
-└── .factory/         # Factory Droid configuration
-    ├── droids/       # Custom droid definitions
-    ├── hooks/        # Pre/post run hooks
-    ├── instructions/ # Droid usage guides
-    └── skills/       # Context router and incident response
+LLM-RULES/
+├── .claude/              # Claude Code configuration (primary)
+│   ├── subagents/       # Specialized agent prompts (directory-based)
+│   ├── workflows/       # Orchestration workflows
+│   ├── commands/        # Custom slash commands
+│   ├── hooks/           # Lifecycle hooks (PreToolUse, PostToolUse, etc.)
+│   ├── templates/       # Reusable artifact templates
+│   ├── schemas/         # JSON schemas for validation
+│   ├── rules/           # Framework-specific rules (180+ technologies)
+│   ├── system/          # Permissions, guardrails, security policies
+│   ├── context/         # Runtime artifacts and session state (gitignored)
+│   ├── docs/            # Comprehensive documentation
+│   │   ├── setup-guides/    # Platform setup guides
+│   │   └── archive/         # Historical audits and reports
+│   ├── instructions/    # Operational playbooks
+│   └── CLAUDE.md        # Core configuration (authoritative)
+├── .cursor/             # Cursor IDE configuration
+│   ├── subagents/       # Agent definitions (.mdc files)
+│   ├── hooks/           # Pre/post execution hooks (JSON)
+│   ├── instructions/    # Platform-specific guides
+│   ├── skills/          # Reusable skills
+│   └── rules/           # Technology-specific rules
+├── .factory/            # Factory Droid configuration
+│   ├── droids/          # Custom droid definitions
+│   ├── hooks/           # Pre/post run hooks (YAML)
+│   ├── instructions/    # Droid usage guides
+│   ├── skills/          # Context router and incident response
+│   └── rules/           # Technology-specific rules
+├── sdk/                 # Claude Agent SDK (TypeScript)
+│   └── typescript/      # SDK implementation packages
+├── AGENTS.md            # This file (cross-platform agent overview)
+└── README.md            # Project overview and quick start
 ```
 
 ## Security
