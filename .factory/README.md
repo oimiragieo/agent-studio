@@ -11,20 +11,41 @@ Factory's Droid platform layers specialized agents across CLI, IDE, and web inte
 
 ## What's Included
 
-### Custom Droids (10 Specialized Agents)
+### Custom Droids (22 Specialized Agents)
 
 Role-aligned droids matching the Claude/Cursor agents:
 
+**Core Development:**
 - **analyst** 📊: Market research, requirements gathering, competitive analysis
 - **pm** 📋: Product requirements, epic definition, business validation
 - **architect** 🏗️: System design, technology selection, security planning
+- **database-architect** 🗄️: Schema design, query optimization, migrations
 - **developer** 💻: Implementation, code quality, testing execution
 - **qa** 🧪: Test planning, quality validation, compliance verification
 - **ux-expert** 🎨: User experience design, accessibility, interface specification
-- **product-owner** 👤: Backlog management, story prioritization
-- **scrum-master** 🔄: Story preparation, sprint planning
-- **bmad-orchestrator** 🎭: Workflow coordination, multi-agent orchestration
-- **bmad-master** 🌟: Universal task executor across all domains
+
+**Enterprise:**
+- **security-architect** 🔒: Security and compliance architecture
+- **devops** ⚙️: Infrastructure, CI/CD, deployment automation
+- **technical-writer** 📝: Documentation and API references
+
+**Coordination:**
+- **orchestrator** 🎯: Task routing and multi-agent coordination
+- **model-orchestrator** 🔀: Multi-model routing (Gemini, Cursor, etc.)
+
+**Code Quality:**
+- **code-reviewer** 👁️: Systematic code review, PR analysis
+- **refactoring-specialist** 🔧: Code transformation, tech debt reduction
+- **performance-engineer** ⚡: Performance optimization, profiling
+
+**Specialized:**
+- **llm-architect** 🤖: AI/LLM system design, RAG, prompt engineering
+- **api-designer** 🔌: REST/GraphQL/gRPC API design
+- **legacy-modernizer** 🏚️: Legacy system modernization
+- **mobile-developer** 📱: iOS/Android/React Native/Flutter
+- **accessibility-expert** ♿: WCAG compliance, a11y testing
+- **compliance-auditor** 📜: GDPR/HIPAA/SOC2/PCI-DSS
+- **incident-responder** 🚨: Crisis management, post-mortems
 
 ### Context Layer Instructions
 
@@ -38,10 +59,28 @@ Instructions that mirror Factory's knowledge graph approach:
 - **Pre-run hook** (`hooks/pre-run.yaml`): Validates code quality, runs tests, attaches context
 - **Post-run hook** (`hooks/post-run.yaml`): Generates reports, publishes artifacts, notifies teams
 
-### Skills Modules
+### Skills Modules (8 Utilities)
 
-- **context-router.md**: Intelligent context source prioritization and combination
-- **incident-response.md**: Automated incident response with runbooks and telemetry
+6 cross-platform skills synced with Claude and Cursor, plus 2 Factory-specific utilities:
+
+| Skill | Invocation | Purpose |
+|-------|------------|---------|
+| `rule-auditor` | Task tool | Validate code against loaded rules |
+| `rule-selector` | Task tool | Auto-detect stack, configure rules |
+| `scaffolder` | Task tool | Generate rule-compliant boilerplate |
+| `repo-rag` | Task tool | Semantic codebase search |
+| `artifact-publisher` | Task tool | Publish to project feed |
+| `context-bridge` | Task tool | Sync with Claude/Cursor |
+| `context-router` | Task tool | Intelligent context prioritization |
+| `incident-response` | Task tool | Automated incident response |
+
+**Example Usage:**
+```
+Run Task tool with skill rule-selector to configure rules
+Run Task tool with skill scaffolder to create a UserProfile component
+Run Task tool with skill rule-auditor to validate src/components/
+Run Task tool with skill context-bridge to sync to Claude
+```
 
 ### Instruction Guides
 
@@ -61,10 +100,18 @@ Comprehensive guides in `instructions/`:
 
 ```
 .factory/
-├── droids/           # Custom droid definitions (10 agents)
+├── droids/           # Custom droid definitions (22 agents)
 ├── hooks/            # Pre/post run hooks (YAML)
 ├── instructions/     # Usage guides and best practices
-├── skills/           # Context router and incident response
+├── skills/           # 8 utility skills (synced with Claude/Cursor)
+│   ├── rule-auditor.md
+│   ├── rule-selector.md
+│   ├── scaffolder.md
+│   ├── repo-rag.md
+│   ├── artifact-publisher.md
+│   ├── context-bridge.md
+│   ├── context-router.md
+│   └── incident-response.md
 ├── rules/            # Framework-specific rules (shared with Cursor/Claude)
 ├── AGENTS.md         # Factory-specific agent instructions
 └── README.md         # This file

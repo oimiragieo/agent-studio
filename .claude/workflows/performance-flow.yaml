@@ -1,0 +1,97 @@
+name: Performance Optimization Workflow
+description: Performance profiling, optimization, and load testing initiatives
+type: performance
+project_type: optimization
+
+trigger_keywords:
+  - "performance"
+  - "optimize"
+  - "profiling"
+  - "benchmark"
+  - "load test"
+  - "slow"
+  - "latency"
+
+steps:
+  - step: 1
+    name: "Performance Analysis"
+    agent: performance-engineer
+    inputs:
+      - target_system
+      - performance_requirements
+      - current_metrics
+    outputs:
+      - performance-analysis.json
+      - bottleneck-report.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/01-performance-engineer.json
+    description: |
+      Comprehensive performance analysis:
+      - Profiling and bottleneck identification
+      - Resource utilization assessment
+      - Latency hotspots
+      - Memory and CPU analysis
+      - Database query performance
+
+  - step: 2
+    name: "Architecture Review"
+    agent: architect
+    inputs:
+      - performance-analysis.json (from step 1)
+      - bottleneck-report.json (from step 1)
+    outputs:
+      - optimization-architecture.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/02-architect.json
+    description: |
+      Architectural optimization planning:
+      - Caching strategy design
+      - Load balancing recommendations
+      - Async processing patterns
+      - Database optimization strategies
+      - CDN and edge computing
+
+  - step: 3
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - optimization-architecture.json (from step 2)
+      - performance-analysis.json (from step 1)
+    outputs:
+      - implementation-manifest.json
+      - code_artifacts
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/03-developer.json
+    description: |
+      Optimization implementation:
+      - Performance-critical code changes
+      - Caching implementation
+      - Query optimization
+      - Resource pooling
+      - Async refactoring
+
+  - step: 4
+    name: "Performance Validation"
+    agent: qa
+    inputs:
+      - implementation-manifest.json (from step 3)
+      - performance-analysis.json (from step 1)
+    outputs:
+      - benchmark-results.json
+      - load-test-report.json
+    description: |
+      Performance validation:
+      - Benchmark comparison (before/after)
+      - Load testing
+      - Stress testing
+      - Regression verification
+      - SLA compliance check
+
+completion_criteria:
+  - Performance improvements measured and documented
+  - Benchmarks show improvement over baseline
+  - Load tests pass with target thresholds
+  - No regression in functionality

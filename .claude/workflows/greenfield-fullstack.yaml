@@ -52,42 +52,69 @@ steps:
       - reasoning.json
     validation:
       schema: .claude/schemas/system_architecture.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/05-architect.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-architect.json
 
   - step: 5
+    name: "Database Architecture"
+    agent: database-architect
+    inputs:
+      - system-architecture.json (from step 4)
+      - prd.json (from step 2)
+    outputs:
+      - database-architecture.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/05-database.json
+
+  - step: 6
     name: "Test Planning"
     agent: qa
     inputs:
       - system-architecture.json (from step 4)
+      - database-architecture.json (from step 5)
       - prd.json (from step 2)
     outputs:
       - test-plan.json
       - reasoning.json
     validation:
       schema: .claude/schemas/test_plan.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/08-qa.json
+      gate: .claude/context/history/gates/{{workflow_id}}/06-qa.json
 
-  - step: 6
+  - step: 7
     name: "Implementation"
     agent: developer
     inputs:
       - system-architecture.json (from step 4)
+      - database-architecture.json (from step 5)
       - ux-spec.json (from step 3)
-      - test-plan.json (from step 5)
+      - test-plan.json (from step 6)
     outputs:
       - dev-manifest.json
       - code_artifacts
       - reasoning.json
     validation:
       schema: .claude/schemas/artifact_manifest.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/06-developer.json
+      gate: .claude/context/history/gates/{{workflow_id}}/07-developer.json
 
-  - step: 7
+  - step: 8
+    name: "Documentation"
+    agent: technical-writer
+    inputs:
+      - dev-manifest.json (from step 7)
+      - system-architecture.json (from step 4)
+      - database-architecture.json (from step 5)
+    outputs:
+      - documentation.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/08-technical-writer.json
+
+  - step: 9
     name: "Quality Assurance"
     agent: qa
     inputs:
-      - dev-manifest.json (from step 6)
-      - test-plan.json (from step 5)
+      - dev-manifest.json (from step 7)
+      - test-plan.json (from step 6)
     outputs:
       - quality_report.json
       - test_results.json

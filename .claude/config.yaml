@@ -1,4 +1,4 @@
-# BMAD-Spec Orchestrator Configuration
+# LLM-RULES Agent Configuration
 # Defines agent routing, model assignments, and workflow selection
 
 # Agent Routing Configuration
@@ -28,6 +28,11 @@ agent_routing:
       - "roadmap"
       - "prioritization"
       - "feature specification"
+      - "sprint planning"
+      - "story refinement"
+      - "product owner"
+      - "scrum"
+      - "agile"
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.7
@@ -45,6 +50,30 @@ agent_routing:
     complexity: high
     model: claude-opus-4
     temperature: 0.5
+    extended_thinking: true
+
+  database-architect:
+    trigger_words:
+      - "database"
+      - "schema"
+      - "data modeling"
+      - "query optimization"
+      - "migration"
+      - "SQL"
+      - "NoSQL"
+      - "PostgreSQL"
+      - "MongoDB"
+      - "Redis"
+      - "indexing"
+      - "sharding"
+      - "replication"
+      - "high availability"
+      - "backup"
+      - "data architecture"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.5
+    extended_thinking: true
 
   developer:
     trigger_words:
@@ -73,6 +102,7 @@ agent_routing:
     complexity: high
     model: claude-opus-4
     temperature: 0.4
+    extended_thinking: true
 
   ux-expert:
     trigger_words:
@@ -88,51 +118,6 @@ agent_routing:
     model: claude-sonnet-4
     temperature: 0.7
 
-  product-owner:
-    trigger_words:
-      - "product owner"
-      - "backlog management"
-      - "sprint planning"
-      - "epic management"
-      - "product vision"
-    complexity: medium
-    model: claude-sonnet-4
-    temperature: 0.7
-
-  scrum-master:
-    trigger_words:
-      - "scrum"
-      - "sprint"
-      - "standup"
-      - "retrospective"
-      - "agile"
-      - "ceremony"
-    complexity: low
-    model: claude-3-5-haiku
-    temperature: 0.5
-
-  bmad-orchestrator:
-    trigger_words:
-      - "workflow"
-      - "orchestrate"
-      - "coordinate"
-      - "multi-agent"
-      - "bmad"
-      - "project planning"
-    complexity: high
-    model: claude-opus-4
-    temperature: 0.6
-
-  bmad-master:
-    trigger_words:
-      - "master"
-      - "expert"
-      - "consultant"
-      - "best practice"
-    complexity: high
-    model: claude-opus-4
-    temperature: 0.6
-
   orchestrator:
     trigger_words:
       - "orchestrate"
@@ -140,10 +125,35 @@ agent_routing:
       - "multi-agent"
       - "complex workflow"
       - "end-to-end"
+      - "workflow"
+      - "project planning"
     complexity: high
     model: claude-opus-4
     temperature: 0.6
     extended_thinking: true
+
+  model-orchestrator:
+    trigger_words:
+      - "call gemini"
+      - "call opus"
+      - "call cursor"
+      - "use gemini"
+      - "use cursor"
+      - "multi-model"
+      - "model routing"
+      - "research with gemini"
+      - "plan with opus"
+      - "implement with cursor"
+      - "get second opinion"
+      - "synthesize models"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.4
+    tools:
+      - Read
+      - Bash
+      - Grep
+      - Glob
 
   security-architect:
     trigger_words:
@@ -169,16 +179,201 @@ agent_routing:
       - "docker"
       - "terraform"
       - "monitoring"
-      - "scalability"
+      - "observability"
+      - "slo"
+      - "sli"
+      - "sla"
+      - "reliability"
+      - "incident"
+      - "release"
+      - "versioning"
+      - "rollout"
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.4
 
-# Workflow Selection Configuration (Scale-Adaptive Intelligence)
+  technical-writer:
+    trigger_words:
+      - "documentation"
+      - "api docs"
+      - "user manual"
+      - "onboarding"
+      - "guide"
+      - "tutorial"
+      - "changelog"
+      - "release notes"
+      - "technical writing"
+    complexity: low
+    model: claude-3-5-haiku
+    temperature: 0.7
+
+  # New High-Impact Agents (v2.0)
+
+  llm-architect:
+    trigger_words:
+      - "ai system"
+      - "llm"
+      - "prompt engineering"
+      - "rag"
+      - "embeddings"
+      - "vector database"
+      - "model selection"
+      - "fine-tuning"
+      - "ai architecture"
+      - "chatbot"
+      - "conversational ai"
+      - "prompt template"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.6
+    extended_thinking: true
+
+  code-reviewer:
+    trigger_words:
+      - "code review"
+      - "review this"
+      - "review the code"
+      - "pr review"
+      - "pull request review"
+      - "check this code"
+      - "audit code"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.3
+    extended_thinking: true
+
+  performance-engineer:
+    trigger_words:
+      - "performance"
+      - "optimize"
+      - "profiling"
+      - "benchmark"
+      - "load testing"
+      - "latency"
+      - "throughput"
+      - "core web vitals"
+      - "slow"
+      - "memory leak"
+      - "bottleneck"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.4
+    extended_thinking: true
+
+  api-designer:
+    trigger_words:
+      - "api design"
+      - "rest api"
+      - "graphql"
+      - "grpc"
+      - "openapi"
+      - "swagger"
+      - "api contract"
+      - "endpoint design"
+      - "api versioning"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.5
+    extended_thinking: true
+
+  legacy-modernizer:
+    trigger_words:
+      - "legacy"
+      - "modernize"
+      - "migration"
+      - "strangler fig"
+      - "technical debt"
+      - "old codebase"
+      - "upgrade"
+      - "rewrite"
+      - "obsolete"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.5
+    extended_thinking: true
+
+  accessibility-expert:
+    trigger_words:
+      - "accessibility"
+      - "wcag"
+      - "a11y"
+      - "screen reader"
+      - "aria"
+      - "inclusive design"
+      - "keyboard navigation"
+      - "color contrast"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.4
+
+  compliance-auditor:
+    trigger_words:
+      - "gdpr"
+      - "hipaa"
+      - "soc2"
+      - "pci"
+      - "regulatory"
+      - "compliance audit"
+      - "data protection"
+      - "privacy"
+      - "ccpa"
+      - "audit"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.3
+    extended_thinking: true
+
+  incident-responder:
+    trigger_words:
+      - "incident"
+      - "outage"
+      - "down"
+      - "production issue"
+      - "emergency"
+      - "post-mortem"
+      - "postmortem"
+      - "root cause"
+      - "crisis"
+      - "runbook"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.2
+
+  refactoring-specialist:
+    trigger_words:
+      - "refactor"
+      - "code smell"
+      - "clean code"
+      - "extract method"
+      - "technical debt"
+      - "complexity"
+      - "maintainability"
+      - "solid principles"
+      - "design patterns"
+    complexity: high
+    model: claude-opus-4
+    temperature: 0.4
+    extended_thinking: true
+
+  mobile-developer:
+    trigger_words:
+      - "mobile"
+      - "ios"
+      - "android"
+      - "react native"
+      - "flutter"
+      - "swift"
+      - "kotlin"
+      - "app store"
+      - "mobile app"
+    complexity: medium
+    model: claude-sonnet-4
+    temperature: 0.5
+
+# Workflow Selection Configuration
 workflow_selection:
-  # Quick Flow: Minimal overhead for simple tasks
   quick_flow:
-    priority: 1  # Highest priority - check first
+    priority: 1
     keywords:
       - "bug fix"
       - "hotfix"
@@ -193,41 +388,16 @@ workflow_selection:
       - developer
       - qa
 
-  # Enterprise Track: Comprehensive for critical systems
-  enterprise_track:
-    priority: 2  # Check before standard workflows
-    keywords:
-      - "enterprise"
-      - "production"
-      - "security-critical"
-      - "compliance"
-      - "SOC2"
-      - "HIPAA"
-      - "GDPR"
-      - "zero-trust"
-      - "mission-critical"
-    complexity: high
-    workflow_file: .claude/workflows/enterprise-track.yaml
-    agents_sequence:
-      - analyst
-      - pm
-      - ux-expert
-      - architect
-      - security-architect
-      - devops
-      - qa
-      - developer
-      - security-architect
-      - qa
-
-  greenfield_fullstack:
-    priority: 3
+  fullstack:
+    priority: 2
     keywords:
       - "new project"
       - "greenfield"
       - "from scratch"
       - "full stack"
       - "fullstack"
+      - "enterprise"
+      - "production"
     complexity: medium
     workflow_file: .claude/workflows/greenfield-fullstack.yaml
     agents_sequence:
@@ -239,24 +409,95 @@ workflow_selection:
       - developer
       - qa
 
-  brownfield_fullstack:
-    priority: 4
+  code_quality:
+    priority: 3
     keywords:
-      - "enhance"
-      - "brownfield"
-      - "existing system"
-      - "legacy"
-      - "add feature"
+      - "code quality"
+      - "code review"
+      - "refactor"
+      - "tech debt"
+      - "code smell"
+      - "clean up"
     complexity: medium
-    workflow_file: .claude/workflows/brownfield-fullstack.yaml
+    workflow_file: .claude/workflows/code-quality-flow.yaml
     agents_sequence:
-      - analyst
-      - pm
-      - architect
-      - ux-expert
-      - architect
+      - code-reviewer
+      - refactoring-specialist
+      - compliance-auditor
       - qa
+
+  performance:
+    priority: 3
+    keywords:
+      - "performance"
+      - "optimize"
+      - "profiling"
+      - "benchmark"
+      - "load test"
+      - "slow"
+      - "latency"
+    complexity: medium
+    workflow_file: .claude/workflows/performance-flow.yaml
+    agents_sequence:
+      - performance-engineer
+      - architect
       - developer
+      - qa
+
+  ai_system:
+    priority: 3
+    keywords:
+      - "ai system"
+      - "llm"
+      - "rag"
+      - "embeddings"
+      - "chatbot"
+      - "ai feature"
+      - "machine learning"
+      - "vector database"
+    complexity: high
+    workflow_file: .claude/workflows/ai-system-flow.yaml
+    agents_sequence:
+      - model-orchestrator
+      - llm-architect
+      - api-designer
+      - developer
+      - qa
+
+  mobile:
+    priority: 3
+    keywords:
+      - "mobile app"
+      - "ios"
+      - "android"
+      - "react native"
+      - "flutter"
+      - "native app"
+      - "app store"
+    complexity: medium
+    workflow_file: .claude/workflows/mobile-flow.yaml
+    agents_sequence:
+      - mobile-developer
+      - ux-expert
+      - developer
+      - qa
+
+  incident:
+    priority: 0  # Highest priority for critical incidents
+    keywords:
+      - "incident"
+      - "outage"
+      - "production issue"
+      - "post-mortem"
+      - "crisis"
+      - "downtime"
+      - "emergency"
+    complexity: high
+    workflow_file: .claude/workflows/incident-flow.yaml
+    agents_sequence:
+      - incident-responder
+      - devops
+      - security-architect
       - qa
 
 # Intelligent Routing Configuration
@@ -264,7 +505,7 @@ intelligent_routing:
   enabled: true
   orchestrator_agent: orchestrator
   auto_select_workflow: true
-  default_workflow: greenfield_fullstack
+  default_workflow: fullstack
 
 # Model Configuration by Complexity
 model_config:
@@ -292,38 +533,62 @@ tool_restrictions:
     allowed_tools:
       - Read
       - Search
-      - MCP (search_knowledge, search_agent_context, crawl_website)
+      - Grep
+      - Glob
     restricted_tools:
       - Edit
-      - Bash (dangerous commands)
+      - Bash
 
   architect:
     allowed_tools:
       - Read
       - Search
-      - Edit (documentation only)
-      - MCP (search_code, search_knowledge)
+      - Grep
+      - Glob
+      - Edit
     restricted_tools:
-      - Bash (execution)
+      - Bash
 
   developer:
     allowed_tools:
       - Read
       - Edit
-      - Bash (safe commands)
-      - MCP (search_code, execute_tests)
+      - Bash
+      - Grep
+      - Glob
     restricted_tools:
-      - Bash (dangerous: rm, format, etc.)
+      - Bash (dangerous: rm -rf, sudo, etc.)
 
   qa:
     allowed_tools:
       - Read
       - Search
-      - Bash (test commands)
-      - MCP (execute_tests, security_scan)
+      - Bash
+      - Grep
+      - Glob
     restricted_tools:
       - Edit (code)
-      - Bash (execution of untested code)
+
+  devops:
+    allowed_tools:
+      - Read
+      - Write
+      - Edit
+      - Bash
+      - Grep
+      - Glob
+    restricted_tools:
+      - Bash (dangerous commands)
+
+  technical-writer:
+    allowed_tools:
+      - Read
+      - Search
+      - Edit
+      - Grep
+      - Glob
+    restricted_tools:
+      - Bash
 
 # Session Management
 session:
@@ -339,8 +604,6 @@ quality_gates:
   enabled: true
   validation_schemas_dir: .claude/schemas
   gate_script: node .claude/tools/gates/gate.mjs
-  auto_fix: true
-  strict_mode: false
 
 # Template Configuration
 templates:
@@ -351,4 +614,3 @@ templates:
   implementation_plan: implementation-plan.md
   test_plan: test-plan.md
   ui_spec: ui-spec.md
-

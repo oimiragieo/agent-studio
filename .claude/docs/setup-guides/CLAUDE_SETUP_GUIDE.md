@@ -5,7 +5,7 @@
 Claude Code automatically discovers and loads configuration from the `.claude/` directory in your **project root** and reads `CLAUDE.md` files hierarchically. When you start Claude Code, it scans for:
 
 1. **`CLAUDE.md`** - Root rules file (in project root, NOT inside `.claude/`)
-2. **`.claude/subagents/`** - Agent definitions (directory-based structure)
+2. **`.claude/agents/`** - Agent definitions (22 agents with YAML frontmatter)
 3. **`.claude/rules/`** - Framework-specific rules (hierarchical loading)
 4. **`.claude/hooks/`** - Lifecycle hooks (PreToolUse, PostToolUse, UserPromptSubmit)
 5. **`.claude/commands/`** - Custom slash commands
@@ -44,14 +44,14 @@ Your project root should look like this:
 your-project/
 ├── CLAUDE.md                  # ← Root rules (MUST be in project root)
 ├── .claude/                   # ← Claude configuration directory
-│   ├── subagents/             # Agent definitions (directory-based)
-│   │   ├── analyst/
-│   │   │   ├── prompt.md
-│   │   │   ├── capabilities.yaml
-│   │   │   └── context.md
-│   │   ├── architect/
-│   │   ├── developer/
-│   │   └── ...
+│   ├── agents/                 # Agent definitions (22 agents)
+│   │   ├── analyst.md
+│   │   ├── architect.md
+│   │   ├── developer.md
+│   │   ├── devops.md
+│   │   ├── security-architect.md
+│   │   ├── database-architect.md
+│   │   └── ... (22 total agents)
 │   ├── rules/                 # Framework rules (hierarchical)
 │   ├── hooks/                 # Lifecycle hooks (YAML files)
 │   │   ├── pre_tool_use.yaml
@@ -88,9 +88,9 @@ your-project/
 1. **Check CLAUDE.md is loaded**: 
    - Claude Code reads `CLAUDE.md` from project root
    - Check right-side navigator for hierarchy
-2. **Check subagents are available**:
-   - Subagents load from `.claude/subagents/[agent]/prompt.md`
-   - Claude Code automatically discovers them
+2. **Check agents are available**:
+   - Agents load from `.claude/agents/[agent].md`
+   - Claude Code automatically discovers all 20 agents
 3. **Test a slash command**:
    - Try `/review` or `/fix-issue` (from `.claude/commands/`)
 4. **Verify hooks**:
@@ -103,16 +103,25 @@ The folder is already correctly named `.claude/` in `production-dropin/.claude/`
 ```
 production-dropin/
 ├── .claude/              # ← Copy this entire folder
-│   ├── subagents/       # 10 agents (directory-based structure)
-│   │   ├── analyst/     # Each agent has prompt.md, capabilities.yaml, context.md
-│   │   ├── architect/
-│   │   └── ...
-│   ├── hooks/           # 3 lifecycle hooks (YAML format)
-│   ├── commands/        # 2 custom slash commands
-│   ├── skills/          # 3 MCP skills (YAML)
+│   ├── agents/          # 22 agents (flat markdown files with YAML frontmatter)
+│   │   ├── analyst.md
+│   │   ├── architect.md
+│   │   ├── database-architect.md
+│   │   ├── developer.md
+│   │   ├── devops.md
+│   │   ├── model-orchestrator.md
+│   │   ├── orchestrator.md
+│   │   ├── pm.md
+│   │   ├── qa.md
+│   │   ├── security-architect.md
+│   │   ├── technical-writer.md
+│   │   └── ... (22 total agents)
+│   ├── hooks/           # 2 lifecycle hooks (shell scripts)
+│   ├── commands/        # 12 custom slash commands
+│   ├── skills/          # 6 utility skills
 │   ├── templates/       # 9 reusable templates
 │   ├── schemas/         # 10 JSON schemas for validation
-│   ├── workflows/       # 2 workflow definitions
+│   ├── workflows/       # 9 workflow definitions
 │   ├── instructions/    # 12 comprehensive guides
 │   ├── config.yaml      # Orchestrator routing config
 │   ├── settings.json    # Tool permissions
@@ -124,7 +133,7 @@ production-dropin/
 - `.claude/` goes in your **project root** (same level as `package.json`, `src/`, etc.)
 - `CLAUDE.md` goes in **project root**, NOT inside `.claude/`
 - Claude Code reads `CLAUDE.md` hierarchically (root → subdirectories)
-- Subagents use directory structure, not flat files like Cursor
+- Agents use flat markdown files with YAML frontmatter (`.claude/agents/[agent].md`)
 
 ## Leveraging Claude Code's Unique Capabilities
 
@@ -188,33 +197,44 @@ Repeatable workflows stored in `.claude/commands/`:
 3. Use `$ARGUMENTS` for parameters
 4. Command auto-discovers on restart
 
-### 4. Subagents (Isolated Context Windows)
+### 4. Agents (Isolated Context Windows)
 
-Subagents have:
+Agents have:
 - **Isolated context**: Each agent has its own context window
-- **Tool permissions**: Defined in `capabilities.yaml`
-- **Specialized prompts**: Located in `prompt.md`
-- **Context files**: Agent-specific context in `context.md`
+- **Tool permissions**: Defined in YAML frontmatter
+- **Specialized prompts**: Located in `.claude/agents/[agent].md`
+- **YAML frontmatter**: Name, description, tools, model, temperature, priority
 
-**Available Subagents (10 Total):**
-- Analyst (with capabilities.yaml, context.md)
-- Architect (with capabilities.yaml, context.md)
-- Developer (with capabilities.yaml, context.md)
-- PM (with capabilities.yaml, context.md)
-- QA (with capabilities.yaml, context.md)
-- UX Expert (with capabilities.yaml, context.md)
-- Product Owner (prompt.md only)
-- Scrum Master (prompt.md only)
-- BMAD Orchestrator (prompt.md only)
-- BMAD Master (prompt.md only)
+**Available Agents (12 Total):**
+
+**Core Development Agents:**
+- Analyst - Market research and business analysis
+- Architect - System architecture and technical design
+- Database Architect - Database design and optimization
+- Developer - Code implementation and testing
+- PM (Product Manager) - Product requirements and roadmaps
+- QA - Quality assurance and validation
+- UX Expert - Interface design and user experience
+
+**Enterprise Agents:**
+- DevOps - Infrastructure, CI/CD, and deployments
+- Security Architect - Security design and threat modeling
+- Technical Writer - Documentation and knowledge management
+
+**Routing Agents:**
+- Model Orchestrator - Multi-model routing (Claude, Gemini, Cursor, OpenCode)
+- Orchestrator - Task routing and multi-agent coordination
 
 ### 5. Extended Thinking (1M+ Tokens)
 
 **Extended Thinking** is Claude Code's capability for long-form reasoning with extended context windows (1M+ tokens). 
 
 **Agents Configured for Extended Thinking:**
-- **Architect**: Uses extended thinking for complex architectural decisions, technology evaluations, security architecture
-- **QA**: Uses extended thinking for critical quality gate decisions, complex test strategy design, risk evaluation
+- **Architect**: Complex architectural decisions, technology evaluations
+- **QA**: Critical quality gate decisions, complex test strategy design
+- **Security Architect**: Threat modeling, compliance evaluation, security trade-offs
+- **Database Architect**: Database technology selection, sharding strategies, migration planning
+- **Orchestrator**: Complex routing decisions, workflow selection, conflict resolution
 
 **When Extended Thinking Activates:**
 - Complex architectural problems requiring deep analysis
@@ -269,17 +289,20 @@ Changes sync → Publish to Projects → Share with team
 - Use artifacts for documentation (Markdown with live preview)
 - Publish artifacts to Claude Projects for team visibility
 
-## Working with Subagents
+## Working with Agents
 
 ### Agent Structure
 
-Each subagent in `.claude/subagents/[agent]/` contains:
+Each agent in `.claude/agents/[agent].md` contains:
 
-- **`prompt.md`**: Agent's system prompt and instructions
-- **`capabilities.yaml`** (if present): Tool permissions and capabilities
-- **`context.md`** (if present): Agent-specific context and examples
+- **YAML frontmatter**: Name, description, tools, model, temperature, priority
+- **Identity section**: Agent persona and core identity
+- **Core capabilities**: Specialized skills and expertise
+- **Execution process**: Step-by-step workflow when activated
+- **MCP integration**: Knowledge federation patterns
+- **Output requirements**: Expected deliverables and formats
 
-### Invoking Subagents
+### Invoking Agents
 
 **Method 1: Trigger Words**
 Agent routing configured in `config.yaml`:
@@ -293,7 +316,7 @@ analyst:
 
 **Method 2: Explicit Invocation**
 ```
-Use the Analyst subagent to create a project brief for [feature]
+Use the Analyst agent to create a project brief for [feature]
 ```
 
 **Method 3: Slash Commands**
@@ -302,9 +325,9 @@ Some commands automatically route to specific agents.
 ### Agent Routing Flow
 
 1. User prompt submitted
-2. `user_prompt_submit.yaml` hook normalizes prompt
+2. Security hook validates request (`.claude/hooks/security-pre-tool.sh`)
 3. `config.yaml` matches trigger words to agent
-4. Subagent loaded with its prompt, capabilities, and context
+4. Agent loaded from `.claude/agents/[agent].md` with YAML frontmatter
 5. Agent executes with isolated context window
 
 ## Workflow Execution
@@ -357,11 +380,11 @@ Schemas in `.claude/schemas/` validate agent outputs:
 
 **A:** Yes! After copying `.claude/` and `CLAUDE.md` to your project root:
 - ✅ `CLAUDE.md` automatically loaded (hierarchical)
-- ✅ Subagents auto-discover from `.claude/subagents/[agent]/prompt.md`
+- ✅ Agents auto-discover from `.claude/agents/[agent].md`
 - ✅ Rules auto-load from `.claude/rules/` (hierarchical)
-- ✅ Hooks load from `.claude/hooks/*.yaml`
+- ✅ Hooks load from `.claude/hooks/*.sh` (shell scripts)
 - ✅ Commands load from `.claude/commands/*.md`
-- ✅ Skills load from `.claude/skills/*.yaml`
+- ✅ Skills load from `.claude/skills/*/SKILL.md`
 
 ### Q: Do I need to configure anything?
 
@@ -371,7 +394,7 @@ Schemas in `.claude/schemas/` validate agent outputs:
 3. (Optional) Register MCP servers from `.claude/.mcp.json`
 
 You can also customize:
-- Edit agent prompts in `.claude/subagents/[agent]/prompt.md`
+- Edit agent prompts in `.claude/agents/[agent].md`
 - Adjust agent routing in `.claude/config.yaml`
 - Modify tool permissions in `.claude/settings.json`
 - Add custom rules to `.claude/rules/`
@@ -392,7 +415,7 @@ Hooks defined in YAML format in `.claude/hooks/`. Enable in Preferences.
 
 | Feature | Claude Code | Cursor |
 |---------|-------------|--------|
-| Agent Structure | Directory-based (`subagents/[agent]/`) | Flat files (`.mdc` files) |
+| Agent Structure | Flat files with YAML frontmatter (`.claude/agents/[agent].md`) | Flat files (`.mdc` files) |
 | Hooks Format | YAML files | JSON files |
 | Rules Location | `CLAUDE.md` + `.claude/rules/` | `.cursorrules` + `.cursor/rules/` |
 | Commands | `.claude/commands/*.md` | Built-in slash commands |
@@ -420,9 +443,9 @@ monorepo/
 
 Each directory can have its own `CLAUDE.md` that extends root rules.
 
-### Q: How do subagents work with hooks?
+### Q: How do agents work with hooks?
 
-**A:** Subagents automatically respect hooks:
+**A:** Agents automatically respect hooks:
 - `PreToolUse` hook validates before agent uses tools
 - `PostToolUse` hook publishes agent artifacts
 - `UserPromptSubmit` routes to appropriate agent
@@ -431,19 +454,20 @@ Hooks apply to all agents unless specifically excluded.
 
 ## Troubleshooting
 
-### Subagents Not Loading
+### Agents Not Loading
 
-1. **Check file structure**: Must be `.claude/subagents/[agent]/prompt.md`
-2. **Check agent name**: Must match directory name
+1. **Check file structure**: Must be `.claude/agents/[agent].md`
+2. **Check agent name**: Must match filename (without .md extension)
 3. **Check `config.yaml`**: Agent must be defined in routing config
-4. **Restart Claude Code**: Full restart required after changes
+4. **Check YAML frontmatter**: Must have valid YAML frontmatter with name field
+5. **Restart Claude Code**: Full restart required after changes
 
 ### Hooks Not Executing
 
 1. **Check Preferences**: Hooks must be enabled in Preferences → Claude Code → Hooks
 2. **Check path**: Point to `.claude/hooks` directory
-3. **Check file format**: Hooks must be YAML (`.yaml` extension)
-4. **Check permissions**: Hook files must be executable (if shell commands)
+3. **Check file format**: Hooks are shell scripts (`.sh` extension)
+4. **Check permissions**: Hook files must be executable (`chmod +x`)
 
 ### CLAUDE.md Not Loading
 
@@ -502,9 +526,9 @@ Claude Code uses **Artifacts** where Cursor uses **Plan Mode**:
 - `config.yaml` - Agent routing configuration
 - `settings.json` - Tool permissions
 - `instructions/` - 12 comprehensive guides
-- `hooks/` - 3 lifecycle hooks (YAML)
-- `commands/` - 2 custom slash commands
-- `workflows/` - 2 workflow definitions
+- `hooks/` - 2 lifecycle hooks (shell scripts)
+- `commands/` - 12 custom slash commands
+- `workflows/` - 9 workflow definitions
 
 Remember: **Claude Code's hierarchical system and Artifacts make it ideal for complex projects!** 🚀
 

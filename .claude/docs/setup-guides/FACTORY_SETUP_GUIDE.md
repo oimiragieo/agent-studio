@@ -71,9 +71,12 @@ If you already have a `.factory/` directory:
 
 ### Verify Custom Droids List
 
-You should see 10 specialized agents:
+You should see 22 specialized agents matching `.claude/agents/`:
 - analyst, pm, architect, developer, qa, ux-expert
-- product-owner, scrum-master, bmad-orchestrator, bmad-master
+- devops, security-architect, technical-writer, orchestrator, model-orchestrator
+- database-architect, llm-architect, code-reviewer, performance-engineer
+- api-designer, legacy-modernizer, accessibility-expert, compliance-auditor
+- refactoring-specialist, mobile-developer, incident-responder
 
 ### Test Hooks
 
@@ -127,17 +130,14 @@ After setup, your `.factory/` directory should contain:
 
 ```
 .factory/
-├── droids/              # 10 custom droid definitions
+├── droids/              # 22 custom droid definitions
 │   ├── analyst.md
 │   ├── pm.md
 │   ├── architect.md
 │   ├── developer.md
 │   ├── qa.md
 │   ├── ux-expert.md
-│   ├── product-owner.md
-│   ├── scrum-master.md
-│   ├── bmad-orchestrator.md
-│   └── bmad-master.md
+│   └── ... (22 total, matching .claude/agents/)
 ├── hooks/               # Pre/post run hooks
 │   ├── pre-run.yaml
 │   └── post-run.yaml

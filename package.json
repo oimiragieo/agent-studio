@@ -1,0 +1,31 @@
+{
+  "name": "llm-rules",
+  "version": "2.0.0",
+  "description": "Multi-platform agent configuration bundle for Claude Code, Cursor IDE, and Factory Droid",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "validate": "node scripts/validate-config.mjs",
+    "validate:verbose": "node scripts/validate-config.mjs --verbose",
+    "validate:sync": "bash scripts/validate-sync.sh",
+    "install-agents": "node scripts/install.mjs"
+  },
+  "keywords": [
+    "claude",
+    "cursor",
+    "factory",
+    "ai",
+    "agents",
+    "llm",
+    "rules"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "js-yaml": "^4.1.0",
+    "ajv": "^8.12.0"
+  }
+}

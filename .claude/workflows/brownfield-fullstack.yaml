@@ -1,116 +1,147 @@
 name: Brownfield Full-Stack Enhancement Workflow
-description: Workflow for enhancing existing full-stack applications
+description: Workflow for enhancing existing codebases with new features or refactoring
 type: brownfield
 project_type: fullstack
 
+# This workflow is optimized for existing projects:
+# - Emphasizes impact analysis and compatibility
+# - Includes migration planning and rollback strategies
+# - Focuses on incremental improvements
+
 steps:
   - step: 1
-    name: "System Analysis"
+    name: "Codebase Discovery & Impact Analysis"
     agent: analyst
     inputs:
-      - existing_system_documentation
-      - enhancement_requirements
+      - user_requirements
+      - existing_codebase
+      - business_objectives
     outputs:
       - project_brief.json
-      - current_system_analysis.json
+      - impact_analysis.json
       - reasoning.json
     validation:
       schema: .claude/schemas/project_brief.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
+    notes: |
+      Focus on understanding existing patterns, identifying risks,
+      and documenting current architecture before proposing changes.
 
   - step: 2
     name: "Enhancement Requirements"
     agent: pm
     inputs:
       - project_brief.json (from step 1)
-      - current_system_analysis.json (from step 1)
+      - impact_analysis.json (from step 1)
     outputs:
-      - brownfield-prd.json
+      - prd.json
+      - migration_requirements.json
       - reasoning.json
     validation:
       schema: .claude/schemas/product_requirements.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-pm.json
+    notes: |
+      Emphasize backward compatibility requirements,
+      feature flags, and phased rollout considerations.
 
   - step: 3
-    name: "Impact Analysis"
+    name: "Architecture Evolution"
     agent: architect
     inputs:
-      - brownfield-prd.json (from step 2)
-      - current_system_analysis.json (from step 1)
+      - prd.json (from step 2)
+      - impact_analysis.json (from step 1)
+      - existing_architecture (if available)
     outputs:
-      - impact-analysis.json
-      - migration-strategy.json
-      - reasoning.json
-
-  - step: 4
-    name: "UX Updates"
-    agent: ux-expert
-    inputs:
-      - brownfield-prd.json (from step 2)
-      - current_system_analysis.json (from step 1)
-    outputs:
-      - ux-spec.json
-      - reasoning.json
-    validation:
-      schema: .claude/schemas/ux_spec.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/03-ux-expert.json
-
-  - step: 5
-    name: "Architecture Updates"
-    agent: architect
-    inputs:
-      - impact-analysis.json (from step 3)
-      - ux-spec.json (from step 4)
-    outputs:
-      - updated-architecture.json
+      - system-architecture.json
+      - migration_plan.json
       - reasoning.json
     validation:
       schema: .claude/schemas/system_architecture.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/05-architect.json
+      gate: .claude/context/history/gates/{{workflow_id}}/03-architect.json
+    notes: |
+      Design for incremental adoption. Include rollback strategies
+      and compatibility shims where needed.
 
-  - step: 6
-    name: "Test Planning"
+  - step: 4
+    name: "Database Migration Planning"
+    agent: database-architect
+    inputs:
+      - system-architecture.json (from step 3)
+      - prd.json (from step 2)
+      - existing_schema (if available)
+    outputs:
+      - database-architecture.json
+      - migration_scripts.json
+      - rollback_plan.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/04-database.json
+    notes: |
+      Plan zero-downtime migrations. Include dual-write strategies
+      and data backfill procedures for existing records.
+
+  - step: 5
+    name: "Test Strategy & Regression Planning"
     agent: qa
     inputs:
-      - updated-architecture.json (from step 5)
-      - migration-strategy.json (from step 3)
+      - system-architecture.json (from step 3)
+      - database-architecture.json (from step 4)
+      - impact_analysis.json (from step 1)
     outputs:
       - test-plan.json
-      - regression-test-plan.json
+      - regression_suite.json
       - reasoning.json
     validation:
       schema: .claude/schemas/test_plan.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/08-qa.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
+    notes: |
+      Focus on regression testing existing functionality.
+      Include integration tests for migration procedures.
 
-  - step: 7
+  - step: 6
     name: "Implementation"
     agent: developer
     inputs:
-      - updated-architecture.json (from step 5)
-      - migration-strategy.json (from step 3)
-      - test-plan.json (from step 6)
+      - system-architecture.json (from step 3)
+      - database-architecture.json (from step 4)
+      - test-plan.json (from step 5)
+      - migration_plan.json (from step 3)
     outputs:
       - dev-manifest.json
       - code_artifacts
+      - migration_artifacts
       - reasoning.json
     validation:
       schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/06-developer.json
+    notes: |
+      Implement with feature flags. Create migration scripts
+      that can be tested in staging before production.
 
-  - step: 8
-    name: "Quality Assurance & Regression"
+  - step: 7
+    name: "Quality Validation"
     agent: qa
     inputs:
-      - dev-manifest.json (from step 7)
-      - regression-test-plan.json (from step 6)
+      - dev-manifest.json (from step 6)
+      - test-plan.json (from step 5)
+      - regression_suite.json (from step 5)
     outputs:
       - quality_report.json
-      - regression_results.json
+      - test_results.json
+      - migration_test_results.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/07-qa-final.json
 
 completion_criteria:
   - All artifacts validated against schemas
   - Quality gates passed
-  - Regression tests passed
-  - Migration strategy verified
-  - Code follows project constitution
+  - Regression tests pass with no degradation
+  - Migration scripts tested successfully
+  - Rollback procedures validated
+  - Code follows existing project patterns
 
+rollback_triggers:
+  - Test coverage drops below baseline
+  - Performance regression detected
+  - Migration scripts fail validation
+  - Breaking changes to existing APIs

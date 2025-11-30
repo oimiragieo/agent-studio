@@ -283,7 +283,21 @@ Auto-invoke Orchestrator when:
 
 ## Integration with Workflows
 
-The Orchestrator works alongside workflow YAML files:
+The Orchestrator works alongside workflow YAML files and the `workflow_runner.js` tool:
+
+### Execution Strategy
+To execute a defined workflow (e.g., `greenfield-fullstack`):
+1. **Read the Workflow**: Load `.claude/workflows/<name>.yaml` to understand the steps.
+2. **Execute Steps**: For each step:
+   - Delegate the task to the specified agent.
+   - Ensure the agent produces the required JSON output.
+   - **Validate**: Run the gate validation using the runner:
+     ```bash
+     node .claude/tools/workflow_runner.js --workflow .claude/workflows/<name>.yaml --step <N> --id <session_id>
+     ```
+3. **Handle Failure**: If validation fails, provide the error feedback to the agent and retry.
+
+### Workflow Patterns
 - **Workflows define patterns**: Standard agent sequences
 - **Orchestrator handles exceptions**: Dynamic routing for unique requests
 - **Workflows for repeatability**: Use YAML for common patterns

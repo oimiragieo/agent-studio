@@ -66,7 +66,7 @@ Follow this systematic development approach:
 - `.claude/templates/project-constitution.md` - Technical standards and governance
 
 **Supporting Tasks** (Reference these for workflow execution):
-- `.claude/tasks/development/generate-ai-frontend-prompt.md` - Frontend development guidance
+- None currently available
 
 ## Enterprise Coding Rules
 

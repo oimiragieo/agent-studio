@@ -1,0 +1,106 @@
+name: Incident Response Workflow
+description: Production incident response, crisis management, and post-mortem analysis
+type: incident
+project_type: operations
+
+trigger_keywords:
+  - "incident"
+  - "outage"
+  - "production issue"
+  - "post-mortem"
+  - "crisis"
+  - "downtime"
+  - "emergency"
+
+priority: critical
+
+steps:
+  - step: 1
+    name: "Incident Triage"
+    agent: incident-responder
+    inputs:
+      - incident_report
+      - system_status
+      - affected_services
+    outputs:
+      - triage-assessment.json
+      - immediate-actions.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/01-incident-responder.json
+    description: |
+      Rapid incident assessment:
+      - Severity classification
+      - Impact assessment
+      - Affected users/services
+      - Initial hypothesis
+      - Communication plan
+      - Immediate mitigation steps
+
+  - step: 2
+    name: "Infrastructure Analysis"
+    agent: devops
+    inputs:
+      - triage-assessment.json (from step 1)
+      - system_logs
+      - metrics
+    outputs:
+      - infrastructure-analysis.json
+      - remediation-plan.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/02-devops.json
+    description: |
+      Infrastructure investigation:
+      - Log analysis
+      - Metric correlation
+      - Resource utilization
+      - Deployment history
+      - Configuration drift detection
+      - Rollback assessment
+
+  - step: 3
+    name: "Security Assessment"
+    agent: security-architect
+    inputs:
+      - triage-assessment.json (from step 1)
+      - infrastructure-analysis.json (from step 2)
+    outputs:
+      - security-assessment.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/03-security-architect.json
+    description: |
+      Security incident evaluation:
+      - Breach indicators
+      - Vulnerability assessment
+      - Attack vector analysis
+      - Data exposure evaluation
+      - Compliance impact
+      - Forensic preservation
+
+  - step: 4
+    name: "Resolution Validation"
+    agent: qa
+    inputs:
+      - remediation-plan.json (from step 2)
+      - security-assessment.json (from step 3)
+    outputs:
+      - resolution-report.json
+      - post-mortem.json
+    description: |
+      Resolution and post-mortem:
+      - Fix verification
+      - Regression testing
+      - Service restoration confirmation
+      - Root cause documentation
+      - Prevention recommendations
+      - Process improvements
+
+completion_criteria:
+  - Incident severity assessed
+  - Root cause identified
+  - Remediation applied
+  - Service restored
+  - Post-mortem documented
+  - Prevention measures defined

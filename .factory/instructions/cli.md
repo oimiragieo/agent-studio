@@ -96,10 +96,6 @@ Available agents match the BMAD-Spec system:
 - **developer**: Implementation, code quality, testing execution
 - **qa**: Test planning, quality validation, compliance verification
 - **ux-expert**: User experience design, accessibility, interface specification
-- **product-owner**: Backlog management, story prioritization
-- **scrum-master**: Story preparation, sprint planning
-- **bmad-orchestrator**: Workflow coordination, multi-agent orchestration
-- **bmad-master**: Universal task executor across all domains
 
 ## Enterprise Integration
 

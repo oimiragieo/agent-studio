@@ -1,0 +1,90 @@
+name: Code Quality Improvement Workflow
+description: Systematic code quality improvement, refactoring, and compliance validation
+type: code-quality
+project_type: enhancement
+
+trigger_keywords:
+  - "code quality"
+  - "code review"
+  - "refactor"
+  - "tech debt"
+  - "code smell"
+  - "clean up"
+
+steps:
+  - step: 1
+    name: "Code Review Analysis"
+    agent: code-reviewer
+    inputs:
+      - target_files
+      - coding_standards
+    outputs:
+      - code-review.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/01-code-reviewer.json
+    description: |
+      Systematic analysis of code quality including:
+      - Adherence to coding standards
+      - Design pattern usage
+      - Code complexity metrics
+      - Security considerations
+      - Test coverage assessment
+
+  - step: 2
+    name: "Refactoring Planning"
+    agent: refactoring-specialist
+    inputs:
+      - code-review.json (from step 1)
+      - target_files
+    outputs:
+      - refactoring-plan.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/02-refactoring-specialist.json
+    description: |
+      Safe transformation strategy including:
+      - Prioritized refactoring tasks
+      - Dependency impact analysis
+      - Incremental migration paths
+      - Risk mitigation strategies
+
+  - step: 3
+    name: "Compliance Validation"
+    agent: compliance-auditor
+    inputs:
+      - refactoring-plan.json (from step 2)
+      - code-review.json (from step 1)
+    outputs:
+      - compliance-report.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/03-compliance-auditor.json
+    description: |
+      Verify compliance with:
+      - Industry standards (OWASP, etc.)
+      - Coding guidelines
+      - Security best practices
+      - Documentation requirements
+
+  - step: 4
+    name: "Quality Validation"
+    agent: qa
+    inputs:
+      - refactoring-plan.json (from step 2)
+      - compliance-report.json (from step 3)
+    outputs:
+      - quality-report.json
+      - test-results.json
+    description: |
+      Final quality validation:
+      - Test coverage verification
+      - Regression testing
+      - Quality gate assessment
+      - Sign-off recommendation
+
+completion_criteria:
+  - Code review completed with actionable findings
+  - Refactoring plan approved
+  - Compliance requirements met
+  - Quality gates passed

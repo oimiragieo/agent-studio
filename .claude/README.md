@@ -14,7 +14,7 @@ Drop the contents of this folder into your project's root (`CLAUDE.md` alongside
 1. Copy `CLAUDE.md` and the `.claude` contents into your repo root.
 2. In Claude Code, open the workspace and confirm the hierarchy in the right-side navigator.
 3. Enable hooks via `Preferences → Claude Code → Hooks` and point to `.claude/hooks`.
-4. (Optional) Register MCP servers referenced inside `skills/*.yaml`.
+4. (Optional) Configure MCP servers in `.claude/.mcp.json` (set required env vars).
 
 [1] Anthropic, "Claude 3.5 Sonnet" (Jun 2024) – doubled speed, state-of-the-art vision, real-time Artifacts workspace.  
 [2] Anthropic, "Projects" (Jun 2024) – persistent team knowledge, instructions, and artifact sharing inside Claude.

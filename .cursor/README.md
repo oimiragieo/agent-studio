@@ -47,17 +47,24 @@ cp -r /path/to/production-dropin/.cursor /path/to/your/project/.cursor
 ```
 your-project/
 ├── .cursor/                    # ← Copy this entire folder to your project root
-│   ├── subagents/             # 10 agent files (.mdc) - auto-discovered
+│   ├── subagents/             # 22 agent files (.mdc) - auto-discovered
 │   │   ├── analyst.mdc
 │   │   ├── architect.mdc
 │   │   ├── developer.mdc
+│   │   └── ...
+│   ├── skills/                # 8 utility skills - invoke with @skill-name
+│   │   ├── rule-auditor.md    # Validate code against rules
+│   │   ├── rule-selector.md   # Auto-configure rules
+│   │   ├── scaffolder.md      # Generate compliant code
+│   │   ├── repo-rag.md        # Codebase search
+│   │   ├── artifact-publisher.md
+│   │   ├── context-bridge.md  # Cross-platform sync
 │   │   └── ...
 │   ├── rules/                 # Framework rules - auto-loaded by file pattern
 │   ├── hooks/                 # Lifecycle hooks (auto-triggers Plan Mode!)
 │   │   ├── preflight-plan.json  # ← Auto-triggers Plan Mode for ≥2 files
 │   │   └── ...
-│   ├── instructions/          # Usage guides (Plan Mode, Composer, etc.)
-│   └── skills/                # Reusable capabilities
+│   └── instructions/          # Usage guides (Plan Mode, Composer, etc.)
 └── .cursorrules               # Optional: root rules (copy to project root if exists)
 ```
 
@@ -70,9 +77,34 @@ your-project/
 ## Key Features
 
 ### Agents
-10 specialized agents optimized for Cursor 2.0:
-- Analyst 📊, PM 📋, Architect 🏗️, Developer 💻, QA 🧪, UX Expert 🎨
-- Product Owner 👤, Scrum Master 🔄, BMAD Orchestrator 🎭, BMAD Master 🌟
+22 specialized agents optimized for Cursor 2.0:
+- **Core Development**: Analyst, PM, Architect, Database Architect, Developer, QA, UX Expert
+- **Enterprise**: Security Architect, DevOps, Technical Writer
+- **Coordination**: Orchestrator, Model Orchestrator
+- **Code Quality**: Code Reviewer, Refactoring Specialist, Performance Engineer
+- **Specialized**: LLM Architect, API Designer, Legacy Modernizer, Mobile Developer, Accessibility Expert, Compliance Auditor, Incident Responder
+
+### Skills (8 Utilities)
+6 cross-platform skills synced with Claude and Factory, plus 2 Cursor-specific utilities:
+
+| Skill | Invocation | Purpose |
+|-------|------------|---------|
+| `rule-auditor` | `@rule-auditor` | Validate code against loaded rules |
+| `rule-selector` | `@rule-selector` | Auto-detect stack, configure rules |
+| `scaffolder` | `@scaffolder` | Generate rule-compliant boilerplate |
+| `repo-rag` | `@repo-rag` | Semantic codebase search |
+| `artifact-publisher` | `@artifact-publisher` | Publish to project feed |
+| `context-bridge` | `@context-bridge` | Sync with Claude/Factory |
+| `handoff` | `@handoff` | Cross-agent task handoff |
+| `repo-index` | `@repo-index` | Index codebase for search |
+
+**Example Usage:**
+```
+Use @rule-selector to configure rules for this Next.js project
+Use @scaffolder to create a UserProfile component
+Use @rule-auditor to check src/components/
+Use @context-bridge to sync this plan to Claude
+```
 
 ### Rules
 - Hierarchical rule system with automatic loading based on file patterns

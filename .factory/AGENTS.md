@@ -5,10 +5,10 @@ This file provides specific instructions for Factory Droid agents working with t
 ## Build & Test
 
 ### Core Commands
-- **Lint**: `pnpm lint` (must pass before committing)
-- **Test**: `pnpm test --watch=false` (full suite, no watch mode)
-- **Coverage**: `pnpm coverage` (generate coverage report)
-- **Build**: `pnpm run build` (compile project)
+- **Validate config**: `pnpm validate` (validates agent configuration files)
+- **Validate verbose**: `pnpm validate:verbose` (verbose validation output)
+- **Install agents**: `pnpm install-agents` (install agent configurations to a project)
+- **Cross-platform sync**: `bash scripts/validate-sync.sh` (validates agent sync across platforms)
 
 ### Pre-Run Validation
 - Run linting before making changes
@@ -24,16 +24,40 @@ This file provides specific instructions for Factory Droid agents working with t
 
 Available specialized agents in `.factory/droids/`:
 
+**Core Development Agents:**
 - **analyst**: Market research, requirements gathering, competitive analysis
 - **pm**: Product requirements, epic definition, business validation
 - **architect**: System design, technology selection, security planning
 - **developer**: Implementation, code quality, testing execution
 - **qa**: Test planning, quality validation, compliance verification
 - **ux-expert**: User experience design, accessibility, interface specification
-- **product-owner**: Backlog management, story prioritization
-- **scrum-master**: Story preparation, sprint planning
-- **bmad-orchestrator**: Workflow coordination, multi-agent orchestration
-- **bmad-master**: Universal task executor across all domains
+
+**Enterprise Agents:**
+- **security-architect**: Security design and threat modeling
+- **devops**: Infrastructure, CI/CD, and deployments
+- **database-architect**: Database design and optimization
+- **sre-agent**: Reliability engineering and observability
+- **data-engineer**: Data pipelines and analytics infrastructure
+
+**Support Agents:**
+- **technical-writer**: Documentation and knowledge management
+- **release-manager**: Release coordination and versioning
+
+**Code Quality Agents:**
+- **code-reviewer**: Systematic code review and PR analysis
+- **refactoring-specialist**: Code transformation and technical debt reduction
+- **performance-engineer**: Performance optimization and profiling
+
+**Specialized Agents:**
+- **llm-architect**: AI/LLM system design, RAG, prompt engineering
+- **api-designer**: REST/GraphQL/gRPC API design patterns
+- **legacy-modernizer**: Legacy system modernization strategies
+- **mobile-developer**: iOS/Android/React Native/Flutter development
+- **accessibility-expert**: WCAG compliance, a11y testing
+- **compliance-auditor**: GDPR/HIPAA/SOC2/PCI-DSS regulatory compliance
+- **incident-responder**: Crisis management and post-mortems
+
+**Total**: 22 specialized agents (includes Orchestrator for task routing and multi-agent coordination).
 
 ### Invoking Custom Droids
 

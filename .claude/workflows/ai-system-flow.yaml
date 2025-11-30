@@ -1,0 +1,118 @@
+name: AI/LLM System Development Workflow
+description: AI and LLM system design, RAG implementation, and intelligent feature development
+type: ai-system
+project_type: ai
+
+trigger_keywords:
+  - "ai system"
+  - "llm"
+  - "rag"
+  - "embeddings"
+  - "chatbot"
+  - "ai feature"
+  - "machine learning"
+  - "vector database"
+
+steps:
+  - step: 1
+    name: "Model Strategy"
+    agent: model-orchestrator
+    inputs:
+      - ai_requirements
+      - use_cases
+      - constraints
+    outputs:
+      - model-strategy.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/01-model-orchestrator.json
+    description: |
+      Multi-model strategy planning:
+      - Model selection for different tasks
+      - Cost/performance trade-offs
+      - Fallback strategies
+      - Provider diversification
+      - Rate limiting considerations
+
+  - step: 2
+    name: "LLM Architecture Design"
+    agent: llm-architect
+    inputs:
+      - model-strategy.json (from step 1)
+      - ai_requirements
+    outputs:
+      - llm-architecture.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/02-llm-architect.json
+    description: |
+      LLM system architecture:
+      - RAG pipeline design
+      - Embedding strategy
+      - Vector database selection
+      - Prompt engineering patterns
+      - Context management
+      - Guardrails and safety
+
+  - step: 3
+    name: "API Design"
+    agent: api-designer
+    inputs:
+      - llm-architecture.json (from step 2)
+      - model-strategy.json (from step 1)
+    outputs:
+      - api-specification.json
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/03-api-designer.json
+    description: |
+      AI API design:
+      - Streaming endpoint patterns
+      - Request/response schemas
+      - Error handling for AI failures
+      - Rate limiting and quotas
+      - Webhook integrations
+
+  - step: 4
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - llm-architecture.json (from step 2)
+      - api-specification.json (from step 3)
+    outputs:
+      - implementation-manifest.json
+      - code_artifacts
+      - reasoning.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/04-developer.json
+    description: |
+      AI system implementation:
+      - LLM integration code
+      - RAG pipeline implementation
+      - Embedding generation
+      - Vector store integration
+      - Prompt templates
+
+  - step: 5
+    name: "AI Quality Validation"
+    agent: qa
+    inputs:
+      - implementation-manifest.json (from step 4)
+      - llm-architecture.json (from step 2)
+    outputs:
+      - ai-test-results.json
+      - quality-report.json
+    description: |
+      AI-specific validation:
+      - Prompt testing
+      - Response quality assessment
+      - Hallucination detection
+      - Edge case handling
+      - Performance benchmarks
+
+completion_criteria:
+  - LLM integration functional
+  - RAG pipeline returns relevant results
+  - API endpoints operational
+  - Quality thresholds met
+  - Safety guardrails validated

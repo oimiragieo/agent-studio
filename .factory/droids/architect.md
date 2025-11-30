@@ -61,7 +61,7 @@ When activated, follow this structured approach:
 - `.claude/templates/project-constitution.md` - Technical governance and standards
 
 **Supporting Tasks** (Reference these for workflow execution):
-- `.claude/tasks/architecture/document-project.md` - Project documentation methodology
+- None currently available
 </available_templates>
 
 ## <technical_excellence_rules>
