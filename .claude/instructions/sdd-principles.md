@@ -134,5 +134,9 @@ SDD transforms software development from craftsmanship to manufacturing—not by
 The BMAD-Spec Orchestrator is SDD in practice: a systematic approach to transforming human intent into working software through intelligent specification execution.
 
 ---
+</guidelines>
+</instructions>
 
+<notes>
 *This document establishes SDD as the foundational philosophy for all BMAD-Spec Orchestrator operations. All agents, workflows, and templates must embody these principles.*
+</notes>

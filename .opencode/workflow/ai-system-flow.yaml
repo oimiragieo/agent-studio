@@ -1,0 +1,71 @@
+name: AI System Flow
+description: Workflow for LLM/AI feature development
+type: ai
+project_type: ai-feature
+
+steps:
+  - step: 1
+    name: "Model Selection & Orchestration"
+    agent: model-orchestrator
+    inputs:
+      - ai_requirements
+      - use_cases
+    outputs:
+      - model-selection.json
+      - orchestration_strategy
+
+  - step: 2
+    name: "AI Architecture Design"
+    agent: llm-architect
+    inputs:
+      - model-selection.json (from step 1)
+      - requirements
+    outputs:
+      - llm-architecture.json
+      - prompt_templates
+
+  - step: 3
+    name: "API Design"
+    agent: api-designer
+    inputs:
+      - llm-architecture.json (from step 2)
+      - integration_requirements
+    outputs:
+      - api-spec.json
+      - endpoint_definitions
+
+  - step: 4
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - llm-architecture.json (from step 2)
+      - api-spec.json (from step 3)
+    outputs:
+      - ai_implementation
+      - integration_code
+
+  - step: 5
+    name: "AI Validation"
+    agent: qa
+    inputs:
+      - ai_implementation (from step 4)
+      - test_scenarios
+    outputs:
+      - ai_test_results.json
+      - quality_metrics
+
+completion_criteria:
+  - Model performance validated
+  - API integration tested
+  - Prompt effectiveness verified
+  - Cost optimization reviewed
+
+triggers:
+  keywords:
+    - ai system
+    - llm
+    - rag
+    - embeddings
+    - chatbot
+    - ai feature
+    - machine learning

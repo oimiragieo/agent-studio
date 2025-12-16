@@ -1,0 +1,289 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "UI Audit Report",
+  "description": "Schema for UI audit reports generated during the UI Perfection Loop workflow",
+  "required": [
+    "visual_hierarchy_score",
+    "consistency_score",
+    "accessibility_score",
+    "enterprise_polish_score",
+    "total_score",
+    "findings",
+    "recommendations"
+  ],
+  "properties": {
+    "component_path": {
+      "type": "string",
+      "description": "Path to the component or page being audited"
+    },
+    "iteration_number": {
+      "type": "integer",
+      "description": "Current iteration number in the perfection loop",
+      "minimum": 1
+    },
+    "audit_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the audit was performed"
+    },
+    "visual_hierarchy_score": {
+      "type": "number",
+      "description": "Score for visual hierarchy (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "consistency_score": {
+      "type": "number",
+      "description": "Score for design consistency (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "accessibility_score": {
+      "type": "number",
+      "description": "Score for accessibility compliance (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "enterprise_polish_score": {
+      "type": "number",
+      "description": "Score for enterprise-level polish and refinement (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "gemini_validator_score": {
+      "type": "number",
+      "description": "External validation score from Gemini (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "total_score": {
+      "type": "number",
+      "description": "Weighted total score (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "score_weights": {
+      "type": "object",
+      "description": "Weights used for calculating total score",
+      "properties": {
+        "visual_hierarchy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "consistency": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "accessibility": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "enterprise_polish": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["visual_hierarchy", "consistency", "accessibility", "enterprise_polish"]
+    },
+    "penalties": {
+      "type": "array",
+      "description": "List of penalties applied to the score",
+      "items": {
+        "type": "object",
+        "required": ["type", "points", "description"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "visual_hierarchy",
+              "consistency",
+              "accessibility",
+              "enterprise_polish",
+              "glassmorphism",
+              "mobile_responsiveness",
+              "performance"
+            ],
+            "description": "Category of the penalty"
+          },
+          "points": {
+            "type": "number",
+            "description": "Points deducted (positive number)",
+            "minimum": 0
+          },
+          "description": {
+            "type": "string",
+            "description": "Explanation of the penalty"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "description": "Severity level of the issue"
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "description": "Detailed findings from the audit",
+      "items": {
+        "type": "object",
+        "required": ["agent", "category", "severity", "description"],
+        "properties": {
+          "agent": {
+            "type": "string",
+            "enum": [
+              "ux-expert",
+              "accessibility-expert",
+              "model-orchestrator",
+              "developer",
+              "mobile-developer",
+              "qa"
+            ],
+            "description": "Agent that identified the finding"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "visual_hierarchy",
+              "consistency",
+              "accessibility",
+              "enterprise_polish",
+              "glassmorphism",
+              "mobile",
+              "performance",
+              "code_quality"
+            ],
+            "description": "Category of the finding"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "description": "Severity of the issue"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the finding"
+          },
+          "location": {
+            "type": "string",
+            "description": "File path or component location where the issue was found"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommended fix for the issue"
+          },
+          "priority": {
+            "type": "integer",
+            "description": "Priority ranking (1 = highest)",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "High-level recommendations for improvement",
+      "items": {
+        "type": "string"
+      }
+    },
+    "glassmorphism_compliance": {
+      "type": "object",
+      "description": "Glassmorphism compliance assessment (if required)",
+      "properties": {
+        "compliant": {
+          "type": "boolean",
+          "description": "Whether glassmorphism requirements are met"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "reference_image_analysis": {
+      "type": "object",
+      "description": "Analysis of provided reference images",
+      "properties": {
+        "images_analyzed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "comparison_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "visual_differences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "next_iteration_required": {
+      "type": "boolean",
+      "description": "Whether another iteration is recommended"
+    },
+    "improvement_areas": {
+      "type": "array",
+      "description": "Areas that need improvement in the next iteration",
+      "items": {
+        "type": "string"
+      }
+    },
+    "iteration_metadata": {
+      "type": "object",
+      "description": "Metadata about the current iteration",
+      "properties": {
+        "current_iteration": {
+          "type": "integer",
+          "description": "Current iteration number (1-based)",
+          "minimum": 1
+        },
+        "max_iterations": {
+          "type": "integer",
+          "description": "Maximum number of iterations allowed",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "previous_score": {
+          "type": "number",
+          "description": "Score from previous iteration (if any)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "score_improvement": {
+          "type": "number",
+          "description": "Score improvement from previous iteration",
+          "minimum": -100,
+          "maximum": 100
+        },
+        "iterations_remaining": {
+          "type": "integer",
+          "description": "Number of iterations remaining",
+          "minimum": 0
+        },
+        "should_continue": {
+          "type": "boolean",
+          "description": "Whether another iteration is recommended"
+        }
+      },
+      "required": ["current_iteration", "max_iterations", "should_continue"]
+    }
+  }
+}
+

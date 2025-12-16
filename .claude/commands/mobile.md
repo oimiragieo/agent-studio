@@ -1,8 +1,9 @@
-# Command: /mobile
+<command_description>
+Command: /mobile - Launch a mobile application development workflow.
+</command_description>
 
-Launch a mobile application development workflow.
-
-## Usage
+<instructions>
+<execution_steps>
 
 ```
 /mobile                          # Start mobile workflow
@@ -59,7 +60,13 @@ Invokes the **mobile-flow** workflow with this agent sequence:
 - `mobile-ux-spec.json` - UX specifications
 - `mobile-test-results.json` - Testing results
 
-## See Also
+</execution_steps>
 
-- `/scaffold component` - Generate mobile components
-- `/code-quality` - Review mobile code quality
+<output_format>
+**Outputs**:
+- `mobile-architecture.json` - App architecture
+- `platform-strategy.json` - Platform decisions
+- `mobile-ux-spec.json` - UX specifications
+- `mobile-test-results.json` - Testing results
+</output_format>
+</instructions>

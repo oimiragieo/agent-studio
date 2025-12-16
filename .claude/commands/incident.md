@@ -1,8 +1,9 @@
-# Command: /incident
+<command_description>
+Command: /incident - Launch an incident response workflow for production issues.
+</command_description>
 
-Launch an incident response workflow for production issues.
-
-## Usage
+<instructions>
+<execution_steps>
 
 ```
 /incident                        # Start incident workflow
@@ -14,7 +15,13 @@ Launch an incident response workflow for production issues.
 
 Invokes the **incident-flow** workflow with this agent sequence:
 
-1. **Incident Responder** - Rapid triage
+1. **Planner** (Step 0) - Incident response planning
+   - Assess incident severity and scope
+   - Create structured response plan
+   - Coordinate response team activation
+   - Generate plan artifacts
+
+2. **Incident Responder** (Step 1) - Rapid triage
    - Severity classification
    - Impact assessment
    - Affected users/services
@@ -22,7 +29,7 @@ Invokes the **incident-flow** workflow with this agent sequence:
    - Communication plan
    - Immediate mitigation steps
 
-2. **DevOps** - Infrastructure analysis
+3. **DevOps** (Step 2) - Infrastructure analysis
    - Log analysis
    - Metric correlation
    - Resource utilization
@@ -30,7 +37,7 @@ Invokes the **incident-flow** workflow with this agent sequence:
    - Configuration drift detection
    - Rollback assessment
 
-3. **Security Architect** - Security assessment
+4. **Security Architect** (Step 3) - Security assessment
    - Breach indicators
    - Vulnerability assessment
    - Attack vector analysis
@@ -38,7 +45,7 @@ Invokes the **incident-flow** workflow with this agent sequence:
    - Compliance impact
    - Forensic preservation
 
-4. **QA** - Resolution validation
+5. **QA** (Step 4) - Resolution validation
    - Fix verification
    - Regression testing
    - Service restoration confirmation
@@ -66,7 +73,14 @@ Invokes the **incident-flow** workflow with this agent sequence:
 
 This workflow is marked as **critical** and will be prioritized over other tasks.
 
-## See Also
+</execution_steps>
 
-- `/review` - Post-incident code review
-- `/code-quality` - Prevent future incidents
+<output_format>
+**Outputs**:
+- `triage-assessment.json` - Initial assessment
+- `immediate-actions.json` - Quick fixes
+- `infrastructure-analysis.json` - Root cause
+- `security-assessment.json` - Security evaluation
+- `post-mortem.json` - Lessons learned
+</output_format>
+</instructions>

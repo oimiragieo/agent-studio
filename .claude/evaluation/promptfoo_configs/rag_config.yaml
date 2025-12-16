@@ -1,0 +1,44 @@
+# RAG Evaluation Configuration
+# Based on Claude Cookbooks retrieval_augmented_generation patterns
+description: "RAG System Evaluation - Retrieval and End-to-End Metrics"
+
+# Providers (retrieval methods to test)
+providers:
+  - python:provider_retrieval.py:retrieve_base
+    label: "Basic RAG"
+  - python:provider_retrieval.py:retrieve_level_two
+    label: "RAG with Summary Indexing"
+  - python:provider_retrieval.py:retrieve_level_three
+    label: "RAG with Re-ranking"
+
+# Prompts
+prompts:
+  - '{{ query }}'
+
+# Tests
+tests:
+  - vars:
+      query: "How do I configure authentication in the API?"
+      correct_chunks: ["auth_config.md", "api_setup.md"]
+      correct_answer: "Authentication is configured using API keys in the Authorization header. Set the header as 'Authorization: Bearer YOUR_API_KEY'. You can generate API keys in the dashboard under Settings > API Keys."
+    assert:
+      # Retrieval metrics
+      - type: python
+        value: file://retrieval_metrics.py:get_assert
+      # End-to-end evaluation
+      - type: python
+        value: file://end_to_end_eval.py:get_assert
+
+# Output configuration
+output:
+  file: .claude/evaluation/results/rag-evaluation-results.json
+
+# Grading
+grading:
+  # Retrieval metrics (Precision, Recall, F1, MRR)
+  - type: python
+    value: file://retrieval_metrics.py:get_assert
+  
+  # End-to-end accuracy (LLM-as-judge)
+  - type: python
+    value: file://end_to_end_eval.py:get_assert

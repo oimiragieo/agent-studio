@@ -1,8 +1,9 @@
-# Command: /select-rules
+<command_description>
+Command: /select-rules - Auto-detect your project's tech stack and configure optimal coding rules.
+</command_description>
 
-Auto-detect your project's tech stack and configure optimal coding rules.
-
-## Usage
+<instructions>
+<execution_steps>
 
 ```
 /select-rules              # Detect stack and show recommendations
@@ -34,9 +35,10 @@ Invokes the **rule-selector** skill to:
    - Documents detected stack with confidence scores
    - Lists included and excluded rule patterns
 
-## Output Format
+</execution_steps>
 
-### Recommendation Report (default)
+<output_format>
+**Recommendation Report (default)**:
 
 ```markdown
 ## Rule Selection Report
@@ -68,14 +70,20 @@ Invokes the **rule-selector** skill to:
 }
 ```
 
-## When to Use
+```
+</output_format>
+</instructions>
 
+<examples>
+<usage_example>
+**When to Use**:
 - Setting up a new project
 - Onboarding to an existing codebase
 - After adding major new dependencies
 - Auditing rule configuration for optimization
 
-## See Also
-
+**See Also**:
 - `/audit` - Validate code against configured rules
 - `/scaffold` - Generate rule-compliant boilerplate
+</usage_example>
+</examples>

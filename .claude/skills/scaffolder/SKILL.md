@@ -1,64 +1,150 @@
 ---
 name: scaffolder
 description: Generates boilerplate code following loaded rules. Creates new components, modules, APIs, and features that automatically comply with your coding standards. Extracts patterns from rules and applies them consistently.
-allowed-tools: read, write, glob, search
+allowed-tools: read, write, glob, search, codebase_search
+version: 2.0
+best_practices:
+  - Identify target framework from manifest.yaml
+  - Extract patterns from relevant rule files
+  - Generate complete file structure (types, tests, etc.)
+  - Follow project naming conventions
+  - Include proper imports and exports
+error_handling: graceful
+streaming: supported
+templates: [component, api, test, hook, context, feature]
 ---
 
-# Rule-Aware Scaffolder
+<identity>
+Rule-Aware Scaffolder - Creates new code that automatically adheres to your project's coding standards.
+</identity>
 
-Creates new code that automatically adheres to your project's coding standards.
-
-## When to Use
-
+<capabilities>
 - Creating new React/Vue/Angular components
 - Adding new API endpoints or routes
 - Setting up new modules or packages
 - Generating test files for existing code
 - Creating data models or database schemas
 - Bootstrapping feature directories
+</capabilities>
 
-## Instructions
+<instructions>
+<execution_process>
 
-### Step 1: Identify Target Framework
+### Step 1: Load Rule Index
 
-Determine which rules apply based on what you're scaffolding:
+Load the rule index to discover relevant rules dynamically:
+- @.claude/context/rule-index.json
 
-```
-Component → react.mdc, nextjs.mdc, typescript.mdc
-API Route → nextjs.mdc (App Router) or fastapi.mdc
-Test File → jest-*.mdc, cypress-*.mdc, playwright-*.mdc
-Database Model → database.mdc, prisma patterns
-```
+### Step 2: Identify Target Framework and Query Index
 
-### Step 2: Extract Patterns from Rules
+Determine which technologies apply based on what you're scaffolding:
 
-Parse the relevant .mdc files to extract:
+**Component scaffolding**:
+- Detect: React, Next.js, TypeScript
+- Query: `index.technology_map['react']`, `index.technology_map['nextjs']`, `index.technology_map['typescript']`
 
-**From `nextjs.mdc`:**
+**API Route scaffolding**:
+- Detect: Next.js App Router or FastAPI
+- Query: `index.technology_map['nextjs']` or `index.technology_map['fastapi']`
+
+**Test File scaffolding**:
+- Detect: Jest, Cypress, Playwright, Vitest, pytest
+- Query: `index.technology_map['jest']`, `index.technology_map['cypress']`, etc.
+
+**Database Model scaffolding**:
+- Detect: Prisma, SQL, database patterns
+- Query: `index.technology_map['prisma']` or database-related rules
+
+### Step 3: Load Relevant Rules
+
+Load only the relevant rule files from the index (progressive disclosure):
+- Master rules first (from `.claude/rules-master/`)
+- Archive rules supplement (from `.claude/archive/`)
+- Load 3-5 most relevant rules, not all 1,081
+
+### Step 4: Extract Patterns from Rules
+
+Parse the loaded rule files to extract scaffolding patterns:
+
+**From Next.js rules** (TECH_STACK_NEXTJS.md or nextjs.mdc):
 - Server Components by default
 - 'use client' only when needed
 - Place in `app/` for routes, `components/` for shared
 - Use lowercase-with-dashes for directories
 
-**From `typescript.mdc`:**
+**From TypeScript rules**:
 - Interfaces for object shapes
 - Proper return type annotations
 - Avoid `any`, use `unknown`
 - PascalCase for types/interfaces
 
-**From `react.mdc`:**
+**From React rules**:
 - Functional components only
 - Custom hooks for reusable logic
 - Props interface for each component
 - Error boundaries for critical sections
 
-### Step 3: Generate Compliant Code
+### Step 5: Generate Compliant Code
 
 Apply extracted patterns to generate code that passes rule-auditor.
+</execution_process>
 
-## Scaffold Templates
+<best_practices>
+1. **Always Audit After**: Run `/audit` after scaffolding to catch any edge cases
+2. **Customize Templates**: Add project-specific patterns to rules for consistent generation
+3. **Use for Consistency**: Scaffold even simple files to maintain team conventions
+4. **Review Generated Code**: Scaffolded code is a starting point, not final implementation
+5. **Keep Rules Updated**: As patterns evolve, update rules so scaffolder stays current
+</best_practices>
 
-### Next.js Server Component
+<integration>
+### Component Generation Flow
+
+```
+1. User: /scaffold component UserDashboard
+2. Scaffolder reads: nextjs.mdc, typescript.mdc, react.mdc
+3. Extracts patterns: Server Component, Suspense, interfaces
+4. Generates compliant code structure
+5. Writes files to correct locations
+6. Runs rule-auditor to verify compliance
+7. Reports any manual adjustments needed
+```
+
+### Feature Module Generation
+
+For larger features, scaffold generates a complete module:
+
+```
+/scaffold feature user-management
+
+Generates:
+app/
+└── (dashboard)/
+    └── users/
+        ├── page.tsx           # List page
+        ├── [id]/
+        │   └── page.tsx       # Detail page
+        ├── new/
+        │   └── page.tsx       # Create page
+        └── components/
+            ├── user-list.tsx
+            ├── user-card.tsx
+            └── user-form.tsx
+components/
+└── users/
+    └── ... (shared components)
+lib/
+└── users/
+    ├── api.ts                 # API functions
+    ├── types.ts               # Type definitions
+    └── validations.ts         # Zod schemas
+```
+</integration>
+</instructions>
+
+<examples>
+<code_example>
+**Next.js Server Component**
 
 **Command**: `/scaffold component UserProfile`
 
@@ -97,10 +183,10 @@ export default UserProfile
 - `components/user-profile/skeleton.tsx` - Loading skeleton
 - `components/user-profile/types.ts` - Shared types
 - `components/user-profile/index.ts` - Barrel export
+</code_example>
 
----
-
-### Next.js Client Component
+<code_example>
+**Next.js Client Component**
 
 **Command**: `/scaffold client-component SearchBar`
 
@@ -151,10 +237,10 @@ export function SearchBar({
 
 export default SearchBar
 ```
+</code_example>
 
----
-
-### Next.js API Route (App Router)
+<code_example>
+**Next.js API Route (App Router)**
 
 **Command**: `/scaffold api users`
 
@@ -233,10 +319,10 @@ export async function POST(request: NextRequest) {
   }
 }
 ```
+</code_example>
 
----
-
-### FastAPI Endpoint
+<code_example>
+**FastAPI Endpoint**
 
 **Command**: `/scaffold fastapi-route users`
 
@@ -342,10 +428,10 @@ async def get_user(
         detail=f"User {user_id} not found",
     )
 ```
+</code_example>
 
----
-
-### Test File (Vitest/Jest)
+<code_example>
+**Test File (Vitest/Jest)**
 
 **Command**: `/scaffold test components/user-profile`
 
@@ -414,10 +500,10 @@ describe('UserProfile', () => {
   })
 })
 ```
+</code_example>
 
----
-
-### Cypress E2E Test
+<code_example>
+**Cypress E2E Test**
 
 **Command**: `/scaffold e2e-test user-flow`
 
@@ -478,10 +564,10 @@ describe('User Flow', () => {
   })
 })
 ```
+</code_example>
 
----
-
-## Quick Commands
+<usage_example>
+**Quick Commands**:
 
 ```
 # Generate a Server Component
@@ -512,7 +598,7 @@ describe('User Flow', () => {
 /scaffold --list
 ```
 
-## Available Templates
+**Available Templates**:
 
 | Template | Framework | Files Generated |
 |----------|-----------|-----------------|
@@ -527,55 +613,5 @@ describe('User Flow', () => {
 | `e2e-test` | Cypress/Playwright | E2E test spec |
 | `model` | Prisma | Schema model |
 | `migration` | Database | Migration file |
-
-## Integration with Workflows
-
-### Component Generation Flow
-
-```
-1. User: /scaffold component UserDashboard
-2. Scaffolder reads: nextjs.mdc, typescript.mdc, react.mdc
-3. Extracts patterns: Server Component, Suspense, interfaces
-4. Generates compliant code structure
-5. Writes files to correct locations
-6. Runs rule-auditor to verify compliance
-7. Reports any manual adjustments needed
-```
-
-### Feature Module Generation
-
-For larger features, scaffold generates a complete module:
-
-```
-/scaffold feature user-management
-
-Generates:
-app/
-└── (dashboard)/
-    └── users/
-        ├── page.tsx           # List page
-        ├── [id]/
-        │   └── page.tsx       # Detail page
-        ├── new/
-        │   └── page.tsx       # Create page
-        └── components/
-            ├── user-list.tsx
-            ├── user-card.tsx
-            └── user-form.tsx
-components/
-└── users/
-    └── ... (shared components)
-lib/
-└── users/
-    ├── api.ts                 # API functions
-    ├── types.ts               # Type definitions
-    └── validations.ts         # Zod schemas
-```
-
-## Best Practices
-
-1. **Always Audit After**: Run `/audit` after scaffolding to catch any edge cases
-2. **Customize Templates**: Add project-specific patterns to rules for consistent generation
-3. **Use for Consistency**: Scaffold even simple files to maintain team conventions
-4. **Review Generated Code**: Scaffolded code is a starting point, not final implementation
-5. **Keep Rules Updated**: As patterns evolve, update rules so scaffolder stays current
+</usage_example>
+</examples>

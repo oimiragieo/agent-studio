@@ -1,0 +1,4 @@
+{"query": "How is user authentication implemented?", "expected_retrieval": ["src/auth/middleware.ts", "src/auth/types.ts", "src/auth/utils.ts"], "ground_truth_answer": "User authentication uses JWT tokens with middleware validation. The middleware checks the Authorization header and validates the token.", "category": "authentication"}
+{"query": "Where are API routes defined?", "expected_retrieval": ["src/app/api/**/route.ts"], "ground_truth_answer": "API routes are defined in src/app/api/ directory following Next.js App Router conventions. Each route is a route.ts file.", "category": "api_structure"}
+{"query": "How is database connection handled?", "expected_retrieval": ["src/lib/db.ts", "src/lib/db-utils.ts"], "ground_truth_answer": "Database connection uses connection pooling with Prisma. Connection is initialized in db.ts and reused across requests.", "category": "database"}
+

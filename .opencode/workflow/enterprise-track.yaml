@@ -1,0 +1,208 @@
+name: Enterprise Development Track
+description: Comprehensive workflow for enterprise projects requiring security, compliance, and documentation
+type: enterprise
+project_type: fullstack
+
+# This workflow is designed for enterprise environments:
+# - Mandatory security review and compliance validation
+# - Comprehensive documentation requirements
+# - Multi-stakeholder approval gates
+# - Audit trail for all decisions
+
+steps:
+  - step: 1
+    name: "Project Discovery & Stakeholder Analysis"
+    agent: analyst
+    inputs:
+      - user_requirements
+      - business_objectives
+      - compliance_requirements
+      - stakeholder_matrix
+    outputs:
+      - project_brief.json
+      - stakeholder_analysis.json
+      - feasibility_report.json
+      - reasoning.json
+    validation:
+      schema: .opencode/schema/project-brief.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/01-analyst.json
+
+  - step: 2
+    name: "Product Requirements & Compliance Mapping"
+    agent: pm
+    inputs:
+      - project_brief.json (from step 1)
+      - compliance_requirements
+    outputs:
+      - prd.json
+      - compliance_mapping.json
+      - approval_requirements.json
+      - reasoning.json
+    validation:
+      schema: .opencode/schema/prd.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/02-pm.json
+
+  - step: 3
+    name: "Security Architecture Review"
+    agent: security-architect
+    inputs:
+      - prd.json (from step 2)
+      - compliance_mapping.json (from step 2)
+    outputs:
+      - security_architecture.json
+      - threat_model.json
+      - compliance_validation.json
+      - reasoning.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/03-security.json
+    notes: |
+      Mandatory security review for enterprise projects.
+      Must validate SOC2, HIPAA, GDPR requirements as applicable.
+
+  - step: 4
+    name: "System Architecture"
+    agent: architect
+    inputs:
+      - prd.json (from step 2)
+      - security_architecture.json (from step 3)
+      - threat_model.json (from step 3)
+    outputs:
+      - system-architecture.json
+      - reasoning.json
+    validation:
+      schema: .opencode/schema/architecture.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/04-architect.json
+    notes: |
+      Architecture must incorporate security controls
+      from the security architecture review.
+
+  - step: 5
+    name: "Database Architecture & Data Governance"
+    agent: database-architect
+    inputs:
+      - system-architecture.json (from step 4)
+      - prd.json (from step 2)
+      - compliance_mapping.json (from step 2)
+    outputs:
+      - database-architecture.json
+      - data_governance_plan.json
+      - encryption_strategy.json
+      - reasoning.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/05-database.json
+    notes: |
+      Must address data retention, encryption at rest,
+      audit logging, and PII handling requirements.
+
+  - step: 6
+    name: "Infrastructure & DevOps Planning"
+    agent: devops
+    inputs:
+      - system-architecture.json (from step 4)
+      - database-architecture.json (from step 5)
+      - security_architecture.json (from step 3)
+    outputs:
+      - infrastructure_plan.json
+      - deployment_strategy.json
+      - monitoring_plan.json
+      - reasoning.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/06-devops.json
+    notes: |
+      Plan must include disaster recovery, backup procedures,
+      and multi-environment deployment strategy.
+
+  - step: 7
+    name: "Test Planning & Security Testing"
+    agent: qa
+    inputs:
+      - system-architecture.json (from step 4)
+      - database-architecture.json (from step 5)
+      - security_architecture.json (from step 3)
+      - prd.json (from step 2)
+    outputs:
+      - test-plan.json
+      - security_test_plan.json
+      - reasoning.json
+    validation:
+      schema: .opencode/schema/test-plan.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/07-qa.json
+    notes: |
+      Must include security testing, penetration testing plan,
+      and compliance validation tests.
+
+  - step: 8
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - system-architecture.json (from step 4)
+      - database-architecture.json (from step 5)
+      - security_architecture.json (from step 3)
+      - infrastructure_plan.json (from step 6)
+      - test-plan.json (from step 7)
+    outputs:
+      - dev-manifest.json
+      - code_artifacts
+      - security_controls_implementation.json
+      - reasoning.json
+    validation:
+      schema: .opencode/schema/artifact_manifest.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/08-developer.json
+
+  - step: 9
+    name: "Enterprise Documentation"
+    agent: technical-writer
+    inputs:
+      - dev-manifest.json (from step 8)
+      - system-architecture.json (from step 4)
+      - database-architecture.json (from step 5)
+      - security_architecture.json (from step 3)
+      - compliance_mapping.json (from step 2)
+    outputs:
+      - documentation.json
+      - operations_runbook.json
+      - compliance_documentation.json
+      - api_documentation.json
+      - reasoning.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/09-technical-writer.json
+    notes: |
+      Enterprise documentation must include operations runbooks,
+      compliance attestations, and audit trail documentation.
+
+  - step: 10
+    name: "Quality Assurance & Security Validation"
+    agent: qa
+    inputs:
+      - dev-manifest.json (from step 8)
+      - test-plan.json (from step 7)
+      - security_test_plan.json (from step 7)
+    outputs:
+      - quality_report.json
+      - test_results.json
+      - security_validation.json
+      - compliance_attestation.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/10-qa-final.json
+
+completion_criteria:
+  - All artifacts validated against schemas
+  - Quality gates passed with documented approvals
+  - Security review completed and signed off
+  - Compliance requirements mapped and validated
+  - Test coverage meets enterprise threshold (80%+)
+  - Documentation complete for audit requirements
+  - Operations runbook reviewed
+  - Disaster recovery plan validated
+
+approval_gates:
+  - Security architecture sign-off required before implementation
+  - Compliance mapping must be validated by compliance team
+  - Architecture review required before developer step
+  - Final QA must include security validation
+
+audit_requirements:
+  - All decisions must be documented in reasoning.json files
+  - Gate validations stored in gates directory
+  - Compliance mapping maintained throughout workflow
+  - Change log generated for all artifact modifications

@@ -1,0 +1,61 @@
+name: Performance Flow
+description: Workflow for performance optimization and tuning
+type: performance
+project_type: optimization
+
+steps:
+  - step: 1
+    name: "Performance Analysis"
+    agent: performance
+    inputs:
+      - application_metrics
+      - performance_requirements
+    outputs:
+      - performance-analysis.json
+      - bottlenecks_identified
+
+  - step: 2
+    name: "Architecture Review"
+    agent: architect
+    inputs:
+      - performance-analysis.json (from step 1)
+      - current_architecture
+    outputs:
+      - optimization-recommendations.json
+      - architecture_changes
+
+  - step: 3
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - optimization-recommendations.json (from step 2)
+      - codebase
+    outputs:
+      - optimized_code
+      - implementation_notes
+
+  - step: 4
+    name: "Performance Validation"
+    agent: qa
+    inputs:
+      - optimized_code (from step 3)
+      - performance_requirements
+    outputs:
+      - benchmark_results.json
+      - performance_report
+
+completion_criteria:
+  - Performance targets met
+  - No regressions introduced
+  - Benchmarks documented
+  - Monitoring configured
+
+triggers:
+  keywords:
+    - performance
+    - optimize
+    - profiling
+    - benchmark
+    - load test
+    - slow
+    - latency

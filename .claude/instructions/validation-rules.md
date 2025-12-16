@@ -1,5 +1,9 @@
-# BMAD-Spec Orchestrator Validation Rules
+<protocol_description>
+BMAD-Spec Orchestrator Validation Rules - Validation rules for workflows, agents, templates, and quality assurance.
+</protocol_description>
 
+<instructions>
+<guidelines>
 ## Workflow Validation
 
 ### Before Starting Any Workflow:
@@ -107,3 +111,5 @@
 - Process improvements are identified and implemented
 - User feedback drives system enhancements
 - Success patterns are documented and replicated
+</guidelines>
+</instructions>

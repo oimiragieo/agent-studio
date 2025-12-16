@@ -1,5 +1,9 @@
-# BMAD-Spec Orchestrator Constitution
+<protocol_description>
+BMAD-Spec Orchestrator Constitution - Core principles, agent responsibilities, quality standards, error handling, and governance for the BMAD-Spec Orchestrator system.
+</protocol_description>
 
+<instructions>
+<guidelines>
 ## Core Principles
 
 ### 1. User-Centric Development
@@ -106,3 +110,5 @@
 - Update constitution if new patterns emerge
 
 This constitution guides all agents in the BMAD-Spec Orchestrator System to ensure consistent, high-quality, user-focused development outcomes.
+</guidelines>
+</instructions>

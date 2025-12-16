@@ -42,11 +42,15 @@ your-project/
 ├── CLAUDE.md           # Root instructions (required)
 ├── .claude/            # Configuration directory
 │   ├── agents/         # 22 specialized agents
-│   ├── skills/         # 6 utility skills
-│   ├── workflows/      # 9 workflow definitions
-│   ├── hooks/          # Security hooks
-│   ├── commands/       # Slash commands
-│   └── config.yaml     # Agent routing
+│   ├── skills/         # 8 utility skills (6 core + 2 validators)
+│   ├── workflows/      # 10 workflow definitions
+│   ├── hooks/          # Security and audit hooks
+│   ├── commands/       # 13 slash commands
+│   ├── tools/          # Enterprise tools (cost, sessions, analytics)
+│   ├── schemas/        # JSON validation schemas
+│   ├── docs/           # Comprehensive documentation
+│   ├── rules/          # 200+ technology rule packs
+│   └── config.yaml     # Agent routing and workflow configuration
 └── [your source code]
 ```
 
@@ -56,6 +60,12 @@ your-project/
 2. Go to **Preferences > Claude Code > Hooks**
 3. Point to `.claude/hooks` directory
 4. Enable security hooks
+
+**Available Hooks:**
+- **security-pre-tool.sh** (PreToolUse): Blocks dangerous commands, protects sensitive files, prevents force pushes
+- **audit-post-tool.sh** (PostToolUse): Logs all tool executions for audit trail
+
+See `.claude/hooks/README.md` for detailed hook documentation.
 
 ### Step 4: Test It Works
 
@@ -99,7 +109,9 @@ pnpm validate
 
 ## What You Get
 
-### 22 Specialized Agents
+### 23 Specialized Agents (NEW: Planner Agent!)
+
+**NEW**: Planner agent creates comprehensive plans before execution!
 
 | Agent | Purpose | Trigger Keywords |
 |-------|---------|------------------|
@@ -130,41 +142,45 @@ pnpm validate
 | compliance-auditor | Regulatory compliance | "gdpr", "hipaa", "soc2" |
 | incident-responder | Crisis management | "incident", "outage", "post-mortem" |
 
-### 9 Workflows
+### 10 Workflows
 
-| Workflow | Use Case | Steps |
-|----------|----------|-------|
-| **quick-flow** | Bug fixes, small features | Developer → QA |
-| **greenfield-fullstack** | New projects | Analyst → PM → UX → Architect → DB → QA → Dev → Docs → QA |
-| **brownfield-fullstack** | Existing codebases | Impact analysis → Requirements → Architecture → Migration → Test → Implement |
-| **enterprise-track** | Compliance-heavy projects | Full security review, compliance mapping, audit documentation |
-| **code-quality-flow** | Code review & refactoring | Code-reviewer → Refactoring-specialist → Compliance-auditor → QA |
-| **performance-flow** | Performance optimization | Performance-engineer → Architect → Developer → QA |
-| **ai-system-flow** | AI/LLM features | Model-orchestrator → LLM-architect → API-designer → Developer → QA |
-| **mobile-flow** | Mobile development | Mobile-developer → UX-expert → Developer → QA |
-| **incident-flow** | Production incidents | Incident-responder → DevOps → Security-architect → QA |
+| Workflow | Use Case | Steps | Iterative |
+|----------|----------|-------|-----------|
+| **quick-flow** | Bug fixes, small features | Developer → QA | No |
+| **greenfield-fullstack** | New projects | Analyst → PM → UX → Architect → DB → QA → Dev → Docs → QA | No |
+| **brownfield-fullstack** | Existing codebases | Impact analysis → Requirements → Architecture → Migration → Test → Implement | No |
+| **enterprise-track** | Compliance-heavy projects | Full security review, compliance mapping, audit documentation | No |
+| **code-quality-flow** | Code review & refactoring | Code-reviewer → Refactoring-specialist → Compliance-auditor → QA | No |
+| **performance-flow** | Performance optimization | Performance-engineer → Architect → Developer → QA | No |
+| **ai-system-flow** | AI/LLM features | Model-orchestrator → LLM-architect → API-designer → Developer → QA | No |
+| **mobile-flow** | Mobile development | Mobile-developer → UX-expert → Developer → QA | No |
+| **incident-flow** | Production incidents | Incident-responder → DevOps → Security-architect → QA | No |
+| **ui-perfection-loop** | UI/UX quality improvement (95%+ target) | UX-expert + Accessibility-expert (parallel) → Model-orchestrator (Gemini validation) → Developer + Mobile-developer → QA | **Yes** (iterates until score >= 95) |
 
-### 12 Slash Commands
+### 13 Slash Commands
 
-| Command | Purpose |
-|---------|---------|
-| **Core** | |
-| `/review` | Comprehensive code review |
-| `/fix-issue <n>` | Fix GitHub issue by number |
-| `/quick-ship` | Fast iteration workflow |
-| `/run-workflow` | Execute a specific workflow |
-| **Skills** | |
-| `/select-rules` | Auto-detect stack and configure rules |
-| `/audit` | Validate code against loaded rules |
-| `/scaffold` | Generate rule-compliant boilerplate |
-| **Workflows** | |
-| `/code-quality` | Code quality improvement workflow |
-| `/performance` | Performance optimization workflow |
-| `/ai-system` | AI/LLM system development workflow |
-| `/mobile` | Mobile application workflow |
-| `/incident` | Incident response workflow |
+| Command | Purpose | Example |
+|---------|---------|---------|
+| **Core** | | |
+| `/review` | Comprehensive code review | `/review` or `/review src/components/` |
+| `/fix-issue <n>` | Fix GitHub issue by number | `/fix-issue 123` |
+| `/quick-ship` | Fast iteration workflow | `/quick-ship Fix login button alignment` |
+| `/run-workflow` | Execute a specific workflow | `/run-workflow code-quality` |
+| **Skills** | | |
+| `/select-rules` | Auto-detect stack and configure rules | `/select-rules` |
+| `/audit` | Validate code against loaded rules | `/audit src/components/` or `/audit --format json` |
+| `/scaffold` | Generate rule-compliant boilerplate | `/scaffold component UserProfile` |
+| **Workflows** | | |
+| `/code-quality` | Code quality improvement workflow | `/code-quality` |
+| `/performance` | Performance optimization workflow | `/performance --target api/` |
+| `/ai-system` | AI/LLM system development workflow | `/ai-system` |
+| `/mobile` | Mobile application workflow | `/mobile` |
+| `/incident` | Incident response workflow | `/incident` |
+| `/ui-perfection` | UI/UX iterative perfection loop (95%+ target) | `/ui-perfection --component UserProfile.tsx --score 98` |
 
-### 6 Utility Skills (Cross-Platform)
+### 13 Utility Skills (Cross-Platform)
+
+**NEW**: 5 new skills added for planning, diagrams, testing, dependencies, and documentation!
 
 Skills work across all three platforms with consistent functionality.
 
@@ -176,50 +192,577 @@ Skills work across all three platforms with consistent functionality.
 | `rule-auditor` | Validate against rules | Natural language | `@rule-auditor` | Task tool |
 | `rule-selector` | Auto-configure rules | Natural language | `@rule-selector` | Task tool |
 | `scaffolder` | Generate compliant code | Natural language | `@scaffolder` | Task tool |
+| `commit-validator` | Validate commit messages | Natural language | `@commit-validator` | Task tool |
+| `code-style-validator` | AST-based style validation | Natural language | `@code-style-validator` | Task tool |
+| `claude-md-generator` | Auto-generate claude.md files (NEW!) | Natural language | `@claude-md-generator` | Task tool |
+| `plan-generator` | Create structured plans (NEW!) | Natural language | `@plan-generator` | Task tool |
+| `diagram-generator` | Generate diagrams (NEW!) | Natural language | `@diagram-generator` | Task tool |
+| `test-generator` | Generate test code (NEW!) | Natural language | `@test-generator` | Task tool |
+| `dependency-analyzer` | Analyze dependencies (NEW!) | Natural language | `@dependency-analyzer` | Task tool |
+| `doc-generator` | Generate documentation (NEW!) | Natural language | `@doc-generator` | Task tool |
 
 **Skill Locations:**
 - Claude: `.claude/skills/*/SKILL.md`
 - Cursor: `.cursor/skills/*.md`
 - Factory: `.factory/skills/*.md`
 
-## First Workflow Example
+## How Workflows Work
 
-**Building a New Feature:**
+Understanding how workflows execute is key to using the system effectively. This section explains the complete execution flow from trigger to completion.
+
+### Workflow Triggering
+
+Workflows can be triggered in two ways:
+
+#### 1. Automatic Keyword Matching
+
+When you use natural language, the system automatically selects a workflow:
+
+**Process:**
+1. **Extract Keywords**: System extracts keywords from your prompt
+2. **Match Workflows**: Keywords matched against `workflow_selection` in `config.yaml`
+3. **Count Matches**: Count how many keywords match each workflow
+4. **Priority Selection**: Among matching workflows, select the one with **lowest priority number** (0 = highest priority)
+5. **Default Fallback**: If no matches, use `default_workflow` (typically `fullstack`)
+
+**Example:**
+```
+User: "Build a new authentication feature from scratch"
+→ Keywords detected: "new", "from scratch"
+→ Matches: `fullstack` workflow (keywords: "new project", "from scratch", "greenfield")
+→ Priority: 2 (medium priority)
+→ Selected: `fullstack` workflow
+→ Executes: Planner (Step 0) → Full Stack Flow with all agents (Steps 1-N)
+```
+
+**Priority System:**
+- **Priority 0**: Incident Flow (critical - highest priority)
+- **Priority 1**: Quick Flow
+- **Priority 2**: Full Stack Flow, UI Perfection Loop
+- **Priority 3**: Code Quality, Performance, AI System, Mobile
+
+#### 2. Slash Commands
+
+Slash commands directly invoke specific workflows:
 
 ```
-User: "I need a task management dashboard with user authentication"
-
-→ Orchestrator detects "greenfield fullstack" workflow
-
-Step 1: Analyst creates project brief
-Step 2: PM creates PRD with user stories
-Step 3: UX Expert designs interface
-Step 4: Architect designs system
-Step 5: Database Architect designs schema
-Step 6: QA creates test plan
-Step 7: Developer implements
-Step 8: Technical Writer documents
-Step 9: QA validates quality gates
+/quick-ship Fix login button
+→ Directly triggers quick-flow workflow
+→ Bypasses keyword matching
 ```
 
-**Quick Bug Fix:**
+### Workflow Execution Flow
 
+Once a workflow is selected, here's what happens step-by-step:
+
+#### Step 0: Session Initialization
+
+1. **Generate Workflow ID**: Create unique identifier (e.g., `1735123456-abc123`)
+2. **Create Session Directories**:
+   - `.claude/context/history/gates/{workflow_id}/` - Validation gates
+   - `.claude/context/history/reasoning/{workflow_id}/` - Agent reasoning files
+   - `.claude/context/artifacts/` - Step outputs (shared)
+
+#### Step 1-N: Sequential Step Execution
+
+For each step in the workflow YAML:
+
+**1. Load Step Configuration**
+- Read step definition from workflow YAML
+- Identify agent, inputs, outputs, validation requirements
+
+**2. Activate Agent**
+- Load agent definition from `.claude/agents/{agent}.md`
+- Load agent context files from `config.yaml` (if specified)
+- Apply agent-specific settings (model, temperature, etc.)
+
+**3. Prepare Inputs**
+- Load artifacts from previous steps (from `.claude/context/artifacts/`)
+- Resolve template variables (e.g., `{{workflow_id}}` → actual ID)
+- Pass user requirements and context
+
+**4. Execute Agent Task**
+- Agent performs work using available tools
+- Agent can read templates, generate code, create documents
+- Agent saves reasoning files to `.claude/context/history/reasoning/{workflow_id}/`
+
+**5. Save Outputs**
+- Save artifacts to `.claude/context/artifacts/{artifact-name}.json`
+- Artifacts become inputs for subsequent steps
+- Special outputs:
+  - `code-artifacts`: Code files/directories (not validated)
+  - `reasoning: path/to/file.json`: Agent decision-making documentation
+
+**6. Validate Step Output**
+- Run `workflow_runner.js` with step number and workflow ID
+- If schema specified: Validate JSON structure against schema
+- Always create gate file: `.claude/context/history/gates/{workflow_id}/{step}-{agent}.json`
+- Gate file contains: validation status, errors (if any), warnings
+
+**7. Handle Validation Results**
+- **Success**: Proceed to next step
+- **Failure**: 
+  - Provide feedback to agent (max 3 retries)
+  - Agent corrects output
+  - Re-validate until passing or max retries reached
+
+#### Artifact Passing Between Steps
+
+Each step's outputs become inputs for subsequent steps:
+
+**Pattern:**
+```yaml
+# Step 1 Output
+outputs:
+  - project-brief.json
+
+# Step 2 Input (references Step 1)
+inputs:
+  - project-brief.json (from step 1)
 ```
-User: "/quick-ship Fix the login button alignment"
 
-→ Quick flow workflow
+**How It Works:**
+1. Step 1 saves `project-brief.json` to `.claude/context/artifacts/`
+2. Step 2 reads `project-brief.json` from `.claude/context/artifacts/`
+3. Agent in Step 2 uses the artifact as context for its work
 
-Step 1: Developer fixes the issue
-Step 2: QA validates the fix
+**Template Variables:**
+Artifacts can use template variables that are resolved at runtime:
+- `{{workflow_id}}`: Unique workflow identifier (required)
+- `{{story_id}}`: Story identifier for story loops (optional)
+- `{{epic_id}}`: Epic identifier for epic loops (optional)
+
+**Example:**
+```yaml
+outputs:
+  - plan-{{workflow_id}}.json
+  # Resolves to: plan-1735123456-abc123.json
 ```
+
+### Complete End-to-End Example
+
+Here's a complete example showing the full execution flow:
+
+#### User Prompt
+```
+"I need a task management dashboard with user authentication"
+```
+
+#### Execution Flow
+
+**1. Workflow Selection**
+- Keywords: "task management", "dashboard", "authentication"
+- Matches: `fullstack` workflow (keywords: "new project", "full stack")
+- Selected: `greenfield-fullstack.yaml`
+
+**2. Session Initialization**
+- Workflow ID: `1735123456-abc123`
+- Directories created:
+  - `.claude/context/history/gates/1735123456-abc123/`
+  - `.claude/context/history/reasoning/1735123456-abc123/`
+
+**3. Step 0: Planner**
+- **Agent**: `planner`
+- **Inputs**: User requirements, business objectives
+- **Actions**:
+  - Loads template: `.claude/templates/plan-template.md`
+  - Creates comprehensive plan
+  - Coordinates with specialists (Analyst, PM, Architect) for input
+- **Outputs**:
+  - `plan-1735123456-abc123.md`
+  - `plan-1735123456-abc123.json`
+  - `reasoning: .claude/context/history/reasoning/1735123456-abc123/00-planner.json`
+- **Validation**:
+  - Schema: `.claude/schemas/plan.schema.json`
+  - Gate: `.claude/context/history/gates/1735123456-abc123/00-planner.json`
+  - Status: ✅ Pass
+
+**4. Step 1: Analyst**
+- **Agent**: `analyst`
+- **Inputs**: 
+  - `plan-1735123456-abc123.json` (from step 0)
+  - User requirements
+- **Actions**:
+  - Researches task management patterns
+  - Analyzes requirements
+  - Creates project brief
+- **Outputs**:
+  - `project-brief.json` → Saved to `.claude/context/artifacts/project-brief.json`
+  - `reasoning: .claude/context/history/reasoning/1735123456-abc123/01-analyst.json`
+- **Validation**:
+  - Schema: `.claude/schemas/project_brief.schema.json`
+  - Gate: `.claude/context/history/gates/1735123456-abc123/01-analyst.json`
+  - Status: ✅ Pass
+
+**5. Step 2: PM**
+- **Agent**: `pm`
+- **Inputs**:
+  - `plan-1735123456-abc123.json` (from step 0)
+  - `project-brief.json` (from step 1) ← **Artifact from previous step**
+- **Actions**:
+  - Loads template: `.claude/templates/prd.md`
+  - Creates PRD with user stories
+  - Defines acceptance criteria
+- **Outputs**:
+  - `prd.json` → Saved to `.claude/context/artifacts/prd.json`
+  - `reasoning: .claude/context/history/reasoning/1735123456-abc123/02-pm.json`
+- **Validation**:
+  - Schema: `.claude/schemas/product_requirements.schema.json`
+  - Gate: `.claude/context/history/gates/1735123456-abc123/02-pm.json`
+  - Status: ✅ Pass
+
+**6. Steps 3-9: Continue Sequentially**
+- Each step follows the same pattern
+- Each step uses outputs from previous steps
+- Each step validates before proceeding
+
+**7. Completion**
+- All steps validated successfully
+- All artifacts created
+- Quality gates passed
+- Workflow complete
+
+### Validation and Error Handling
+
+#### Validation Process
+
+Each step can specify validation:
+
+```yaml
+validation:
+  schema: .claude/schemas/project_brief.schema.json
+  gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
+```
+
+**Validation Steps:**
+1. Run: `node .claude/tools/workflow_runner.js --workflow <yaml> --step <N> --id <workflow_id>`
+2. Script loads schema and validates output JSON
+3. Creates gate file with validation results
+4. Returns exit code 0 (success) or 1 (failure)
+
+#### Error Handling
+
+**If Validation Fails:**
+1. Gate file contains error details
+2. System provides feedback to agent
+3. Agent corrects output (max 3 retries)
+4. Re-validate until passing
+
+**Common Issues:**
+- **Missing Artifacts**: Previous step didn't create required artifact
+- **Schema Mismatch**: Output doesn't match expected schema structure
+- **Template Variables**: Variables not resolved (e.g., `{{workflow_id}}` not provided)
+- **Agent Errors**: Agent failed to understand task or generate correct output
+
+### Manual Workflow Execution
+
+You can also manually execute workflows:
+
+**1. Select Workflow**
+- Choose from available workflows in `config.yaml`
+- Or use slash command: `/run-workflow <workflow-name>`
+
+**2. Initialize Session**
+```bash
+WORKFLOW_ID=$(date +%s)-$(uuidgen | cut -d'-' -f1)
+mkdir -p .claude/context/history/gates/$WORKFLOW_ID
+```
+
+**3. Execute Steps**
+For each step:
+```bash
+# Execute step 1
+node .claude/tools/workflow_runner.js \
+  --workflow .claude/workflows/greenfield-fullstack.yaml \
+  --step 1 \
+  --id $WORKFLOW_ID
+```
+
+**4. Handle Failures**
+- Review gate file for errors
+- Provide feedback to agent
+- Retry step or adjust approach
+
+### Workflow vs Skill vs Agent
+
+**Workflow**: Multi-step orchestration
+- Coordinates multiple agents
+- Passes artifacts between steps
+- Validates each step
+- Example: `/code-quality` (5 steps, 4 agents)
+
+**Skill**: Single utility function
+- Performs one specific task
+- No multi-step orchestration
+- Example: `/scaffold` (generates code)
+
+**Agent**: Specialized AI assistant
+- Activated by keywords or workflow
+- Performs specific role (Developer, Architect, etc.)
+- Can be used standalone or in workflows
+
+## Customer User Journeys (CUJs)
+
+We have **24 documented Customer User Journeys** that show complete workflows from start to finish:
+
+- **Onboarding & Setup** (CUJ-001 to CUJ-003)
+- **Planning & Architecture** (CUJ-004 to CUJ-008)
+- **Development** (CUJ-009 to CUJ-012)
+- **Quality Assurance** (CUJ-013 to CUJ-015)
+- **Documentation** (CUJ-016 to CUJ-018)
+- **Specialized Workflows** (CUJ-019 to CUJ-022)
+- **Maintenance & Operations** (CUJ-023 to CUJ-024)
+
+See `.claude/docs/cujs/CUJ-INDEX.md` for the complete index and individual CUJ files for detailed workflows.
+
+## Example Prompts & Workflows
+
+> **Note**: For detailed workflow execution flow, see the "How Workflows Work" section above.
+
+### Building a New Feature
+
+**Prompt:**
+```
+"I need a task management dashboard with user authentication"
+```
+
+**What Happens:**
+1. **Workflow Selection**: Keywords "new", "dashboard" match `fullstack` workflow
+2. **Step 0**: Planner creates comprehensive plan
+3. **Step 1**: Analyst creates project brief (uses plan from Step 0)
+4. **Step 2**: PM creates PRD with user stories (uses plan + project brief)
+5. **Step 3**: UX Expert designs interface (uses plan + PRD)
+6. **Step 4**: Architect designs system (uses plan + PRD + UX spec)
+7. **Step 5**: Database Architect designs schema (uses plan + system architecture)
+8. **Step 6**: QA creates test plan (uses plan + architecture + database)
+9. **Step 7**: Developer implements (uses plan + all previous artifacts)
+10. **Step 8**: Technical Writer documents (uses plan + dev manifest)
+11. **Step 9**: QA validates quality gates (uses plan + dev manifest + test plan)
+
+**Artifact Flow:**
+- Each step saves outputs to `.claude/context/artifacts/`
+- Next step reads artifacts as inputs
+- All steps reference the plan from Step 0
+
+### Quick Bug Fix
+
+**Prompt:**
+```
+/quick-ship Fix the login button alignment
+```
+
+**What Happens:**
+- Quick flow workflow activates
+- Step 1: Developer fixes the issue
+- Step 2: QA validates the fix
+
+### UI Perfection Loop (Iterative)
+
+**Prompt:**
+```
+/ui-perfection --component app/components/Dashboard.tsx --score 98 --glassmorphism --images designs/ref-1.png designs/ref-2.png
+```
+
+**What Happens:**
+- Phase 1: UX Expert + Accessibility Expert (parallel audit)
+- Phase 2: Model Orchestrator (Gemini validation, scoring)
+- Phase 3: Developer + Mobile Developer (implementation)
+- Phase 4: QA (verification with anti-hallucination protocol)
+- **Iterates** until score >= 98 or max iterations (5) reached
+- Each iteration preserves context and compares scores
+
+### Code Quality Review
+
+**Prompt:**
+```
+/code-quality
+```
+
+**What Happens:**
+- Code-reviewer analyzes code quality
+- Refactoring-specialist creates transformation plan
+- Compliance-auditor validates standards
+- QA runs final validation
+
+### Performance Optimization
+
+**Prompt:**
+```
+/performance --target api/users
+```
+
+**What Happens:**
+- Performance-engineer profiles and identifies bottlenecks
+- Architect reviews optimization strategy
+- Developer implements optimizations
+- QA validates performance improvements
+
+### AI System Development
+
+**Prompt:**
+```
+/ai-system
+```
+
+**What Happens:**
+- Model-orchestrator plans multi-model routing
+- LLM-architect designs RAG pipeline and prompt engineering
+- API-designer creates API specification
+- Developer implements AI features
+- QA validates AI quality and safety
+
+### Mobile Development
+
+**Prompt:**
+```
+/mobile
+```
+
+**What Happens:**
+- Mobile-developer plans platform strategy
+- UX-expert designs mobile interface
+- Developer implements mobile features
+- QA tests on multiple devices
+
+### Incident Response
+
+**Prompt:**
+```
+/incident
+```
+
+**What Happens:**
+- Incident-responder analyzes the crisis
+- DevOps implements fixes
+- Security-architect reviews security implications
+- QA validates resolution
+
+### Using Skills Directly
+
+**Prompt:**
+```
+"Select rules for this Next.js TypeScript project"
+```
+
+**What Happens:**
+- rule-selector skill activates
+- Auto-detects tech stack
+- Configures optimal rules in manifest.yaml
+
+**Prompt:**
+```
+"Scaffold a UserProfile component with authentication"
+```
+
+**What Happens:**
+- scaffolder skill activates
+- Generates rule-compliant component code
+- Includes types, tests, and proper structure
+
+**Prompt:**
+```
+"Audit src/components/ against our rules"
+```
+
+**What Happens:**
+- rule-auditor skill activates
+- Validates code against loaded rules
+- Generates compliance report with violations and fixes
+
+**Prompt:**
+```
+"Validate this commit message: feat(auth): add OAuth2 support"
+```
+
+**What Happens:**
+- commit-validator skill activates
+- Validates against Conventional Commits format
+- Returns pass/fail with suggestions if invalid
 
 ## Troubleshooting
+
+### Workflow Issues
+
+#### Workflow Not Triggering
+
+**Problem**: Natural language prompt doesn't trigger expected workflow
+
+**Solutions**:
+1. Check keywords match workflow in `config.yaml`
+   - View `.claude/config.yaml` → `workflow_selection` section
+   - Ensure your prompt contains matching keywords
+2. Use slash command for direct invocation:
+   ```
+   /code-quality  # Directly triggers code-quality workflow
+   ```
+3. Check priority: Lower number = higher priority
+   - Incident (0) > Quick (1) > Full Stack (2) > Others (3)
+4. Verify workflow file exists:
+   - Check `.claude/workflows/{workflow-name}.yaml` exists
+
+#### Workflow Step Failing
+
+**Problem**: Step validation fails or agent doesn't produce expected output
+
+**Solutions**:
+1. Check gate file for errors:
+   ```bash
+   cat .claude/context/history/gates/{workflow_id}/{step}-{agent}.json
+   ```
+2. Review agent reasoning file:
+   ```bash
+   cat .claude/context/history/reasoning/{workflow_id}/{step}-{agent}.json
+   ```
+3. Verify previous step outputs exist:
+   ```bash
+   ls .claude/context/artifacts/
+   # Check that required artifacts from previous steps exist
+   ```
+4. Check artifact naming matches:
+   - Step outputs must match step inputs exactly
+   - Use kebab-case: `project-brief.json` (not `project_brief.json`)
+5. Verify schema validation:
+   - Check schema file exists: `.claude/schemas/{schema-name}.schema.json`
+   - Validate JSON structure matches schema
+
+#### Artifacts Not Passing Between Steps
+
+**Problem**: Step can't find artifact from previous step
+
+**Solutions**:
+1. Verify artifact was created:
+   ```bash
+   ls .claude/context/artifacts/
+   # Should see artifact from previous step
+   ```
+2. Check artifact name matches exactly:
+   - Output: `project-brief.json`
+   - Input: `project-brief.json` (must match exactly)
+3. Verify template variables resolved:
+   - `{{workflow_id}}` must be provided via `--id` argument
+   - Check artifact name doesn't contain unresolved variables
+4. Check step number in reference:
+   - `artifact.json (from step 1)` - step number must be correct
+
+#### Validation Errors
+
+**Problem**: Schema validation fails
+
+**Solutions**:
+1. Check schema file exists and is valid JSON
+2. Verify output JSON structure matches schema
+3. Review gate file for specific validation errors
+4. Manually validate JSON:
+   ```bash
+   node -e "const schema = require('./.claude/schemas/plan.schema.json'); const data = require('./.claude/context/artifacts/plan-{id}.json'); console.log('Valid:', require('ajv')().compile(schema)(data));"
+   ```
 
 ### Agents Not Activating
 
 1. Check `CLAUDE.md` is in project root (not inside `.claude/`)
 2. Verify `.claude/config.yaml` exists
 3. Restart Claude Code after copying files
+4. Check agent file exists: `.claude/agents/{agent-name}.md`
 
 ### Hooks Not Running
 
@@ -227,25 +770,135 @@ Step 2: QA validates the fix
 2. Point to `.claude/hooks` directory
 3. Check hook files are executable (Linux/Mac)
 
+**Available Hooks:**
+- **security-pre-tool.sh** (PreToolUse): Blocks dangerous commands before execution
+- **audit-post-tool.sh** (PostToolUse): Logs all tool executions for audit trail
+
+**Testing Hooks:**
+```bash
+# Test security hook blocks dangerous command
+echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /"}}' | bash .claude/hooks/security-pre-tool.sh
+# Expected: {"decision": "block", "reason": "Blocked dangerous command pattern"}
+
+# Test audit hook logs execution
+echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/audit-post-tool.sh
+cat ~/.claude/audit/tool-usage.log
+```
+
 ### Slash Commands Not Found
 
 1. Commands load from `.claude/commands/*.md`
 2. Restart Claude Code after adding commands
 3. Check file extension is `.md`
 
+## Hooks System
+
+### Available Hooks
+
+The LLM-RULES system includes two native Claude Code hooks that provide security and audit capabilities:
+
+**1. security-pre-tool.sh (PreToolUse Hook)**
+- **Purpose**: Validates and blocks dangerous operations before execution
+- **Location**: `.claude/hooks/security-pre-tool.sh`
+- **When it runs**: Before every tool execution
+- **Blocks**:
+  - Dangerous shell commands (`rm -rf /`, `sudo rm`, `mkfs`, `dd`, etc.)
+  - Code injection patterns (`eval`, `python -c`, `node -e`, etc.)
+  - Remote code execution (`curl|bash`, `wget|sh`, etc.)
+  - SQL injection attempts (`DROP DATABASE`, etc.)
+  - Credential file modifications (`.env`, `.pem`, `.key`, etc.)
+  - Force push to main/master branches
+  - PowerShell encoded commands (Windows)
+
+**2. audit-post-tool.sh (PostToolUse Hook)**
+- **Purpose**: Logs all tool executions for audit trail
+- **Location**: `.claude/hooks/audit-post-tool.sh`
+- **When it runs**: After every tool execution
+- **Logs**:
+  - Timestamp of execution
+  - Tool name and command/file path
+  - Stores in `~/.claude/audit/tool-usage.log`
+  - Auto-rotates logs to prevent disk bloat (max 10MB)
+
+### Enabling Hooks
+
+**Method 1: Via Claude Code UI**
+1. Open Claude Code in your project
+2. Go to **Preferences > Claude Code > Hooks**
+3. Point to `.claude/hooks` directory
+4. Enable both hooks:
+   - PreToolUse: `.claude/hooks/security-pre-tool.sh`
+   - PostToolUse: `.claude/hooks/audit-post-tool.sh`
+
+**Method 2: Manual Configuration**
+Add to your Claude Code settings:
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "command": "bash .claude/hooks/security-pre-tool.sh"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "command": "bash .claude/hooks/audit-post-tool.sh"
+      }
+    ]
+  }
+}
+```
+
+### Testing Hooks
+
+```bash
+# Test security hook blocks dangerous command
+echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /"}}' | bash .claude/hooks/security-pre-tool.sh
+# Expected: {"decision": "block", "reason": "Blocked dangerous command pattern: rm -rf /"}
+
+# Test security hook allows safe command
+echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/security-pre-tool.sh
+# Expected: {"decision": "allow"}
+
+# Test audit hook logs execution
+echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/audit-post-tool.sh
+cat ~/.claude/audit/tool-usage.log
+```
+
+### Customizing Hooks
+
+**Adding Blocked Patterns:**
+Edit `.claude/hooks/security-pre-tool.sh` and add patterns to `DANGEROUS_PATTERNS` array.
+
+**Protecting Additional Files:**
+Add file patterns to the file protection section in `security-pre-tool.sh`.
+
+**Custom Audit Format:**
+Modify the logging format in `audit-post-tool.sh`.
+
+See `.claude/hooks/README.md` for detailed hook documentation.
+
 ## Security Features
 
-The configuration includes security hooks that block:
+### Guardrails
 
-- Dangerous shell commands (`rm -rf /`, `sudo rm`, etc.)
-- Code injection patterns (`eval`, `python -c`, etc.)
-- SQL injection attempts (`DROP DATABASE`, etc.)
-- Credential file modifications (`.env`, `.pem`, etc.)
+Additional guardrails are enforced via `.claude/tools/guardrails-enforcer.mjs`:
+- **Latency guardrails**: Blocks long-running operations (>30s)
+- **Hallucination detection**: Requires source citations for technical claims
+- **Jailbreak mitigation**: Blocks suspicious prompt patterns
+- **Prompt leak prevention**: Detects potential system prompt exposure
+- **Consistency enforcement**: Ensures code follows templates and patterns
 
-**To bypass security hooks (use with caution):**
+**Usage:**
 ```bash
-# Only for trusted operations
-.claude/tools/model-router.sh -m opus -p "prompt" --bypass-permissions
+# Check prompt for issues
+node .claude/tools/guardrails-enforcer.mjs check "<prompt>"
+
+# Check for jailbreak attempts
+node .claude/tools/guardrails-enforcer.mjs jailbreak "<prompt>"
+
+# Check command latency
+node .claude/tools/guardrails-enforcer.mjs latency "<command>"
 ```
 
 ## Cross-Platform Skill Usage
@@ -286,6 +939,85 @@ Use @context-bridge to hand off to Factory
 Run Task tool with skill context-bridge to sync to Claude
 ```
 
+## Enterprise Features
+
+### Cost Tracking
+
+Monitor token usage and costs per agent session:
+
+```bash
+# View cost report
+node .claude/tools/cost-tracker.mjs report
+
+# Get cost stats for specific agent
+node .claude/tools/cost-tracker.mjs stats developer 30
+
+# Get cost forecast
+node .claude/tools/cost-tracker.mjs forecast 30
+```
+
+### Session Management
+
+Track and manage agent sessions:
+
+```bash
+# Create new session
+node .claude/tools/session-manager.mjs create developer
+
+# List active sessions
+node .claude/tools/session-manager.mjs list
+
+# Get session details
+node .claude/tools/session-manager.mjs get <session-id>
+
+# Close session
+node .claude/tools/session-manager.mjs close <session-id> "completed"
+```
+
+### Context Monitoring
+
+Track context usage to optimize token consumption:
+
+```bash
+# Generate context usage report
+node .claude/tools/context-monitor.mjs report
+
+# Get stats for specific agent
+node .claude/tools/context-monitor.mjs stats developer 7
+```
+
+### Analytics
+
+Track usage and performance metrics:
+
+```bash
+# Track event
+node .claude/tools/analytics-api.mjs track "agent_activation" '{"agent":"developer"}'
+
+# Get usage stats
+node .claude/tools/analytics-api.mjs stats 7d developer
+
+# Generate report
+node .claude/tools/analytics-api.mjs report 7d
+```
+
+### Testing & Evaluation
+
+Define success criteria and run evaluations:
+
+```bash
+# Define evaluation criteria
+node .claude/tools/eval-framework.mjs define "code-quality" '<criteria-json>'
+
+# Run evaluation
+node .claude/tools/eval-framework.mjs run "code-quality" '<test-case-json>'
+
+# Generate report
+node .claude/tools/eval-framework.mjs report "code-quality" 7
+```
+
+See `.claude/docs/ENTERPRISE_FEATURES.md` for complete enterprise feature documentation.
+
 ## Next Steps
 
 1. **Customize agents**: Edit files in `.claude/agents/` to match your team's style
@@ -293,17 +1025,136 @@ Run Task tool with skill context-bridge to sync to Claude
 3. **Add rules**: Create technology-specific rules in `.claude/rules/`
 4. **Create commands**: Add custom workflows in `.claude/commands/`
 5. **Configure MCP**: Set up integrations in `.claude/.mcp.json`
+6. **Enable enterprise features**: Set up cost tracking, session management, and analytics
+7. **Configure hooks**: Enable security and audit hooks for production use
 
 ## Documentation
 
+### Setup & Configuration
 - **Full Setup Guide**: `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md`
+- **Migration Guide**: `.claude/docs/MIGRATION_GUIDE.md`
+- **Context Optimization**: `.claude/docs/CONTEXT_OPTIMIZATION.md`
+
+### Enterprise Features
+- **Enterprise Features**: `.claude/docs/ENTERPRISE_FEATURES.md`
+- **Enterprise Deployment**: `.claude/docs/ENTERPRISE_DEPLOYMENT.md`
+- **Implementation Summary**: `.claude/docs/IMPLEMENTATION_SUMMARY.md`
+
+### Workflows & Tools
+- **Workflow Guide**: `.claude/workflows/WORKFLOW-GUIDE.md`
+- **UI Perfection Tools**: `.claude/docs/UI_PERFECTION_TOOLS.md`
 - **Agent Details**: `.claude/agents/` (each agent has full documentation)
-- **Security Features**: `.claude/docs/ENTERPRISE-FEATURES.md`
+
+### Hooks & Security
+- **Hooks Documentation**: `.claude/hooks/README.md`
+- **Guardrails**: `.claude/system/guardrails/guardrails.md`
+- **Permissions**: `.claude/system/permissions/permissions.md`
+
+## Quick Reference
+
+### All Slash Commands
+
+| Command | Purpose | Example |
+|---------|---------|---------|
+| `/review` | Code review | `/review` or `/review src/components/` |
+| `/fix-issue <n>` | Fix GitHub issue | `/fix-issue 123` |
+| `/quick-ship` | Fast iteration | `/quick-ship Fix button alignment` |
+| `/run-workflow` | Execute workflow | `/run-workflow code-quality` |
+| `/select-rules` | Configure rules | `/select-rules` |
+| `/audit` | Validate code | `/audit src/` or `/audit --format json` |
+| `/scaffold` | Generate code | `/scaffold component UserProfile` |
+| `/code-quality` | Code quality workflow | `/code-quality` |
+| `/performance` | Performance optimization | `/performance --target api/` |
+| `/ai-system` | AI/LLM development | `/ai-system` |
+| `/mobile` | Mobile development | `/mobile` |
+| `/incident` | Incident response | `/incident` |
+| `/ui-perfection` | UI perfection loop | `/ui-perfection --component Dashboard.tsx --score 98` |
+
+### All Hooks
+
+| Hook | Event | Purpose | Location |
+|------|-------|---------|----------|
+| `security-pre-tool.sh` | PreToolUse | Blocks dangerous commands | `.claude/hooks/security-pre-tool.sh` |
+| `audit-post-tool.sh` | PostToolUse | Logs tool executions | `.claude/hooks/audit-post-tool.sh` |
+
+### All Enterprise Tools
+
+| Tool | Purpose | Command |
+|------|---------|---------|
+| `cost-tracker.mjs` | Cost monitoring | `node .claude/tools/cost-tracker.mjs report` |
+| `session-manager.mjs` | Session management | `node .claude/tools/session-manager.mjs list` |
+| `context-monitor.mjs` | Context usage tracking | `node .claude/tools/context-monitor.mjs report` |
+| `analytics-api.mjs` | Usage analytics | `node .claude/tools/analytics-api.mjs report 7d` |
+| `eval-framework.mjs` | Testing & evaluation | `node .claude/tools/eval-framework.mjs report <name>` |
+| `guardrails-enforcer.mjs` | Safety guardrails | `node .claude/tools/guardrails-enforcer.mjs check "<prompt>"` |
+| `validate-commit.mjs` | Commit validation | `echo "message" \| node .claude/tools/validate-commit.mjs` |
+| `subagent-context-loader.mjs` | Context loading | `node .claude/tools/subagent-context-loader.mjs load developer` |
+
+### Example Prompts by Use Case
+
+**New Feature Development:**
+```
+"I need a task management dashboard with user authentication"
+→ Triggers greenfield-fullstack workflow
+```
+
+**UI/UX Optimization:**
+```
+/ui-perfection --component Dashboard.tsx --score 98 --glassmorphism
+→ Iterative UI perfection loop until 98% score
+```
+
+**Code Quality:**
+```
+/code-quality
+→ Comprehensive code review and refactoring
+```
+
+**Performance Issues:**
+```
+/performance --target api/users
+→ Performance profiling and optimization
+```
+
+**AI Feature:**
+```
+/ai-system
+→ AI/LLM system design and implementation
+```
+
+**Quick Fix:**
+```
+/quick-ship Fix the login button alignment
+→ Fast iteration workflow
+```
+
+**Rule Configuration:**
+```
+"Select rules for this Next.js TypeScript project"
+→ Auto-detects stack and configures rules
+```
+
+**Code Generation:**
+```
+"Scaffold a UserProfile component with authentication"
+→ Generates rule-compliant component code
+```
+
+**Code Validation:**
+```
+"Audit src/components/ against our rules"
+→ Validates code compliance
+```
 
 ## Support
 
+- **First-Time Users**: Start with `FIRST_TIME_USER.md`
+- **CUJ Documentation**: `.claude/docs/cujs/CUJ-INDEX.md` - All 24 user journeys
+- **Onboarding Tool**: Run `node .claude/tools/onboarding.mjs` to validate setup
 - Issues: https://github.com/anthropics/claude-code/issues
 - Documentation: `.claude/docs/`
+- Workflow Guide: `.claude/workflows/WORKFLOW-GUIDE.md` - Now with Planner integration!
+- Enterprise Features: `.claude/docs/ENTERPRISE_FEATURES.md`
 
 ---
 

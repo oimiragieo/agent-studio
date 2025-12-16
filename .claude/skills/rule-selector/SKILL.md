@@ -52,78 +52,91 @@ cat requirements.txt | grep -E "fastapi|django|flask|pytorch|tensorflow"
 cat go.mod | grep -E "gin|echo|fiber|chi"
 ```
 
-### Step 3: Map to Rule Packs
+### Step 3: Load Rule Index
 
-Use this detection matrix to select rules:
+Load the rule index to discover all available rules dynamically:
+- @.claude/context/rule-index.json
 
-| Detection Signal | Rule Pack(s) to Include |
-|------------------|-------------------------|
-| `next` in package.json | `nextjs.mdc`, `nextjs-app-router-*` |
-| `react` + `typescript` | `react.mdc`, `typescript.mdc` |
-| `tailwindcss` | `tailwind.mdc`, `tailwind-*` |
-| `fastapi` in requirements | `fastapi.mdc`, `python-fastapi-*` |
-| `django` in requirements | `python.mdc`, `django-*` |
-| `vue` in package.json | `vue.mdc`, `vue3-*` |
-| `@angular/core` | `angular-*.mdc` |
-| `svelte` | `svelte.mdc`, `sveltekit-*` |
-| `cypress` in devDependencies | `cypress-*` |
-| `playwright` | `playwright-*` |
-| `jest` or `vitest` | `jest-*`, `vitest-*` |
-| `.go` files present | `go-*`, `backend-scalability-*` |
-| `Cargo.toml` present | `rust.mdc` |
+The index contains metadata for all 1,081+ rules with technology mappings.
 
-### Step 4: Generate Stack Profile
+### Step 4: Map Technologies to Rules
 
-Create a custom profile in manifest.yaml:
+For each detected technology, query the index's `technology_map`:
+
+```javascript
+// Pseudocode
+const detectedTech = ['nextjs', 'react', 'typescript', 'tailwind'];
+const recommendedRules = [];
+
+detectedTech.forEach(tech => {
+  const rules = index.technology_map[tech] || [];
+  recommendedRules.push(...rules);
+});
+
+// Prioritize master rules over archive rules
+const masterRules = recommendedRules.filter(r => r.type === 'master');
+const archiveRules = recommendedRules.filter(r => r.type === 'archive');
+```
+
+**Technology Mapping**:
+- Detected technologies from Step 2 → Query `index.technology_map[tech]`
+- Get all rules for each technology
+- Prioritize master rules (from `.claude/rules-master/`)
+- Supplement with archive rules (from `.claude/archive/`)
+
+### Step 5: Generate Stack Profile
+
+Create a custom profile in manifest.yaml using rules from the index:
 
 ```yaml
 # Generated stack profile for: my-nextjs-app
+# Rules discovered from rule index
 stack_profiles:
   my-nextjs-app:
     # Auto-detected: Next.js 14 + TypeScript + Tailwind + Prisma
     include:
-      # Core framework rules
-      - ".claude/rules/nextjs.mdc"
-      - ".claude/rules/nextjs-app-router-cursorrules-prompt-file/**/*.mdc"
-      - ".claude/rules/nextjs-typescript-tailwind-cursorrules-prompt-file/**/*.mdc"
-
-      # Language rules
-      - ".claude/rules/typescript.mdc"
-      - ".claude/rules/react.mdc"
-
-      # Styling rules
-      - ".claude/rules/tailwind.mdc"
-
-      # Testing rules (detected: vitest)
-      - ".claude/rules/vitest-unit-testing-cursorrules-prompt-file/**/*.mdc"
-
-      # Code quality
-      - ".claude/rules/clean-code.mdc"
-      - ".claude/rules/javascript-typescript-code-quality-*/**/*.mdc"
+      # Master rules (from index, type: "master")
+      - ".claude/rules-master/TECH_STACK_NEXTJS.md"
+      - ".claude/rules-master/PROTOCOL_ENGINEERING.md"
+      
+      # Archive rules (from index, type: "archive")
+      # Selected based on technology_map queries
+      - ".claude/archive/nextjs.mdc"
+      - ".claude/archive/typescript.mdc"
+      - ".claude/archive/react.mdc"
+      - ".claude/archive/tailwind.mdc"
+      - ".claude/archive/vitest-unit-testing-cursorrules-prompt-file/**/*.mdc"
 
     exclude:
-      # Exclude irrelevant frameworks
-      - ".claude/rules/angular-*/**"
-      - ".claude/rules/vue-*/**"
-      - ".claude/rules/python-*/**"
-      - ".claude/rules/go-*/**"
-      - ".claude/rules/swift-*/**"
-      - ".claude/rules/android-*/**"
+      # Exclude rules for technologies NOT detected
+      # Query index.technology_map for all technologies
+      # Exclude rules not matching detected stack
+      - ".claude/archive/angular-*/**"
+      - ".claude/archive/vue-*/**"
+      - ".claude/archive/python-*/**"
+      - ".claude/archive/go-*/**"
+      - ".claude/archive/swift-*/**"
+      - ".claude/archive/android-*/**"
 
-    # Priority order (first = highest priority)
+    # Priority order (master rules first)
     priority:
-      - nextjs-app-router  # Framework-specific first
-      - typescript         # Language second
-      - clean-code         # Universal last
+      - TECH_STACK_NEXTJS      # Master rule (highest priority)
+      - PROTOCOL_ENGINEERING    # Master rule (universal)
+      - nextjs                  # Archive rule (framework-specific)
+      - typescript              # Archive rule (language)
 
     metadata:
       generated: "2025-11-29"
+      generated_by: "rule-selector (index-based)"
       detected_stack:
         - "next@14.0.0"
         - "react@18.2.0"
         - "typescript@5.3.0"
         - "tailwindcss@3.4.0"
         - "@prisma/client@5.7.0"
+      rules_source: "rule-index.json"
+      total_rules_available: 1081
+      rules_selected: 7
 ```
 
 ## Detection Patterns

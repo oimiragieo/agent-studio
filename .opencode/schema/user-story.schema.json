@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "User Story",
+  "description": "Schema for user story artifacts",
+  "required": ["id", "title", "as_a", "i_want", "so_that", "acceptance_criteria"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^US-\\d+$",
+      "description": "Unique story identifier"
+    },
+    "title": {
+      "type": "string",
+      "description": "Brief title for the story"
+    },
+    "as_a": {
+      "type": "string",
+      "description": "The user role"
+    },
+    "i_want": {
+      "type": "string",
+      "description": "The desired action or feature"
+    },
+    "so_that": {
+      "type": "string",
+      "description": "The benefit or value"
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["given", "when", "then"],
+        "properties": {
+          "id": { "type": "string" },
+          "given": { "type": "string" },
+          "when": { "type": "string" },
+          "then": { "type": "string" }
+        }
+      },
+      "minItems": 1
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["must-have", "should-have", "could-have", "wont-have"]
+    },
+    "story_points": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 21
+    },
+    "epic": {
+      "type": "string",
+      "description": "Parent epic ID"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["backlog", "ready", "in_progress", "review", "done"]
+    },
+    "assignee": {
+      "type": "string"
+    },
+    "sprint": {
+      "type": "string"
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "string"
+    },
+    "technical_notes": {
+      "type": "string"
+    },
+    "design_link": {
+      "type": "string",
+      "format": "uri"
+    }
+  }
+}

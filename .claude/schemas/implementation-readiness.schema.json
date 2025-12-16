@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Implementation Readiness",
+  "description": "Schema for implementation readiness assessment",
+  "type": "object",
+  "required": ["readiness_status", "readiness_score", "checklist", "created_at"],
+  "properties": {
+    "readiness_status": {
+      "type": "string",
+      "enum": ["ready", "almost_ready", "not_ready"],
+      "description": "Overall readiness status"
+    },
+    "readiness_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Readiness score (0-100)"
+    },
+    "checklist": {
+      "type": "object",
+      "description": "Readiness checklist items",
+      "properties": {
+        "architecture_complete": {
+          "type": "boolean"
+        },
+        "stories_defined": {
+          "type": "boolean"
+        },
+        "test_plan_ready": {
+          "type": "boolean"
+        },
+        "dependencies_identified": {
+          "type": "boolean"
+        },
+        "risks_assessed": {
+          "type": "boolean"
+        },
+        "team_ready": {
+          "type": "boolean"
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "description": "Blockers preventing implementation",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Recommendations before starting implementation",
+      "items": {
+        "type": "string"
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
+

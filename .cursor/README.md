@@ -47,7 +47,7 @@ cp -r /path/to/production-dropin/.cursor /path/to/your/project/.cursor
 ```
 your-project/
 ├── .cursor/                    # ← Copy this entire folder to your project root
-│   ├── subagents/             # 22 agent files (.mdc) - auto-discovered
+│   ├── subagents/             # 23 agent files (.mdc) - auto-discovered
 │   │   ├── analyst.mdc
 │   │   ├── architect.mdc
 │   │   ├── developer.mdc
@@ -77,12 +77,15 @@ your-project/
 ## Key Features
 
 ### Agents
-22 specialized agents optimized for Cursor 2.0:
+23 specialized agents optimized for Cursor 2.0:
+- **Planning**: Planner (strategic planning and coordination)
 - **Core Development**: Analyst, PM, Architect, Database Architect, Developer, QA, UX Expert
 - **Enterprise**: Security Architect, DevOps, Technical Writer
 - **Coordination**: Orchestrator, Model Orchestrator
 - **Code Quality**: Code Reviewer, Refactoring Specialist, Performance Engineer
 - **Specialized**: LLM Architect, API Designer, Legacy Modernizer, Mobile Developer, Accessibility Expert, Compliance Auditor, Incident Responder
+
+**Note**: Planner Agent (persona) works alongside Cursor's Plan Mode (UI feature). Use Planner Agent for strategic, multi-agent coordination planning. Use Plan Mode for implementation-level planning of multi-file changes.
 
 ### Skills (8 Utilities)
 6 cross-platform skills synced with Claude and Factory, plus 2 Cursor-specific utilities:

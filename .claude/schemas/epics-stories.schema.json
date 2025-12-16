@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Epics and Stories",
+  "description": "Schema for epics and user stories breakdown",
+  "type": "object",
+  "required": ["epics", "created_at"],
+  "properties": {
+    "epics": {
+      "type": "array",
+      "description": "List of epics",
+      "items": {
+        "$ref": "#/definitions/epic"
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp when epics/stories were created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp when epics/stories were last updated"
+    },
+    "total_stories": {
+      "type": "number",
+      "description": "Total number of stories across all epics"
+    }
+  },
+  "definitions": {
+    "epic": {
+      "type": "object",
+      "required": ["id", "name", "description", "stories"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique epic identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Epic name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Epic description"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Epic priority"
+        },
+        "stories": {
+          "type": "array",
+          "description": "User stories in this epic",
+          "items": {
+            "$ref": "#/definitions/story"
+          }
+        },
+        "estimated_effort": {
+          "type": "number",
+          "description": "Estimated story points for epic"
+        }
+      }
+    },
+    "story": {
+      "type": "object",
+      "required": ["id", "title", "description", "acceptance_criteria"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique story identifier"
+        },
+        "title": {
+          "type": "string",
+          "description": "Story title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Story description in Given-When-Then format"
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "description": "List of acceptance criteria",
+          "items": {
+            "type": "string"
+          }
+        },
+        "story_points": {
+          "type": "number",
+          "description": "Estimated story points"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "Story IDs this story depends on",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
+

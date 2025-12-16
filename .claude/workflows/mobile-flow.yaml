@@ -3,6 +3,9 @@ description: Mobile app development for iOS, Android, and cross-platform framewo
 type: mobile
 project_type: mobile
 
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
   - "mobile app"
   - "ios"
@@ -13,18 +16,40 @@ trigger_keywords:
   - "app store"
 
 steps:
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
+    inputs:
+      - app_requirements
+      - target_platforms
+      - design_specs
+    outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Plan mobile application development:
+      - Analyze app requirements and platforms
+      - Coordinate mobile development strategy
+      - Create structured development plan
+
   - step: 1
     name: "Mobile Development"
     agent: mobile-developer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - app_requirements
       - target_platforms
       - design_specs
     outputs:
       - mobile-architecture.json
       - platform-strategy.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-mobile-developer.json
     validation:
+      schema: .claude/schemas/system_architecture.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-mobile-developer.json
     description: |
       Mobile development planning:
@@ -39,12 +64,14 @@ steps:
     name: "Mobile UX Design"
     agent: ux-expert
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - mobile-architecture.json (from step 1)
       - app_requirements
     outputs:
       - mobile-ux-spec.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-ux-expert.json
     validation:
+      schema: .claude/schemas/ux_spec.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-ux-expert.json
     description: |
       Mobile-specific UX design:
@@ -59,13 +86,15 @@ steps:
     name: "Implementation"
     agent: developer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - mobile-architecture.json (from step 1)
       - mobile-ux-spec.json (from step 2)
     outputs:
-      - implementation-manifest.json
-      - code_artifacts
-      - reasoning.json
+      - dev-manifest.json
+      - code-artifacts
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-developer.json
     validation:
+      schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-developer.json
     description: |
       Mobile implementation:
@@ -80,11 +109,14 @@ steps:
     name: "Mobile Quality Assurance"
     agent: qa
     inputs:
-      - implementation-manifest.json (from step 3)
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 3)
       - mobile-ux-spec.json (from step 2)
     outputs:
       - mobile-test-results.json
       - quality-report.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/04-qa.json
     description: |
       Mobile-specific testing:
       - Device compatibility testing

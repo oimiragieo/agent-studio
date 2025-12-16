@@ -1,0 +1,68 @@
+# Promptfoo Configuration for LLM-RULES Evaluation
+# Base configuration for evaluating agent performance and rule compliance
+# Enhanced with Claude Cookbooks patterns
+
+description: "LLM-RULES Agent and Rule Compliance Evaluation"
+
+# Providers (Claude models)
+providers:
+  - claude-sonnet-4-5:
+      id: anthropic:claude-sonnet-4-5-20250929
+      config:
+        apiKey: ${ANTHROPIC_API_KEY}
+  - claude-opus-4-5:
+      id: anthropic:claude-opus-4-5-20251101
+      config:
+        apiKey: ${ANTHROPIC_API_KEY}
+
+# Prompts (agent configurations)
+prompts:
+  - file://.claude/agents/developer.md
+  - file://.claude/agents/architect.md
+  - file://.claude/agents/qa.md
+
+# Tests (evaluation scenarios)
+tests:
+  - vars:
+      task: "Implement a user authentication API endpoint"
+      expected_files: ["api/auth/route.ts", "api/auth/route.test.ts"]
+    assert:
+      - type: contains
+        value: "route.ts"
+      - type: contains
+        value: "test"
+      - type: javascript
+        value: |
+          const output = context.vars.output;
+          return output.files_created && output.files_created.length > 0;
+
+# Output configuration
+output:
+  file: .claude/evaluation/results/promptfoo-results.json
+
+# Grading
+grading:
+  # Code-based grading for structured outputs
+  - type: code
+    value: |
+      const output = context.vars.output;
+      if (output.validation === "pass") return 1.0;
+      return 0.0;
+  
+  # Model-based grading for quality assessment
+  - type: model
+    provider: claude-sonnet-4-5
+    value: |
+      Evaluate the code quality on a scale of 0-1:
+      - Code structure and organization
+      - Error handling
+      - Security best practices
+      - Test coverage
+      
+      Output: {code}
+
+# Specialized configurations available:
+# - .claude/evaluation/promptfoo_configs/rag_config.yaml - RAG evaluation with retrieval metrics
+# - .claude/evaluation/promptfoo_configs/classification_config.yaml - Classification evaluation
+# - .claude/evaluation/promptfoo_configs/text_to_sql_config.yaml - SQL generation evaluation
+

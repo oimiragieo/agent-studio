@@ -3,6 +3,9 @@ description: Production incident response, crisis management, and post-mortem an
 type: incident
 project_type: operations
 
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
   - "incident"
   - "outage"
@@ -15,17 +18,38 @@ trigger_keywords:
 priority: critical
 
 steps:
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
+    inputs:
+      - incident_report
+      - system_status
+      - affected_services
+    outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Rapid incident response planning:
+      - Assess incident severity and scope
+      - Create structured response plan
+      - Coordinate response team activation
+
   - step: 1
     name: "Incident Triage"
     agent: incident-responder
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - incident_report
       - system_status
       - affected_services
     outputs:
       - triage-assessment.json
       - immediate-actions.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-incident-responder.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/01-incident-responder.json
     description: |
@@ -41,13 +65,14 @@ steps:
     name: "Infrastructure Analysis"
     agent: devops
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - triage-assessment.json (from step 1)
       - system_logs
       - metrics
     outputs:
       - infrastructure-analysis.json
       - remediation-plan.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-devops.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/02-devops.json
     description: |
@@ -63,11 +88,12 @@ steps:
     name: "Security Assessment"
     agent: security-architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - triage-assessment.json (from step 1)
       - infrastructure-analysis.json (from step 2)
     outputs:
       - security-assessment.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-security-architect.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/03-security-architect.json
     description: |
@@ -83,11 +109,15 @@ steps:
     name: "Resolution Validation"
     agent: qa
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - remediation-plan.json (from step 2)
       - security-assessment.json (from step 3)
     outputs:
       - resolution-report.json
       - post-mortem.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-qa.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/04-qa.json
     description: |
       Resolution and post-mortem:
       - Fix verification

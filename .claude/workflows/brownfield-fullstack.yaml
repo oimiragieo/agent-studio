@@ -3,23 +3,48 @@ description: Workflow for enhancing existing codebases with new features or refa
 type: brownfield
 project_type: fullstack
 
+# NOTE: This workflow is selected via keywords defined in .claude/config.yaml workflow_selection section.
+# The routing system matches user prompts against keywords in config.yaml, not this file.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
+
 # This workflow is optimized for existing projects:
 # - Emphasizes impact analysis and compatibility
 # - Includes migration planning and rollback strategies
 # - Focuses on incremental improvements
 
 steps:
-  - step: 1
-    name: "Codebase Discovery & Impact Analysis"
-    agent: analyst
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
     inputs:
       - user_requirements
       - existing_codebase
       - business_objectives
     outputs:
-      - project_brief.json
-      - impact_analysis.json
-      - reasoning.json
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Plan brownfield enhancement workflow:
+      - Analyze requirements and existing codebase
+      - Coordinate enhancement strategy
+      - Create structured improvement plan
+
+  - step: 1
+    name: "Codebase Discovery & Impact Analysis"
+    agent: analyst
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - user_requirements
+      - existing_codebase
+      - business_objectives
+    outputs:
+      - project-brief.json
+      - impact-analysis.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-analyst.json
     validation:
       schema: .claude/schemas/project_brief.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
@@ -31,12 +56,13 @@ steps:
     name: "Enhancement Requirements"
     agent: pm
     inputs:
-      - project_brief.json (from step 1)
-      - impact_analysis.json (from step 1)
+      - plan-{{workflow_id}}.json (from step 0)
+      - project-brief.json (from step 1)
+      - impact-analysis.json (from step 1)
     outputs:
       - prd.json
-      - migration_requirements.json
-      - reasoning.json
+      - migration-requirements.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-pm.json
     validation:
       schema: .claude/schemas/product_requirements.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-pm.json
@@ -48,13 +74,14 @@ steps:
     name: "Architecture Evolution"
     agent: architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - prd.json (from step 2)
-      - impact_analysis.json (from step 1)
-      - existing_architecture (if available)
+      - impact-analysis.json (from step 1)
+      - existing-architecture (optional)
     outputs:
       - system-architecture.json
-      - migration_plan.json
-      - reasoning.json
+      - migration-plan.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-architect.json
     validation:
       schema: .claude/schemas/system_architecture.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-architect.json
@@ -66,16 +93,18 @@ steps:
     name: "Database Migration Planning"
     agent: database-architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 3)
       - prd.json (from step 2)
-      - existing_schema (if available)
+      - existing-schema (optional)
     outputs:
       - database-architecture.json
-      - migration_scripts.json
-      - rollback_plan.json
-      - reasoning.json
+      - migration-scripts.json
+      - rollback-plan.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-database-architect.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/04-database.json
+      schema: .claude/schemas/database_architecture.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-database-architect.json
     notes: |
       Plan zero-downtime migrations. Include dual-write strategies
       and data backfill procedures for existing records.
@@ -84,13 +113,14 @@ steps:
     name: "Test Strategy & Regression Planning"
     agent: qa
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 3)
       - database-architecture.json (from step 4)
-      - impact_analysis.json (from step 1)
+      - impact-analysis.json (from step 1)
     outputs:
       - test-plan.json
-      - regression_suite.json
-      - reasoning.json
+      - regression-suite.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05-qa.json
     validation:
       schema: .claude/schemas/test_plan.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
@@ -102,15 +132,16 @@ steps:
     name: "Implementation"
     agent: developer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 3)
       - database-architecture.json (from step 4)
       - test-plan.json (from step 5)
-      - migration_plan.json (from step 3)
+      - migration-plan.json (from step 3)
     outputs:
       - dev-manifest.json
-      - code_artifacts
-      - migration_artifacts
-      - reasoning.json
+      - code-artifacts
+      - migration-artifacts
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/06-developer.json
     validation:
       schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/06-developer.json
@@ -122,13 +153,15 @@ steps:
     name: "Quality Validation"
     agent: qa
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 6)
       - test-plan.json (from step 5)
-      - regression_suite.json (from step 5)
+      - regression-suite.json (from step 5)
     outputs:
-      - quality_report.json
-      - test_results.json
-      - migration_test_results.json
+      - quality-report.json
+      - test-results.json
+      - migration-test-results.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/07-qa-final.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/07-qa-final.json
 

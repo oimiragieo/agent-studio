@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Phase Plan Schema",
+  "description": "Schema for phase-based project plan files (1-3k lines max)",
+  "type": "object",
+  "required": [
+    "phaseNumber",
+    "phaseName",
+    "description",
+    "objectives"
+  ],
+  "properties": {
+    "phaseNumber": {
+      "type": "integer",
+      "description": "Phase number (1, 2, 3, etc.)",
+      "minimum": 1
+    },
+    "phaseName": {
+      "type": "string",
+      "description": "Human-readable phase name (e.g., 'Planning', 'Architecture', 'Implementation')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Overview of what this phase accomplishes"
+    },
+    "objectives": {
+      "type": "array",
+      "description": "List of phase objectives",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "tasks": {
+      "type": "array",
+      "description": "List of tasks in this phase",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique task identifier"
+          },
+          "description": {
+            "type": "string",
+            "description": "Task description"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "completed", "blocked"],
+            "description": "Current task status"
+          },
+          "assignedAgent": {
+            "type": ["string", "null"],
+            "description": "Agent assigned to this task"
+          },
+          "dependencies": {
+            "type": "array",
+            "description": "List of task IDs this task depends on",
+            "items": {
+              "type": "string"
+            }
+          },
+          "artifacts": {
+            "type": "array",
+            "description": "Artifacts produced by this task",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "List of previous phases this phase depends on",
+      "items": {
+        "type": "string",
+        "description": "Phase name (e.g., 'phase-01-planning')"
+      }
+    },
+    "estimatedLines": {
+      "type": "integer",
+      "description": "Estimated lines of code/documentation for this phase",
+      "minimum": 0,
+      "maximum": 3000
+    },
+    "actualLines": {
+      "type": "integer",
+      "description": "Actual lines of code/documentation for this phase",
+      "minimum": 0
+    },
+    "startDate": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when phase started"
+    },
+    "endDate": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when phase completed"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["not_started", "in_progress", "completed", "blocked"],
+      "description": "Current phase status"
+    }
+  }
+}
+

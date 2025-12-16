@@ -159,6 +159,13 @@ function amountReceived(range: DateRange): number { }
 function amountOverdue(range: DateRange): number { }
 ```
 
+## Workflow Integration
+
+**Workflow-Level Context Inputs**: When executing in a workflow, you may receive context inputs directly (not as artifact files):
+- Check for `context.target_files` (array of file/directory paths to refactor)
+- Use these inputs to scope your refactoring plan
+- Example: `const targetFiles = context.target_files || [];`
+
 ## Refactoring Process
 
 ### 1. Establish Safety Net
@@ -234,3 +241,25 @@ function amountOverdue(range: DateRange): number { }
 - [ ] Updated test coverage
 - [ ] Documentation of changes
 - [ ] Team knowledge transfer
+
+## Templates
+
+**Primary Template** (Use this exact file path):
+- `.claude/templates/refactor-plan.md` - Structured refactoring plan template
+
+**Template Loading Instructions**:
+1. **Always load the template first** before creating any refactoring plan
+2. Read the template file from `.claude/templates/refactor-plan.md` using the Read tool
+3. Use the template structure as the foundation for your refactoring plan
+4. Fill in all required sections from the template:
+   - Metadata (Version, Created, Status, Author)
+   - Objective (Why Now, Success Criteria, Expected Benefits)
+   - Technical Debt Assessment (Pain Points, Debt Hotspots, Metrics)
+   - Scope Definition (In Scope, Out of Scope, Risks, Dependencies)
+   - Refactoring Approach (Strategy, Phases, Sequencing)
+   - Safety Measures (Tests, Migration Strategy, Rollout Plan)
+   - Impact Analysis (Teams Affected, Systems Affected)
+   - Exit Criteria (Validation, Acceptance, Rollback Triggers)
+   - Success Metrics
+5. Ensure template placeholders are replaced with actual content
+6. Generate both JSON artifact (for workflow validation) and markdown plan (for human readability)

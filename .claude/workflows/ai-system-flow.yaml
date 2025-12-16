@@ -3,6 +3,9 @@ description: AI and LLM system design, RAG implementation, and intelligent featu
 type: ai-system
 project_type: ai
 
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
   - "ai system"
   - "llm"
@@ -14,16 +17,37 @@ trigger_keywords:
   - "vector database"
 
 steps:
-  - step: 1
-    name: "Model Strategy"
-    agent: model-orchestrator
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
     inputs:
       - ai_requirements
       - use_cases
       - constraints
     outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Plan AI/LLM system development:
+      - Analyze AI requirements and use cases
+      - Coordinate with AI specialists
+      - Create structured development plan
+
+  - step: 1
+    name: "Model Strategy"
+    agent: model-orchestrator
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - ai_requirements
+      - use_cases
+      - constraints
+    outputs:
       - model-strategy.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-model-orchestrator.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/01-model-orchestrator.json
     description: |
@@ -38,12 +62,14 @@ steps:
     name: "LLM Architecture Design"
     agent: llm-architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - model-strategy.json (from step 1)
       - ai_requirements
     outputs:
       - llm-architecture.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-llm-architect.json
     validation:
+      schema: .claude/schemas/system_architecture.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-llm-architect.json
     description: |
       LLM system architecture:
@@ -58,11 +84,12 @@ steps:
     name: "API Design"
     agent: api-designer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - llm-architecture.json (from step 2)
       - model-strategy.json (from step 1)
     outputs:
       - api-specification.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-api-designer.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/03-api-designer.json
     description: |
@@ -77,13 +104,15 @@ steps:
     name: "Implementation"
     agent: developer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - llm-architecture.json (from step 2)
       - api-specification.json (from step 3)
     outputs:
-      - implementation-manifest.json
-      - code_artifacts
-      - reasoning.json
+      - dev-manifest.json
+      - code-artifacts
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-developer.json
     validation:
+      schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/04-developer.json
     description: |
       AI system implementation:
@@ -97,11 +126,14 @@ steps:
     name: "AI Quality Validation"
     agent: qa
     inputs:
-      - implementation-manifest.json (from step 4)
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 4)
       - llm-architecture.json (from step 2)
     outputs:
       - ai-test-results.json
       - quality-report.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
     description: |
       AI-specific validation:
       - Prompt testing

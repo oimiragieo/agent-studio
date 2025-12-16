@@ -222,3 +222,5 @@ Our current system has **excellent foundations** but lacks **enterprise-grade or
 These improvements transform our BMAD-Spec Orchestrator from a **proof-of-concept** to an **enterprise-ready system** capable of handling complex, real-world software development projects with reliability, performance, and intelligence.
 
 **Next Steps**: Begin with Phase 1 Priority 1A (Context Management System) as it provides the foundation for all other improvements.
+</guidelines>
+</instructions>

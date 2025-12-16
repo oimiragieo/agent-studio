@@ -1,166 +1,63 @@
-# LLM-RULES Project - Agent Configuration
+# AGENTS.md - LLM-RULES
 
 Multi-platform agent configuration bundle for Claude Code, Cursor IDE, and Factory Droid.
 
-## Core Principles
-
-1. **Nearest-wins hierarchy** - Agents read the closest AGENTS.md to the file being edited
-2. **JIT (Just-In-Time) indexing** - Provide paths/globs/commands, NOT full content
-3. **Token efficiency** - Small, actionable guidance over encyclopedic documentation
-4. **Cross-platform skills** - Skills work across Claude, Cursor, and Factory
-
-## Quick Commands
-
-### Validation
+## Commands
 ```bash
-pnpm validate          # Validate agent configuration files
-pnpm validate:verbose  # Verbose validation output
-bash scripts/validate-sync.sh  # Validate cross-platform sync
+pnpm validate            # Validate all agent configuration files
+pnpm validate:verbose    # Verbose validation output
+pnpm validate:sync       # Validate cross-platform sync (bash scripts/validate-sync.sh)
 ```
 
-### Code Discovery
-```bash
-# Find agent definitions
-find .claude/agents -name "*.md"
-find .cursor/subagents -name "*.mdc"
-find .factory/droids -name "*.md"
+## Code Style
+- **File types**: Markdown (`.md`), YAML (`.yaml`), JSON Schema (`.schema.json`), JavaScript ESM (`.mjs`)
+- **Naming**: kebab-case for files and directories (e.g., `code-reviewer.md`, `rule-auditor/`)
+- **YAML frontmatter**: Required in `.mdc` files with `description`, `alwaysApply` fields
+- **Imports**: ES modules only (`import`/`export`), no CommonJS
+- **Error handling**: Always validate inputs; use descriptive error messages
 
-# Find skill definitions
-find .claude/skills -name "SKILL.md"
-find .cursor/skills -name "*.md"
-find .factory/skills -name "*.md"
+## Key Directories
+- `.claude/agents/` - Agent prompts (23 roles, including new Planner agent)
+- `.claude/rules/` - Framework-specific rules (200+)
+- `.claude/skills/` - Utility skills (13 skills, including 5 new ones)
+- `.claude/docs/cujs/` - Customer User Journeys (24 CUJs documented)
+- `.cursor/rules/` - Cursor rules (auto-loaded by file pattern)
+- `scripts/` - Validation and migration scripts
 
-# Find rule files
-find .claude/rules -type d | head -20
+## New Features
 
-# Find hook files
-find .claude/hooks -name "*.sh"
-```
+### Planner Agent (NEW!)
+- Creates comprehensive plans before execution
+- Coordinates with specialists (Analyst, PM, Architect)
+- Validates plan completeness and feasibility
+- Tracks execution progress
+- See `.claude/agents/planner.md` for Claude version
+- See `.cursor/subagents/planner.mdc` for Cursor version
 
-## Directory Structure
+**Important: Planner Agent vs Plan Mode**
+- **Planner Agent** (Persona): A strategic planning agent that creates comprehensive plans, coordinates specialists, and validates execution. Available in both Claude (`.claude/agents/planner.md`) and Cursor (`.cursor/subagents/planner.mdc`).
+- **Plan Mode** (Cursor UI Feature): Cursor's built-in structured planning canvas that auto-researches the repo before coding. Activated with `Shift+Tab` or automatically via hooks.
+- **When to Use**: Use Planner Agent for strategic, multi-agent coordination planning. Use Plan Mode for implementation-level planning of multi-file changes. They work together: Planner Agent creates strategic plans that can be referenced in Plan Mode for detailed implementation.
 
-```
-LLM-RULES/
-├── .claude/              # Claude Code configuration (primary)
-│   ├── agents/          # 22 specialized agent prompts
-│   ├── skills/          # 6 utility skills
-│   ├── workflows/       # Orchestration workflows
-│   ├── commands/        # Custom slash commands
-│   ├── hooks/           # Native Claude Code hooks
-│   ├── templates/       # Reusable artifact templates
-│   ├── schemas/         # JSON schemas for validation
-│   ├── rules/           # Framework-specific rules (200+)
-│   ├── context/         # Runtime artifacts (gitignored)
-│   ├── instructions/    # Operational playbooks
-│   └── CLAUDE.md        # Core configuration
-├── .cursor/             # Cursor IDE configuration
-│   ├── subagents/       # Agent definitions (.mdc)
-│   ├── skills/          # Utility skills (mirrored from Claude)
-│   ├── rules/           # Technology rules
-│   └── hooks/           # Lifecycle hooks
-├── .factory/            # Factory Droid configuration
-│   ├── droids/          # Droid definitions
-│   ├── skills/          # Utility skills (mirrored from Claude)
-│   ├── rules/           # Technology rules
-│   └── hooks/           # Lifecycle hooks
-├── AGENTS.md            # This file
-└── README.md            # Project overview
-```
+### New Skills (5 Added)
+- **claude-md-generator**: Auto-generates claude.md files for modules
+- **plan-generator**: Creates structured plans from requirements
+- **diagram-generator**: Generates architecture/database diagrams
+- **test-generator**: Generates test code from specifications
+- **dependency-analyzer**: Analyzes and updates dependencies
+- **doc-generator**: Generates comprehensive documentation
 
-## Agents (22 Roles)
+### Customer User Journeys (CUJs)
+- 24 complete workflows documented
+- See `.claude/docs/cujs/CUJ-INDEX.md` for complete list
+- Each CUJ includes: trigger, workflow, agents, skills, outputs, success criteria
 
-| Agent | Purpose | Model |
-|-------|---------|-------|
-| **Core Development** | | |
-| orchestrator | Task routing and coordination | opus |
-| model-orchestrator | Multi-model routing (Gemini, Cursor, etc.) | sonnet |
-| analyst | Research and discovery | sonnet |
-| pm | Product requirements and roadmaps | sonnet |
-| architect | System design and API design | opus |
-| database-architect | Schema design, query optimization, migrations | opus |
-| developer | Code implementation | sonnet |
-| qa | Quality assurance and testing | opus |
-| ux-expert | Interface design and UX | sonnet |
-| **Enterprise** | | |
-| security-architect | Security and compliance | opus |
-| devops | Infrastructure and deployment | sonnet |
-| technical-writer | Documentation | haiku |
-| **Code Quality** | | |
-| code-reviewer | Systematic code review | opus |
-| refactoring-specialist | Code transformation and debt reduction | opus |
-| performance-engineer | Performance optimization and profiling | opus |
-| **Specialized** | | |
-| llm-architect | AI/LLM system design, RAG, prompt engineering | opus |
-| api-designer | REST/GraphQL/gRPC API design | opus |
-| legacy-modernizer | Legacy system modernization | opus |
-| mobile-developer | iOS/Android/React Native/Flutter | sonnet |
-| accessibility-expert | WCAG compliance, a11y testing | sonnet |
-| compliance-auditor | GDPR/HIPAA/SOC2/PCI-DSS | opus |
-| incident-responder | Crisis management and post-mortems | sonnet |
-
-## Skills (6 Utilities)
-
-Skills work across all three platforms with platform-specific implementations.
-
-| Skill | Purpose | Claude | Cursor | Factory |
-|-------|---------|--------|--------|---------|
-| repo-rag | Codebase retrieval and indexing | `.claude/skills/repo-rag/` | `.cursor/skills/repo-rag.md` | `.factory/skills/repo-rag.md` |
-| artifact-publisher | Publish artifacts to project feed | `.claude/skills/artifact-publisher/` | `.cursor/skills/artifact-publisher.md` | `.factory/skills/artifact-publisher.md` |
-| context-bridge | Sync state across platforms | `.claude/skills/context-bridge/` | `.cursor/skills/context-bridge.md` | `.factory/skills/context-bridge.md` |
-| rule-auditor | Validate code against rules | `.claude/skills/rule-auditor/` | `.cursor/skills/rule-auditor.md` | `.factory/skills/rule-auditor.md` |
-| rule-selector | Auto-configure rules for stack | `.claude/skills/rule-selector/` | `.cursor/skills/rule-selector.md` | `.factory/skills/rule-selector.md` |
-| scaffolder | Generate rule-compliant code | `.claude/skills/scaffolder/` | `.cursor/skills/scaffolder.md` | `.factory/skills/scaffolder.md` |
-
-### Skill Invocation by Platform
-
-**Claude Code:**
-```
-"Audit this file against our rules"
-"Scaffold a UserProfile component"
-"Select rules for this project"
-```
-
-**Cursor IDE:**
-```
-Use @rule-auditor to check this code
-Use @scaffolder to create a new component
-Use @rule-selector to configure rules
-```
-
-**Factory Droid:**
-```
-Run Task tool with skill rule-auditor
-Run Task tool with skill scaffolder
-Run Task tool with skill rule-selector
-```
+### Plan-First Workflows
+- All workflows now start with Planner agent (Step 0)
+- Comprehensive planning before execution
+- Plan validation and tracking
+- See `.claude/workflows/WORKFLOW-GUIDE.md` for details
 
 ## Security
-
-### Blocked Operations
-- `rm -rf`, `sudo rm`, `format`, `dd`, `mkfs`
-- Force push to main/master
-- Editing `.env*` files or secrets
-
-### Tool Permissions
-- **Read-only agents**: analyst, pm, ux-expert, technical-writer
-- **Edit agents**: architect (docs only), developer (code), devops (infra)
-- **Bash agents**: developer (safe), devops (safe), qa (test commands)
-
-## Git Conventions
-
-### Branching
-- Feature branches: `feature/add-auth`, `fix/login-bug`
-- Create from `main` or `develop`
-
-### Commits
-- Clear, descriptive messages
-- Reference issues: `fix: Resolve login issue (#123)`
-- Co-author trailer when AI assists
-
-## Definition of Done
-
-- [ ] Code follows project standards (check `.claude/rules/`)
-- [ ] Tests written and passing
-- [ ] No linting errors
-- [ ] Security review completed
-- [ ] Documentation updated
+- Never commit secrets or `.env*` files
+- Blocked: `rm -rf`, force push to main/master, editing credentials

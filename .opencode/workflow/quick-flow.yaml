@@ -1,0 +1,50 @@
+name: Quick Flow Development Workflow
+description: Fast-track workflow for bug fixes, small features, and minor enhancements
+type: quick
+project_type: enhancement
+
+steps:
+  - step: 1
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - user_requirements
+      - existing_codebase
+    outputs:
+      - dev-manifest.json
+      - code_artifacts
+      - reasoning.json
+
+  - step: 2
+    name: "Quality Validation"
+    agent: qa
+    inputs:
+      - dev-manifest.json (from step 1)
+      - code_artifacts (from step 1)
+    outputs:
+      - quality_report.json
+      - test_results.json
+
+completion_criteria:
+  - Implementation validated against requirements
+  - Tests passing
+  - Code quality acceptable
+  - No critical security issues
+
+triggers:
+  keywords:
+    - bug fix
+    - hotfix
+    - quick fix
+    - small feature
+    - documentation
+    - refactor
+    - minor change
+  file_changes: <5
+  estimated_time: <4 hours
+
+skip_agents:
+  - analyst
+  - pm
+  - ux-expert
+  - architect

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json.schemastore.org/opencode-settings",
+  "version": "2.0",
+  "tool_permissions": {
+    "always_allow": [
+      "Read",
+      "Search"
+    ],
+    "require_confirmation": [
+      "Edit",
+      "Bash"
+    ],
+    "always_deny": [
+      "Bash(rm -rf *)",
+      "Bash(format *)",
+      "Bash(dd *)",
+      "Bash(mkfs *)",
+      "Bash(npm run dev)"
+    ]
+  },
+  "bash_commands": {
+    "safe_patterns": [
+      "npm run *",
+      "pnpm *",
+      "yarn *",
+      "python -m pytest *",
+      "git status",
+      "git diff",
+      "git log",
+      "npm test",
+      "npm run lint",
+      "npm run typecheck"
+    ],
+    "require_confirmation": [
+      "git commit",
+      "git push",
+      "npm install",
+      "npm uninstall"
+    ],
+    "blocked_patterns": [
+      "rm -rf",
+      "sudo *",
+      "format *",
+      "dd *",
+      "mkfs *"
+    ]
+  },
+  "session": {
+    "auto_save": true,
+    "context_file": ".opencode/context/session.json",
+    "max_context_tokens": 100000
+  },
+  "agent_config": {
+    "agent_directory": ".opencode/agent"
+  },
+  "extended_thinking": {
+    "enabled": true,
+    "use_for_agents": [
+      "orchestrator",
+      "architect",
+      "database-architect",
+      "qa",
+      "security-architect",
+      "llm-architect",
+      "code-reviewer",
+      "performance-engineer",
+      "api-designer",
+      "legacy-modernizer",
+      "compliance-auditor",
+      "refactoring-specialist"
+    ]
+  }
+}

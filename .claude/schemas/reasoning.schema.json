@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Agent Reasoning",
+  "description": "Schema for agent reasoning files documenting decision-making process",
+  "required": ["agent", "step", "timestamp", "decisions"],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "description": "Name of the agent that generated this reasoning"
+    },
+    "step": {
+      "type": "number",
+      "description": "Workflow step number"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Unique identifier for the workflow run"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when reasoning was generated"
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "description": "Description of the decision made"
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Reasoning behind the decision"
+          },
+          "alternatives_considered": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Alternative approaches that were considered"
+          },
+          "tradeoffs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tradeoffs involved in the decision"
+          }
+        },
+        "required": ["decision", "rationale"]
+      },
+      "description": "List of key decisions made during execution"
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Assumptions made during execution"
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Constraints that influenced decisions"
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Questions that remain unanswered or require clarification"
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional context relevant to the reasoning",
+      "properties": {
+        "inputs_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "artifacts_referenced": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tools_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "validation_notes": {
+      "type": "string",
+      "description": "Notes about validation or quality checks performed"
+    }
+  }
+}
+

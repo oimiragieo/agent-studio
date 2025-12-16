@@ -1,0 +1,37 @@
+[
+  {
+    "query": "How do I configure authentication in the API?",
+    "correct_chunks": ["auth_config.md", "api_setup.md"],
+    "correct_answer": "Authentication is configured using API keys in the Authorization header. Set the header as 'Authorization: Bearer YOUR_API_KEY'. You can generate API keys in the dashboard under Settings > API Keys.",
+    "category": "authentication",
+    "difficulty": "medium"
+  },
+  {
+    "query": "What is the rate limit for API requests?",
+    "correct_chunks": ["rate_limits.md", "api_usage.md"],
+    "correct_answer": "The API has a rate limit of 1000 requests per hour per API key. Rate limit headers are included in all responses: X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset.",
+    "category": "api_usage",
+    "difficulty": "easy"
+  },
+  {
+    "query": "How do I handle errors in the API?",
+    "correct_chunks": ["error_handling.md", "api_reference.md"],
+    "correct_answer": "API errors are returned with appropriate HTTP status codes. 4xx errors indicate client issues (invalid request, authentication), while 5xx errors indicate server issues. Error responses include a 'message' field with details and an optional 'code' field for programmatic handling.",
+    "category": "error_handling",
+    "difficulty": "medium"
+  },
+  {
+    "query": "What webhooks are available and how do I configure them?",
+    "correct_chunks": ["webhooks.md", "events.md"],
+    "correct_answer": "Available webhooks include: user.created, user.updated, payment.completed, and subscription.cancelled. Configure webhooks in the dashboard under Settings > Webhooks. Provide a URL endpoint that accepts POST requests and returns 200 status codes.",
+    "category": "webhooks",
+    "difficulty": "hard"
+  },
+  {
+    "query": "How do I paginate through API results?",
+    "correct_chunks": ["pagination.md", "api_reference.md"],
+    "correct_answer": "Use the 'page' and 'per_page' query parameters. 'page' defaults to 1, 'per_page' defaults to 20 with a maximum of 100. Response includes 'page', 'per_page', 'total', and 'total_pages' in metadata.",
+    "category": "pagination",
+    "difficulty": "easy"
+  }
+]

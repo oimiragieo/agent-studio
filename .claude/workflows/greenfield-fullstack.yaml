@@ -3,16 +3,41 @@ description: Complete workflow for building a new full-stack application from sc
 type: greenfield
 project_type: fullstack
 
+# NOTE: This workflow is selected via keywords defined in .claude/config.yaml workflow_selection section.
+# The routing system matches user prompts against keywords in config.yaml, not this file.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
+
 steps:
-  - step: 1
-    name: "Project Discovery"
-    agent: analyst
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
     inputs:
       - user_requirements
       - business_objectives
     outputs:
-      - project_brief.json
-      - reasoning.json
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Comprehensive planning before execution:
+      - Analyze requirements and objectives
+      - Coordinate with specialists for planning input
+      - Generate structured plan with steps, dependencies, risks
+      - Validate plan completeness and feasibility
+
+  - step: 1
+    name: "Project Discovery"
+    agent: analyst
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - user_requirements
+      - business_objectives
+    outputs:
+      - project-brief.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-analyst.json
     validation:
       schema: .claude/schemas/project_brief.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
@@ -21,10 +46,11 @@ steps:
     name: "Product Requirements"
     agent: pm
     inputs:
-      - project_brief.json (from step 1)
+      - plan-{{workflow_id}}.json (from step 0)
+      - project-brief.json (from step 1)
     outputs:
       - prd.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-pm.json
     validation:
       schema: .claude/schemas/product_requirements.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-pm.json
@@ -33,10 +59,11 @@ steps:
     name: "UX Design"
     agent: ux-expert
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - prd.json (from step 2)
     outputs:
       - ux-spec.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-ux-expert.json
     validation:
       schema: .claude/schemas/ux_spec.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-ux-expert.json
@@ -45,11 +72,12 @@ steps:
     name: "System Architecture"
     agent: architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - prd.json (from step 2)
       - ux-spec.json (from step 3)
     outputs:
       - system-architecture.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-architect.json
     validation:
       schema: .claude/schemas/system_architecture.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/04-architect.json
@@ -58,24 +86,27 @@ steps:
     name: "Database Architecture"
     agent: database-architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 4)
       - prd.json (from step 2)
     outputs:
       - database-architecture.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05-database-architect.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/05-database.json
+      schema: .claude/schemas/database_architecture.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-database-architect.json
 
   - step: 6
     name: "Test Planning"
     agent: qa
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 4)
       - database-architecture.json (from step 5)
       - prd.json (from step 2)
     outputs:
       - test-plan.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/06-qa.json
     validation:
       schema: .claude/schemas/test_plan.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/06-qa.json
@@ -84,14 +115,15 @@ steps:
     name: "Implementation"
     agent: developer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 4)
       - database-architecture.json (from step 5)
       - ux-spec.json (from step 3)
       - test-plan.json (from step 6)
     outputs:
       - dev-manifest.json
-      - code_artifacts
-      - reasoning.json
+      - code-artifacts
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/07-developer.json
     validation:
       schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/07-developer.json
@@ -100,12 +132,13 @@ steps:
     name: "Documentation"
     agent: technical-writer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 7)
       - system-architecture.json (from step 4)
       - database-architecture.json (from step 5)
     outputs:
       - documentation.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/08-technical-writer.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/08-technical-writer.json
 
@@ -113,11 +146,15 @@ steps:
     name: "Quality Assurance"
     agent: qa
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 7)
       - test-plan.json (from step 6)
     outputs:
-      - quality_report.json
-      - test_results.json
+      - quality-report.json
+      - test-results.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/09-qa.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/09-qa.json
 
 completion_criteria:
   - All artifacts validated against schemas

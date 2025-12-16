@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Sprint Plan",
+  "description": "Schema for sprint planning artifact",
+  "type": "object",
+  "required": ["sprint_id", "sprint_goal", "stories", "created_at"],
+  "properties": {
+    "sprint_id": {
+      "type": "string",
+      "description": "Unique sprint identifier"
+    },
+    "sprint_goal": {
+      "type": "string",
+      "description": "Sprint goal statement"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Sprint start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Sprint end date"
+    },
+    "stories": {
+      "type": "array",
+      "description": "Stories planned for this sprint",
+      "items": {
+        "type": "object",
+        "required": ["story_id", "epic_id"],
+        "properties": {
+          "story_id": {
+            "type": "string"
+          },
+          "epic_id": {
+            "type": "string"
+          },
+          "assigned_to": {
+            "type": "string",
+            "description": "Agent assigned to story"
+          },
+          "estimated_points": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "total_points": {
+      "type": "number",
+      "description": "Total story points in sprint"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
+

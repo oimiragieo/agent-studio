@@ -1,8 +1,9 @@
-# Command: /code-quality
+<command_description>
+Command: /code-quality - Launch a systematic code quality improvement workflow.
+</command_description>
 
-Launch a systematic code quality improvement workflow.
-
-## Usage
+<instructions>
+<execution_steps>
 
 ```
 /code-quality                    # Start code quality workflow
@@ -52,7 +53,13 @@ Invokes the **code-quality-flow** workflow with this agent sequence:
 - `compliance-report.json` - Standards compliance status
 - `quality-report.json` - Final quality assessment
 
-## See Also
+</execution_steps>
 
-- `/review` - Quick code review (single agent)
-- `/audit` - Rule compliance check
+<output_format>
+**Outputs**:
+- `code-review.json` - Detailed code analysis
+- `refactoring-plan.json` - Prioritized improvement plan
+- `compliance-report.json` - Standards compliance status
+- `quality-report.json` - Final quality assessment
+</output_format>
+</instructions>

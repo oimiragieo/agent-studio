@@ -5,10 +5,15 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "validate": "node scripts/validate-config.mjs",
-    "validate:verbose": "node scripts/validate-config.mjs --verbose",
+    "validate": "node scripts/validate-config.mjs && node scripts/validate-model-names.mjs && pnpm index-rules",
+    "validate:verbose": "node scripts/validate-config.mjs --verbose && node scripts/validate-model-names.mjs --verbose",
     "validate:sync": "bash scripts/validate-sync.sh",
-    "install-agents": "node scripts/install.mjs"
+    "validate:models": "node scripts/validate-model-names.mjs",
+    "validate:workflow": "node scripts/validate-workflow.mjs",
+    "validate:references": "node scripts/validate-all-references.mjs",
+    "validate:all": "node scripts/validate-config.mjs && node scripts/validate-model-names.mjs && node scripts/validate-workflow.mjs && node scripts/validate-all-references.mjs && pnpm index-rules",
+    "install-agents": "node scripts/install.mjs",
+    "index-rules": "node scripts/generate-rule-index.mjs"
   },
   "keywords": [
     "claude",
@@ -23,6 +28,11 @@
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "zod": "^3.22.0",
+    "ws": "^8.14.0"
   },
   "devDependencies": {
     "js-yaml": "^4.1.0",

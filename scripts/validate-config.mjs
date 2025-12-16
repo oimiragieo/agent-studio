@@ -12,7 +12,7 @@
  *   1: One or more validations failed
  */
 
-import { readFileSync, existsSync, statSync } from 'fs';
+import { readFileSync, existsSync, statSync, readdirSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -203,10 +203,45 @@ function validateConfig() {
     }
   }
   
-  // 5. Check schema directory
+  // 5. Check schema directory and validate all schema files exist
   console.log('\nChecking schema files...');
-  if (config.quality_gates && config.quality_gates.validation_schemas_dir) {
-    checkDirectory(config.quality_gates.validation_schemas_dir, 'schemas directory');
+  const schemasDir = '.claude/schemas';
+  checkDirectory(schemasDir, 'schemas directory');
+  
+  // Validate all schema files in schemas directory exist and are valid JSON
+  const schemaFiles = [
+    'architecture-validation.schema.json',
+    'artifact_manifest.schema.json',
+    'backlog.schema.json',
+    'epic.schema.json',
+    'epics-stories.schema.json',
+    'implementation-readiness.schema.json',
+    'product_requirements.schema.json',
+    'project_brief.schema.json',
+    'retrospective.schema.json',
+    'route_decision.schema.json',
+    'sprint-plan.schema.json',
+    'story.schema.json',
+    'system_architecture.schema.json',
+    'test_plan.schema.json',
+    'ui-audit-report.schema.json',
+    'user_story.schema.json',
+    'ux_spec.schema.json'
+  ];
+  
+  for (const schemaFile of schemaFiles) {
+    const schemaPath = `${schemasDir}/${schemaFile}`;
+    if (existsSync(resolve(rootDir, schemaPath))) {
+      try {
+        const schemaContent = readFileSync(resolve(rootDir, schemaPath), 'utf-8');
+        JSON.parse(schemaContent); // Validate JSON
+        console.log(`  ✓ Schema file valid: ${schemaFile}`);
+      } catch (error) {
+        errors.push(`Invalid JSON in schema file: ${schemaPath} - ${error.message}`);
+      }
+    } else {
+      warnings.push(`Schema file not found (optional): ${schemaPath}`);
+    }
   }
   
   // 6. Validate workflow files and check referenced schemas
@@ -215,7 +250,14 @@ function validateConfig() {
     '.claude/workflows/enterprise-track.yaml',
     '.claude/workflows/greenfield-fullstack.yaml',
     '.claude/workflows/brownfield-fullstack.yaml',
-    '.claude/workflows/quick-flow.yaml'
+    '.claude/workflows/quick-flow.yaml',
+    '.claude/workflows/code-quality-flow.yaml',
+    '.claude/workflows/performance-flow.yaml',
+    '.claude/workflows/ai-system-flow.yaml',
+    '.claude/workflows/mobile-flow.yaml',
+    '.claude/workflows/incident-flow.yaml',
+    '.claude/workflows/ui-perfection-loop.yaml',
+    '.claude/workflows/bmad-greenfield-standard.yaml'
   ];
   
   const referencedSchemas = new Set();
@@ -264,35 +306,396 @@ function validateConfig() {
   // 7. Check referenced schema files
   console.log('\nChecking referenced schema files...');
   for (const schemaPath of referencedSchemas) {
-    checkFile(schemaPath, `schema file ${schemaPath}`);
+    if (!checkFile(schemaPath, `schema file ${schemaPath}`)) {
+      errors.push(`Schema file referenced in workflow but missing: ${schemaPath}`);
+    }
+  }
+
+  // 8. Check agents referenced in workflows
+  console.log('\nChecking agents in workflows...');
+  const referencedAgents = new Set();
+  
+  for (const workflowFile of workflowFiles) {
+    if (!existsSync(resolve(rootDir, workflowFile))) {
+      continue;
+    }
+    
+    if (yaml) {
+      try {
+        const workflowContent = readFileSync(resolve(rootDir, workflowFile), 'utf-8');
+        const workflow = yaml.load(workflowContent);
+        
+        // Check step-based workflows
+        if (workflow.steps && Array.isArray(workflow.steps)) {
+          for (const step of workflow.steps) {
+            if (step.agent) {
+              referencedAgents.add({ agent: step.agent, workflow: workflowFile });
+            }
+          }
+        }
+        
+        // Check phase-based workflows (BMad)
+        if (workflow.phases && Array.isArray(workflow.phases)) {
+          for (const phase of workflow.phases) {
+            if (phase.steps && Array.isArray(phase.steps)) {
+              for (const step of phase.steps) {
+                if (step.agent) {
+                  referencedAgents.add({ agent: step.agent, workflow: workflowFile });
+                }
+              }
+            }
+            // Check if_yes and if_no steps
+            if (phase.decision) {
+              if (phase.decision.if_yes && Array.isArray(phase.decision.if_yes)) {
+                for (const step of phase.decision.if_yes) {
+                  if (step.agent) {
+                    referencedAgents.add({ agent: step.agent, workflow: workflowFile });
+                  }
+                }
+              }
+              if (phase.decision.if_no && Array.isArray(phase.decision.if_no)) {
+                for (const step of phase.decision.if_no) {
+                  if (step.agent) {
+                    referencedAgents.add({ agent: step.agent, workflow: workflowFile });
+                  }
+                }
+              }
+            }
+            // Check epic_loop and story_loop
+            if (phase.epic_loop && phase.epic_loop.story_loop && Array.isArray(phase.epic_loop.story_loop)) {
+              for (const step of phase.epic_loop.story_loop) {
+                if (step.agent) {
+                  referencedAgents.add({ agent: step.agent, workflow: workflowFile });
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        // Already reported as YAML error
+      }
+    }
   }
   
-  // 8. Check hook files
+  // Validate all referenced agents exist
+  for (const { agent, workflow } of referencedAgents) {
+    const agentFile = `.claude/agents/${agent}.md`;
+    if (!checkFile(agentFile, `agent ${agent} referenced in ${workflow}`)) {
+      errors.push(`Agent ${agent} referenced in ${workflow} but file missing`);
+    }
+  }
+  
+  // 9. Validate skill structure
+  console.log('\nValidating skill structure...');
+  const skillsDir = '.claude/skills';
+  checkDirectory(skillsDir, 'skills directory');
+  
+  // Find all SKILL.md files
+  const skillFiles = [];
+  try {
+    const skillDirs = readdirSync(resolve(rootDir, skillsDir), { withFileTypes: true });
+    for (const dirent of skillDirs) {
+      if (dirent.isDirectory() && dirent.name !== 'sdk') {
+        const skillFile = resolve(rootDir, skillsDir, dirent.name, 'SKILL.md');
+        if (existsSync(skillFile)) {
+          skillFiles.push({ path: skillFile, name: dirent.name });
+        }
+      }
+    }
+  } catch (error) {
+    errors.push(`Error reading skills directory: ${error.message}`);
+  }
+  
+  // Validate each skill file
+  for (const { path, name } of skillFiles) {
+    try {
+      const content = readFileSync(path, 'utf-8');
+      
+      // Check for YAML frontmatter
+      if (!content.startsWith('---\n')) {
+        errors.push(`Skill ${name}: Missing YAML frontmatter (must start with ---)`);
+        continue;
+      }
+      
+      // Extract frontmatter
+      const frontmatterEnd = content.indexOf('\n---\n', 4);
+      if (frontmatterEnd === -1) {
+        errors.push(`Skill ${name}: Invalid YAML frontmatter (missing closing ---)`);
+        continue;
+      }
+      
+      const frontmatter = content.substring(4, frontmatterEnd);
+      
+      // Parse YAML frontmatter
+      if (yaml) {
+        try {
+          const parsed = yaml.load(frontmatter);
+          
+          // Check required fields
+          const requiredFields = ['name', 'description', 'allowed-tools', 'version'];
+          for (const field of requiredFields) {
+            if (!parsed[field]) {
+              errors.push(`Skill ${name}: Missing required field: ${field}`);
+            }
+          }
+          
+          // Validate skill name matches directory name
+          if (parsed.name && parsed.name !== name) {
+            warnings.push(`Skill ${name}: Frontmatter name "${parsed.name}" doesn't match directory name`);
+          }
+          
+          // Check template references if present
+          if (parsed.templates && Array.isArray(parsed.templates)) {
+            // Templates are just type names, not file paths, so no validation needed
+          }
+          
+          console.log(`  ✓ Skill validated: ${name}`);
+        } catch (yamlError) {
+          errors.push(`Skill ${name}: Invalid YAML frontmatter - ${yamlError.message}`);
+        }
+      } else {
+        // Without yaml parser, do basic checks
+        const requiredFields = ['name:', 'description:', 'allowed-tools:', 'version:'];
+        for (const field of requiredFields) {
+          if (!frontmatter.includes(field)) {
+            errors.push(`Skill ${name}: Missing required field: ${field.replace(':', '')}`);
+          }
+        }
+        console.log(`  ⚠️  Skill ${name}: Basic validation (YAML parser not available)`);
+      }
+    } catch (error) {
+      errors.push(`Error reading skill file ${name}: ${error.message}`);
+    }
+  }
+  
+  // 10. Check hook files
   console.log('\nChecking hook files...');
   const hookDir = '.claude/hooks';
   checkDirectory(hookDir, 'hooks directory');
   
-  // Check common hook files
+  // Check common hook files (shell scripts, not YAML)
   const commonHooks = [
-    'pre_tool_use.yaml',
-    'post_tool_use.yaml',
-    'user_prompt_submit.yaml',
-    'security_validation.yaml',
-    'streaming_monitor.yaml'
+    'security-pre-tool.sh',      // PreToolUse hook
+    'audit-post-tool.sh',         // PostToolUse hook
+    'user-prompt-submit.sh',      // UserPromptSubmit hook
+    'notification.sh',             // Notification hook
+    'stop.sh',                     // Stop hook
+    'orchestrator.mjs'             // Orchestrator hook (optional)
   ];
+  
+  // Python SDK hook limitations
+  const pythonUnsupportedHooks = ['SessionStart', 'SessionEnd', 'Notification'];
+  const hookEventMapping = {
+    'security-pre-tool.sh': 'PreToolUse',
+    'audit-post-tool.sh': 'PostToolUse',
+    'user-prompt-submit.sh': 'UserPromptSubmit',
+    'notification.sh': 'Notification',
+    'stop.sh': 'Stop',
+    'orchestrator.mjs': 'SubagentStart' // or other events
+  };
   
   for (const hookFile of commonHooks) {
     const hookPath = `${hookDir}/${hookFile}`;
     if (existsSync(resolve(rootDir, hookPath))) {
-      validateYAML(hookPath, `hook file ${hookFile}`);
+      // Shell scripts and JS files don't need YAML validation
+      console.log(`  ✓ Hook file found: ${hookFile}`);
+      
+      // Check for Python SDK compatibility
+      const eventName = hookEventMapping[hookFile];
+      if (eventName && pythonUnsupportedHooks.includes(eventName)) {
+        warnings.push(`Hook ${hookFile} uses event "${eventName}" which is not supported by Python SDK. TypeScript SDK supports all hook events.`);
+      }
     } else {
       warnings.push(`Hook file not found (optional): ${hookPath}`);
     }
   }
   
-  // 9. Check settings.json
-  console.log('\nValidating settings.json...');
-  validateJSON('.claude/settings.json', 'settings.json');
+  // Note about hook output format
+  console.log('  ℹ️  Hooks must return JSON matching SDK HookJSONOutput structure');
+  console.log('  ℹ️  Python SDK limitation: SessionStart, SessionEnd, Notification hooks not supported');
+
+  // 11. Validate template references
+  console.log('\nValidating template references...');
+  const templatesDir = '.claude/templates';
+  checkDirectory(templatesDir, 'templates directory');
+  
+  // Find template references in agent files
+  const templateReferences = new Set();
+  try {
+    const agentFiles = readdirSync(resolve(rootDir, '.claude/agents'), { withFileTypes: true });
+    for (const dirent of agentFiles) {
+      if (dirent.isFile() && dirent.name.endsWith('.md')) {
+        const agentPath = resolve(rootDir, '.claude/agents', dirent.name);
+        try {
+          const content = readFileSync(agentPath, 'utf-8');
+          // Look for template references like .claude/templates/xxx.md
+          const templateMatches = content.match(/\.claude\/templates\/[a-z0-9-]+\.md/g);
+          if (templateMatches) {
+            templateMatches.forEach(templateRef => {
+              templateReferences.add(templateRef);
+            });
+          }
+        } catch (error) {
+          // Skip if can't read
+        }
+      }
+    }
+  } catch (error) {
+    warnings.push(`Error scanning agent files for template references: ${error.message}`);
+  }
+  
+  // Find template references in skill files
+  for (const { path: skillPath, name } of skillFiles) {
+    try {
+      const content = readFileSync(skillPath, 'utf-8');
+      const templateMatches = content.match(/\.claude\/templates\/[a-z0-9-]+\.md/g);
+      if (templateMatches) {
+        templateMatches.forEach(templateRef => {
+          templateReferences.add(templateRef);
+        });
+      }
+    } catch (error) {
+      // Skip if can't read
+    }
+  }
+  
+  // Validate all referenced templates exist
+  for (const templateRef of templateReferences) {
+    const templatePath = resolve(rootDir, templateRef);
+    if (!existsSync(templatePath)) {
+      errors.push(`Template file referenced but missing: ${templateRef}`);
+    } else if (verbose) {
+      console.log(`  ✓ Template reference validated: ${templateRef}`);
+    }
+  }
+  
+  if (templateReferences.size === 0 && verbose) {
+    console.log('  ℹ️  No template references found in agent or skill files');
+  }
+
+  // 12. Validate MCP server configuration
+  console.log('\nValidating MCP configuration...');
+  const mcpConfigPath = '.claude/.mcp.json';
+  if (existsSync(resolve(rootDir, mcpConfigPath))) {
+    try {
+      const mcpContent = readFileSync(resolve(rootDir, mcpConfigPath), 'utf-8');
+      const mcpConfig = JSON.parse(mcpContent);
+      
+      // Validate MCP server config structure (SDK-compatible)
+      if (typeof mcpConfig !== 'object') {
+        errors.push('.mcp.json: Root must be an object');
+      } else {
+        // Each key is a server name, value is server config
+        for (const [serverName, serverConfig] of Object.entries(mcpConfig)) {
+          if (typeof serverConfig !== 'object' || serverConfig === null) {
+            errors.push(`.mcp.json: Server ${serverName} config must be an object`);
+            continue;
+          }
+          
+          // Check server type (stdio, sse, http, or sdk)
+          const validTypes = ['stdio', 'sse', 'http', 'sdk'];
+          if (serverConfig.type && !validTypes.includes(serverConfig.type)) {
+            warnings.push(`.mcp.json: Server ${serverName} has invalid type: ${serverConfig.type}`);
+          }
+          
+          // Validate required fields based on type
+          if (serverConfig.type === 'stdio' || !serverConfig.type) {
+            // stdio is default, needs command
+            if (!serverConfig.command) {
+              warnings.push(`.mcp.json: Server ${serverName} (stdio) missing required field: command`);
+            }
+          } else if (serverConfig.type === 'sse' || serverConfig.type === 'http') {
+            if (!serverConfig.url) {
+              errors.push(`.mcp.json: Server ${serverName} (${serverConfig.type}) missing required field: url`);
+            }
+          } else if (serverConfig.type === 'sdk') {
+            if (!serverConfig.name) {
+              warnings.push(`.mcp.json: Server ${serverName} (sdk) missing name field`);
+            }
+          }
+        }
+      }
+      
+      console.log('  ✓ .mcp.json validated');
+    } catch (error) {
+      errors.push(`Invalid JSON in .mcp.json: ${error.message}`);
+    }
+  } else {
+    console.log('  ℹ️  .mcp.json not found (optional)');
+  }
+  
+  // 12. Validate SDK settings files
+  console.log('\nValidating SDK settings files...');
+  
+  // Validate settings.json (project settings)
+  const settingsPath = '.claude/settings.json';
+  if (existsSync(resolve(rootDir, settingsPath))) {
+    try {
+      const settingsContent = readFileSync(resolve(rootDir, settingsPath), 'utf-8');
+      const settings = JSON.parse(settingsContent);
+      
+      // Validate SDK-compatible structure (camelCase keys)
+      const validKeys = [
+        'agents', 'allowedTools', 'disallowedTools', 'mcpServers', 'hooks',
+        'permissionMode', 'tool_permissions', 'bash_commands', 'session',
+        'rules', 'agent_config', 'extended_thinking', '$schema', 'version'
+      ];
+      
+      // Check for common SDK settings (optional, but validate structure if present)
+      if (settings.agents && typeof settings.agents !== 'object') {
+        warnings.push('settings.json: agents should be an object');
+      }
+      if (settings.allowedTools && !Array.isArray(settings.allowedTools)) {
+        warnings.push('settings.json: allowedTools should be an array');
+      }
+      if (settings.disallowedTools && !Array.isArray(settings.disallowedTools)) {
+        warnings.push('settings.json: disallowedTools should be an array');
+      }
+      if (settings.mcpServers && typeof settings.mcpServers !== 'object') {
+        warnings.push('settings.json: mcpServers should be an object');
+      }
+      if (settings.permissionMode && !['default', 'acceptEdits', 'bypassPermissions', 'plan'].includes(settings.permissionMode)) {
+        warnings.push(`settings.json: invalid permissionMode: ${settings.permissionMode}`);
+      }
+      
+      // Check for conflicting settings
+      if (settings.allowedTools && settings.disallowedTools) {
+        const overlap = settings.allowedTools.filter(tool => settings.disallowedTools.includes(tool));
+        if (overlap.length > 0) {
+          warnings.push(`settings.json: Tools in both allowedTools and disallowedTools: ${overlap.join(', ')}`);
+        }
+      }
+      
+      console.log('  ✓ settings.json validated');
+    } catch (error) {
+      errors.push(`Invalid JSON in settings.json: ${error.message}`);
+    }
+  } else {
+    warnings.push('settings.json not found (optional, but recommended)');
+  }
+  
+  // Validate settings.local.json (local settings, gitignored)
+  const localSettingsPath = '.claude/settings.local.json';
+  if (existsSync(resolve(rootDir, localSettingsPath))) {
+    try {
+      const localSettingsContent = readFileSync(resolve(rootDir, localSettingsPath), 'utf-8');
+      const localSettings = JSON.parse(localSettingsContent);
+      
+      // Same validation as settings.json
+      if (localSettings.allowedTools && !Array.isArray(localSettings.allowedTools)) {
+        warnings.push('settings.local.json: allowedTools should be an array');
+      }
+      if (localSettings.disallowedTools && !Array.isArray(localSettings.disallowedTools)) {
+        warnings.push('settings.local.json: disallowedTools should be an array');
+      }
+      
+      console.log('  ✓ settings.local.json validated (local settings)');
+    } catch (error) {
+      errors.push(`Invalid JSON in settings.local.json: ${error.message}`);
+    }
+  } else {
+    console.log('  ℹ️  settings.local.json not found (optional, gitignored)');
+  }
   
   // Summary
   console.log('\n' + '='.repeat(60));

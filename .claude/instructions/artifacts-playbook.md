@@ -1,7 +1,9 @@
-# Artifacts Playbook
+<protocol_description>
+Artifacts Playbook - Standardizes how we create, review, and publish artifacts across agents using Claude 3.5 Sonnet Artifacts.
+</protocol_description>
 
-Claude 3.5 Sonnet introduces Artifacts as a live workspace for code, docs, and designs [1]. Use this guide to standardize how we create, review, and publish artifacts across agents.
-
+<instructions>
+<protocol_steps>
 ## When to Create an Artifact
 - Multi-file code changes or RFC drafts.
 - UI proposals that benefit from live preview.
@@ -17,6 +19,13 @@ Claude 3.5 Sonnet introduces Artifacts as a live workspace for code, docs, and d
 - ✅ Linked to Jira/Linear ticket.
 - ✅ Includes test coverage notes.
 - ✅ Contains rollback strategy when relevant.
+</protocol_steps>
+</instructions>
 
-[1] Anthropic, "Claude 3.5 Sonnet" (Jun 2024).  
-[5] Cursor, "Cloud Agents" (Oct 30, 2025).
+<examples>
+<usage_example>
+**References**:
+- [1] Anthropic, "Claude 3.5 Sonnet" (Jun 2024).  
+- [5] Cursor, "Cloud Agents" (Oct 30, 2025).
+</usage_example>
+</examples>

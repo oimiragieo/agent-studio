@@ -3,6 +3,10 @@ description: Comprehensive workflow for enterprise projects requiring security, 
 type: enterprise
 project_type: fullstack
 
+# NOTE: This workflow is selected via keywords defined in .claude/config.yaml workflow_selection section.
+# The routing system matches user prompts against keywords in config.yaml, not this file.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
+
 # This workflow is designed for enterprise environments:
 # - Mandatory security review and compliance validation
 # - Comprehensive documentation requirements
@@ -10,19 +14,41 @@ project_type: fullstack
 # - Audit trail for all decisions
 
 steps:
-  - step: 1
-    name: "Project Discovery & Stakeholder Analysis"
-    agent: analyst
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
     inputs:
       - user_requirements
       - business_objectives
       - compliance_requirements
       - stakeholder_matrix
     outputs:
-      - project_brief.json
-      - stakeholder_analysis.json
-      - feasibility_report.json
-      - reasoning.json
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Plan enterprise development workflow:
+      - Analyze requirements and compliance needs
+      - Coordinate with enterprise specialists
+      - Create structured development plan
+
+  - step: 1
+    name: "Project Discovery & Stakeholder Analysis"
+    agent: analyst
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - user_requirements
+      - business_objectives
+      - compliance_requirements
+      - stakeholder_matrix
+    outputs:
+      - project-brief.json
+      - stakeholder-analysis.json
+      - feasibility-report.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-analyst.json
     validation:
       schema: .claude/schemas/project_brief.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
@@ -31,13 +57,14 @@ steps:
     name: "Product Requirements & Compliance Mapping"
     agent: pm
     inputs:
-      - project_brief.json (from step 1)
+      - plan-{{workflow_id}}.json (from step 0)
+      - project-brief.json (from step 1)
       - compliance_requirements
     outputs:
       - prd.json
-      - compliance_mapping.json
-      - approval_requirements.json
-      - reasoning.json
+      - compliance-mapping.json
+      - approval-requirements.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-pm.json
     validation:
       schema: .claude/schemas/product_requirements.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-pm.json
@@ -46,13 +73,14 @@ steps:
     name: "Security Architecture Review"
     agent: security-architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - prd.json (from step 2)
-      - compliance_mapping.json (from step 2)
+      - compliance-mapping.json (from step 2)
     outputs:
-      - security_architecture.json
-      - threat_model.json
-      - compliance_validation.json
-      - reasoning.json
+      - security-architecture.json
+      - threat-model.json
+      - compliance-validation.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-security-architect.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/03-security.json
     notes: |
@@ -63,12 +91,13 @@ steps:
     name: "System Architecture"
     agent: architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - prd.json (from step 2)
-      - security_architecture.json (from step 3)
-      - threat_model.json (from step 3)
+      - security-architecture.json (from step 3)
+      - threat-model.json (from step 3)
     outputs:
       - system-architecture.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-architect.json
     validation:
       schema: .claude/schemas/system_architecture.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/04-architect.json
@@ -80,16 +109,18 @@ steps:
     name: "Database Architecture & Data Governance"
     agent: database-architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 4)
       - prd.json (from step 2)
-      - compliance_mapping.json (from step 2)
+      - compliance-mapping.json (from step 2)
     outputs:
       - database-architecture.json
-      - data_governance_plan.json
-      - encryption_strategy.json
-      - reasoning.json
+      - data-governance-plan.json
+      - encryption-strategy.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05-database-architect.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/05-database.json
+      schema: .claude/schemas/database_architecture.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-database-architect.json
     notes: |
       Must address data retention, encryption at rest,
       audit logging, and PII handling requirements.
@@ -98,14 +129,15 @@ steps:
     name: "Infrastructure & DevOps Planning"
     agent: devops
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 4)
       - database-architecture.json (from step 5)
-      - security_architecture.json (from step 3)
+      - security-architecture.json (from step 3)
     outputs:
-      - infrastructure_plan.json
-      - deployment_strategy.json
-      - monitoring_plan.json
-      - reasoning.json
+      - infrastructure-plan.json
+      - deployment-strategy.json
+      - monitoring-plan.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/06-devops.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/06-devops.json
     notes: |
@@ -116,14 +148,15 @@ steps:
     name: "Test Planning & Security Testing"
     agent: qa
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 4)
       - database-architecture.json (from step 5)
-      - security_architecture.json (from step 3)
+      - security-architecture.json (from step 3)
       - prd.json (from step 2)
     outputs:
       - test-plan.json
-      - security_test_plan.json
-      - reasoning.json
+      - security-test-plan.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/07-qa.json
     validation:
       schema: .claude/schemas/test_plan.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/07-qa.json
@@ -135,16 +168,17 @@ steps:
     name: "Implementation"
     agent: developer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 4)
       - database-architecture.json (from step 5)
-      - security_architecture.json (from step 3)
-      - infrastructure_plan.json (from step 6)
+      - security-architecture.json (from step 3)
+      - infrastructure-plan.json (from step 6)
       - test-plan.json (from step 7)
     outputs:
       - dev-manifest.json
-      - code_artifacts
-      - security_controls_implementation.json
-      - reasoning.json
+      - code-artifacts
+      - security-controls-implementation.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/08-developer.json
     validation:
       schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/08-developer.json
@@ -153,17 +187,18 @@ steps:
     name: "Enterprise Documentation"
     agent: technical-writer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 8)
       - system-architecture.json (from step 4)
       - database-architecture.json (from step 5)
-      - security_architecture.json (from step 3)
-      - compliance_mapping.json (from step 2)
+      - security-architecture.json (from step 3)
+      - compliance-mapping.json (from step 2)
     outputs:
       - documentation.json
-      - operations_runbook.json
-      - compliance_documentation.json
-      - api_documentation.json
-      - reasoning.json
+      - operations-runbook.json
+      - compliance-documentation.json
+      - api-documentation.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/09-technical-writer.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/09-technical-writer.json
     notes: |
@@ -174,14 +209,16 @@ steps:
     name: "Quality Assurance & Security Validation"
     agent: qa
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 8)
       - test-plan.json (from step 7)
-      - security_test_plan.json (from step 7)
+      - security-test-plan.json (from step 7)
     outputs:
-      - quality_report.json
-      - test_results.json
-      - security_validation.json
-      - compliance_attestation.json
+      - quality-report.json
+      - test-results.json
+      - security-validation.json
+      - compliance-attestation.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/10-qa-final.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/10-qa-final.json
 

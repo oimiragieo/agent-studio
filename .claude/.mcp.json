@@ -1,4 +1,10 @@
 {
+  "betaFeatures": ["advanced-tool-use-2025-11-20"],
+  "toolSearch": {
+    "enabled": true,
+    "autoEnableThreshold": 20,
+    "defaultDeferLoading": true
+  },
   "mcpServers": {
     "repo": {
       "command": "npx",
@@ -9,7 +15,9 @@
       "env": {
         "REPO_PATH": "${workspaceFolder}"
       },
-      "description": "Repository search and codebase RAG for Claude Code. Used by repo-rag skill."
+      "description": "Repository search and codebase RAG for Claude Code. Used by repo-rag skill.",
+      "deferLoading": true,
+      "alwaysLoadTools": ["search_code", "read_file"]
     },
     "artifacts": {
       "command": "npx",
@@ -20,7 +28,8 @@
       "env": {
         "ARTIFACTS_DIR": "${workspaceFolder}/.claude/context/artifacts"
       },
-      "description": "Artifact publishing and management for Claude Projects. Used by artifact-publisher skill."
+      "description": "Artifact publishing and management for Claude Projects. Used by artifact-publisher skill.",
+      "deferLoading": true
     },
     "github": {
       "command": "npx",
@@ -32,7 +41,39 @@
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
       },
       "description": "GitHub integration for issues, PRs, and repository management. Used by context-bridge skill.",
-      "optional": true
+      "optional": true,
+      "deferLoading": true,
+      "alwaysLoadTools": ["create_pull_request", "get_issue"],
+      "allowedCallers": ["code_execution_20250825"],
+      "tools": {
+        "create_pull_request": {
+          "programmatic": true
+        },
+        "list_issues": {
+          "programmatic": true
+        },
+        "get_file_contents": {
+          "programmatic": true
+        }
+      },
+      "inputExamples": {
+        "create_pull_request": [
+          {
+            "title": "Fix authentication bug",
+            "body": "Resolves #123\n\nThis PR fixes the authentication bug reported in issue #123.",
+            "head": "feature/fix-auth",
+            "base": "main",
+            "draft": false
+          },
+          {
+            "title": "Add dark mode support",
+            "body": "Implements dark mode toggle with system preference detection.",
+            "head": "feature/dark-mode",
+            "base": "develop",
+            "draft": true
+          }
+        ]
+      }
     },
     "linear": {
       "command": "npx",
@@ -44,7 +85,8 @@
         "LINEAR_API_KEY": "${LINEAR_API_KEY}"
       },
       "description": "Linear integration for issue tracking. Used by context-bridge skill.",
-      "optional": true
+      "optional": true,
+      "deferLoading": true
     },
     "slack": {
       "command": "npx",
@@ -56,7 +98,15 @@
         "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}"
       },
       "description": "Slack integration for notifications. Used by context-bridge skill.",
-      "optional": true
+      "optional": true,
+      "deferLoading": true
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y","chrome-devtools-mcp@latest"],
+      "description": "Chrome DevTools Protocol integration for browser automation, debugging, and performance analysis. Allows AI to control and inspect live Chrome instances.",
+      "deferLoading": true,
+      "alwaysLoadTools": ["take_screenshot", "navigate_page"]
     }
   }
 }

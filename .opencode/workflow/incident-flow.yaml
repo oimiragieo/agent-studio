@@ -1,0 +1,62 @@
+name: Incident Flow
+description: Workflow for incident response and post-mortem
+type: incident
+project_type: operations
+
+steps:
+  - step: 1
+    name: "Incident Response"
+    agent: incident
+    inputs:
+      - incident_details
+      - system_state
+    outputs:
+      - incident-assessment.json
+      - immediate_actions
+
+  - step: 2
+    name: "DevOps Investigation"
+    agent: devops
+    inputs:
+      - incident-assessment.json (from step 1)
+      - infrastructure_logs
+    outputs:
+      - root-cause-analysis.json
+      - infrastructure_findings
+
+  - step: 3
+    name: "Security Review"
+    agent: security
+    inputs:
+      - root-cause-analysis.json (from step 2)
+      - security_logs
+    outputs:
+      - security-assessment.json
+      - vulnerabilities_identified
+
+  - step: 4
+    name: "Remediation Validation"
+    agent: qa
+    inputs:
+      - remediation_changes
+      - incident-assessment.json (from step 1)
+    outputs:
+      - validation_results.json
+      - post_mortem_report
+
+completion_criteria:
+  - Incident resolved
+  - Root cause identified
+  - Preventive measures implemented
+  - Post-mortem documented
+
+triggers:
+  keywords:
+    - incident
+    - outage
+    - production issue
+    - post-mortem
+    - crisis
+    - downtime
+    - emergency
+  priority: 0  # Highest priority

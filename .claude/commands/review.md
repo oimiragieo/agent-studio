@@ -1,8 +1,11 @@
-# Command: /review
+<command_description>
+Command: /review - Perform a comprehensive code review of recent changes.
 
-Perform a comprehensive code review of recent changes.
+**Note**: This command directly invokes the `code-reviewer` agent and does not use a workflow. For workflow-based code quality improvements, use `/code-quality` instead.
+</command_description>
 
-## Steps
+<instructions>
+<execution_steps>
 
 1. **Check Code Quality**
    - Verify code follows rules from `.claude/rules/`
@@ -28,9 +31,9 @@ Perform a comprehensive code review of recent changes.
    - Verify code is properly documented
    - Check that complex logic has comments
    - Ensure README/docs are updated if needed
+</execution_steps>
 
-## Output Format
-
+<output_format>
 Provide a structured review with:
 - Summary of findings
 - Critical issues (must fix)
@@ -39,4 +42,6 @@ Provide a structured review with:
 - Test coverage assessment
 
 Use artifacts if the review is extensive.
+</output_format>
+</instructions>
 

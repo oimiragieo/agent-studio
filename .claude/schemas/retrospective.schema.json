@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Retrospective",
+  "description": "Schema for sprint/epic retrospective",
+  "type": "object",
+  "required": ["epic_id", "what_went_well", "what_could_improve", "action_items", "created_at"],
+  "properties": {
+    "epic_id": {
+      "type": "string",
+      "description": "Epic ID this retrospective is for"
+    },
+    "sprint_id": {
+      "type": "string",
+      "description": "Sprint ID if applicable"
+    },
+    "what_went_well": {
+      "type": "array",
+      "description": "List of positive observations",
+      "items": {
+        "type": "string"
+      }
+    },
+    "what_could_improve": {
+      "type": "array",
+      "description": "List of improvement opportunities",
+      "items": {
+        "type": "string"
+      }
+    },
+    "action_items": {
+      "type": "array",
+      "description": "Action items from retrospective",
+      "items": {
+        "type": "object",
+        "required": ["description", "owner"],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string",
+            "description": "Agent or team responsible"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Sprint/epic metrics",
+      "properties": {
+        "stories_completed": {
+          "type": "number"
+        },
+        "stories_total": {
+          "type": "number"
+        },
+        "velocity": {
+          "type": "number",
+          "description": "Story points completed"
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
+

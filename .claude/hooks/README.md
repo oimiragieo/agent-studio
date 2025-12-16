@@ -95,6 +95,116 @@ Add patterns to the file protection section in `security-pre-tool.sh`.
 ### Custom Audit Format
 Modify the logging format in `audit-post-tool.sh`.
 
+## Python Hook Examples
+
+Based on Claude Cookbooks Chief of Staff agent patterns, comprehensive Python hook examples are available:
+
+### Report Tracker (PostToolUse)
+
+Tracks all file writes and edits for audit trail. Full implementation and configuration details in [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md#pattern-1-report-tracker-posttooluse).
+
+**Key Features:**
+- Tracks file creation and modification
+- Maintains history with timestamps
+- Calculates word counts
+- Keeps last 50 entries
+
+**Configuration:**
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [{"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/report-tracker.py"}]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [{"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/report-tracker.py"}]
+      }
+    ]
+  }
+}
+```
+
+### Script Usage Logger (PostToolUse)
+
+Logs when Python scripts are executed via Bash tool. Full implementation in [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md#pattern-2-script-usage-logger-posttooluse).
+
+**Key Features:**
+- Detects Python script execution
+- Logs command and description
+- Tracks success/failure
+- Keeps last 100 entries
+
+**Configuration:**
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/script-usage-logger.py"}]
+      }
+    ]
+  }
+}
+```
+
+### Security Validator (PreToolUse)
+
+Validates tool usage before execution. Full implementation in [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md#pattern-3-security-validation-pretooluse).
+
+**Key Features:**
+- Blocks dangerous bash commands
+- Prevents editing sensitive files
+- Returns allow/block decisions
+
+**Configuration:**
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [{"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/security-validator.py"}]
+      }
+    ]
+  }
+}
+```
+
+### Notification Hook (PostToolUse)
+
+Sends notifications for important events. Full implementation in [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md#pattern-4-notification-hook-posttooluse).
+
+**Key Features:**
+- Detects important operations
+- Sends notifications (Slack, email, etc.)
+- Configurable importance patterns
+
+## Advanced Patterns
+
+See [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md) for comprehensive hook patterns including:
+- Audit trail tracking
+- Script usage logging
+- Security validation
+- Notification hooks
+- Best practices
+- Testing hooks
+- Integration with Agent SDK
+
+## Setting Sources
+
+**IMPORTANT**: Hooks configured in `settings.local.json` require `setting_sources=["project", "local"]` in SDK configuration:
+
+```python
+options = ClaudeAgentOptions(
+    setting_sources=["project", "local"],  # Required for hooks
+    # ... other options
+)
+```
+
 ## Security Note
 
 These hooks provide a defense-in-depth layer but should not be relied upon as the only security measure. Always:

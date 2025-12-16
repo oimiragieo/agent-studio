@@ -28,5 +28,8 @@ audit/**/*.log
 !history/gates/.gitkeep
 !audit/.gitkeep
 
+# Rule index (pre-generated, should be committed)
+!rule-index.json
+
 # Optional: Keep specific important artifacts
 # !artifacts/important-artifact.json

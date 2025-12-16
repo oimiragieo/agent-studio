@@ -14,7 +14,8 @@
       "Bash(rm -rf *)",
       "Bash(format *)",
       "Bash(dd *)",
-      "Bash(mkfs *)"
+      "Bash(mkfs *)",
+      "Bash(npm run dev)"
     ]
   },
   "bash_commands": {
@@ -48,6 +49,12 @@
     "auto_save": true,
     "context_file": ".claude/context/session.json",
     "max_context_tokens": 100000
+  },
+  "rules": {
+    "exclude_patterns": [
+      ".claude/archive/**"
+    ],
+    "archive_access": "on_demand"
   },
   "agent_config": {
     "agent_directory": ".claude/agents"

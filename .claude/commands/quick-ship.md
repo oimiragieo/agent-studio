@@ -1,8 +1,9 @@
-# Quick Ship Command
+<command_description>
+Command: /quick-ship - Trigger quick-flow workflow for rapid bug fixes and small features.
+</command_description>
 
-Trigger quick-flow workflow for rapid bug fixes and small features.
-
-## Usage
+<instructions>
+<execution_steps>
 
 ```
 /quick-ship
@@ -17,13 +18,19 @@ Or provide details inline:
 ## What It Does
 
 1. Analyzes the request for quick-flow suitability
-2. Routes directly to Developer agent (skips planning agents)
-3. Implements the fix/feature
-4. Runs QA validation
+2. **Planner** (Step 0): Creates focused plan for quick implementation
+3. **Developer** (Step 1): Implements the fix/feature
+4. **QA** (Step 2): Runs quality validation
 5. Provides implementation summary
 
-## Best For
+**Workflow**: This command invokes `.claude/workflows/quick-flow.yaml` which follows a plan-first approach with minimal overhead for small changes.
 
+</execution_steps>
+</instructions>
+
+<examples>
+<usage_example>
+**Best For**:
 - Bug fixes
 - Hotfixes
 - Small UI tweaks
@@ -31,8 +38,7 @@ Or provide details inline:
 - Minor refactors
 - Code cleanup
 
-## Not Suitable For
-
+**Not Suitable For**:
 - New features requiring architecture
 - Security-critical changes
 - Database migrations
@@ -41,12 +47,17 @@ Or provide details inline:
 
 For complex work, use standard workflows instead.
 
-## Example
+**Example**:
 
 ```
 User: /quick-ship Fix the typo in the header component
-Claude: [Invokes quick-flow workflow]
-  → Developer: Fixes typo in Header.tsx
-  → QA: Validates change, runs tests
+Claude: [Invokes quick-flow workflow from .claude/workflows/quick-flow.yaml]
+  → Planner (Step 0): Creates focused plan
+  → Developer (Step 1): Fixes typo in Header.tsx
+  → QA (Step 2): Validates change, runs tests
   → Result: Fix complete, tests passing
 ```
+
+**Workflow File**: `.claude/workflows/quick-flow.yaml`
+</usage_example>
+</examples>

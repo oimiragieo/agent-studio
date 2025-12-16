@@ -1,31 +1,81 @@
+# LLM-RULES Master Rules Manifest
+# Defines which rules load globally vs. per-agent
+
+# Global Rules (Loaded for ALL agents)
+# Note: Master rules are in .claude/rules-master/ (outside .claude/rules/ to prevent auto-loading)
+# They are referenced with @filename in CLAUDE.md and loaded via config.yaml when agents activate
+master_rules:
+  global:
+    - .claude/rules-master/PROTOCOL_ENGINEERING.md
+
+  # Agent-Specific Rules (Loaded only when agent activates)
+  agent_specific:
+    developer:
+      - .claude/rules-master/TECH_STACK_NEXTJS.md
+      - .claude/rules-master/PROTOCOL_ENGINEERING.md
+    
+    qa:
+      - .claude/rules-master/TOOL_CYPRESS_MASTER.md
+      - .claude/rules-master/TOOL_PLAYWRIGHT_MASTER.md
+      - .claude/rules-master/PROTOCOL_ENGINEERING.md
+    
+    database-architect:
+      - .claude/rules-master/PROTOCOL_ENGINEERING.md
+    
+    security-architect:
+      - .claude/rules-master/LANG_SOLIDITY.md
+      - .claude/rules-master/PROTOCOL_ENGINEERING.md
+    
+    # Python agents (when needed)
+    python-developer:
+      - .claude/rules-master/LANG_PYTHON_GENERAL.md
+      - .claude/rules-master/FRAMEWORK_FASTAPI.md
+      - .claude/rules-master/PROTOCOL_ENGINEERING.md
+
+# Archive Configuration
+archive:
+  location: .claude/archive/
+  lookup_method: "read_file_on_demand"
+  description: "Niche rules stored here are not automatically loaded but can be accessed on-demand"
+
+# Legacy Stack Profiles (for backward compatibility)
+# These are deprecated - use master_rules.agent_specific instead
 stack_profiles:
   react_next_ts:
     include:
-      - ".claude/rules/nextjs-typescript-*/**/*.mdc"
-      - ".claude/rules/tailwind-*/**/*.mdc"
-      - ".claude/rules/javascript-typescript-code-quality-cursorrules-pro*/**/*.mdc"
+      - ".claude/rules-master/TECH_STACK_NEXTJS.md"
     exclude:
+      - ".claude/archive/**"
       - ".claude/rules/android-*/**"
       - ".claude/rules/swift-*/**"
 
   fastapi_python:
     include:
-      - ".claude/rules/cursorrules-file-cursor-ai-python-fastapi-api/**/*.mdc"
-      - ".claude/rules/python-projects-guide-cursorrules-prompt-file/**/*.mdc"
-      - ".claude/rules/python-cursorrules-prompt-file-best-practices/**/*.mdc"
-      - ".claude/rules/python-llm-ml-workflow-cursorrules-prompt-file/**/*.mdc"
-      - ".claude/rules/jest-unit-testing-cursorrules-prompt-file/**/*.mdc"
+      - ".claude/rules-master/FRAMEWORK_FASTAPI.md"
+      - ".claude/rules-master/LANG_PYTHON_GENERAL.md"
     exclude:
+      - ".claude/archive/**"
       - ".claude/rules/kotlin-*/**"
       - ".claude/rules/java-*/**"
 
   node_api:
     include:
-      - ".claude/rules/javascript-*/**/*.mdc"
-      - ".claude/rules/github-code-quality-cursorrules-prompt-file/**/*.mdc"
+      - ".claude/rules-master/PROTOCOL_ENGINEERING.md"
     exclude:
+      - ".claude/archive/**"
       - ".claude/rules/flutter-*/**"
 
+# Loading Policy
 loading_policy:
-  max_rules_files: 3
-  selection: "most_relevant"
+  strategy: "subagent_context"
+  max_rules_files: 5
+  selection: "agent_specific"
+  lazy_load: true
+  cache_loaded_context: true
+
+# Context Management
+context_management:
+  subagent_loading: true
+  global_rules_always_loaded: true
+  archive_access: "on_demand"
+  max_context_tokens: 200000

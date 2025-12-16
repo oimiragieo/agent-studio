@@ -1,36 +1,68 @@
 ---
 name: rule-auditor
 description: Validates code against currently loaded rules and reports compliance violations. Use after implementing features, during code review, or to ensure coding standards are followed. Provides actionable feedback with line-by-line issues and suggested fixes.
-allowed-tools: read, grep, glob, search
+allowed-tools: read, grep, glob, search, codebase_search
+version: 2.0
+best_practices:
+  - Run audits early in development cycle
+  - Focus on high-severity violations first
+  - Provide specific, actionable fixes
+  - Group violations by rule category
+  - Include code examples in suggestions
+error_handling: graceful
+streaming: supported
+output_formats: [markdown, json, inline_comments]
 ---
 
-# Rule Auditor
+<identity>
+Rule Auditor - Automatically validates code against your project's coding standards and rules.
+</identity>
 
-Automatically validates code against your project's coding standards and rules.
-
-## When to Use
-
+<capabilities>
 - After implementing a new feature or component
 - During code review to check standards compliance
 - Before committing to ensure quality gates pass
 - When onboarding to understand project conventions
 - To generate compliance reports for teams
+</capabilities>
 
-## Instructions
+<instructions>
+<execution_process>
 
-### Step 1: Identify Active Rules
+### Step 1: Load Rule Index
 
-First, determine which rules apply to the current project:
+Load the rule index to discover all available rules dynamically:
+- @.claude/context/rule-index.json
 
-```bash
-# Check manifest for stack profile
-cat .claude/rules/manifest.yaml
+The index contains metadata for all 1,081+ rules in `.claude/rules-master/` and `.claude/archive/`.
 
-# List all loaded rule files
-find .claude/rules -name "*.mdc" -type f | head -20
-```
+### Step 2: Filter Relevant Rules
 
-### Step 2: Scan Target Files
+Query the index's `technology_map` based on target files:
+
+1. **Detect technologies** from target files:
+   - File extension (`.tsx` → TypeScript, React)
+   - Import statements (`next` → Next.js, `react` → React)
+   - Directory structure (`app/` → Next.js App Router)
+
+2. **Query technology_map**:
+   ```javascript
+   // Pseudocode
+   const detectedTech = ['nextjs', 'react', 'typescript'];
+   const relevantRules = [];
+   
+   detectedTech.forEach(tech => {
+     const rules = index.technology_map[tech] || [];
+     relevantRules.push(...rules);
+   });
+   ```
+
+3. **Load only relevant rule files** (progressive disclosure):
+   - Master rules take priority
+   - Archive rules supplement
+   - Load 5-10 most relevant rules, not all 1,081
+
+### Step 3: Scan Target Files
 
 Identify the files to audit based on the task:
 
@@ -45,7 +77,7 @@ audit: src/components/
 git diff --name-only HEAD~1
 ```
 
-### Step 3: Extract Rule Patterns
+### Step 4: Extract Rule Patterns
 
 Parse the relevant .mdc files to extract checkable patterns:
 
@@ -60,9 +92,43 @@ Parse the relevant .mdc files to extract checkable patterns:
 | Performance | "Use Server Components by default" | Directive scan |
 | Security | "Never hardcode secrets" | Pattern detection |
 
-### Step 4: Generate Compliance Report
+### Step 5: Generate Compliance Report
 
-Output a structured report:
+Output a structured report with violations, warnings, and passed rules.
+</execution_process>
+
+<audit_patterns>
+**Next.js / React Audit**:
+- CHECK: 'use client' directive present when using useState, useEffect, useContext
+- CHECK: Server Components for data fetching (no useEffect for fetch)
+- CHECK: Image optimization using next/image
+
+**TypeScript Audit**:
+- CHECK: Type safety - No `any` types, interfaces for object shapes
+- CHECK: Naming conventions - PascalCase for Components, camelCase for functions
+
+**Python/FastAPI Audit**:
+- CHECK: Async patterns - async def for I/O operations
+- CHECK: Type hints - All function parameters typed
+</audit_patterns>
+
+<integration>
+**Pre-Commit Hook**: Run rule audit on modified files before commit
+**CI/CD Integration**: Generate JSON reports for automated quality gates
+</integration>
+
+<best_practices>
+1. **Run Early**: Audit during development, not just before commit
+2. **Fix as You Go**: Address violations immediately while context is fresh
+3. **Customize Rules**: Adjust rule severity in manifest.yaml for your team
+4. **Track Trends**: Monitor violation counts over time to measure improvement
+5. **Educate Team**: Use audit reports in code reviews to teach standards
+</best_practices>
+</instructions>
+
+<examples>
+<formatting_example>
+**Markdown Report Format**:
 
 ```markdown
 ## Rule Audit Report
@@ -102,63 +168,11 @@ Output a structured report:
 - ✅ Implement proper error boundaries
 ... (12 more)
 ```
+</formatting_example>
 
-## Audit Patterns by Framework
+<code_example>
+**JSON Output Format (for CI/CD)**:
 
-### Next.js / React Audit
-
-```
-CHECK: 'use client' directive present when using:
-  - useState, useEffect, useContext
-  - onClick, onChange handlers
-  - Browser APIs (window, document)
-
-CHECK: Server Components for:
-  - Data fetching (no useEffect for fetch)
-  - Static content rendering
-  - Database queries
-
-CHECK: Image optimization:
-  - Using next/image, not <img>
-  - Width/height or fill specified
-  - Priority on above-fold images
-```
-
-### TypeScript Audit
-
-```
-CHECK: Type safety:
-  - No `any` types (use `unknown`)
-  - Interfaces for object shapes
-  - Proper function return types
-  - Strict null checks
-
-CHECK: Naming conventions:
-  - PascalCase: Components, Types, Interfaces
-  - camelCase: functions, variables
-  - SCREAMING_SNAKE_CASE: constants
-```
-
-### Python/FastAPI Audit
-
-```
-CHECK: Async patterns:
-  - async def for I/O operations
-  - Proper await usage
-  - No blocking calls in async functions
-
-CHECK: Type hints:
-  - All function parameters typed
-  - Return types specified
-  - Pydantic models for validation
-```
-
-## Output Formats
-
-### Format 1: Markdown Report (default)
-Full compliance report with context and suggestions.
-
-### Format 2: JSON (for CI/CD)
 ```json
 {
   "target": "src/components/",
@@ -182,18 +196,21 @@ Full compliance report with context and suggestions.
   ]
 }
 ```
+</code_example>
 
-### Format 3: Inline Comments
-For direct code annotation:
+<code_example>
+**Inline Comments Format**:
+
 ```typescript
 // RULE_VIOLATION: typescript.mdc > Avoid using `any`
 // FIX: Define User interface with proper types
 const user: any = await getUser();  // ❌ FAIL
 ```
+</code_example>
 
-## Integration with Workflows
+<code_example>
+**Pre-Commit Hook**:
 
-### Pre-Commit Hook
 ```bash
 #!/bin/bash
 # .claude/hooks/pre-commit-audit.sh
@@ -209,8 +226,11 @@ for file in $modified; do
   fi
 done
 ```
+</code_example>
 
-### CI/CD Integration
+<code_example>
+**CI/CD Integration (GitHub Actions)**:
+
 ```yaml
 # GitHub Actions example
 - name: Rule Audit
@@ -221,8 +241,10 @@ done
       exit 1
     fi
 ```
+</code_example>
 
-## Quick Commands
+<usage_example>
+**Quick Commands**:
 
 ```
 # Audit current file
@@ -240,11 +262,5 @@ done
 # Show only failures
 /audit src/ --severity fail
 ```
-
-## Best Practices
-
-1. **Run Early**: Audit during development, not just before commit
-2. **Fix as You Go**: Address violations immediately while context is fresh
-3. **Customize Rules**: Adjust rule severity in manifest.yaml for your team
-4. **Track Trends**: Monitor violation counts over time to measure improvement
-5. **Educate Team**: Use audit reports in code reviews to teach standards
+</usage_example>
+</examples>

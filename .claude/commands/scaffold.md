@@ -1,8 +1,9 @@
-# Command: /scaffold
+<command_description>
+Command: /scaffold - Generate rule-compliant boilerplate code for your project.
+</command_description>
 
-Generate rule-compliant boilerplate code for your project.
-
-## Usage
+<instructions>
+<execution_steps>
 
 ```
 /scaffold component UserProfile      # Server Component (Next.js)
@@ -109,7 +110,9 @@ components/user-profile/__tests__/index.test.tsx
 - Bootstrapping feature modules
 - Ensuring new code follows team standards
 
-## See Also
+</execution_steps>
+</instructions>
 
-- `/select-rules` - Configure rules for your stack first
-- `/audit` - Validate generated code against rules
+<examples>
+<usage_example>
+**Usage Examples**:

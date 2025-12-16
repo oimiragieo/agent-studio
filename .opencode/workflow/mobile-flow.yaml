@@ -1,0 +1,60 @@
+name: Mobile Flow
+description: Workflow for mobile application development
+type: mobile
+project_type: mobile-app
+
+steps:
+  - step: 1
+    name: "Mobile Development"
+    agent: mobile-developer
+    inputs:
+      - mobile_requirements
+      - platform_targets
+    outputs:
+      - mobile-architecture.json
+      - platform_considerations
+
+  - step: 2
+    name: "UX Design"
+    agent: ux-expert
+    inputs:
+      - mobile-architecture.json (from step 1)
+      - design_requirements
+    outputs:
+      - mobile-ux-spec.json
+      - component_designs
+
+  - step: 3
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - mobile-ux-spec.json (from step 2)
+      - mobile-architecture.json (from step 1)
+    outputs:
+      - mobile_implementation
+      - platform_code
+
+  - step: 4
+    name: "Mobile Testing"
+    agent: qa
+    inputs:
+      - mobile_implementation (from step 3)
+      - device_matrix
+    outputs:
+      - mobile_test_results.json
+      - compatibility_report
+
+completion_criteria:
+  - Cross-platform compatibility verified
+  - Performance on target devices validated
+  - App store requirements met
+  - Accessibility compliance checked
+
+triggers:
+  keywords:
+    - mobile app
+    - ios
+    - android
+    - react native
+    - flutter
+    - native app

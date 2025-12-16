@@ -1,8 +1,9 @@
-# Command: /audit
+<command_description>
+Command: /audit - Validate code against your project's coding rules and standards.
+</command_description>
 
-Validate code against your project's coding rules and standards.
-
-## Usage
+<instructions>
+<execution_steps>
 
 ```
 /audit                     # Audit recent changes
@@ -77,8 +78,7 @@ Invokes the **rule-auditor** skill to:
 - Before committing changes
 - To generate compliance reports
 
-## See Also
+</execution_steps>
 
-- `/select-rules` - Configure rules for your stack
-- `/scaffold` - Generate rule-compliant boilerplate
-- `/review` - Comprehensive code review (includes audit)
+<output_format>
+**Output Format**:

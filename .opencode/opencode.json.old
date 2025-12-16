@@ -1,0 +1,117 @@
+{
+  "$schema": "https://opencode.ai/schema/config.json",
+  "name": "omega-ai-platform",
+  "version": "1.0.0",
+  "description": "Omega AI Platform - Intelligent Development Assistant",
+  
+  "agents": {
+    "directory": ".opencode/agent",
+    "default": "orchestrator"
+  },
+  
+  "commands": {
+    "directory": ".opencode/command"
+  },
+  
+  "templates": {
+    "directory": ".opencode/template"
+  },
+  
+  "tools": {
+    "directory": ".opencode/tool"
+  },
+  
+  "skills": {
+    "directory": ".opencode/skill"
+  },
+  
+  "instructions": {
+    "directory": ".opencode/instruction",
+    "autoload": [
+      "constitution.md",
+      "validation-rules.md"
+    ]
+  },
+  
+  "schemas": {
+    "directory": ".opencode/schema"
+  },
+  
+  "context": {
+    "directory": ".opencode/context",
+    "artifacts": ".opencode/context/artifacts",
+    "audit": ".opencode/context/audit"
+  },
+  
+  "system": {
+    "directory": ".opencode/system",
+    "guardrails": ".opencode/system/guardrails.md",
+    "permissions": ".opencode/system/permissions.md"
+  },
+  
+  "project": {
+    "type": "fullstack",
+    "framework": {
+      "frontend": "react",
+      "backend": "express"
+    },
+    "language": {
+      "frontend": "javascript",
+      "backend": "javascript"
+    },
+    "ports": {
+      "frontend": 3000,
+      "backend": 5000,
+      "sandbox": 8000,
+      "ollama": 11435,
+      "chroma": 8001
+    }
+  },
+  
+  "conventions": {
+    "imports": {
+      "order": ["external", "internal", "relative"]
+    },
+    "naming": {
+      "variables": "camelCase",
+      "functions": "camelCase",
+      "components": "PascalCase",
+      "classes": "PascalCase"
+    },
+    "logging": {
+      "use": "logger",
+      "avoid": ["console.log"]
+    },
+    "errorHandling": {
+      "tryCatch": "required",
+      "nullChecks": ["?.", "??"]
+    }
+  },
+  
+  "testing": {
+    "framework": "jest",
+    "commands": {
+      "unit": "npm test",
+      "integration": "npm run test:integration",
+      "e2e": "npm run test:e2e"
+    },
+    "coverage": {
+      "minimum": 80
+    }
+  },
+  
+  "lint": {
+    "frontend": "cd frontend && npm run lint",
+    "format": "npm run prettier"
+  },
+  
+  "build": {
+    "dev": "npm run dev",
+    "prod": "npm run build"
+  },
+  
+  "docker": {
+    "compose": "docker-compose.yml",
+    "services": ["redis", "chroma", "ollama"]
+  }
+}

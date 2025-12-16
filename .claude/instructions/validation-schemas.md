@@ -1,7 +1,9 @@
-# BMAD Validation Schemas & Data Models
+<protocol_description>
+BMAD Validation Schemas & Data Models - Defines validation schemas and data models used throughout the BMAD-Spec Orchestrator system to ensure consistency and correctness.
+</protocol_description>
 
-This document defines the validation schemas and data models used throughout the BMAD-Spec Orchestrator system to ensure consistency and correctness.
-
+<instructions>
+<guidelines>
 ## Core Data Models
 
 ### WorkflowModel
@@ -230,5 +232,9 @@ REVIEW: "review"          # Review artifact
 - Manual intervention points are clearly documented
 
 ---
+</guidelines>
+</instructions>
 
+<notes>
 *This document establishes the validation framework for all BMAD-Spec Orchestrator components. All workflows, agents, and templates must conform to these schemas to ensure system reliability and consistency.*
+</notes>

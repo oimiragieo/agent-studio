@@ -5,13 +5,105 @@
 Claude Code automatically discovers and loads configuration from the `.claude/` directory in your **project root** and reads `CLAUDE.md` files hierarchically. When you start Claude Code, it scans for:
 
 1. **`CLAUDE.md`** - Root rules file (in project root, NOT inside `.claude/`)
-2. **`.claude/agents/`** - Agent definitions (22 agents with YAML frontmatter)
+2. **`.claude/agents/`** - Agent definitions (23 agents with YAML frontmatter)
 3. **`.claude/rules/`** - Framework-specific rules (hierarchical loading)
 4. **`.claude/hooks/`** - Lifecycle hooks (PreToolUse, PostToolUse, UserPromptSubmit)
 5. **`.claude/commands/`** - Custom slash commands
 6. **`.claude/skills/`** - MCP skill definitions
 7. **`.claude/config.yaml`** - Orchestrator configuration
 8. **`.claude/settings.json`** - Tool permissions and MCP settings
+
+## Subagent Context Loading (Optimized Configuration)
+
+### Overview
+
+The optimized configuration uses **subagent context loading** to reduce context usage. Rules load ONLY when specific agents activate, keeping the main context clean.
+
+### How It Works
+
+1. **Global Rules**: `PROTOCOL_ENGINEERING.md` loads for all agents (universal standards)
+2. **Agent-Specific Rules**: Each agent loads only its relevant rules when activated
+3. **Lazy Loading**: Rules load on-demand, not upfront
+4. **Archive**: Niche rules stored in `.claude/archive/` for on-demand lookup
+
+### Configuration
+
+Agent context files are configured in `.claude/config.yaml`:
+
+```yaml
+agent_routing:
+  developer:
+    context_files:
+      - .claude/rules-master/TECH_STACK_NEXTJS.md
+      - .claude/rules-master/PROTOCOL_ENGINEERING.md
+    context_strategy: "lazy_load"
+  
+  qa:
+    context_files:
+      - .claude/rules-master/TOOL_CYPRESS_MASTER.md
+      - .claude/rules-master/TOOL_PLAYWRIGHT_MASTER.md
+      - .claude/rules-master/PROTOCOL_ENGINEERING.md
+    context_strategy: "lazy_load"
+```
+
+### Master Rules Files
+
+Master rules are in `.claude/rules-master/` (outside `.claude/rules/` to prevent auto-loading):
+
+- **TECH_STACK_NEXTJS.md**: Next.js/React/TypeScript/Tailwind (for developer agent)
+- **PROTOCOL_ENGINEERING.md**: Universal engineering standards (all agents)
+- **TOOL_CYPRESS_MASTER.md**: Cypress testing (for QA agent)
+- **TOOL_PLAYWRIGHT_MASTER.md**: Playwright testing (for QA agent)
+- **LANG_PYTHON_GENERAL.md**: General Python (for Python projects)
+- **FRAMEWORK_FASTAPI.md**: FastAPI-specific (for FastAPI projects)
+- **LANG_SOLIDITY.md**: Solidity smart contracts (for security-architect agent)
+
+### Benefits
+
+- **Reduced Context Usage**: From 141% to ~60-70%
+- **Faster Agent Activation**: Clean main context, specialized context on-demand
+- **Lower Token Costs**: Only load what's needed
+- **Better Organization**: Single source of truth for each rule category
+
+### Customization
+
+To add context files for a custom agent:
+
+1. Edit `.claude/config.yaml`
+2. Add `context_files` section to the agent
+3. Specify master rule files (or custom rules)
+4. Set `context_strategy: "lazy_load"`
+
+Example:
+```yaml
+my-custom-agent:
+  trigger_words:
+    - "custom task"
+  context_files:
+    - .claude/rules-master/PROTOCOL_ENGINEERING.md
+    - .claude/rules/my-custom-rules.md
+  context_strategy: "lazy_load"
+```
+
+### Monitoring Context Usage
+
+Use the context monitor tool:
+
+```bash
+# View usage report
+node .claude/tools/context-monitor.mjs report
+
+# View stats for specific agent
+node .claude/tools/context-monitor.mjs stats developer
+```
+
+### Best Practices
+
+1. **Use Master Files**: Reference master files in `_core/` directory
+2. **Archive Niche Rules**: Move rarely-used rules to `archive/`
+3. **Monitor Usage**: Track context usage per agent
+4. **Keep Global Rules Minimal**: Only PROTOCOL_ENGINEERING.md loads globally
+5. **Test Agent Activation**: Verify rules load correctly when agents activate
 
 ## Step-by-Step Setup
 
@@ -44,7 +136,7 @@ Your project root should look like this:
 your-project/
 ├── CLAUDE.md                  # ← Root rules (MUST be in project root)
 ├── .claude/                   # ← Claude configuration directory
-│   ├── agents/                 # Agent definitions (22 agents)
+│   ├── agents/                 # Agent definitions (23 agents)
 │   │   ├── analyst.md
 │   │   ├── architect.md
 │   │   ├── developer.md
@@ -53,10 +145,10 @@ your-project/
 │   │   ├── database-architect.md
 │   │   └── ... (22 total agents)
 │   ├── rules/                 # Framework rules (hierarchical)
-│   ├── hooks/                 # Lifecycle hooks (YAML files)
-│   │   ├── pre_tool_use.yaml
-│   │   ├── post_tool_use.yaml
-│   │   └── user_prompt_submit.yaml
+│   ├── hooks/                 # Lifecycle hooks (shell scripts)
+│   │   ├── security-pre-tool.sh      # PreToolUse hook
+│   │   ├── audit-post-tool.sh         # PostToolUse hook
+│   │   └── user-prompt-submit.sh      # UserPromptSubmit hook
 │   ├── commands/              # Custom slash commands
 │   ├── skills/                # MCP skill definitions
 │   ├── templates/             # Reusable templates
@@ -75,13 +167,110 @@ your-project/
 
 ### Step 3: Enable Hooks in Claude Code
 
+Hooks are shell scripts that execute at lifecycle events to provide security validation and audit logging. They are essential for production use.
+
+**What Hooks Do**:
+
+- **PreToolUse Hook** (`security-pre-tool.sh`): Validates tool usage before execution
+  - Blocks dangerous bash commands (`rm -rf`, `sudo rm`, `mkfs`, `dd`, etc.)
+  - Prevents force push to main/master branches
+  - Protects `.env` files and credential files from editing
+  - Blocks potentially malicious curl/wget piped to bash
+  - Returns JSON: `{"decision": "allow"}` or `{"decision": "block", "reason": "..."}`
+
+- **PostToolUse Hook** (`audit-post-tool.sh`): Logs tool executions for audit trail
+  - Records timestamp, tool name, and summary
+  - Stores logs in `~/.claude/audit/tool-usage.log`
+  - Auto-rotates logs to prevent disk bloat
+  - Provides compliance audit trail
+
+**Registration Steps**:
+
 1. Open **Claude Code** in your project directory
-2. Go to **Preferences → Claude Code → Hooks**
-3. Point hooks directory to `.claude/hooks`
-4. Enable the hooks you want:
-   - `pre_tool_use.yaml` - Validates plans before tool use
-   - `post_tool_use.yaml` - Publishes artifacts and logs
-   - `user_prompt_submit.yaml` - Normalizes prompts
+2. Navigate to **Preferences → Claude Code → Hooks** (or **Settings → Hooks**)
+3. Set hooks directory to `.claude/hooks` (absolute or relative path)
+4. Enable the hooks:
+   - **PreToolUse**: `.claude/hooks/security-pre-tool.sh`
+   - **PostToolUse**: `.claude/hooks/audit-post-tool.sh`
+5. Save preferences
+
+**Manual Registration** (if UI not available):
+
+Add to your Claude Code configuration file (location varies by platform):
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "command": "bash .claude/hooks/security-pre-tool.sh"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "command": "bash .claude/hooks/audit-post-tool.sh"
+      }
+    ]
+  }
+}
+```
+
+**Verify Hooks Are Working**:
+
+1. **Test Security Hook**:
+   - Try a safe command: `ls -la` (should be allowed)
+   - Try a dangerous command: `rm -rf /` (should be blocked)
+   - Check for error message explaining why it was blocked
+
+2. **Test Audit Hook**:
+   - Execute any tool (e.g., read a file)
+   - Check audit log: `cat ~/.claude/audit/tool-usage.log`
+   - Should see entry with timestamp, tool name, and summary
+
+3. **Check Hook Execution**:
+   - Look for hook execution in Claude Code's activity log
+   - Verify hooks directory path is correct
+   - Ensure hook scripts have execute permissions: `chmod +x .claude/hooks/*.sh`
+
+**Troubleshooting**:
+
+- **Hooks not executing**: 
+  - Verify hooks directory path in preferences
+  - Check that hook scripts exist and are executable
+  - Ensure bash is available in PATH
+
+- **Commands being blocked unexpectedly**:
+  - Review `security-pre-tool.sh` to understand blocked patterns
+  - Check if command matches dangerous pattern
+  - Modify hook script if pattern is too aggressive (but be cautious)
+
+- **No audit logs appearing**:
+  - Verify `audit-post-tool.sh` has execute permissions
+  - Check that `~/.claude/audit/` directory exists and is writable
+  - Review hook script for errors in log file path
+
+- **Permission errors**:
+  - Ensure hook scripts are executable: `chmod +x .claude/hooks/*.sh`
+  - Check file paths are correct (absolute vs relative)
+  - Verify bash interpreter path if using absolute paths
+
+**What Each Hook Does in Detail**:
+
+**security-pre-tool.sh**:
+- Reads JSON input from stdin with tool name and input
+- For Bash tool, extracts command and validates against dangerous patterns
+- Blocks file system destruction, remote code execution, SQL injection, etc.
+- Protects sensitive files (`.env*`, `secrets/`, `credentials.json`, etc.)
+- Returns JSON decision to Claude Code
+
+**audit-post-tool.sh**:
+- Reads JSON input with tool execution details
+- Formats log entry with timestamp, tool name, and summary
+- Appends to audit log file
+- Handles log rotation to prevent disk bloat
+- Provides compliance audit trail
+
+For detailed hook documentation and customization, see `.claude/hooks/README.md`.
 
 ### Step 4: Verify It Worked
 
@@ -95,6 +284,9 @@ your-project/
    - Try `/review` or `/fix-issue` (from `.claude/commands/`)
 4. **Verify hooks**:
    - Hooks should execute on tool use (check Preferences)
+   - Test with a safe command (should be allowed)
+   - Test with dangerous command like `rm -rf /` (should be blocked)
+   - Check audit log at `~/.claude/audit/tool-usage.log` for entries
 
 ## About the Folder Structure
 
@@ -103,7 +295,7 @@ The folder is already correctly named `.claude/` in `production-dropin/.claude/`
 ```
 production-dropin/
 ├── .claude/              # ← Copy this entire folder
-│   ├── agents/          # 22 agents (flat markdown files with YAML frontmatter)
+│   ├── agents/          # 23 agents (flat markdown files with YAML frontmatter)
 │   │   ├── analyst.md
 │   │   ├── architect.md
 │   │   ├── database-architect.md
@@ -252,6 +444,39 @@ Agents have:
 ### 6. Model Context Protocol (MCP) Integration
 
 MCP servers configured in `.claude/.mcp.json`:
+
+#### Advanced Tool Use (Beta Features)
+
+Anthropic's advanced tool use features (released November 24, 2025) dramatically reduce MCP tool token usage:
+
+**Tool Search Tool**:
+- Reduces MCP tool tokens by 85% (80k → 12k tokens)
+- Tools load on-demand instead of upfront
+- Improves tool selection accuracy (79.5% → 88.1%)
+
+**Configuration**:
+```json
+{
+  "betaFeatures": ["advanced-tool-use-2025-11-20"],
+  "toolSearch": {
+    "enabled": true,
+    "defaultDeferLoading": true
+  },
+  "mcpServers": {
+    "github": {
+      "deferLoading": true,
+      "alwaysLoadTools": ["create_pull_request"]
+    }
+  }
+}
+```
+
+**When to Enable**:
+- MCP tool count > 20 tools
+- MCP tools consume >30% of context
+- Want improved tool selection accuracy
+
+See `.claude/docs/ADVANCED_TOOL_USE.md` for comprehensive guide on Tool Search Tool, Programmatic Tool Calling, and Tool Use Examples.
 - **Repository RAG**: Codebase search and knowledge retrieval
 - **Artifact Publisher**: Push artifacts to Claude Projects
 - **Context Bridge**: Sync across Claude, Cursor, Droid

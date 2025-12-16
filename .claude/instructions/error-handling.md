@@ -152,3 +152,5 @@ RESOLUTION: How the error was resolved
 - Implement automated recovery where possible
 
 This error handling framework ensures robust, user-friendly operation of the BMAD-Spec Orchestrator System.
+</guidelines>
+</instructions>

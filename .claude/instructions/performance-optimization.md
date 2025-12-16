@@ -1,5 +1,9 @@
-# Performance & Scalability Optimization
+<protocol_description>
+Performance & Scalability Optimization - Strategies for optimizing workflow execution, agent coordination, and system scalability.
+</protocol_description>
 
+<instructions>
+<guidelines>
 ## Current Performance Bottlenecks
 
 ### 1. Sequential Agent Execution
@@ -138,3 +142,5 @@ monitoring:
     - agent_prompt_optimization
     - template_simplification_suggestions
 ```
+</guidelines>
+</instructions>

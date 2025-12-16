@@ -1,11 +1,14 @@
 ---
 name: security-architect
-description: Security architecture, threat modeling, compliance validation, and security assessment. Use for designing authentication systems, evaluating vulnerabilities, security code review, penetration testing planning, and compliance validation (SOC2, HIPAA, GDPR). Specializes in zero-trust architecture and defense-in-depth.
+description: Security architecture, threat modeling, compliance validation, and security assessment. Use for designing authentication systems, evaluating vulnerabilities, security code review, penetration testing planning, and compliance validation (SOC2, HIPAA, GDPR). Specializes in zero-trust architecture and defense-in-depth. Also handles blockchain and smart contract security.
 tools: Read, Search, Grep, Glob, Edit, MCP_search_code, MCP_security_scan
 model: opus
 temperature: 0.4
 extended_thinking: true
 priority: high
+context_files:
+  - .claude/rules-master/LANG_SOLIDITY.md
+  - .claude/rules-master/PROTOCOL_ENGINEERING.md
 ---
 
 # Security Architect Agent

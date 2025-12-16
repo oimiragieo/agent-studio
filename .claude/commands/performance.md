@@ -1,8 +1,9 @@
-# Command: /performance
+<command_description>
+Command: /performance - Launch a performance optimization workflow.
+</command_description>
 
-Launch a performance optimization workflow.
-
-## Usage
+<instructions>
+<execution_steps>
 
 ```
 /performance                     # Start performance workflow
@@ -54,7 +55,13 @@ Invokes the **performance-flow** workflow with this agent sequence:
 - `optimization-architecture.json` - Improvement plan
 - `benchmark-results.json` - Before/after metrics
 
-## See Also
+</execution_steps>
 
-- `/code-quality` - General code improvement
-- `/review` - Quick review including performance
+<output_format>
+**Outputs**:
+- `performance-analysis.json` - Profiling results
+- `bottleneck-report.json` - Identified issues
+- `optimization-architecture.json` - Improvement plan
+- `benchmark-results.json` - Before/after metrics
+</output_format>
+</instructions>

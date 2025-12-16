@@ -1,11 +1,9 @@
-# Command: /fix-issue
+<command_description>
+Command: /fix-issue - Analyze and fix a GitHub issue automatically.
+</command_description>
 
-Analyze and fix a GitHub issue automatically.
-
-## Arguments
-$ARGUMENTS - GitHub issue number or URL
-
-## Workflow
+<instructions>
+<execution_steps>
 
 1. **Fetch Issue Details**
    ```bash
@@ -48,11 +46,15 @@ $ARGUMENTS - GitHub issue number or URL
    - Link PR to original issue
    - Add appropriate reviewers
 
-## Best Practices
+**Arguments**: $ARGUMENTS - GitHub issue number or URL
+</execution_steps>
 
+<best_practices>
 - Always understand the problem before coding
 - Test locally before committing
 - Keep changes focused and minimal
 - Document non-obvious fixes
 - Consider edge cases and error scenarios
+</best_practices>
+</instructions>
 

@@ -1,5 +1,9 @@
-# Advanced Error Handling & Recovery System
+<protocol_description>
+Advanced Error Handling & Recovery System - Output quality detection, graceful degradation strategies, context recovery, and alternative workflow paths.
+</protocol_description>
 
+<instructions>
+<protocol_steps>
 ## Current Problems  
 1. **No error detection** - System can't identify when agents produce poor outputs
 2. **No recovery mechanisms** - If one agent fails, entire workflow stops
@@ -94,3 +98,11 @@ workflow_alternatives:
       - incorporate_feedback
       - resume_with_corrections
 ```
+</protocol_steps>
+</instructions>
+
+<examples>
+<code_example>
+**Output Quality Detection**:
+
+```yaml

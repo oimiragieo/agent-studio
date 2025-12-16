@@ -1,5 +1,9 @@
-# Advanced Agent Coordination System
+<protocol_description>
+Advanced Agent Coordination System - Protocols for cross-agent validation, conflict resolution, quality gates, and collaborative decision making.
+</protocol_description>
 
+<instructions>
+<protocol_steps>
 ## Current Problems
 1. **No cross-agent validation** - PM agent doesn't validate Analyst's technical feasibility assessments
 2. **Conflicting outputs** - Architect might specify technologies that contradict PM's requirements  
@@ -83,3 +87,11 @@ architect_prompt_addition: |
   3. Request PM clarification on priority conflicts
   4. Escalate to consensus building if unresolved
 ```
+</protocol_steps>
+</instructions>
+
+<examples>
+<code_example>
+**Cross-Agent Validation Protocol**:
+
+```yaml

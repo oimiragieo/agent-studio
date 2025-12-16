@@ -45,6 +45,25 @@ Plan Mode gives Cursor agents a structured planning canvas that auto-researches 
 - Store plan artifacts for context preservation
 - Update plans as work progresses (create v2 if major changes)
 
+## Planner Agent Integration
+
+**Important Distinction**:
+- **Plan Mode** (this document): Cursor's built-in UI feature for implementation-level planning. Activated with `Shift+Tab` or automatically via hooks.
+- **Planner Agent** (`.cursor/subagents/planner.mdc`): A strategic planning persona that creates comprehensive plans, coordinates specialists, and validates execution.
+
+**How They Work Together**:
+- **Planner Agent** creates strategic, multi-agent coordination plans (saved to `.claude/context/artifacts/`)
+- **Plan Mode** handles implementation-level planning for multi-file code changes (saved to `.cursor/plans/`)
+- Strategic plans from Planner Agent can be referenced in Plan Mode for detailed implementation
+- Use Planner Agent for complex workflows requiring multiple specialist agents
+- Use Plan Mode for direct code implementation planning
+
+**Example Workflow**:
+1. Planner Agent creates strategic plan with Analyst → PM → Architect coordination
+2. Plan Mode references the strategic plan for implementation details
+3. Developer uses Plan Mode to plan specific file changes
+4. Plans are linked for full traceability
+
 ## Agent Integration
 
 ### Developer Agent
@@ -62,5 +81,11 @@ Plan Mode gives Cursor agents a structured planning canvas that auto-researches 
 - Review plans for test coverage
 - Validate plan includes all necessary test scenarios
 - Check requirements traceability in plans
+
+### Planner Agent
+- Creates strategic plans that can be referenced in Plan Mode
+- Coordinates with specialists before implementation planning
+- Validates plan completeness and feasibility
+- Links strategic plans to Plan Mode artifacts for implementation
 
 [4] Cursor, "Introducing Plan Mode" (Oct 7, 2025).

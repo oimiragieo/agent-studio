@@ -3,6 +3,9 @@ description: Performance profiling, optimization, and load testing initiatives
 type: performance
 project_type: optimization
 
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
   - "performance"
   - "optimize"
@@ -13,17 +16,38 @@ trigger_keywords:
   - "latency"
 
 steps:
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
+    inputs:
+      - target_system
+      - performance_requirements
+      - current_metrics
+    outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Plan performance optimization workflow:
+      - Analyze performance requirements
+      - Coordinate optimization strategy
+      - Create structured improvement plan
+
   - step: 1
     name: "Performance Analysis"
     agent: performance-engineer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - target_system
       - performance_requirements
       - current_metrics
     outputs:
       - performance-analysis.json
       - bottleneck-report.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-performance-engineer.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/01-performance-engineer.json
     description: |
@@ -38,12 +62,14 @@ steps:
     name: "Architecture Review"
     agent: architect
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - performance-analysis.json (from step 1)
       - bottleneck-report.json (from step 1)
     outputs:
       - optimization-architecture.json
-      - reasoning.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-architect.json
     validation:
+      schema: .claude/schemas/system_architecture.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-architect.json
     description: |
       Architectural optimization planning:
@@ -57,13 +83,15 @@ steps:
     name: "Implementation"
     agent: developer
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - optimization-architecture.json (from step 2)
       - performance-analysis.json (from step 1)
     outputs:
-      - implementation-manifest.json
-      - code_artifacts
-      - reasoning.json
+      - dev-manifest.json
+      - code-artifacts
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-developer.json
     validation:
+      schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-developer.json
     description: |
       Optimization implementation:
@@ -77,11 +105,14 @@ steps:
     name: "Performance Validation"
     agent: qa
     inputs:
-      - implementation-manifest.json (from step 3)
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 3)
       - performance-analysis.json (from step 1)
     outputs:
       - benchmark-results.json
       - load-test-report.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/04-qa.json
     description: |
       Performance validation:
       - Benchmark comparison (before/after)

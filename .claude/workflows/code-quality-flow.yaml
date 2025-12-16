@@ -3,6 +3,9 @@ description: Systematic code quality improvement, refactoring, and compliance va
 type: code-quality
 project_type: enhancement
 
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
   - "code quality"
   - "code review"
@@ -11,17 +14,88 @@ trigger_keywords:
   - "code smell"
   - "clean up"
 
+# Workflow-Level Context Inputs
+# These inputs must be provided when the workflow is initialized (by orchestrator or user).
+# They are passed directly to agents as context, not loaded from artifact files.
+#
+# Required Inputs:
+#   - target_files: Array of file/directory paths to analyze
+#     Example: ["src/", "lib/", "app/components/"]
+#   - coding_standards: String or array of coding standards to apply
+#     Example: "PEP 8" or ["Airbnb JavaScript Style Guide", "Google Java Style"]
+#
+# How to Provide:
+#   1. Via orchestrator: Pass as context object when initializing workflow
+#      Example:
+#        {
+#          "target_files": ["src/", "lib/"],
+#          "coding_standards": "PEP 8"
+#        }
+#
+#   2. Via command line: Set as environment variables
+#      Example:
+#        export TARGET_FILES='["src/", "lib/"]'
+#        export CODING_STANDARDS="PEP 8"
+#
+#   3. Via JSON config file: Include in workflow initialization parameters
+#      Example config.json:
+#        {
+#          "workflow": "code-quality-flow",
+#          "inputs": {
+#            "target_files": ["src/", "lib/"],
+#            "coding_standards": "PEP 8"
+#          }
+#        }
+#
+# Validation: These inputs are validated by the orchestrator before workflow execution.
+# If not provided, the workflow will fail with a clear error message.
+#
+# Agent Usage: Agents receive these inputs as context variables (not artifact files).
+# Agents should check for these inputs in their context and use them for their analysis.
+# Example agent code:
+#   const targetFiles = context.target_files || [];
+#   const codingStandards = context.coding_standards || "default";
+workflow_inputs:
+  required:
+    - target_files
+    - coding_standards
+  optional: []
+
 steps:
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
+    inputs:
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - target_files  # List of files/directories to analyze (e.g., ["src/", "lib/", "app/components/"])
+      - coding_standards  # Coding standards to apply (e.g., "PEP 8", "Airbnb JavaScript Style Guide", "Google Java Style")
+    outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Plan code quality improvement workflow:
+      - Analyze code quality requirements
+      - Coordinate with specialists for planning
+      - Create structured improvement plan
+
   - step: 1
     name: "Code Review Analysis"
     agent: code-reviewer
     inputs:
-      - target_files
-      - coding_standards
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - target_files  # List of files/directories to analyze
+      - coding_standards  # Coding standards to apply
     outputs:
-      - code-review.json
-      - reasoning.json
+      - code-review-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-code-reviewer.json
     validation:
+      schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-code-reviewer.json
     description: |
       Systematic analysis of code quality including:
@@ -35,12 +109,17 @@ steps:
     name: "Refactoring Planning"
     agent: refactoring-specialist
     inputs:
-      - code-review.json (from step 1)
-      - target_files
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - code-review-{{workflow_id}}.json (from step 1)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - target_files  # List of files/directories to analyze
+      - coding_standards  # Coding standards to apply
     outputs:
-      - refactoring-plan.json
-      - reasoning.json
+      - refactoring-plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-refactoring-specialist.json
     validation:
+      schema: .claude/schemas/refactoring-plan.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-refactoring-specialist.json
     description: |
       Safe transformation strategy including:
@@ -53,12 +132,18 @@ steps:
     name: "Compliance Validation"
     agent: compliance-auditor
     inputs:
-      - refactoring-plan.json (from step 2)
-      - code-review.json (from step 1)
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - refactoring-plan-{{workflow_id}}.json (from step 2)
+      - code-review-{{workflow_id}}.json (from step 1)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - target_files  # List of files/directories to analyze
+      - coding_standards  # Coding standards to apply
     outputs:
-      - compliance-report.json
-      - reasoning.json
+      - compliance-report-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-compliance-auditor.json
     validation:
+      schema: .claude/schemas/compliance-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-compliance-auditor.json
     description: |
       Verify compliance with:
@@ -71,11 +156,34 @@ steps:
     name: "Quality Validation"
     agent: qa
     inputs:
-      - refactoring-plan.json (from step 2)
-      - compliance-report.json (from step 3)
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - code-review-{{workflow_id}}.json (from step 1)
+      - refactoring-plan-{{workflow_id}}.json (from step 2)
+      - compliance-report-{{workflow_id}}.json (from step 3)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - target_files  # List of files/directories to analyze
+      - coding_standards  # Coding standards to apply
     outputs:
-      - quality-report.json
-      - test-results.json
+      - quality-report-{{workflow_id}}.json
+      - test-results-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-qa.json
+    validation:
+      schema: .claude/schemas/quality-report.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-qa.json
+      # Validation Notes:
+      # Primary output: quality-report-{{workflow_id}}.json
+      #   - Validated against quality-report.schema.json by workflow runner
+      # Secondary output: test-results-{{workflow_id}}.json
+      #   - Schema: .claude/schemas/test-results.schema.json
+      #   - Automatically validated by workflow runner after primary output validation passes
+      #   - Validation timing: post-generation (after primary output passes)
+      #   - If validation fails, the workflow runner will report the error and step will fail
+      #   - The QA agent must ensure this artifact is created and conforms to the schema
+      secondary_outputs:
+        - artifact: test-results-{{workflow_id}}.json
+          schema: .claude/schemas/test-results.schema.json
+          validation_timing: post-generation
     description: |
       Final quality validation:
       - Test coverage verification

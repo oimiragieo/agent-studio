@@ -3,20 +3,44 @@ description: Fast-track workflow for bug fixes, small features, and minor enhanc
 type: quick
 project_type: enhancement
 
+# NOTE: The triggers section below is for documentation only.
+# The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
+
 # Quick Flow: Developer → QA (minimal overhead)
 # Use for: Bug fixes, hotfixes, small features, documentation updates, refactoring
 
 steps:
-  - step: 1
-    name: "Implementation"
-    agent: developer
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
     inputs:
       - user_requirements
       - existing_codebase
     outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Quick planning for bug fixes and small features:
+      - Analyze requirements and scope
+      - Create focused plan for quick implementation
+      - Validate plan feasibility
+
+  - step: 1
+    name: "Implementation"
+    agent: developer
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - user_requirements
+      - existing_codebase
+    outputs:
       - dev-manifest.json
-      - code_artifacts
-      - reasoning.json
+      - code-artifacts
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-developer.json
     validation:
       schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-developer.json
@@ -25,11 +49,14 @@ steps:
     name: "Quality Validation"
     agent: qa
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 1)
-      - code_artifacts (from step 1)
+      - code-artifacts (from step 1)
     outputs:
-      - quality_report.json
-      - test_results.json
+      - quality-report.json
+      - test-results.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/02-qa.json
 
 completion_criteria:
   - Implementation validated against requirements

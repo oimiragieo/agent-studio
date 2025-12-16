@@ -1,0 +1,433 @@
+#!/usr/bin/env node
+/**
+ * Comprehensive Reference Validation Script
+ * 
+ * Validates all file references across the entire LLM-RULES system:
+ * - Agent files referenced in config.yaml
+ * - Schema files referenced in workflows
+ * - Template files referenced in agents/workflows
+ * - Workflow files referenced in config.yaml
+ * - All cross-references
+ * 
+ * Usage:
+ *   node scripts/validate-all-references.mjs [--verbose] [--fix]
+ * 
+ * Exit codes:
+ *   0: All validations passed
+ *   1: One or more validations failed
+ */
+
+import { readFileSync, existsSync, readdirSync } from 'fs';
+import { resolve, dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+// Import js-yaml
+let yaml;
+try {
+  yaml = (await import('js-yaml')).default;
+} catch (error) {
+  console.error('❌ Error: js-yaml package is required for validation.');
+  console.error('   Please install it: pnpm add -D js-yaml');
+  process.exit(2);
+}
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const rootDir = resolve(__dirname, '..');
+
+const args = process.argv.slice(2);
+const verbose = args.includes('--verbose');
+const fixMode = args.includes('--fix');
+
+const errors = [];
+const warnings = [];
+const fixes = [];
+
+/**
+ * Check if file exists
+ */
+function checkFile(path, description, required = true) {
+  const fullPath = resolve(rootDir, path);
+  const exists = existsSync(fullPath);
+  
+  if (!exists) {
+    if (required) {
+      errors.push(`Missing required file: ${path} (${description})`);
+    } else {
+      warnings.push(`Missing optional file: ${path} (${description})`);
+    }
+    return false;
+  }
+  
+  if (verbose) {
+    console.log(`  ✓ ${description}: ${path}`);
+  }
+  return true;
+}
+
+/**
+ * Extract template references from markdown content
+ */
+function extractTemplateReferences(content, filePath) {
+  const templateRefs = [];
+  // Match patterns like: .claude/templates/plan-template.md
+  const regex = /\.claude\/templates\/([a-z-]+\.md)/g;
+  let match;
+  
+  while ((match = regex.exec(content)) !== null) {
+    templateRefs.push({
+      template: match[1],
+      fullPath: `.claude/templates/${match[1]}`,
+      referencedIn: filePath
+    });
+  }
+  
+  return templateRefs;
+}
+
+/**
+ * Extract schema references from YAML content
+ */
+function extractSchemaReferences(content, filePath) {
+  const schemaRefs = [];
+  // Match patterns like: schema: .claude/schemas/plan.schema.json
+  const regex = /schema:\s*\.claude\/schemas\/([a-z-]+\.schema\.json)/g;
+  let match;
+  
+  while ((match = regex.exec(content)) !== null) {
+    schemaRefs.push({
+      schema: match[1],
+      fullPath: `.claude/schemas/${match[1]}`,
+      referencedIn: filePath
+    });
+  }
+  
+  return schemaRefs;
+}
+
+/**
+ * Validate config.yaml
+ */
+function validateConfigYAML() {
+  console.log('\n📋 Validating config.yaml...');
+  
+  const configPath = resolve(rootDir, '.claude/config.yaml');
+  if (!checkFile('.claude/config.yaml', 'Config file', true)) {
+    return;
+  }
+  
+  let config;
+  try {
+    const content = readFileSync(configPath, 'utf-8');
+    config = yaml.load(content);
+  } catch (error) {
+    errors.push(`Failed to parse config.yaml: ${error.message}`);
+    return;
+  }
+  
+  // Validate agent routing
+  if (config.agent_routing) {
+    const agentFiles = readdirSync(resolve(rootDir, '.claude/agents'))
+      .filter(f => f.endsWith('.md'))
+      .map(f => f.replace('.md', ''));
+    
+    Object.keys(config.agent_routing).forEach(agentName => {
+      if (agentName === 'sdk') return; // Skip SDK directory
+      
+      const agentFile = resolve(rootDir, `.claude/agents/${agentName}.md`);
+      if (!existsSync(agentFile)) {
+        errors.push(`Agent referenced in config.yaml but file missing: ${agentName}.md`);
+      } else if (verbose) {
+        console.log(`  ✓ Agent ${agentName} exists`);
+      }
+    });
+  }
+  
+  // Validate workflow files
+  if (config.workflow_selection) {
+    Object.entries(config.workflow_selection).forEach(([name, workflow]) => {
+      if (workflow.workflow_file) {
+        const workflowPath = resolve(rootDir, workflow.workflow_file);
+        if (!existsSync(workflowPath)) {
+          errors.push(`Workflow file missing: ${workflow.workflow_file} (referenced by ${name})`);
+        } else if (verbose) {
+          console.log(`  ✓ Workflow file exists: ${workflow.workflow_file}`);
+        }
+      }
+    });
+  }
+  
+  // Validate template configuration
+  if (config.templates) {
+    Object.entries(config.templates).forEach(([key, templateFile]) => {
+      if (key === 'base_dir') return;
+      const templatePath = resolve(rootDir, config.templates.base_dir || '.claude/templates', templateFile);
+      if (!existsSync(templatePath)) {
+        errors.push(`Template missing: ${templateFile} (referenced in config.yaml templates.${key})`);
+      } else if (verbose) {
+        console.log(`  ✓ Template ${key}: ${templateFile}`);
+      }
+    });
+  }
+}
+
+/**
+ * Validate all workflows
+ */
+function validateWorkflows() {
+  console.log('\n📋 Validating workflows...');
+  
+  const workflowsDir = resolve(rootDir, '.claude/workflows');
+  if (!existsSync(workflowsDir)) {
+    errors.push('Workflows directory missing: .claude/workflows');
+    return;
+  }
+  
+  const workflowFiles = readdirSync(workflowsDir)
+    .filter(f => f.endsWith('.yaml') || f.endsWith('.yml'))
+    .filter(f => f !== 'WORKFLOW-GUIDE.md');
+  
+  const allSchemas = new Set();
+  const allAgents = new Set();
+  
+  workflowFiles.forEach(file => {
+    const filePath = resolve(workflowsDir, file);
+    try {
+      const content = readFileSync(filePath, 'utf-8');
+      const workflow = yaml.load(content);
+      
+      // Extract schema references
+      const schemaRefs = extractSchemaReferences(content, file);
+      schemaRefs.forEach(ref => {
+        allSchemas.add(ref.fullPath);
+        if (!checkFile(ref.fullPath, `Schema ${ref.schema}`, true)) {
+          errors.push(`Schema missing: ${ref.schema} (referenced in ${file})`);
+        }
+      });
+      
+      // Extract agent references
+      if (workflow.steps && Array.isArray(workflow.steps)) {
+        workflow.steps.forEach(step => {
+          if (step.agent) {
+            allAgents.add(step.agent);
+            const agentFile = resolve(rootDir, `.claude/agents/${step.agent}.md`);
+            if (!existsSync(agentFile)) {
+              errors.push(`Agent missing: ${step.agent}.md (referenced in ${file}, step ${step.step})`);
+            }
+          }
+        });
+      }
+      
+      // Check for phase-based workflows (BMad format)
+      if (workflow.phases && Array.isArray(workflow.phases)) {
+        workflow.phases.forEach(phase => {
+          if (phase.steps && Array.isArray(phase.steps)) {
+            phase.steps.forEach(step => {
+              if (step.agent) {
+                allAgents.add(step.agent);
+                const agentFile = resolve(rootDir, `.claude/agents/${step.agent}.md`);
+                if (!existsSync(agentFile)) {
+                  errors.push(`Agent missing: ${step.agent}.md (referenced in ${file}, phase step ${step.step})`);
+                }
+              }
+            });
+          }
+        });
+      }
+      
+    } catch (error) {
+      errors.push(`Failed to parse workflow ${file}: ${error.message}`);
+    }
+  });
+  
+  if (verbose) {
+    console.log(`  Found ${allSchemas.size} unique schema references`);
+    console.log(`  Found ${allAgents.size} unique agent references`);
+  }
+}
+
+/**
+ * Validate all agents
+ */
+function validateAgents() {
+  console.log('\n📋 Validating agents...');
+  
+  const agentsDir = resolve(rootDir, '.claude/agents');
+  if (!existsSync(agentsDir)) {
+    errors.push('Agents directory missing: .claude/agents');
+    return;
+  }
+  
+  const agentFiles = readdirSync(agentsDir)
+    .filter(f => f.endsWith('.md'));
+  
+  const allTemplates = new Set();
+  
+  agentFiles.forEach(file => {
+    const filePath = resolve(agentsDir, file);
+    try {
+      const content = readFileSync(filePath, 'utf-8');
+      
+      // Extract template references
+      const templateRefs = extractTemplateReferences(content, file);
+      templateRefs.forEach(ref => {
+        allTemplates.add(ref.fullPath);
+        if (!checkFile(ref.fullPath, `Template ${ref.template}`, true)) {
+          errors.push(`Template missing: ${ref.template} (referenced in agent ${file})`);
+        }
+      });
+      
+    } catch (error) {
+      warnings.push(`Failed to read agent ${file}: ${error.message}`);
+    }
+  });
+  
+  if (verbose) {
+    console.log(`  Found ${allTemplates.size} unique template references`);
+  }
+}
+
+/**
+ * Validate all templates exist
+ */
+function validateTemplates() {
+  console.log('\n📋 Validating templates...');
+  
+  const templatesDir = resolve(rootDir, '.claude/templates');
+  if (!existsSync(templatesDir)) {
+    errors.push('Templates directory missing: .claude/templates');
+    return;
+  }
+  
+  const templateFiles = readdirSync(templatesDir)
+    .filter(f => f.endsWith('.md'));
+  
+  // Check critical templates
+  const criticalTemplates = [
+    'plan-template.md',
+    'claude-md-template.md',
+    'project-brief.md',
+    'prd.md',
+    'architecture.md',
+    'ui-spec.md',
+    'test-plan.md'
+  ];
+  
+  criticalTemplates.forEach(template => {
+    checkFile(`.claude/templates/${template}`, `Critical template: ${template}`, true);
+  });
+  
+  if (verbose) {
+    console.log(`  Found ${templateFiles.length} template files`);
+  }
+}
+
+/**
+ * Validate all schemas exist
+ */
+function validateSchemas() {
+  console.log('\n📋 Validating schemas...');
+  
+  const schemasDir = resolve(rootDir, '.claude/schemas');
+  if (!existsSync(schemasDir)) {
+    errors.push('Schemas directory missing: .claude/schemas');
+    return;
+  }
+  
+  const schemaFiles = readdirSync(schemasDir)
+    .filter(f => f.endsWith('.schema.json'));
+  
+  // Check critical schemas
+  const criticalSchemas = [
+    'plan.schema.json',
+    'project_brief.schema.json',
+    'product_requirements.schema.json',
+    'system_architecture.schema.json',
+    'database_architecture.schema.json',
+    'ux_spec.schema.json',
+    'test_plan.schema.json',
+    'artifact_manifest.schema.json'
+  ];
+  
+  criticalSchemas.forEach(schema => {
+    checkFile(`.claude/schemas/${schema}`, `Critical schema: ${schema}`, true);
+  });
+  
+  if (verbose) {
+    console.log(`  Found ${schemaFiles.length} schema files`);
+  }
+}
+
+/**
+ * Validate workflow runner dependencies
+ */
+function validateWorkflowRunner() {
+  console.log('\n📋 Validating workflow runner...');
+  
+  const runnerPath = resolve(rootDir, '.claude/tools/workflow_runner.js');
+  if (!checkFile('.claude/tools/workflow_runner.js', 'Workflow runner', true)) {
+    return;
+  }
+  
+  // Check for required dependencies
+  const dependencies = [
+    '.claude/tools/workflow/decision-handler.mjs',
+    '.claude/tools/workflow/loop-handler.mjs'
+  ];
+  
+  dependencies.forEach(dep => {
+    checkFile(dep, `Workflow dependency: ${dep}`, true);
+  });
+}
+
+/**
+ * Main validation function
+ */
+function main() {
+  console.log('🔍 Comprehensive Reference Validation\n');
+  console.log('='.repeat(60));
+  
+  validateConfigYAML();
+  validateWorkflows();
+  validateAgents();
+  validateTemplates();
+  validateSchemas();
+  validateWorkflowRunner();
+  
+  // Print results
+  console.log('\n' + '='.repeat(60));
+  console.log('📊 Validation Results\n');
+  
+  if (errors.length > 0) {
+    console.error('❌ Errors Found:');
+    errors.forEach(error => {
+      console.error(`  • ${error}`);
+    });
+  }
+  
+  if (warnings.length > 0) {
+    console.warn('\n⚠️  Warnings:');
+    warnings.forEach(warning => {
+      console.warn(`  • ${warning}`);
+    });
+  }
+  
+  if (errors.length === 0 && warnings.length === 0) {
+    console.log('✅ All validations passed!');
+    console.log('\n✓ All agent files exist');
+    console.log('✓ All schema files exist');
+    console.log('✓ All template files exist');
+    console.log('✓ All workflow files exist');
+    console.log('✓ All references are valid');
+    process.exit(0);
+  } else {
+    console.log(`\n📊 Summary: ${errors.length} error(s), ${warnings.length} warning(s)`);
+    if (errors.length > 0) {
+      process.exit(1);
+    }
+    process.exit(0);
+  }
+}
+
+main();
+

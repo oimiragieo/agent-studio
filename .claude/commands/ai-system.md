@@ -1,8 +1,9 @@
-# Command: /ai-system
+<command_description>
+Command: /ai-system - Launch an AI/LLM system development workflow.
+</command_description>
 
-Launch an AI/LLM system development workflow.
-
-## Usage
+<instructions>
+<execution_steps>
 
 ```
 /ai-system                       # Start AI system workflow
@@ -62,7 +63,13 @@ Invokes the **ai-system-flow** workflow with this agent sequence:
 - `api-specification.json` - API design
 - `ai-test-results.json` - Quality assessment
 
-## See Also
+</execution_steps>
 
-- `/scaffold` - Generate AI boilerplate
-- `/performance` - Optimize AI system performance
+<output_format>
+**Outputs**:
+- `model-strategy.json` - Model selection plan
+- `llm-architecture.json` - System architecture
+- `api-specification.json` - API design
+- `ai-test-results.json` - Quality assessment
+</output_format>
+</instructions>
