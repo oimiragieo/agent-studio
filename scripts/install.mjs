@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * LLM-RULES Installer Script
+ * Agent Studio Installer Script
  * 
  * Copies agent bundles (.claude/, .cursor/, .factory/) to target project
  * and validates configuration.
@@ -91,7 +91,7 @@ function main() {
   const args = parseArgs();
   const targetDir = args.targetDir ? resolve(args.targetDir) : process.cwd();
   
-  console.log('LLM-RULES Installer');
+  console.log('Agent Studio Installer');
   console.log('='.repeat(60));
   console.log(`Target directory: ${targetDir}`);
   if (args.force) console.log('Mode: Force (will overwrite existing bundles)');

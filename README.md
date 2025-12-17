@@ -1,4 +1,4 @@
-# LLM-RULES Production Pack
+# Agent Studio
 
 **Copy-paste agent configurations** for Claude Code, Cursor, and Factory Droids.
 

@@ -133,7 +133,7 @@ function validateJSON(path, description) {
 
 // Main validation function
 function validateConfig() {
-  console.log('Validating LLM-RULES configuration...\n');
+  console.log('Validating Agent Studio configuration...\n');
   
   // 1. Check gate script
   console.log('Checking gate script...');

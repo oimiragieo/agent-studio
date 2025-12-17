@@ -2,7 +2,7 @@
 /**
  * Comprehensive Reference Validation Script
  * 
- * Validates all file references across the entire LLM-RULES system:
+ * Validates all file references across the entire Agent Studio system:
  * - Agent files referenced in config.yaml
  * - Schema files referenced in workflows
  * - Template files referenced in agents/workflows

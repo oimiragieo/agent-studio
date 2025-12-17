@@ -1,4 +1,4 @@
-# AGENTS.md - LLM-RULES
+# AGENTS.md - Agent Studio
 
 Multi-platform agent configuration bundle for Claude Code, Cursor IDE, and Factory Droid.
 

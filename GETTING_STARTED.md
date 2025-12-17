@@ -1,4 +1,4 @@
-# Getting Started with LLM-RULES
+# Getting Started with Agent Studio
 
 Get up and running in 5 minutes.
 
@@ -795,7 +795,7 @@ cat ~/.claude/audit/tool-usage.log
 
 ### Available Hooks
 
-The LLM-RULES system includes two native Claude Code hooks that provide security and audit capabilities:
+The Agent Studio system includes two native Claude Code hooks that provide security and audit capabilities:
 
 **1. security-pre-tool.sh (PreToolUse Hook)**
 - **Purpose**: Validates and blocks dangerous operations before execution

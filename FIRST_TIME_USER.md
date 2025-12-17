@@ -1,10 +1,10 @@
 # First-Time User Guide
 
-Welcome to LLM-RULES! This guide will help you get started in 5 minutes.
+Welcome to Agent Studio! This guide will help you get started in 5 minutes.
 
-## What is LLM-RULES?
+## What is Agent Studio?
 
-LLM-RULES is a drop-in configuration bundle that gives you:
+Agent Studio is a drop-in configuration bundle that gives you:
 - **22 specialized AI agents** for different tasks
 - **13 utility skills** for code generation, validation, and more
 - **1,081+ technology rules** that auto-apply to your code
@@ -18,7 +18,7 @@ LLM-RULES is a drop-in configuration bundle that gives you:
 Copy the `.claude/` folder and `CLAUDE.md` to your project root:
 
 ```bash
-# From the LLM-RULES directory
+# From the Agent Studio directory
 cp -r .claude/ /path/to/your/project/
 cp CLAUDE.md /path/to/your/project/
 ```
@@ -224,7 +224,7 @@ After setup, you should be able to:
 
 ## What Makes This Different?
 
-Unlike other tools, LLM-RULES:
+Unlike other tools, Agent Studio:
 - ✅ **No installation** - Just copy files
 - ✅ **No build step** - Works immediately
 - ✅ **No dependencies** - Core features work without Node.js

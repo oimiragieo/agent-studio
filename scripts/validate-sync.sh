@@ -5,7 +5,7 @@
 set -e
 
 echo "=========================================="
-echo "LLM-RULES Configuration Validation"
+echo "Agent Studio Configuration Validation"
 echo "=========================================="
 echo ""
 
