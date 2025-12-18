@@ -3,7 +3,7 @@
 ## Overview
 - **Type**: Multi-platform agent configuration bundle
 - **Stack**: OpenCode, Cursor, Factory Droid with shared rule base
-- **Agents**: 22 specialized agents with defined roles
+- **Agents**: 23 specialized agents with defined roles
 - **Skills**: 6 utility skills for rule management and code generation
 - **Rules**: 200+ technology-specific rule packs
 
@@ -28,11 +28,12 @@ OpenCode has unique capabilities that set it apart from generic agent configurat
 5. **Token Efficiency Through Structure** - Use sections to keep related instructions together
 6. **Living Documentation** - Use `#` key during sessions to add memories organically
 
-## Agents (22 Roles)
+## Agents (23 Roles)
 
 | Agent | Purpose | Model |
 |-------|---------|-------|
 | **Core Development** | | |
+| planner | Strategic planning, plan generation, validation, and execution tracking | opus |
 | orchestrator | Task routing and coordination | opus |
 | model-orchestrator | Multi-model routing (Gemini, Cursor, etc.) | sonnet |
 | analyst | Research and discovery | sonnet |
@@ -232,7 +233,7 @@ npx depcheck
 - `OPENCODE.md`: This file (root instructions)
 
 ### Agent System
-- `.opencode/agent/`: 22 agent prompts
+- `.opencode/agent/`: 23 agent prompts
 - `.opencode/skill/`: 6 utility skills
 - `.opencode/workflow/`: 9 workflow definitions (see `WORKFLOW-GUIDE.md`)
 - `.opencode/template/`: 14 artifact templates
@@ -276,7 +277,7 @@ npx depcheck
 
 ```
 .opencode/
-├── agent/         # 22 agent definitions
+├── agent/         # 23 agent definitions
 ├── skill/         # 6 utility skills
 ├── command/       # 12 slash commands
 ├── workflow/      # 9 workflow definitions

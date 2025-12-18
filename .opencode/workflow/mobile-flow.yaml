@@ -1,60 +1,135 @@
-name: Mobile Flow
-description: Workflow for mobile application development
+name: Mobile Application Development Workflow
+description: Mobile app development for iOS, Android, and cross-platform frameworks
 type: mobile
-project_type: mobile-app
+project_type: mobile
+
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .opencode/config.yaml workflow_selection section.
+# See .opencode/config.yaml for the authoritative keyword list used by the routing system.
+trigger_keywords:
+  - "mobile app"
+  - "ios"
+  - "android"
+  - "react native"
+  - "flutter"
+  - "native app"
+  - "app store"
 
 steps:
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
+    inputs:
+      - app_requirements
+      - target_platforms
+      - design_specs
+    outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .opencode/schema/plan.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Plan mobile application development:
+      - Analyze app requirements and platforms
+      - Coordinate mobile development strategy
+      - Create structured development plan
+
   - step: 1
     name: "Mobile Development"
     agent: mobile-developer
     inputs:
-      - mobile_requirements
-      - platform_targets
+      - plan-{{workflow_id}}.json (from step 0)
+      - app_requirements
+      - target_platforms
+      - design_specs
     outputs:
-      - mobile-architecture.json
-      - platform_considerations
+      - mobile-architecture-{{workflow_id}}.json
+      - platform-strategy-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/01-mobile-developer.json
+    validation:
+      schema: .opencode/schema/architecture.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/01-mobile-developer.json
+    description: |
+      Mobile development planning:
+      - Platform selection (native vs cross-platform)
+      - Architecture patterns (MVVM, Clean, etc.)
+      - State management strategy
+      - Navigation structure
+      - Offline-first capabilities
+      - Push notification design
 
   - step: 2
-    name: "UX Design"
+    name: "Mobile UX Design"
     agent: ux-expert
     inputs:
-      - mobile-architecture.json (from step 1)
-      - design_requirements
+      - plan-{{workflow_id}}.json (from step 0)
+      - mobile-architecture-{{workflow_id}}.json (from step 1)
+      - app_requirements
     outputs:
-      - mobile-ux-spec.json
-      - component_designs
+      - mobile-ux-spec-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/02-ux-expert.json
+    validation:
+      schema: .opencode/schema/ux-spec.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/02-ux-expert.json
+    description: |
+      Mobile-specific UX design:
+      - Touch-first interface design
+      - Gesture patterns
+      - Platform-specific guidelines (HIG, Material)
+      - Responsive layouts
+      - Accessibility considerations
+      - Animation and micro-interactions
 
   - step: 3
     name: "Implementation"
     agent: developer
     inputs:
-      - mobile-ux-spec.json (from step 2)
-      - mobile-architecture.json (from step 1)
+      - plan-{{workflow_id}}.json (from step 0)
+      - mobile-architecture-{{workflow_id}}.json (from step 1)
+      - mobile-ux-spec-{{workflow_id}}.json (from step 2)
     outputs:
-      - mobile_implementation
-      - platform_code
+      - dev-manifest-{{workflow_id}}.json
+      - code-artifacts
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/03-developer.json
+    validation:
+      schema: .opencode/schema/artifact_manifest.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/03-developer.json
+    description: |
+      Mobile implementation:
+      - Core app structure
+      - UI components
+      - Navigation implementation
+      - API integration
+      - Local storage
+      - Platform-specific features
 
   - step: 4
-    name: "Mobile Testing"
+    name: "Mobile Quality Assurance"
     agent: qa
     inputs:
-      - mobile_implementation (from step 3)
-      - device_matrix
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest-{{workflow_id}}.json (from step 3)
+      - mobile-ux-spec-{{workflow_id}}.json (from step 2)
     outputs:
-      - mobile_test_results.json
-      - compatibility_report
+      - mobile-test-results-{{workflow_id}}.json
+      - quality-report-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/04-qa.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/04-qa.json
+    description: |
+      Mobile-specific testing:
+      - Device compatibility testing
+      - Performance profiling
+      - Battery usage analysis
+      - Network condition testing
+      - App store compliance check
+      - Accessibility audit
 
 completion_criteria:
-  - Cross-platform compatibility verified
-  - Performance on target devices validated
+  - App builds successfully for target platforms
+  - Core features functional
+  - Performance metrics acceptable
+  - Platform guidelines followed
   - App store requirements met
-  - Accessibility compliance checked
-
-triggers:
-  keywords:
-    - mobile app
-    - ios
-    - android
-    - react native
-    - flutter
-    - native app

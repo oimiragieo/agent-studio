@@ -1,71 +1,151 @@
-name: AI System Flow
-description: Workflow for LLM/AI feature development
-type: ai
-project_type: ai-feature
+name: AI/LLM System Development Workflow
+description: AI and LLM system design, RAG implementation, and intelligent feature development
+type: ai-system
+project_type: ai
+
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .opencode/config.yaml workflow_selection section.
+# See .opencode/config.yaml for the authoritative keyword list used by the routing system.
+trigger_keywords:
+  - "ai system"
+  - "llm"
+  - "rag"
+  - "embeddings"
+  - "chatbot"
+  - "ai feature"
+  - "machine learning"
+  - "vector database"
 
 steps:
-  - step: 1
-    name: "Model Selection & Orchestration"
-    agent: model-orchestrator
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
     inputs:
       - ai_requirements
       - use_cases
+      - constraints
     outputs:
-      - model-selection.json
-      - orchestration_strategy
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .opencode/schema/plan.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Plan AI/LLM system development:
+      - Analyze AI requirements and use cases
+      - Coordinate with AI specialists
+      - Create structured development plan
+
+  - step: 1
+    name: "Model Strategy"
+    agent: model-orchestrator
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - ai_requirements
+      - use_cases
+      - constraints
+    outputs:
+      - model-strategy-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/01-model-orchestrator.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/01-model-orchestrator.json
+    description: |
+      Multi-model strategy planning:
+      - Model selection for different tasks
+      - Cost/performance trade-offs
+      - Fallback strategies
+      - Provider diversification
+      - Rate limiting considerations
 
   - step: 2
-    name: "AI Architecture Design"
+    name: "LLM Architecture Design"
     agent: llm-architect
     inputs:
-      - model-selection.json (from step 1)
-      - requirements
+      - plan-{{workflow_id}}.json (from step 0)
+      - model-strategy-{{workflow_id}}.json (from step 1)
+      - ai_requirements
     outputs:
-      - llm-architecture.json
-      - prompt_templates
+      - llm-architecture-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/02-llm-architect.json
+    validation:
+      schema: .opencode/schema/architecture.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/02-llm-architect.json
+    description: |
+      LLM system architecture:
+      - RAG pipeline design
+      - Embedding strategy
+      - Vector database selection
+      - Prompt engineering patterns
+      - Context management
+      - Guardrails and safety
 
   - step: 3
     name: "API Design"
     agent: api-designer
     inputs:
-      - llm-architecture.json (from step 2)
-      - integration_requirements
+      - plan-{{workflow_id}}.json (from step 0)
+      - llm-architecture-{{workflow_id}}.json (from step 2)
+      - model-strategy-{{workflow_id}}.json (from step 1)
     outputs:
-      - api-spec.json
-      - endpoint_definitions
+      - api-specification-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/03-api-designer.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/03-api-designer.json
+    description: |
+      AI API design:
+      - Streaming endpoint patterns
+      - Request/response schemas
+      - Error handling for AI failures
+      - Rate limiting and quotas
+      - Webhook integrations
 
   - step: 4
     name: "Implementation"
     agent: developer
     inputs:
-      - llm-architecture.json (from step 2)
-      - api-spec.json (from step 3)
+      - plan-{{workflow_id}}.json (from step 0)
+      - llm-architecture-{{workflow_id}}.json (from step 2)
+      - api-specification-{{workflow_id}}.json (from step 3)
     outputs:
-      - ai_implementation
-      - integration_code
+      - dev-manifest-{{workflow_id}}.json
+      - code-artifacts
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/04-developer.json
+    validation:
+      schema: .opencode/schema/artifact_manifest.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/04-developer.json
+    description: |
+      AI system implementation:
+      - LLM integration code
+      - RAG pipeline implementation
+      - Embedding generation
+      - Vector store integration
+      - Prompt templates
 
   - step: 5
-    name: "AI Validation"
+    name: "AI Quality Validation"
     agent: qa
     inputs:
-      - ai_implementation (from step 4)
-      - test_scenarios
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest-{{workflow_id}}.json (from step 4)
+      - llm-architecture-{{workflow_id}}.json (from step 2)
     outputs:
-      - ai_test_results.json
-      - quality_metrics
+      - ai-test-results-{{workflow_id}}.json
+      - quality-report-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/05-qa.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/05-qa.json
+    description: |
+      AI-specific validation:
+      - Prompt testing
+      - Response quality assessment
+      - Hallucination detection
+      - Edge case handling
+      - Performance benchmarks
 
 completion_criteria:
-  - Model performance validated
-  - API integration tested
-  - Prompt effectiveness verified
-  - Cost optimization reviewed
-
-triggers:
-  keywords:
-    - ai system
-    - llm
-    - rag
-    - embeddings
-    - chatbot
-    - ai feature
-    - machine learning
+  - LLM integration functional
+  - RAG pipeline returns relevant results
+  - API endpoints operational
+  - Quality thresholds met
+  - Safety guardrails validated

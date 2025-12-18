@@ -5,7 +5,8 @@
  * Validates JSON artifacts against JSON schemas using AJV.
  * 
  * Usage:
- *   node gate.mjs --schema <schema-path> --input <input-path> --gate <gate-path> [--autofix <0|1>]
+ *   node gate.mjs [--schema <schema-path>] --input <input-path> --gate <gate-path> [--autofix <0|1>]
+ *   Note: --schema is optional. If not provided, only JSON structure validation is performed.
  */
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
@@ -102,30 +103,38 @@ function autofix(data, schema) {
 async function main() {
   const args = parseArgs();
   
-  if (!args.schema || !args.input || !args.gate) {
-    console.error('Error: Missing required arguments');
+  if (!args.input || !args.gate) {
+    console.error('Error: Missing required arguments (input and gate are required, schema is optional)');
     process.exit(2);
   }
   
-  const schemaPath = resolve(args.schema);
+  const schemaPath = args.schema ? resolve(args.schema) : null;
   const inputPath = resolve(args.input);
   const gatePath = resolve(args.gate);
   const autofixEnabled = args.autofix === '1' || args.autofix === 'true';
   
   try {
-    const schema = JSON.parse(readFileSync(schemaPath, 'utf-8'));
     const inputData = JSON.parse(readFileSync(inputPath, 'utf-8'));
     
-    let validation = await validateJSON(inputData, schema);
+    let validation = { valid: true, errors: [] };
     let finalData = inputData;
     let fixedCount = 0;
     
-    if (autofixEnabled && !validation.valid) {
-      const fixResult = autofix(inputData, schema);
-      finalData = fixResult.fixed;
-      fixedCount = fixResult.fixedCount;
+    // Only validate against schema if schema is provided
+    if (schemaPath) {
+      const schema = JSON.parse(readFileSync(schemaPath, 'utf-8'));
+      validation = await validateJSON(inputData, schema);
       
-      validation = await validateJSON(finalData, schema);
+      if (autofixEnabled && !validation.valid) {
+        const fixResult = autofix(inputData, schema);
+        finalData = fixResult.fixed;
+        fixedCount = fixResult.fixedCount;
+        
+        validation = await validateJSON(finalData, schema);
+      }
+    } else {
+      // No schema provided - just validate that input is valid JSON (already done above)
+      console.log('⚠️  No schema provided - skipping schema validation, only validating JSON structure');
     }
     
     const gateDir = dirname(gatePath);
@@ -133,7 +142,7 @@ async function main() {
     
     const gateData = {
       timestamp: new Date().toISOString(),
-      schema_path: args.schema,
+      schema_path: args.schema || null,
       input_path: args.input,
       valid: validation.valid,
       errors: validation.errors || [],

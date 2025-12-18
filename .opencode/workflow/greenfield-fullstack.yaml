@@ -3,106 +3,158 @@ description: Complete workflow for building a new full-stack application from sc
 type: greenfield
 project_type: fullstack
 
+# NOTE: This workflow is selected via keywords defined in .opencode/config.yaml workflow_selection section.
+# The routing system matches user prompts against keywords in config.yaml, not this file.
+# See .opencode/config.yaml for the authoritative keyword list used by the routing system.
+
 steps:
-  - step: 1
-    name: "Project Discovery"
-    agent: analyst
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
     inputs:
       - user_requirements
       - business_objectives
     outputs:
-      - project_brief.json
-      - reasoning.json
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .opencode/schema/plan.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Comprehensive planning before execution:
+      - Analyze requirements and objectives
+      - Coordinate with specialists for planning input
+      - Generate structured plan with steps, dependencies, risks
+      - Validate plan completeness and feasibility
+
+  - step: 1
+    name: "Project Discovery"
+    agent: analyst
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - user_requirements
+      - business_objectives
+    outputs:
+      - project-brief-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/01-analyst.json
     validation:
       schema: .opencode/schema/project-brief.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/01-analyst.json
 
   - step: 2
     name: "Product Requirements"
     agent: pm
     inputs:
-      - project_brief.json (from step 1)
+      - plan-{{workflow_id}}.json (from step 0)
+      - project-brief-{{workflow_id}}.json (from step 1)
     outputs:
-      - prd.json
-      - reasoning.json
+      - prd-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/02-pm.json
     validation:
       schema: .opencode/schema/prd.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/02-pm.json
 
   - step: 3
     name: "UX Design"
     agent: ux-expert
     inputs:
-      - prd.json (from step 2)
+      - plan-{{workflow_id}}.json (from step 0)
+      - prd-{{workflow_id}}.json (from step 2)
     outputs:
-      - ux-spec.json
-      - reasoning.json
+      - ux-spec-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/03-ux-expert.json
     validation:
       schema: .opencode/schema/ux-spec.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/03-ux-expert.json
 
   - step: 4
     name: "System Architecture"
     agent: architect
     inputs:
-      - prd.json (from step 2)
-      - ux-spec.json (from step 3)
+      - plan-{{workflow_id}}.json (from step 0)
+      - prd-{{workflow_id}}.json (from step 2)
+      - ux-spec-{{workflow_id}}.json (from step 3)
     outputs:
-      - system-architecture.json
-      - reasoning.json
+      - system-architecture-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/04-architect.json
     validation:
       schema: .opencode/schema/architecture.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/04-architect.json
 
   - step: 5
     name: "Database Architecture"
     agent: database-architect
     inputs:
-      - system-architecture.json (from step 4)
-      - prd.json (from step 2)
+      - plan-{{workflow_id}}.json (from step 0)
+      - system-architecture-{{workflow_id}}.json (from step 4)
+      - prd-{{workflow_id}}.json (from step 2)
     outputs:
-      - database-architecture.json
-      - reasoning.json
+      - database-architecture-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/05-database-architect.json
+    validation:
+      schema: .opencode/schema/architecture.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/05-database-architect.json
 
   - step: 6
     name: "Test Planning"
     agent: qa
     inputs:
-      - system-architecture.json (from step 4)
-      - prd.json (from step 2)
+      - plan-{{workflow_id}}.json (from step 0)
+      - system-architecture-{{workflow_id}}.json (from step 4)
+      - database-architecture-{{workflow_id}}.json (from step 5)
+      - prd-{{workflow_id}}.json (from step 2)
     outputs:
-      - test-plan.json
-      - reasoning.json
+      - test-plan-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/06-qa.json
     validation:
       schema: .opencode/schema/test-plan.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/06-qa.json
 
   - step: 7
     name: "Implementation"
     agent: developer
     inputs:
-      - system-architecture.json (from step 4)
-      - ux-spec.json (from step 3)
-      - test-plan.json (from step 6)
+      - plan-{{workflow_id}}.json (from step 0)
+      - system-architecture-{{workflow_id}}.json (from step 4)
+      - database-architecture-{{workflow_id}}.json (from step 5)
+      - ux-spec-{{workflow_id}}.json (from step 3)
+      - test-plan-{{workflow_id}}.json (from step 6)
     outputs:
-      - dev-manifest.json
-      - code_artifacts
-      - reasoning.json
+      - dev-manifest-{{workflow_id}}.json
+      - code-artifacts
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/07-developer.json
+    validation:
+      schema: .opencode/schema/artifact_manifest.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/07-developer.json
 
   - step: 8
     name: "Documentation"
     agent: technical-writer
     inputs:
-      - dev-manifest.json (from step 7)
-      - system-architecture.json (from step 4)
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest-{{workflow_id}}.json (from step 7)
+      - system-architecture-{{workflow_id}}.json (from step 4)
+      - database-architecture-{{workflow_id}}.json (from step 5)
     outputs:
-      - documentation.json
-      - reasoning.json
+      - documentation-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/08-technical-writer.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/08-technical-writer.json
 
   - step: 9
     name: "Quality Assurance"
     agent: qa
     inputs:
-      - dev-manifest.json (from step 7)
-      - test-plan.json (from step 6)
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest-{{workflow_id}}.json (from step 7)
+      - test-plan-{{workflow_id}}.json (from step 6)
     outputs:
-      - quality_report.json
-      - test_results.json
+      - quality-report-{{workflow_id}}.json
+      - test-results-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/09-qa.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/09-qa.json
 
 completion_criteria:
   - All artifacts validated against schemas

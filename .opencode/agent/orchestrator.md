@@ -81,6 +81,78 @@ PM -> Architect -> QA -> [Issues?] -> Architect (refine) -> QA
 4. **Set Clear Objectives**: Define specific deliverables expected
 5. **Provide Constraints**: Pass technical, business, or time constraints
 
+## Workflow Input Handling
+
+When initializing workflows, you must extract and validate required workflow-level inputs from the user's request or provide defaults.
+
+### Extracting Workflow Inputs
+
+1. **Read Workflow YAML**: Load the workflow file to identify required inputs from the `workflow_inputs.required` section
+2. **Parse User Request**: Extract input values from the user's natural language request
+3. **Apply Defaults**: Use project defaults or reasonable defaults when inputs are not explicitly provided
+4. **Validate Inputs**: Ensure all required inputs are present before starting the workflow
+
+### Common Workflow Inputs
+
+#### target_files
+- **Extraction Pattern**: Look for file/directory paths in user request
+- **Examples**:
+  - "review src/components/" → `["src/components/"]`
+  - "analyze lib/ and app/" → `["lib/", "app/"]`
+  - "check all Python files" → `["**/*.py"]`
+- **Default**: Current directory `["."]` if not specified
+
+#### coding_standards
+- **Extraction Pattern**: Look for standard names or infer from project type
+- **Examples**:
+  - "apply PEP 8" → `"PEP 8"`
+  - "use Airbnb style" → `"Airbnb JavaScript Style Guide"`
+  - "follow Google Java Style" → `"Google Java Style"`
+- **Default**: Project's default coding standard (check `.opencode/config.yaml` or project documentation)
+
+### Workflow Initialization Example
+
+```javascript
+// Example: Initializing code-quality-flow workflow
+const workflowInputs = {
+  target_files: extractPaths(userRequest) || ["src/"],
+  coding_standards: extractStandards(userRequest) || "PEP 8"
+};
+
+// Validate inputs match workflow requirements
+const workflowYaml = readWorkflowYaml('code-quality-flow.yaml');
+const requiredInputs = extractRequiredInputs(workflowYaml);
+const missing = validateInputs(workflowInputs, requiredInputs);
+
+if (missing.length > 0) {
+  // Request missing inputs from user or use defaults
+  workflowInputs = applyDefaults(workflowInputs, missing);
+}
+
+// Pass inputs to workflow runner
+executeWorkflow('code-quality-flow', {
+  step: 0,
+  workflowId: generateWorkflowId(),
+  inputs: workflowInputs
+});
+```
+
+### Passing Inputs to Agents
+
+Workflow-level inputs are passed directly to agents as context variables (not as artifact files):
+
+- Agents receive inputs in their execution context
+- Agents should check for inputs: `const targetFiles = context.target_files || [];`
+- Inputs are available to all steps in the workflow
+- Inputs are documented in workflow YAML `workflow_inputs` section
+
+### Input Validation
+
+- **Before Step 0**: Validate all required inputs are present
+- **Error Messages**: Provide clear error messages listing missing inputs
+- **Format Validation**: Ensure inputs match expected types (array, string, etc.)
+- **Path Validation**: Verify file/directory paths exist (if applicable)
+
 ## Error Handling
 
 - **Incomplete output**: Request completion, escalate to alternate agent

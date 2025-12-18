@@ -1,62 +1,136 @@
-name: Incident Flow
-description: Workflow for incident response and post-mortem
+name: Incident Response Workflow
+description: Production incident response, crisis management, and post-mortem analysis
 type: incident
 project_type: operations
 
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .opencode/config.yaml workflow_selection section.
+# See .opencode/config.yaml for the authoritative keyword list used by the routing system.
+trigger_keywords:
+  - "incident"
+  - "outage"
+  - "production issue"
+  - "post-mortem"
+  - "crisis"
+  - "downtime"
+  - "emergency"
+
+priority: critical
+
 steps:
-  - step: 1
-    name: "Incident Response"
-    agent: incident
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
     inputs:
-      - incident_details
-      - system_state
+      - incident_report
+      - system_status
+      - affected_services
     outputs:
-      - incident-assessment.json
-      - immediate_actions
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .opencode/schema/plan.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Rapid incident response planning:
+      - Assess incident severity and scope
+      - Create structured response plan
+      - Coordinate response team activation
+
+  - step: 1
+    name: "Incident Triage"
+    agent: incident-responder
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - incident_report
+      - system_status
+      - affected_services
+    outputs:
+      - triage-assessment-{{workflow_id}}.json
+      - immediate-actions-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/01-incident-responder.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/01-incident-responder.json
+    description: |
+      Rapid incident assessment:
+      - Severity classification
+      - Impact assessment
+      - Affected users/services
+      - Initial hypothesis
+      - Communication plan
+      - Immediate mitigation steps
 
   - step: 2
-    name: "DevOps Investigation"
+    name: "Infrastructure Analysis"
     agent: devops
     inputs:
-      - incident-assessment.json (from step 1)
-      - infrastructure_logs
+      - plan-{{workflow_id}}.json (from step 0)
+      - triage-assessment-{{workflow_id}}.json (from step 1)
+      - system_logs
+      - metrics
     outputs:
-      - root-cause-analysis.json
-      - infrastructure_findings
+      - infrastructure-analysis-{{workflow_id}}.json
+      - remediation-plan-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/02-devops.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/02-devops.json
+    description: |
+      Infrastructure investigation:
+      - Log analysis
+      - Metric correlation
+      - Resource utilization
+      - Deployment history
+      - Configuration drift detection
+      - Rollback assessment
 
   - step: 3
-    name: "Security Review"
-    agent: security
+    name: "Security Assessment"
+    agent: security-architect
     inputs:
-      - root-cause-analysis.json (from step 2)
-      - security_logs
+      - plan-{{workflow_id}}.json (from step 0)
+      - triage-assessment-{{workflow_id}}.json (from step 1)
+      - infrastructure-analysis-{{workflow_id}}.json (from step 2)
     outputs:
-      - security-assessment.json
-      - vulnerabilities_identified
+      - security-assessment-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/03-security-architect.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/03-security-architect.json
+    description: |
+      Security incident evaluation:
+      - Breach indicators
+      - Vulnerability assessment
+      - Attack vector analysis
+      - Data exposure evaluation
+      - Compliance impact
+      - Forensic preservation
 
   - step: 4
-    name: "Remediation Validation"
+    name: "Resolution Validation"
     agent: qa
     inputs:
-      - remediation_changes
-      - incident-assessment.json (from step 1)
+      - plan-{{workflow_id}}.json (from step 0)
+      - remediation-plan-{{workflow_id}}.json (from step 2)
+      - security-assessment-{{workflow_id}}.json (from step 3)
     outputs:
-      - validation_results.json
-      - post_mortem_report
+      - resolution-report-{{workflow_id}}.json
+      - post-mortem-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/04-qa.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/04-qa.json
+    description: |
+      Resolution and post-mortem:
+      - Fix verification
+      - Regression testing
+      - Service restoration confirmation
+      - Root cause documentation
+      - Prevention recommendations
+      - Process improvements
 
 completion_criteria:
-  - Incident resolved
+  - Incident severity assessed
   - Root cause identified
-  - Preventive measures implemented
+  - Remediation applied
+  - Service restored
   - Post-mortem documented
-
-triggers:
-  keywords:
-    - incident
-    - outage
-    - production issue
-    - post-mortem
-    - crisis
-    - downtime
-    - emergency
-  priority: 0  # Highest priority
+  - Prevention measures defined

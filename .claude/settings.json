@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json.schemastore.org/claude-settings",
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "version": "2.0",
   "tool_permissions": {
     "always_allow": [

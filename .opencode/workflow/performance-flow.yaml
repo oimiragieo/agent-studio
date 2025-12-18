@@ -1,61 +1,129 @@
-name: Performance Flow
-description: Workflow for performance optimization and tuning
+name: Performance Optimization Workflow
+description: Performance profiling, optimization, and load testing initiatives
 type: performance
 project_type: optimization
 
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .opencode/config.yaml workflow_selection section.
+# See .opencode/config.yaml for the authoritative keyword list used by the routing system.
+trigger_keywords:
+  - "performance"
+  - "optimize"
+  - "profiling"
+  - "benchmark"
+  - "load test"
+  - "slow"
+  - "latency"
+
 steps:
+  - step: 0
+    name: "Planning Phase"
+    agent: planner
+    inputs:
+      - target_system
+      - performance_requirements
+      - current_metrics
+    outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .opencode/schema/plan.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Plan performance optimization workflow:
+      - Analyze performance requirements
+      - Coordinate optimization strategy
+      - Create structured improvement plan
+
   - step: 1
     name: "Performance Analysis"
-    agent: performance
+    agent: performance-engineer
     inputs:
-      - application_metrics
+      - plan-{{workflow_id}}.json (from step 0)
+      - target_system
       - performance_requirements
+      - current_metrics
     outputs:
-      - performance-analysis.json
-      - bottlenecks_identified
+      - performance-analysis-{{workflow_id}}.json
+      - bottleneck-report-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/01-performance-engineer.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/01-performance-engineer.json
+    description: |
+      Comprehensive performance analysis:
+      - Profiling and bottleneck identification
+      - Resource utilization assessment
+      - Latency hotspots
+      - Memory and CPU analysis
+      - Database query performance
 
   - step: 2
     name: "Architecture Review"
     agent: architect
     inputs:
-      - performance-analysis.json (from step 1)
-      - current_architecture
+      - plan-{{workflow_id}}.json (from step 0)
+      - performance-analysis-{{workflow_id}}.json (from step 1)
+      - bottleneck-report-{{workflow_id}}.json (from step 1)
     outputs:
-      - optimization-recommendations.json
-      - architecture_changes
+      - optimization-architecture-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/02-architect.json
+    validation:
+      schema: .opencode/schema/architecture.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/02-architect.json
+    description: |
+      Architectural optimization planning:
+      - Caching strategy design
+      - Load balancing recommendations
+      - Async processing patterns
+      - Database optimization strategies
+      - CDN and edge computing
 
   - step: 3
     name: "Implementation"
     agent: developer
     inputs:
-      - optimization-recommendations.json (from step 2)
-      - codebase
+      - plan-{{workflow_id}}.json (from step 0)
+      - optimization-architecture-{{workflow_id}}.json (from step 2)
+      - performance-analysis-{{workflow_id}}.json (from step 1)
     outputs:
-      - optimized_code
-      - implementation_notes
+      - dev-manifest-{{workflow_id}}.json
+      - code-artifacts
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/03-developer.json
+    validation:
+      schema: .opencode/schema/artifact_manifest.schema.json
+      gate: .opencode/context/history/gates/{{workflow_id}}/03-developer.json
+    description: |
+      Optimization implementation:
+      - Performance-critical code changes
+      - Caching implementation
+      - Query optimization
+      - Resource pooling
+      - Async refactoring
 
   - step: 4
     name: "Performance Validation"
     agent: qa
     inputs:
-      - optimized_code (from step 3)
-      - performance_requirements
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest-{{workflow_id}}.json (from step 3)
+      - performance-analysis-{{workflow_id}}.json (from step 1)
     outputs:
-      - benchmark_results.json
-      - performance_report
+      - benchmark-results-{{workflow_id}}.json
+      - load-test-report-{{workflow_id}}.json
+      - reasoning: .opencode/context/history/reasoning/{{workflow_id}}/04-qa.json
+    validation:
+      gate: .opencode/context/history/gates/{{workflow_id}}/04-qa.json
+    description: |
+      Performance validation:
+      - Benchmark comparison (before/after)
+      - Load testing
+      - Stress testing
+      - Regression verification
+      - SLA compliance check
 
 completion_criteria:
-  - Performance targets met
-  - No regressions introduced
-  - Benchmarks documented
-  - Monitoring configured
-
-triggers:
-  keywords:
-    - performance
-    - optimize
-    - profiling
-    - benchmark
-    - load test
-    - slow
-    - latency
+  - Performance improvements measured and documented
+  - Benchmarks show improvement over baseline
+  - Load tests pass with target thresholds
+  - No regression in functionality

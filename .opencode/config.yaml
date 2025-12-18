@@ -421,6 +421,7 @@ workflow_selection:
     complexity: low
     workflow_file: .opencode/workflow/quick-flow.yaml
     agents_sequence:
+      - planner
       - developer
       - qa
 
@@ -437,6 +438,7 @@ workflow_selection:
     complexity: medium
     workflow_file: .opencode/workflow/greenfield-fullstack.yaml
     agents_sequence:
+      - planner
       - analyst
       - pm
       - ux-expert
@@ -457,6 +459,7 @@ workflow_selection:
     complexity: medium
     workflow_file: .opencode/workflow/code-quality-flow.yaml
     agents_sequence:
+      - planner
       - code-reviewer
       - refactoring-specialist
       - compliance-auditor
@@ -475,6 +478,7 @@ workflow_selection:
     complexity: medium
     workflow_file: .opencode/workflow/performance-flow.yaml
     agents_sequence:
+      - planner
       - performance-engineer
       - architect
       - developer
@@ -494,6 +498,7 @@ workflow_selection:
     complexity: high
     workflow_file: .opencode/workflow/ai-system-flow.yaml
     agents_sequence:
+      - planner
       - model-orchestrator
       - llm-architect
       - api-designer
@@ -513,6 +518,7 @@ workflow_selection:
     complexity: medium
     workflow_file: .opencode/workflow/mobile-flow.yaml
     agents_sequence:
+      - planner
       - mobile-developer
       - ux-expert
       - developer
@@ -531,6 +537,7 @@ workflow_selection:
     complexity: high
     workflow_file: .opencode/workflow/incident-flow.yaml
     agents_sequence:
+      - planner
       - incident-responder
       - devops
       - security-architect

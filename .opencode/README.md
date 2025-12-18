@@ -36,6 +36,65 @@ Drop the contents of this folder into your project's root. Assets are organized 
 └── settings.json    # Tool permissions
 ```
 
+## Directory Structure: .claude vs .opencode
+
+This project supports two directory structures for different platforms:
+
+### .opencode/ (OpenCode Platform)
+- **Purpose**: Configuration for OpenCode IDE and MCP tooling
+- **Authoritative**: This directory is the primary source for OpenCode workflows
+- **Usage**: Used by OpenCode's hierarchical loader, hooks, and MCP servers
+- **Workflows**: `.opencode/workflow/*.yaml` files are used by OpenCode workflow runner
+- **Agents**: `.opencode/agent/*.md` files define agent prompts for OpenCode
+- **Tools**: `.opencode/tool/` contains OpenCode-specific tools (e.g., `workflow_runner.js`)
+
+### .claude/ (Claude Code Platform)
+- **Purpose**: Configuration for Claude Code IDE
+- **Authoritative**: This directory is the primary source for Claude Code workflows
+- **Usage**: Used by Claude Code's agent system and workflow execution
+- **Workflows**: `.claude/workflows/*.yaml` files are used by Claude Code
+- **Agents**: `.claude/agents/*.md` files define agent prompts for Claude Code
+- **Tools**: `.claude/tools/` contains Claude Code-specific tools
+
+### Path Conventions
+
+**OpenCode Workflows**:
+- Workflow files: `.opencode/workflow/*.yaml`
+- Agent files: `.opencode/agent/{agent-name}.md`
+- Schema files: `.opencode/schema/*.schema.json`
+- Template files: `.opencode/template/*.md`
+- Artifact paths: `.opencode/context/artifacts/`
+- Gate paths: `.opencode/context/history/gates/{workflow_id}/`
+
+**Claude Code Workflows**:
+- Workflow files: `.claude/workflows/*.yaml`
+- Agent files: `.claude/agents/{agent-name}.md`
+- Schema files: `.claude/schemas/*.schema.json`
+- Template files: `.claude/templates/*.md`
+- Artifact paths: `.claude/context/artifacts/`
+- Gate paths: `.claude/context/history/gates/{workflow_id}/`
+
+### Synchronization
+
+- **Templates**: Some templates are shared between platforms (e.g., `plan-template.md`)
+- **Schemas**: JSON schemas should be kept in sync between platforms
+- **Workflows**: Workflow definitions may differ slightly between platforms due to path differences
+- **Agents**: Agent definitions are platform-specific but may share similar content
+
+### Which Directory to Use?
+
+- **OpenCode IDE**: Use `.opencode/` directory
+- **Claude Code IDE**: Use `.claude/` directory
+- **Both Platforms**: Maintain both directories with appropriate path references
+
+### Migration Notes
+
+When copying files between platforms:
+1. Update all path references (`.opencode/` ↔ `.claude/`)
+2. Update workflow YAML paths to match target platform
+3. Verify agent file paths in workflow definitions
+4. Check schema and template paths
+
 ## Activation
 
 1. Copy `.opencode` contents into your repo root.
