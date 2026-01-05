@@ -4,6 +4,64 @@ This directory contains **native Claude Code hooks** - shell scripts that execut
 
 ## Available Hooks
 
+### orchestrator-enforcement-hook.mjs (PreToolUse/PostToolUse) - **Phase 1 Enforcement**
+
+**NEW**: Enforces orchestrator delegation rules by blocking direct implementation work.
+
+Prevents orchestrators from using implementation tools directly, forcing them to delegate via Task tool.
+
+**Blocked Tools for Orchestrators**:
+- `Write` → must delegate to developer
+- `Edit` → must delegate to developer
+- `Bash` with rm/git commands → must delegate to developer
+- `Bash` with validation scripts → must delegate to qa
+- `Read` (>2 files) → must delegate to analyst/Explore
+- `Grep` → must delegate to analyst
+- `Glob` → must delegate to analyst
+
+**Benefits**:
+- Prevents orchestrators from doing work directly
+- Enforces the "orchestrators manage, not implement" rule
+- Clear violation messages with correct delegation patterns
+- 2-FILE RULE enforcement for Read tool
+- Zero false positives (only affects orchestrator agents)
+
+**Testing**: Run `node .claude/hooks/test-orchestrator-enforcement-hook.mjs`
+
+**Configuration**:
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "path": ".claude/hooks/orchestrator-enforcement-hook.mjs",
+        "enabled": true
+      }
+    ],
+    "PostToolUse": [
+      {
+        "path": ".claude/hooks/orchestrator-enforcement-hook.mjs",
+        "enabled": true
+      }
+    ]
+  }
+}
+```
+
+**Violation Example**:
+```
+Orchestrator attempts: Write tool
+Hook blocks with:
+╔══════════════════════════════════════════════════════════╗
+║  ORCHESTRATOR VIOLATION DETECTED                         ║
+║  Tool: Write                                             ║
+║  Reason: Orchestrators MUST NOT write files directly     ║
+║  Action: Spawn developer subagent via Task tool          ║
+╚══════════════════════════════════════════════════════════╝
+```
+
+---
+
 ### skill-injection-hook.js (PreToolUse) - **Phase 2B**
 
 **NEW**: Automatically injects skill requirements into Task tool calls.

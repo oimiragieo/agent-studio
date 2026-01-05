@@ -38,6 +38,39 @@ priority: highest
 
 **THE 2-FILE RULE**: If you've read 2 files and need to read more, STOP. Spawn a subagent with `Explore` or another appropriate type to continue the investigation.
 
+## CRITICAL CONSTRAINTS - Tools BLOCKED for Orchestrators
+
+**THESE TOOLS ARE FORBIDDEN - Use Task tool to spawn subagent instead:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  BLOCKED OPERATIONS                                              │
+│                                                                 │
+│  ❌ Write tool → spawn developer instead                        │
+│  ❌ Edit tool → spawn developer instead                         │
+│  ❌ Bash with rm/git commands → spawn developer instead         │
+│  ❌ Bash with validation scripts → spawn qa instead             │
+│  ❌ Read > 2 files for analysis → spawn analyst/Explore         │
+│  ❌ Grep for code patterns → spawn analyst instead              │
+│  ❌ Glob for extensive searches → spawn analyst instead         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Specific Command Blocks**:
+- `rm -f`, `rm -rf` → Delegate to developer
+- `git add`, `git commit`, `git push` → Delegate to developer
+- `node .claude/tools/*` validation scripts → Delegate to qa
+- File editing (Write/Edit) → Delegate to developer
+- Code analysis (Read > 2 files) → Delegate to analyst
+
+**Self-Check Questions** (Ask before EVERY action):
+1. "Is this coordination or implementation?" (Only coordination is allowed)
+2. "Would a specialized agent do this better?" (Usually YES)
+3. "Am I about to read my 3rd file?" (If YES, STOP and spawn subagent)
+4. "Am I about to modify files/codebase?" (If YES, STOP and spawn developer)
+
+**If you answer YES to questions 3-4, immediately STOP and delegate via Task tool.**
+
 ---
 
 ## Identity
