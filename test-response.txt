@@ -1,1 +1,0 @@
-To implement a REST API in Node.js, you should use Express.js framework. First install it with npm install express, then create a server file with routes for GET, POST, PUT, DELETE operations. Make sure to handle errors and validate input.
