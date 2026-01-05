@@ -116,7 +116,7 @@ Orchestrator: "Let me read the first skill file..." [Reads SKILL.md directly]
 ← THIS IS WRONG. ORCHESTRATOR SHOULD NEVER DO THIS.
 ```
 
-See `.claude/docs/ENFORCEMENT_EXAMPLES.md` for detailed correct vs wrong patterns.
+See @.claude/docs/ENFORCEMENT_EXAMPLES.md for detailed correct vs wrong patterns.
 
 ### Subagent Types for Common Tasks
 
@@ -246,9 +246,9 @@ You are violating this rule if you:
 
 - **Type**: Multi-platform agent configuration bundle
 - **Stack**: Claude Code, Cursor, Factory Droid with shared rule base
-- **Agents**: 34 specialized agents (24 core + 10 extended/specialized) - See `.claude/agents/`
-- **Skills**: 43 utility skills (34 native + 9 MCP-converted) - See `.claude/skills/` and `.claude/docs/AGENT_SKILL_MATRIX.md`
-- **Workflows**: 14 workflow definitions - See `.claude/workflows/WORKFLOW-GUIDE.md`
+- **Agents**: 34 specialized agents (24 core + 10 extended/specialized) - See @.claude/agents/
+- **Skills**: 43 utility skills (34 native + 9 MCP-converted) - @.claude/skills/ and @.claude/docs/AGENT_SKILL_MATRIX.md
+- **Workflows**: 14 workflow definitions - See @.claude/workflows/WORKFLOW-GUIDE.md
 - **CUJs**: 55 Customer User Journeys (52 core + 3 extended)
 - **Schemas**: 83 JSON validation schemas for artifact validation
 - **Rules**: 1,081+ technology-specific rule packs (8 master + 1,073 rules-library)
@@ -273,7 +273,7 @@ Default to Claude Sonnet 4.5 unless requested otherwise. Model string: `claude-s
 
 ## Agents (34 Roles)
 
-Complete list of specialized agents. See `.claude/agents/` for detailed documentation.
+Complete list of specialized agents. See @.claude/agents/ for detailed documentation.
 
 | Agent | Purpose | Model |
 |-------|---------|-------|
@@ -323,7 +323,7 @@ Skills provide 90%+ context savings vs MCP servers. Invoke with natural language
 
 **Dual Persistence**: All agents use both CLAUDE.md files AND memory skills for fault tolerance.
 
-**Agent-Skill Mapping**: See `.claude/docs/AGENT_SKILL_MATRIX.md` for comprehensive mapping of all 34 agents to their required and recommended skills.
+**Agent-Skill Mapping**: @.claude/docs/AGENT_SKILL_MATRIX.md provides comprehensive mapping of all 34 agents to their required and recommended skills.
 
 **Categories**:
 - **Core**: repo-rag, artifact-publisher, context-bridge, rule-auditor, rule-selector, scaffolder
@@ -369,7 +369,7 @@ The rule index enables Skills to discover all 1,081+ rules dynamically without h
 
 **Skills Using the Index**: explaining-rules, fixing-rule-violations, recommending-rules, migrating-rules, rule-auditor, rule-selector, scaffolder
 
-See `.claude/docs/RULE_INDEX_MIGRATION.md` for detailed migration guide.
+See @.claude/docs/RULE_INDEX_MIGRATION.md for detailed migration guide.
 
 ## Enforcement System (Phase 1)
 
@@ -431,7 +431,7 @@ Security-sensitive tasks are automatically routed to required agents and can blo
 node .claude/tools/enforcement-gate.mjs validate-security --task "<description>" [--agents <agent1,agent2>]
 ```
 
-See `.claude/docs/SECURITY_TRIGGERS.md` for detailed security trigger documentation.
+See @.claude/docs/SECURITY_TRIGGERS.md for detailed security trigger documentation.
 
 ### Master Gate Function
 
@@ -480,7 +480,7 @@ The Master Orchestrator (`.claude/agents/master-orchestrator.md`) is the single 
 6. **Monitor Progress**: Master Orchestrator tracks progress via Project Database
 7. **Update Dashboard**: Master Orchestrator maintains live dashboard.md artifact
 
-See `.claude/workflows/WORKFLOW-GUIDE.md` for detailed workflow documentation and legacy routing fallback.
+See @.claude/workflows/WORKFLOW-GUIDE.md for detailed workflow documentation and legacy routing fallback.
 
 ## Workflow Execution
 
@@ -533,7 +533,7 @@ Workflows automatically enforce security requirements through enforcement gates:
 - Artifacts: `.claude/context/artifacts/`
 - Gates: `.claude/context/history/gates/<workflow_id>/`
 
-See `.claude/workflows/WORKFLOW-GUIDE.md` for detailed execution instructions, YAML structure, and error handling.
+See @.claude/workflows/WORKFLOW-GUIDE.md for detailed execution instructions, YAML structure, and error handling.
 
 ## Universal Development Rules
 
@@ -648,7 +648,7 @@ Make all independent tool calls in parallel. Prioritize calling tools simultaneo
 
 The system automatically enforces security requirements through semantic analysis of task descriptions covering 12 security categories with 136+ keywords.
 
-See `.claude/docs/SECURITY_TRIGGERS.md` for detailed security trigger documentation.
+See @.claude/docs/SECURITY_TRIGGERS.md for detailed security trigger documentation.
 
 ## Setup
 
@@ -656,7 +656,7 @@ See `.claude/docs/SECURITY_TRIGGERS.md` for detailed security trigger documentat
 2. Agents activate based on task keywords
 3. Use slash commands for quick workflows
 
-See `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md` for detailed setup and validation.
+See @.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md for detailed setup and validation.
 
 ## New Features
 
@@ -673,15 +673,15 @@ See `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md` for detailed setup and val
 
 ## Documentation
 
-- **Setup Guide**: `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md`
-- **Workflow Guide**: `.claude/workflows/WORKFLOW-GUIDE.md`
-- **Agent-Skill Matrix**: `.claude/docs/AGENT_SKILL_MATRIX.md`
-- **Enforcement Examples**: `.claude/docs/ENFORCEMENT_EXAMPLES.md`
-- **Security Triggers**: `.claude/docs/SECURITY_TRIGGERS.md`
-- **Enterprise Guardrails**: `.claude/system/guardrails/` and `.claude/system/permissions/`
-- **Agent Details**: `.claude/agents/` (each agent has full documentation)
-- **Skill Details**: `.claude/skills/` (each skill has SKILL.md documentation)
-- **Instructions**: `.claude/instructions/` (operational playbooks)
+- **Setup Guide**: @.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md
+- **Workflow Guide**: @.claude/workflows/WORKFLOW-GUIDE.md
+- **Agent-Skill Matrix**: @.claude/docs/AGENT_SKILL_MATRIX.md
+- **Enforcement Examples**: @.claude/docs/ENFORCEMENT_EXAMPLES.md
+- **Security Triggers**: @.claude/docs/SECURITY_TRIGGERS.md
+- **Enterprise Guardrails**: @.claude/system/guardrails/ and @.claude/system/permissions/
+- **Agent Details**: @.claude/agents/ (each agent has full documentation)
+- **Skill Details**: @.claude/skills/ (each skill has SKILL.md documentation)
+- **Instructions**: @.claude/instructions/ (operational playbooks)
 
 ## MCP Integration (Optional)
 
@@ -691,7 +691,7 @@ The `.claude/.mcp.json` file contains optional MCP server configurations. This p
 
 **When to Keep MCP**: Core tools needed every conversation (1-5 tools), complex OAuth flows or persistent connections, tools not yet converted to Skills.
 
-See `.claude/docs/ADVANCED_TOOL_USE.md` for Tool Search Tool (Beta) documentation.
+See @.claude/docs/ADVANCED_TOOL_USE.md for Tool Search Tool (Beta) documentation.
 
 ## Context Management
 
@@ -703,7 +703,7 @@ See `.claude/docs/ADVANCED_TOOL_USE.md` for Tool Search Tool (Beta) documentatio
 
 **Multi-Session State**: For long tasks, use `tests.json` (structured), `progress.txt` (notes), and git commits for state tracking.
 
-See `.claude/docs/CONTEXT_OPTIMIZATION.md` for details.
+See @.claude/docs/CONTEXT_OPTIMIZATION.md for details.
 
 ## Context Window Management
 
