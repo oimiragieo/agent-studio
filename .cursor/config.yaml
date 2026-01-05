@@ -1,0 +1,168 @@
+# Cursor Agent Configuration
+# Equivalent to .claude/config.yaml for cross-platform parity
+# Version: 1.0
+
+# Agent Routing Configuration
+agent_routing:
+  planner:
+    trigger_words:
+      - "plan"
+      - "create a plan"
+      - "roadmap"
+      - "strategy"
+    complexity: high
+    context_strategy: "lazy_load"
+    
+  analyst:
+    trigger_words:
+      - "market research"
+      - "competitive analysis"
+      - "project brief"
+      - "requirements gathering"
+    complexity: medium
+    context_strategy: "lazy_load"
+
+  pm:
+    trigger_words:
+      - "prd"
+      - "product requirements"
+      - "user stories"
+      - "backlog"
+    complexity: medium
+    context_strategy: "lazy_load"
+
+  architect:
+    trigger_words:
+      - "architecture"
+      - "system design"
+      - "technology stack"
+      - "api design"
+    complexity: high
+    context_strategy: "lazy_load"
+
+  developer:
+    trigger_words:
+      - "implement"
+      - "code"
+      - "development"
+      - "debug"
+      - "refactor"
+    complexity: medium
+    context_strategy: "lazy_load"
+
+  qa:
+    trigger_words:
+      - "test"
+      - "quality"
+      - "testing"
+      - "test plan"
+    complexity: high
+    context_strategy: "lazy_load"
+
+  ux-expert:
+    trigger_words:
+      - "ux"
+      - "ui"
+      - "design"
+      - "wireframe"
+    complexity: medium
+    context_strategy: "lazy_load"
+
+  devops:
+    trigger_words:
+      - "infrastructure"
+      - "deployment"
+      - "ci/cd"
+      - "docker"
+    complexity: medium
+    context_strategy: "lazy_load"
+
+  code-reviewer:
+    trigger_words:
+      - "code review"
+      - "review this"
+      - "pr review"
+    complexity: high
+    context_strategy: "lazy_load"
+
+  security-architect:
+    trigger_words:
+      - "security"
+      - "authentication"
+      - "authorization"
+    complexity: high
+    context_strategy: "lazy_load"
+
+  performance-engineer:
+    trigger_words:
+      - "performance"
+      - "optimize"
+      - "profiling"
+    complexity: high
+    context_strategy: "lazy_load"
+
+  llm-architect:
+    trigger_words:
+      - "ai system"
+      - "llm"
+      - "prompt engineering"
+      - "rag"
+    complexity: high
+    context_strategy: "lazy_load"
+
+  incident-responder:
+    trigger_words:
+      - "incident"
+      - "outage"
+      - "production issue"
+    complexity: medium
+    context_strategy: "lazy_load"
+
+# Workflow Selection Configuration
+workflow_selection:
+  plan_mode:
+    priority: 1
+    keywords:
+      - "plan"
+      - "multi-file"
+      - "large change"
+    auto_trigger: true
+    min_files: 2
+
+  quick:
+    priority: 2
+    keywords:
+      - "quick"
+      - "small change"
+      - "hotfix"
+    auto_trigger: false
+
+# Session Management
+session:
+  plans_dir: .cursor/plans
+  context_dir: .cursor/context
+  auto_save: true
+
+# Cross-Platform Context Bridge
+context_bridge:
+  enabled: true
+  sync_on_completion: true
+  platforms:
+    - claude
+    - factory
+  sync_dirs:
+    claude: .claude/context/artifacts
+    factory: .factory/docs
+
+# Plan Mode Configuration
+plan_mode:
+  enabled: true
+  auto_trigger_threshold: 2  # min files to trigger
+  store_plans: true
+  plans_directory: .cursor/plans
+
+# Rules Configuration
+rules:
+  manifest: .cursor/rules/manifest.yaml
+  loading_strategy: "pattern-based"
+  max_rules_per_file: 10

@@ -1,0 +1,431 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Log Analysis",
+  "description": "Schema for analysis of browser console, network, and performance logs",
+  "required": ["analysis_id", "analysis_date", "analyzer_agent", "console_logs", "network_logs", "summary"],
+  "properties": {
+    "analysis_id": {
+      "type": "string",
+      "description": "Unique identifier for the log analysis"
+    },
+    "analysis_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when analysis was performed"
+    },
+    "analyzer_agent": {
+      "type": "string",
+      "description": "Agent that performed the analysis (e.g., developer)"
+    },
+    "console_logs": {
+      "type": "object",
+      "required": ["errors", "warnings", "info", "total_count"],
+      "properties": {
+        "errors": {
+          "type": "array",
+          "description": "Array of console error objects",
+          "items": {
+            "type": "object",
+            "required": ["message"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Error message"
+              },
+              "source": {
+                "type": "string",
+                "description": "Source file or URL where error occurred"
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Line number where error occurred"
+              },
+              "column": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Column number where error occurred"
+              },
+              "stack": {
+                "type": "string",
+                "description": "Stack trace (if available)"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the error occurred"
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["low", "medium", "high", "critical"],
+                "description": "Severity of the error"
+              },
+              "category": {
+                "type": "string",
+                "enum": ["javascript", "network", "security", "performance", "other"],
+                "description": "Category of the error"
+              }
+            }
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "description": "Array of console warning objects",
+          "items": {
+            "type": "object",
+            "required": ["message"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Warning message"
+              },
+              "source": {
+                "type": "string",
+                "description": "Source file or URL"
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "column": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "info": {
+          "type": "array",
+          "description": "Array of console info messages",
+          "items": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "total_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of console log entries"
+        }
+      }
+    },
+    "network_logs": {
+      "type": "object",
+      "required": ["failed_requests", "slow_requests"],
+      "properties": {
+        "failed_requests": {
+          "type": "array",
+          "description": "Array of failed network requests",
+          "items": {
+            "type": "object",
+            "required": ["url", "status", "method", "error_type"],
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the failed request"
+              },
+              "status": {
+                "type": "integer",
+                "description": "HTTP status code (4xx, 5xx)"
+              },
+              "method": {
+                "type": "string",
+                "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+                "description": "HTTP method"
+              },
+              "error_type": {
+                "type": "string",
+                "enum": ["network_error", "timeout", "cors", "4xx", "5xx", "other"],
+                "description": "Type of error"
+              },
+              "error_message": {
+                "type": "string",
+                "description": "Error message"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the request failed"
+              },
+              "duration_ms": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Request duration before failure"
+              }
+            }
+          }
+        },
+        "slow_requests": {
+          "type": "array",
+          "description": "Array of slow network requests",
+          "items": {
+            "type": "object",
+            "required": ["url", "duration", "threshold_exceeded"],
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the slow request"
+              },
+              "duration": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Request duration in milliseconds"
+              },
+              "threshold_exceeded": {
+                "type": "number",
+                "minimum": 0,
+                "description": "How much the threshold was exceeded (ms)"
+              },
+              "method": {
+                "type": "string",
+                "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
+              },
+              "status": {
+                "type": "integer",
+                "description": "HTTP status code"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "cors_errors": {
+          "type": "array",
+          "description": "Array of CORS errors",
+          "items": {
+            "type": "object",
+            "required": ["url", "error_message"],
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "error_message": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "api_errors": {
+          "type": "array",
+          "description": "Array of API response errors",
+          "items": {
+            "type": "object",
+            "required": ["url", "status", "error_response"],
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "status": {
+                "type": "integer"
+              },
+              "error_response": {
+                "type": "string",
+                "description": "Error response body or message"
+              },
+              "method": {
+                "type": "string",
+                "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "total_requests": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of network requests"
+        }
+      }
+    },
+    "performance_logs": {
+      "type": "object",
+      "description": "Performance-related log entries",
+      "properties": {
+        "long_tasks": {
+          "type": "array",
+          "description": "Array of long-running tasks",
+          "items": {
+            "type": "object",
+            "required": ["duration", "start_time"],
+            "properties": {
+              "duration": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Task duration in milliseconds"
+              },
+              "start_time": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Task start time (relative to page load)"
+              },
+              "name": {
+                "type": "string",
+                "description": "Task name or description"
+              },
+              "source": {
+                "type": "string",
+                "description": "Source of the long task"
+              }
+            }
+          }
+        },
+        "layout_shifts": {
+          "type": "array",
+          "description": "Array of Cumulative Layout Shift (CLS) events",
+          "items": {
+            "type": "object",
+            "required": ["value", "timestamp"],
+            "properties": {
+              "value": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Layout shift value"
+              },
+              "timestamp": {
+                "type": "number",
+                "minimum": 0,
+                "description": "When the layout shift occurred (relative to page load)"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "node": {
+                      "type": "string",
+                      "description": "DOM node that shifted"
+                    },
+                    "previous_rect": {
+                      "type": "object",
+                      "description": "Previous bounding rectangle"
+                    },
+                    "current_rect": {
+                      "type": "object",
+                      "description": "Current bounding rectangle"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "memory_usage": {
+          "type": "object",
+          "description": "Memory usage patterns",
+          "properties": {
+            "peak_memory_mb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Peak memory usage in MB"
+            },
+            "average_memory_mb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Average memory usage in MB"
+            },
+            "memory_leaks_suspected": {
+              "type": "boolean",
+              "description": "Whether memory leaks are suspected"
+            },
+            "memory_growth_pattern": {
+              "type": "string",
+              "enum": ["stable", "gradual_increase", "rapid_increase", "fluctuating"],
+              "description": "Pattern of memory growth"
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total_errors", "total_warnings", "critical_issues_count"],
+      "properties": {
+        "total_errors": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of errors found"
+        },
+        "total_warnings": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of warnings found"
+        },
+        "critical_issues_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of critical issues"
+        },
+        "failed_requests_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of failed network requests"
+        },
+        "slow_requests_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of slow network requests"
+        },
+        "cors_errors_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of CORS errors"
+        },
+        "long_tasks_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of long-running tasks"
+        },
+        "layout_shifts_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of layout shift events"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "analysis_tool": {
+          "type": "string",
+          "description": "Tool used for log analysis (e.g., Chrome DevTools MCP)"
+        },
+        "log_collection_duration_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Duration of log collection in seconds"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about the analysis"
+        }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,388 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Workflow YAML Schema",
+  "description": "Schema for validating workflow YAML structure. Note: JSON Schema doesn't validate YAML features perfectly, but useful for structure validation.",
+  "required": ["workflow_id", "name"],
+  "properties": {
+    "workflow_id": {
+      "type": "string",
+      "description": "Unique workflow identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable workflow name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Workflow description"
+    },
+    "steps": {
+      "type": "array",
+      "description": "Array of workflow steps (flat structure)",
+      "items": {
+        "$ref": "#/definitions/step"
+      }
+    },
+    "phases": {
+      "type": "array",
+      "description": "Array of phases (nested structure, BMad format)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phase_id": { "type": "string" },
+          "name": { "type": "string" },
+          "steps": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/step" }
+          }
+        },
+        "required": ["phase_id", "name", "steps"]
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional workflow metadata"
+    }
+  },
+  "definitions": {
+    "step": {
+      "type": "object",
+      "required": ["step", "name", "agent"],
+      "properties": {
+        "step": {
+          "type": ["integer", "string"],
+          "description": "Step number"
+        },
+        "name": {
+          "type": "string",
+          "description": "Step name"
+        },
+        "agent": {
+          "type": "string",
+          "description": "Agent to execute this step"
+        },
+        "description": {
+          "type": "string",
+          "description": "Step description"
+        },
+        "tool": {
+          "type": "string",
+          "description": "Tool-based step (optional, alternative to agent)"
+        },
+        "output": {
+          "type": "string",
+          "description": "Output artifact path (supports template variables)"
+        },
+        "canonical_artifact": {
+          "type": "string",
+          "description": "Canonical JSON artifact path (JSON-first pattern)"
+        },
+        "render_artifact": {
+          "type": "string",
+          "description": "Rendered Markdown artifact path (optional, generated from canonical)"
+        },
+        "schema": {
+          "type": "string",
+          "description": "Path to JSON schema for validation"
+        },
+        "requires_approval": {
+          "type": "boolean",
+          "description": "Whether step requires user approval before execution",
+          "default": false
+        },
+        "approval_reason": {
+          "type": "string",
+          "description": "Reason approval is required"
+        },
+        "idempotency_policy": {
+          "type": "string",
+          "enum": ["overwrite", "version", "skip"],
+          "description": "Policy for handling reruns",
+          "default": "overwrite"
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "Step dependencies",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fromStep": { "type": ["integer", "string"] },
+              "artifact": { "type": "string" },
+              "optional": { "type": "boolean", "default": false }
+            },
+            "required": ["fromStep", "artifact"]
+          }
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "gate": {
+              "type": "string",
+              "description": "Gate script path"
+            },
+            "custom_checks": {
+              "type": "array",
+              "description": "Custom validation checks (snake_case)",
+              "items": { "type": "string" }
+            },
+            "secondary_outputs": {
+              "type": "array",
+              "description": "Secondary output artifacts (snake_case)",
+              "items": { "type": "string" }
+            },
+            "security_checks": {
+              "type": "array",
+              "description": "Security validation checks (snake_case)",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "injections": {
+          "type": "array",
+          "description": "Context injections (e.g., ['architecture', 'style-guide'])",
+          "items": { "type": "string" }
+        },
+        "max_retries": {
+          "type": "integer",
+          "description": "Maximum retry attempts",
+          "minimum": 0,
+          "default": 3
+        },
+        "required_skills": {
+          "type": "array",
+          "description": "Skills that MUST be invoked during this step. Execution blocked if missing. Skill names must be lowercase with hyphens (kebab-case).",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "examples": [
+            ["scaffolder", "rule-auditor", "repo-rag"],
+            ["response-rater", "plan-generator"],
+            ["diagram-generator", "doc-generator"]
+          ]
+        },
+        "recommended_skills": {
+          "type": "array",
+          "description": "Skills that SHOULD be used but won't block execution if missing. Generates warnings in validation logs.",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "examples": [
+            ["test-generator", "code-style-validator"],
+            ["sequential-thinking", "api-contract-generator"]
+          ]
+        },
+        "skill_triggers": {
+          "type": "object",
+          "description": "Conditional skill activation based on task context. Keys are skill names, values define activation conditions.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "condition": {
+                "type": "string",
+                "description": "Condition that activates this skill (e.g., 'code_changes detected', 'new_component requested', 'security_review needed')"
+              },
+              "params": {
+                "type": "object",
+                "description": "Parameters to pass to the skill when activated",
+                "additionalProperties": true
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["required", "recommended", "optional"],
+                "default": "recommended",
+                "description": "Priority level: 'required' blocks execution if skill not used, 'recommended' generates warning, 'optional' logs info only"
+              }
+            },
+            "required": ["condition"]
+          },
+          "examples": [
+            {
+              "rule-auditor": {
+                "condition": "code_changes detected",
+                "params": {
+                  "target_files": "{{context.modified_files}}",
+                  "severity": "error"
+                },
+                "priority": "required"
+              },
+              "security-enforcement": {
+                "condition": "auth_changes detected",
+                "params": {
+                  "categories": ["authentication", "authorization"]
+                },
+                "priority": "required"
+              },
+              "test-generator": {
+                "condition": "new_component created",
+                "params": {
+                  "test_type": "unit",
+                  "coverage_threshold": 80
+                },
+                "priority": "recommended"
+              }
+            }
+          ]
+        },
+        "skill_outputs": {
+          "type": "object",
+          "description": "Maps skills to their expected output artifacts for traceability and validation. Keys are skill names.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "primary": {
+                "type": "string",
+                "description": "Primary artifact produced by this skill (supports template variables like {{workflow_id}})"
+              },
+              "secondary": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Secondary artifacts produced by this skill (optional)"
+              },
+              "validation_schema": {
+                "type": "string",
+                "description": "Path to JSON schema for validating skill output artifacts"
+              }
+            },
+            "required": ["primary"]
+          },
+          "examples": [
+            {
+              "rule-auditor": {
+                "primary": "code-review-{{workflow_id}}.json",
+                "secondary": ["rule-violations-{{workflow_id}}.json", "compliance-report-{{workflow_id}}.md"],
+                "validation_schema": ".claude/schemas/code_review.schema.json"
+              },
+              "response-rater": {
+                "primary": "plan-rating-{{workflow_id}}.json",
+                "validation_schema": ".claude/schemas/plan_rating.schema.json"
+              },
+              "diagram-generator": {
+                "primary": "architecture-diagram-{{workflow_id}}.mermaid",
+                "secondary": ["diagram-metadata-{{workflow_id}}.json"]
+              }
+            }
+          ]
+        },
+        "skill_validation": {
+          "type": "object",
+          "description": "Validation settings for skill usage compliance in this step",
+          "properties": {
+            "enforce": {
+              "type": "boolean",
+              "description": "Block step completion if required skills not used. Default true for steps with required_skills.",
+              "default": true
+            },
+            "min_compliance_score": {
+              "type": "number",
+              "description": "Minimum skill compliance percentage (0-100). Calculated as (skills_used / skills_required) * 100.",
+              "minimum": 0,
+              "maximum": 100,
+              "default": 100
+            },
+            "allow_unexpected": {
+              "type": "boolean",
+              "description": "Allow skills not in required/recommended lists. If false, unexpected skills trigger warnings.",
+              "default": true
+            },
+            "report_path": {
+              "type": "string",
+              "description": "Path to save skill usage compliance report (supports template variables)"
+            }
+          },
+          "examples": [
+            {
+              "enforce": true,
+              "min_compliance_score": 100,
+              "allow_unexpected": true,
+              "report_path": ".claude/context/runs/{{run_id}}/skill-compliance-{{step}}.json"
+            },
+            {
+              "enforce": false,
+              "min_compliance_score": 80,
+              "allow_unexpected": false
+            }
+          ]
+        },
+        "skill_requirements": {
+          "type": "object",
+          "description": "Phase 2A: Consolidated skill requirements for this step. See workflow-step-skills.schema.json for full schema.",
+          "properties": {
+            "required": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "uniqueItems": true,
+              "description": "Skills that MUST be invoked during this step. Step execution blocked if any are missing."
+            },
+            "triggered": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["pattern", "skills"],
+                "properties": {
+                  "pattern": { "type": "string", "description": "Regex pattern to match against task description" },
+                  "skills": { "type": "array", "items": { "type": "string" }, "description": "Skills to activate when pattern matches" },
+                  "priority": { "type": "string", "enum": ["required", "recommended", "optional"], "default": "recommended" },
+                  "context_keys": { "type": "array", "items": { "type": "string" }, "description": "Additional context keys to check" },
+                  "skill_params": { "type": "object", "additionalProperties": true, "description": "Parameters to pass to triggered skills" }
+                }
+              },
+              "description": "Skills that activate conditionally based on pattern matching"
+            },
+            "recommended": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "uniqueItems": true,
+              "description": "Skills that SHOULD be used but won't block execution. Generates warnings if missing."
+            },
+            "forbidden": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "uniqueItems": true,
+              "description": "Skills that MUST NOT be used in this step. Execution blocked if any are invoked."
+            },
+            "outputs": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "required": ["primary"],
+                "properties": {
+                  "primary": { "type": "string", "description": "Primary artifact path (supports template variables)" },
+                  "secondary": { "type": "array", "items": { "type": "string" } },
+                  "schema": { "type": "string", "description": "Path to JSON schema for validation" },
+                  "required_for_completion": { "type": "boolean", "default": true }
+                }
+              },
+              "description": "Maps skills to their expected output artifacts"
+            },
+            "validation": {
+              "type": "object",
+              "properties": {
+                "mode": { "type": "string", "enum": ["blocking", "warning", "info"], "default": "blocking" },
+                "min_compliance": { "type": "integer", "minimum": 0, "maximum": 100, "default": 100 },
+                "allow_unlisted_skills": { "type": "boolean", "default": true },
+                "require_output_validation": { "type": "boolean", "default": false },
+                "compliance_report_path": { "type": "string" },
+                "on_failure": { "type": "string", "enum": ["block", "warn_and_continue", "retry", "escalate"], "default": "block" },
+                "max_retries": { "type": "integer", "minimum": 0, "maximum": 5, "default": 1 }
+              },
+              "description": "Validation settings for skill usage compliance"
+            },
+            "inherit_from_agent": { "type": "boolean", "default": true, "description": "Merge step skills with agent defaults from skill-integration-matrix.json" },
+            "override_agent_skills": { "type": "boolean", "default": false, "description": "Replace agent defaults entirely instead of merging" }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "oneOf": [
+    { "required": ["steps"] },
+    { "required": ["phases"] }
+  ]
+}
+

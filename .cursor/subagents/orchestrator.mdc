@@ -71,6 +71,21 @@ When activated as the Orchestrator:
    - Provide comprehensive summary to user
 </execution_process>
 
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+
 ## <orchestration_patterns>
 
 ### 1. Sequential Orchestration (Linear Pipeline)
@@ -211,6 +226,49 @@ Use shared context space for async agent collaboration:
 ```
 </context_management>
 
+## <artifact_management>
+
+### Artifact Registry
+Track all artifacts created during workflow execution:
+- Register artifacts after subagent completes (name, step, agent, timestamp, dependencies, validation status)
+- Check artifact registry before delegating to verify required inputs exist
+- Use registry to identify missing dependencies
+- Registry location: `.claude/context/artifacts/registry-{workflow_id}.json`
+
+**Registry Integrity Validation** (Before Each Step):
+1. **Check Registry File Exists**: Verify registry file exists at `.claude/context/artifacts/registry-{workflow_id}.json`
+   - If missing: Initialize new registry (workflow may have been interrupted)
+   - Log registry initialization in reasoning file
+2. **Validate JSON Structure**: Parse and verify registry JSON is valid
+   - Attempt to parse registry file using Read tool
+   - If parse fails: Registry is corrupted, proceed to recovery
+   - Log parse result in reasoning file
+3. **Verify Registry Matches File System State**: Compare registry entries with actual files
+   - For each artifact in registry, verify file exists at specified path
+   - Check file modification times match registry timestamps (within tolerance)
+   - Identify discrepancies (files exist but not in registry, or vice versa)
+   - Log verification result in reasoning file
+4. **Registry Corruption Recovery** (if corrupted or mismatched):
+   - **Rebuild from File System**: Scan `.claude/context/artifacts/` directory
+   - **Reconstruct Registry**: Create registry entries from existing files
+   - **Validate Reconstructed Entries**: Check gate files for validation status
+   - **Update Registry**: Save reconstructed registry
+   - **Log Recovery**: Document recovery actions in reasoning file
+5. **Registry Synchronization Validation**: Ensure registry is up-to-date
+   - Check for artifacts created but not registered
+   - Check for registry entries without corresponding files
+   - Synchronize registry with file system state
+   - Log synchronization actions in reasoning file
+
+### Explicit Artifact Passing
+Before delegating to subagent for Step N:
+1. Identify required artifacts from workflow YAML
+2. Verify artifacts exist in artifact registry
+3. Check artifact validation status (must be 'pass')
+4. Load artifacts from file system
+5. Pass artifacts explicitly to subagent as context
+6. Document artifact passing in reasoning file
+
 ## <error_handling>
 
 ### Common Failure Scenarios
@@ -228,6 +286,13 @@ Use shared context space for async agent collaboration:
 - Action: Identify dependency cycle
 - Break cycle by relaxing constraint
 - Re-route around blocking agent
+
+**Scenario 4: Validation failure**
+- Action: Read gate file to understand errors
+- Route back to agent for correction
+- Re-validate after correction
+- Track retry attempts (max 3 retries)
+- If max retries exceeded, escalate to fallback agent or request human review
 </error_handling>
 
 ## <output_requirements>
@@ -260,3 +325,86 @@ Auto-invoke Orchestrator when:
 - Request contains phrases like "orchestrate", "coordinate", "manage workflow"
 - Multiple conflicting requirements detected
 </invocation_triggers>
+
+## <skill_integration>
+## Skill Usage for Orchestration
+
+**Available Skills for Orchestration**:
+
+### @recovery Skill
+**When to Use**:
+- Context loss or session interruption
+- Workflow resumption after failure
+- State reconstruction
+
+**How to Invoke**:
+- Natural language: "Recover workflow state"
+- Cursor mention: `@recovery` (Note: Manual recovery may be needed in Cursor)
+
+**What It Does**:
+- Identifies last completed step
+- Loads plan documents
+- Recovers context from artifacts and reasoning files
+- Resumes execution from next step
+
+### @optional-artifact-handler Skill
+**When to Use**:
+- Workflow steps with optional artifact inputs
+- Handling missing dependencies gracefully
+- Applying defaults when artifacts are unavailable
+
+**How to Invoke**:
+- Automatic when artifacts are optional
+- Cursor mention: `@optional-artifact-handler` (Note: Manual handling may be needed in Cursor)
+
+**What It Does**:
+- Detects optional artifacts in workflow
+- Applies defaults if missing
+- Documents handling in reasoning file
+
+### @conflict-resolution Skill
+**When to Use**:
+- Multiple agents provide conflicting outputs
+- Conflicting requirements detected
+- Need to reach consensus
+
+**How to Invoke**:
+- Natural language: "Resolve conflict between agents"
+- Cursor mention: `@conflict-resolution` (Note: Manual resolution may be needed in Cursor)
+
+**What It Does**:
+- Detects conflicts between agent outputs
+- Assesses severity (critical, high, medium, low)
+- Escalates to resolution agent
+- Documents resolution
+
+### @artifact-publisher Skill
+**When to Use**:
+- Publishing validated artifacts
+- Sharing artifacts to project feed
+- Cross-platform artifact distribution
+
+**How to Invoke**:
+- Natural language: "Publish artifact to project feed"
+- Cursor mention: `@artifact-publisher`
+
+**What It Does**:
+- Publishes artifacts to project feed
+- Handles retry logic with exponential backoff
+- Updates artifact registry with publishing status
+
+### @context-bridge Skill
+**When to Use**:
+- Syncing state across platforms
+- Handoff between Claude and Cursor
+- Cross-conversation context sharing
+
+**How to Invoke**:
+- Natural language: "Sync context to Cursor"
+- Cursor mention: `@context-bridge`
+
+**What It Does**:
+- Synchronizes task state across platforms
+- Handles handoff between Claude, Cursor, Factory
+- Updates external trackers
+</skill_integration>

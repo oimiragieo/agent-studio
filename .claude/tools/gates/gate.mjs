@@ -112,6 +112,146 @@ function validateBasicJSON(data) {
   }
 }
 
+/**
+ * Validate that no actual secrets are present in connection strings or environment variables
+ * Rejects connection strings with actual passwords, tokens, or API keys
+ * 
+ * @param {Object} data - The data object to validate
+ * @returns {Array} Array of error messages (empty if no secrets found)
+ */
+function validateNoActualSecrets(data) {
+  const errors = [];
+  const secretPatterns = [
+    /(:|\?|&)(password|passwd|pwd|secret|token|api[_-]?key)=[^&@\s"']+/i,
+    /postgresql:\/\/[^:]+:[^@]+@/i,
+    /mysql:\/\/[^:]+:[^@]+@/i,
+    /mongodb:\/\/[^:]+:[^@]+@/i,
+    /redis:\/\/:[^@]+@/i
+  ];
+  
+  // Check connection strings in resources
+  if (data.resources) {
+    ['compute', 'database', 'storage'].forEach(resourceType => {
+      if (data.resources[resourceType]) {
+        data.resources[resourceType].forEach((resource, index) => {
+          // Check connection_string (old format, should not contain actual secrets)
+          if (resource.connection_string) {
+            const connStr = resource.connection_string;
+            // Allow template placeholders like {DB_PASSWORD} or ${DB_PASSWORD}
+            if (!connStr.includes('{') && !connStr.includes('$')) {
+              secretPatterns.forEach(pattern => {
+                if (pattern.test(connStr)) {
+                  errors.push(`Connection string in ${resourceType}[${index}] (${resource.name || 'unnamed'}) appears to contain actual secret. Use template with placeholder (e.g., {DB_PASSWORD}) and secret_references instead.`);
+                }
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+  
+  // Check environment variables
+  if (data.environment_variables) {
+    Object.entries(data.environment_variables).forEach(([key, value]) => {
+      if (key.toLowerCase().includes('password') || 
+          key.toLowerCase().includes('secret') || 
+          key.toLowerCase().includes('token') ||
+          key.toLowerCase().includes('key') ||
+          key.toLowerCase().includes('credential')) {
+        // Check if value looks like actual secret (not a reference)
+        if (typeof value === 'string' && 
+            !value.startsWith('projects/') && 
+            !value.includes('secret') &&
+            !value.includes('SECRET_ID') &&
+            value.length > 10 &&
+            !value.match(/^[A-Z_]+$/)) { // Not all caps (which would be env var name
+          errors.push(`Environment variable ${key} appears to contain actual secret. Use Secret Manager reference (projects/.../secrets/...) instead.`);
+        }
+      }
+    });
+  }
+  
+  return errors;
+}
+
+/**
+ * Validate that secret_references section exists and is properly formatted
+ * when connection strings use placeholders
+ * 
+ * @param {Object} data - The data object to validate
+ * @returns {Object} Object with errors, warnings, and secretReferencesFound count
+ */
+function validateSecretReferences(data) {
+  const errors = [];
+  const warnings = [];
+  const secretRefPattern = /^projects\/[^/]+\/secrets\/[^/]+\/versions\/[^/]+$/;
+  
+  // Check if connection strings use placeholders
+  let hasPlaceholders = false;
+  if (data.resources) {
+    ['compute', 'database', 'storage'].forEach(resourceType => {
+      if (data.resources[resourceType]) {
+        data.resources[resourceType].forEach(resource => {
+          // Check connection_string_template (new format)
+          if (resource.connection_string_template && 
+              (resource.connection_string_template.includes('{') || 
+               resource.connection_string_template.includes('$'))) {
+            hasPlaceholders = true;
+          }
+          // Also check connection_string for placeholders (backward compatibility)
+          if (resource.connection_string && 
+              (resource.connection_string.includes('{') || 
+               resource.connection_string.includes('$'))) {
+            hasPlaceholders = true;
+          }
+        });
+      }
+    });
+  }
+  
+  // If placeholders found, verify secret_references exists
+  if (hasPlaceholders) {
+    if (!data.secret_references || Object.keys(data.secret_references).length === 0) {
+      errors.push('Connection strings use placeholders but secret_references section is missing or empty.');
+    } else {
+      // Validate each secret reference
+      Object.entries(data.secret_references).forEach(([key, ref]) => {
+        if (!ref.secret_id || !secretRefPattern.test(ref.secret_id)) {
+          errors.push(`Secret reference "${key}" has invalid secret_id format. Expected: projects/{project_id}/secrets/{secret_name}/versions/{version}`);
+        }
+        if (!ref.environment_variable) {
+          errors.push(`Secret reference "${key}" missing environment_variable field.`);
+        }
+      });
+    }
+  }
+  
+  // Check environment variables for secret references (should use SECRET_ID pattern)
+  if (data.environment_variables) {
+    Object.entries(data.environment_variables).forEach(([key, value]) => {
+      if (key.toLowerCase().includes('password') || 
+          key.toLowerCase().includes('secret') || 
+          key.toLowerCase().includes('token') ||
+          key.toLowerCase().includes('key')) {
+        // If it's a secret-related env var, it should be a reference or end with _SECRET_ID
+        if (typeof value === 'string' && 
+            !value.startsWith('projects/') && 
+            !key.endsWith('_SECRET_ID') &&
+            !key.endsWith('_SECRET_REF')) {
+          warnings.push(`Environment variable ${key} appears to be secret-related but doesn't follow SECRET_ID naming convention. Consider renaming to ${key}_SECRET_ID.`);
+        }
+      }
+    });
+  }
+  
+  return { 
+    errors, 
+    warnings, 
+    secretReferencesFound: data.secret_references ? Object.keys(data.secret_references).length : 0 
+  };
+}
+
 // Main function
 async function main() {
   const args = parseArgs();
@@ -145,6 +285,23 @@ async function main() {
     let validation;
     let finalData = inputData;
     let fixedCount = 0;
+    
+    // Secret validation (always performed for infrastructure-config.json)
+    const secretValidationErrors = [];
+    const secretRefValidation = { errors: [], warnings: [], secretReferencesFound: 0 };
+    const isInfrastructureConfig = args.input && args.input.includes('infrastructure-config');
+    
+    if (isInfrastructureConfig) {
+      // Validate no actual secrets
+      const secretErrors = validateNoActualSecrets(inputData);
+      secretValidationErrors.push(...secretErrors);
+      
+      // Validate secret references
+      const secretRefResult = validateSecretReferences(inputData);
+      secretRefValidation.errors = secretRefResult.errors;
+      secretRefValidation.warnings = secretRefResult.warnings;
+      secretRefValidation.secretReferencesFound = secretRefResult.secretReferencesFound;
+    }
     
     if (hasSchema) {
       // Schema-based validation
@@ -188,6 +345,10 @@ async function main() {
       console.log('ℹ️  No schema provided - performing basic JSON structure validation only');
     }
     
+    // Combine schema validation errors with secret validation errors
+    const allErrors = [...(validation.errors || []), ...secretValidationErrors, ...secretRefValidation.errors];
+    const isValid = validation.valid && secretValidationErrors.length === 0 && secretRefValidation.errors.length === 0;
+    
     const gateDir = dirname(gatePath);
     try { mkdirSync(gateDir, { recursive: true }); } catch (e) {}
     
@@ -196,24 +357,86 @@ async function main() {
       schema_path: args.schema || null,
       schema_used: hasSchema,
       input_path: args.input,
-      valid: validation.valid,
-      errors: validation.errors || [],
+      valid: isValid,
+      errors: allErrors,
       autofix_applied: autofixEnabled && fixedCount > 0,
       fixed_fields_count: fixedCount,
-      validated_data: finalData
+      validated_data: finalData,
+      // Secret validation results (for infrastructure-config.json)
+      secrets_validated: isInfrastructureConfig,
+      secret_validation_errors: secretValidationErrors,
+      secret_references_validated: isInfrastructureConfig,
+      secret_references_found: secretRefValidation.secretReferencesFound,
+      secret_references_errors: secretRefValidation.errors,
+      secret_references_warnings: secretRefValidation.warnings
     };
     
     writeFileSync(gatePath, JSON.stringify(gateData, null, 2), 'utf-8');
     
-    if (validation.valid) {
+    if (isValid) {
       const message = hasSchema 
-        ? (fixedCount > 0 ? `✅ Schema validation passed (autofix: ${fixedCount})` : '✅ Schema validation passed')
+        ? (fixedCount > 0 ? `✅ Schema validation passed (autofix: ${fixedCount} fields)` : '✅ Schema validation passed')
         : '✅ Basic validation passed (no schema)';
       console.log(message);
+      
+      // Show secret validation status if applicable
+      if (isInfrastructureConfig) {
+        if (secretRefValidation.secretReferencesFound > 0) {
+          console.log(`   ✅ Secret references validated: ${secretRefValidation.secretReferencesFound} found`);
+        }
+        if (secretRefValidation.warnings.length > 0) {
+          console.log(`   ⚠️  Warnings: ${secretRefValidation.warnings.length}`);
+          secretRefValidation.warnings.forEach(warning => {
+            console.log(`      - ${warning}`);
+          });
+        }
+      }
+      
+      console.log(`\n📋 Gate file created: ${gatePath}`);
+      console.log(`   Validation status: PASSED`);
+      if (hasSchema) {
+        console.log(`   Schema: ${args.schema}`);
+      }
       process.exit(0);
     } else {
-      console.error('❌ Validation failed:');
-      validation.errors.forEach(error => console.error(`  - ${error}`));
+      console.error('\n❌ Validation failed:');
+      console.error(`   Input file: ${inputPath}`);
+      if (hasSchema) {
+        console.error(`   Schema: ${schemaPath}`);
+      }
+      console.error(`   Gate file: ${gatePath}`);
+      console.error(`\n   Errors found:`);
+      allErrors.forEach((error, index) => {
+        console.error(`   ${index + 1}. ${error}`);
+      });
+      
+      // Show secret validation errors separately if applicable
+      if (isInfrastructureConfig && secretValidationErrors.length > 0) {
+        console.error(`\n   Secret Validation Errors:`);
+        secretValidationErrors.forEach((error, index) => {
+          console.error(`   ${index + 1}. ${error}`);
+        });
+      }
+      
+      if (isInfrastructureConfig && secretRefValidation.errors.length > 0) {
+        console.error(`\n   Secret References Validation Errors:`);
+        secretRefValidation.errors.forEach((error, index) => {
+          console.error(`   ${index + 1}. ${error}`);
+        });
+      }
+      
+      console.error(`\n💡 Suggestions:`);
+      console.error(`   - Review the errors above and fix the issues in the input file`);
+      if (hasSchema) {
+        console.error(`   - Check the schema file to understand expected structure`);
+      }
+      if (isInfrastructureConfig) {
+        console.error(`   - Ensure all secrets use Secret Manager references (projects/.../secrets/...)`);
+        console.error(`   - Use connection string templates with placeholders (e.g., {DB_PASSWORD})`);
+        console.error(`   - Include secret_references section for all secrets`);
+      }
+      console.error(`   - Use --autofix 1 to attempt automatic fixes (if supported)`);
+      console.error(`   - Review the gate file for detailed validation results: ${gatePath}`);
       process.exit(1);
     }
     

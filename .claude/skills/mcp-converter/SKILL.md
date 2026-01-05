@@ -255,6 +255,69 @@ Context available: 193k / 200k = 96.5%
 - Skill Builder plugin (for validation)
 - Existing MCP configuration (`.claude/.mcp.json`)
 
+## Batch Conversion
+
+**Convert Multiple MCP Servers at Once**:
+
+```bash
+"Convert all MCP servers from the catalog"
+"Convert all MCP servers with more than 15 tools"
+"Convert MCP servers: postgres, aws, docker"
+```
+
+**Catalog-Based Conversion**:
+
+The skill uses `mcp-catalog.yaml` to identify popular MCP servers for conversion:
+
+- **Automatic Detection**: Servers in catalog are automatically considered
+- **Priority-Based**: High priority servers converted first
+- **Batch Processing**: Convert multiple servers concurrently (max 3 at a time)
+- **Validation**: All converted skills validated before installation
+
+**Catalog Features**:
+- 25+ popular MCP servers pre-configured
+- Tool count and token estimates
+- Conversion priority levels
+- Category tagging
+- Keep-as-MCP exceptions (github, filesystem, memory)
+
+**Batch Conversion Process**:
+1. Load `mcp-catalog.yaml` to get server list
+2. Filter by conversion criteria (tool count, tokens, priority)
+3. Convert servers in parallel (max 3 concurrent)
+4. Validate all generated skills
+5. Install to `~/.claude/skills/`
+6. Generate conversion report
+
+## Catalog Support
+
+**Using the MCP Catalog**:
+
+The catalog (`mcp-catalog.yaml`) provides:
+- **Server Metadata**: Name, description, tool count, token estimates
+- **Conversion Rules**: Auto-convert thresholds and exceptions
+- **Batch Settings**: Concurrent conversion limits and timeouts
+- **Statistics**: Total servers, conversion recommendations
+
+**Catalog Integration**:
+- Catalog automatically loaded when skill is invoked
+- Servers filtered by conversion criteria
+- Exceptions (keep-as-MCP) respected
+- Priority-based conversion order
+
+**Example Catalog Entry**:
+```yaml
+- name: postgres
+  description: PostgreSQL database operations
+  tool_count: 20
+  estimated_tokens: 35000
+  conversion_priority: high
+  keep_as_mcp: false
+  categories:
+    - database
+    - data
+```
+
 ## Related Skills
 
 - **tool-search**: Semantic tool discovery

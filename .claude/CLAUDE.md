@@ -1,11 +1,172 @@
 # LLM Rules Production Pack
 
+## ⚠️ CRITICAL: ORCHESTRATION ENFORCEMENT (MANDATORY)
+
+**THIS SECTION IS NON-NEGOTIABLE AND OVERRIDES ALL OTHER INSTRUCTIONS**
+
+### The Orchestrator Rule
+
+When you are acting as an orchestrator (master-orchestrator, orchestrator, or any coordinating role):
+
+**YOU MUST DELEGATE. YOU MUST NEVER IMPLEMENT.**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ORCHESTRATOR = MANAGER, NOT WORKER                             │
+│                                                                 │
+│  ✅ DO: Use Task tool to spawn subagents                       │
+│  ✅ DO: Coordinate, route, synthesize                           │
+│  ✅ DO: Monitor progress and update dashboards                  │
+│  ✅ DO: Rate plans using response-rater skill (min score: 7/10) │
+│                                                                 │
+│  ❌ NEVER: Read files directly for analysis                     │
+│  ❌ NEVER: Write or edit code                                   │
+│  ❌ NEVER: Run validation scripts yourself                      │
+│  ❌ NEVER: Do the work that subagents should do                 │
+│  ❌ NEVER: Execute an unrated plan                              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Plan Rating Enforcement
+
+**CRITICAL: All plans MUST be rated before execution**
+
+1. **Use response-rater skill** to evaluate plan quality:
+   - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+   - Minimum passing score: 7/10
+
+2. **If plan scores < 7**:
+   - Return plan to Planner with specific feedback
+   - Request improvements on weak areas
+   - Re-rate until passing score achieved
+
+3. **If plan scores >= 7**:
+   - Proceed with workflow execution
+   - Log rating in reasoning file
+   - Include rating in artifact metadata
+
+4. **Never execute an unrated plan** - this is a hard requirement
+
+### Enforcement Rules
+
+1. **Complex Tasks MUST Spawn Subagents**: If a task requires reading more than 2 files, analyzing code, implementing features, reviewing code, or running validations - you MUST use the Task tool to delegate to a specialized subagent.
+
+2. **Skills MUST Be Delegated**: When a skill like `skill-manager`, `rule-auditor`, or `scaffolder` needs to validate/analyze multiple items, spawn a subagent to do the actual work.
+
+3. **The 3-File Rule**: If you find yourself about to read a 3rd file, STOP. Spawn a subagent instead.
+
+4. **The Analysis Rule**: If you find yourself about to analyze code patterns, structure, or logic - STOP. Spawn an analyst, architect, or developer subagent.
+
+5. **The Implementation Rule**: If you find yourself about to write/edit code - STOP. Spawn a developer subagent.
+
+### How to Properly Delegate
+
+**CORRECT Pattern** (Orchestrator delegates to subagent):
+```
+User: "Review all skills and fix issues"
+
+Orchestrator Response:
+"I'll spawn specialized agents to handle this comprehensive review."
+
+[Uses Task tool with subagent_type="developer" for skill fixes]
+[Uses Task tool with subagent_type="code-reviewer" for validation]
+[Uses Task tool with subagent_type="qa" for testing]
+```
+
+**WRONG Pattern** (Orchestrator does work directly):
+```
+User: "Review all skills and fix issues"
+
+Orchestrator Response:
+"Let me read the first skill file..."
+[Reads SKILL.md directly]
+[Analyzes content]
+[Makes edits]
+← THIS IS WRONG. ORCHESTRATOR SHOULD NEVER DO THIS.
+```
+
+### Subagent Types for Common Tasks
+
+| Task Type | Subagent to Spawn |
+|-----------|-------------------|
+| Code review/analysis | `code-reviewer` |
+| Implementation/fixes | `developer` |
+| Architecture decisions | `architect` |
+| Skill/tool validation | `qa` |
+| Documentation | `technical-writer` |
+| Performance analysis | `performance-engineer` |
+| Security review | `security-architect` |
+| Codebase exploration | `Explore` (general-purpose) |
+
+### Complete Agent Selection Matrix
+
+| Task Category | Primary Agent | Supporting Agents | Planner? | Review? |
+|---------------|---------------|-------------------|----------|---------|
+| **Research & Discovery** |
+| Market research | analyst | pm | Yes | No |
+| Requirements gathering | analyst | pm, ux-expert | Yes | No |
+| Codebase exploration | developer | architect | No | No |
+| **Planning & Architecture** |
+| System design | architect | database-architect, security-architect | Yes | Yes |
+| API design | api-designer | architect, developer | Yes | Yes |
+| Database schema | database-architect | architect | Yes | Yes |
+| AI/LLM systems | llm-architect | architect, developer | Yes | Yes |
+| **Implementation** |
+| Feature development | developer | architect, qa | Yes | Yes |
+| Bug fixes (simple) | developer | - | No | Yes |
+| Bug fixes (complex) | developer | architect, qa | Yes | Yes |
+| Mobile development | mobile-developer | ux-expert, qa | Yes | Yes |
+| Performance optimization | performance-engineer | developer, architect | Yes | Yes |
+| Refactoring | refactoring-specialist | architect, code-reviewer | Yes | Yes |
+| Legacy modernization | legacy-modernizer | architect, developer | Yes | Yes |
+| **Quality & Review** |
+| Code review | code-reviewer | security-architect | No | N/A |
+| Code simplification | code-simplifier | code-reviewer, refactoring-specialist | No | N/A |
+| Testing strategy | qa | developer | Yes | No |
+| Security review | security-architect | code-reviewer | Yes | No |
+| Accessibility audit | accessibility-expert | ux-expert, qa | Yes | No |
+| Compliance audit | compliance-auditor | security-architect | Yes | No |
+| **Operations** |
+| Infrastructure/DevOps | devops | security-architect | Yes | Yes |
+| Incident response | incident-responder | devops, developer | No | Yes |
+| **Documentation** |
+| Technical docs | technical-writer | developer | No | No |
+| Product specs | pm | analyst, ux-expert | Yes | No |
+| UI/UX specs | ux-expert | pm, developer | Yes | No |
+| **Orchestration** |
+| Task routing | orchestrator | - | No | No |
+| Multi-model routing | model-orchestrator | - | No | No |
+| Planning | planner | architect | N/A | No |
+
+### Agent Selection Rules
+
+1. **Always use the most specialized agent** - Don't use developer for security issues
+2. **Chain agents appropriately** - architect → developer → code-reviewer → qa
+3. **Include supporting agents** - Complex tasks need multiple perspectives
+4. **Default to stricter gates** - When unsure, require planner and review
+
+### Violation Detection
+
+You are violating this rule if you:
+- Use `Read` tool more than twice for analysis purposes
+- Use `Edit` or `Write` tools directly
+- Use `Grep` or `Glob` for extensive code searching
+- Run validation scripts via `Bash` directly
+- Analyze file contents in your response
+
+**If you catch yourself doing any of these: STOP and delegate to a subagent.**
+
+---
+
 ## Overview
 - **Type**: Multi-platform agent configuration bundle
 - **Stack**: Claude Code, Cursor, Factory Droid with shared rule base
-- **Agents**: 22 specialized agents with defined roles
-- **Skills**: 10 utility skills for rule management and code generation
-- **Rules**: 1,081+ technology-specific rule packs (8 master + 1,073 archive)
+- **Agents**: 34 specialized agents with defined roles (24 core + 10 extended/specialized)
+- **Skills**: 43 utility skills (34 native + 9 MCP-converted) for rule management, code generation, and tool execution
+- **Workflows**: 14 workflow definitions for multi-agent orchestration
+- **CUJs**: 55 Customer User Journeys (52 core + 3 extended)
+- **Schemas**: 83 JSON validation schemas for artifact validation
+- **Rules**: 1,081+ technology-specific rule packs (8 master + 1,073 rules-library)
 - **Rule Index**: Dynamic discovery system for all rules via `.claude/context/rule-index.json`
 
 This CLAUDE.md is authoritative. Subdirectories extend these rules.
@@ -24,7 +185,7 @@ Claude Code has unique capabilities that set it apart from generic agent configu
 
 1. **CLAUDE.md is AUTHORITATIVE** - Treated as system rules, not suggestions
 2. **Modular Sections** - Use clear markdown headers to prevent instruction bleeding
-3. **Front-load Critical Context** - Large CLAUDE.md files provide better instruction adherence
+3. **Front-load Critical Context** - Put essential rules in CLAUDE.md; link to detailed docs for depth (balance instruction adherence with token efficiency)
 4. **Hierarchical Strategy**: Root = universal rules; Subdirs = specific context
 5. **Token Efficiency Through Structure** - Use sections to keep related instructions together
 6. **Living Documentation** - Use `#` key during sessions to add memories organically
@@ -55,7 +216,7 @@ Control output formatting by:
 3. Matching your prompt style to the desired output style
 4. Providing detailed prompts for specific formatting preferences
 
-## Agents (23 Roles)
+## Agents (34 Roles)
 
 | Agent | Purpose | Model |
 |-------|---------|-------|
@@ -75,6 +236,7 @@ Control output formatting by:
 | technical-writer | Documentation | haiku |
 | **Code Quality** | | |
 | code-reviewer | Systematic code review, PR analysis | opus |
+| code-simplifier | Code simplification, complexity reduction | sonnet |
 | refactoring-specialist | Code transformation, tech debt reduction | opus |
 | performance-engineer | Performance optimization, profiling | opus |
 | **Specialized** | | |
@@ -85,42 +247,50 @@ Control output formatting by:
 | accessibility-expert | WCAG compliance, a11y testing | sonnet |
 | compliance-auditor | GDPR/HIPAA/SOC2/PCI-DSS | opus |
 | incident-responder | Crisis management, post-mortems | sonnet |
+| **Extended/Specialized (Phase 1+)** | | |
+| planner | Strategic planning and workflow scoping | opus |
+| impact-analyzer | Impact analysis and change assessment | sonnet |
+| cloud-integrator | Cloud platform integration and infrastructure | sonnet |
+| react-component-developer | React component development and patterns | sonnet |
+| router | Multi-model and multi-platform routing | sonnet |
+| gcp-cloud-agent | Google Cloud Platform expertise and integration | sonnet |
+| ai-council | Multi-AI validation and consensus | opus |
+| codex-validator | Code validation across multiple models | sonnet |
+| cursor-validator | Cursor-specific validation and integration | sonnet |
+| gemini-validator | Google Gemini model validation | sonnet |
+| master-orchestrator | Single entry point for all user requests | opus |
 
-## Skills (23 Utilities)
+## Skills (43 Utilities)
 
-Skills extend agent capabilities. Invoke with natural language or the Skill tool.
+Skills provide 90%+ context savings vs MCP servers. Invoke with natural language (e.g., "Audit this code") or the Skill tool.
 
-| Skill | Purpose | Location |
-|-------|---------|----------|
-| **Core Skills** | | |
-| repo-rag | Codebase retrieval and symbol indexing | `.claude/skills/repo-rag/` |
-| artifact-publisher | Publish artifacts to project feed | `.claude/skills/artifact-publisher/` |
-| context-bridge | Sync state across Claude, Cursor, Factory | `.claude/skills/context-bridge/` |
-| rule-auditor | Validate code against loaded rules | `.claude/skills/rule-auditor/` |
-| rule-selector | Auto-detect stack and configure rules | `.claude/skills/rule-selector/` |
-| scaffolder | Generate rule-compliant boilerplate | `.claude/skills/scaffolder/`
-| **Memory & Context** | | |
-| memory-manager | Dual persistence (CLAUDE.md + Memory Tool) | `.claude/skills/memory-manager/` |
-| **Document Generation** | | |
-| excel-generator | Generate Excel workbooks with formulas and charts | `.claude/skills/excel-generator/` |
-| powerpoint-generator | Generate PowerPoint presentations | `.claude/skills/powerpoint-generator/` |
-| pdf-generator | Generate PDF documents | `.claude/skills/pdf-generator/` |
-| **Evaluation & Analysis** | | |
-| evaluator | Evaluate agent performance and rule compliance | `.claude/skills/evaluator/` |
-| classifier | Classify code, documents, and data | `.claude/skills/classifier/` |
-| summarizer | Generate summaries of documents and code | `.claude/skills/summarizer/` |
-| **Database & Query** | | |
-| text-to-sql | Convert natural language to SQL queries | `.claude/skills/text-to-sql/` |
-| **Tool Management** | | |
-| tool-search | Semantic tool search with embeddings | `.claude/skills/tool-search/` |
-| claude-md-generator | Auto-generates claude.md files for modules | `.claude/skills/claude-md-generator/` |
-| plan-generator | Creates structured plans from requirements | `.claude/skills/plan-generator/` |
-| diagram-generator | Generates architecture/database diagrams | `.claude/skills/diagram-generator/` |
-| test-generator | Generates test code from specifications | `.claude/skills/test-generator/` |
-| dependency-analyzer | Analyzes and updates dependencies | `.claude/skills/dependency-analyzer/` |
-| doc-generator | Generates comprehensive documentation | `.claude/skills/doc-generator/` |
-| code-style-validator | Validates code style compliance | `.claude/skills/code-style-validator/` |
-| commit-validator | Validates commit messages and format | `.claude/skills/commit-validator/` |
+**Dual Persistence**: All agents should use both CLAUDE.md files AND memory skills (memory, memory-manager) for fault tolerance. If one fails, the other provides backup. Sync learned patterns to both systems.
+
+**Agent-Skill Mapping**: See `.claude/context/skill-integration-matrix.json` for comprehensive mapping of all 34 agents to their required and recommended skills. This matrix defines skill triggers for each agent type and usage notes for optimal skill deployment.
+
+**Categories** (see `.claude/skills/<skill>/SKILL.md` for details):
+- **Core**: repo-rag, artifact-publisher, context-bridge, rule-auditor, rule-selector, scaffolder
+- **Memory**: memory-manager, memory
+- **Documents**: excel-generator, powerpoint-generator, pdf-generator
+- **Analysis**: evaluator, classifier, summarizer, text-to-sql
+- **Tools**: tool-search, mcp-converter, skill-manager
+- **Code Gen**: claude-md-generator, plan-generator, diagram-generator, test-generator, api-contract-generator, dependency-analyzer, doc-generator
+- **Validation**: code-style-validator, commit-validator, response-rater
+- **Recovery & Orchestration**: recovery, conflict-resolution, optional-artifact-handler (new in Phase 1)
+- **Enforcement**: migrating-rules, explaining-rules, fixing-rule-violations (for compliance and migration)
+
+### MCP-Converted Skills
+
+MCP servers converted to Skills for 90%+ context savings:
+- **sequential-thinking**: Structured problem solving with revision
+- **filesystem**: File operations (read, write, list)
+- **git**: Git operations (status, diff, commit, branch)
+- **github**: GitHub API (repos, issues, PRs, actions)
+- **puppeteer**: Browser automation
+- **chrome-devtools**: Chrome DevTools for debugging
+- **memory**: Knowledge graph storage
+- **cloud-run**: Google Cloud Run deployment and management
+- **computer-use**: Playwright browser automation (click, type, scroll, screenshot)
 
 ### Skill Invocation
 
@@ -129,7 +299,6 @@ Skills extend agent capabilities. Invoke with natural language or the Skill tool
 "Audit src/components/ for rule violations"
 "Scaffold a new UserProfile component"
 "Select the right rules for this project"
-"Search for authentication patterns"
 ```
 
 **Skill Tool** (programmatic):
@@ -149,8 +318,50 @@ Skill: rule-selector
 | Code Review | rule-auditor | Validate compliance before commit |
 | Cross-Platform | context-bridge | Sync state to Cursor/Factory |
 | Documentation | artifact-publisher | Publish to project feed |
+| Plan Validation | response-rater | Rate plans (min score: 7/10 for execution) |
+| Workflow Recovery | recovery | Handle orchestration failures and retries |
+| Agent Conflict | conflict-resolution | Resolve agent disagreements in outputs |
 
-See `.claude/skills/` for detailed skill workflows.
+## Agent-Skill Matrix (Quick Reference)
+
+Detailed mapping at `.claude/context/skill-integration-matrix.json`. Quick reference below:
+
+| Agent | Required Skills | Recommended Skills | Key Triggers |
+|-------|-----------------|-------------------|--------------|
+| **orchestrator** | response-rater, recovery, artifact-publisher | context-bridge | plan_validation, workflow_error, task_complete |
+| **developer** | scaffolder, rule-auditor, repo-rag | test-generator, claude-md-generator, code-style-validator | new_component, code_changes, codebase_search |
+| **code-reviewer** | rule-auditor, code-style-validator, explaining-rules | fixing-rule-violations, dependency-analyzer | review_code, style_review, rule_explanation |
+| **qa** | test-generator, rule-auditor, evaluator | response-rater, chrome-devtools, computer-use | test_creation, quality_check, agent_evaluation |
+| **architect** | diagram-generator, repo-rag, dependency-analyzer | doc-generator, api-contract-generator, sequential-thinking | architecture_diagram, pattern_search, dependency_analysis |
+| **security-architect** | rule-auditor, dependency-analyzer, explaining-rules | repo-rag, doc-generator, sequential-thinking | security_audit, vulnerability_scan, threat_modeling |
+| **technical-writer** | doc-generator, diagram-generator, summarizer | claude-md-generator, pdf-generator, powerpoint-generator | documentation, diagrams, summaries |
+| **planner** | plan-generator, sequential-thinking | diagram-generator, classifier, repo-rag | plan_creation, complex_analysis, plan_diagram |
+| **analyst** | repo-rag, sequential-thinking | classifier, summarizer, text-to-sql | codebase_analysis, deep_analysis, categorization |
+| **pm** | plan-generator, classifier | summarizer, excel-generator, powerpoint-generator | requirement_planning, feature_classification |
+| **ux-expert** | diagram-generator, claude-md-generator | doc-generator, powerpoint-generator, summarizer | user_flow_diagram, component_docs, design_presentation |
+| **database-architect** | diagram-generator, text-to-sql, dependency-analyzer | doc-generator, repo-rag | schema_diagram, query_generation, orm_analysis |
+| **devops** | cloud-run, dependency-analyzer | doc-generator, diagram-generator, git | deployment, dependency_check, infrastructure_docs |
+| **llm-architect** | sequential-thinking, diagram-generator, doc-generator | repo-rag, api-contract-generator, response-rater | llm_design, architecture_diagram, prompt_evaluation |
+| **api-designer** | api-contract-generator, diagram-generator, doc-generator | repo-rag, sequential-thinking | api_contract, api_diagram, api_docs |
+| **mobile-developer** | scaffolder, rule-auditor, repo-rag | test-generator, chrome-devtools, dependency-analyzer | new_component, code_review, pattern_search |
+| **performance-engineer** | dependency-analyzer, repo-rag, diagram-generator | sequential-thinking, doc-generator | dependency_analysis, performance_pattern_search |
+| **refactoring-specialist** | repo-rag, rule-auditor, fixing-rule-violations | diagram-generator, code-style-validator | pattern_search, rule_compliance, violation_fixes |
+| **legacy-modernizer** | repo-rag, dependency-analyzer, migrating-rules | diagram-generator, sequential-thinking, doc-generator | legacy_analysis, dependency_upgrade, rule_migration |
+| **accessibility-expert** | rule-auditor, chrome-devtools, computer-use | repo-rag, doc-generator, diagram-generator | a11y_audit, browser_testing, ui_testing |
+| **compliance-auditor** | rule-auditor, dependency-analyzer, explaining-rules | doc-generator, excel-generator, pdf-generator | compliance_audit, vulnerability_scan, audit_report |
+| **incident-responder** | repo-rag, dependency-analyzer, sequential-thinking | doc-generator, diagram-generator, github | incident_analysis, root_cause_analysis, postmortem_docs |
+| **model-orchestrator** | response-rater, context-bridge | recovery, conflict-resolution | response_evaluation, platform_routing, workflow_recovery |
+| **code-simplifier** | repo-rag, code-style-validator, rule-auditor | fixing-rule-violations, diagram-generator | complexity_analysis, style_validation, rule_compliance |
+| **master-orchestrator** | response-rater, recovery, artifact-publisher | context-bridge, conflict-resolution | plan_validation, workflow_orchestration, task_complete |
+| **impact-analyzer** | sequential-thinking, repo-rag, diagram-generator | evaluator, response-rater | impact_assessment, change_analysis, risk_evaluation |
+| **cloud-integrator** | cloud-run, dependency-analyzer, doc-generator | sequential-thinking, diagram-generator | cloud_integration, infrastructure_setup, deployment |
+| **react-component-developer** | scaffolder, rule-auditor, test-generator | code-style-validator, repo-rag | component_creation, pattern_implementation, testing |
+| **router** | response-rater, context-bridge | recovery, conflict-resolution | model_routing, platform_routing, workflow_selection |
+| **gcp-cloud-agent** | cloud-run, dependency-analyzer, sequential-thinking | doc-generator, diagram-generator | gcp_integration, cloud_setup, infrastructure |
+| **ai-council** | response-rater, sequential-thinking, evaluator | repo-rag, conflict-resolution | multi_model_validation, consensus_building, quality_check |
+| **codex-validator** | code-style-validator, rule-auditor, evaluator | response-rater, test-generator | code_validation, multi_model_review, quality_assessment |
+| **cursor-validator** | rule-auditor, evaluator, response-rater | code-style-validator, artifact-publisher | cursor_integration, platform_validation, compatibility_check |
+| **gemini-validator** | evaluator, response-rater, sequential-thinking | artifact-publisher, classifier | gemini_integration, model_validation, response_quality |
 
 ## Rule Index System
 
@@ -168,7 +379,7 @@ The rule index enables Skills to discover all 1,081+ rules dynamically without h
 The index contains:
 - **Metadata**: Path, name, description, technologies for each rule
 - **Technology Map**: Fast lookup of rules by technology (e.g., `nextjs`, `python`, `cypress`)
-- **Rule Types**: Master rules (`.claude/rules-master/`) vs Archive rules (`.claude/archive/`)
+- **Rule Types**: Master rules (`.claude/rules-master/`) vs Library rules (`.claude/rules-library/`)
 
 ### Regenerating the Index
 
@@ -178,6 +389,8 @@ pnpm index-rules
 ```
 
 This scans all rules and updates `.claude/context/rule-index.json`. All Skills automatically discover new rules without code changes.
+
+**Self-Healing Index**: If a requested rule is not found in the index, offer to run `pnpm index-rules` to regenerate it. This handles cases where new rules were added but the index wasn't updated.
 
 ### Skills Using the Index
 
@@ -191,353 +404,284 @@ This scans all rules and updates `.claude/context/rule-index.json`. All Skills a
 
 See `.claude/docs/RULE_INDEX_MIGRATION.md` for detailed migration guide.
 
-## Workflow Routing System
+## Enforcement System (Phase 1)
 
-The workflow routing system automatically selects and executes predefined workflows based on user prompts, ensuring consistent multi-agent coordination for complex tasks.
+The enforcement system provides hard validation gates to ensure orchestration quality and security compliance. Three integrated enforcement modules work together:
 
-### Automatic Workflow Selection
+### 1. Plan Rating Enforcement (enforcement-gate.mjs)
 
-When a user prompt is received, follow this process:
+All plans MUST be rated before execution. This is enforced at the orchestrator level.
 
-1. **Load Configuration**: Read `.claude/config.yaml` and extract the `workflow_selection` section
-2. **Keyword Matching**: 
-   - Extract keywords from the user prompt (case-insensitive)
-   - Match against each workflow's `keywords` array in `config.yaml`
-   - Count matches for each workflow
-3. **Priority Selection**: 
-   - Among workflows with matches, select the one with the **lowest priority number** (0 = highest priority, 1 = high, 2 = medium, 3 = low)
-   - **Example**: If both `incident` (priority 0) and `fullstack` (priority 2) match, select `incident` because 0 < 2
-   - If no matches, use the `default_workflow` from `intelligent_routing` section (typically `fullstack`)
-4. **Workflow Execution**: 
-   - Load the workflow YAML file from the path specified in `workflow_file` (resolved from project root)
-   - Execute steps sequentially starting with Step 0 (Planner)
+**How it works**:
+- Orchestrator spawns Planner to create plan
+- Orchestrator uses `response-rater` skill to evaluate plan quality
+- Rating is recorded in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+- Minimum passing score: **7/10**
+- If score < 7: Plan returned to Planner with specific feedback; re-rate after improvements
+- If score >= 7: Workflow execution proceeds; rating logged in run state
 
-### Workflow Selection Example
-
-**User Prompt**: "Build a new authentication feature from scratch"
-
-**Matching Process**:
-- Keywords detected: "new", "from scratch"
-- Matches `fullstack` workflow (keywords: "new project", "from scratch", "greenfield")
-- Priority: 2 (medium priority)
-- Selected: `fullstack` workflow
-- Loads: `.claude/workflows/greenfield-fullstack.yaml` (resolved from project root)
-
-**Example with Multiple Matches**:
-**User Prompt**: "Fix the production incident with the authentication system"
-
-**Matching Process**:
-- Keywords detected: "incident", "production" (matches both `incident` and `fullstack`)
-- `incident` workflow: 2 keyword matches, priority 0 (highest)
-- `fullstack` workflow: 1 keyword match, priority 2
-- Selected: `incident` workflow (lowest priority number = highest priority)
-- Loads: `.claude/workflows/incident-flow.yaml`
-
-### Workflow Execution Process
-
-Once a workflow is selected:
-
-1. **Read Workflow YAML**: Load the workflow file from the path specified in `config.yaml`'s `workflow_file` field (e.g., `.claude/workflows/<workflow-name>.yaml`). The path is resolved relative to the project root, not the current working directory.
-2. **Execute Steps Sequentially**:
-   - For each step in the `steps` array:
-     - Activate the specified agent (load agent definition from `.claude/agents/<agent>.md`)
-     - Load agent's context files (from `config.yaml` agent_routing section)
-     - Pass inputs from previous steps (read artifacts from `.claude/context/artifacts/`)
-     - Execute agent's task
-     - Collect outputs as artifacts (save to `.claude/context/artifacts/`)
-     - Validate against schema (if `validation.schema` is specified)
-3. **Quality Gates**: After each step, run validation:
-   ```bash
-   node .claude/tools/workflow_runner.js --workflow .claude/workflows/<name>.yaml --step <N> --id <workflow_id> [--story-id <id>] [--epic-id <id>]
-   ```
-   - Validates output against JSON schema
-   - Creates gate file in `.claude/context/history/gates/<workflow_id>/<step>-<agent>.json`
-4. **Context Passing**: 
-   - Save each agent's outputs to `.claude/context/artifacts/`
-   - Next agent reads previous agent's artifacts as inputs
-   - Maintain workflow session state in `.claude/context/session.json`
-
-### Workflow Execution Flow
-
-**Complete Flow Diagram:**
-
-```mermaid
-flowchart TD
-    Start[User Prompt] --> LoadConfig[Load config.yaml]
-    LoadConfig --> ExtractKeywords[Extract Keywords from Prompt]
-    ExtractKeywords --> MatchWorkflows[Match Keywords Against Workflow Keywords]
-    MatchWorkflows --> CountMatches[Count Matches per Workflow]
-    CountMatches --> SelectWorkflow{Select Workflow}
-    SelectWorkflow -->|Matches Found| PrioritySelect[Select Lowest Priority Number]
-    SelectWorkflow -->|No Matches| DefaultWorkflow[Use Default: fullstack]
-    PrioritySelect --> LoadYAML[Load Workflow YAML File]
-    DefaultWorkflow --> LoadYAML
-    
-    LoadYAML --> InitSession[Initialize Workflow Session]
-    InitSession --> ExecuteSteps[Execute Steps Sequentially]
-    
-    ExecuteSteps --> Step0[Step 0: Planner Creates Plan]
-    Step0 --> Validate0[Validate Plan with workflow_runner.js]
-    Validate0 -->|Pass| StepN[Step 1-N: Execute Workflow Steps]
-    Validate0 -->|Fail| Retry0[Retry Step 0 with Feedback]
-    Retry0 --> Validate0
-    
-    StepN --> ActivateAgent[Activate Agent from .claude/agents/]
-    ActivateAgent --> LoadContext[Load Agent Context Files from config.yaml]
-    LoadContext --> PassInputs[Load Previous Step Artifacts]
-    PassInputs --> ExecuteTask[Execute Agent Task with Tools]
-    ExecuteTask --> SaveOutputs[Save Artifacts to .claude/context/artifacts/]
-    SaveOutputs --> Validate[Validate with workflow_runner.js]
-    Validate -->|Pass| NextStep{More Steps?}
-    Validate -->|Fail| Retry[Retry Step with Feedback]
-    Retry --> ExecuteTask
-    NextStep -->|Yes| StepN
-    NextStep -->|No| Complete[Workflow Complete]
-    
-    style Start fill:#e1f5ff
-    style Complete fill:#d4edda
-    style Validate0 fill:#fff3cd
-    style Validate fill:#fff3cd
-    style Retry0 fill:#f8d7da
-    style Retry fill:#f8d7da
+**Validation command**:
+```bash
+node .claude/tools/enforcement-gate.mjs validate-plan --run-id <id> --plan-id <id> [--task-type <type>] [--complexity <level>]
 ```
 
-**Key Execution Steps Explained:**
+**Rating matrix** (`.claude/context/plan-review-matrix.json`):
+- Defines minimum scores by task type (feature, bug, refactor, etc.)
+- Defines complexity modifiers (+0.5 for complex, -0.5 for simple)
+- Defines blocking thresholds for component-level scores
 
-1. **Prompt Analysis**: System extracts keywords from user prompt
-2. **Workflow Matching**: Keywords matched against `workflow_selection` in `config.yaml`
-3. **Priority Selection**: Among matching workflows, select lowest priority number (0 = highest priority)
-4. **Default Fallback**: If no matches, use `default_workflow` (typically `fullstack`)
-5. **Session Initialization**: Create unique workflow ID and session directory
-6. **Step Execution**: For each step (0-N):
-   - Load agent definition from `.claude/agents/<agent>.md`
-   - Load agent context files from `config.yaml`
-   - Pass inputs from previous steps (artifacts from `.claude/context/artifacts/`)
-   - Execute agent task
-   - Save outputs as artifacts
-   - Validate with `workflow_runner.js` (checks schema if provided, always creates gate file)
-7. **Error Handling**: If validation fails, provide feedback and retry (max 3 attempts)
-8. **Completion**: All steps validated successfully
+### 2. Signoff Validation (enforcement-gate.mjs)
 
-### Manual Workflow Execution
+Workflow steps may require signoffs from specific agents (e.g., security-architect for auth changes).
 
-To manually execute a workflow:
+**Configuration** (`.claude/context/signoff-matrix.json`):
+- Workflow-level signoff requirements (required_signoffs)
+- Conditional signoffs (triggered by task keywords)
+- Signoff rules (blocking behavior, conditions)
 
-1. **Select Workflow**: Choose from available workflows in `config.yaml`
-2. **Initialize Session**: Create workflow session ID
-3. **Execute Steps**: For each step:
-   - Read step configuration from YAML
-   - Activate agent with proper context
-   - Execute and collect outputs
-   - Validate with `workflow_runner.js`
-4. **Handle Failures**: If validation fails:
-   - Review error feedback
-   - Provide feedback to agent
-   - Retry step or adjust approach
+**Validation command**:
+```bash
+node .claude/tools/enforcement-gate.mjs validate-signoffs --run-id <id> --workflow <name> --step <n> [--task "<description>"]
+```
+
+**Signoff types**:
+- **Artifact-based**: Requires specific artifact to be present (e.g., security-review.json)
+- **Conditional-based**: Triggered by keywords in task description
+- **Agent-based**: Requires sign-off from specific agents
+
+### 3. Security Trigger Enforcement (security-enforcement.mjs, enforcement-gate.mjs)
+
+Security-sensitive tasks are automatically routed to required agents and can block execution if agents are missing.
+
+**Configuration** (`.claude/context/security-triggers-v2.json`):
+- **12 security categories** covering 136+ keywords:
+  - Authentication & Authorization (oauth, password, jwt, etc.)
+  - Data Encryption & Privacy (encrypt, decrypt, pii, etc.)
+  - Vulnerability Management (sql injection, xss, etc.)
+  - API Security (rate limiting, cors, etc.)
+  - And 8 more categories
+- **Critical combinations**: Multi-category triggers with priority override
+- **Escalation rules**: Define blocking behavior by priority (low, medium, high, critical)
+
+**How it works**:
+1. Task description is analyzed for security keywords
+2. Matching categories trigger required agents
+3. If agents are missing and priority is "critical" → **BLOCKED**
+4. If agents are missing and priority < "critical" → **WARNING**
+
+**Validation command**:
+```bash
+node .claude/tools/enforcement-gate.mjs validate-security --task "<description>" [--agents <agent1,agent2>]
+```
+
+**Priority levels and blocking**:
+- `critical`: BLOCKS execution if required agents missing
+- `high`: WARNING if agents missing, execution proceeds
+- `medium`: WARNING only, no blocking
+- `low`: INFO only
+
+**Example security triggers**:
+- Keywords "oauth", "authentication" → triggers: `security-architect` (required), `developer` (recommended)
+- Keywords "password", "credentials" → triggers: `security-architect` (required)
+- Keywords "sql injection", "xss" + "database" → critical combination → blocks unless `security-architect` assigned
+
+### Master Gate Function
+
+Combine all three validations with `validate-all`:
+
+```bash
+node .claude/tools/enforcement-gate.mjs validate-all \
+  --run-id <id> \
+  --workflow <name> \
+  --step <n> \
+  --plan-id <id> \
+  --task "<description>" \
+  --agents <agent1,agent2> \
+  [--task-type <type>] \
+  [--complexity <level>]
+```
+
+Returns JSON with:
+- `allowed`: Boolean - proceed with execution?
+- `blockers`: Array of blocking issues
+- `warnings`: Array of non-blocking issues
+- `validations`: Detailed results for plan, signoffs, security
+- `summary`: Human-readable summary
+
+**Exit codes**:
+- `0`: All gates passed, execution allowed
+- `1`: One or more gates failed, execution blocked
+
+### Integration with Workflows
+
+**Before executing workflow step**:
+1. Run enforcement-gate validate-all
+2. If `allowed: false` → stop, report blockers
+3. If `allowed: true` → proceed with step execution
+
+**In Master Orchestrator**:
+1. After Planner produces plan, rate with response-rater
+2. Record rating with `enforcement-gate.mjs record-rating`
+3. Before each workflow step, validate with enforce-gate
+4. Document all ratings and signoffs in run state
+
+## Master Orchestrator Entry Point
+
+**NEW: All user requests are routed through the Master Orchestrator first**
+
+The Master Orchestrator (`.claude/agents/master-orchestrator.md`) is the single entry point for all user requests. It provides a seamless, infinite flow experience by managing the entire project lifecycle without user-visible interruptions.
+
+### Master Orchestrator Flow
+
+When a user prompt is received:
+
+1. **Route to Master Orchestrator**: All requests go to Master Orchestrator first
+2. **Spawn Planner**: Master Orchestrator spawns Planner to scope the work
+3. **Review and Rate Plan**: Master Orchestrator reviews the plan for completeness
+   - **MANDATORY**: Use response-rater skill to evaluate plan quality
+   - **Minimum score**: 7/10 required to proceed
+   - **If score < 7**: Return to Planner with feedback, request improvements
+   - **If score >= 7**: Proceed with execution, log rating in reasoning file
+   - **Never execute an unrated plan**
+4. **Dynamic Workflow Instantiation**: Master Orchestrator dynamically creates or selects workflows based on plan
+5. **Coordinate Execution**: Master Orchestrator delegates to specialized agents via Task tool
+6. **Monitor Progress**: Master Orchestrator tracks progress via Project Database
+7. **Update Dashboard**: Master Orchestrator maintains live dashboard.md artifact
+
+See `.claude/workflows/WORKFLOW-GUIDE.md` for detailed workflow documentation and legacy routing fallback.
+
+### Legacy Routing (Fallback)
+
+If Master Orchestrator is bypassed, the legacy keyword-based routing system activates:
+- User prompt keywords matched against `workflow_selection` in `config.yaml`
+- Lowest priority number wins among matching workflows
+- Falls back to `fullstack` workflow if no matches
+- Still uses `workflow_runner.js` for step validation
+
+**Example**: "Fix the production incident with auth" matches both `incident` (priority 0) and `fullstack` (priority 2). Since 0 < 2, `incident` workflow is selected.
+
+## Workflow Execution
+
+### Starting a Run (Recommended)
+
+Use run-manager to create a canonical run before executing steps:
+```bash
+node .claude/tools/run-manager.mjs create --run-id <id> --workflow .claude/workflows/<name>.yaml
+```
+
+Alternatively, invoke Master Orchestrator directly - it will create runs automatically.
+
+**Validation Command** (includes enforcement gates):
+```bash
+node .claude/tools/workflow_runner.js --workflow .claude/workflows/<name>.yaml --step <N> --id <workflow_id>
+```
+
+**With explicit enforcement**:
+```bash
+node .claude/tools/enforcement-gate.mjs validate-all \
+  --run-id <id> \
+  --workflow <name> \
+  --step <N> \
+  --task "<task_description>" \
+  --agents <agent1,agent2>
+```
+
+**Key Points**:
+- Workflows execute steps sequentially, each activating an agent from `.claude/agents/`
+- Artifacts saved to `.claude/context/artifacts/`, referenced as `<artifact>.json (from step N)`
+- Validation creates gate files in `.claude/context/history/gates/<workflow_id>/`
+- Max 3 retries on validation failure; session state in `.claude/context/session.json`
+
+### Security Enforcement in Workflows
+
+Workflows automatically enforce security requirements through enforcement gates:
+
+**Automatic Security Checks**:
+- Task description analyzed for security keywords
+- Required agents automatically assigned
+- If critical security agents missing → **execution blocked**
+- Warnings logged for non-blocking security gaps
+
+**Security-Sensitive Workflows**:
+- `auth-flow.yaml`: Automatically includes security-architect
+- `data-protection-flow.yaml`: Includes security-architect and compliance-auditor
+- `legacy-modernization-flow.yaml`: Includes security-architect for breaking changes
+- Any workflow with keywords like "oauth", "password", "encryption", "sql injection", etc.
+
+**Overriding Security Blocks**:
+- Only orchestrator can approve security exceptions
+- Requires documented justification
+- Requires compliance-auditor sign-off for high-priority security tasks
+
+### New Workflows (Phase 1)
+
+| Workflow | Purpose | Primary Agent | Security Required |
+|----------|---------|---------------|-------------------|
+| `legacy-modernization-flow.yaml` | Modernize legacy systems | legacy-modernizer | Yes (breaking changes) |
+| `code-quality-flow.yaml` | Improve code quality | refactoring-specialist | No |
+| `incident-flow.yaml` | Respond to production incidents | incident-responder | Conditional |
+
+### Troubleshooting workflow_runner.js
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| "Missing workflow_id" | `--id` not provided | Add `--id <workflow-id>` to command |
+| Gate path not found | Directory doesn't exist | Directories are created at runtime; re-run with valid `--id` |
+| Artifact not found | Previous step didn't complete | Run previous steps first; check `.claude/context/artifacts/` |
+| Schema validation failed | Output doesn't match schema | Read gate file for specific errors; fix agent output |
+| "BLOCKED: Security-sensitive task" | Security triggers matched, agents missing | Add required security agents or get approval to override |
+| "Plan rating not found" | Plan not rated before execution | Use response-rater skill to rate plan, then re-validate |
 
 ### Workflow Validation
 
 Each workflow step can specify validation:
-
 ```yaml
 validation:
   schema: .claude/schemas/project_brief.schema.json
   gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
 ```
 
-Validation process:
-1. Run `workflow_runner.js` with step number
-2. Script loads schema and validates output JSON
-3. Creates gate file with validation results
-4. If validation fails, agent receives feedback for correction
+Validation process: Run `workflow_runner.js` → Load schema → Validate output JSON → Create gate file with results. If validation fails, agent receives feedback for correction.
 
 ### Template Variables
 
 Workflow artifacts and paths support template variable interpolation:
+- `{{workflow_id}}`: Unique identifier (required, passed via `--id`)
+- `{{story_id}}`: Story identifier for story loops (optional, passed via `--story-id`)
+- `{{epic_id}}`: Epic identifier for epic loops (optional, passed via `--epic-id`)
 
-**Supported Variables:**
-- `{{workflow_id}}`: Unique identifier for the workflow run (required, passed via `--id`)
-- `{{story_id}}`: Story identifier for story loop iterations (optional, passed via `--story-id`)
-- `{{epic_id}}`: Epic identifier for epic loop iterations (optional, passed via `--epic-id`)
-
-**Usage in Artifacts:**
-```yaml
-outputs:
-  - plan-{{workflow_id}}.json
-  - story-{{story_id}}-implementation.json
-  - epic-{{epic_id}}-summary.json
-```
-
-**Usage in Gate Paths:**
-```yaml
-validation:
-  gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
-```
-
-**Interpolation Behavior:**
-- Variables are replaced with actual values when artifacts are created or paths are resolved
-- **Required Variables**: `{{workflow_id}}` must be provided via `--id` or execution will fail
-- **Optional Variables**: If `{{story_id}}` or `{{epic_id}}` are not provided, they remain as-is in the artifact name (e.g., `story-{{story_id}}.json` without `--story-id` becomes `story-{{story_id}}.json`)
-  - Missing optional variables generate warnings but don't block execution
-  - Un-interpolated optional variables may cause path resolution issues if not handled properly
-- Template variables are case-sensitive and must use double curly braces
-
-**Error Handling:**
-- **Missing Required Variables**: The `{{workflow_id}}` variable is required. If not provided via `--id`, `workflow_runner.js` will exit with an error code and display an error message
-- **Invalid Variable Syntax**: Variables must use double curly braces `{{variable_name}}`. Single braces or missing braces will not be interpolated
-- **Case Sensitivity**: `{{workflow_id}}` and `{{WORKFLOW_ID}}` are different variables. Always use lowercase with underscores
-- **Troubleshooting Common Errors**:
-  - **Error: "Missing workflow_id"**: Ensure `--id <workflow-id>` is provided to workflow_runner.js
-  - **Artifacts contain literal `{{workflow_id}}`**: Variable was not interpolated - check that `--id` was provided
-  - **Gate path not found**: Verify workflow_id was correctly interpolated in the gate path
-  - **Variable not replaced**: Check for typos in variable names (case-sensitive) and ensure double curly braces are used
-
-**Example Command:**
-```bash
-node .claude/tools/workflow_runner.js \
-  --workflow .claude/workflows/greenfield-fullstack.yaml \
-  --step 1 \
-  --id my-workflow-123 \
-  --story-id story-456 \
-  --epic-id epic-789
-```
-
-This will interpolate:
-- `plan-{{workflow_id}}.json` → `plan-my-workflow-123.json`
-- `story-{{story_id}}-implementation.json` → `story-story-456-implementation.json`
-- Gate path: `.claude/context/history/gates/my-workflow-123/01-analyst.json`
-
-## Workflow Execution Instructions
-
-### Reading Workflow YAML Files
-
-Workflow files are structured YAML with the following sections:
-
-- **name**: Human-readable workflow name
-- **description**: What the workflow accomplishes
-- **type**: Workflow category (greenfield, brownfield, etc.)
-- **steps**: Array of step definitions, each containing:
-  - `step`: Step number
-  - `name`: Step description
-  - `agent`: Agent to activate
-  - `inputs`: Required inputs (can reference previous step outputs)
-  - `outputs`: Expected output artifacts
-  - `validation`: Schema and gate file paths
-
-**Example Step Structure**:
-```yaml
-- step: 1
-  name: "Project Discovery"
-  agent: analyst
-  inputs:
-    - user_requirements
-    - business_objectives
-  outputs:
-    - project_brief.json
-    - reasoning.json
-  validation:
-    schema: .claude/schemas/project_brief.schema.json
-    gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
-```
-
-### Executing Steps Sequentially
-
-**Step-by-Step Execution**:
-
-1. **Initialize Workflow Session**:
-   - Generate unique workflow ID (UUID or timestamp-based)
-   - Create session directory: `.claude/context/history/gates/<workflow_id>/`
-   - Initialize session state in `.claude/context/session.json`
-
-2. **For Each Step**:
-   - **Activate Agent**: Load agent definition from `.claude/agents/<agent>.md`
-   - **Load Context**: Load agent's context files from `config.yaml` (e.g., rules-master files)
-   - **Prepare Inputs**: 
-     - Read artifacts from previous steps (from `.claude/context/artifacts/`)
-     - Resolve input references (e.g., `project_brief.json (from step 1)`)
-     - Pass inputs to agent as context
-   - **Execute Task**: Agent performs its work using available tools
-   - **Collect Outputs**: 
-     - Save outputs to `.claude/context/artifacts/<output-name>.json`
-     - Save reasoning/logs to `.claude/context/history/reasoning/`
-   - **Validate Output**: Run validation if schema is specified
-
-3. **Context Passing Between Steps**:
-   - Each agent's outputs become available to subsequent agents
-   - Reference outputs using format: `<artifact-name>.json (from step N)`
-   - Artifacts are JSON files with structured data matching schemas
-
-### Validating with workflow_runner.js
-
-The `workflow_runner.js` script validates workflow step outputs:
-
-**Command Syntax**:
-```bash
-node .claude/tools/workflow_runner.js \
-  --workflow .claude/workflows/<workflow-name>.yaml \
-  --step <step-number> \
-  --id <workflow-id>
-```
-
-**What It Does**:
-1. Loads workflow YAML and finds the specified step
-2. Reads the validation schema (if specified)
-3. Loads the output artifact from `.claude/context/artifacts/`
-4. Validates JSON structure against schema
-5. Creates gate file with validation results
-6. Returns exit code 0 (success) or 1 (failure)
-
-**Gate File Structure**:
-Gate files are created at the path specified in `validation.gate`:
-- Contains validation status (pass/fail)
-- Lists any schema violations
-- Includes error messages for failures
-- Timestamp and workflow metadata
+Required variables must be provided or execution fails. Optional variables remain as-is if not provided.
 
 ### Error Handling and Retry Logic
 
-**When Validation Fails**:
-
+When validation fails:
 1. **Read Gate File**: Load the gate file to understand failures
-2. **Analyze Errors**: Identify specific schema violations or missing fields
-3. **Provide Feedback**: Give agent clear feedback about what needs correction
-4. **Retry Step**: 
-   - Agent receives feedback and corrects output
-   - Re-validate with `workflow_runner.js`
-   - Repeat until validation passes or max retries (3 recommended)
+2. **Analyze Errors**: Identify schema violations or missing fields
+3. **Provide Feedback**: Give agent clear feedback for correction
+4. **Retry Step**: Re-validate with `workflow_runner.js` (max 3 retries)
 
-**Retry Strategy**:
-- **First Retry**: Agent corrects based on validation errors
-- **Second Retry**: If still failing, provide more detailed guidance
-- **Third Retry**: If still failing, consider adjusting schema or workflow step definition
+If step fails after max retries, pause workflow and request user guidance.
 
-**Workflow Continuation**:
-- Only proceed to next step after current step validates successfully
-- If step fails after max retries, pause workflow and request user guidance
-- Save workflow state to allow resumption later
+### Run State Management
 
-### Workflow State Management
+**Canonical State Location**: `.claude/context/runs/<run_id>/` (managed by `run-manager.mjs`)
+- Artifacts: `.claude/context/runs/<run_id>/artifacts/`
+- Gates: `.claude/context/runs/<run_id>/gates/`
+- Registry: `.claude/context/runs/<run_id>/artifact-registry.json`
 
-**Session State** (`session.json`):
-```json
-{
-  "workflow_id": "uuid-here",
-  "workflow_name": "greenfield-fullstack",
-  "current_step": 3,
-  "status": "in_progress",
-  "started_at": "2025-01-XX...",
-  "artifacts": {
-    "project_brief": ".claude/context/artifacts/project-brief.json",
-    "prd": ".claude/context/artifacts/prd.json"
-  }
-}
-```
+### Backward Compatibility
 
-**Resuming Workflows**:
-- Load session state from `session.json`
-- Identify current step
-- Continue from where workflow paused
-- Re-validate previous steps if needed
+**Legacy Mode** (still supported):
+- Session state: `.claude/context/session.json`
+- Artifacts: `.claude/context/artifacts/`
+- Gates: `.claude/context/history/gates/<workflow_id>/`
+
+**New Mode** (recommended):
+- All state: `.claude/context/runs/<run_id>/` (managed by `run-manager.mjs`)
+
+Both modes are runtime-created; absence of these directories in the repo is expected. New workflows should use runs directory; legacy paths supported for existing integrations.
+
+See `.claude/workflows/WORKFLOW-GUIDE.md` for detailed execution instructions, YAML structure, and error handling.
 
 ## Universal Development Rules
 
@@ -580,6 +724,7 @@ If you intend to call multiple tools and there are no dependencies between the t
 | `/fix-issue <n>` | Fix GitHub issue by number |
 | `/quick-ship` | Fast iteration for small changes |
 | `/run-workflow` | Execute a workflow step with validation |
+| `/validate-gates` | Run all enforcement gates (plan, signoffs, security) |
 
 ### Skill Commands
 | Command | Purpose |
@@ -587,6 +732,7 @@ If you intend to call multiple tools and there are no dependencies between the t
 | `/select-rules` | Auto-detect tech stack and configure rules |
 | `/audit` | Validate code against loaded rules |
 | `/scaffold` | Generate rule-compliant boilerplate |
+| `/rate-plan` | Rate a plan using response-rater (min score 7/10) |
 
 ### Workflow Commands
 | Command | Purpose |
@@ -596,6 +742,16 @@ If you intend to call multiple tools and there are no dependencies between the t
 | `/ai-system` | AI/LLM system development workflow |
 | `/mobile` | Mobile application workflow |
 | `/incident` | Incident response workflow |
+| `/legacy-modernize` | Legacy system modernization workflow |
+
+### Enforcement Commands (Phase 1)
+| Command | Purpose |
+|---------|---------|
+| `/check-security <task>` | Analyze task for security triggers |
+| `/enforce-security` | Block execution if security agents missing |
+| `/approve-security` | Override security blocks (orchestrator only) |
+| `/validate-plan-rating <run-id>` | Validate plan meets minimum score |
+| `/validate-signoffs <run-id> <workflow> <step>` | Check signoff requirements |
 
 See `.claude/agents/developer.md` for common commands and workflows.
 
@@ -606,12 +762,23 @@ See `.claude/agents/developer.md` for common commands and workflows.
 - `.claude/settings.json`: Tool permissions
 - `CLAUDE.md`: This file (root instructions)
 
+### Enforcement System (Phase 1)
+- `.claude/context/skill-integration-matrix.json`: Maps 34 agents to 43 skills with triggers
+- `.claude/context/plan-review-matrix.json`: Plan rating scores by task type and complexity
+- `.claude/context/signoff-matrix.json`: Signoff requirements by workflow and step
+- `.claude/context/security-triggers-v2.json`: 12 security categories with 136+ keywords
+
+### Enforcement Tools
+- `.claude/tools/enforcement-gate.mjs`: Hard validation gates (plan ratings, signoffs, security)
+- `.claude/tools/security-enforcement.mjs`: Security trigger integration and routing
+- `.claude/tools/validate-security-integration.mjs`: CI/CD validation for security triggers
+
 ### Agent System
-- `.claude/agents/`: 23 agent prompts
-- `.claude/skills/`: 13 utility skills
-- `.claude/workflows/`: 11 workflow definitions (see `WORKFLOW-GUIDE.md`)
+- `.claude/agents/`: 24 agent prompts (now includes impact-analyzer, cloud-integrator, react-component-developer, planner)
+- `.claude/skills/`: 45 utility skills (34 native + 9 MCP-converted + 2 new recovery skills)
+- `.claude/workflows/`: 12 workflow definitions including legacy-modernization-flow.yaml (see `WORKFLOW-GUIDE.md`)
 - `.claude/templates/`: 14 artifact templates
-- `.claude/schemas/`: JSON validation schemas
+- `.claude/schemas/`: 13 JSON validation schemas
 
 ### Templates (14 Artifacts)
 
@@ -647,6 +814,55 @@ See `.claude/agents/developer.md` for common commands and workflows.
 - **Require Confirmation**: Edit, Bash
 - **Always Blocked**: Destructive operations
 
+### Security Trigger System (Phase 1)
+
+The system automatically enforces security requirements through semantic analysis of task descriptions.
+
+**12 Security Categories** (136+ keywords total):
+1. **Authentication & Authorization** (oauth, jwt, password, credentials, oidc, saml, rbac, acl, etc.)
+2. **Data Encryption & Privacy** (encrypt, decrypt, pii, sensitive, gdpr, ccpa, etc.)
+3. **Vulnerability Management** (sql injection, xss, csrf, directory traversal, etc.)
+4. **API Security** (rate limiting, cors, authentication headers, api key management, etc.)
+5. **Session Management** (session hijacking, cookie security, session timeout, etc.)
+6. **Network Security** (tls, ssl, https, firewall, network segmentation, etc.)
+7. **Code Injection** (eval, code execution, arbitrary code, remote code, etc.)
+8. **Compliance & Auditing** (audit log, logging, traceability, compliance, certification, etc.)
+9. **Dependency Security** (outdated, vulnerable, malware, supply chain, etc.)
+10. **Input Validation** (validation, sanitization, input filtering, etc.)
+11. **Secrets Management** (api key, secret, token, credential, vault, etc.)
+12. **Access Control** (permission, authorization, privilege escalation, etc.)
+
+**How Security Triggers Work**:
+1. Task description is scanned for keywords in all 12 categories
+2. Matching categories trigger required agent assignments
+3. Required agents for each category specified in `security-triggers-v2.json`
+4. Critical combinations (e.g., "sql injection" + "database change") may elevate priority to "critical"
+5. If critical priority and agents missing → **execution blocked**
+
+**Agent Assignment by Category** (examples):
+- Authentication: security-architect (required), developer (recommended)
+- Encryption: security-architect (required), compliance-auditor (recommended)
+- Vulnerability: security-architect (required)
+- SQL Injection + Database: critical combo → BLOCKS unless security-architect assigned
+
+**Escalation Rules by Priority**:
+- `critical`: Blocks execution if required agents missing; requires security-architect sign-off
+- `high`: Warns if agents missing; execution proceeds with caution flag
+- `medium`: Logs warning only
+- `low`: Logs info only
+
+**Security Trigger Configuration** (`.claude/context/security-triggers-v2.json`):
+- Category definitions with keywords
+- Required/recommended agents per category
+- Critical combination rules
+- Escalation rules with blocking behavior
+
+**Bypassing Security Blocks**:
+- Only orchestrator can override security blocks
+- Requires documented approval from security-architect
+- Requires compliance-auditor sign-off for critical priority
+- Override decision logged in run state with justification
+
 ## Setup
 
 1. Copy `.claude/`, `.cursor/`, `.factory/` into your project
@@ -657,83 +873,18 @@ See `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md` for detailed setup and val
 
 See `.claude/agents/` for agent-specific triggers and workflows.
 
-## New Features (Cookbook Integration)
+## New Features
 
-### Everlasting Agent System
-
-**Context Window Management**: Phase-based project structure with orchestrator handoff enables unlimited project duration without context limits.
-
-- **Phase-Based Structure**: Projects organized into phases (1-3k lines each)
-- **Token Monitoring**: Continuous context usage monitoring
-- **Orchestrator Handoff**: Seamless transitions at 90% threshold
-- **Ephemeral Developer Agents**: Fresh context per task
-
-See `.claude/docs/EVERLASTING_AGENTS.md` and `.claude/docs/PHASE_BASED_PROJECTS.md` for details.
-
-### Dual Persistence (CLAUDE.md + Memory Tool)
-
-**Redundancy Strategy**: All agents use both CLAUDE.md files and memory tool for fault tolerance and cross-conversation learning.
-
-- **CLAUDE.md**: Static, version-controlled context (rules, standards)
-- **Memory Tool**: Dynamic, learned patterns (preferences, insights)
-- **Redundancy**: If one fails, the other provides backup
-- **Synergy**: Both systems maintain knowledge
-
-See `.claude/docs/MEMORY_PATTERNS.md` for details.
-
-### Context Editing
-
-**Automatic Context Compaction**: Automatic context management for long-running sessions.
-
-- **Tool Use Clearing**: Clears old tool results when context grows large
-- **Thinking Management**: Manages extended thinking blocks
-- **Configurable Triggers**: Token-based triggers (30-40k tokens)
-- **Retention Policies**: Keep recent content, clear old content
-
-See `.claude/docs/CONTEXT_OPTIMIZATION.md` for details.
-
-### Evaluation Framework
-
-**Systematic Evaluation**: Evaluate agent performance, rule compliance, and workflow quality.
-
-- **Code-Based Grading**: Exact matches, structured outputs
-- **Model-Based Grading**: Subjective quality assessment
-- **Human Grading**: Final validation
-- **Promptfoo Integration**: Comprehensive evaluation system
-
-See `.claude/docs/EVALUATION_GUIDE.md` for details.
-
-### Tool Search with Embeddings
-
-**Scalable Tool Discovery**: Semantic tool search enables thousands of tools with 90%+ context reduction.
-
-- **On-Demand Loading**: Tools loaded only when needed
-- **Embedding-Based Matching**: Semantic similarity for tool discovery
-- **85% Context Reduction**: 80k → 12k tokens for MCP tools
-- **Improved Accuracy**: 79.5% → 88.1% tool selection accuracy
-
-See `.claude/skills/tool-search/SKILL.md` and `.claude/docs/ADVANCED_TOOL_USE.md` for details.
-
-### Document Generation
-
-**Professional Documents**: Generate Excel, PowerPoint, and PDF documents using Claude's Skills feature.
-
-- **Excel**: Workbooks with formulas, charts, and formatting
-- **PowerPoint**: Presentations with slides, charts, and transitions
-- **PDF**: Formatted documents with text, tables, and images
-
-See `.claude/docs/DOCUMENT_GENERATION.md` for details.
-
-### Advanced Orchestration
-
-**Subagent Patterns**: Advanced orchestration patterns from Claude Agent SDK.
-
-- **Output Styles**: Different formats for different audiences
-- **Plan Mode**: Approval before execution
-- **Hooks**: Custom code after actions
-- **Slash Commands**: Shortcuts for common actions
-
-See `.claude/docs/ORCHESTRATION_PATTERNS.md` for details.
+| Feature | Purpose | Documentation |
+|---------|---------|---------------|
+| Everlasting Agents | Unlimited project duration via context recycling | `.claude/docs/EVERLASTING_AGENTS.md` |
+| Phase-Based Projects | Projects organized into phases (1-3k lines each) | `.claude/docs/PHASE_BASED_PROJECTS.md` |
+| Dual Persistence | CLAUDE.md + memory skills for redundancy | `.claude/docs/MEMORY_PATTERNS.md` |
+| Context Editing | Auto-compaction at token limits | `.claude/docs/CONTEXT_OPTIMIZATION.md` |
+| Evaluation Framework | Agent performance + rule compliance grading | `.claude/docs/EVALUATION_GUIDE.md` |
+| Tool Search | Semantic tool discovery (90%+ savings) | `.claude/docs/ADVANCED_TOOL_USE.md` |
+| Document Generation | Excel, PowerPoint, PDF output | `.claude/docs/DOCUMENT_GENERATION.md` |
+| Advanced Orchestration | Subagent patterns, hooks, slash commands | `.claude/docs/ORCHESTRATION_PATTERNS.md` |
 
 ## Documentation
 
@@ -746,21 +897,33 @@ See `.claude/docs/ORCHESTRATION_PATTERNS.md` for details.
 
 ## MCP Integration (Optional)
 
-The `.claude/.mcp.json` file contains optional MCP server configurations. This project does NOT ship an MCP server - these are configs consumed by Claude Code when you set the required environment variables:
+The `.claude/.mcp.json` file contains optional MCP server configurations. This project does NOT ship an MCP server - these are configs consumed by Claude Code when you set the required environment variables.
 
-**Tool Search Tool (Beta)**: For projects with many MCP tools (20+), consider enabling Anthropic's Tool Search Tool beta feature to reduce MCP tool token usage by ~85%. Configure `deferLoading: true` in `.claude/.mcp.json` for each MCP server. See `.claude/docs/ADVANCED_TOOL_USE.md` for details on Tool Search Tool, Programmatic Tool Calling, and Tool Use Examples.
+**Prefer Skills over MCP**: Most MCP servers have been converted to Skills for 90%+ context savings. Use Skills (`.claude/skills/`) instead of MCP when possible. See "MCP-Converted Skills" section under Skills.
 
-| Server | Purpose | Environment Variable |
-|--------|---------|---------------------|
-| repo | Codebase search | None (auto-configured) |
-| github | GitHub integration | `GITHUB_TOKEN` |
-| linear | Linear issues | `LINEAR_API_KEY` |
-| slack | Notifications | `SLACK_BOT_TOKEN` |
+**When to Keep MCP**:
+- Core tools needed every conversation (1-5 tools)
+- Complex OAuth flows or persistent connections
+- Tools not yet converted to Skills
+
+| Server | Purpose | Skill Alternative | Environment Variable |
+|--------|---------|-------------------|---------------------|
+| repo | Codebase search | `repo-rag` skill | None (auto-configured) |
+| github | GitHub integration | `github` skill | `GITHUB_TOKEN` |
+| filesystem | File operations | `filesystem` skill | None |
+| git | Git operations | `git` skill | None |
+| memory | Knowledge graph | `memory` skill | None |
+| cloud-run | Cloud Run deployment | `cloud-run` skill | `GOOGLE_CLOUD_PROJECT` |
+| linear | Linear issues | - | `LINEAR_API_KEY` |
+| slack | Notifications | - | `SLACK_BOT_TOKEN` |
+
+**Tool Search Tool (Beta)**: For projects still using many MCP tools (20+), enable Anthropic's Tool Search Tool beta feature with `deferLoading: true` in `.claude/.mcp.json`. See `.claude/docs/ADVANCED_TOOL_USE.md` for details.
 
 ## Context Management
 
-**Lazy-Loaded Master Rules**: Master rule files are in `.claude/rules-master/` (outside `.claude/rules/` to prevent auto-loading). Reference them with `@filename` syntax for on-demand loading:
+**Lazy-Loaded Rules**: Reference master rules with `@.claude/rules-master/<rule>.md` syntax. Rules load only when agents activate.
 
+**Available Master Rules**:
 - `@.claude/rules-master/PROTOCOL_ENGINEERING.md` - Universal engineering standards
 - `@.claude/rules-master/TECH_STACK_NEXTJS.md` - Next.js/React/TypeScript
 - `@.claude/rules-master/TOOL_CYPRESS_MASTER.md` - Cypress testing
@@ -769,13 +932,17 @@ The `.claude/.mcp.json` file contains optional MCP server configurations. This p
 - `@.claude/rules-master/FRAMEWORK_FASTAPI.md` - FastAPI rules
 - `@.claude/rules-master/LANG_SOLIDITY.md` - Solidity rules
 
-**Subagent Context Loading**: Rules load only when agents activate (configured in `.claude/config.yaml`). Archive rules (`.claude/archive/`) are excluded from global loading. See `.claude/docs/CONTEXT_OPTIMIZATION.md` for details.
+**Auto-Compaction**: Context window auto-compacts at limits. Don't stop tasks early due to token concerns - complete work fully.
 
-**Session Management**: Use `/clear` between tasks, `/compact` for long sessions. Reference files with `@filename`. See `.claude/docs/CONTEXT_OPTIMIZATION.md` for best practices.
+**Multi-Session State**: For long tasks, use `tests.json` (structured), `progress.txt` (notes), and git commits for state tracking.
+
+**Session Commands**: `/clear` between tasks, `/compact` for long sessions.
+
+See `.claude/docs/CONTEXT_OPTIMIZATION.md` for details.
 
 ## Context Window Management
 
-Your context window will be automatically compacted as it approaches its limit, allowing you to continue working indefinitely from where you left off. Therefore, do not stop tasks early due to token budget concerns. As you approach your token budget limit, save your current progress and state to memory before the context window refreshes. Always be as persistent and autonomous as possible and complete tasks fully, even if the end of your budget is approaching. Never artificially stop any task early regardless of the context remaining.
+Your context window will be automatically compacted as it approaches its limit, allowing you to continue working indefinitely. Do not stop tasks early due to token budget concerns - complete tasks fully.
 
 For tasks spanning multiple context windows:
 1. Use the first context window to set up a framework (write tests, create setup scripts)
@@ -803,15 +970,34 @@ Example state files:
 - Git commits: State checkpoints
 
 ## Escalation Playbook
-1. Flag blockers in the Claude Project feed; attach the current artifact or plan.
-2. Page the appropriate subagent (Architect vs. QA vs. PM) via Claude subagent commands.
-3. If automation fails, fall back to manual CLI with the same rules and document the resolution artifact.
+
+1. Flag blockers in the Claude Project feed; attach the current artifact or plan
+2. Page the appropriate subagent (Architect vs. QA vs. PM) via subagent commands
+3. If automation fails, fall back to manual CLI with the same rules
 
 ## References
 
-[1] Anthropic, "Claude 3.5 Sonnet" (Jun 2024).  
-[2] Anthropic, "Projects" (Jun 2024).  
-[3] Cursor, "Introducing Cursor 2.0 and Composer" (Oct 29, 2025).  
-[4] Cursor, "Introducing Plan Mode" (Oct 7, 2025).  
-[5] Cursor, "Cloud Agents" (Oct 30, 2025).  
-[6] Sid Bharath, "Factory.ai: A Guide To Building A Software Development Droid Army" (Sep 30, 2025).
+Quick navigation to key documentation:
+- **Setup**: `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md`
+- **Workflows**: `.claude/workflows/WORKFLOW-GUIDE.md`
+- **Enforcement**: `.claude/context/` (skill matrix, plan review, signoffs, security triggers)
+- **Agents**: `.claude/agents/` (24 agent definitions)
+- **Skills**: `.claude/skills/` (45 skill definitions)
+- **Rules**: `.claude/rules-master/` (8 master rules) + `.claude/rules-library/` (1,073 library rules)
+- **Templates**: `.claude/templates/` (14 artifact templates)
+- **Schemas**: `.claude/schemas/` (13 validation schemas)
+
+## Phase 1 Enhancement Summary
+
+**Orchestration Enforcement Foundation** includes:
+
+1. **Agent-Skill Integration**: 34 agents × 43 skills = comprehensive skill mapping with triggers
+2. **Plan Rating Enforcement**: Mandatory 7/10 minimum score via response-rater before execution
+3. **Signoff Validation**: Workflow step approvals and conditional signoffs
+4. **Security Trigger System**: 12 categories, 136+ keywords, automatic agent routing with blocking
+5. **Master Gate Function**: Unified validation combining plans, signoffs, and security
+6. **Tool Support**: enforcement-gate.mjs for CLI validation and CI/CD integration
+7. **Workflow Updates**: 12 workflows with security enforcement, legacy modernization support
+8. **Agent Additions**: planner, impact-analyzer, cloud-integrator, react-component-developer
+
+See `.claude/CLAUDE.md` (this file) for authoritative orchestration rules.

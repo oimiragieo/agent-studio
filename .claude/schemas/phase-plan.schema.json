@@ -1,111 +1,158 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Phase Plan Schema",
-  "description": "Schema for phase-based project plan files (1-3k lines max)",
   "type": "object",
-  "required": [
-    "phaseNumber",
-    "phaseName",
-    "description",
-    "objectives"
-  ],
   "properties": {
-    "phaseNumber": {
-      "type": "integer",
-      "description": "Phase number (1, 2, 3, etc.)",
-      "minimum": 1
-    },
-    "phaseName": {
-      "type": "string",
-      "description": "Human-readable phase name (e.g., 'Planning', 'Architecture', 'Implementation')"
-    },
-    "description": {
-      "type": "string",
-      "description": "Overview of what this phase accomplishes"
-    },
-    "objectives": {
-      "type": "array",
-      "description": "List of phase objectives",
-      "items": {
-        "type": "string"
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "phaseId": {"type": "string"},
+        "phaseName": {"type": "string"},
+        "masterPlanId": {"type": "string"},
+        "createdAt": {"type": "string", "format": "date-time"},
+        "lastUpdated": {"type": "string", "format": "date-time"}
       },
-      "minItems": 1
+      "required": ["phaseId", "phaseName", "masterPlanId"]
     },
     "tasks": {
       "type": "array",
-      "description": "List of tasks in this phase",
       "items": {
         "type": "object",
-        "required": ["id", "description", "status"],
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique task identifier"
-          },
-          "description": {
-            "type": "string",
-            "description": "Task description"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["pending", "in_progress", "completed", "blocked"],
-            "description": "Current task status"
-          },
+          "taskId": {"type": "string"},
+          "description": {"type": "string"},
+          "priority": {"enum": ["P0", "P1", "P2", "P3"]},
+          "category": {"type": "string"},
+          "status": {"enum": ["pending", "in_progress", "completed", "failed", "blocked"]},
           "assignedAgent": {
-            "type": ["string", "null"],
-            "description": "Agent assigned to this task"
+            "enum": [
+              "planner",
+              "orchestrator",
+              "analyst",
+              "pm",
+              "architect",
+              "llm-architect",
+              "database-architect",
+              "api-designer",
+              "developer",
+              "mobile-developer",
+              "qa",
+              "code-reviewer",
+              "security-architect",
+              "compliance-auditor",
+              "performance-engineer",
+              "ux-expert",
+              "accessibility-expert",
+              "devops",
+              "incident-responder",
+              "refactoring-specialist",
+              "legacy-modernizer",
+              "technical-writer",
+              "model-orchestrator",
+              "gcp-cloud-agent",
+              "ai-council"
+            ]
           },
-          "dependencies": {
-            "type": "array",
-            "description": "List of task IDs this task depends on",
-            "items": {
-              "type": "string"
+          "files": {"type": "array", "items": {"type": "string"}},
+          "lineNumbers": {"type": "array", "items": {"type": "number"}},
+          "dependencies": {"type": "array", "items": {"type": "string"}},
+          "testRequirements": {
+            "type": "object",
+            "properties": {
+              "testPattern": {"type": "string"},
+              "testCommand": {"type": "string"},
+              "expectedResults": {"type": "string"}
             }
           },
+          "startedAt": {"type": "string", "format": "date-time"},
+          "completedAt": {"type": "string", "format": "date-time"},
+          "result": {"type": "object"},
           "artifacts": {
             "type": "array",
-            "description": "Artifacts produced by this task",
             "items": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "path": {"type": "string"},
+                "description": {"type": "string"},
+                "type": {"enum": ["file", "directory", "test_result", "log", "documentation"]}
+              },
+              "required": ["path", "description"]
             }
           }
+        },
+        "required": ["taskId", "description", "priority", "status", "assignedAgent"]
+      }
+    },
+    "agentAssignments": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {"type": "string"}
+      }
+    },
+    "testResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "taskId": {"type": "string"},
+          "testCommand": {"type": "string"},
+          "result": {"enum": ["pass", "fail", "pending"]},
+          "details": {"type": "object"},
+          "timestamp": {"type": "string", "format": "date-time"}
         }
       }
     },
-    "dependencies": {
-      "type": "array",
-      "description": "List of previous phases this phase depends on",
-      "items": {
-        "type": "string",
-        "description": "Phase name (e.g., 'phase-01-planning')"
+    "statusTracking": {
+      "type": "object",
+      "properties": {
+        "overallStatus": {"enum": ["planning", "in_progress", "completed", "failed", "paused"]},
+        "completedTasks": {"type": "number"},
+        "inProgressTasks": {"type": "number"},
+        "pendingTasks": {"type": "number"},
+        "failedTasks": {"type": "number"},
+        "lastTaskCompleted": {"type": "string"},
+        "nextTask": {"type": "string"}
       }
     },
-    "estimatedLines": {
-      "type": "integer",
-      "description": "Estimated lines of code/documentation for this phase",
-      "minimum": 0,
-      "maximum": 3000
+    "recoveryMetadata": {
+      "type": "object",
+      "properties": {
+        "canResume": {"type": "boolean"},
+        "resumePoint": {"type": "string"},
+        "contextSummary": {"type": "string"},
+        "completedWork": {"type": "string"},
+        "pendingWork": {"type": "string"},
+        "scratchpad": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "taskId": {"type": "string"},
+              "attempts": {"type": "number"},
+              "failureReason": {"type": "string"},
+              "timestamp": {"type": "string", "format": "date-time"},
+              "avoidApproach": {"type": "string"}
+            }
+          },
+          "description": "Records of failed approaches to avoid retrying"
+        }
+      }
     },
-    "actualLines": {
-      "type": "integer",
-      "description": "Actual lines of code/documentation for this phase",
-      "minimum": 0
-    },
-    "startDate": {
-      "type": ["string", "null"],
-      "format": "date-time",
-      "description": "ISO 8601 timestamp when phase started"
-    },
-    "endDate": {
-      "type": ["string", "null"],
-      "format": "date-time",
-      "description": "ISO 8601 timestamp when phase completed"
-    },
-    "status": {
-      "type": "string",
-      "enum": ["not_started", "in_progress", "completed", "blocked"],
-      "description": "Current phase status"
+    "councilDecisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "decisionId": {"type": "string"},
+          "issue": {"type": "string"},
+          "participants": {"type": "array", "items": {"type": "string"}},
+          "consensus": {"type": "string"},
+          "recommendation": {"type": "string"},
+          "arguments": {"type": "array"},
+          "timestamp": {"type": "string", "format": "date-time"}
+        }
+      }
     }
-  }
+  },
+  "required": ["metadata", "tasks", "statusTracking"]
 }
-

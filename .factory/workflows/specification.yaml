@@ -1,0 +1,92 @@
+# Factory Droid Specification Mode Workflow
+# Equivalent to Claude's greenfield-fullstack.yaml
+name: "Specification Mode"
+description: "Full discovery and specification workflow for new projects or features"
+type: "specification"
+
+steps:
+  - step: 0
+    name: "Planning"
+    droid: planner
+    inputs:
+      - user_requirements
+      - business_objectives
+    outputs:
+      - workflow-plan.json
+    validation:
+      required: true
+
+  - step: 1
+    name: "Project Discovery"
+    droid: analyst
+    inputs:
+      - workflow-plan.json (from step 0)
+      - market_context
+    outputs:
+      - project-brief.json
+      - competitive-analysis.json
+    validation:
+      required: true
+      schema: .factory/schemas/project_brief.schema.json
+
+  - step: 2
+    name: "Requirements Definition"
+    droid: pm
+    inputs:
+      - project-brief.json (from step 1)
+      - stakeholder_needs
+    outputs:
+      - prd.json
+      - user-stories.json
+    validation:
+      required: true
+      schema: .factory/schemas/prd.schema.json
+
+  - step: 3
+    name: "UX Specification"
+    droid: ux-expert
+    inputs:
+      - prd.json (from step 2)
+      - user-stories.json (from step 2)
+    outputs:
+      - ui-spec.json
+      - wireframes.json
+    validation:
+      required: true
+
+  - step: 4
+    name: "Architecture Design"
+    droid: architect
+    inputs:
+      - prd.json (from step 2)
+      - ui-spec.json (from step 3)
+    outputs:
+      - system-architecture.json
+      - api-spec.json
+    validation:
+      required: true
+      schema: .factory/schemas/system_architecture.schema.json
+
+  - step: 5
+    name: "Quality Gate"
+    droid: qa
+    inputs:
+      - all previous artifacts
+    outputs:
+      - specification-review.json
+    validation:
+      required: true
+      gate: .factory/gates/specification/05-qa.json
+
+# Context Bridge Integration
+context_bridge:
+  sync_on_complete: true
+  sync_to:
+    - .claude/context/artifacts/
+    - .cursor/context/
+
+# Hooks
+hooks:
+  post_run:
+    - publish_to_claude
+    - notify_team

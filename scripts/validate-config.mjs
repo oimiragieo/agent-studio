@@ -411,20 +411,21 @@ function validateConfig() {
     try {
       const content = readFileSync(path, 'utf-8');
       
-      // Check for YAML frontmatter
-      if (!content.startsWith('---\n')) {
+      // Check for YAML frontmatter (handle both LF and CRLF)
+      const normalizedContent = content.replace(/\r\n/g, '\n');
+      if (!normalizedContent.startsWith('---\n')) {
         errors.push(`Skill ${name}: Missing YAML frontmatter (must start with ---)`);
         continue;
       }
-      
+
       // Extract frontmatter
-      const frontmatterEnd = content.indexOf('\n---\n', 4);
+      const frontmatterEnd = normalizedContent.indexOf('\n---\n', 4);
       if (frontmatterEnd === -1) {
         errors.push(`Skill ${name}: Invalid YAML frontmatter (missing closing ---)`);
         continue;
       }
       
-      const frontmatter = content.substring(4, frontmatterEnd);
+      const frontmatter = normalizedContent.substring(4, frontmatterEnd);
       
       // Parse YAML frontmatter
       if (yaml) {
@@ -697,6 +698,55 @@ function validateConfig() {
     console.log('  ℹ️  settings.local.json not found (optional, gitignored)');
   }
   
+  // 13. Validate rule-index.json paths
+  console.log('\nValidating rule-index.json paths...');
+  const ruleIndexPath = '.claude/context/rule-index.json';
+  if (existsSync(resolve(rootDir, ruleIndexPath))) {
+    try {
+      const ruleIndexContent = readFileSync(resolve(rootDir, ruleIndexPath), 'utf-8');
+      const ruleIndex = JSON.parse(ruleIndexContent);
+      
+      // Check for old archive paths
+      const indexString = JSON.stringify(ruleIndex);
+      if (indexString.includes('.claude/archive/')) {
+        errors.push('rule-index.json contains old .claude/archive/ paths. Run pnpm index-rules to regenerate.');
+      }
+      
+      // Validate that paths in index exist on disk
+      if (ruleIndex.rules && Array.isArray(ruleIndex.rules)) {
+        let missingPaths = 0;
+        for (const rule of ruleIndex.rules.slice(0, 100)) { // Check first 100 to avoid performance issues
+          if (rule.path) {
+            const rulePath = resolve(rootDir, rule.path);
+            if (!existsSync(rulePath)) {
+              missingPaths++;
+              if (missingPaths <= 5) { // Only report first 5 missing paths
+                errors.push(`rule-index.json references missing file: ${rule.path}`);
+              }
+            }
+          }
+        }
+        if (missingPaths > 5) {
+          errors.push(`rule-index.json references ${missingPaths} missing files (showing first 5)`);
+        }
+        if (missingPaths === 0) {
+          console.log('  ✓ All checked rule paths exist');
+        }
+      }
+      
+      // Check field name consistency
+      if (ruleIndex.archive_rules !== undefined) {
+        warnings.push('rule-index.json uses old "archive_rules" field. Should be "library_rules". Run pnpm index-rules to regenerate.');
+      }
+      
+      console.log('  ✓ rule-index.json structure validated');
+    } catch (error) {
+      errors.push(`Invalid JSON in rule-index.json: ${error.message}`);
+    }
+  } else {
+    warnings.push('rule-index.json not found (optional, but recommended for rule-selector skill)');
+  }
+
   // Summary
   console.log('\n' + '='.repeat(60));
   console.log('Validation Summary');

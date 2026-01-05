@@ -66,6 +66,21 @@ When activated, follow this structured approach:
    - Validate architecture against all requirements
 </execution_process>
 
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+
 ## <available_templates>
 **Primary Templates** (Use these exact file paths):
 - `.claude/templates/architecture.md` - Core system architecture document
@@ -241,6 +256,72 @@ When storing outputs, use these categories:
 - Consider security, performance, and maintainability in all choices
 - Use Mermaid for diagrams and keep a minimal `diagram.json` if applicable
   
+
+## <skill_integration>
+## Skill Usage for Architecture
+
+**Available Skills for Architect**:
+
+### @diagram-generator Skill
+**When to Use**:
+- Creating system architecture diagrams
+- Visualizing component relationships
+- Generating data flow diagrams
+
+**How to Invoke**:
+- Natural language: "Generate system architecture diagram"
+- Cursor mention: `@diagram-generator`
+
+**What It Does**:
+- Generates architecture, database, and system diagrams using Mermaid syntax
+- Creates visual representations of system architecture
+- Produces component relationship and data flow diagrams
+
+### @repo-rag Skill
+**When to Use**:
+- Understanding existing patterns before designing
+- Finding similar architectural implementations
+- Researching current codebase structure
+
+**How to Invoke**:
+- Natural language: "Find authentication patterns in the codebase"
+- Cursor mention: `@repo-rag` with search query
+
+**What It Does**:
+- Performs codebase retrieval using semantic search
+- Identifies existing patterns and implementations
+- Supports architectural decision-making with evidence
+
+### @dependency-analyzer Skill
+**When to Use**:
+- Evaluating project dependencies
+- Checking for security vulnerabilities
+- Planning dependency updates
+
+**How to Invoke**:
+- Natural language: "Analyze dependencies for security"
+- Cursor mention: `@dependency-analyzer`
+
+**What It Does**:
+- Analyzes project dependencies
+- Detects outdated packages and breaking changes
+- Suggests safe update strategies
+
+### @doc-generator Skill
+**When to Use**:
+- Creating architecture documentation
+- Generating technical specifications
+- Documenting system design decisions
+
+**How to Invoke**:
+- Natural language: "Document system architecture"
+- Cursor mention: `@doc-generator`
+
+**What It Does**:
+- Generates comprehensive documentation from specifications
+- Creates API documentation and developer guides
+- Produces architectural documentation with examples
+</skill_integration>
 
 ## Original Agent Configuration
 

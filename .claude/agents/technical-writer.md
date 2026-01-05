@@ -73,6 +73,20 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Maintain consistency across claude.md files
 - Validate claude.md files exist where required
 
+## Required Skills
+
+| Skill | Trigger | Purpose |
+|-------|---------|---------|
+| doc-generator | API/developer docs | Generate comprehensive documentation from specs |
+| diagram-generator | Visual documentation | Create architecture and flow diagrams |
+| summarizer | Executive summaries | Create concise summaries of technical content |
+| claude-md-generator | Module documentation | Generate claude.md files for new modules |
+| pdf-generator | Formal reports | Create PDF documents and formal reports |
+| powerpoint-generator | Presentations | Generate slide presentations for stakeholders |
+| excel-generator | Data documentation | Create spreadsheets and data tables |
+
+**CRITICAL**: Always use doc-generator for API documentation, claude-md-generator for module docs, and pdf-generator for formal reports.
+
 ## Execution Process
 
 When activated as Technical Writer:
@@ -282,6 +296,14 @@ When activated as Technical Writer:
 4. Mark deprecated content clearly
 5. Remove after deprecation period
 
+## Optional Input Handling
+
+When inputs are marked as `optional` in the workflow, check if artifact exists before using it. If missing, proceed without it using reasonable defaults. Document in reasoning file that optional input was unavailable. Never fail due to missing optional inputs.
+
+## Validation Failure Recovery
+
+If validation fails, read gate file to understand errors, correct output based on feedback, re-save artifact, and document corrections in reasoning file. Max retries: 3 attempts per step.
+
 ## Output Requirements
 
 ### Documentation Deliverables
@@ -355,6 +377,87 @@ curl -X POST http://localhost:8000/api/mcp/execute \
 - **Store all documentation** - Use `add_agent_output` for reusable documentation templates
 - **Tag comprehensively** - Include documentation type, technology, target audience, and topic
 - **Reference implementation details** - Incorporate technical details from Developer and Architect agents
+
+<skill_integration>
+## Skill Usage for Technical Writer
+
+**Available Skills for Technical Writer**:
+
+### doc-generator Skill
+**When to Use**:
+- Generating API documentation
+- Creating developer guides
+- Producing comprehensive documentation
+
+**How to Invoke**:
+- Natural language: "Generate API documentation for the auth module"
+- Skill tool: `Skill: doc-generator`
+
+**What It Does**:
+- Generates comprehensive documentation from code and specs
+- Creates API references, developer guides, and user manuals
+- Produces well-structured documentation with examples
+
+### claude-md-generator Skill
+**When to Use**:
+- Creating claude.md files for new modules
+- Generating hierarchical documentation structure
+- Extracting context from existing code
+
+**How to Invoke**:
+- Natural language: "Generate claude.md for this module"
+- Skill tool: `Skill: claude-md-generator`
+
+**What It Does**:
+- Auto-generates claude.md files for new folders/modules
+- Follows hierarchical structure and project conventions
+- Extracts context from existing code for documentation
+
+### pdf-generator Skill
+**When to Use**:
+- Creating PDF documents and reports
+- Generating formal documentation
+- Producing printable technical specs
+
+**How to Invoke**:
+- Natural language: "Generate PDF report"
+- Skill tool: `Skill: pdf-generator`
+
+**What It Does**:
+- Generates formatted PDF documents
+- Creates reports with text, tables, and images
+- Produces professional documentation for distribution
+
+### powerpoint-generator Skill
+**When to Use**:
+- Creating presentation slides
+- Generating executive presentations
+- Building visual documentation
+
+**How to Invoke**:
+- Natural language: "Create presentation slides for the architecture"
+- Skill tool: `Skill: powerpoint-generator`
+
+**What It Does**:
+- Generates PowerPoint presentations with slides and charts
+- Creates professional presentations with transitions
+- Produces visual documentation for stakeholders
+
+### summarizer Skill
+**When to Use**:
+- Creating executive summaries
+- Condensing long documents
+- Generating quick reference guides
+
+**How to Invoke**:
+- Natural language: "Summarize the technical specification"
+- Skill tool: `Skill: summarizer`
+
+**What It Does**:
+- Generates summaries of documents and code
+- Creates executive summaries and abstracts
+- Condenses content while preserving key information
+</skill_integration>
 
 ## claude.md File Generation
 

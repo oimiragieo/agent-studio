@@ -20,7 +20,7 @@ pnpm validate:sync       # Validate cross-platform sync (bash scripts/validate-s
 - `.claude/agents/` - Agent prompts (23 roles, including new Planner agent)
 - `.claude/rules/` - Framework-specific rules (200+)
 - `.claude/skills/` - Utility skills (13 skills, including 5 new ones)
-- `.claude/docs/cujs/` - Customer User Journeys (24 CUJs documented)
+- `.claude/docs/cujs/` - Customer User Journeys (47 CUJs documented, CUJ-031/032/033 reserved/removed)
 - `.cursor/rules/` - Cursor rules (auto-loaded by file pattern)
 - `scripts/` - Validation and migration scripts
 

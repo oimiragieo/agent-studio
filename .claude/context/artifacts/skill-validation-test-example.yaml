@@ -1,0 +1,76 @@
+# Example Workflow with Skill Requirements
+# Demonstrates Phase 2A skill validation integration
+
+name: Example Feature Development
+description: Sample workflow demonstrating skill requirements and validation
+
+steps:
+  - step: 1
+    agent: planner
+    description: Create implementation plan
+    outputs:
+      - implementation-plan.json
+    skill_requirements:
+      required:
+        - plan-generator
+        - sequential-thinking
+      recommended:
+        - diagram-generator
+      validation:
+        mode: blocking
+        enforce_usage: true
+
+  - step: 2
+    agent: developer
+    description: Create new UserProfile component with tests
+    inputs:
+      - implementation-plan.json (from step 1)
+    outputs:
+      - dev-manifest.json
+    skill_requirements:
+      required:
+        - scaffolder
+        - rule-auditor
+      recommended:
+        - test-generator
+        - claude-md-generator
+      validation:
+        mode: blocking  # Blocks if required skills not used
+        enforce_usage: true
+
+  - step: 3
+    agent: code-reviewer
+    description: Review implemented code for compliance
+    inputs:
+      - dev-manifest.json (from step 2)
+    outputs:
+      - code-review-report.json
+    skill_requirements:
+      required:
+        - rule-auditor
+        - code-style-validator
+      recommended:
+        - explaining-rules
+        - fixing-rule-violations
+      validation:
+        mode: warning  # Warns but doesn't block
+        enforce_usage: true
+
+  - step: 4
+    agent: qa
+    description: Generate test suite and validate coverage
+    inputs:
+      - dev-manifest.json (from step 2)
+      - code-review-report.json (from step 3)
+    outputs:
+      - test-plan.json
+    skill_requirements:
+      required:
+        - test-generator
+        - rule-auditor
+      recommended:
+        - evaluator
+        - response-rater
+      validation:
+        mode: blocking
+        enforce_usage: true

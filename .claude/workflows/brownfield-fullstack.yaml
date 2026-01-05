@@ -150,20 +150,44 @@ steps:
       that can be tested in staging before production.
 
   - step: 7
+    name: "Code Review"
+    agent: code-reviewer
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 6)
+      - system-architecture.json (from step 3)
+      - impact-analysis.json (from step 1)
+    outputs:
+      - code-review-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/07-code-reviewer.json
+    validation:
+      schema: .claude/schemas/code-review.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/07-code-reviewer.json
+    on_failure: "Return to implementation step with feedback"
+    description: |
+      Review brownfield enhancements for quality, security, and codebase impact:
+      - Verify backward compatibility maintained
+      - Check integration with existing patterns
+      - Review migration strategies and rollback procedures
+      - Validate feature flag implementation
+      - Ensure minimal disruption to existing functionality
+
+  - step: 8
     name: "Quality Validation"
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 6)
+      - code-review-{{workflow_id}}.json (from step 7)
       - test-plan.json (from step 5)
       - regression-suite.json (from step 5)
     outputs:
       - quality-report.json
       - test-results.json
       - migration-test-results.json
-      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/07-qa-final.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/08-qa-final.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/07-qa-final.json
+      gate: .claude/context/history/gates/{{workflow_id}}/08-qa-final.json
 
 completion_criteria:
   - All artifacts validated against schemas

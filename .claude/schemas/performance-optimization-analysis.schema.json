@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Performance Optimization Analysis",
+  "description": "Schema for performance optimization analysis output from Performance Engineer agent",
+  "required": ["analysis_id", "analysis_date", "target_url", "optimizations"],
+  "properties": {
+    "analysis_id": {
+      "type": "string",
+      "description": "Unique identifier for the optimization analysis"
+    },
+    "analysis_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the analysis was performed"
+    },
+    "target_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the application analyzed"
+    },
+    "analyzer_agent": {
+      "type": "string",
+      "description": "Agent that performed the analysis (e.g., performance-engineer)"
+    },
+    "optimizations": {
+      "type": "array",
+      "description": "Array of performance optimization recommendations",
+      "items": {
+        "type": "object",
+        "required": ["optimization", "priority", "category"],
+        "properties": {
+          "optimization": {
+            "type": "string",
+            "description": "Description of the performance optimization"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["P0", "P1", "P2", "P3"],
+            "description": "Priority level (P0 = critical, P3 = low)"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["code_splitting", "image_optimization", "lazy_loading", "caching", "api_optimization", "bundle_size", "render_optimization", "other"],
+            "description": "Category of the optimization"
+          },
+          "estimated_improvement": {
+            "type": "string",
+            "description": "Expected performance improvement (e.g., '40% bundle reduction', '200ms faster load', '30% faster interaction')"
+          },
+          "estimated_effort": {
+            "type": "string",
+            "description": "Estimated effort to implement (e.g., '2-4 hours', '1 day')"
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Reasoning for this optimization recommendation"
+          },
+          "related_features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Feature identifiers from ui-test-results that would benefit from this optimization"
+          },
+          "current_metrics": {
+            "type": "object",
+            "description": "Current performance metrics related to this optimization",
+            "properties": {
+              "metric_name": {
+                "type": "string",
+                "description": "Name of the metric (e.g., 'LCP', 'FID', 'bundle_size')"
+              },
+              "current_value": {
+                "type": "string",
+                "description": "Current value of the metric"
+              },
+              "target_value": {
+                "type": "string",
+                "description": "Target value after optimization"
+              }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary of optimization analysis",
+      "properties": {
+        "total_optimizations": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of optimizations identified"
+        },
+        "critical_optimizations": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of P0 (critical) optimizations"
+        },
+        "high_priority_optimizations": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of P1 (high priority) optimizations"
+        },
+        "categories": {
+          "type": "object",
+          "description": "Count of optimizations by category",
+          "properties": {
+            "code_splitting": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "image_optimization": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "lazy_loading": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "caching": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "api_optimization": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "bundle_size": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "render_optimization": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "other": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "estimated_total_improvement": {
+          "type": "string",
+          "description": "Estimated total performance improvement if all optimizations are implemented"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "performance_metrics_reference": {
+          "type": "string",
+          "description": "Reference to performance-metrics artifact used for analysis"
+        },
+        "log_analysis_reference": {
+          "type": "string",
+          "description": "Reference to log-analysis artifact used for analysis"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about the analysis"
+        }
+      }
+    }
+  }
+}
+

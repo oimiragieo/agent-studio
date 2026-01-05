@@ -1,0 +1,4 @@
+# Context directory for cross-platform artifact sync
+# Syncs with:
+#   - .claude/context/artifacts/
+#   - .factory/docs/

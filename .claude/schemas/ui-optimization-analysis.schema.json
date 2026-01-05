@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "UI Optimization Analysis",
+  "description": "Schema for UI/UX optimization analysis output from UX Expert agent",
+  "required": ["analysis_id", "analysis_date", "target_url", "improvements"],
+  "properties": {
+    "analysis_id": {
+      "type": "string",
+      "description": "Unique identifier for the optimization analysis"
+    },
+    "analysis_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the analysis was performed"
+    },
+    "target_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the application analyzed"
+    },
+    "analyzer_agent": {
+      "type": "string",
+      "description": "Agent that performed the analysis (e.g., ux-expert)"
+    },
+    "improvements": {
+      "type": "array",
+      "description": "Array of UI/UX improvement recommendations",
+      "items": {
+        "type": "object",
+        "required": ["improvement", "priority", "category"],
+        "properties": {
+          "improvement": {
+            "type": "string",
+            "description": "Description of the UI/UX improvement"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["P0", "P1", "P2", "P3"],
+            "description": "Priority level (P0 = critical, P3 = low)"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["accessibility", "visual_design", "interaction", "layout", "responsive", "other"],
+            "description": "Category of the improvement"
+          },
+          "estimated_effort": {
+            "type": "string",
+            "description": "Estimated effort to implement (e.g., '2-4 hours', '1 day')"
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "description": "Expected impact of the improvement"
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Reasoning for this improvement recommendation"
+          },
+          "related_features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Feature identifiers from ui-test-results that relate to this improvement"
+          },
+          "screenshots": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Paths to screenshots showing the area needing improvement"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary of optimization analysis",
+      "properties": {
+        "total_improvements": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of improvements identified"
+        },
+        "critical_improvements": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of P0 (critical) improvements"
+        },
+        "high_priority_improvements": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of P1 (high priority) improvements"
+        },
+        "categories": {
+          "type": "object",
+          "description": "Count of improvements by category",
+          "properties": {
+            "accessibility": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "visual_design": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "interaction": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "layout": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "responsive": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "other": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "ui_test_results_reference": {
+          "type": "string",
+          "description": "Reference to ui-test-results artifact used for analysis"
+        },
+        "performance_metrics_reference": {
+          "type": "string",
+          "description": "Reference to performance-metrics artifact used for analysis"
+        },
+        "documentation_comparison_reference": {
+          "type": "string",
+          "description": "Reference to documentation-comparison artifact used for analysis"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about the analysis"
+        }
+      }
+    }
+  }
+}
+

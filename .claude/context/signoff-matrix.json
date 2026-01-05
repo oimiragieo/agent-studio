@@ -1,0 +1,309 @@
+{
+  "version": "1.0.0",
+  "description": "Signoff requirements matrix defining which artifacts and approvals are needed for workflows",
+  "workflows": {
+    "fullstack": {
+      "required_signoffs": [
+        {
+          "type": "quality_signoff",
+          "artifact": "test-results.json",
+          "schema": ".claude/schemas/test_results.schema.json",
+          "agents": ["qa"],
+          "conditions": {
+            "test_coverage": ">=80%",
+            "passing_tests": "100%",
+            "critical_bugs": 0
+          }
+        },
+        {
+          "type": "code_review_signoff",
+          "artifact": "code-review-report.json",
+          "schema": ".claude/schemas/code_review.schema.json",
+          "agents": ["code-reviewer"],
+          "conditions": {
+            "review_score": ">=7",
+            "critical_issues": 0,
+            "blocking_issues": 0
+          }
+        }
+      ],
+      "conditional_signoffs": [
+        {
+          "type": "security_signoff",
+          "artifact": "security-review.json",
+          "schema": ".claude/schemas/security_review.schema.json",
+          "agents": ["security-architect"],
+          "trigger_keywords": ["auth", "encryption", "security", "credential"],
+          "conditions": {
+            "security_score": ">=8",
+            "vulnerabilities": 0
+          }
+        },
+        {
+          "type": "performance_signoff",
+          "artifact": "performance-review.json",
+          "schema": ".claude/schemas/performance_review.schema.json",
+          "agents": ["performance-engineer"],
+          "trigger_keywords": ["performance", "optimization", "scale", "benchmark"],
+          "conditions": {
+            "performance_score": ">=7",
+            "regressions": 0
+          }
+        }
+      ]
+    },
+    "quick_flow": {
+      "required_signoffs": [
+        {
+          "type": "code_review_signoff",
+          "artifact": "code-review-report.json",
+          "schema": ".claude/schemas/code_review.schema.json",
+          "agents": ["code-reviewer"],
+          "conditions": {
+            "review_score": ">=6",
+            "critical_issues": 0
+          }
+        }
+      ],
+      "conditional_signoffs": []
+    },
+    "incident": {
+      "required_signoffs": [
+        {
+          "type": "incident_signoff",
+          "artifact": "incident-report.json",
+          "schema": ".claude/schemas/incident_report.schema.json",
+          "agents": ["incident-responder"],
+          "conditions": {
+            "resolved": true,
+            "post_mortem_complete": true,
+            "action_items_assigned": true
+          }
+        },
+        {
+          "type": "security_signoff",
+          "artifact": "security-review.json",
+          "schema": ".claude/schemas/security_review.schema.json",
+          "agents": ["security-architect"],
+          "conditions": {
+            "security_score": ">=8",
+            "vulnerabilities": 0
+          }
+        }
+      ],
+      "conditional_signoffs": []
+    },
+    "code_quality": {
+      "required_signoffs": [
+        {
+          "type": "code_review_signoff",
+          "artifact": "code-review-report.json",
+          "schema": ".claude/schemas/code_review.schema.json",
+          "agents": ["code-reviewer"],
+          "conditions": {
+            "review_score": ">=8",
+            "critical_issues": 0,
+            "blocking_issues": 0
+          }
+        },
+        {
+          "type": "quality_signoff",
+          "artifact": "test-results.json",
+          "schema": ".claude/schemas/test_results.schema.json",
+          "agents": ["qa"],
+          "conditions": {
+            "test_coverage": ">=90%",
+            "passing_tests": "100%"
+          }
+        }
+      ],
+      "conditional_signoffs": []
+    },
+    "performance": {
+      "required_signoffs": [
+        {
+          "type": "performance_signoff",
+          "artifact": "performance-review.json",
+          "schema": ".claude/schemas/performance_review.schema.json",
+          "agents": ["performance-engineer"],
+          "conditions": {
+            "performance_score": ">=8",
+            "regressions": 0,
+            "benchmarks_met": true
+          }
+        },
+        {
+          "type": "quality_signoff",
+          "artifact": "test-results.json",
+          "schema": ".claude/schemas/test_results.schema.json",
+          "agents": ["qa"],
+          "conditions": {
+            "test_coverage": ">=80%",
+            "passing_tests": "100%"
+          }
+        }
+      ],
+      "conditional_signoffs": []
+    },
+    "ai_system": {
+      "required_signoffs": [
+        {
+          "type": "llm_architecture_signoff",
+          "artifact": "llm-architecture.json",
+          "schema": ".claude/schemas/llm_architecture.schema.json",
+          "agents": ["llm-architect"],
+          "conditions": {
+            "architecture_score": ">=8",
+            "rag_design_complete": true,
+            "prompt_engineering_reviewed": true
+          }
+        },
+        {
+          "type": "quality_signoff",
+          "artifact": "test-results.json",
+          "schema": ".claude/schemas/test_results.schema.json",
+          "agents": ["qa"],
+          "conditions": {
+            "test_coverage": ">=80%",
+            "passing_tests": "100%"
+          }
+        }
+      ],
+      "conditional_signoffs": [
+        {
+          "type": "security_signoff",
+          "artifact": "security-review.json",
+          "schema": ".claude/schemas/security_review.schema.json",
+          "agents": ["security-architect"],
+          "trigger_keywords": ["auth", "api key", "credentials"],
+          "conditions": {
+            "security_score": ">=8",
+            "vulnerabilities": 0
+          }
+        }
+      ]
+    },
+    "mobile": {
+      "required_signoffs": [
+        {
+          "type": "mobile_signoff",
+          "artifact": "mobile-review.json",
+          "schema": ".claude/schemas/mobile_review.schema.json",
+          "agents": ["mobile-developer"],
+          "conditions": {
+            "platform_compatibility": ">=95%",
+            "performance_benchmarks": "met"
+          }
+        },
+        {
+          "type": "ux_signoff",
+          "artifact": "ux-review.json",
+          "schema": ".claude/schemas/ux_review.schema.json",
+          "agents": ["ux-expert"],
+          "conditions": {
+            "ux_score": ">=7",
+            "usability_issues": 0
+          }
+        },
+        {
+          "type": "quality_signoff",
+          "artifact": "test-results.json",
+          "schema": ".claude/schemas/test_results.schema.json",
+          "agents": ["qa"],
+          "conditions": {
+            "test_coverage": ">=80%",
+            "passing_tests": "100%"
+          }
+        }
+      ],
+      "conditional_signoffs": [
+        {
+          "type": "accessibility_signoff",
+          "artifact": "accessibility-review.json",
+          "schema": ".claude/schemas/accessibility_review.schema.json",
+          "agents": ["accessibility-expert"],
+          "trigger_keywords": ["ui", "component", "screen", "wcag"],
+          "conditions": {
+            "wcag_compliance": "AA",
+            "violations": 0
+          }
+        }
+      ]
+    },
+    "ui_perfection": {
+      "required_signoffs": [
+        {
+          "type": "ux_signoff",
+          "artifact": "ux-review.json",
+          "schema": ".claude/schemas/ux_review.schema.json",
+          "agents": ["ux-expert"],
+          "conditions": {
+            "ux_score": ">=8",
+            "usability_issues": 0
+          }
+        },
+        {
+          "type": "accessibility_signoff",
+          "artifact": "accessibility-review.json",
+          "schema": ".claude/schemas/accessibility_review.schema.json",
+          "agents": ["accessibility-expert"],
+          "conditions": {
+            "wcag_compliance": "AA",
+            "violations": 0
+          }
+        },
+        {
+          "type": "quality_signoff",
+          "artifact": "test-results.json",
+          "schema": ".claude/schemas/test_results.schema.json",
+          "agents": ["qa"],
+          "conditions": {
+            "test_coverage": ">=80%",
+            "passing_tests": "100%"
+          }
+        }
+      ],
+      "conditional_signoffs": []
+    },
+    "browser_testing": {
+      "required_signoffs": [
+        {
+          "type": "browser_test_signoff",
+          "artifact": "browser-test-results.json",
+          "schema": ".claude/schemas/browser_test_results.schema.json",
+          "agents": ["qa"],
+          "conditions": {
+            "browser_coverage": ">=90%",
+            "passing_tests": "100%",
+            "visual_regressions": 0
+          }
+        }
+      ],
+      "conditional_signoffs": [
+        {
+          "type": "performance_signoff",
+          "artifact": "performance-review.json",
+          "schema": ".claude/schemas/performance_review.schema.json",
+          "agents": ["performance-engineer"],
+          "trigger_keywords": ["performance", "core web vitals", "lcp", "fid"],
+          "conditions": {
+            "performance_score": ">=7",
+            "core_web_vitals": "good"
+          }
+        }
+      ]
+    }
+  },
+  "signoffRules": {
+    "required_signoffs_blocking": true,
+    "conditional_signoffs_blocking": false,
+    "allow_conditional_override": true,
+    "signoff_expiration_hours": 24
+  },
+  "metadata": {
+    "created": "2026-01-04",
+    "totalWorkflows": 9,
+    "description": "Defines signoff requirements for each workflow",
+    "updateFrequency": "as needed"
+  }
+}

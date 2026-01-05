@@ -74,31 +74,31 @@ function validateModelName(modelName, context = '') {
 
 function extractModelNames(config) {
   const models = [];
-  
+
   // Extract from agent_routing
   if (config.agent_routing) {
-    for (const [agentName, config] of Object.entries(config.agent_routing)) {
-      if (config.model) {
+    for (const [agentName, agentConfig] of Object.entries(config.agent_routing)) {
+      if (agentConfig.model) {
         models.push({
           source: `agent_routing.${agentName}`,
-          model: config.model,
+          model: agentConfig.model,
         });
       }
     }
   }
-  
+
   // Extract from model_config
   if (config.model_config) {
-    for (const [complexity, config] of Object.entries(config.model_config)) {
-      if (config.model) {
+    for (const [complexity, modelConfig] of Object.entries(config.model_config)) {
+      if (modelConfig.model) {
         models.push({
           source: `model_config.${complexity}`,
-          model: config.model,
+          model: modelConfig.model,
         });
       }
     }
   }
-  
+
   return models;
 }
 

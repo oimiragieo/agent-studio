@@ -2,7 +2,52 @@
 description: Master ruleset for Next.js 15 + React 19 + TypeScript + Tailwind CSS + Shadcn UI
 globs: **/*.{ts,tsx,js,jsx}, app/**/*, components/**/*, src/**/*
 priority: high
+validation:
+  # Note: Regex patterns use [\s\S]*? for multi-line matching. For very complex
+  # patterns, use repo-rag skill or a proper linter (ESLint with eslint-plugin-react-hooks).
+  forbidden_patterns:
+    - pattern: "useEffect[\\s\\S]*?fetch"
+      message: "Do not use useEffect for data fetching; use Server Components."
+      severity: "error"
+    - pattern: "console\\.log"
+      message: "Remove console.log statements before commit."
+      severity: "warning"
+    - pattern: ":\\s*any\\b"
+      message: "Avoid 'any' type; use 'unknown' or proper types."
+      severity: "error"
+    - pattern: "require\\("
+      message: "Use ES modules (import) instead of CommonJS (require)."
+      severity: "error"
 ---
+
+<template name="component">
+```typescript
+import { Suspense } from 'react'
+
+export default function {{Name}}() {
+  return (
+    <Suspense fallback={<{{Name}}Skeleton />}>
+      <{{Name}}Content />
+    </Suspense>
+  )
+}
+```
+</template>
+
+<template name="api-route">
+```typescript
+import { NextRequest, NextResponse } from 'next/server'
+
+export async function {{Method}}(request: NextRequest) {
+  try {
+    // Implementation
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+  }
+}
+```
+</template>
 
 # Next.js 15 + React 19 + TypeScript + Tailwind CSS Master Rules
 

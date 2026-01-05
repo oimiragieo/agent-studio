@@ -1,0 +1,240 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Browser Session",
+  "description": "Schema for browser session data captured during browser-based testing",
+  "required": ["session_id", "session_date", "target_url", "browser_info"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique identifier for the browser session"
+    },
+    "session_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the session started"
+    },
+    "target_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Initial URL loaded in the browser"
+    },
+    "browser_info": {
+      "type": "object",
+      "required": ["browser", "version"],
+      "properties": {
+        "browser": {
+          "type": "string",
+          "enum": ["Chrome", "Firefox", "Safari", "Edge", "Other"],
+          "description": "Browser name"
+        },
+        "version": {
+          "type": "string",
+          "description": "Browser version"
+        },
+        "user_agent": {
+          "type": "string",
+          "description": "User agent string"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Operating system platform"
+        },
+        "viewport": {
+          "type": "object",
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "initial_load": {
+      "type": "object",
+      "description": "Initial page load metrics",
+      "properties": {
+        "load_time_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total page load time in milliseconds"
+        },
+        "time_to_first_byte_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Time to first byte (TTFB) in milliseconds"
+        },
+        "dom_content_loaded_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "DOM content loaded time in milliseconds"
+        },
+        "resources_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of resources loaded"
+        },
+        "resources_total_size_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total size of all resources in bytes"
+        },
+        "network_requests": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of network requests"
+        },
+        "failed_requests": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of failed network requests"
+        }
+      }
+    },
+    "screenshots": {
+      "type": "array",
+      "description": "Array of screenshot metadata captured during testing",
+      "items": {
+        "type": "object",
+        "required": ["screenshot_id", "path", "timestamp", "description"],
+        "properties": {
+          "screenshot_id": {
+            "type": "string",
+            "description": "Unique identifier for the screenshot"
+          },
+          "path": {
+            "type": "string",
+            "description": "File path to the screenshot"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when screenshot was taken"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what the screenshot shows"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the page when screenshot was taken"
+          },
+          "full_page": {
+            "type": "boolean",
+            "description": "Whether this is a full page screenshot"
+          },
+          "feature_tested": {
+            "type": "string",
+            "description": "Feature being tested when screenshot was taken"
+          }
+        }
+      }
+    },
+    "devtools_enabled": {
+      "type": "object",
+      "description": "DevTools features enabled during the session",
+      "properties": {
+        "network_monitoring": {
+          "type": "boolean",
+          "description": "Whether network monitoring was enabled"
+        },
+        "console_logging": {
+          "type": "boolean",
+          "description": "Whether console logging was enabled"
+        },
+        "performance_profiling": {
+          "type": "boolean",
+          "description": "Whether performance profiling was enabled"
+        },
+        "memory_profiling": {
+          "type": "boolean",
+          "description": "Whether memory profiling was enabled"
+        },
+        "accessibility_inspection": {
+          "type": "boolean",
+          "description": "Whether accessibility inspection was enabled"
+        }
+      }
+    },
+    "session_duration": {
+      "type": "object",
+      "description": "Session duration metrics",
+      "properties": {
+        "total_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total session duration in seconds"
+        },
+        "active_testing_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Active testing time (excluding idle time)"
+        },
+        "start_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Session start timestamp"
+        },
+        "end_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Session end timestamp"
+        }
+      }
+    },
+    "pages_tested": {
+      "type": "array",
+      "description": "Array of URLs/pages tested during the session",
+      "items": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the page tested"
+          },
+          "page_title": {
+            "type": "string",
+            "description": "Page title"
+          },
+          "tested_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this page was tested"
+          },
+          "features_tested_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of features tested on this page"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "testing_method": {
+          "type": "string",
+          "enum": ["manual", "automated", "hybrid"],
+          "description": "Testing method used"
+        },
+        "automation_tool": {
+          "type": "string",
+          "description": "Automation tool used (e.g., Chrome DevTools MCP, Playwright)"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about the session"
+        }
+      }
+    }
+  }
+}
+

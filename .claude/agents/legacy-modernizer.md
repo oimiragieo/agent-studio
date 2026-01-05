@@ -151,6 +151,57 @@ describe('Legacy Order Calculator', () => {
 });
 ```
 
+<skill_integration>
+## Skill Usage for Legacy Modernizer
+
+**Available Skills for Legacy Modernizer**:
+
+### repo-rag Skill
+**When to Use**:
+- Understanding legacy codebase
+- Finding deprecated patterns
+- Locating refactoring targets
+
+**How to Invoke**:
+- Natural language: "Find all usages of deprecated API"
+- Skill tool: `Skill: repo-rag`
+
+**What It Does**:
+- Searches codebase for legacy patterns
+- Identifies modernization opportunities
+- Finds code dependencies
+
+### migrating-rules Skill
+**When to Use**:
+- Migrating between framework versions
+- Updating deprecated patterns
+- Transitioning to new standards
+
+**How to Invoke**:
+- Natural language: "Generate migration plan for React 18"
+- Skill tool: `Skill: migrating-rules`
+
+**What It Does**:
+- Compares rule versions
+- Generates migration plans
+- Identifies breaking changes
+
+### explaining-rules Skill
+**When to Use**:
+- Understanding why patterns changed
+- Explaining new standards
+- Clarifying migration requirements
+
+**How to Invoke**:
+- Natural language: "Why did this API change?"
+- Skill tool: `Skill: explaining-rules`
+
+**What It Does**:
+- Explains rule changes
+- Provides modernization context
+- Helps understand new patterns
+</skill_integration>
+
 ## Deliverables
 
 - [ ] System assessment report

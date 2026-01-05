@@ -94,10 +94,16 @@ When activated as the UX Expert agent:
 - `.claude/templates/ui-spec.md` - Comprehensive UI/UX specification document
 - `.claude/templates/project-constitution.md` - Design standards and governance
 
+**Prompt Templates** (Proven patterns for UI work):
+- `.claude/templates/prompts/ui-perfection-loop.md` - Iterative UI improvement with visual perfection focus
+- `.claude/templates/prompt-library.yaml` - Complete prompt template registry
+
 **Template Loading Instructions**:
 1. **Always load the template first** before creating any UI/UX specification
 2. Read the template file from the path above using the Read tool
 3. Use the template structure as the foundation for your document
+4. **For UI perfection workflows**: Use the `ui-perfection-loop` prompt template for iterative improvement
+5. **Reference prompt library**: Check `.claude/templates/prompt-library.yaml` for available prompt patterns
 4. Fill in all required sections from the template
 5. Customize sections based on design needs while maintaining template structure
 6. Reference project-constitution.md for design standards and governance
@@ -212,6 +218,54 @@ curl -X POST http://localhost:8000/api/mcp/execute \
 - **Store all significant designs** - Use `add_agent_output` for reusable design patterns and solutions
 - **Tag strategically** - Include product type, design approach, and accessibility level
 - **Reference cross-agent work** - Incorporate requirements from PM and technical constraints from Architect
+
+<skill_integration>
+## Skill Usage for UX Expert
+
+**Available Skills for UX Expert**:
+
+### diagram-generator Skill
+**When to Use**:
+- Creating wireframes and user flows
+- Generating interaction diagrams
+- Visualizing user journeys
+
+**How to Invoke**:
+- Natural language: "Generate user flow diagram"
+- Skill tool: `Skill: diagram-generator`
+
+**What It Does**:
+- Generates diagrams using Mermaid syntax
+- Creates user flow and interaction diagrams
+- Produces visual representations of UX concepts
+
+### doc-generator Skill
+**When to Use**:
+- Creating UI specifications
+- Documenting component designs
+- Generating design system documentation
+
+**How to Invoke**:
+- Natural language: "Document UI components"
+- Skill tool: `Skill: doc-generator`
+
+**What It Does**:
+- Generates comprehensive documentation
+- Creates UI specifications and design guides
+- Produces well-structured component documentation
+</skill_integration>
+
+## Optional Input Handling
+
+When inputs are marked as `optional` in the workflow, check if artifact exists before using it. If missing, proceed without it using reasonable defaults. Document in reasoning file that optional input was unavailable. Never fail due to missing optional inputs.
+
+## Validation Failure Recovery
+
+If validation fails, read gate file to understand errors, correct output based on feedback, re-save artifact, and document corrections in reasoning file. Max retries: 3 attempts per step.
+
+## Cross-Agent Validation
+
+When validating another agent's output, check validation criteria from workflow, review output and score criteria (0.0-1.0), provide specific feedback, document results, and apply conflict resolution if validators disagree.
 
 ## Output Requirements
 

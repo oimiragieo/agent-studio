@@ -1,0 +1,246 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "UI Test Results",
+  "description": "Schema for results from systematic UI feature testing",
+  "required": ["test_id", "test_date", "tester_agent", "target_url", "features_tested", "test_summary"],
+  "properties": {
+    "test_id": {
+      "type": "string",
+      "description": "Unique identifier for the test run"
+    },
+    "test_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when testing was performed"
+    },
+    "tester_agent": {
+      "type": "string",
+      "description": "Agent that performed the testing (e.g., qa)"
+    },
+    "target_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the application tested"
+    },
+    "features_tested": {
+      "type": "array",
+      "description": "Array of feature test results",
+      "items": {
+        "type": "object",
+        "required": ["feature_name", "feature_type", "status"],
+        "properties": {
+          "feature_name": {
+            "type": "string",
+            "description": "Name of the feature tested"
+          },
+          "feature_type": {
+            "type": "string",
+            "enum": ["navigation", "form", "interactive", "data_display", "search_filter", "pagination", "authentication", "other"],
+            "description": "Type of feature"
+          },
+          "location": {
+            "type": "string",
+            "description": "Where the feature is located (URL, component path)"
+          },
+          "test_steps": {
+            "type": "array",
+            "description": "Array of test steps executed",
+            "items": {
+              "type": "object",
+              "required": ["step_number", "action", "description"],
+              "properties": {
+                "step_number": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "action": {
+                  "type": "string",
+                  "description": "Action performed (e.g., 'Click login button', 'Fill email field')"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Detailed description of the step"
+                },
+                "result": {
+                  "type": "string",
+                  "description": "Result of this step"
+                }
+              }
+            }
+          },
+          "expected_behavior": {
+            "type": "string",
+            "description": "Expected behavior from documentation"
+          },
+          "actual_behavior": {
+            "type": "string",
+            "description": "Actual behavior observed during testing"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "warning"],
+            "description": "Test status"
+          },
+          "screenshots": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Paths to screenshots captured during testing"
+          },
+          "timing": {
+            "type": "object",
+            "description": "Interaction timing metrics",
+            "properties": {
+              "interaction_time_ms": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Time for user interaction to complete in milliseconds"
+              },
+              "response_time_ms": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Response time after interaction in milliseconds"
+              },
+              "render_time_ms": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Time for UI to render after interaction"
+              }
+            }
+          },
+          "console_errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Console errors captured during testing of this feature"
+          },
+          "console_warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Console warnings captured during testing"
+          },
+          "network_errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Network errors related to this feature"
+          },
+          "issues_found": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["issue", "severity"],
+              "properties": {
+                "issue": {
+                  "type": "string",
+                  "description": "Description of the issue"
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": ["low", "medium", "high", "critical"],
+                  "description": "Severity of the issue"
+                }
+              }
+            },
+            "description": "Issues found during testing of this feature"
+          },
+          "documentation_reference": {
+            "type": "string",
+            "description": "Reference to documentation for this feature (PRD section, user story, etc.)"
+          }
+        }
+      }
+    },
+    "test_summary": {
+      "type": "object",
+      "required": ["total_features", "passed", "failed", "warnings"],
+      "properties": {
+        "total_features": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of features tested"
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of features that passed"
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of features that failed"
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of features with warnings"
+        },
+        "pass_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Pass rate percentage"
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "description": "Test coverage metrics",
+      "properties": {
+        "documented_features_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of features documented"
+        },
+        "features_tested_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of documented features tested"
+        },
+        "coverage_percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of documented features tested"
+        },
+        "undocumented_features_tested": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of undocumented features that were tested"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "testing_method": {
+          "type": "string",
+          "enum": ["manual", "automated", "hybrid"],
+          "description": "Testing method used"
+        },
+        "automation_tool": {
+          "type": "string",
+          "description": "Automation tool used (e.g., Chrome DevTools MCP)"
+        },
+        "documentation_sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Documentation sources referenced (PRD, UX spec, user stories)"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about the testing"
+        }
+      }
+    }
+  }
+}
+

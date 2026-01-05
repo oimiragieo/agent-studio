@@ -60,6 +60,12 @@ Publish the implementation artifacts to Claude Projects
 - Post-run hook artifact generation
 - Cross-platform sync via context-bridge
 
+## Platform-Specific Notes
+
+**Factory Invocation**: Use Task tool with skill: "Run Task tool with skill artifact-publisher"
+**Metadata**: Ensure consistent structure with Claude version (see `.claude/skills/artifact-publisher/SKILL.md`)
+**Cross-Platform**: Published artifacts sync via `context-bridge` skill
+
 ## Related Skills
 
 - `context-bridge` - Sync artifacts across platforms

@@ -81,7 +81,7 @@ Or ask a question:
 ### Essential Reading (Start Here)
 1. **README.md** - Overview of all features
 2. **GETTING_STARTED.md** - Detailed setup instructions
-3. **CUJ Index** (`.claude/docs/cujs/CUJ-INDEX.md`) - All 24 user journeys
+3. **CUJ Index** (`.claude/docs/cujs/CUJ-INDEX.md`) - All 47 user journeys
 
 ### Key Concepts
 
@@ -139,7 +139,7 @@ Validates code against your project rules.
 
 ## Understanding CUJs (Customer User Journeys)
 
-CUJs are complete workflows from start to finish. We have 24 documented CUJs:
+CUJs are complete workflows from start to finish. We have 48 documented CUJs (CUJ-031/032/033 are reserved/removed):
 
 - **Onboarding & Setup** (CUJ-001 to CUJ-003)
 - **Planning & Architecture** (CUJ-004 to CUJ-008)

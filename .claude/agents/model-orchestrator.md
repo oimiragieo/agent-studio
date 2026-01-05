@@ -289,7 +289,52 @@ Run via shell script (see `.claude/tools/model-router.sh`):
 .claude/tools/model-router.sh -s parallel -M "opus,gemini" -p "Review security architecture"
 ```
 
-### 5. Response Synthesis
+### 5. Disagreement Resolution (Multi-AI Validation)
+
+When coordinating multiple AI validators (Cursor, Gemini, Codex) for code validation:
+
+**Consensus Calculation**:
+- **2/3 Agreement**: Route consensus issues to Developer for fixing
+- **1/3 Finding Issue**: Log as low-priority warning (may be false positive)
+- **All 3 Disagree**: Flag for human review (fundamental disagreement)
+
+**Disagreement Resolution Process**:
+1. **Collect Validation Results**: Gather issues from all three validators
+2. **Calculate Consensus**: Count how many validators found each issue
+3. **Categorize Issues**:
+   - **Consensus Issues** (2/3+ agreement): Route to Developer
+   - **Disagreements** (1/3 only): Log as warnings
+   - **Complete Disagreement** (all 3 disagree): Flag for human review
+4. **Generate Reports**:
+   - `consensus-issues.json`: Issues with 2/3+ agreement
+   - `disagreements.json`: Issues with 1/3 agreement or complete disagreement
+   - `validation-report.json`: Complete validation summary
+
+**Example Consensus Calculation**:
+```json
+{
+  "issue_1": {
+    "description": "Missing error handling",
+    "validators": ["cursor", "gemini"],
+    "consensus": "2/3",
+    "action": "route_to_developer"
+  },
+  "issue_2": {
+    "description": "Potential performance issue",
+    "validators": ["codex"],
+    "consensus": "1/3",
+    "action": "log_warning"
+  },
+  "issue_3": {
+    "description": "Architecture concern",
+    "validators": [],
+    "consensus": "0/3",
+    "action": "human_review"
+  }
+}
+```
+
+### 6. Response Synthesis
 When using multiple models, synthesize:
 
 ```json
@@ -449,3 +494,54 @@ User Request → Main Agent (Claude)
 - **Rate Limited**: Queue and retry with exponential backoff
 - **Invalid Response**: Retry with clarified prompt
 - **Conflict Between Models**: Flag for human review or use Opus as tiebreaker
+
+<skill_integration>
+## Skill Usage for Model Orchestrator
+
+**Available Skills for Model Orchestrator**:
+
+### response-rater Skill
+**When to Use**:
+- Rating responses from multiple models
+- Evaluating model output quality
+- Comparing model responses
+
+**How to Invoke**:
+- Natural language: "Rate this response against the rubric"
+- Skill tool: `Skill: response-rater`
+
+**What It Does**:
+- Runs headless AI CLIs to rate responses
+- Provides actionable feedback
+- Supports multi-model comparison
+
+### evaluator Skill
+**When to Use**:
+- Evaluating model performance
+- Assessing response quality
+- Measuring model accuracy
+
+**How to Invoke**:
+- Natural language: "Evaluate model response"
+- Skill tool: `Skill: evaluator`
+
+**What It Does**:
+- Evaluates agent performance
+- Uses code-based and model-based grading
+- Provides systematic evaluation
+
+### conflict-resolution Skill
+**When to Use**:
+- Models produce conflicting outputs
+- Need to reach consensus between models
+- Resolving disagreements
+
+**How to Invoke**:
+- Natural language: "Resolve conflict between model outputs"
+- Skill tool: `Skill: conflict-resolution`
+
+**What It Does**:
+- Detects conflicts between outputs
+- Assesses severity
+- Facilitates consensus building
+</skill_integration>

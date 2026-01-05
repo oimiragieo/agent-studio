@@ -1,0 +1,393 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.com/schemas/security-architecture.schema.json",
+  "title": "Security Architecture",
+  "description": "Security architecture artifact for system security design and controls",
+  "type": "object",
+  "required": [
+    "architecture_id",
+    "timestamp",
+    "security_model",
+    "authentication",
+    "authorization",
+    "data_protection",
+    "threat_modeling"
+  ],
+  "properties": {
+    "architecture_id": {
+      "type": "string",
+      "description": "Unique identifier for the security architecture"
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "ISO 8601 timestamp of architecture creation",
+      "format": "date-time"
+    },
+    "security_model": {
+      "type": "object",
+      "description": "Overall security model and philosophy",
+      "required": ["model_type", "principles"],
+      "properties": {
+        "model_type": {
+          "type": "string",
+          "enum": ["zero_trust", "defense_in_depth", "least_privilege", "separation_of_duties", "hybrid"]
+        },
+        "principles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "threat_model": {
+          "type": "string",
+          "description": "Primary threat model approach (e.g., STRIDE, PASTA, LINDDUN)"
+        }
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "description": "Authentication mechanisms and strategies",
+      "required": ["mechanism", "protocols"],
+      "properties": {
+        "mechanism": {
+          "type": "string",
+          "enum": ["oauth2", "oidc", "saml", "jwt", "session_based", "mutual_tls", "api_key", "multi_factor"]
+        },
+        "protocols": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mfa_required": {
+          "type": "boolean",
+          "description": "Whether MFA is required"
+        },
+        "password_policy": {
+          "type": "object",
+          "properties": {
+            "min_length": {
+              "type": "number"
+            },
+            "complexity_requirements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "expiration_days": {
+              "type": "number"
+            }
+          }
+        },
+        "session_management": {
+          "type": "object",
+          "properties": {
+            "timeout_minutes": {
+              "type": "number"
+            },
+            "secure_cookies": {
+              "type": "boolean"
+            },
+            "httponly_cookies": {
+              "type": "boolean"
+            },
+            "samesite_policy": {
+              "type": "string",
+              "enum": ["strict", "lax", "none"]
+            }
+          }
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "description": "Authorization mechanisms and access control",
+      "required": ["model", "enforcement_points"],
+      "properties": {
+        "model": {
+          "type": "string",
+          "enum": ["rbac", "abac", "pbac", "dac", "mac", "hybrid"]
+        },
+        "enforcement_points": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "resource_protection": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string"
+              },
+              "access_control": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "data_protection": {
+      "type": "object",
+      "description": "Data protection strategies and encryption",
+      "required": ["encryption_at_rest", "encryption_in_transit"],
+      "properties": {
+        "encryption_at_rest": {
+          "type": "object",
+          "required": ["enabled", "algorithm"],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "algorithm": {
+              "type": "string"
+            },
+            "key_management": {
+              "type": "string"
+            }
+          }
+        },
+        "encryption_in_transit": {
+          "type": "object",
+          "required": ["enabled", "protocols"],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "protocols": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tls_version": {
+              "type": "string"
+            }
+          }
+        },
+        "data_classification": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "classification": {
+                "type": "string",
+                "enum": ["public", "internal", "confidential", "restricted", "pii", "phi"]
+              },
+              "protection_measures": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "pii_handling": {
+          "type": "object",
+          "properties": {
+            "anonymization": {
+              "type": "boolean"
+            },
+            "pseudonymization": {
+              "type": "boolean"
+            },
+            "retention_policy": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "threat_modeling": {
+      "type": "object",
+      "description": "Threat modeling and risk assessment",
+      "required": ["methodology", "threats_identified"],
+      "properties": {
+        "methodology": {
+          "type": "string",
+          "enum": ["STRIDE", "PASTA", "LINDDUN", "VAST", "OCTAVE", "Trike"]
+        },
+        "threats_identified": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["threat_id", "category", "severity", "mitigation"],
+            "properties": {
+              "threat_id": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string",
+                "enum": ["spoofing", "tampering", "repudiation", "information_disclosure", "denial_of_service", "elevation_of_privilege"]
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["critical", "high", "medium", "low"]
+              },
+              "description": {
+                "type": "string"
+              },
+              "mitigation": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["identified", "mitigated", "accepted", "transferred"]
+              }
+            }
+          }
+        },
+        "attack_surface": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "network_security": {
+      "type": "object",
+      "description": "Network security controls",
+      "properties": {
+        "firewall_rules": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "network_segmentation": {
+          "type": "boolean"
+        },
+        "vpc_configuration": {
+          "type": "object"
+        },
+        "ddos_protection": {
+          "type": "boolean"
+        }
+      }
+    },
+    "api_security": {
+      "type": "object",
+      "description": "API security controls",
+      "properties": {
+        "rate_limiting": {
+          "type": "boolean"
+        },
+        "cors_policy": {
+          "type": "object",
+          "properties": {
+            "allowed_origins": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allowed_methods": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "api_versioning": {
+          "type": "string"
+        },
+        "input_validation": {
+          "type": "boolean"
+        }
+      }
+    },
+    "secrets_management": {
+      "type": "object",
+      "description": "Secrets and credential management",
+      "properties": {
+        "vault_type": {
+          "type": "string",
+          "enum": ["hashicorp_vault", "aws_secrets_manager", "gcp_secret_manager", "azure_key_vault", "custom"]
+        },
+        "rotation_policy": {
+          "type": "string"
+        },
+        "access_control": {
+          "type": "string"
+        }
+      }
+    },
+    "logging_monitoring": {
+      "type": "object",
+      "description": "Security logging and monitoring",
+      "properties": {
+        "audit_logging": {
+          "type": "boolean"
+        },
+        "log_retention_days": {
+          "type": "number"
+        },
+        "siem_integration": {
+          "type": "boolean"
+        },
+        "anomaly_detection": {
+          "type": "boolean"
+        }
+      }
+    },
+    "compliance_frameworks": {
+      "type": "array",
+      "description": "Compliance frameworks addressed",
+      "items": {
+        "type": "string",
+        "enum": ["GDPR", "HIPAA", "PCI-DSS", "SOC2", "ISO27001", "NIST", "FedRAMP"]
+      }
+    },
+    "security_controls": {
+      "type": "array",
+      "description": "Implemented security controls",
+      "items": {
+        "type": "object",
+        "required": ["control_id", "category", "description"],
+        "properties": {
+          "control_id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "implementation_status": {
+            "type": "string",
+            "enum": ["implemented", "planned", "not_applicable"]
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional architectural notes"
+    }
+  }
+}

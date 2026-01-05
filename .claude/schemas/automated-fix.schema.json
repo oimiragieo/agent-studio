@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Automated Fix Results",
+  "description": "Schema for automated fix results from automated-enterprise-flow",
+  "required": ["fix_id", "fix_date", "status", "fixes_applied"],
+  "properties": {
+    "fix_id": { "type": "string", "description": "Unique identifier for fix results" },
+    "fix_date": { "type": "string", "format": "date-time" },
+    "executor": { "type": "string" },
+    "status": { "type": "string", "enum": ["all_fixed", "partial", "failed", "no_fixes_needed"] },
+    "validation_reference": { "type": "string", "description": "Reference to validation report that triggered fixes" },
+    "fixes_applied": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["issue_id", "status"],
+        "properties": {
+          "issue_id": { "type": "string" },
+          "issue_description": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "status": { "type": "string", "enum": ["fixed", "partial", "failed", "skipped", "deferred"] },
+          "fix_type": { "type": "string", "enum": ["automatic", "manual", "hybrid"] },
+          "agent": { "type": "string", "description": "Agent that applied the fix" },
+          "file_path": { "type": "string" },
+          "changes": {
+            "type": "object",
+            "properties": {
+              "lines_added": { "type": "integer" },
+              "lines_removed": { "type": "integer" },
+              "diff_summary": { "type": "string" }
+            }
+          },
+          "verification": {
+            "type": "object",
+            "properties": {
+              "verified": { "type": "boolean" },
+              "verification_method": { "type": "string" },
+              "tests_passed": { "type": "boolean" }
+            }
+          },
+          "failure_reason": { "type": "string" },
+          "deferred_reason": { "type": "string" }
+        }
+      }
+    },
+    "fix_summary": {
+      "type": "object",
+      "properties": {
+        "total_issues": { "type": "integer", "minimum": 0 },
+        "fixed": { "type": "integer", "minimum": 0 },
+        "partial": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "deferred": { "type": "integer", "minimum": 0 },
+        "fix_rate": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "code_changes": {
+      "type": "object",
+      "properties": {
+        "files_modified": { "type": "integer", "minimum": 0 },
+        "total_lines_added": { "type": "integer", "minimum": 0 },
+        "total_lines_removed": { "type": "integer", "minimum": 0 },
+        "commits_created": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "remaining_issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "issue": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "reason_not_fixed": { "type": "string" },
+          "recommended_action": { "type": "string" }
+        }
+      }
+    },
+    "side_effects": {
+      "type": "array",
+      "description": "Unintended consequences of fixes",
+      "items": {
+        "type": "object",
+        "properties": {
+          "effect": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "caused_by_fix": { "type": "string" },
+          "mitigation": { "type": "string" }
+        }
+      }
+    },
+    "next_steps": { "type": "array", "items": { "type": "string" } },
+    "requires_re_validation": { "type": "boolean" }
+  }
+}

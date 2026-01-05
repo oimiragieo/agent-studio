@@ -241,6 +241,114 @@ const COMPLEXITY_LEVELS = {
 };
 
 /**
+ * Task type indicators with primary agent assignments
+ */
+const TASK_TYPE_INDICATORS = {
+  UI_UX: {
+    keywords: ['ui', 'ux', 'design', 'wireframe', 'interface', 'tailwind', 'css', 'component', 'layout', 'styling', 'theme'],
+    patterns: [/ui\s+(design|fix|update)/i, /user\s+interface/i, /wireframe/i, /mockup/i],
+    primaryAgent: 'ux-expert',
+    weight: 100
+  },
+  MOBILE: {
+    keywords: ['mobile', 'ios', 'android', 'react native', 'flutter', 'swift', 'kotlin', 'app store'],
+    patterns: [/mobile\s+(app|dev)/i, /(ios|android)/i, /react\s+native/i],
+    primaryAgent: 'mobile-developer',
+    weight: 100
+  },
+  DATABASE: {
+    keywords: ['database', 'schema', 'migration', 'sql', 'postgresql', 'mongodb', 'query', 'index'],
+    patterns: [/database|schema|migration/i, /sql\s+(query|table)/i],
+    primaryAgent: 'database-architect',
+    weight: 100
+  },
+  API: {
+    keywords: ['api design', 'rest', 'graphql', 'grpc', 'openapi', 'endpoint'],
+    patterns: [/api\s+(design|endpoint)/i, /(rest|graphql|grpc)\s+api/i],
+    primaryAgent: 'api-designer',
+    weight: 100
+  },
+  SECURITY: {
+    keywords: ['security', 'auth', 'encryption', 'vulnerability', 'oauth', 'jwt'],
+    patterns: [/security|auth|encrypt/i, /vulnerability\s+(scan|fix)/i],
+    primaryAgent: 'security-architect',
+    weight: 100
+  },
+  PERFORMANCE: {
+    keywords: ['performance', 'optimize', 'profiling', 'benchmark', 'latency', 'slow'],
+    patterns: [/performance|optimize|slow/i, /latency|throughput/i],
+    primaryAgent: 'performance-engineer',
+    weight: 100
+  },
+  AI_LLM: {
+    keywords: ['ai', 'llm', 'prompt', 'rag', 'embeddings', 'chatbot', 'claude', 'gpt'],
+    patterns: [/ai\s+system|llm|prompt/i, /rag|embeddings/i],
+    primaryAgent: 'llm-architect',
+    weight: 100
+  },
+  LEGACY: {
+    keywords: ['legacy', 'modernize', 'migrate', 'upgrade', 'rewrite', 'obsolete'],
+    patterns: [/legacy|modernize|migrate/i, /upgrade\s+(from|to)/i],
+    primaryAgent: 'legacy-modernizer',
+    weight: 100
+  },
+  INCIDENT: {
+    keywords: ['incident', 'outage', 'emergency', 'production issue', 'crisis', 'down'],
+    patterns: [/incident|outage|emergency/i, /production\s+(issue|down)/i],
+    primaryAgent: 'incident-responder',
+    weight: 100
+  },
+  COMPLIANCE: {
+    keywords: ['gdpr', 'hipaa', 'soc2', 'pci', 'compliance', 'audit', 'regulation'],
+    patterns: [/gdpr|hipaa|compliance/i, /(soc2|pci)\s+(audit|compliance)/i],
+    primaryAgent: 'compliance-auditor',
+    weight: 100
+  },
+  INFRASTRUCTURE: {
+    keywords: ['infrastructure', 'deployment', 'ci/cd', 'kubernetes', 'docker', 'terraform'],
+    patterns: [/infrastructure|deployment|devops/i, /(kubernetes|docker|terraform)/i],
+    primaryAgent: 'devops',
+    weight: 100
+  },
+  DOCUMENTATION: {
+    keywords: ['documentation', 'docs', 'readme', 'guide', 'tutorial', 'api docs'],
+    patterns: [/documentation|docs|readme/i, /(guide|tutorial)\s+for/i],
+    primaryAgent: 'technical-writer',
+    weight: 100
+  },
+  RESEARCH: {
+    keywords: ['research', 'analysis', 'requirements', 'feasibility', 'investigate'],
+    patterns: [/research|analysis|investigate/i, /feasibility\s+(study|analysis)/i],
+    primaryAgent: 'analyst',
+    weight: 100
+  },
+  PRODUCT: {
+    keywords: ['prd', 'product', 'user story', 'epic', 'backlog', 'roadmap'],
+    patterns: [/product|user\s+story|backlog/i, /(prd|epic|roadmap)/i],
+    primaryAgent: 'pm',
+    weight: 100
+  },
+  ARCHITECTURE: {
+    keywords: ['architecture', 'system design', 'technology stack', 'scalability'],
+    patterns: [/architecture|system\s+design/i, /(scalability|tech\s+stack)/i],
+    primaryAgent: 'architect',
+    weight: 100
+  },
+  REFACTORING: {
+    keywords: ['refactor', 'code smell', 'clean code', 'technical debt', 'maintainability'],
+    patterns: [/refactor|tech\s+debt/i, /code\s+(smell|quality)/i],
+    primaryAgent: 'refactoring-specialist',
+    weight: 100
+  },
+  IMPLEMENTATION: {
+    keywords: ['implement', 'code', 'feature', 'bug fix', 'develop', 'build'],
+    patterns: [/implement|feature|bug/i, /(develop|build)\s+(new|a)/i],
+    primaryAgent: 'developer',
+    weight: 50 // Lower weight - default fallback
+  }
+};
+
+/**
  * Keywords that indicate higher complexity
  */
 const COMPLEXITY_INDICATORS = {
@@ -371,6 +479,53 @@ const FILE_SCOPE_PATTERNS = {
     /\d+\s+files?/i
   ]
 };
+
+/**
+ * Analyze task type to determine primary agent
+ * @param {string} task - Task description
+ * @returns {Object} Task type analysis with primary agent
+ */
+function analyzeTaskType(task) {
+  const taskLower = task.toLowerCase();
+  const scores = {};
+
+  // Calculate scores for each task type
+  for (const [type, indicators] of Object.entries(TASK_TYPE_INDICATORS)) {
+    scores[type] = 0;
+
+    // Check keywords
+    for (const keyword of indicators.keywords) {
+      if (taskLower.includes(keyword)) {
+        scores[type] += indicators.weight;
+      }
+    }
+
+    // Check patterns with higher weight
+    for (const pattern of indicators.patterns) {
+      if (pattern.test(task)) {
+        scores[type] += indicators.weight * 1.5;
+      }
+    }
+  }
+
+  // Find highest scoring type
+  let maxScore = 0;
+  let taskType = 'IMPLEMENTATION'; // Default
+
+  for (const [type, score] of Object.entries(scores)) {
+    if (score > maxScore) {
+      maxScore = score;
+      taskType = type;
+    }
+  }
+
+  return {
+    taskType,
+    primaryAgent: TASK_TYPE_INDICATORS[taskType].primaryAgent,
+    confidence: maxScore,
+    allScores: scores
+  };
+}
 
 /**
  * Analyze task description for complexity indicators
@@ -661,6 +816,9 @@ export async function classifyTask(taskDescription, options = {}) {
     throw new Error(`Task description exceeds maximum length of ${MAX_TASK_DESCRIPTION_LENGTH} characters`);
   }
 
+  // Analyze task type
+  const typeAnalysis = analyzeTaskType(taskDescription);
+
   // Analyze task description
   const taskAnalysis = analyzeTaskDescription(taskDescription);
 
@@ -669,13 +827,15 @@ export async function classifyTask(taskDescription, options = {}) {
 
   // Determine complexity (includes security keyword floor check)
   const determination = determineComplexity(taskAnalysis, fileAnalysis, taskDescription);
-  
+
   // Get gate requirements
   const complexityConfig = COMPLEXITY_LEVELS[determination.complexity];
-  
+
   // Build result
   const result = {
     complexity: determination.complexity,
+    taskType: typeAnalysis.taskType,
+    primaryAgent: typeAnalysis.primaryAgent,
     gates: { ...complexityConfig.gates },
     reasoning: determination.reasons.join('. ') || 'Default classification based on task scope'
   };
@@ -684,6 +844,10 @@ export async function classifyTask(taskDescription, options = {}) {
   if (options.verbose) {
     result.details = {
       description: complexityConfig.description,
+      taskTypeAnalysis: {
+        confidence: typeAnalysis.confidence,
+        allScores: typeAnalysis.allScores
+      },
       analysis: {
         taskIndicators: taskAnalysis.matchedIndicators,
         scores: determination.scores,
@@ -835,8 +999,10 @@ function formatResult(result, verbose = false) {
   };
   
   lines.push(`\nComplexity: ${badges[result.complexity]} ${result.complexity.toUpperCase()}`);
+  lines.push(`Task Type:  ${result.taskType}`);
+  lines.push(`Primary Agent: ${result.primaryAgent}`);
   lines.push(`\nReasoning: ${result.reasoning}`);
-  
+
   // Gates
   lines.push('\nRequired Gates:');
   lines.push(`  Planner:        ${result.gates.planner ? 'Yes' : 'No'}`);
@@ -905,14 +1071,21 @@ async function main() {
 }
 
 // Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))) {
   main().catch(console.error);
 }
+
+export {
+  analyzeTaskType,
+  TASK_TYPE_INDICATORS
+};
 
 export default {
   classifyTask,
   classifyTasks,
   getComplexityLevel,
   getAllComplexityLevels,
-  COMPLEXITY_LEVELS
+  analyzeTaskType,
+  COMPLEXITY_LEVELS,
+  TASK_TYPE_INDICATORS
 };

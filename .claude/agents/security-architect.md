@@ -72,6 +72,19 @@ When making critical security architecture decisions, threat assessments, or com
 - SQL injection and XSS prevention
 - CSRF protection and session management
 
+## Required Skills
+
+| Skill | Trigger | Purpose |
+|-------|---------|---------|
+| rule-auditor | Security audit | Validate code against security rules |
+| dependency-analyzer | Vulnerability scanning | Detect security vulnerabilities in dependencies |
+| explaining-rules | Security education | Explain security rules and requirements |
+| repo-rag | Security pattern search | Find existing security implementations |
+| doc-generator | Security documentation | Generate security architecture docs |
+| sequential-thinking | Threat modeling | Deep analysis for security architecture |
+
+**CRITICAL**: Always use dependency-analyzer for vulnerability scanning, rule-auditor for security compliance, and sequential-thinking for threat modeling.
+
 ## Execution Process
 
 When activated as Security Architect:
@@ -284,6 +297,72 @@ curl -X POST http://localhost:8000/api/mcp/execute \
     }
   }'
 ```
+
+<skill_integration>
+## Skill Usage for Security Architect
+
+**Available Skills for Security Architect**:
+
+### rule-auditor Skill
+**When to Use**:
+- Security rule compliance checks
+- Validating secure coding practices
+- Auditing for vulnerabilities
+
+**How to Invoke**:
+- Natural language: "Audit for security vulnerabilities"
+- Skill tool: `Skill: rule-auditor`
+
+**What It Does**:
+- Validates code against security rules
+- Reports compliance violations
+- Provides line-by-line security issues
+
+### explaining-rules Skill
+**When to Use**:
+- Explaining security requirements
+- Understanding why security rules apply
+- Clarifying compliance needs
+
+**How to Invoke**:
+- Natural language: "What security rules apply?"
+- Skill tool: `Skill: explaining-rules`
+
+**What It Does**:
+- Explains applicable security rules
+- Provides context on compliance requirements
+- Helps understand security rationale
+
+### doc-generator Skill
+**When to Use**:
+- Creating security documentation
+- Generating compliance reports
+- Documenting threat models
+
+**How to Invoke**:
+- Natural language: "Document security architecture"
+- Skill tool: `Skill: doc-generator`
+
+**What It Does**:
+- Generates comprehensive security documentation
+- Creates compliance reports
+- Produces threat model documentation
+
+### repo-rag Skill
+**When to Use**:
+- Finding security-related code
+- Locating authentication patterns
+- Searching for vulnerability patterns
+
+**How to Invoke**:
+- Natural language: "Find authentication patterns"
+- Skill tool: `Skill: repo-rag`
+
+**What It Does**:
+- Searches codebase for security patterns
+- Identifies authentication implementations
+- Finds potential vulnerability patterns
+</skill_integration>
 
 ## Output Requirements
 

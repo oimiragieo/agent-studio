@@ -257,24 +257,25 @@ phases:
               loop_back: 4.2
             if_no:
               continue: true
-      - step: 4.6
-        agent: orchestrator
-        task: Retrospective
-        inputs:
-          - all_story_artifacts
-        outputs:
-          - retrospective-{{epic_id}}.json
-          - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-orchestrator-retro-{{epic_id}}.json
-        validation:
-          schema: .claude/schemas/retrospective.schema.json
-          gate: .claude/context/history/gates/{{workflow_id}}/04-orchestrator-retro-{{epic_id}}.json
-      - decision:
-          id: more_epics
-          type: more_epics
-          if_yes:
-            loop_back: 4.1
-          if_no:
-            end: true
+      after_stories:
+        - step: 4.6
+          agent: orchestrator
+          task: Retrospective
+          inputs:
+            - all_story_artifacts
+          outputs:
+            - retrospective-{{epic_id}}.json
+            - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-orchestrator-retro-{{epic_id}}.json
+          validation:
+            schema: .claude/schemas/retrospective.schema.json
+            gate: .claude/context/history/gates/{{workflow_id}}/04-orchestrator-retro-{{epic_id}}.json
+        - decision:
+            id: more_epics
+            type: more_epics
+            if_yes:
+              loop_back: 4.1
+            if_no:
+              end: true
 
 completion_criteria:
   - All epics completed

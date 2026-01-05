@@ -1,0 +1,295 @@
+{
+  "version": "2.0.0",
+  "description": "Enhanced security triggers with categorization and priority escalation",
+  "categories": {
+    "authentication": {
+      "keywords": [
+        "login",
+        "signup",
+        "signin",
+        "password",
+        "auth",
+        "authentication",
+        "oauth",
+        "saml",
+        "sso",
+        "single sign-on",
+        "mfa",
+        "2fa",
+        "two-factor",
+        "biometric",
+        "session",
+        "token refresh"
+      ],
+      "priority": "critical",
+      "required_agents": ["security-architect"],
+      "recommended_agents": ["compliance-auditor"],
+      "description": "Authentication and identity management"
+    },
+    "authorization": {
+      "keywords": [
+        "authorization",
+        "authz",
+        "rbac",
+        "role",
+        "permission",
+        "access control",
+        "acl",
+        "policy",
+        "entitlement",
+        "privilege",
+        "scope",
+        "grant"
+      ],
+      "priority": "critical",
+      "required_agents": ["security-architect"],
+      "recommended_agents": ["architect"],
+      "description": "Authorization and access control"
+    },
+    "data_protection": {
+      "keywords": [
+        "encryption",
+        "decrypt",
+        "cipher",
+        "hash",
+        "salt",
+        "crypto",
+        "tls",
+        "ssl",
+        "certificate",
+        "key management",
+        "kms",
+        "data at rest",
+        "data in transit",
+        "pii",
+        "personal data",
+        "sensitive data"
+      ],
+      "priority": "critical",
+      "required_agents": ["security-architect", "compliance-auditor"],
+      "recommended_agents": ["devops"],
+      "description": "Data encryption and protection"
+    },
+    "secrets_management": {
+      "keywords": [
+        "secret",
+        "credential",
+        "api key",
+        "token",
+        "jwt",
+        "bearer token",
+        "access token",
+        "refresh token",
+        "service account",
+        "client secret",
+        "private key",
+        "password",
+        "env variable",
+        "vault"
+      ],
+      "priority": "critical",
+      "required_agents": ["security-architect"],
+      "recommended_agents": ["devops"],
+      "description": "Secrets and credentials management"
+    },
+    "input_validation": {
+      "keywords": [
+        "validation",
+        "sanitization",
+        "xss",
+        "sql injection",
+        "injection",
+        "csrf",
+        "input validation",
+        "output encoding",
+        "escaping",
+        "parameterized query"
+      ],
+      "priority": "high",
+      "required_agents": ["security-architect"],
+      "recommended_agents": ["code-reviewer"],
+      "description": "Input validation and injection prevention"
+    },
+    "network_security": {
+      "keywords": [
+        "firewall",
+        "network",
+        "zero-trust",
+        "vpc",
+        "vpn",
+        "waf",
+        "ddos",
+        "rate limiting",
+        "ip whitelist",
+        "cors",
+        "csp",
+        "content security policy"
+      ],
+      "priority": "high",
+      "required_agents": ["security-architect"],
+      "recommended_agents": ["devops"],
+      "description": "Network security and infrastructure"
+    },
+    "vulnerability": {
+      "keywords": [
+        "vulnerability",
+        "cve",
+        "security patch",
+        "exploit",
+        "attack",
+        "threat",
+        "malware",
+        "backdoor",
+        "zero-day",
+        "penetration test",
+        "security scan"
+      ],
+      "priority": "critical",
+      "required_agents": ["security-architect", "incident-responder"],
+      "recommended_agents": ["devops"],
+      "description": "Vulnerabilities and security patches"
+    },
+    "compliance": {
+      "keywords": [
+        "gdpr",
+        "hipaa",
+        "pci dss",
+        "sox",
+        "ccpa",
+        "soc2",
+        "iso 27001",
+        "compliance",
+        "audit",
+        "regulation",
+        "privacy policy",
+        "data retention",
+        "right to be forgotten"
+      ],
+      "priority": "critical",
+      "required_agents": ["compliance-auditor", "security-architect"],
+      "recommended_agents": ["architect"],
+      "description": "Compliance and regulatory requirements"
+    },
+    "api_security": {
+      "keywords": [
+        "api security",
+        "api key",
+        "api gateway",
+        "graphql",
+        "rest api",
+        "api rate limit",
+        "api authentication",
+        "api authorization",
+        "api throttling",
+        "webhook security"
+      ],
+      "priority": "high",
+      "required_agents": ["security-architect"],
+      "recommended_agents": ["api-designer"],
+      "description": "API security and protection"
+    },
+    "cloud_security": {
+      "keywords": [
+        "iam",
+        "service account",
+        "cloud security",
+        "gcp security",
+        "aws security",
+        "azure security",
+        "cloud iam",
+        "resource policy",
+        "bucket policy",
+        "cloud kms"
+      ],
+      "priority": "high",
+      "required_agents": ["security-architect"],
+      "recommended_agents": ["devops", "cloud-integrator"],
+      "description": "Cloud platform security"
+    },
+    "session_management": {
+      "keywords": [
+        "session",
+        "cookie",
+        "session timeout",
+        "logout",
+        "session fixation",
+        "session hijacking",
+        "remember me",
+        "persistent session"
+      ],
+      "priority": "high",
+      "required_agents": ["security-architect"],
+      "recommended_agents": ["developer"],
+      "description": "Session management and cookies"
+    },
+    "logging_monitoring": {
+      "keywords": [
+        "security logging",
+        "audit log",
+        "security monitoring",
+        "intrusion detection",
+        "anomaly detection",
+        "security event",
+        "siem",
+        "log analysis"
+      ],
+      "priority": "medium",
+      "required_agents": ["security-architect"],
+      "recommended_agents": ["devops"],
+      "description": "Security logging and monitoring"
+    }
+  },
+  "escalationRules": {
+    "critical": {
+      "blocking": true,
+      "require_signoff": true,
+      "notify": ["security-architect", "compliance-auditor"],
+      "max_response_time_hours": 4
+    },
+    "high": {
+      "blocking": true,
+      "require_signoff": true,
+      "notify": ["security-architect"],
+      "max_response_time_hours": 8
+    },
+    "medium": {
+      "blocking": false,
+      "require_signoff": true,
+      "notify": ["security-architect"],
+      "max_response_time_hours": 24
+    },
+    "low": {
+      "blocking": false,
+      "require_signoff": false,
+      "notify": [],
+      "max_response_time_hours": 72
+    }
+  },
+  "combinationRules": {
+    "critical_combinations": [
+      {
+        "categories": ["authentication", "data_protection"],
+        "priority_override": "critical",
+        "description": "Authentication with data protection requires highest security"
+      },
+      {
+        "categories": ["authorization", "secrets_management"],
+        "priority_override": "critical",
+        "description": "Authorization with secrets requires highest security"
+      },
+      {
+        "categories": ["compliance", "data_protection"],
+        "priority_override": "critical",
+        "description": "Compliance with data protection is critical"
+      }
+    ]
+  },
+  "metadata": {
+    "created": "2026-01-04",
+    "totalCategories": 12,
+    "totalKeywords": 150,
+    "version": "2.0.0",
+    "description": "Enhanced security triggers with categorization",
+    "updateFrequency": "as needed"
+  }
+}

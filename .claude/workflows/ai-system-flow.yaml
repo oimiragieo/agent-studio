@@ -49,6 +49,7 @@ steps:
       - model-strategy.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-model-orchestrator.json
     validation:
+      schema: .claude/schemas/model-strategy.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-model-orchestrator.json
     description: |
       Multi-model strategy planning:
@@ -91,6 +92,7 @@ steps:
       - api-specification.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-api-designer.json
     validation:
+      schema: .claude/schemas/api-design.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-api-designer.json
     description: |
       AI API design:
@@ -123,17 +125,45 @@ steps:
       - Prompt templates
 
   - step: 5
+    name: "Code Review"
+    agent: code-reviewer
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 4)
+      - llm-architecture.json (from step 2)
+      - api-specification.json (from step 3)
+    outputs:
+      - code-review-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05-code-reviewer.json
+    validation:
+      schema: .claude/schemas/code-review.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-code-reviewer.json
+    on_failure: "Return to implementation step with feedback"
+    description: |
+      Review AI/LLM implementation for quality, security, and codebase impact:
+      - Verify prompt engineering best practices
+      - Check API error handling and retry logic
+      - Review data privacy and security controls
+      - Validate RAG pipeline implementation
+      - Ensure proper token usage monitoring
+
+  - step: 6
     name: "AI Quality Validation"
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 4)
+      - code-review-{{workflow_id}}.json (from step 5)
       - llm-architecture.json (from step 2)
     outputs:
       - ai-test-results.json
       - quality-report.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
+      schema: .claude/schemas/ai-quality-validation.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/06-qa.json
+    secondary_outputs:
+      - artifact: quality-report.json
+        schema: .claude/schemas/quality-report.schema.json
     description: |
       AI-specific validation:
       - Prompt testing

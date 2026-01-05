@@ -2,6 +2,7 @@ name: Quick Flow Development Workflow
 description: Fast-track workflow for bug fixes, small features, and minor enhancements
 type: quick
 project_type: enhancement
+publish_policy: auto-on-pass  # Automatically publish artifacts after validation passes
 
 # NOTE: The triggers section below is for documentation only.
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
@@ -29,6 +30,7 @@ steps:
       - Analyze requirements and scope
       - Create focused plan for quick implementation
       - Validate plan feasibility
+      - **Publishing**: After validation, use `artifact-publisher` skill to publish plan artifacts to project feed
 
   - step: 1
     name: "Implementation"
@@ -44,19 +46,95 @@ steps:
     validation:
       schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-developer.json
+    description: |
+      Implement bug fix or small feature:
+      - Write code following plan
+      - Create dev-manifest.json with file list
+      - **Publishing**: After validation, use `artifact-publisher` skill to publish final implementation artifacts
 
-  - step: 2
-    name: "Quality Validation"
-    agent: qa
+  - step: 1.5
+    name: "Security Review (Conditional)"
+    agent: security-architect
+    condition: "plan matches security keywords (auth, encrypt, secret, token, password, vulnerability, exploit)"
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 1)
       - code-artifacts (from step 1)
     outputs:
+      - security-review-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01.5-security-architect.json
+    validation:
+      schema: .claude/schemas/security-review.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/01.5-security-architect.json
+    description: |
+      Conditional security review for security-sensitive changes:
+      - Only executes if task matches security keywords
+      - Review authentication and authorization changes
+      - Check for security vulnerabilities
+      - Validate secrets management and encryption
+      - Review input validation and sanitization
+      - Verify secure coding practices
+      - Block merge if critical security issues found
+
+  - step: 2
+    name: "Code Review"
+    agent: code-reviewer
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 1)
+      - code-artifacts (from step 1)
+    outputs:
+      - code-review-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-code-reviewer.json
+    validation:
+      schema: .claude/schemas/code-review.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/02-code-reviewer.json
+    on_failure: "Return to implementation step with feedback"
+    description: |
+      Review quick fix implementation for quality, security, and codebase impact:
+      - Verify fix addresses the issue correctly
+      - Check for unintended side effects
+      - Review security implications
+      - Ensure code quality standards maintained
+      - Validate test coverage
+
+  - step: 3
+    name: "Quality Validation"
+    agent: qa
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 1)
+      - code-review-{{workflow_id}}.json (from step 2)
+      - code-artifacts (from step 1)
+    outputs:
       - quality-report.json
       - test-results.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/02-qa.json
+      gate: .claude/context/history/gates/{{workflow_id}}/03-qa.json
+
+  - step: 4
+    name: "QA Signoff"
+    agent: qa
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - quality-report.json (from step 3)
+      - test-results.json (from step 3)
+      - code-review-{{workflow_id}}.json (from step 2)
+      - security-review-{{workflow_id}}.json (from step 1.5, optional)
+    outputs:
+      - qa-signoff-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-qa.json
+    validation:
+      schema: .claude/schemas/qa-signoff.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-qa.json
+    description: |
+      Final quality signoff for quick fix:
+      - Review test results and quality metrics
+      - Verify no regressions introduced
+      - Confirm security review passed (if applicable)
+      - Validate fix addresses original issue
+      - Sign off on quality for merge
+      - Block merge if quality gates not met
 
 completion_criteria:
   - Implementation validated against requirements

@@ -144,6 +144,168 @@ When activated as DevOps:
    - Monitor performance and optimize resources
    - Implement cost optimization strategies
 
+## Infrastructure Resource Definition Process
+
+When executing Step 4.5 (Infrastructure Resource Definition) in workflows:
+
+**CRITICAL: This step happens BEFORE implementation to provide concrete resource names to developers.**
+
+### 1. Convert Logical Architecture to Concrete Resources
+
+**Input**: System architecture defines logical components (e.g., "Object Storage", "Database", "API Gateway")
+**Output**: Concrete resource definitions with actual names, IDs, and connection strings
+
+**Process**:
+- Review `system-architecture.json` from Architect agent
+- Identify all logical infrastructure components
+- Convert each logical component to concrete cloud resources
+- Generate resource names following naming conventions with unique suffixes: `{project}-{resource}-{env}-{unique_suffix}`
+- Example: Logical "Object Storage" → Concrete "google_storage_bucket: app-assets-dev-a3f2b1c" (with unique suffix)
+
+### 2. Generate Infrastructure Configuration
+
+Create `infrastructure-config.json` with the following structure:
+
+```json
+{
+  "project_name": "project-name",
+  "environment": "development",
+  "cloud_provider": "gcp",
+  "resources": {
+    "compute": [
+      {
+        "name": "app-backend-dev-x7k9m2n",
+        "unique_suffix": "x7k9m2n",
+        "naming_strategy": "unique_hash",
+        "type": "cloud-run",
+        "region": "us-central1",
+        "connection_string": "https://app-backend-dev-x7k9m2n-xyz.run.app"
+      }
+    ],
+    "storage": [
+      {
+        "name": "app-assets-dev-a3f2b1c",
+        "unique_suffix": "a3f2b1c",
+        "naming_strategy": "unique_hash",
+        "type": "gcs-bucket",
+        "region": "us-central1",
+        "access_pattern": "authenticated"
+      }
+    ],
+    "database": [
+      {
+        "name": "app-db-dev-a3f2b1c",
+        "unique_suffix": "a3f2b1c",
+        "naming_strategy": "unique_hash",
+        "type": "cloud-sql",
+        "engine": "postgresql",
+        "connection_string_template": "postgresql://user:{DB_PASSWORD}@/dbname?host=/cloudsql/project:region:app-db-dev-a3f2b1c",
+        "connection_string_secret_ref": "projects/my-proj/secrets/db-password/versions/1"
+      }
+    ]
+  },
+  "environment_variables": {
+    "STORAGE_BUCKET": "app-assets-dev-a3f2b1c",
+    "DATABASE_HOST": "/cloudsql/project:region:app-db-dev-a3f2b1c",
+    "DATABASE_PASSWORD_SECRET_ID": "projects/my-proj/secrets/db-password/versions/1",
+    "API_ENDPOINT": "https://app-backend-dev-x7k9m2n-xyz.run.app"
+  },
+  "secret_references": {
+    "db_password": {
+      "secret_id": "projects/my-proj/secrets/db-password/versions/1",
+      "environment_variable": "DATABASE_PASSWORD_SECRET_ID",
+      "local_development_note": "Set DB_PASSWORD in .env (never commit .env)"
+    }
+  },
+  "service_accounts": [
+    {
+      "name": "app-service-account-dev",
+      "roles": ["storage.objectAdmin", "cloudsql.client"]
+    }
+  ]
+}
+```
+
+### 3. Naming Conventions with Global Uniqueness
+
+**CRITICAL: Cloud resource names must be globally unique (especially GCP buckets, which are globally unique across all Google customers).**
+
+Follow consistent naming patterns with unique suffixes:
+- **Format**: `{project}-{resource-type}-{environment}-{unique_suffix}`
+- **Unique Suffix Generation**: Append a unique suffix to prevent global namespace collisions
+- **Naming Strategy Options**:
+  - `unique_hash`: Generate 6-8 character hash from `project_id + resource_type + timestamp` (recommended)
+  - `project_id`: Use GCP project ID as suffix component
+  - `uuid`: Use short UUID (first 8 characters)
+  - `deterministic`: For reproducible names (use with caution, may still collide)
+
+**Examples**:
+- Storage bucket: `myapp-assets-dev-a3f2b1c` (with unique suffix `a3f2b1c`)
+- Cloud Run service: `myapp-api-dev-x7k9m2n`
+- Cloud SQL instance: `myapp-db-dev-p4q8r5s`
+- Service account: `myapp-sa-dev-t1w3y6z`
+
+**GCP Naming Constraints** (must be enforced):
+- **Storage Buckets**: 3-63 characters, lowercase, alphanumeric and hyphens only, globally unique
+- **Cloud SQL**: 1-98 characters, alphanumeric and hyphens, globally unique per project
+- **Cloud Run**: 1-63 characters, lowercase, alphanumeric and hyphens
+- **Pub/Sub Topics**: 1-255 characters, alphanumeric and hyphens
+
+**Implementation Logic**:
+1. Generate base name: `{project}-{resource-type}-{environment}`
+2. Generate unique suffix using selected strategy (default: `unique_hash`)
+3. Combine: `{base_name}-{unique_suffix}`
+4. Validate length constraints (ensure total length meets cloud provider requirements)
+5. Store both `name` and `unique_suffix` in resource definition
+6. Store `naming_strategy` used for traceability
+
+**Example Resource Definition**:
+```json
+{
+  "name": "myapp-assets-dev-a3f2b1c",
+  "unique_suffix": "a3f2b1c",
+  "naming_strategy": "unique_hash",
+  "type": "gcs-bucket"
+}
+```
+
+### 4. Generate Terraform/Infrastructure-as-Code
+
+Create `terraform-plan.json` or Terraform files:
+- Define all resources in Terraform/HCL format
+- Include variable definitions
+- Add output values for connection strings
+- Document resource dependencies
+
+### 5. Environment Variables
+
+Generate all environment variables needed by the Developer:
+- Connection strings
+- Resource names
+- API endpoints
+- Service account keys (for local development)
+- Configuration values
+
+**IMPORTANT**: These environment variables must be concrete values that developers can use immediately, not placeholders.
+
+### 6. Output Requirements
+
+**Required Outputs**:
+- `infrastructure-config.json`: Complete infrastructure configuration with all resource definitions
+- `terraform-plan.json`: Terraform configuration (optional, but recommended)
+- `deployment-config.json`: Deployment-specific configuration
+
+**Validation**:
+- All resources have concrete names with unique suffixes (no placeholders)
+- Resource names meet cloud provider length and character constraints
+- Unique suffixes are generated and stored for each resource
+- Naming strategy is documented for each resource
+- Connection strings are properly formatted (use placeholders for secrets, never actual passwords)
+- Environment variables are complete
+- Naming conventions are consistent
+- Resource dependencies are documented
+- Secret references are used instead of actual secrets (see Secrets Management section)
+
 ## Infrastructure Patterns
 
 ### Deployment Strategies
@@ -311,6 +473,89 @@ curl -X POST http://localhost:8000/api/mcp/execute \
   }'
 ```
 
+## Secrets Management
+
+**CRITICAL: NEVER output actual secrets, passwords, API keys, or tokens in infrastructure-config.json.**
+
+### Rules for Secret Handling
+
+1. **Reference-Only Pattern**:
+   - ALWAYS use Secret Manager references for sensitive values
+   - Format: `projects/{project_id}/secrets/{secret_name}/versions/{version}`
+   - Example: `projects/my-proj/secrets/db-password/versions/1`
+
+2. **Connection String Templates**:
+   - Use placeholders in connection strings: `postgresql://user:{DB_PASSWORD}@host/db`
+   - NEVER include actual passwords: `postgresql://user:superSecretPassword123@host/db` ❌
+   - Store secret reference separately: `connection_string_secret_ref`
+
+3. **Environment Variables**:
+   - Store secret IDs, not actual secrets: `DB_PASSWORD_SECRET_ID=projects/my-proj/secrets/db-password/versions/1`
+   - NEVER store actual passwords: `DB_PASSWORD=superSecretPassword123` ❌
+   - For local development: Document that secrets should come from `.env` (never commit `.env`)
+
+4. **Secret References Section**:
+   - Include `secret_references` object in infrastructure-config.json
+   - Map each secret to its Secret Manager path
+   - Document environment variable names
+   - Include local development instructions
+
+### Validation Checklist
+
+**Security Checklist** (before outputting `infrastructure-config.json`):
+- [ ] No hardcoded secrets (passwords, API keys, tokens) in any field
+- [ ] All secrets use Secret Manager references (e.g., `projects/my-proj/secrets/db-password/versions/1`)
+- [ ] All resource names include unique suffixes to prevent namespace collisions
+- [ ] Connection strings use placeholders (e.g., `{DB_PASSWORD}`) or Secret Manager references
+- [ ] No actual secret values in connection strings
+- [ ] All sensitive values reference `secret_references` object
+- [ ] Environment variables use Secret Manager IDs, not actual secrets
+- [ ] Local development notes mention `.env` file (never commit `.env`)
+
+Before outputting `infrastructure-config.json`, verify:
+- [ ] No actual passwords in connection strings
+- [ ] No API keys or tokens in plain text
+- [ ] All secrets use Secret Manager references
+- [ ] Connection strings use placeholders (e.g., `{DB_PASSWORD}`)
+- [ ] `secret_references` section is populated
+- [ ] Environment variables reference secret IDs, not actual secrets
+- [ ] Local development notes explain `.env` usage (never commit `.env`)
+
+### Example: Correct Secret Handling
+
+**Good Example** (CORRECT):
+```json
+{
+  "database": [{
+    "name": "myapp-db-dev-a3f2b1c",
+    "connection_string_template": "postgresql://user:{DB_PASSWORD}@host/db",
+    "connection_string_secret_ref": "projects/my-proj/secrets/db-password/versions/1"
+  }],
+  "environment_variables": {
+    "DB_PASSWORD_SECRET_ID": "projects/my-proj/secrets/db-password/versions/1"
+  },
+  "secret_references": {
+    "db_password": {
+      "secret_id": "projects/my-proj/secrets/db-password/versions/1",
+      "environment_variable": "DB_PASSWORD_SECRET_ID",
+      "local_development_note": "Set DB_PASSWORD in .env (never commit .env)"
+    }
+  }
+}
+```
+
+**Bad Example** (DO NOT DO THIS):
+```json
+{
+  "database": [{
+    "connection_string": "postgresql://user:superSecretPassword123@host/db"  // ❌ NEVER DO THIS
+  }],
+  "environment_variables": {
+    "DB_PASSWORD": "superSecretPassword123"  // ❌ NEVER DO THIS
+  }
+}
+```
+
 ## Output Requirements
 
 ### Infrastructure Architecture Document
@@ -355,3 +600,69 @@ Write reasoning JSON to `.claude/context/history/reasoning/<workflow>/devops.jso
 - **Performance Tuning**: Optimize application and infrastructure performance
 - **Cost Optimization**: Right-size resources and implement cost controls
 - **Incident Response**: Debug production issues and implement fixes
+
+<skill_integration>
+## Skill Usage for DevOps
+
+**Available Skills for DevOps**:
+
+### dependency-analyzer Skill
+**When to Use**:
+- Checking deployment dependencies
+- Evaluating security vulnerabilities
+- Planning dependency updates
+
+**How to Invoke**:
+- Natural language: "Analyze deployment dependencies"
+- Skill tool: `Skill: dependency-analyzer`
+
+**What It Does**:
+- Analyzes project dependencies
+- Detects outdated packages and breaking changes
+- Suggests safe update strategies
+
+### git Skill
+**When to Use**:
+- Git repository operations
+- Checking status, diff, commits
+- Branch management
+
+**How to Invoke**:
+- Natural language: "Show git status"
+- Skill tool: `Skill: git`
+
+**What It Does**:
+- Git operations (status, diff, commit, branch, log)
+- Converted from MCP server for 90%+ context savings
+- Supports all common Git workflows
+
+### github Skill
+**When to Use**:
+- GitHub API operations
+- Managing PRs, issues, and actions
+- Repository management
+
+**How to Invoke**:
+- Natural language: "List open PRs"
+- Skill tool: `Skill: github`
+
+**What It Does**:
+- GitHub API operations (repos, issues, PRs, actions)
+- Supports code security and discussions
+- Converted from MCP server for 90%+ context savings
+
+### filesystem Skill
+**When to Use**:
+- File operations (read, write, list)
+- Directory management
+- Configuration file handling
+
+**How to Invoke**:
+- Natural language: "List directory contents"
+- Skill tool: `Skill: filesystem`
+
+**What It Does**:
+- File system operations (read, write, list directories)
+- Converted from MCP server for 90%+ context savings
+- Supports all common file operations
+</skill_integration>

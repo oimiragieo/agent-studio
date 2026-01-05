@@ -87,14 +87,21 @@ Validate your configuration after copying:
 pnpm install
 
 # Run validation
-pnpm validate
+pnpm validate          # Fast validation (config, models)
+pnpm validate:all      # Full validation (includes workflows, references, CUJs, rule index)
 ```
 
-**What it checks**:
+**What fast validation checks**:
+- Configuration files (config.yaml) are valid
+- Model names are correct
+
+**What full validation checks** (pnpm validate:all):
 - All referenced agent files exist
 - All workflow YAML files are valid
 - All schema files exist
+- All CUJ files are valid
 - Hook configurations are valid
+- Cross-platform sync (agents, skills)
 
 ## Configuration Files
 
@@ -503,7 +510,7 @@ node .claude/tools/workflow_runner.js \
 
 ## Customer User Journeys (CUJs)
 
-We have **24 documented Customer User Journeys** that show complete workflows from start to finish:
+We have **48 documented Customer User Journeys** that show complete workflows from start to finish (CUJ-031/032/033 are reserved/removed):
 
 - **Onboarding & Setup** (CUJ-001 to CUJ-003)
 - **Planning & Architecture** (CUJ-004 to CUJ-008)
@@ -1149,7 +1156,7 @@ See `.claude/docs/ENTERPRISE_FEATURES.md` for complete enterprise feature docume
 ## Support
 
 - **First-Time Users**: Start with `FIRST_TIME_USER.md`
-- **CUJ Documentation**: `.claude/docs/cujs/CUJ-INDEX.md` - All 24 user journeys
+- **CUJ Documentation**: `.claude/docs/cujs/CUJ-INDEX.md` - All 47 user journeys
 - **Onboarding Tool**: Run `node .claude/tools/onboarding.mjs` to validate setup
 - Issues: https://github.com/anthropics/claude-code/issues
 - Documentation: `.claude/docs/`

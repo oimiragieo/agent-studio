@@ -261,6 +261,57 @@ ListView.builder(
 - Flutter Integration Tests
 - XCUITest / Espresso
 
+<skill_integration>
+## Skill Usage for Mobile Developer
+
+**Available Skills for Mobile Developer**:
+
+### scaffolder Skill
+**When to Use**:
+- Generating new React Native components
+- Creating Flutter widgets
+- Scaffolding mobile app features
+
+**How to Invoke**:
+- Natural language: "Scaffold a new login screen"
+- Skill tool: `Skill: scaffolder`
+
+**What It Does**:
+- Generates platform-specific boilerplate
+- Creates rule-compliant component structure
+- Applies mobile development patterns
+
+### rule-auditor Skill
+**When to Use**:
+- Validating mobile code patterns
+- Checking platform-specific compliance
+- Auditing accessibility in mobile apps
+
+**How to Invoke**:
+- Natural language: "Audit mobile components for compliance"
+- Skill tool: `Skill: rule-auditor`
+
+**What It Does**:
+- Validates code against mobile rules
+- Reports platform-specific violations
+- Provides actionable fix suggestions
+
+### test-generator Skill
+**When to Use**:
+- Creating mobile unit tests
+- Generating UI test scaffolds
+- Building integration test suites
+
+**How to Invoke**:
+- Natural language: "Generate tests for UserProfile component"
+- Skill tool: `Skill: test-generator`
+
+**What It Does**:
+- Generates Jest/Detox/Flutter tests
+- Creates test fixtures and mocks
+- Follows mobile testing patterns
+</skill_integration>
+
 ## Deliverables
 
 - [ ] Architecture documentation

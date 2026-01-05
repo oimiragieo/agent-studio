@@ -51,3 +51,70 @@ useQuery({
   networkMode: 'offlineFirst',
 });
 ```
+
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+</subagent_coordination>
+
+## <skill_integration>
+## Skill Usage for Mobile Development
+
+**Available Skills for Mobile Developer**:
+
+### @scaffolder Skill
+**When to Use**:
+- Generating mobile components
+- Creating mobile screens
+- Bootstrapping mobile features
+
+**How to Invoke**:
+- Natural language: "Scaffold mobile screen"
+- Cursor mention: `@scaffolder` with component type and name
+
+**What It Does**:
+- Queries rule index for mobile rules
+- Generates mobile boilerplate following project conventions
+- Creates mobile components with proper structure
+
+### @rule-auditor Skill
+**When to Use**:
+- Checking mobile best practices
+- Validating mobile code compliance
+- Auditing mobile code quality
+
+**How to Invoke**:
+- Natural language: "Audit mobile code"
+- Cursor mention: `@rule-auditor` with file or directory path
+
+**What It Does**:
+- Validates mobile code against loaded rules
+- Reports mobile-specific violations
+- Provides mobile best practice feedback
+
+### @test-generator Skill
+**When to Use**:
+- Creating mobile tests
+- Generating mobile test suites
+- Writing mobile test cases
+
+**How to Invoke**:
+- Natural language: "Generate mobile tests"
+- Cursor mention: `@test-generator`
+
+**What It Does**:
+- Generates mobile test code
+- Creates unit and integration tests for mobile
+- Follows mobile testing patterns
+</skill_integration>

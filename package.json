@@ -5,15 +5,22 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "validate": "node scripts/validate-config.mjs && node scripts/validate-model-names.mjs && pnpm index-rules",
+    "validate": "node scripts/validate-config.mjs && node scripts/validate-model-names.mjs",
+    "validate:full": "pnpm validate && node scripts/validate-workflow.mjs && node scripts/validate-all-references.mjs && node scripts/validate-cujs.mjs && pnpm validate:index && pnpm index-rules",
     "validate:verbose": "node scripts/validate-config.mjs --verbose && node scripts/validate-model-names.mjs --verbose",
     "validate:sync": "bash scripts/validate-sync.sh",
     "validate:models": "node scripts/validate-model-names.mjs",
     "validate:workflow": "node scripts/validate-workflow.mjs",
     "validate:references": "node scripts/validate-all-references.mjs",
-    "validate:all": "node scripts/validate-config.mjs && node scripts/validate-model-names.mjs && node scripts/validate-workflow.mjs && node scripts/validate-all-references.mjs && pnpm index-rules",
+    "validate:cujs": "node scripts/validate-cujs.mjs",
+    "validate:index": "node scripts/validate-index.mjs",
+    "validate:index-version": "node scripts/validate-rule-index-paths.mjs --check-version",
+    "validate:index-paths": "node scripts/validate-rule-index-paths.mjs",
+    "validate:all": "pnpm validate:full",
+    "test:version-validation": "node scripts/test-version-validation.mjs",
     "install-agents": "node scripts/install.mjs",
-    "index-rules": "node scripts/generate-rule-index.mjs"
+    "index-rules": "node scripts/generate-rule-index.mjs",
+    "index-rules:prebuilt": "node scripts/generate-prebuilt-rule-index.mjs"
   },
   "keywords": [
     "claude",

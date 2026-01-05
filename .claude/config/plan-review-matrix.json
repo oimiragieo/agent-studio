@@ -1,0 +1,375 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "version": "1.0.0",
+  "description": "Plan review matrix defining which agents review which aspects of plans and under what conditions",
+  "review_domains": {
+    "technical_feasibility": {
+      "reviewer_agent": "architect",
+      "description": "Evaluates technical approach, architecture decisions, and implementation feasibility",
+      "mandatory_for": [
+        "fullstack",
+        "ai-system",
+        "mobile",
+        "api-design",
+        "database-design",
+        "legacy-modernization"
+      ],
+      "optional_for": [
+        "code-quality",
+        "performance",
+        "refactoring"
+      ],
+      "skip_conditions": [
+        "plan_type == 'hotfix' && scope_lines < 50",
+        "plan_type == 'documentation-only'"
+      ],
+      "minimum_score": 7,
+      "blocking_score": 5,
+      "review_criteria": [
+        "Architecture aligns with system design principles",
+        "Technology choices are appropriate for requirements",
+        "Implementation approach is technically sound",
+        "Dependencies and integrations are clearly defined",
+        "Technical risks are identified and mitigated",
+        "Scalability considerations are addressed",
+        "Technical debt implications are documented"
+      ]
+    },
+    "security_implications": {
+      "reviewer_agent": "security-architect",
+      "description": "Assesses security risks, compliance requirements, and security controls",
+      "mandatory_for": [
+        "fullstack",
+        "ai-system",
+        "mobile",
+        "api-design",
+        "legacy-modernization"
+      ],
+      "optional_for": [
+        "code-quality",
+        "performance",
+        "refactoring",
+        "database-design"
+      ],
+      "skip_conditions": [
+        "plan_type == 'documentation-only'",
+        "plan_type == 'ui-only' && no_backend_changes == true"
+      ],
+      "minimum_score": 7,
+      "blocking_score": 4,
+      "review_criteria": [
+        "Authentication and authorization mechanisms are secure",
+        "Data protection measures are adequate",
+        "Input validation and sanitization are implemented",
+        "Secrets management follows best practices",
+        "Compliance requirements are identified (GDPR, HIPAA, etc.)",
+        "Security vulnerabilities are addressed",
+        "Threat model is comprehensive"
+      ]
+    },
+    "product_alignment": {
+      "reviewer_agent": "pm",
+      "description": "Validates alignment with product requirements, user stories, and business objectives",
+      "mandatory_for": [
+        "fullstack",
+        "mobile",
+        "ai-system"
+      ],
+      "optional_for": [
+        "api-design",
+        "code-quality",
+        "performance",
+        "refactoring",
+        "database-design",
+        "legacy-modernization"
+      ],
+      "skip_conditions": [
+        "plan_type == 'technical-debt'",
+        "plan_type == 'infrastructure-only'"
+      ],
+      "minimum_score": 7,
+      "blocking_score": 5,
+      "review_criteria": [
+        "User stories and acceptance criteria are met",
+        "Business objectives are addressed",
+        "Product requirements are fully satisfied",
+        "Feature scope aligns with product roadmap",
+        "Stakeholder needs are considered",
+        "MVP vs full feature set is appropriately scoped",
+        "Product metrics and success criteria are defined"
+      ]
+    },
+    "testability": {
+      "reviewer_agent": "qa",
+      "description": "Evaluates test coverage, test strategy, and quality assurance approach",
+      "mandatory_for": [
+        "fullstack",
+        "ai-system",
+        "mobile",
+        "api-design"
+      ],
+      "optional_for": [
+        "code-quality",
+        "performance",
+        "refactoring",
+        "database-design",
+        "legacy-modernization"
+      ],
+      "skip_conditions": [
+        "plan_type == 'documentation-only'",
+        "plan_type == 'config-change' && test_impact == 'none'"
+      ],
+      "minimum_score": 7,
+      "blocking_score": 5,
+      "review_criteria": [
+        "Test strategy is comprehensive (unit, integration, e2e)",
+        "Test coverage targets are realistic and adequate",
+        "Critical user flows have test coverage",
+        "Edge cases and error conditions are tested",
+        "Test automation is included in plan",
+        "Regression testing approach is defined",
+        "Test data and fixtures are considered"
+      ]
+    },
+    "ux_accessibility": {
+      "reviewer_agent": "ux-expert",
+      "description": "Reviews user experience design, accessibility compliance, and interface usability",
+      "mandatory_for": [
+        "fullstack",
+        "mobile"
+      ],
+      "optional_for": [
+        "ai-system",
+        "api-design",
+        "legacy-modernization"
+      ],
+      "skip_conditions": [
+        "plan_type == 'backend-only'",
+        "plan_type == 'api-only'",
+        "plan_type == 'infrastructure-only'",
+        "no_ui_changes == true"
+      ],
+      "minimum_score": 7,
+      "blocking_score": 5,
+      "review_criteria": [
+        "User interface design follows UX best practices",
+        "User flows are intuitive and efficient",
+        "Accessibility standards are met (WCAG 2.1 AA minimum)",
+        "Responsive design is considered",
+        "Error states and loading states are designed",
+        "User feedback mechanisms are included",
+        "Mobile-first or desktop-first approach is appropriate"
+      ]
+    },
+    "performance_impact": {
+      "reviewer_agent": "performance-engineer",
+      "description": "Assesses performance implications, optimization strategies, and SLA compliance",
+      "mandatory_for": [
+        "performance",
+        "ai-system"
+      ],
+      "optional_for": [
+        "fullstack",
+        "mobile",
+        "api-design",
+        "database-design",
+        "legacy-modernization",
+        "refactoring"
+      ],
+      "skip_conditions": [
+        "plan_type == 'documentation-only'",
+        "plan_type == 'ui-only' && no_backend_changes == true",
+        "performance_impact == 'negligible'"
+      ],
+      "minimum_score": 7,
+      "blocking_score": 5,
+      "review_criteria": [
+        "Performance requirements are clearly defined",
+        "SLA targets are realistic and measurable",
+        "Performance bottlenecks are identified",
+        "Optimization strategies are appropriate",
+        "Database query performance is considered",
+        "Caching strategies are defined",
+        "Load testing approach is included",
+        "Performance monitoring is planned"
+      ]
+    },
+    "database_design": {
+      "reviewer_agent": "database-architect",
+      "description": "Reviews database schema, migrations, query optimization, and data integrity",
+      "mandatory_for": [
+        "database-design",
+        "fullstack"
+      ],
+      "optional_for": [
+        "ai-system",
+        "mobile",
+        "api-design",
+        "legacy-modernization"
+      ],
+      "skip_conditions": [
+        "plan_type == 'frontend-only'",
+        "plan_type == 'ui-only'",
+        "no_database_changes == true"
+      ],
+      "minimum_score": 7,
+      "blocking_score": 5,
+      "review_criteria": [
+        "Database schema is normalized and efficient",
+        "Migration strategy is safe and reversible",
+        "Indexes are appropriate for query patterns",
+        "Data integrity constraints are enforced",
+        "Backup and recovery procedures are defined",
+        "Data retention policies are addressed",
+        "Database scalability is considered",
+        "Query optimization is planned"
+      ]
+    },
+    "api_contract": {
+      "reviewer_agent": "api-designer",
+      "description": "Validates API design, contracts, versioning, and backward compatibility",
+      "mandatory_for": [
+        "api-design",
+        "fullstack"
+      ],
+      "optional_for": [
+        "ai-system",
+        "mobile",
+        "database-design",
+        "legacy-modernization"
+      ],
+      "skip_conditions": [
+        "plan_type == 'frontend-only'",
+        "plan_type == 'ui-only'",
+        "no_api_changes == true"
+      ],
+      "minimum_score": 7,
+      "blocking_score": 5,
+      "review_criteria": [
+        "API design follows REST/GraphQL/gRPC best practices",
+        "API contracts are clearly defined (OpenAPI/GraphQL schema)",
+        "Versioning strategy is defined",
+        "Backward compatibility is maintained",
+        "Error responses are standardized",
+        "Rate limiting and throttling are considered",
+        "API documentation is comprehensive",
+        "Authentication and authorization are secure"
+      ]
+    },
+    "compliance_requirements": {
+      "reviewer_agent": "compliance-auditor",
+      "description": "Ensures compliance with regulatory requirements (GDPR, HIPAA, SOC2, PCI-DSS)",
+      "mandatory_for": [],
+      "optional_for": [
+        "fullstack",
+        "ai-system",
+        "mobile",
+        "api-design",
+        "database-design",
+        "legacy-modernization"
+      ],
+      "skip_conditions": [
+        "plan_type == 'documentation-only'",
+        "plan_type == 'internal-tool' && no_pii == true",
+        "compliance_scope == 'none'"
+      ],
+      "minimum_score": 7,
+      "blocking_score": 4,
+      "review_criteria": [
+        "GDPR compliance is addressed (if applicable)",
+        "HIPAA compliance is addressed (if applicable)",
+        "SOC2 requirements are met (if applicable)",
+        "PCI-DSS compliance is ensured (if applicable)",
+        "Data privacy controls are implemented",
+        "Audit logging is comprehensive",
+        "Compliance documentation is complete",
+        "Regulatory reporting is considered"
+      ]
+    }
+  },
+  "scoring_rules": {
+    "scale": {
+      "min": 0,
+      "max": 10,
+      "description": "0 = Critical issues, 10 = Excellent"
+    },
+    "score_levels": {
+      "0-4": {
+        "label": "Blocking",
+        "action": "Plan must be revised before implementation",
+        "severity": "critical"
+      },
+      "5-6": {
+        "label": "Needs Improvement",
+        "action": "Address issues before proceeding",
+        "severity": "high"
+      },
+      "7-8": {
+        "label": "Acceptable",
+        "action": "May proceed with minor revisions",
+        "severity": "medium"
+      },
+      "9-10": {
+        "label": "Excellent",
+        "action": "Approved without reservations",
+        "severity": "low"
+      }
+    },
+    "aggregation": {
+      "method": "weighted_average",
+      "weights": {
+        "technical_feasibility": 1.5,
+        "security_implications": 2.0,
+        "product_alignment": 1.2,
+        "testability": 1.3,
+        "ux_accessibility": 1.0,
+        "performance_impact": 1.2,
+        "database_design": 1.3,
+        "api_contract": 1.2,
+        "compliance_requirements": 1.8
+      },
+      "minimum_weighted_score": 7.0,
+      "blocking_weighted_score": 5.0
+    }
+  },
+  "escalation_rules": {
+    "blocking_review": {
+      "condition": "Any review score < blocking_score for that domain",
+      "action": "Escalate to Master Orchestrator",
+      "notification": "PM, Architect, and relevant domain expert",
+      "required_resolution": "Plan must be revised and re-reviewed"
+    },
+    "multiple_low_scores": {
+      "condition": "3+ reviews with scores between blocking_score and minimum_score",
+      "action": "Escalate to Master Orchestrator",
+      "notification": "PM and Architect",
+      "required_resolution": "Plan should be revised"
+    },
+    "weighted_average_below_threshold": {
+      "condition": "weighted_average < minimum_weighted_score",
+      "action": "Escalate to Master Orchestrator",
+      "notification": "PM and all reviewers",
+      "required_resolution": "Plan must be revised"
+    },
+    "compliance_failure": {
+      "condition": "compliance_requirements score < 5",
+      "action": "Immediate escalation to Compliance Auditor and Master Orchestrator",
+      "notification": "Legal, Compliance, PM, Architect",
+      "required_resolution": "Compliance issues must be resolved before proceeding"
+    },
+    "security_failure": {
+      "condition": "security_implications score < 4",
+      "action": "Immediate escalation to Security Architect and Master Orchestrator",
+      "notification": "Security Team, PM, Architect",
+      "required_resolution": "Security issues must be resolved before proceeding"
+    }
+  },
+  "review_process": {
+    "timing": "After Planner creates plan, before Developer starts implementation",
+    "parallel_reviews": true,
+    "review_timeout": "24 hours",
+    "auto_approve_threshold": 9.0,
+    "review_artifact": "plan-review-{{workflow_id}}.json",
+    "review_schema": ".claude/schemas/plan-review.schema.json"
+  }
+}

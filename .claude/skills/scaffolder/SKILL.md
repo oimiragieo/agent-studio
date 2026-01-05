@@ -2,16 +2,19 @@
 name: scaffolder
 description: Generates boilerplate code following loaded rules. Creates new components, modules, APIs, and features that automatically comply with your coding standards. Extracts patterns from rules and applies them consistently.
 allowed-tools: read, write, glob, search, codebase_search
-version: 2.0
+version: 2.1
+executable: .claude/skills/scaffolder/scripts/scaffold.mjs
+test_suite: .claude/skills/scaffolder/scripts/test-scaffold.mjs
 best_practices:
   - Identify target framework from manifest.yaml
   - Extract patterns from relevant rule files
   - Generate complete file structure (types, tests, etc.)
   - Follow project naming conventions
   - Include proper imports and exports
+  - Use executable script for programmatic invocation
 error_handling: graceful
 streaming: supported
-templates: [component, api, test, hook, context, feature]
+templates: [component, client-component, api, fastapi-route, test, hook, context, feature]
 ---
 
 <identity>
@@ -59,7 +62,7 @@ Determine which technologies apply based on what you're scaffolding:
 
 Load only the relevant rule files from the index (progressive disclosure):
 - Master rules first (from `.claude/rules-master/`)
-- Archive rules supplement (from `.claude/archive/`)
+- Library rules supplement (from `.claude/rules-library/`)
 - Load 3-5 most relevant rules, not all 1,081
 
 ### Step 4: Extract Patterns from Rules
@@ -84,9 +87,48 @@ Parse the loaded rule files to extract scaffolding patterns:
 - Props interface for each component
 - Error boundaries for critical sections
 
-### Step 5: Generate Compliant Code
+### Step 5: Check for Template Blocks
 
-Apply extracted patterns to generate code that passes rule-auditor.
+Before generating code, check for explicit template blocks in loaded rule files:
+
+1. **Look for `<template>` blocks** in rule files:
+   - Pattern: `<template name="component">...</template>`
+   - Pattern: `<template name="api">...</template>`
+   - Extract template content and variables (e.g., `{{Name}}`, `{{Props}}`)
+
+2. **Template Priority**:
+   - **First**: Use `<template>` blocks from loaded rule files (most specific)
+   - **Second**: Use explicit templates from `.claude/templates/` directory
+   - **Third**: Infer patterns from rule text (fallback)
+
+3. **Template Validation**:
+   - Verify template file exists (if using `.claude/templates/`)
+   - Check template syntax is valid
+   - Ensure required template variables are provided
+   - Validate template structure matches expected output type
+
+### Step 6: Generate Compliant Code
+
+Apply extracted patterns or templates to generate code that passes rule-auditor.
+
+### Step 7: Validate Generated Code
+
+After generating code, validate it matches the template and rules:
+
+1. **Template Validation**:
+   - Check generated code matches template structure (if template was used)
+   - Verify all template variables were replaced
+   - Ensure no template placeholders remain (e.g., `{{Name}}`)
+
+2. **Rule Compliance Validation**:
+   - Run rule-auditor on generated code
+   - Fix any violations found
+   - Ensure generated code follows all loaded rules
+
+3. **Structure Validation**:
+   - Verify file structure matches expected (imports, exports, etc.)
+   - Check naming conventions are followed
+   - Ensure proper file organization
 </execution_process>
 
 <best_practices>
@@ -567,7 +609,23 @@ describe('User Flow', () => {
 </code_example>
 
 <usage_example>
-**Quick Commands**:
+**Programmatic Usage** (recommended for automation):
+
+```bash
+# Using executable script directly
+node .claude/skills/scaffolder/scripts/scaffold.mjs component UserProfile
+node .claude/skills/scaffolder/scripts/scaffold.mjs client-component SearchBar --path src/components
+node .claude/skills/scaffolder/scripts/scaffold.mjs api users
+node .claude/skills/scaffolder/scripts/scaffold.mjs test src/components/Button.tsx
+
+# List available templates
+node .claude/skills/scaffolder/scripts/scaffold.mjs --list
+
+# Run tests
+node .claude/skills/scaffolder/scripts/test-scaffold.mjs
+```
+
+**Quick Commands** (agent invocation):
 
 ```
 # Generate a Server Component

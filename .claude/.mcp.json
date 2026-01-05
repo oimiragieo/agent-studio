@@ -107,6 +107,12 @@
       "description": "Chrome DevTools Protocol integration for browser automation, debugging, and performance analysis. Allows AI to control and inspect live Chrome instances.",
       "deferLoading": true,
       "alwaysLoadTools": ["take_screenshot", "navigate_page"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Sequential thinking and structured problem solving. Helps break down complex problems into steps with revision capabilities.",
+      "deferLoading": true
     }
   }
 }

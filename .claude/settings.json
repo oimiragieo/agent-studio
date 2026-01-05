@@ -4,18 +4,52 @@
   "tool_permissions": {
     "always_allow": [
       "Read",
-      "Search"
-    ],
-    "require_confirmation": [
+      "Search",
       "Edit",
-      "Bash"
+      "Write",
+      "Glob",
+      "Grep",
+      "Task",
+      "Bash(node *)",
+      "Bash(python *)",
+      "Bash(npm *)",
+      "Bash(pnpm *)",
+      "Bash(yarn *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(for *)",
+      "Bash(echo *)",
+      "Bash(cd *)",
+      "Bash(pwd)",
+      "Bash(which *)",
+      "Bash(where *)",
+      "Bash(test *)",
+      "Bash([ *)",
+      "Bash(curl *)",
+      "Bash(wget *)"
     ],
+    "require_confirmation": [],
     "always_deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
       "Bash(rm -rf *)",
+      "Bash(sudo rm *)",
       "Bash(format *)",
-      "Bash(dd *)",
+      "Bash(dd if=*)",
       "Bash(mkfs *)",
-      "Bash(npm run dev)"
+      "Bash(shutdown *)",
+      "Bash(reboot *)",
+      "Bash(init 0)",
+      "Bash(init 6)"
     ]
   },
   "bash_commands": {
@@ -23,25 +57,21 @@
       "npm run *",
       "pnpm *",
       "yarn *",
-      "python -m pytest *",
-      "git status",
-      "git diff",
-      "git log",
+      "python *",
+      "node *",
+      "npx *",
+      "git *",
       "npm test",
       "npm run lint",
       "npm run typecheck"
     ],
-    "require_confirmation": [
-      "git commit",
-      "git push",
-      "npm install",
-      "npm uninstall"
-    ],
+    "require_confirmation": [],
     "blocked_patterns": [
-      "rm -rf",
-      "sudo *",
+      "rm -rf /",
+      "rm -rf ~",
+      "sudo rm",
       "format *",
-      "dd *",
+      "dd if=",
       "mkfs *"
     ]
   },

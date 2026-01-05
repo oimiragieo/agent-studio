@@ -1,0 +1,355 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "version": "1.0.0",
+  "description": "Signoff matrix defining which agents provide final approval for deliverables and under what conditions",
+  "signoff_types": {
+    "quality_signoff": {
+      "signoff_agent": "qa",
+      "description": "Quality assurance approval for code quality, test coverage, and defect resolution",
+      "artifact_name": "quality-signoff-{{workflow_id}}.json",
+      "schema": ".claude/schemas/quality-signoff.schema.json",
+      "required_fields": [
+        "verdict",
+        "test_coverage_percentage",
+        "critical_bugs_found",
+        "regression_status",
+        "test_results_summary"
+      ],
+      "passing_conditions": {
+        "verdict": "approved",
+        "test_coverage_percentage": ">=80",
+        "critical_bugs_found": "==0",
+        "regression_status": "passed"
+      },
+      "conditional_approval": {
+        "condition": "test_coverage_percentage >= 70 && critical_bugs_found == 0",
+        "requires": "PM approval for reduced coverage"
+      }
+    },
+    "security_signoff": {
+      "signoff_agent": "security-architect",
+      "description": "Security approval for vulnerability assessment, threat modeling, and security controls",
+      "artifact_name": "security-signoff-{{workflow_id}}.json",
+      "schema": ".claude/schemas/security-signoff.schema.json",
+      "required_fields": [
+        "verdict",
+        "vulnerabilities_found",
+        "critical_vulnerabilities",
+        "security_review_complete",
+        "threat_model_verified"
+      ],
+      "passing_conditions": {
+        "verdict": "approved",
+        "critical_vulnerabilities": "==0",
+        "security_review_complete": true,
+        "threat_model_verified": true
+      },
+      "blocking_conditions": {
+        "critical_vulnerabilities": ">0",
+        "high_vulnerabilities": ">3"
+      }
+    },
+    "architecture_signoff": {
+      "signoff_agent": "architect",
+      "description": "Architecture approval for system design, technical decisions, and scalability",
+      "artifact_name": "architecture-signoff-{{workflow_id}}.json",
+      "schema": ".claude/schemas/architecture-signoff.schema.json",
+      "required_fields": [
+        "verdict",
+        "architecture_alignment",
+        "technical_debt_acceptable",
+        "scalability_verified",
+        "design_review_complete"
+      ],
+      "passing_conditions": {
+        "verdict": "approved",
+        "architecture_alignment": true,
+        "technical_debt_acceptable": true,
+        "scalability_verified": true
+      },
+      "conditional_approval": {
+        "condition": "technical_debt_acceptable == false",
+        "requires": "Technical debt documented and planned for resolution"
+      }
+    },
+    "product_signoff": {
+      "signoff_agent": "pm",
+      "description": "Product approval for requirements fulfillment, user stories, and acceptance criteria",
+      "artifact_name": "product-signoff-{{workflow_id}}.json",
+      "schema": ".claude/schemas/product-signoff.schema.json",
+      "required_fields": [
+        "verdict",
+        "acceptance_criteria_met",
+        "user_stories_complete",
+        "stakeholder_approval"
+      ],
+      "passing_conditions": {
+        "verdict": "approved",
+        "acceptance_criteria_met": true,
+        "user_stories_complete": ">=95",
+        "stakeholder_approval": true
+      },
+      "conditional_approval": {
+        "condition": "user_stories_complete >= 90 && user_stories_complete < 95",
+        "requires": "Stakeholder approval for partial completion"
+      }
+    },
+    "compliance_signoff": {
+      "signoff_agent": "compliance-auditor",
+      "description": "Compliance approval for regulatory requirements (GDPR, HIPAA, SOC2, PCI-DSS)",
+      "artifact_name": "compliance-signoff-{{workflow_id}}.json",
+      "schema": ".claude/schemas/compliance-signoff.schema.json",
+      "required_fields": [
+        "verdict",
+        "regulations_checked",
+        "violations_found",
+        "remediation_complete"
+      ],
+      "passing_conditions": {
+        "verdict": "approved",
+        "violations_found": "==0",
+        "remediation_complete": true
+      },
+      "blocking_conditions": {
+        "violations_found": ">0",
+        "critical_violations": ">0"
+      }
+    },
+    "accessibility_signoff": {
+      "signoff_agent": "accessibility-expert",
+      "description": "Accessibility approval for WCAG compliance and inclusive design",
+      "artifact_name": "accessibility-signoff-{{workflow_id}}.json",
+      "schema": ".claude/schemas/accessibility-signoff.schema.json",
+      "required_fields": [
+        "verdict",
+        "wcag_level",
+        "critical_issues",
+        "keyboard_nav_verified",
+        "screen_reader_tested"
+      ],
+      "passing_conditions": {
+        "verdict": "approved",
+        "wcag_level": ">=AA",
+        "critical_issues": "==0",
+        "keyboard_nav_verified": true
+      },
+      "conditional_approval": {
+        "condition": "wcag_level == 'AA' && minor_issues <= 5",
+        "requires": "Minor issues documented and planned for resolution"
+      }
+    },
+    "performance_signoff": {
+      "signoff_agent": "performance-engineer",
+      "description": "Performance approval for SLA compliance, load testing, and optimization",
+      "artifact_name": "performance-signoff-{{workflow_id}}.json",
+      "schema": ".claude/schemas/performance-signoff.schema.json",
+      "required_fields": [
+        "verdict",
+        "sla_compliance",
+        "load_test_passed",
+        "performance_metrics"
+      ],
+      "passing_conditions": {
+        "verdict": "approved",
+        "sla_compliance": true,
+        "load_test_passed": true
+      },
+      "conditional_approval": {
+        "condition": "sla_compliance == true && performance_degradation < 10%",
+        "requires": "Performance degradation acceptable with mitigation plan"
+      }
+    }
+  },
+  "workflow_signoff_requirements": {
+    "fullstack": {
+      "required_signoffs": [
+        "quality_signoff",
+        "security_signoff",
+        "architecture_signoff",
+        "product_signoff"
+      ],
+      "optional_signoffs": [
+        "accessibility_signoff",
+        "performance_signoff",
+        "compliance_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    },
+    "ai-system": {
+      "required_signoffs": [
+        "quality_signoff",
+        "security_signoff",
+        "architecture_signoff",
+        "product_signoff",
+        "performance_signoff"
+      ],
+      "optional_signoffs": [
+        "compliance_signoff",
+        "accessibility_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    },
+    "mobile": {
+      "required_signoffs": [
+        "quality_signoff",
+        "security_signoff",
+        "architecture_signoff",
+        "product_signoff",
+        "accessibility_signoff"
+      ],
+      "optional_signoffs": [
+        "performance_signoff",
+        "compliance_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    },
+    "code-quality": {
+      "required_signoffs": [
+        "quality_signoff",
+        "architecture_signoff"
+      ],
+      "optional_signoffs": [
+        "security_signoff",
+        "performance_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    },
+    "performance": {
+      "required_signoffs": [
+        "quality_signoff",
+        "performance_signoff",
+        "architecture_signoff"
+      ],
+      "optional_signoffs": [
+        "security_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    },
+    "refactoring": {
+      "required_signoffs": [
+        "quality_signoff",
+        "architecture_signoff"
+      ],
+      "optional_signoffs": [
+        "security_signoff",
+        "performance_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    },
+    "incident": {
+      "required_signoffs": [
+        "quality_signoff",
+        "security_signoff"
+      ],
+      "optional_signoffs": [
+        "architecture_signoff",
+        "product_signoff"
+      ],
+      "signoff_order": "sequential",
+      "all_required_must_pass": true,
+      "expedited": true
+    },
+    "api-design": {
+      "required_signoffs": [
+        "quality_signoff",
+        "security_signoff",
+        "architecture_signoff"
+      ],
+      "optional_signoffs": [
+        "product_signoff",
+        "performance_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    },
+    "database-design": {
+      "required_signoffs": [
+        "quality_signoff",
+        "security_signoff",
+        "architecture_signoff"
+      ],
+      "optional_signoffs": [
+        "performance_signoff",
+        "compliance_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    },
+    "legacy-modernization": {
+      "required_signoffs": [
+        "quality_signoff",
+        "security_signoff",
+        "architecture_signoff",
+        "product_signoff"
+      ],
+      "optional_signoffs": [
+        "performance_signoff",
+        "compliance_signoff",
+        "accessibility_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    },
+    "compliance": {
+      "required_signoffs": [
+        "quality_signoff",
+        "security_signoff",
+        "compliance_signoff"
+      ],
+      "optional_signoffs": [
+        "architecture_signoff"
+      ],
+      "signoff_order": "parallel",
+      "all_required_must_pass": true
+    }
+  },
+  "signoff_process": {
+    "timing": "After Developer completes implementation and before Code Reviewer reviews",
+    "parallel_signoffs": true,
+    "signoff_timeout": "48 hours",
+    "auto_approve_threshold": null,
+    "escalation_on_failure": true,
+    "retry_allowed": true,
+    "max_retries": 2,
+    "signoff_artifact_location": ".claude/context/artifacts/signoffs/",
+    "signoff_summary_artifact": "signoff-summary-{{workflow_id}}.json"
+  },
+  "escalation_rules": {
+    "signoff_failure": {
+      "condition": "Any required signoff has verdict != 'approved'",
+      "action": "Escalate to Master Orchestrator",
+      "notification": "PM, Architect, and failing signoff agent",
+      "required_resolution": "Address signoff issues and retry"
+    },
+    "multiple_signoff_failures": {
+      "condition": "2+ required signoffs fail",
+      "action": "Escalate to Master Orchestrator and PM",
+      "notification": "All stakeholders",
+      "required_resolution": "Major revision required"
+    },
+    "blocking_security_failure": {
+      "condition": "security_signoff.critical_vulnerabilities > 0",
+      "action": "Immediate escalation to Security Architect and Master Orchestrator",
+      "notification": "Security Team, PM, Architect, Developer",
+      "required_resolution": "Security issues must be resolved immediately"
+    },
+    "blocking_compliance_failure": {
+      "condition": "compliance_signoff.violations_found > 0",
+      "action": "Immediate escalation to Compliance Auditor and Master Orchestrator",
+      "notification": "Legal, Compliance, PM, Architect",
+      "required_resolution": "Compliance violations must be resolved immediately"
+    },
+    "max_retries_exceeded": {
+      "condition": "Signoff retries >= max_retries",
+      "action": "Escalate to Master Orchestrator and PM",
+      "notification": "All stakeholders",
+      "required_resolution": "Manual review and decision required"
+    }
+  }
+}

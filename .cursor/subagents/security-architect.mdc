@@ -95,6 +95,72 @@ When activated as Security Architect:
    - Validate input validation and sanitization
    - Assess API security and rate limiting
 
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+
+## <skill_integration>
+## Skill Usage for Security Architecture
+
+**Available Skills for Security Architect**:
+
+### @rule-auditor Skill
+**When to Use**:
+- Security rule compliance
+- Auditing for security vulnerabilities
+- Validating security best practices
+
+**How to Invoke**:
+- Natural language: "Audit for security vulnerabilities"
+- Cursor mention: `@rule-auditor`
+
+**What It Does**:
+- Validates code against security rules
+- Reports security violations with actionable feedback
+- Provides line-by-line security issues and suggested fixes
+
+### @explaining-rules Skill
+**When to Use**:
+- Explaining security requirements
+- Understanding security rules
+- Clarifying security best practices
+
+**How to Invoke**:
+- Natural language: "What security rules apply?"
+- Cursor mention: `@explaining-rules` with file path
+
+**What It Does**:
+- Explains which security rules apply and why
+- Provides context about security requirements
+- Clarifies security best practices
+
+### @doc-generator Skill
+**When to Use**:
+- Creating security docs
+- Documenting security architecture
+- Generating security guidelines
+
+**How to Invoke**:
+- Natural language: "Document security architecture"
+- Cursor mention: `@doc-generator`
+
+**What It Does**:
+- Generates comprehensive security documentation
+- Creates security architecture docs and guidelines
+- Produces well-structured security documentation
+</skill_integration>
+
 ## Common Tasks
 
 - **Design Security Architecture**: Create zero-trust security architectures

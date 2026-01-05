@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Gemini Validation Results",
+  "description": "Schema for Gemini AI validation results in UI perfection workflow",
+  "required": ["validation_id", "validation_date", "model_used", "validation_status", "scores"],
+  "properties": {
+    "validation_id": { "type": "string", "description": "Unique identifier for Gemini validation" },
+    "validation_date": { "type": "string", "format": "date-time" },
+    "model_used": { "type": "string", "description": "Gemini model version used" },
+    "target_component": { "type": "string", "description": "Component being validated" },
+    "validation_status": { "type": "string", "enum": ["passed", "failed", "partial", "error"] },
+    "execution_time_ms": { "type": "number", "minimum": 0 },
+    "scores": {
+      "type": "object",
+      "required": ["overall_score"],
+      "properties": {
+        "overall_score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "visual_hierarchy": { "type": "number", "minimum": 0, "maximum": 100 },
+        "design_consistency": { "type": "number", "minimum": 0, "maximum": 100 },
+        "accessibility": { "type": "number", "minimum": 0, "maximum": 100 },
+        "enterprise_polish": { "type": "number", "minimum": 0, "maximum": 100 },
+        "responsiveness": { "type": "number", "minimum": 0, "maximum": 100 },
+        "glassmorphism_compliance": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "visual_analysis": {
+      "type": "object",
+      "properties": {
+        "color_scheme": {
+          "type": "object",
+          "properties": {
+            "harmony_score": { "type": "number", "minimum": 0, "maximum": 100 },
+            "contrast_issues": { "type": "array", "items": { "type": "string" } },
+            "recommendations": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "typography": {
+          "type": "object",
+          "properties": {
+            "readability_score": { "type": "number", "minimum": 0, "maximum": 100 },
+            "hierarchy_clear": { "type": "boolean" },
+            "issues": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "spacing": {
+          "type": "object",
+          "properties": {
+            "consistency_score": { "type": "number", "minimum": 0, "maximum": 100 },
+            "issues": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "layout": {
+          "type": "object",
+          "properties": {
+            "balance_score": { "type": "number", "minimum": 0, "maximum": 100 },
+            "alignment_issues": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "issues_found": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["issue", "severity"],
+        "properties": {
+          "issue": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "category": { "type": "string", "enum": ["visual", "accessibility", "consistency", "performance", "usability"] },
+          "location": { "type": "string" },
+          "recommendation": { "type": "string" },
+          "auto_fixable": { "type": "boolean" }
+        }
+      }
+    },
+    "comparison_with_claude": {
+      "type": "object",
+      "properties": {
+        "claude_score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "gemini_score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "score_difference": { "type": "number" },
+        "use_gemini_score": { "type": "boolean", "description": "True if Gemini score is 10+ points lower" },
+        "consensus_score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "areas_of_agreement": { "type": "array", "items": { "type": "string" } },
+        "areas_of_disagreement": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "recommendation": { "type": "string" },
+          "priority": { "type": "string", "enum": ["P0", "P1", "P2", "P3"] },
+          "expected_score_impact": { "type": "number" }
+        }
+      }
+    },
+    "pass_threshold": { "type": "number", "minimum": 0, "maximum": 100 },
+    "meets_threshold": { "type": "boolean" }
+  }
+}

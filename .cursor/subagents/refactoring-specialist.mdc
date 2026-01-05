@@ -45,3 +45,85 @@ function printOwing() {
 3. Plan refactoring sequence
 4. Execute one at a time
 5. Verify metrics improved
+
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+</subagent_coordination>
+
+## <skill_integration>
+## Skill Usage for Refactoring
+
+**Available Skills for Refactoring Specialist**:
+
+### @repo-rag Skill
+**When to Use**:
+- Finding code to refactor
+- Understanding code patterns
+- Discovering code smells
+
+**How to Invoke**:
+- Natural language: "Find code smells in this module"
+- Cursor mention: `@repo-rag` with search query
+
+**What It Does**:
+- Performs codebase retrieval using semantic search
+- Finds code patterns and potential refactoring opportunities
+- Identifies code smells and anti-patterns
+
+### @rule-auditor Skill
+**When to Use**:
+- Validating refactored code
+- Checking rule compliance after refactoring
+- Ensuring refactored code meets standards
+
+**How to Invoke**:
+- Natural language: "Validate refactored code"
+- Cursor mention: `@rule-auditor` with file or directory path
+
+**What It Does**:
+- Validates code against loaded rules
+- Reports compliance violations with actionable feedback
+- Ensures refactored code meets quality standards
+
+### @fixing-rule-violations Skill
+**When to Use**:
+- Fixing violations
+- Correcting rule violations
+- Applying rule fixes
+
+**How to Invoke**:
+- Natural language: "Fix rule violations in this file"
+- Cursor mention: `@fixing-rule-violations`
+
+**What It Does**:
+- Provides fix instructions for rule violations
+- Suggests corrections for code issues
+- Helps resolve rule compliance problems
+
+### @explaining-rules Skill
+**When to Use**:
+- Understanding patterns
+- Explaining best practices
+- Clarifying rule requirements
+
+**How to Invoke**:
+- Natural language: "Explain best practice for this"
+- Cursor mention: `@explaining-rules` with file path
+
+**What It Does**:
+- Explains which rules apply and why
+- Provides context about rule requirements
+- Clarifies best practices for refactoring
+</skill_integration>

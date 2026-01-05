@@ -115,6 +115,64 @@
           }
         }
       }
+    },
+    "local_emulation": {
+      "type": "object",
+      "description": "Local emulation strategy for cloud services",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether local emulation is enabled"
+        },
+        "emulators": {
+          "type": "array",
+          "description": "List of emulators to use for local testing",
+          "items": {
+            "type": "object",
+            "properties": {
+              "service": {
+                "type": "string",
+                "description": "Cloud service name (e.g., pubsub, datastore, storage)"
+              },
+              "emulator": {
+                "type": "string",
+                "description": "Emulator name (e.g., pubsub-emulator, datastore-emulator, testcontainers)"
+              },
+              "port": {
+                "type": "number",
+                "description": "Port number for emulator"
+              },
+              "config": {
+                "type": "object",
+                "description": "Emulator-specific configuration"
+              }
+            },
+            "required": ["service", "emulator"]
+          }
+        },
+        "emulator_config": {
+          "type": "object",
+          "description": "Configuration for each emulator",
+          "additionalProperties": {
+            "type": "object",
+            "description": "Emulator-specific configuration"
+          }
+        },
+        "test_environment": {
+          "type": "string",
+          "enum": ["local", "staging", "production"],
+          "description": "Primary test environment",
+          "default": "local"
+        },
+        "docker_compose": {
+          "type": "string",
+          "description": "Path to docker-compose.yml for emulator setup"
+        },
+        "setup_instructions": {
+          "type": "string",
+          "description": "Instructions for setting up local emulators"
+        }
+      }
     }
   }
 }

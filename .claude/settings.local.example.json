@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "version": "2.0",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "tool": "Task",
+        "command": ".claude/hooks/skill-injection-hook.sh"
+      }
+    ]
+  },
+  "comments": {
+    "hooks": "Enable skill injection hook for automatic skill loading when Task tool is used",
+    "windows_users": "Windows users should use .claude/hooks/skill-injection-hook.ps1 instead of .sh"
+  }
+}

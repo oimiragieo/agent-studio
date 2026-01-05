@@ -1,0 +1,145 @@
+# Prompt Template Library Registry
+# Maps prompt templates to agents and use cases
+
+prompt_templates:
+  - id: codebase-walkthrough
+    name: Codebase Walkthrough
+    description: Comprehensive codebase understanding and exploration
+    file: .claude/templates/prompts/codebase-walkthrough.md
+    category: analysis
+    agents:
+      - analyst
+      - architect
+      - developer
+    use_cases:
+      - initial_codebase_exploration
+      - onboarding
+      - architecture_documentation
+      - refactoring_planning
+    tags:
+      - codebase
+      - architecture
+      - exploration
+      - documentation
+
+  - id: deep-dive
+    name: Deep Dive
+    description: Detailed analysis of specific code areas or features
+    file: .claude/templates/prompts/deep-dive.md
+    category: analysis
+    agents:
+      - code-reviewer
+      - architect
+      - developer
+      - performance-engineer
+    use_cases:
+      - feature_analysis
+      - code_review_preparation
+      - refactoring_planning
+      - performance_optimization
+    tags:
+      - analysis
+      - code-review
+      - refactoring
+      - performance
+
+  - id: senior-review
+    name: Senior Review
+    description: Comprehensive code review from a senior engineer perspective
+    file: .claude/templates/prompts/senior-review.md
+    category: review
+    agents:
+      - code-reviewer
+      - security-architect
+      - performance-engineer
+    use_cases:
+      - pre_merge_review
+      - architecture_review
+      - security_audit
+      - performance_review
+    tags:
+      - code-review
+      - security
+      - performance
+      - architecture
+
+  - id: ui-perfection-loop
+    name: UI Perfection Loop
+    description: Iterative UI improvement with visual perfection focus
+    file: .claude/templates/prompts/ui-perfection-loop.md
+    category: ui
+    agents:
+      - ux-expert
+      - accessibility-expert
+      - developer
+      - mobile-developer
+    use_cases:
+      - ui_quality_improvement
+      - accessibility_enhancement
+      - design_system_compliance
+      - visual_polish
+    tags:
+      - ui
+      - ux
+      - accessibility
+      - design
+
+# Template Categories
+categories:
+  - id: analysis
+    name: Analysis
+    description: Templates for codebase and feature analysis
+  - id: review
+    name: Review
+    description: Templates for code and architecture review
+  - id: ui
+    name: UI/UX
+    description: Templates for UI and UX improvement
+  - id: planning
+    name: Planning
+    description: Templates for project and feature planning
+  - id: implementation
+    name: Implementation
+    description: Templates for code implementation
+
+# Agent Mappings
+agent_mappings:
+  planner:
+    recommended_templates:
+      - codebase-walkthrough
+      - deep-dive
+    use_when:
+      - creating_comprehensive_plans
+      - analyzing_requirements
+  
+  orchestrator:
+    recommended_templates:
+      - codebase-walkthrough
+      - deep-dive
+    use_when:
+      - coordinating_multi_agent_workflows
+      - routing_complex_tasks
+  
+  code-reviewer:
+    recommended_templates:
+      - senior-review
+      - deep-dive
+    use_when:
+      - performing_code_reviews
+      - security_audits
+      - performance_reviews
+  
+  ux-expert:
+    recommended_templates:
+      - ui-perfection-loop
+    use_when:
+      - ui_quality_improvement
+      - accessibility_enhancement
+
+# Usage Statistics
+usage_stats:
+  total_templates: 4
+  categories: 5
+  agents_mapped: 8
+  last_updated: "2025-01-17"
+

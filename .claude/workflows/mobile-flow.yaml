@@ -82,6 +82,52 @@ steps:
       - Accessibility considerations
       - Animation and micro-interactions
 
+  - step: 2.5
+    name: "Security & Permissions Review"
+    agent: security-architect
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - mobile-architecture.json (from step 1)
+      - mobile-ux-spec.json (from step 2)
+    outputs:
+      - mobile-security-review.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02.5-security-architect.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/02.5-security-architect.json
+    description: |
+      Mobile security and permissions review:
+      - Authentication and authorization patterns
+      - Secure storage (Keychain, KeyStore)
+      - API security and certificate pinning
+      - Permissions model (iOS/Android)
+      - Data encryption (at rest and in transit)
+      - Secure communication protocols
+      - Biometric authentication implementation
+      - PII handling and privacy compliance
+
+  - step: 2.6
+    name: "Mobile Accessibility Audit"
+    agent: accessibility-expert
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - mobile-architecture.json (from step 1)
+      - mobile-ux-spec.json (from step 2)
+    outputs:
+      - mobile-accessibility-audit.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02.6-accessibility-expert.json
+    validation:
+      gate: .claude/context/history/gates/{{workflow_id}}/02.6-accessibility-expert.json
+    description: |
+      Mobile accessibility compliance:
+      - Screen reader support (VoiceOver, TalkBack)
+      - Touch target sizing (44x44pt minimum)
+      - Color contrast and high contrast modes
+      - Dynamic type support
+      - Haptic feedback patterns
+      - Accessibility labels and hints
+      - Focus management
+      - WCAG mobile guidelines compliance
+
   - step: 3
     name: "Implementation"
     agent: developer
@@ -106,17 +152,41 @@ steps:
       - Platform-specific features
 
   - step: 4
+    name: "Code Review"
+    agent: code-reviewer
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 3)
+      - mobile-architecture.json (from step 1)
+      - mobile-ux-spec.json (from step 2)
+    outputs:
+      - code-review-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-code-reviewer.json
+    validation:
+      schema: .claude/schemas/code-review.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-code-reviewer.json
+    on_failure: "Return to implementation step with feedback"
+    description: |
+      Review mobile implementation for quality, security, and codebase impact:
+      - Verify platform-specific best practices (iOS/Android/React Native)
+      - Check memory management and leak prevention
+      - Review state management implementation
+      - Validate offline-first capabilities
+      - Ensure proper navigation patterns
+
+  - step: 5
     name: "Mobile Quality Assurance"
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 3)
+      - code-review-{{workflow_id}}.json (from step 4)
       - mobile-ux-spec.json (from step 2)
     outputs:
       - mobile-test-results.json
       - quality-report.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/04-qa.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
     description: |
       Mobile-specific testing:
       - Device compatibility testing

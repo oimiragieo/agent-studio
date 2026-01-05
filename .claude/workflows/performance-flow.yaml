@@ -36,11 +36,34 @@ steps:
       - Coordinate optimization strategy
       - Create structured improvement plan
 
+  - step: 0.5
+    name: "Baseline Measurement"
+    agent: performance-engineer
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - target_system
+      - performance_requirements
+    outputs:
+      - baseline-metrics.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.5-performance-engineer.json
+    validation:
+      schema: .claude/schemas/baseline-metrics.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.5-performance-engineer.json
+    description: |
+      Capture baseline performance metrics before optimization:
+      - Response time measurements
+      - Throughput metrics
+      - Resource utilization (CPU, memory, disk, network)
+      - Database query performance
+      - Error rates
+      - Store baseline in artifact for comparison
+
   - step: 1
     name: "Performance Analysis"
     agent: performance-engineer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
+      - baseline-metrics.json (from step 0.5)
       - target_system
       - performance_requirements
       - current_metrics
@@ -49,6 +72,7 @@ steps:
       - bottleneck-report.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-performance-engineer.json
     validation:
+      schema: .claude/schemas/performance-metrics.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-performance-engineer.json
     description: |
       Comprehensive performance analysis:
@@ -57,6 +81,7 @@ steps:
       - Latency hotspots
       - Memory and CPU analysis
       - Database query performance
+      - Compare against baseline metrics
 
   - step: 2
     name: "Architecture Review"
@@ -102,24 +127,52 @@ steps:
       - Async refactoring
 
   - step: 4
+    name: "Code Review"
+    agent: code-reviewer
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 3)
+      - optimization-architecture.json (from step 2)
+      - performance-analysis.json (from step 1)
+    outputs:
+      - code-review-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-code-reviewer.json
+    validation:
+      schema: .claude/schemas/code-review.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-code-reviewer.json
+    on_failure: "Return to implementation step with feedback"
+    description: |
+      Review performance optimization implementation for quality, security, and codebase impact:
+      - Verify optimization techniques are correctly applied
+      - Check for potential side effects or regressions
+      - Review caching strategies and configurations
+      - Validate async/await patterns and concurrency
+      - Ensure database query optimizations are safe
+
+  - step: 5
     name: "Performance Validation"
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
+      - baseline-metrics.json (from step 0.5)
       - dev-manifest.json (from step 3)
+      - code-review-{{workflow_id}}.json (from step 4)
       - performance-analysis.json (from step 1)
     outputs:
       - benchmark-results.json
       - load-test-report.json
+      - performance-comparison.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/04-qa.json
+      schema: .claude/schemas/test-results.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
     description: |
       Performance validation:
-      - Benchmark comparison (before/after)
+      - Benchmark comparison (before/after using baseline-metrics.json)
       - Load testing
       - Stress testing
       - Regression verification
       - SLA compliance check
+      - Generate performance-comparison.json showing improvements
 
 completion_criteria:
   - Performance improvements measured and documented

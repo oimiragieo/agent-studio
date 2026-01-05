@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "planId": {"type": "string"},
+        "createdAt": {"type": "string", "format": "date-time"},
+        "lastUpdated": {"type": "string", "format": "date-time"},
+        "orchestratorSessionId": {"type": "string"},
+        "planName": {"type": "string"},
+        "planVersion": {"type": "number"}
+      },
+      "required": ["planId", "createdAt", "planName"]
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phaseId": {"type": "string"},
+          "phaseName": {"type": "string"},
+          "status": {"enum": ["pending", "in_progress", "completed", "failed", "blocked"]},
+          "phasePlanPath": {"type": "string"},
+          "description": {"type": "string"},
+          "estimatedTasks": {"type": "number"},
+          "completedTasks": {"type": "number"},
+          "startedAt": {"type": "string", "format": "date-time"},
+          "completedAt": {"type": "string", "format": "date-time"}
+        },
+        "required": ["phaseId", "phaseName", "status", "phasePlanPath"]
+      }
+    },
+    "overallStatus": {
+      "type": "object",
+      "properties": {
+        "status": {"enum": ["planning", "in_progress", "completed", "failed", "paused"]},
+        "currentPhase": {"type": "string"},
+        "totalPhases": {"type": "number"},
+        "completedPhases": {"type": "number"}
+      }
+    },
+    "recoveryMetadata": {
+      "type": "object",
+      "properties": {
+        "canResume": {"type": "boolean"},
+        "resumePoint": {"type": "string"},
+        "contextSummary": {"type": "string"},
+        "completedWork": {"type": "string"},
+        "pendingWork": {"type": "string"},
+        "scratchpad": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "taskId": {"type": "string"},
+              "failureReason": {"type": "string"},
+              "approachToAvoid": {"type": "string"},
+              "timestamp": {"type": "string", "format": "date-time"}
+            }
+          },
+          "description": "Records of failed approaches to avoid retrying"
+        }
+      }
+    }
+  },
+  "required": ["metadata", "phases", "overallStatus"]
+}
+

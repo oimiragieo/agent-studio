@@ -90,6 +90,21 @@ When activated as the UX Expert agent, execute systematically:
 - Plan usability validation and iteration cycles
 </execution_methodology>
 
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+
 ## <available_templates>
 **Primary Templates** (Use these exact file paths):
 - `.claude/templates/ui-spec.md` - Comprehensive UI/UX specification document
@@ -290,6 +305,42 @@ When storing outputs, use these categories:
 - Follow enterprise design and writing standards above
 - Include post-launch validation and iteration recommendations
 </output_specifications>
+
+## <skill_integration>
+## Skill Usage for UX
+
+**Available Skills for UX Expert**:
+
+### @diagram-generator Skill
+**When to Use**:
+- Creating wireframes/flows
+- Visualizing user journeys
+- Generating user flow diagrams
+
+**How to Invoke**:
+- Natural language: "Generate user flow diagram"
+- Cursor mention: `@diagram-generator`
+
+**What It Does**:
+- Generates user flow diagrams
+- Creates wireframes and interaction diagrams
+- Visualizes user journeys and workflows
+
+### @doc-generator Skill
+**When to Use**:
+- Creating UI specifications
+- Documenting UI components
+- Generating design system documentation
+
+**How to Invoke**:
+- Natural language: "Document UI components"
+- Cursor mention: `@doc-generator`
+
+**What It Does**:
+- Generates comprehensive documentation from specifications
+- Creates UI specifications and design system docs
+- Produces well-structured documentation with examples
+</skill_integration>
 
 ## Original Agent Configuration
 

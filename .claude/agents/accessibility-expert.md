@@ -206,6 +206,57 @@ const StatusMessage = ({ message }) => (
 - [ ] Content reflows at 400% zoom
 - [ ] Animations can be disabled
 
+<skill_integration>
+## Skill Usage for Accessibility Expert
+
+**Available Skills for Accessibility Expert**:
+
+### rule-auditor Skill
+**When to Use**:
+- Validating WCAG compliance
+- Checking accessibility patterns
+- Auditing ARIA usage
+
+**How to Invoke**:
+- Natural language: "Audit components for accessibility"
+- Skill tool: `Skill: rule-auditor`
+
+**What It Does**:
+- Validates code against a11y rules
+- Reports WCAG violations with severity
+- Provides line-by-line accessibility issues
+
+### explaining-rules Skill
+**When to Use**:
+- Explaining WCAG requirements
+- Clarifying accessibility guidelines
+- Understanding why patterns matter
+
+**How to Invoke**:
+- Natural language: "What accessibility rules apply?"
+- Skill tool: `Skill: explaining-rules`
+
+**What It Does**:
+- Explains applicable a11y rules
+- Provides WCAG success criteria context
+- Helps understand compliance rationale
+
+### doc-generator Skill
+**When to Use**:
+- Creating accessibility documentation
+- Generating VPAT reports
+- Documenting a11y testing procedures
+
+**How to Invoke**:
+- Natural language: "Document accessibility guidelines"
+- Skill tool: `Skill: doc-generator`
+
+**What It Does**:
+- Generates comprehensive a11y documentation
+- Creates accessibility checklists
+- Produces training materials
+</skill_integration>
+
 ## Deliverables
 
 - [ ] Accessibility audit report

@@ -87,6 +87,21 @@ When activated as the PM agent, execute systematically:
 - Prepare implementation handoff materials
 </execution_methodology>
 
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+
 ## <available_templates>
 **Primary Templates** (Use these exact file paths):
 - `.claude/templates/prd.md` - Core Product Requirements Document
@@ -257,6 +272,57 @@ When storing outputs, use these categories:
 - Flag dependencies and risks with suggested mitigations
 - Follow enterprise writing and quality rules above
 </output_specifications>
+
+## <skill_integration>
+## Skill Usage for Product Management
+
+**Available Skills for PM**:
+
+### @plan-generator Skill
+**When to Use**:
+- Creating comprehensive product plans
+- Generating roadmaps from requirements
+- Planning feature implementation
+
+**How to Invoke**:
+- Natural language: "Create product roadmap for the new feature"
+- Cursor mention: `@plan-generator`
+
+**What It Does**:
+- Creates structured plans from requirements
+- Generates comprehensive plans with steps and dependencies
+- Identifies risks and success criteria
+
+### @doc-generator Skill
+**When to Use**:
+- Creating PRDs and specifications
+- Generating user documentation
+- Creating feature guides
+
+**How to Invoke**:
+- Natural language: "Generate PRD for the authentication feature"
+- Cursor mention: `@doc-generator`
+
+**What It Does**:
+- Generates comprehensive documentation from specifications
+- Creates PRDs, user guides, and feature documentation
+- Produces well-structured documentation with examples
+
+### @excel-generator Skill
+**When to Use**:
+- Creating project tracking sheets
+- Generating sprint planning spreadsheets
+- Building backlog management worksheets
+
+**How to Invoke**:
+- Natural language: "Create project tracking spreadsheet"
+- Cursor mention: `@excel-generator`
+
+**What It Does**:
+- Generates Excel workbooks with formulas and charts
+- Creates project tracking and planning spreadsheets
+- Produces formatted worksheets for backlog management
+</skill_integration>
 
 ## Original Agent Configuration
 

@@ -7,13 +7,14 @@
 **A drop-in configuration bundle** with native Agent SDK integration - NOT an SDK or MCP server.
 
 Copy these folders into your project and immediately gain access to:
-- **23 specialized AI agents** with defined roles and responsibilities (including new Planner agent for comprehensive planning)
-- **13 utility skills** for rule management, code generation, planning, and documentation (with SDK registration)
-- **1,081+ technology rule packs** (8 master + 1,073 archive) with dynamic discovery
+- **34 specialized AI agents** with defined roles and responsibilities (24 core + 10 extended/specialized including Planner, impact-analyzer, cloud-integrator, and model validators)
+- **43 utility skills** for rule management, code generation, planning, and documentation (34 native + 9 MCP-converted)
+- **1,081+ technology rule packs** with dynamic discovery:
+  - **8 master rules** in `.claude/rules-master/` - Core protocol rules for engineering practices
+  - **1,073+ library rules** in `.claude/rules-library/` - Technology-specific rules (formerly archive)
 - **7 native tools** (Bash, Code Execution, Text Editor, Web Fetch, Web Search, Memory, Computer Use) with streaming support
-- **12 slash commands** for common workflows
-- **10 workflow definitions** for project orchestration (all now start with Planner agent)
-- **24 Customer User Journeys (CUJs)** - Complete workflows documented from start to finish
+- **14 workflow definitions** for project orchestration (legacy modernization, code quality, incident response, etc.)
+- **55 Customer User Journeys (CUJs)** - Complete workflows documented from start to finish (52 core + 3 extended)
 - **Enhanced hooks system** (PreToolUse, PostToolUse, UserPromptSubmit, Notification, Stop)
 - **Enterprise APIs** (Administration, Usage Cost, Analytics)
 - **Knowledge Base-Aware (KBA) Orchestration** - Dynamic, privacy-preserving agent routing based on agent knowledge bases (see [KBA_ORCHESTRATION.md](.claude/docs/KBA_ORCHESTRATION.md))
@@ -84,10 +85,11 @@ cp -r .factory/ your-project/  # Optional: Factory support
    Run these commands in Claude Code:
 
 ```
-Step 1: Generate rule index (one-time)
-        → Run: pnpm index-rules
-        → Or: node scripts/generate-rule-index.mjs
-        → Creates .claude/context/rule-index.json with all 1,081+ rules
+Step 1: Rule index (pre-built, works out-of-the-box)
+        → A pre-built rule-index.json ships with the repo (common stacks included)
+        → Rule-selector works immediately without running pnpm index-rules
+        → Optional: Run `pnpm index-rules` to generate full index with all 1,081+ rules
+        → Optional: Run `pnpm index-rules:prebuilt` to regenerate lightweight pre-built index
 
 Step 2: "Select rules for this project"
         → Auto-detects your tech stack
@@ -368,7 +370,7 @@ Agents have scoped permissions:
 ## Documentation
 
 - **First-Time User Guide**: `FIRST_TIME_USER.md` - Start here for new users!
-- **CUJ Index**: `.claude/docs/cujs/CUJ-INDEX.md` - All 24 Customer User Journeys
+- **CUJ Index**: `.claude/docs/cujs/CUJ-INDEX.md` - All 47 Customer User Journeys (CUJ-031/032/033 reserved/removed)
 - **Setup Guide**: `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md`
 - **Agent Details**: `.claude/agents/` (each agent has full documentation)
 - **Instructions**: `.claude/instructions/` (operational playbooks)
@@ -450,8 +452,9 @@ The core agent configuration works without Node.js. Validation scripts and workf
 pnpm install
 
 # Validate configuration files
-pnpm validate
-pnpm validate:verbose  # detailed output
+pnpm validate          # Fast validation (config, models)
+pnpm validate:all      # Full validation (includes workflows, references, CUJs, rule index)
+pnpm validate:verbose   # Detailed output
 
 # Cross-platform agent/skill parity
 pnpm validate:sync

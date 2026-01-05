@@ -57,6 +57,84 @@
 ## Testing Strategy
 {{testing_strategy}}
 
+## Local Development Setup (Emulator-First)
+
+**CRITICAL: For cloud-connected applications, use emulators for local development.**
+
+### Emulator Configuration
+
+**Environment Variables** (for local development):
+```bash
+# GCP Emulators
+export PUBSUB_EMULATOR_HOST=localhost:8085
+export DATASTORE_EMULATOR_HOST=localhost:8081
+export STORAGE_EMULATOR_HOST=http://localhost:9023
+
+# Database (Testcontainers or local)
+export DATABASE_URL=postgresql://user:pass@localhost:5432/dbname
+
+# Disable real cloud credentials for local dev
+unset GOOGLE_APPLICATION_CREDENTIALS
+```
+
+### Connection String Examples
+
+**Emulator vs Production**:
+- **Emulator**: `pubsub://localhost:8085` or use `PUBSUB_EMULATOR_HOST` env var
+- **Production**: Use Application Default Credentials (ADC) or service account key
+
+**Code Pattern**:
+```typescript
+// Automatically uses emulator if PUBSUB_EMULATOR_HOST is set
+const pubsub = new PubSub({
+  projectId: process.env.GCP_PROJECT_ID || 'test-project'
+});
+```
+
+### Docker Compose Setup
+
+Include `docker-compose.dev.yml` for local emulator stack:
+```yaml
+version: '3.8'
+services:
+  pubsub-emulator:
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:emulators
+    command: gcloud beta emulators pubsub start --host-port=0.0.0.0:8085
+    ports:
+      - "8085:8085"
+  
+  datastore-emulator:
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:emulators
+    command: gcloud beta emulators datastore start --host-port=0.0.0.0:8081
+    ports:
+      - "8081:8081"
+  
+  postgres-dev:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: devdb
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpass
+    ports:
+      - "5432:5432"
+```
+
+**Start emulators**: `docker-compose -f docker-compose.dev.yml up -d`
+
+### Testing Strategy with Emulators
+
+1. **Unit Tests**: Use emulators for all cloud service mocks
+2. **Integration Tests**: Run against emulators, not live cloud
+3. **Local Development**: Always use emulators to avoid costs and credentials
+4. **Production Deployment**: Only use real cloud services in deployed environments
+
+### Benefits
+
+- **No Cloud Costs**: Develop and test without incurring cloud charges
+- **Faster Feedback**: Local emulators are faster than cloud API calls
+- **Offline Development**: Work without internet connectivity
+- **Consistent Environment**: Same emulator behavior across all developers
+
 ## Deployment Plan
 {{deployment_plan}}
 

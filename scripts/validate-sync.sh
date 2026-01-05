@@ -85,6 +85,87 @@ for claude_agent in .claude/agents/*.md; do
 done
 
 # ====================
+# 2.5. Cursor Directory/File Checks
+# ====================
+echo ""
+echo "2.5. Validating Cursor Directory Structure"
+echo "-------------------------------------------"
+
+# Check .cursor/plans/ directory (runtime-created, may not exist)
+if [ -d ".cursor/plans" ]; then
+    info ".cursor/plans/ directory exists (runtime-created, may be empty)"
+else
+    info ".cursor/plans/ directory not found (will be created at runtime)"
+fi
+
+# Check .cursor/subagents/ matches .claude/agents/
+if [ -d ".cursor/subagents" ]; then
+    CURSOR_SUBAGENTS=$(find .cursor/subagents -name "*.mdc" 2>/dev/null | wc -l)
+    info "Cursor subagents: $CURSOR_SUBAGENTS"
+    
+    if [ "$CLAUDE_AGENTS" -eq "$CURSOR_SUBAGENTS" ]; then
+        success "Cursor subagents count matches Claude agents"
+    else
+        warning "Cursor subagents count ($CURSOR_SUBAGENTS) differs from Claude agents ($CLAUDE_AGENTS)"
+    fi
+else
+    warning ".cursor/subagents/ directory not found"
+fi
+
+# Check .cursor/skills/ structure
+if [ -d ".cursor/skills" ]; then
+    CURSOR_SKILLS=$(find .cursor/skills -name "SKILL.md" -o -name "SKILL.mdc" 2>/dev/null | wc -l)
+    info "Cursor skills: $CURSOR_SKILLS"
+else
+    info ".cursor/skills/ directory not found (will be created at runtime if needed)"
+fi
+
+# ====================
+# 2.6. Skill Parity Checks
+# ====================
+echo ""
+echo "2.6. Validating Skill Parity"
+echo "-------------------------------------------"
+
+CLAUDE_SKILLS=$(find .claude/skills -name "SKILL.md" 2>/dev/null | wc -l)
+info "Claude skills: $CLAUDE_SKILLS"
+
+if [ -d ".cursor/skills" ]; then
+    CURSOR_SKILLS=$(find .cursor/skills -name "SKILL.md" -o -name "SKILL.mdc" 2>/dev/null | wc -l)
+    
+    if [ "$CLAUDE_SKILLS" -eq "$CURSOR_SKILLS" ]; then
+        success "Skill counts match between Claude and Cursor"
+    else
+        warning "Skill counts differ: Claude=$CLAUDE_SKILLS, Cursor=$CURSOR_SKILLS"
+    fi
+    
+    # Check individual skill names
+    for claude_skill_dir in .claude/skills/*/; do
+        skill_name=$(basename "$claude_skill_dir")
+        cursor_skill_file=".cursor/skills/${skill_name}/SKILL.md"
+        cursor_skill_file_mdc=".cursor/skills/${skill_name}/SKILL.mdc"
+        
+        if [ -f "$cursor_skill_file" ] || [ -f "$cursor_skill_file_mdc" ]; then
+            success "Skill '$skill_name' exists in Cursor"
+        else
+            warning "Skill '$skill_name' missing in Cursor (.cursor/skills/${skill_name}/SKILL.md)"
+        fi
+    done
+    
+    # Check for skills in Cursor that don't exist in Claude
+    for cursor_skill_dir in .cursor/skills/*/; do
+        skill_name=$(basename "$cursor_skill_dir")
+        claude_skill_file=".claude/skills/${skill_name}/SKILL.md"
+        
+        if [ ! -f "$claude_skill_file" ]; then
+            warning "Cursor has skill '$skill_name' that doesn't exist in Claude"
+        fi
+    done
+else
+    info "Skipping skill parity checks (Cursor skills directory not found)"
+fi
+
+# ====================
 # 3. Validate Workflows
 # ====================
 echo ""
@@ -210,6 +291,29 @@ for file in "${required_files[@]}"; do
         success "Required file exists: $file"
     else
         error "Required file missing: $file"
+    fi
+done
+
+# ====================
+# 7. Runtime-Created Directories Documentation
+# ====================
+echo ""
+echo "7. Runtime-Created Directories"
+echo "-------------------------------------------"
+
+runtime_dirs=(
+    ".cursor/plans"
+    ".claude/context/artifacts"
+    ".claude/context/checkpoints"
+    ".claude/context/history"
+)
+
+info "The following directories are created at runtime and may not exist:"
+for dir in "${runtime_dirs[@]}"; do
+    if [ -d "$dir" ]; then
+        info "  - $dir (exists)"
+    else
+        info "  - $dir (will be created at runtime)"
     fi
 done
 

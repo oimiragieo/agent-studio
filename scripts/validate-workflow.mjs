@@ -175,19 +175,23 @@ function getAllStepNumbers(workflow) {
  */
 function validateTemplateVariableSyntax(str) {
   if (typeof str !== 'string') return { valid: true, errors: [] };
-  
+
   const errors = [];
+
   // Check for unclosed variables: {{variable without closing }}
+  // Pattern: {{ followed by non-} chars until end of string
   const unclosedMatches = str.match(/\{\{[^}]*$/g);
   if (unclosedMatches) {
     errors.push(`Unclosed template variable: ${unclosedMatches[0]}`);
   }
-  // Check for closing braces without opening
-  const orphanedCloses = str.match(/^[^}]*\}\}/g);
-  if (orphanedCloses) {
-    errors.push(`Orphaned closing braces: ${orphanedCloses[0]}`);
+
+  // Check for closing braces without opening: }} that aren't preceded by {{
+  // Strategy: Remove all valid {{...}} patterns, then check for orphaned }}
+  const withoutValidTemplates = str.replace(/\{\{[^}]+\}\}/g, '');
+  if (withoutValidTemplates.includes('}}')) {
+    errors.push(`Orphaned closing braces found`);
   }
-  
+
   return {
     valid: errors.length === 0,
     errors

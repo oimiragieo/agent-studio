@@ -1,0 +1,22 @@
+{
+  "skill_name": "computer-use",
+  "command": "python",
+  "args": ["${skillPath}/server.py"],
+  "env": {
+    "CU_HEADFUL": "${CU_HEADFUL}",
+    "CU_SLOW_MO": "${CU_SLOW_MO}",
+    "CU_SHOW_CURSOR": "${CU_SHOW_CURSOR}",
+    "CU_NO_SANDBOX": "${CU_NO_SANDBOX}"
+  },
+  "description": "Playwright browser automation for computer use - click, type, scroll, screenshot, JavaScript execution",
+  "converted_at": "2026-01-03T18:00:00.000Z",
+  "source": "https://github.com/automateyournetwork/GeminiCLI_ComputerUse_Extension",
+  "package": "fastmcp + playwright",
+  "package_manager": "pip",
+  "requirements": [
+    "fastmcp>=2.12",
+    "playwright>=1.55",
+    "pillow>=11.0"
+  ],
+  "notes": "Requires Python 3.10+. Run 'playwright install chromium' after pip install. Set CU_HEADFUL=1 for visible browser."
+}

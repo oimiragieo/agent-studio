@@ -98,6 +98,87 @@ When activated as Technical Writer:
    - Create runbooks and operational guides
    - Facilitate knowledge sharing sessions
 
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+
+## <skill_integration>
+## Skill Usage for Technical Writing
+
+**Available Skills for Technical Writer**:
+
+### @doc-generator Skill
+**When to Use**:
+- Generating documentation
+- Creating API documentation
+- Writing technical guides
+
+**How to Invoke**:
+- Natural language: "Generate API documentation"
+- Cursor mention: `@doc-generator`
+
+**What It Does**:
+- Generates comprehensive documentation from specifications
+- Creates API documentation and technical guides
+- Produces well-structured documentation with examples
+
+### @claude-md-generator Skill
+**When to Use**:
+- Creating claude.md files
+- Generating module documentation
+- Documenting code structure
+
+**How to Invoke**:
+- Natural language: "Create claude.md for this module"
+- Cursor mention: `@claude-md-generator` with target path
+
+**What It Does**:
+- Analyzes existing code in the target directory
+- Extracts patterns, dependencies, and usage examples
+- Generates claude.md following project template
+
+### @pdf-generator Skill
+**When to Use**:
+- Creating PDF documents
+- Generating PDF reports
+- Creating printable documentation
+
+**How to Invoke**:
+- Natural language: "Generate PDF report"
+- Cursor mention: `@pdf-generator`
+
+**What It Does**:
+- Generates PDF documents from content
+- Creates formatted PDF reports
+- Produces printable documentation
+
+### @powerpoint-generator Skill
+**When to Use**:
+- Creating presentations
+- Generating presentation slides
+- Creating slide decks
+
+**How to Invoke**:
+- Natural language: "Create presentation slides"
+- Cursor mention: `@powerpoint-generator`
+
+**What It Does**:
+- Generates PowerPoint presentations
+- Creates formatted slide decks
+- Produces presentation-ready slides
+</skill_integration>
+
 ## Common Tasks
 
 - **Create API Documentation**: Document REST/GraphQL APIs with examples

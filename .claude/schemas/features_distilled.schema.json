@@ -1,0 +1,147 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Features Distilled",
+  "description": "Schema for distilled feature list from large markdown documents. Created by Analyst agent when input document exceeds 15KB to prevent context window overflow.",
+  "required": ["features", "summary", "total_features", "original_document_size_kb"],
+  "properties": {
+    "features": {
+      "type": "array",
+      "description": "List of features extracted and summarized from the original markdown document",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description", "priority"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the feature (e.g., feature-1, feature-2)",
+            "pattern": "^feature-[a-zA-Z0-9_-]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable feature name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the feature (summarized from original document)"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Feature priority level"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^feature-[a-zA-Z0-9_-]+$"
+            },
+            "description": "List of feature IDs this feature depends on"
+          },
+          "acceptance_criteria": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Acceptance criteria for the feature"
+          },
+          "estimated_complexity": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "description": "Estimated implementation complexity"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes or context from the original document"
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "summary": {
+      "type": "string",
+      "description": "High-level summary of all features extracted from the original document"
+    },
+    "total_features": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Total number of features extracted"
+    },
+    "original_document_size_kb": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Size of the original markdown document in kilobytes"
+    },
+    "distillation_metadata": {
+      "type": "object",
+      "description": "Metadata about the distillation process",
+      "properties": {
+        "distilled_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when distillation was performed"
+        },
+        "original_file_path": {
+          "type": "string",
+          "description": "Path to the original markdown document"
+        },
+        "preserved_sections": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of section names from original document that were preserved"
+        },
+        "removed_sections": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of section names that were removed during distillation (e.g., verbose examples, detailed implementation notes)"
+        }
+      }
+    },
+    "quality_metrics": {
+      "type": "object",
+      "description": "Quality metrics for feature extraction (added by validation process)",
+      "properties": {
+        "extraction_completeness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of features successfully extracted from original document (0-100)"
+        },
+        "information_preservation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of critical information preserved during distillation (0-100)"
+        },
+        "critical_details_preserved": {
+          "type": "boolean",
+          "description": "True if all critical details (acceptance criteria, dependencies, priorities) were preserved"
+        },
+        "all_features_have_acceptance_criteria": {
+          "type": "boolean",
+          "description": "True if all features have acceptance criteria"
+        },
+        "dependencies_mapped": {
+          "type": "boolean",
+          "description": "True if all feature dependencies are properly mapped"
+        },
+        "quality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Overall extraction quality score (0-100), calculated from completeness and preservation metrics"
+        },
+        "validated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when quality validation was performed"
+        }
+      }
+    }
+  }
+}
+

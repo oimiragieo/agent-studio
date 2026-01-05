@@ -1,0 +1,16 @@
+{
+  "skill_name": "git",
+  "command": "python",
+  "args": [
+    "-m",
+    "mcp_server_git"
+  ],
+  "env": {},
+  "description": "Git repository operations - status, diff, commit, branch, log",
+  "pypi_package": "mcp-server-git",
+  "requires_path": true,
+  "path_flag": "--repository",
+  "path_type": "git",
+  "package_manager": "pypi",
+  "converted_at": "2026-01-03T03:47:27.259Z"
+}

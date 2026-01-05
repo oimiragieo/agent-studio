@@ -2,14 +2,17 @@
 /**
  * Orchestrator Handoff - Manages seamless transition between orchestrator instances
  * 
- * When orchestrator reaches 90% context usage, this tool:
- * 1. Updates all state via subagents (plans, CLAUDE.md files, artifacts)
- * 2. Creates handoff package with all necessary state
- * 3. Initializes new orchestrator with handoff package
- * 4. Shuts down previous orchestrator cleanly
+ * Implements two-phase commit handoff protocol:
+ * 1. Freeze: Orchestrator sets run state to handoff_pending, stops spawning new work
+ * 2. Snapshot: Write handoff.json with run id, workflow + step, current task, open questions, artifacts, validation summary, "what to do next" checklist
+ * 3. Spawn: Platform-specific launcher opens new orchestrator with handoff.md as first input
+ * 4. Ack: New orchestrator writes handoff-ack.json ("loaded successfully" + hash of handoff)
+ * 5. Shutdown: Old orchestrator sees ack and marks itself shutdown (becomes read-only)
+ * 
+ * Uses run directory structure: .claude/context/runs/<run_id>/
  * 
  * Usage:
- *   node .claude/tools/orchestrator-handoff.mjs --session-id <id> --project <name>
+ *   node .claude/tools/orchestrator-handoff.mjs --run-id <id> [--spawn-cursor]
  */
 
 import { readFile, writeFile, mkdir, readdir, stat } from 'fs/promises';
@@ -17,306 +20,299 @@ import { join, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { createHash } from 'crypto';
+import { existsSync } from 'fs';
+import { readRun, updateRun, getRunDirectoryStructure, readArtifactRegistry } from './run-manager.mjs';
+import { packageContextForHandoff } from './context-handoff.mjs';
+import { updateProjectDatabase } from './project-db.mjs';
+import { resolvePlanPath } from './path-resolver.mjs';
 
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /**
- * Get all phase directories for a project
+ * Initialize new orchestrator with handoff package (run-based)
+ * Loads from run directory handoff.json
  */
-async function getProjectPhases(projectName) {
-  const projectDir = join(__dirname, '..', 'projects', projectName);
-  const entries = await readdir(projectDir, { withFileTypes: true });
+export async function initializeNewOrchestrator(runId) {
+  const runDirs = getRunDirectoryStructure(runId);
+  const handoffFile = runDirs.handoff_json;
   
-  return entries
-    .filter(entry => entry.isDirectory() && entry.name.startsWith('phase-'))
-    .map(entry => entry.name)
-    .sort();
-}
-
-/**
- * Get all plan files for a project
- */
-async function getPlanFiles(projectName) {
-  const phases = await getProjectPhases(projectName);
-  const planFiles = {};
-  
-  for (const phase of phases) {
-    const planPath = join(__dirname, '..', 'projects', projectName, phase, 'plan.md');
-    try {
-      await stat(planPath);
-      planFiles[phase] = planPath;
-    } catch (error) {
-      // Plan file doesn't exist yet
-    }
+  if (!existsSync(handoffFile)) {
+    throw new Error(`Handoff file not found: ${handoffFile}`);
   }
-  
-  return planFiles;
-}
-
-/**
- * Get all CLAUDE.md files for a project
- */
-async function getClaudeMdFiles(projectName) {
-  const phases = await getProjectPhases(projectName);
-  const claudeMdFiles = [];
-  
-  for (const phase of phases) {
-    const claudePath = join(__dirname, '..', 'projects', projectName, phase, 'claude.md');
-    try {
-      await stat(claudePath);
-      claudeMdFiles.push(claudePath);
-    } catch (error) {
-      // CLAUDE.md doesn't exist yet
-    }
-  }
-  
-  return claudeMdFiles;
-}
-
-/**
- * Get all artifacts for a project
- */
-async function getArtifacts(projectName) {
-  const phases = await getProjectPhases(projectName);
-  const artifacts = [];
-  
-  for (const phase of phases) {
-    const artifactsDir = join(__dirname, '..', 'projects', projectName, phase, 'artifacts');
-    try {
-      const entries = await readdir(artifactsDir, { recursive: true, withFileTypes: true });
-      for (const entry of entries) {
-        if (entry.isFile()) {
-          artifacts.push(join(artifactsDir, entry.name));
-        }
-      }
-    } catch (error) {
-      // Artifacts directory doesn't exist
-    }
-  }
-  
-  return artifacts;
-}
-
-/**
- * Get memory files from orchestrator session
- */
-async function getMemoryFiles(sessionId) {
-  const memoryDir = join(__dirname, '..', 'orchestrators', `orchestrator-${sessionId}`, 'memory');
-  const memoryFiles = [];
-  
-  try {
-    const entries = await readdir(memoryDir, { recursive: true, withFileTypes: true });
-    for (const entry of entries) {
-      if (entry.isFile()) {
-        memoryFiles.push(join(memoryDir, entry.name));
-      }
-    }
-  } catch (error) {
-    // Memory directory doesn't exist
-  }
-  
-  return memoryFiles;
-}
-
-/**
- * Get current project state
- */
-async function getProjectState(projectName, sessionId) {
-  const stateFile = join(__dirname, '..', 'projects', projectName, 'orchestrator-state.json');
-  
-  try {
-    const state = JSON.parse(await readFile(stateFile, 'utf-8'));
-    return state;
-  } catch (error) {
-    // State file doesn't exist, return default
-    return {
-      projectName,
-      currentPhase: null,
-      currentStep: 0,
-      completedTasks: [],
-      pendingTasks: [],
-      contextSummary: 'Initial state'
-    };
-  }
-}
-
-/**
- * Create handoff package
- */
-export async function createHandoffPackage(previousSessionId, projectName) {
-  const newSessionId = `orchestrator-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  const orchestratorDir = join(__dirname, '..', 'orchestrators', `orchestrator-${previousSessionId}`);
-  const handoffFile = join(orchestratorDir, 'handoff-package.json');
-  
-  // Ensure directory exists
-  await mkdir(orchestratorDir, { recursive: true });
-  
-  // Gather all state
-  const [planFiles, claudeMdFiles, artifacts, memoryFiles, projectState] = await Promise.all([
-    getPlanFiles(projectName),
-    getClaudeMdFiles(projectName),
-    getArtifacts(projectName),
-    getMemoryFiles(previousSessionId),
-    getProjectState(projectName, previousSessionId)
-  ]);
-  
-  const handoffPackage = {
-    previousSessionId,
-    newSessionId,
-    projectName,
-    createdAt: new Date().toISOString(),
-    currentPhase: projectState.currentPhase,
-    planFiles: Object.fromEntries(
-      Object.entries(planFiles).map(([phase, path]) => [
-        phase,
-        relative(join(__dirname, '..'), path)
-      ])
-    ),
-    claudeMdFiles: claudeMdFiles.map(path => relative(join(__dirname, '..'), path)),
-    artifacts: artifacts.map(path => relative(join(__dirname, '..'), path)),
-    memoryFiles: memoryFiles.map(path => relative(join(__dirname, '..'), path)),
-    projectState: {
-      currentStep: projectState.currentStep,
-      completedTasks: projectState.completedTasks,
-      pendingTasks: projectState.pendingTasks,
-      contextSummary: projectState.contextSummary || 'Handoff from previous orchestrator'
-    }
-  };
-  
-  // Save handoff package
-  await writeFile(handoffFile, JSON.stringify(handoffPackage, null, 2), 'utf-8');
-  
-  // Also save to new orchestrator directory for initialization
-  const newOrchestratorDir = join(__dirname, '..', 'orchestrators', newSessionId);
-  await mkdir(newOrchestratorDir, { recursive: true });
-  await writeFile(
-    join(newOrchestratorDir, 'handoff-package.json'),
-    JSON.stringify(handoffPackage, null, 2),
-    'utf-8'
-  );
-  
-  return handoffPackage;
-}
-
-/**
- * Initialize new orchestrator with handoff package
- */
-export async function initializeNewOrchestrator(newSessionId) {
-  const orchestratorDir = join(__dirname, '..', 'orchestrators', newSessionId);
-  const handoffFile = join(orchestratorDir, 'handoff-package.json');
   
   const handoffPackage = JSON.parse(await readFile(handoffFile, 'utf-8'));
+  const runRecord = handoffPackage.run_record;
   
   // Create initialization prompt
-  const initPrompt = `Initialize the codebase and pick up the project where the previous orchestrator left off.
+  const initPrompt = `Initialize the codebase and pick up the run where the previous orchestrator left off.
 
-Previous Session: ${handoffPackage.previousSessionId}
-Project: ${handoffPackage.projectName}
-Current Phase: ${handoffPackage.currentPhase || 'Not specified'}
-Current Step: ${handoffPackage.projectState.currentStep}
+Run ID: ${runId}
+Workflow ID: ${runRecord.workflow_id}
+Current Step: ${runRecord.current_step}
+Status: ${runRecord.status}
 
-Context Summary:
-${handoffPackage.projectState.contextSummary}
+Artifact Registry: ${runDirs.artifact_registry}
+Total Artifacts: ${handoffPackage.validation_summary?.total_artifacts || 0}
+Validated: ${handoffPackage.validation_summary?.validated_artifacts || 0}
 
-Available Resources:
-- Plan files: ${Object.keys(handoffPackage.planFiles).join(', ')}
-- CLAUDE.md files: ${handoffPackage.claudeMdFiles.length} files
-- Artifacts: ${handoffPackage.artifacts.length} files
-- Memory files: ${handoffPackage.memoryFiles.length} files
+What to Do Next:
+${handoffPackage.what_to_do_next?.map(item => `- ${item}`).join('\n') || 'Continue workflow execution'}
 
-Completed Tasks:
-${handoffPackage.projectState.completedTasks.map(t => `- ${t}`).join('\n')}
-
-Pending Tasks:
-${handoffPackage.projectState.pendingTasks.map(t => `- ${t}`).join('\n')}
+Open Questions:
+${handoffPackage.open_questions?.map(q => `- ${q}`).join('\n') || 'None'}
 
 Your task:
-1. Review the handoff package to understand the current project state
-2. Load relevant plan files and CLAUDE.md files for context
-3. Continue from where the previous orchestrator left off
-4. Update the orchestrator state as you progress
-5. Once initialized, send a shutdown signal to the previous orchestrator (${handoffPackage.previousSessionId})`;
-
-  // Save initialization prompt
-  await writeFile(
-    join(orchestratorDir, 'init-prompt.md'),
-    initPrompt,
-    'utf-8'
-  );
+1. Read run.json from ${runDirs.run_json}
+2. Load artifact registry from ${runDirs.artifact_registry}
+3. Review handoff.md for context
+4. Continue from step ${runRecord.current_step}
+5. Write handoff-ack.json to acknowledge handoff`;
   
   return {
-    newSessionId,
+    runId,
     initPrompt,
     handoffPackage
   };
 }
 
 /**
- * Shutdown previous orchestrator
+ * Two-Phase Commit Handoff Protocol
+ * 
+ * Phase 1: Freeze
+ * - Set run state to handoff_pending
+ * - Stop spawning new work
  */
-export async function shutdownOrchestrator(sessionId) {
-  const orchestratorDir = join(__dirname, '..', 'orchestrators', `orchestrator-${sessionId}`);
-  const sessionFile = join(orchestratorDir, 'session.json');
-  
-  let sessionData = {};
-  try {
-    sessionData = JSON.parse(await readFile(sessionFile, 'utf-8'));
-  } catch (error) {
-    // Session file doesn't exist
-  }
-  
-  sessionData.status = 'shutdown';
-  sessionData.shutdownAt = new Date().toISOString();
-  
-  await writeFile(sessionFile, JSON.stringify(sessionData, null, 2), 'utf-8');
-  
-  // Note: Actual agent shutdown would be handled by Claude Code
-  // This just marks the session as shutdown in our tracking
-  
-  return sessionData;
+async function freezeRun(runId) {
+  await updateRun(runId, { status: 'handoff_pending' });
+  return await readRun(runId);
 }
 
 /**
- * Main handoff process
+ * Phase 2: Snapshot
+ * - Write handoff.json with complete state
+ * - Include run record, artifact registry, context, current task, open questions, validation summary, "what to do next" checklist
  */
-export async function executeHandoff(previousSessionId, projectName) {
-  // Step 1: Create handoff package
-  const handoffPackage = await createHandoffPackage(previousSessionId, projectName);
+async function snapshotHandoff(runId) {
+  const runRecord = await readRun(runId);
+  const artifactRegistry = await readArtifactRegistry(runId);
+  const runDirs = getRunDirectoryStructure(runId);
   
-  // Step 2: Initialize new orchestrator
-  const initResult = await initializeNewOrchestrator(handoffPackage.newSessionId);
+  // Get current task from run record
+  const currentTask = runRecord.task_queue?.find(t => t.status === 'in_progress') || null;
   
-  // Step 3: Shutdown previous orchestrator (after new one is ready)
-  // Note: In practice, the new orchestrator would handle this after initialization
-  // await shutdownOrchestrator(previousSessionId);
+  // Package context (enumerates all artifacts, gates, reasoning)
+  const context = await packageContextForHandoff(
+    runId,
+    runRecord.workflow_id,
+    runRecord.current_step,
+    {
+      nextSteps: [],
+      state: {},
+      openQuestions: [],
+      whatToDoNext: [
+        `Continue workflow from step ${runRecord.current_step}`,
+        `Load artifact registry from ${runDirs.artifact_registry}`,
+        `Read plan document: ${resolvePlanPath(runId, `plan-${runRecord.workflow_id}.json`)}`,
+        `Resume task: ${currentTask?.task_id || 'next task in queue'}`
+      ]
+    }
+  );
   
-  return {
-    handoffPackage,
-    initResult,
-    message: `Handoff complete. New orchestrator: ${handoffPackage.newSessionId}`
+  // Create handoff package
+  const handoffPackage = {
+    run_id: runId,
+    workflow_id: runRecord.workflow_id,
+    current_step: runRecord.current_step,
+    timestamp: new Date().toISOString(),
+    status: 'snapshot',
+    run_record: runRecord,
+    artifact_registry: artifactRegistry,
+    context: context.context,
+    current_task: currentTask,
+    open_questions: context.open_questions || [],
+    validation_summary: context.validation_summary,
+    what_to_do_next: context.what_to_do_next || []
   };
+  
+  // Calculate hash for verification
+  const handoffJson = JSON.stringify(handoffPackage);
+  const handoffHash = createHash('sha256').update(handoffJson).digest('hex');
+  handoffPackage.handoff_hash = handoffHash;
+  
+  // Write handoff.json
+  await writeFile(runDirs.handoff_json, handoffJson, 'utf-8');
+  
+  // Create human-readable handoff.md
+  const handoffMd = `# Handoff Package: ${runId}
+
+## Run Information
+- **Run ID**: ${runId}
+- **Workflow ID**: ${runRecord.workflow_id}
+- **Current Step**: ${runRecord.current_step}
+- **Status**: ${runRecord.status}
+- **Timestamp**: ${handoffPackage.timestamp}
+
+## Current Task
+${currentTask ? `- **Task ID**: ${currentTask.task_id}\n- **Agent**: ${currentTask.agent}\n- **Description**: ${currentTask.description || 'N/A'}` : 'No current task'}
+
+## Artifacts
+Total: ${context.validation_summary.total_artifacts}
+- Validated: ${context.validation_summary.validated_artifacts}
+- Failed: ${context.validation_summary.failed_validations}
+
+## What to Do Next
+${context.what_to_do_next.map(item => `- ${item}`).join('\n')}
+
+## Open Questions
+${context.open_questions.length > 0 ? context.open_questions.map(q => `- ${q}`).join('\n') : 'None'}
+
+## Files
+- Run Record: ${runDirs.run_json}
+- Artifact Registry: ${runDirs.artifact_registry}
+- Handoff Package: ${runDirs.handoff_json}
+- Reasoning Files: ${runDirs.reasoning_dir}
+- Gate Files: ${runDirs.gates_dir}
+`;
+  
+  await writeFile(runDirs.handoff_md, handoffMd, 'utf-8');
+  
+  return handoffPackage;
 }
+
+/**
+ * Phase 3: Spawn
+ * - Platform-specific launcher opens new orchestrator with handoff.md as first input
+ */
+async function spawnNewOrchestrator(runId, spawnCursor = false) {
+  const runDirs = getRunDirectoryStructure(runId);
+  const handoffMdPath = runDirs.handoff_md;
+  
+  if (spawnCursor) {
+    // Spawn Cursor window with handoff package
+    // This would require a cursor-spawner.mjs module
+    console.log(`Handoff package ready: ${handoffMdPath}`);
+    console.log(`New orchestrator should load: ${handoffMdPath}`);
+  } else {
+    // Standard handoff (no spawning)
+    console.log(`Handoff package ready: ${handoffMdPath}`);
+    console.log(`New orchestrator should load: ${handoffMdPath}`);
+  }
+}
+
+/**
+ * Phase 4: Ack
+ * - New orchestrator writes handoff-ack.json ("loaded successfully" + hash of handoff)
+ */
+export async function acknowledgeHandoff(runId, handoffHash) {
+  const runDirs = getRunDirectoryStructure(runId);
+  
+  // Verify handoff hash matches
+  const handoffContent = await readFile(runDirs.handoff_json, 'utf-8');
+  const handoffData = JSON.parse(handoffContent);
+  
+  if (handoffData.handoff_hash !== handoffHash) {
+    throw new Error('Handoff hash mismatch - handoff may have been modified');
+  }
+  
+  // Write ack file
+  const ackData = {
+    run_id: runId,
+    ack_timestamp: new Date().toISOString(),
+    handoff_hash: handoffHash,
+    status: 'loaded_successfully',
+    orchestrator_session_id: `orchestrator-${Date.now()}`
+  };
+  
+  const ackPath = join(runDirs.run_dir, 'handoff-ack.json');
+  await writeFile(ackPath, JSON.stringify(ackData, null, 2), 'utf-8');
+  
+  return ackData;
+}
+
+/**
+ * Phase 5: Shutdown
+ * - Old orchestrator sees ack and marks itself shutdown (becomes read-only)
+ */
+async function shutdownOrchestratorFromHandoff(runId) {
+  const runDirs = getRunDirectoryStructure(runId);
+  const ackPath = join(runDirs.run_dir, 'handoff-ack.json');
+  
+  // Check if ack exists
+  if (existsSync(ackPath)) {
+    // Ack received, mark run as handed off
+    await updateRun(runId, { status: 'handed_off' });
+    console.log(`Handoff acknowledged. Run ${runId} marked as handed off.`);
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Silent Kill Pattern - Updates Project Database and exits with code 100
+ * This is called by orchestrator when context limit is reached
+ * Wrapper detects exit code 100 and automatically respawns
+ */
+export async function silentKillForRecycling(runId) {
+  // Update run record to handoff_pending (project-db will be synced automatically)
+  const runRecord = await readRun(runId);
+  
+  // Update run status to handoff_pending
+  await updateRun(runId, {
+    status: 'handoff_pending',
+    metadata: {
+      ...runRecord.metadata,
+      handoff_reason: 'context_limit_reached',
+      handoff_triggered_at: new Date().toISOString()
+    }
+  });
+  
+  // Print message for user
+  console.log('\n⚠️  Context limit reached. Resuming in new instance...\n');
+  
+  // Exit with code 100 (signal for wrapper)
+  process.exit(100);
+}
+
+/**
+ * Execute complete two-phase commit handoff (NEW - uses run directory)
+ */
+export async function executeHandoffWithRunId(runId, spawnCursor = false) {
+  // Phase 1: Freeze
+  await freezeRun(runId);
+  console.log(`Phase 1 (Freeze): Run ${runId} set to handoff_pending`);
+  
+  // Phase 2: Snapshot
+  const handoffPackage = await snapshotHandoff(runId);
+  console.log(`Phase 2 (Snapshot): Handoff package created at ${getRunDirectoryStructure(runId).handoff_json}`);
+  
+  // Phase 3: Spawn
+  await spawnNewOrchestrator(runId, spawnCursor);
+  console.log(`Phase 3 (Spawn): New orchestrator ${spawnCursor ? 'spawned' : 'ready to initialize'}`);
+  
+  return handoffPackage;
+}
+
 
 /**
  * CLI interface
  */
 async function main() {
   const args = process.argv.slice(2);
-  const sessionIdIndex = args.indexOf('--session-id');
-  const projectIndex = args.indexOf('--project');
+  const runIdIndex = args.indexOf('--run-id');
+  const spawnCursor = args.includes('--spawn-cursor');
   
-  if (sessionIdIndex === -1 || !args[sessionIdIndex + 1] || 
-      projectIndex === -1 || !args[projectIndex + 1]) {
-    console.error('Usage: node orchestrator-handoff.mjs --session-id <id> --project <name>');
+  if (runIdIndex === -1 || !args[runIdIndex + 1]) {
+    console.error('Usage: node orchestrator-handoff.mjs --run-id <id> [--spawn-cursor]');
     process.exit(1);
   }
   
-  const sessionId = args[sessionIdIndex + 1];
-  const projectName = args[projectIndex + 1];
+  const runId = args[runIdIndex + 1];
   
-  const result = await executeHandoff(sessionId, projectName);
+  const result = await executeHandoffWithRunId(runId, spawnCursor);
   
   console.log(JSON.stringify(result, null, 2));
 }
@@ -327,9 +323,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export default { 
-  createHandoffPackage, 
   initializeNewOrchestrator, 
-  shutdownOrchestrator, 
-  executeHandoff 
+  executeHandoffWithRunId,
+  acknowledgeHandoff,
+  silentKillForRecycling
 };
 

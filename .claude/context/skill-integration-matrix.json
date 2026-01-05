@@ -1,0 +1,333 @@
+{
+  "version": "1.0.0",
+  "description": "Maps agents to their required and recommended skills with specific triggers",
+  "last_updated": "2026-01-04T00:00:00Z",
+  "agents": {
+    "orchestrator": {
+      "required_skills": ["response-rater", "recovery", "artifact-publisher"],
+      "recommended_skills": ["context-bridge", "conflict-resolution", "optional-artifact-handler"],
+      "skill_triggers": {
+        "plan_validation": "response-rater",
+        "workflow_error": "recovery",
+        "task_complete": "artifact-publisher",
+        "platform_handoff": "context-bridge",
+        "agent_conflict": "conflict-resolution",
+        "missing_optional_artifact": "optional-artifact-handler"
+      },
+      "description": "Orchestrator coordinates workflows and delegates to specialized agents. Must use response-rater for plan validation (min score: 7/10)."
+    },
+    "developer": {
+      "required_skills": ["scaffolder", "rule-auditor", "repo-rag"],
+      "recommended_skills": ["test-generator", "claude-md-generator", "dependency-analyzer", "code-style-validator"],
+      "skill_triggers": {
+        "new_component": "scaffolder",
+        "code_changes": "rule-auditor",
+        "codebase_search": "repo-rag",
+        "test_creation": "test-generator",
+        "new_module": "claude-md-generator",
+        "dependency_update": "dependency-analyzer",
+        "style_check": "code-style-validator"
+      },
+      "description": "Developer implements features and creates code. Uses scaffolder for boilerplate, rule-auditor before commit, repo-rag for pattern discovery."
+    },
+    "code-reviewer": {
+      "required_skills": ["rule-auditor", "code-style-validator", "explaining-rules"],
+      "recommended_skills": ["fixing-rule-violations", "dependency-analyzer", "commit-validator"],
+      "skill_triggers": {
+        "review_code": "rule-auditor",
+        "style_review": "code-style-validator",
+        "rule_explanation": "explaining-rules",
+        "violation_fix": "fixing-rule-violations",
+        "dependency_review": "dependency-analyzer",
+        "commit_review": "commit-validator"
+      },
+      "description": "Code reviewer validates quality and compliance. Uses rule-auditor for compliance checks, code-style-validator for consistency."
+    },
+    "qa": {
+      "required_skills": ["test-generator", "rule-auditor", "evaluator"],
+      "recommended_skills": ["response-rater", "chrome-devtools", "computer-use", "summarizer"],
+      "skill_triggers": {
+        "test_creation": "test-generator",
+        "quality_check": "rule-auditor",
+        "agent_evaluation": "evaluator",
+        "response_quality": "response-rater",
+        "browser_testing": "chrome-devtools",
+        "ui_testing": "computer-use",
+        "test_summary": "summarizer"
+      },
+      "description": "QA creates test strategies and validates quality. Uses test-generator for test suites, evaluator for performance assessment."
+    },
+    "architect": {
+      "required_skills": ["diagram-generator", "repo-rag", "dependency-analyzer"],
+      "recommended_skills": ["doc-generator", "api-contract-generator", "sequential-thinking"],
+      "skill_triggers": {
+        "architecture_diagram": "diagram-generator",
+        "pattern_search": "repo-rag",
+        "dependency_analysis": "dependency-analyzer",
+        "api_design": "api-contract-generator",
+        "architecture_docs": "doc-generator",
+        "complex_decision": "sequential-thinking"
+      },
+      "description": "Architect designs system architecture. Uses diagram-generator for visuals, repo-rag for existing patterns, dependency-analyzer for tech stack."
+    },
+    "security-architect": {
+      "required_skills": ["rule-auditor", "dependency-analyzer", "explaining-rules"],
+      "recommended_skills": ["repo-rag", "doc-generator", "sequential-thinking"],
+      "skill_triggers": {
+        "security_audit": "rule-auditor",
+        "vulnerability_scan": "dependency-analyzer",
+        "security_explanation": "explaining-rules",
+        "pattern_search": "repo-rag",
+        "security_docs": "doc-generator",
+        "threat_modeling": "sequential-thinking"
+      },
+      "description": "Security architect validates security and compliance. Uses dependency-analyzer for vulnerabilities, rule-auditor for security rules."
+    },
+    "technical-writer": {
+      "required_skills": ["doc-generator", "diagram-generator", "summarizer"],
+      "recommended_skills": ["claude-md-generator", "pdf-generator", "powerpoint-generator", "excel-generator"],
+      "skill_triggers": {
+        "documentation": "doc-generator",
+        "diagrams": "diagram-generator",
+        "summaries": "summarizer",
+        "module_docs": "claude-md-generator",
+        "pdf_reports": "pdf-generator",
+        "presentations": "powerpoint-generator",
+        "data_tables": "excel-generator"
+      },
+      "description": "Technical writer creates documentation. Uses doc-generator for API docs, claude-md-generator for module docs, pdf-generator for reports."
+    },
+    "planner": {
+      "required_skills": ["plan-generator", "sequential-thinking"],
+      "recommended_skills": ["diagram-generator", "classifier", "repo-rag"],
+      "skill_triggers": {
+        "plan_creation": "plan-generator",
+        "complex_analysis": "sequential-thinking",
+        "plan_diagram": "diagram-generator",
+        "task_classification": "classifier",
+        "pattern_search": "repo-rag"
+      },
+      "description": "Planner creates comprehensive project plans. Uses plan-generator for structured plans, sequential-thinking for complex analysis."
+    },
+    "analyst": {
+      "required_skills": ["repo-rag", "sequential-thinking"],
+      "recommended_skills": ["classifier", "summarizer", "text-to-sql"],
+      "skill_triggers": {
+        "codebase_analysis": "repo-rag",
+        "deep_analysis": "sequential-thinking",
+        "categorization": "classifier",
+        "data_summary": "summarizer",
+        "database_query": "text-to-sql"
+      },
+      "description": "Analyst performs research and analysis. Uses repo-rag for codebase exploration, sequential-thinking for deep analysis."
+    },
+    "pm": {
+      "required_skills": ["plan-generator", "classifier"],
+      "recommended_skills": ["summarizer", "excel-generator", "powerpoint-generator"],
+      "skill_triggers": {
+        "requirement_planning": "plan-generator",
+        "feature_classification": "classifier",
+        "requirement_summary": "summarizer",
+        "roadmap_export": "excel-generator",
+        "stakeholder_presentation": "powerpoint-generator"
+      },
+      "description": "PM manages product requirements. Uses plan-generator for roadmaps, classifier for feature prioritization."
+    },
+    "ux-expert": {
+      "required_skills": ["diagram-generator", "claude-md-generator"],
+      "recommended_skills": ["doc-generator", "powerpoint-generator", "summarizer"],
+      "skill_triggers": {
+        "user_flow_diagram": "diagram-generator",
+        "component_docs": "claude-md-generator",
+        "ux_documentation": "doc-generator",
+        "design_presentation": "powerpoint-generator",
+        "ux_summary": "summarizer"
+      },
+      "description": "UX expert designs user interfaces. Uses diagram-generator for user flows, claude-md-generator for component documentation."
+    },
+    "database-architect": {
+      "required_skills": ["diagram-generator", "text-to-sql", "dependency-analyzer"],
+      "recommended_skills": ["doc-generator", "repo-rag"],
+      "skill_triggers": {
+        "schema_diagram": "diagram-generator",
+        "query_generation": "text-to-sql",
+        "orm_analysis": "dependency-analyzer",
+        "database_docs": "doc-generator",
+        "pattern_search": "repo-rag"
+      },
+      "description": "Database architect designs data models. Uses diagram-generator for ER diagrams, text-to-sql for query generation."
+    },
+    "devops": {
+      "required_skills": ["cloud-run", "dependency-analyzer"],
+      "recommended_skills": ["doc-generator", "diagram-generator", "git"],
+      "skill_triggers": {
+        "deployment": "cloud-run",
+        "dependency_check": "dependency-analyzer",
+        "infrastructure_docs": "doc-generator",
+        "architecture_diagram": "diagram-generator",
+        "git_operations": "git"
+      },
+      "description": "DevOps manages infrastructure. Uses cloud-run for deployment, dependency-analyzer for package management."
+    },
+    "llm-architect": {
+      "required_skills": ["sequential-thinking", "diagram-generator", "doc-generator"],
+      "recommended_skills": ["repo-rag", "api-contract-generator", "response-rater"],
+      "skill_triggers": {
+        "llm_design": "sequential-thinking",
+        "architecture_diagram": "diagram-generator",
+        "api_documentation": "doc-generator",
+        "pattern_search": "repo-rag",
+        "api_contract": "api-contract-generator",
+        "prompt_evaluation": "response-rater"
+      },
+      "description": "LLM architect designs AI/LLM systems. Uses sequential-thinking for complex design, response-rater for prompt evaluation."
+    },
+    "api-designer": {
+      "required_skills": ["api-contract-generator", "diagram-generator", "doc-generator"],
+      "recommended_skills": ["repo-rag", "sequential-thinking"],
+      "skill_triggers": {
+        "api_contract": "api-contract-generator",
+        "api_diagram": "diagram-generator",
+        "api_docs": "doc-generator",
+        "pattern_search": "repo-rag",
+        "complex_design": "sequential-thinking"
+      },
+      "description": "API designer creates API specifications. Uses api-contract-generator for OpenAPI specs, doc-generator for API documentation."
+    },
+    "mobile-developer": {
+      "required_skills": ["scaffolder", "rule-auditor", "repo-rag"],
+      "recommended_skills": ["test-generator", "chrome-devtools", "dependency-analyzer"],
+      "skill_triggers": {
+        "new_component": "scaffolder",
+        "code_review": "rule-auditor",
+        "pattern_search": "repo-rag",
+        "test_creation": "test-generator",
+        "browser_testing": "chrome-devtools",
+        "dependency_check": "dependency-analyzer"
+      },
+      "description": "Mobile developer implements mobile features. Uses scaffolder for components, rule-auditor for mobile-specific rules."
+    },
+    "performance-engineer": {
+      "required_skills": ["dependency-analyzer", "repo-rag", "diagram-generator"],
+      "recommended_skills": ["sequential-thinking", "doc-generator"],
+      "skill_triggers": {
+        "dependency_analysis": "dependency-analyzer",
+        "performance_pattern_search": "repo-rag",
+        "performance_diagram": "diagram-generator",
+        "optimization_analysis": "sequential-thinking",
+        "performance_docs": "doc-generator"
+      },
+      "description": "Performance engineer optimizes systems. Uses dependency-analyzer for bundle analysis, repo-rag for optimization patterns."
+    },
+    "refactoring-specialist": {
+      "required_skills": ["repo-rag", "rule-auditor", "fixing-rule-violations"],
+      "recommended_skills": ["diagram-generator", "code-style-validator"],
+      "skill_triggers": {
+        "pattern_search": "repo-rag",
+        "rule_compliance": "rule-auditor",
+        "violation_fixes": "fixing-rule-violations",
+        "refactor_diagram": "diagram-generator",
+        "style_check": "code-style-validator"
+      },
+      "description": "Refactoring specialist improves code quality. Uses repo-rag for patterns, fixing-rule-violations for automated fixes."
+    },
+    "legacy-modernizer": {
+      "required_skills": ["repo-rag", "dependency-analyzer", "migrating-rules"],
+      "recommended_skills": ["diagram-generator", "sequential-thinking", "doc-generator"],
+      "skill_triggers": {
+        "legacy_analysis": "repo-rag",
+        "dependency_upgrade": "dependency-analyzer",
+        "rule_migration": "migrating-rules",
+        "migration_diagram": "diagram-generator",
+        "migration_planning": "sequential-thinking",
+        "migration_docs": "doc-generator"
+      },
+      "description": "Legacy modernizer updates old systems. Uses migrating-rules for rule updates, dependency-analyzer for package upgrades."
+    },
+    "accessibility-expert": {
+      "required_skills": ["rule-auditor", "chrome-devtools", "computer-use"],
+      "recommended_skills": ["repo-rag", "doc-generator", "diagram-generator"],
+      "skill_triggers": {
+        "a11y_audit": "rule-auditor",
+        "browser_testing": "chrome-devtools",
+        "ui_testing": "computer-use",
+        "pattern_search": "repo-rag",
+        "a11y_docs": "doc-generator",
+        "user_flow": "diagram-generator"
+      },
+      "description": "Accessibility expert ensures WCAG compliance. Uses rule-auditor for a11y rules, chrome-devtools for browser testing."
+    },
+    "compliance-auditor": {
+      "required_skills": ["rule-auditor", "dependency-analyzer", "explaining-rules"],
+      "recommended_skills": ["doc-generator", "excel-generator", "pdf-generator"],
+      "skill_triggers": {
+        "compliance_audit": "rule-auditor",
+        "vulnerability_scan": "dependency-analyzer",
+        "rule_explanation": "explaining-rules",
+        "compliance_docs": "doc-generator",
+        "audit_report": "excel-generator",
+        "formal_report": "pdf-generator"
+      },
+      "description": "Compliance auditor validates regulatory compliance. Uses rule-auditor for compliance rules, pdf-generator for audit reports."
+    },
+    "incident-responder": {
+      "required_skills": ["repo-rag", "dependency-analyzer", "sequential-thinking"],
+      "recommended_skills": ["doc-generator", "diagram-generator", "github"],
+      "skill_triggers": {
+        "incident_analysis": "repo-rag",
+        "dependency_check": "dependency-analyzer",
+        "root_cause_analysis": "sequential-thinking",
+        "postmortem_docs": "doc-generator",
+        "incident_diagram": "diagram-generator",
+        "issue_tracking": "github"
+      },
+      "description": "Incident responder manages production issues. Uses sequential-thinking for root cause analysis, doc-generator for postmortems."
+    },
+    "model-orchestrator": {
+      "required_skills": ["response-rater", "context-bridge"],
+      "recommended_skills": ["recovery", "conflict-resolution"],
+      "skill_triggers": {
+        "response_evaluation": "response-rater",
+        "platform_routing": "context-bridge",
+        "workflow_recovery": "recovery",
+        "model_conflict": "conflict-resolution"
+      },
+      "description": "Model orchestrator routes tasks across models. Uses response-rater for output evaluation, context-bridge for platform handoff."
+    },
+    "code-simplifier": {
+      "required_skills": ["repo-rag", "code-style-validator", "rule-auditor"],
+      "recommended_skills": ["fixing-rule-violations", "diagram-generator"],
+      "skill_triggers": {
+        "complexity_analysis": "repo-rag",
+        "style_validation": "code-style-validator",
+        "rule_compliance": "rule-auditor",
+        "simplification_fixes": "fixing-rule-violations",
+        "complexity_diagram": "diagram-generator"
+      },
+      "description": "Code simplifier reduces complexity. Uses repo-rag for complexity patterns, code-style-validator for consistency."
+    }
+  },
+  "skill_categories": {
+    "code_generation": ["scaffolder", "claude-md-generator", "api-contract-generator"],
+    "code_quality": ["rule-auditor", "code-style-validator", "fixing-rule-violations"],
+    "documentation": ["doc-generator", "diagram-generator", "summarizer", "pdf-generator", "powerpoint-generator", "excel-generator"],
+    "analysis": ["repo-rag", "dependency-analyzer", "evaluator", "classifier", "text-to-sql"],
+    "testing": ["test-generator", "chrome-devtools", "computer-use"],
+    "orchestration": ["recovery", "response-rater", "artifact-publisher", "context-bridge", "conflict-resolution", "optional-artifact-handler"],
+    "planning": ["plan-generator", "sequential-thinking"],
+    "rules": ["rule-auditor", "rule-selector", "explaining-rules", "fixing-rule-violations", "migrating-rules", "recommending-rules"],
+    "platform": ["git", "github", "cloud-run", "puppeteer"],
+    "memory": ["memory", "memory-manager"],
+    "tools": ["tool-search", "mcp-converter", "skill-manager", "filesystem", "sdk"],
+    "commit": ["commit-validator"]
+  },
+  "usage_notes": {
+    "orchestrator": "MUST rate all plans using response-rater (min score: 7/10). MUST delegate work to subagents, never implement directly.",
+    "developer": "MUST use scaffolder for new components, rule-auditor before commit, claude-md-generator for new modules.",
+    "code-reviewer": "MUST use rule-auditor for compliance validation. Use explaining-rules to clarify violations.",
+    "qa": "MUST use test-generator for test suites. Use chrome-devtools for browser testing, computer-use for UI automation.",
+    "architect": "Use diagram-generator for all architecture diagrams. Use sequential-thinking for complex architectural decisions.",
+    "technical-writer": "Use claude-md-generator for module documentation. Use pdf-generator for formal reports.",
+    "all_agents": "Use repo-rag to search codebase for patterns before implementing. Use dependency-analyzer to check for security vulnerabilities."
+  }
+}

@@ -12,19 +12,43 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const CONTEXT_HISTORY_FILE = path.join(__dirname, '../context/history/context-usage.json');
-const ALERT_THRESHOLD = 0.8; // Alert at 80% of max context
-const MAX_CONTEXT_TOKENS = 200000;
+const ALERT_THRESHOLD = 0.7; // Alert at 70% of max context
+
+/**
+ * Get context limit from settings or default
+ * @returns {number} Context limit in tokens
+ */
+function getContextLimit() {
+  try {
+    const settingsPath = path.join(__dirname, '../settings.json');
+    if (fs.existsSync(settingsPath)) {
+      const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+      if (settings.session?.max_context_tokens) {
+        return settings.session.max_context_tokens;
+      }
+    }
+  } catch (error) {
+    // Fall back to default
+  }
+  // Default to 100k (from settings.json)
+  return 100000;
+}
 
 /**
  * Record context usage for an agent session
+ * @param {string} agentName - Agent name
+ * @param {Object} usage - Usage data
+ * @param {string} runId - Optional run ID for run-based tracking
  */
-export function recordContextUsage(agentName, usage) {
+export async function recordContextUsage(agentName, usage, runId = null) {
+  const maxTokens = getContextLimit();
   const history = loadHistory();
   const timestamp = new Date().toISOString();
   
   const record = {
     timestamp,
     agent: agentName,
+    runId: runId || null,
     totalTokens: usage.total || 0,
     systemPrompt: usage.systemPrompt || 0,
     systemTools: usage.systemTools || 0,
@@ -33,7 +57,8 @@ export function recordContextUsage(agentName, usage) {
     memoryFiles: usage.memoryFiles || 0,
     messages: usage.messages || 0,
     autocompactBuffer: usage.autocompactBuffer || 0,
-    percentage: (usage.total / MAX_CONTEXT_TOKENS) * 100
+    percentage: (usage.total / maxTokens) * 100,
+    maxTokens
   };
   
   history.push(record);
@@ -45,13 +70,119 @@ export function recordContextUsage(agentName, usage) {
   
   saveHistory(history);
   
-  // Check for alerts
-  if (record.percentage > ALERT_THRESHOLD * 100) {
+  // Store snapshot in run directory if runId provided
+  if (runId) {
+    await saveRunContextSnapshot(runId, record);
+  }
+  
+  // Check for alerts at 70% threshold
+  if (record.percentage >= ALERT_THRESHOLD * 100) {
     console.warn(`⚠️  Context usage alert for ${agentName}: ${record.percentage.toFixed(1)}%`);
-    console.warn(`   Total: ${record.totalTokens.toLocaleString()} / ${MAX_CONTEXT_TOKENS.toLocaleString()} tokens`);
+    console.warn(`   Total: ${record.totalTokens.toLocaleString()} / ${maxTokens.toLocaleString()} tokens`);
+    
+    // Check if Phoenix reset should be triggered (90% threshold)
+    if (runId && record.percentage >= 90) {
+      try {
+        const { shouldTriggerPhoenixReset, triggerPhoenixReset } = await import('./phoenix-manager.mjs');
+        if (shouldTriggerPhoenixReset(record.percentage, 90)) {
+          console.warn(`🔄 Context usage at ${record.percentage.toFixed(1)}% - Phoenix reset recommended`);
+          console.warn(`   Use triggerPhoenixReset() to initiate seamless context recycling`);
+        }
+      } catch (error) {
+        // Phoenix manager not available - continue with warning
+      }
+    }
+    
+    return { ...record, alert: true, thresholdReached: true };
   }
   
   return record;
+}
+
+/**
+ * Save context snapshot to run directory
+ * @param {string} runId - Run identifier
+ * @param {Object} snapshot - Context usage snapshot
+ */
+async function saveRunContextSnapshot(runId, snapshot) {
+  try {
+    const { getRunDirectoryStructure } = await import('./run-manager.mjs');
+    const runDirs = getRunDirectoryStructure(runId);
+    const snapshotDir = path.join(runDirs.run_dir, 'context-snapshots');
+    
+    if (!fs.existsSync(snapshotDir)) {
+      fs.mkdirSync(snapshotDir, { recursive: true });
+    }
+    
+    const snapshotFile = path.join(snapshotDir, `snapshot-${Date.now()}.json`);
+    fs.writeFileSync(snapshotFile, JSON.stringify(snapshot, null, 2), 'utf8');
+  } catch (error) {
+    // Non-critical - continue if snapshot save fails
+    console.warn(`Warning: Could not save context snapshot: ${error.message}`);
+  }
+}
+
+/**
+ * Check if context usage exceeds threshold (real-time monitoring)
+ * @param {string} agentName - Agent name
+ * @param {Object} usage - Usage data
+ * @param {string} runId - Optional run ID
+ */
+export function checkContextThreshold(agentName, usage, runId = null) {
+  const maxTokens = getContextLimit();
+  const percentage = ((usage.total || 0) / maxTokens) * 100;
+  const thresholdReached = percentage >= ALERT_THRESHOLD * 100;
+  
+  if (thresholdReached) {
+    return {
+      thresholdReached: true,
+      percentage: percentage.toFixed(1),
+      totalTokens: usage.total || 0,
+      maxTokens: maxTokens,
+      recommendation: 'Consider handoff to new orchestrator instance',
+      runId
+    };
+  }
+  
+  return {
+    thresholdReached: false,
+    percentage: percentage.toFixed(1),
+    totalTokens: usage.total || 0,
+    maxTokens: maxTokens,
+    runId
+  };
+}
+
+/**
+ * Get context usage for a run
+ * @param {string} runId - Run identifier
+ * @returns {Promise<Object|null>} Latest context snapshot or null
+ */
+export async function getRunContextUsage(runId) {
+  try {
+    const { getRunDirectoryStructure } = await import('./run-manager.mjs');
+    const runDirs = getRunDirectoryStructure(runId);
+    const snapshotDir = path.join(runDirs.run_dir, 'context-snapshots');
+    
+    if (!fs.existsSync(snapshotDir)) {
+      return null;
+    }
+    
+    const files = fs.readdirSync(snapshotDir)
+      .filter(f => f.startsWith('snapshot-') && f.endsWith('.json'))
+      .sort()
+      .reverse();
+    
+    if (files.length === 0) {
+      return null;
+    }
+    
+    const latestFile = path.join(snapshotDir, files[0]);
+    const snapshot = JSON.parse(fs.readFileSync(latestFile, 'utf8'));
+    return snapshot;
+  } catch (error) {
+    return null;
+  }
 }
 
 /**

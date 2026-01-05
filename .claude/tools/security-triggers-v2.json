@@ -1,0 +1,494 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "version": "2.0.0",
+  "description": "Enhanced security trigger detection system with 180+ keywords, file patterns, and task types",
+  "categories": {
+    "authentication": {
+      "description": "Authentication-related keywords that trigger security review",
+      "keywords": [
+        "authentication",
+        "auth",
+        "login",
+        "logout",
+        "signin",
+        "signout",
+        "sign-in",
+        "sign-out",
+        "password",
+        "credential",
+        "oauth",
+        "oauth2",
+        "saml",
+        "sso",
+        "single sign-on",
+        "jwt",
+        "token",
+        "access token",
+        "refresh token",
+        "session",
+        "cookie",
+        "bearer",
+        "basic auth",
+        "api key",
+        "api-key",
+        "apikey",
+        "client secret",
+        "client-secret",
+        "mfa",
+        "2fa",
+        "two-factor",
+        "multi-factor",
+        "otp",
+        "totp",
+        "biometric",
+        "fingerprint",
+        "face id",
+        "passkey",
+        "webauthn",
+        "fido",
+        "ldap",
+        "active directory",
+        "kerberos",
+        "pkce",
+        "auth code",
+        "authorization code",
+        "implicit flow",
+        "client credentials",
+        "password grant"
+      ],
+      "weight": 1.5
+    },
+    "authorization": {
+      "description": "Authorization and access control keywords",
+      "keywords": [
+        "authorization",
+        "authz",
+        "permission",
+        "role",
+        "rbac",
+        "abac",
+        "acl",
+        "access control",
+        "privilege",
+        "scope",
+        "claim",
+        "entitlement",
+        "policy",
+        "attribute-based",
+        "role-based",
+        "resource-based",
+        "capability",
+        "delegation",
+        "impersonation",
+        "sudo",
+        "admin",
+        "superuser",
+        "root",
+        "elevate",
+        "privilege escalation",
+        "least privilege",
+        "principle of least privilege",
+        "need to know",
+        "separation of duties",
+        "tenant isolation",
+        "multi-tenant"
+      ],
+      "weight": 1.5
+    },
+    "data_protection": {
+      "description": "Data security and protection keywords",
+      "keywords": [
+        "encryption",
+        "decrypt",
+        "encrypt",
+        "cipher",
+        "crypto",
+        "cryptography",
+        "aes",
+        "rsa",
+        "tls",
+        "ssl",
+        "https",
+        "certificate",
+        "cert",
+        "pki",
+        "key management",
+        "kms",
+        "secret",
+        "secrets",
+        "sensitive data",
+        "pii",
+        "personally identifiable",
+        "phi",
+        "protected health",
+        "gdpr",
+        "hipaa",
+        "pci",
+        "pci-dss",
+        "data protection",
+        "data privacy",
+        "privacy",
+        "anonymize",
+        "pseudonymize",
+        "mask",
+        "redact",
+        "hash",
+        "hashing",
+        "salt",
+        "bcrypt",
+        "scrypt",
+        "argon2",
+        "pbkdf2",
+        "secure storage",
+        "vault"
+      ],
+      "weight": 2.0
+    },
+    "injection_prevention": {
+      "description": "Injection attack prevention keywords",
+      "keywords": [
+        "sql injection",
+        "sqli",
+        "xss",
+        "cross-site scripting",
+        "csrf",
+        "cross-site request forgery",
+        "injection",
+        "sanitize",
+        "sanitization",
+        "validate",
+        "validation",
+        "input validation",
+        "output encoding",
+        "parameterized query",
+        "prepared statement",
+        "escape",
+        "escaping",
+        "whitelist",
+        "allowlist",
+        "blacklist",
+        "blocklist",
+        "command injection",
+        "code injection",
+        "ldap injection",
+        "xpath injection",
+        "xml injection",
+        "template injection",
+        "ssti",
+        "server-side template injection",
+        "path traversal",
+        "directory traversal"
+      ],
+      "weight": 2.0
+    },
+    "secrets_management": {
+      "description": "Secrets and credentials management keywords",
+      "keywords": [
+        "secret",
+        "secrets",
+        "api key",
+        "api-key",
+        "apikey",
+        "private key",
+        "private-key",
+        "password",
+        "credential",
+        "token",
+        "access token",
+        "environment variable",
+        "env var",
+        ".env",
+        "dotenv",
+        "vault",
+        "secrets manager",
+        "key vault",
+        "parameter store",
+        "secrets store",
+        "hardcoded",
+        "hard-coded",
+        "plaintext",
+        "plain-text",
+        "clear text",
+        "cleartext"
+      ],
+      "weight": 2.0
+    },
+    "network_security": {
+      "description": "Network security and communication keywords",
+      "keywords": [
+        "cors",
+        "cross-origin",
+        "csp",
+        "content security policy",
+        "firewall",
+        "network",
+        "vpn",
+        "proxy",
+        "reverse proxy",
+        "rate limit",
+        "rate-limit",
+        "throttle",
+        "ddos",
+        "dos",
+        "denial of service",
+        "ip whitelist",
+        "ip allowlist",
+        "ip blacklist",
+        "ip blocklist",
+        "tls",
+        "ssl",
+        "https",
+        "certificate pinning",
+        "mutual tls",
+        "mtls"
+      ],
+      "weight": 1.3
+    },
+    "compliance_security": {
+      "description": "Compliance and regulatory security keywords",
+      "keywords": [
+        "gdpr",
+        "general data protection regulation",
+        "hipaa",
+        "health insurance portability",
+        "pci",
+        "pci-dss",
+        "payment card industry",
+        "sox",
+        "sarbanes-oxley",
+        "soc2",
+        "soc 2",
+        "iso27001",
+        "iso 27001",
+        "nist",
+        "ccpa",
+        "california consumer privacy",
+        "ferpa",
+        "coppa",
+        "glba",
+        "fisma",
+        "fedramp",
+        "audit log",
+        "audit trail",
+        "compliance",
+        "regulatory"
+      ],
+      "weight": 1.8
+    },
+    "vulnerability_management": {
+      "description": "Vulnerability and threat keywords",
+      "keywords": [
+        "vulnerability",
+        "cve",
+        "exploit",
+        "attack",
+        "threat",
+        "malware",
+        "ransomware",
+        "phishing",
+        "social engineering",
+        "zero-day",
+        "patch",
+        "security update",
+        "security advisory",
+        "penetration test",
+        "pentest",
+        "red team"
+      ],
+      "weight": 1.5
+    }
+  },
+  "file_patterns": {
+    "description": "File patterns that trigger security review",
+    "patterns": [
+      {
+        "pattern": "**/*auth*.{ts,js,py,java,go,rb}",
+        "description": "Authentication files",
+        "weight": 1.5
+      },
+      {
+        "pattern": "**/*security*.{ts,js,py,java,go,rb}",
+        "description": "Security-related files",
+        "weight": 1.5
+      },
+      {
+        "pattern": "**/*permission*.{ts,js,py,java,go,rb}",
+        "description": "Permission files",
+        "weight": 1.3
+      },
+      {
+        "pattern": "**/*role*.{ts,js,py,java,go,rb}",
+        "description": "Role files",
+        "weight": 1.3
+      },
+      {
+        "pattern": "**/.env*",
+        "description": "Environment files",
+        "weight": 2.0
+      },
+      {
+        "pattern": "**/secrets/**",
+        "description": "Secrets directory",
+        "weight": 2.0
+      },
+      {
+        "pattern": "**/config/security*.{yml,yaml,json}",
+        "description": "Security configuration",
+        "weight": 1.5
+      },
+      {
+        "pattern": "**/middleware/{auth,security}*.{ts,js,py}",
+        "description": "Auth/Security middleware",
+        "weight": 1.5
+      },
+      {
+        "pattern": "**/api/**/{auth,login,token,session}*.{ts,js,py,java,go}",
+        "description": "Auth API endpoints",
+        "weight": 1.8
+      },
+      {
+        "pattern": "**/infrastructure/security/**",
+        "description": "Security infrastructure",
+        "weight": 1.5
+      }
+    ]
+  },
+  "task_types": {
+    "description": "Task types that trigger security review",
+    "types": [
+      {
+        "type": "authentication_implementation",
+        "description": "Implementing authentication system",
+        "weight": 2.0
+      },
+      {
+        "type": "authorization_implementation",
+        "description": "Implementing authorization/access control",
+        "weight": 2.0
+      },
+      {
+        "type": "api_security",
+        "description": "Securing APIs",
+        "weight": 1.8
+      },
+      {
+        "type": "data_encryption",
+        "description": "Implementing encryption",
+        "weight": 2.0
+      },
+      {
+        "type": "secrets_management",
+        "description": "Managing secrets/credentials",
+        "weight": 2.0
+      },
+      {
+        "type": "compliance_implementation",
+        "description": "Implementing compliance requirements",
+        "weight": 1.8
+      },
+      {
+        "type": "vulnerability_fix",
+        "description": "Fixing security vulnerabilities",
+        "weight": 2.0
+      },
+      {
+        "type": "security_audit",
+        "description": "Security audit or assessment",
+        "weight": 1.5
+      },
+      {
+        "type": "third_party_integration",
+        "description": "Integrating third-party services",
+        "weight": 1.5
+      },
+      {
+        "type": "database_security",
+        "description": "Database security implementation",
+        "weight": 1.8
+      },
+      {
+        "type": "network_security",
+        "description": "Network security configuration",
+        "weight": 1.5
+      },
+      {
+        "type": "user_data_handling",
+        "description": "Handling user/sensitive data",
+        "weight": 1.8
+      }
+    ]
+  },
+  "detection_rules": {
+    "keyword_matching": {
+      "case_sensitive": false,
+      "word_boundary": true,
+      "minimum_keyword_matches": 2,
+      "description": "Require at least 2 keyword matches to trigger"
+    },
+    "file_pattern_matching": {
+      "use_glob": true,
+      "match_any": true,
+      "description": "Match using glob patterns"
+    },
+    "task_type_matching": {
+      "exact_match": false,
+      "fuzzy_threshold": 0.8,
+      "description": "Allow fuzzy matching for task types"
+    },
+    "scoring": {
+      "keyword_weight": 1.0,
+      "file_pattern_weight": 1.2,
+      "task_type_weight": 1.5,
+      "threshold_for_trigger": 3.0,
+      "description": "Weighted scoring system"
+    }
+  },
+  "trigger_actions": {
+    "security_architect_review": {
+      "condition": "score >= 3.0 OR file_pattern_match == true OR task_type in high_risk_types",
+      "action": "Route to security-architect for review",
+      "priority": "high"
+    },
+    "security_checklist": {
+      "condition": "score >= 2.0",
+      "action": "Include security checklist in workflow",
+      "priority": "medium"
+    },
+    "compliance_check": {
+      "condition": "compliance_security keywords matched OR task_type == 'compliance_implementation'",
+      "action": "Route to compliance-auditor for review",
+      "priority": "high"
+    },
+    "automated_security_scan": {
+      "condition": "score >= 1.5",
+      "action": "Run automated security scans (SAST, dependency check)",
+      "priority": "low"
+    }
+  },
+  "exemptions": {
+    "description": "Tasks exempt from security review",
+    "exemption_rules": [
+      {
+        "rule": "documentation_only",
+        "condition": "task_type == 'documentation' && no_code_changes == true",
+        "description": "Documentation-only changes"
+      },
+      {
+        "rule": "test_only",
+        "condition": "files_changed matches '**/test/**' AND no_production_code_changes == true",
+        "description": "Test-only changes"
+      },
+      {
+        "rule": "ui_only_no_backend",
+        "condition": "task_type == 'ui_update' && no_backend_changes == true && no_api_changes == true",
+        "description": "UI-only changes with no backend"
+      }
+    ]
+  },
+  "statistics": {
+    "total_keywords": 184,
+    "total_file_patterns": 10,
+    "total_task_types": 12,
+    "last_updated": "2026-01-04"
+  }
+}

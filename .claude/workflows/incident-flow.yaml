@@ -51,6 +51,7 @@ steps:
       - immediate-actions.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-incident-responder.json
     validation:
+      schema: .claude/schemas/incident-triage.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-incident-responder.json
     description: |
       Rapid incident assessment:
@@ -74,6 +75,7 @@ steps:
       - remediation-plan.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-devops.json
     validation:
+      schema: .claude/schemas/infrastructure-analysis.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-devops.json
     description: |
       Infrastructure investigation:
@@ -95,6 +97,7 @@ steps:
       - security-assessment.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-security-architect.json
     validation:
+      schema: .claude/schemas/security-assessment.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-security-architect.json
     description: |
       Security incident evaluation:
@@ -105,19 +108,71 @@ steps:
       - Compliance impact
       - Forensic preservation
 
+  - step: 3.5
+    name: "Compliance Impact Assessment"
+    agent: compliance-auditor
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - triage-assessment.json (from step 1)
+      - security-assessment.json (from step 3)
+    outputs:
+      - compliance-impact.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03.5-compliance-auditor.json
+    validation:
+      schema: .claude/schemas/compliance-report.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/03.5-compliance-auditor.json
+    description: |
+      Compliance and regulatory impact:
+      - Data breach notification requirements (GDPR, CCPA, etc.)
+      - PII/PHI exposure assessment
+      - Regulatory reporting obligations
+      - Breach notification timelines
+      - Customer communication requirements
+      - Documentation and evidence preservation
+      - SOC2/ISO27001/HIPAA/PCI-DSS impact
+      - Legal and contractual obligations
+      - Third-party vendor notifications
+
   - step: 4
+    name: "Code Review"
+    agent: code-reviewer
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - remediation-plan.json (from step 2)
+      - security-assessment.json (from step 3)
+    outputs:
+      - code-review-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-code-reviewer.json
+    validation:
+      schema: .claude/schemas/code-review.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-code-reviewer.json
+    on_failure: "Return to remediation step with feedback"
+    description: |
+      Review remediation implementation for quality, security, and codebase impact:
+      - Verify fix addresses root cause
+      - Check for unintended side effects
+      - Validate security implications
+      - Ensure proper error handling
+      - Review rollback procedures
+
+  - step: 5
     name: "Resolution Validation"
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - remediation-plan.json (from step 2)
       - security-assessment.json (from step 3)
+      - code-review-{{workflow_id}}.json (from step 4)
     outputs:
       - resolution-report.json
       - post-mortem.json
-      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-qa.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05-qa.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/04-qa.json
+      schema: .claude/schemas/incident-resolution.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
+    secondary_outputs:
+      - artifact: post-mortem.json
+        schema: .claude/schemas/post-mortem.schema.json
     description: |
       Resolution and post-mortem:
       - Fix verification

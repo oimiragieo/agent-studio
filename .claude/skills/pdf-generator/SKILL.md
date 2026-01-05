@@ -106,8 +106,8 @@ PDF can combine content from:
 ### With Artifact Publisher
 
 PDF files can be published as artifacts:
-- Save to `.claude/context/artifacts/`
-- Include in artifact manifests
+- Save to `.claude/context/runs/{run-id}/artifacts/` (use `path-resolver.mjs` to resolve paths)
+- Register in artifact registry via `run-manager.mjs`
 - Reference in workflow outputs
 
 ### With Workflows

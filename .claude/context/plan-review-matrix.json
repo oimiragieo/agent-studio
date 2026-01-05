@@ -1,0 +1,225 @@
+{
+  "version": "1.0.0",
+  "description": "Plan review matrix defining which agents review plans based on task type and complexity",
+  "taskTypes": {
+    "UI_UX": {
+      "required": ["ux-expert", "accessibility-expert"],
+      "optional": ["pm", "designer"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "MOBILE": {
+      "required": ["mobile-developer", "ux-expert", "qa"],
+      "optional": ["performance-engineer", "accessibility-expert"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "DATABASE": {
+      "required": ["database-architect", "architect", "security-architect"],
+      "optional": ["performance-engineer", "developer"],
+      "minimum_score": 8,
+      "blocking_threshold": 5
+    },
+    "IMPLEMENTATION": {
+      "required": ["architect", "developer"],
+      "optional": ["qa", "code-reviewer"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "BUG_FIX_SIMPLE": {
+      "required": ["developer"],
+      "optional": ["code-reviewer"],
+      "minimum_score": 6,
+      "blocking_threshold": 4
+    },
+    "BUG_FIX_COMPLEX": {
+      "required": ["developer", "architect", "qa"],
+      "optional": ["security-architect"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "ARCHITECTURE": {
+      "required": ["architect", "database-architect", "security-architect"],
+      "optional": ["performance-engineer", "devops"],
+      "minimum_score": 8,
+      "blocking_threshold": 5
+    },
+    "API_DESIGN": {
+      "required": ["api-designer", "architect"],
+      "optional": ["security-architect", "developer"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "SECURITY": {
+      "required": ["security-architect", "compliance-auditor"],
+      "optional": ["code-reviewer", "architect"],
+      "minimum_score": 9,
+      "blocking_threshold": 6
+    },
+    "PERFORMANCE": {
+      "required": ["performance-engineer", "architect"],
+      "optional": ["developer", "qa"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "CODE_REVIEW": {
+      "required": ["code-reviewer"],
+      "optional": ["security-architect", "performance-engineer"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "REFACTORING": {
+      "required": ["refactoring-specialist", "architect"],
+      "optional": ["code-reviewer", "qa"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "LEGACY_MODERNIZATION": {
+      "required": ["legacy-modernizer", "architect", "qa"],
+      "optional": ["security-architect", "developer"],
+      "minimum_score": 8,
+      "blocking_threshold": 5
+    },
+    "AI_LLM_SYSTEM": {
+      "required": ["llm-architect", "architect"],
+      "optional": ["developer", "qa"],
+      "minimum_score": 8,
+      "blocking_threshold": 5
+    },
+    "TESTING": {
+      "required": ["qa", "developer"],
+      "optional": ["code-reviewer"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "INCIDENT_RESPONSE": {
+      "required": ["incident-responder", "devops"],
+      "optional": ["security-architect", "developer"],
+      "minimum_score": 8,
+      "blocking_threshold": 6
+    },
+    "INFRASTRUCTURE": {
+      "required": ["devops", "security-architect"],
+      "optional": ["architect", "code-reviewer"],
+      "minimum_score": 8,
+      "blocking_threshold": 5
+    },
+    "COMPLIANCE_AUDIT": {
+      "required": ["compliance-auditor", "security-architect"],
+      "optional": ["architect"],
+      "minimum_score": 9,
+      "blocking_threshold": 6
+    },
+    "ACCESSIBILITY": {
+      "required": ["accessibility-expert", "ux-expert"],
+      "optional": ["qa", "developer"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "DOCUMENTATION": {
+      "required": ["technical-writer"],
+      "optional": ["developer"],
+      "minimum_score": 6,
+      "blocking_threshold": 4
+    },
+    "RESEARCH": {
+      "required": ["analyst"],
+      "optional": ["pm"],
+      "minimum_score": 6,
+      "blocking_threshold": 4
+    },
+    "REQUIREMENTS": {
+      "required": ["pm", "analyst"],
+      "optional": ["ux-expert", "architect"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "BROWSER_TESTING": {
+      "required": ["qa", "developer"],
+      "optional": ["ux-expert", "accessibility-expert"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "CLOUD_INTEGRATION": {
+      "required": ["cloud-integrator", "devops"],
+      "optional": ["security-architect", "developer"],
+      "minimum_score": 8,
+      "blocking_threshold": 5
+    },
+    "IMPACT_ANALYSIS": {
+      "required": ["impact-analyzer", "architect"],
+      "optional": ["qa", "developer"],
+      "minimum_score": 8,
+      "blocking_threshold": 5
+    },
+    "SIMPLIFICATION": {
+      "required": ["code-simplifier", "refactoring-specialist"],
+      "optional": ["code-reviewer", "developer"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    },
+    "MODEL_ORCHESTRATION": {
+      "required": ["model-orchestrator"],
+      "optional": ["planner"],
+      "minimum_score": 7,
+      "blocking_threshold": 5
+    }
+  },
+  "complexityModifiers": {
+    "trivial": {
+      "score_modifier": -1,
+      "reduce_required_reviewers": 1
+    },
+    "simple": {
+      "score_modifier": 0,
+      "reduce_required_reviewers": 0
+    },
+    "moderate": {
+      "score_modifier": 0,
+      "reduce_required_reviewers": 0
+    },
+    "complex": {
+      "score_modifier": 1,
+      "reduce_required_reviewers": 0
+    },
+    "critical": {
+      "score_modifier": 2,
+      "reduce_required_reviewers": 0
+    }
+  },
+  "workflowModifiers": {
+    "quick_flow": {
+      "reduce_required_reviewers": 1,
+      "skip_optional": true
+    },
+    "fullstack": {
+      "reduce_required_reviewers": 0,
+      "skip_optional": false
+    },
+    "incident": {
+      "reduce_required_reviewers": 0,
+      "skip_optional": true,
+      "minimum_score_override": 9
+    },
+    "ai_system": {
+      "reduce_required_reviewers": 0,
+      "skip_optional": false,
+      "add_reviewers": ["llm-architect"]
+    }
+  },
+  "scoringRules": {
+    "score_range": [0, 10],
+    "aggregation": "weighted_average",
+    "weights": {
+      "required": 0.7,
+      "optional": 0.3
+    },
+    "blocking_behavior": "any_reviewer_below_threshold_blocks"
+  },
+  "metadata": {
+    "created": "2026-01-04",
+    "totalTaskTypes": 27,
+    "description": "Defines which agents review plans and scoring rules",
+    "updateFrequency": "as needed"
+  }
+}

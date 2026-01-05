@@ -1,0 +1,24 @@
+# Ensure consistent line endings across platforms
+
+# Shell scripts must use LF
+*.sh text eol=lf
+
+# JavaScript/Node scripts should use LF
+*.mjs text eol=lf
+*.js text eol=lf
+
+# TypeScript files should use LF
+*.ts text eol=lf
+
+# JSON files should use LF
+*.json text eol=lf
+
+# YAML files should use LF
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# Markdown files should use LF
+*.md text eol=lf
+
+# All other text files use LF
+* text=auto eol=lf

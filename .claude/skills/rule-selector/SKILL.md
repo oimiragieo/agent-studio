@@ -2,6 +2,8 @@
 name: rule-selector
 description: Analyzes project tech stack and recommends optimal rule configuration. Detects frameworks from package.json, requirements.txt, go.mod, and other config files. Generates custom manifest.yaml profiles for your specific stack.
 allowed-tools: read, glob, grep, search
+min_required_version: 1.0.0
+compatible_versions: "^1.0.0"
 ---
 
 # Rule Selector
@@ -59,6 +61,168 @@ Load the rule index to discover all available rules dynamically:
 
 The index contains metadata for all 1,081+ rules with technology mappings.
 
+**Version Compatibility Check** (CRITICAL):
+
+Before using the rule index, verify version compatibility:
+
+```javascript
+// Load and validate index version
+const ruleIndex = JSON.parse(await fs.readFile('.claude/context/rule-index.json', 'utf-8'));
+const indexVersion = ruleIndex.version || '0.0.0';
+const minRequired = '1.0.0'; // From skill frontmatter
+
+if (!isVersionCompatible(indexVersion, minRequired)) {
+  console.warn(`
+⚠️  RULE INDEX VERSION MISMATCH
+   Current index version: ${indexVersion}
+   Required version: ${minRequired}+
+
+   The rule index may be outdated. Please regenerate it:
+
+   Command: pnpm index-rules
+   Or:      node scripts/generate-rule-index.mjs
+
+   This ensures all rules are discoverable by the skill.
+  `);
+
+  // Offer to regenerate automatically
+  const shouldRegenerate = await promptUser('Regenerate rule index now? (y/n)');
+  if (shouldRegenerate) {
+    await execAsync('pnpm index-rules');
+    // Reload index after regeneration
+    ruleIndex = JSON.parse(await fs.readFile('.claude/context/rule-index.json', 'utf-8'));
+  }
+}
+
+// Helper function for semantic version comparison
+function isVersionCompatible(current, required) {
+  const [cMajor, cMinor, cPatch] = current.split('.').map(Number);
+  const [rMajor, rMinor, rPatch] = required.split('.').map(Number);
+
+  // Major version must match (breaking changes)
+  if (cMajor !== rMajor) return false;
+
+  // Minor version must be >= required (new features are backward compatible)
+  if (cMinor < rMinor) return false;
+
+  // Patch version doesn't matter for compatibility
+  return true;
+}
+```
+
+**When to Increment Index Version**:
+
+Update the version in `scripts/generate-rule-index.mjs` when:
+
+| Change Type | Version Bump | Example |
+|------------|--------------|---------|
+| **Major (X.0.0)** | Breaking schema changes | Renamed `technology_map` to `tech_index`, removed `rules` array |
+| **Minor (1.X.0)** | New rules added | Added 50 new rules, new technology categories |
+| **Minor (1.X.0)** | Rule paths changed | Moved rules from `.claude/archive/` to `.claude/rules-library/` |
+| **Minor (1.X.0)** | New metadata fields | Added `templates` or `validation_blocks` to rule metadata |
+| **Patch (1.0.X)** | Bug fixes only | Fixed technology detection, corrected metadata parsing |
+| **Patch (1.0.X)** | Re-indexing | Re-ran index generation without content changes |
+
+**Version History**:
+
+- **1.1.0**: Added versioning metadata, schema_version, and increment guide
+- **1.0.0**: Initial release with master rules and library rules support
+
+**Fallback Strategy (CRITICAL for drop-in reliability):**
+
+If `.claude/context/rule-index.json` is missing or cannot be loaded:
+
+1. **Attempt to load pre-built index** (should exist in repo):
+   - Check if file exists at `.claude/context/rule-index.json`
+   - If exists, load it (pre-built index includes common stacks)
+
+2. **If pre-built index missing, fall back to direct directory scan**:
+   - Scan `.claude/rules-master/` directory directly
+   - Scan `.claude/rules-library/` (formerly archive) directory directly
+   - Build temporary index in memory from discovered rules
+   - Continue with rule selection using temporary index
+   - Log fallback in reasoning: "Used directory scan fallback - rule-index.json not found"
+
+3. **Never fail** - Always provide rule recommendations even if index is missing
+
+**Empty Directory Handling:**
+
+If no configuration files are detected (package.json, requirements.txt, go.mod, etc.):
+
+1. **Detect empty state**:
+   - Check for common config files: `package.json`, `requirements.txt`, `go.mod`, `Cargo.toml`, `pom.xml`, `build.gradle`, `composer.json`, `Gemfile`
+   - Check for framework configs: `next.config.*`, `nuxt.config.*`, `angular.json`, `svelte.config.*`, `astro.config.*`
+   - If none found: Empty directory detected
+
+2. **Prompt user with Quick Pick list for common stacks**:
+   ```
+   "No configuration files detected. Please select your intended stack:
+   
+   **Quick Pick (Common Stacks):**
+   1. Next.js - Full-stack React framework with App Router
+   2. Python API - FastAPI/Django REST API service
+   3. Go Service - Go microservice or API
+   4. React SPA - React single-page application
+   5. TypeScript App - TypeScript application
+   6. Vue.js App - Vue.js application
+   7. Other - Describe your stack using keywords
+   
+   Or describe your stack using one of these keywords:
+   
+   **Supported Stack Keywords:**
+   - `nextjs-app` - Next.js application
+   - `react-spa` - React single-page application
+   - `fastapi-backend` - FastAPI backend service
+   - `django-backend` - Django backend service
+   - `go-microservice` - Go microservice
+   - `python-api` - Python API service
+   - `typescript-app` - TypeScript application
+   - `vue-app` - Vue.js application
+   - `angular-app` - Angular application
+   - `nodejs-api` - Node.js API service
+   - `mobile-react-native` - React Native mobile app
+   - `mobile-flutter` - Flutter mobile app
+   
+   **Or describe your stack in natural language:**
+   - Example: 'React with Python backend'
+   - Example: 'Next.js TypeScript with PostgreSQL'
+   - Example: 'Go microservices'
+   - Example: 'Python FastAPI with MongoDB'
+   "
+   ```
+
+3. **Parse user description**:
+   - Extract technologies from user input
+   - Map to rule categories using technology keywords
+   - Generate profile based on parsed technologies
+   - **If user uses a Stack Keyword**: Map directly to corresponding rules (e.g., `nextjs-app` → Next.js + TypeScript + React rules)
+
+4. **Generate manifest.yaml**:
+   - Use parsed technologies to select rules
+   - Create stack profile with selected rules
+   - Document that profile was generated from user description
+
+## Supported Stack Keywords
+
+When prompting users in empty directory scenarios, suggest these keywords for better rule mapping:
+
+| Keyword | Description | Maps To Rules |
+|---------|-------------|---------------|
+| `nextjs-app` | Next.js application | Next.js, React, TypeScript, Tailwind |
+| `react-spa` | React single-page application | React, TypeScript, JavaScript |
+| `fastapi-backend` | FastAPI backend service | FastAPI, Python, Pydantic |
+| `django-backend` | Django backend service | Django, Python |
+| `go-microservice` | Go microservice | Go, Golang |
+| `python-api` | Python API service | Python, FastAPI/Django |
+| `typescript-app` | TypeScript application | TypeScript, JavaScript |
+| `vue-app` | Vue.js application | Vue, TypeScript, JavaScript |
+| `angular-app` | Angular application | Angular, TypeScript |
+| `nodejs-api` | Node.js API service | Node.js, Express, TypeScript |
+| `mobile-react-native` | React Native mobile app | React Native, TypeScript |
+| `mobile-flutter` | Flutter mobile app | Flutter, Dart |
+
+**Usage**: When user provides a keyword, map directly to corresponding technology rules. For natural language descriptions, extract technologies and map to rules.
+
 ### Step 4: Map Technologies to Rules
 
 For each detected technology, query the index's `technology_map`:
@@ -73,16 +237,16 @@ detectedTech.forEach(tech => {
   recommendedRules.push(...rules);
 });
 
-// Prioritize master rules over archive rules
+// Prioritize master rules over library rules
 const masterRules = recommendedRules.filter(r => r.type === 'master');
-const archiveRules = recommendedRules.filter(r => r.type === 'archive');
+const libraryRules = recommendedRules.filter(r => r.type === 'library');
 ```
 
 **Technology Mapping**:
 - Detected technologies from Step 2 → Query `index.technology_map[tech]`
 - Get all rules for each technology
 - Prioritize master rules (from `.claude/rules-master/`)
-- Supplement with archive rules (from `.claude/archive/`)
+- Supplement with library rules (from `.claude/rules-library/`, formerly archive)
 
 ### Step 5: Generate Stack Profile
 
@@ -99,31 +263,31 @@ stack_profiles:
       - ".claude/rules-master/TECH_STACK_NEXTJS.md"
       - ".claude/rules-master/PROTOCOL_ENGINEERING.md"
       
-      # Archive rules (from index, type: "archive")
+      # Library rules (from index, type: "library", formerly archive)
       # Selected based on technology_map queries
-      - ".claude/archive/nextjs.mdc"
-      - ".claude/archive/typescript.mdc"
-      - ".claude/archive/react.mdc"
-      - ".claude/archive/tailwind.mdc"
-      - ".claude/archive/vitest-unit-testing-cursorrules-prompt-file/**/*.mdc"
+      - ".claude/rules-library/nextjs.mdc"
+      - ".claude/rules-library/typescript.mdc"
+      - ".claude/rules-library/react.mdc"
+      - ".claude/rules-library/tailwind.mdc"
+      - ".claude/rules-library/vitest-unit-testing-cursorrules-prompt-file/**/*.mdc"
 
     exclude:
       # Exclude rules for technologies NOT detected
       # Query index.technology_map for all technologies
       # Exclude rules not matching detected stack
-      - ".claude/archive/angular-*/**"
-      - ".claude/archive/vue-*/**"
-      - ".claude/archive/python-*/**"
-      - ".claude/archive/go-*/**"
-      - ".claude/archive/swift-*/**"
-      - ".claude/archive/android-*/**"
+      - ".claude/rules-library/angular-*/**"
+      - ".claude/rules-library/vue-*/**"
+      - ".claude/rules-library/python-*/**"
+      - ".claude/rules-library/go-*/**"
+      - ".claude/rules-library/swift-*/**"
+      - ".claude/rules-library/android-*/**"
 
     # Priority order (master rules first)
     priority:
       - TECH_STACK_NEXTJS      # Master rule (highest priority)
       - PROTOCOL_ENGINEERING    # Master rule (universal)
-      - nextjs                  # Archive rule (framework-specific)
-      - typescript              # Archive rule (language)
+      - nextjs                  # Library rule (framework-specific)
+      - typescript              # Library rule (language)
 
     metadata:
       generated: "2025-11-29"
@@ -388,6 +552,153 @@ stack_profiles:
     include: ["typescript.mdc", "clean-code.mdc"]
 ```
 
+## Version Checking
+
+### Overview
+
+The rule-selector skill relies on the rule index (`.claude/context/rule-index.json`) for dynamic rule discovery. To ensure compatibility, the skill validates the index version before use.
+
+### Version Compatibility Rules
+
+**Semantic Versioning** (MAJOR.MINOR.PATCH):
+- **MAJOR**: Breaking changes to index structure (must match exactly)
+- **MINOR**: New features/rules added (backward compatible, skill requires minimum)
+- **PATCH**: Bug fixes and re-indexing (always compatible)
+
+**Compatibility Check**:
+```javascript
+// Skill requires: 1.2.0
+// Index version: 1.3.0 ✅ Compatible (same major, higher minor)
+// Index version: 1.1.0 ❌ Incompatible (lower minor version)
+// Index version: 2.0.0 ❌ Incompatible (different major version)
+```
+
+### Automatic Version Validation
+
+When the skill loads the rule index, it automatically:
+
+1. **Checks version compatibility** against `min_required_version` in frontmatter
+2. **Warns if outdated** with clear instructions to regenerate
+3. **Offers auto-regeneration** (if running in interactive mode)
+4. **Falls back gracefully** to directory scanning if index is severely outdated
+
+### Warning Message Format
+
+When version mismatch is detected:
+
+```
+⚠️  RULE INDEX VERSION MISMATCH
+   Current index version: 1.0.0
+   Required version: 1.2.0+
+
+   The rule index may be outdated. Please regenerate it:
+
+   Command: pnpm index-rules
+   Or:      node scripts/generate-rule-index.mjs
+
+   This ensures all rules are discoverable by the skill.
+```
+
+### Regeneration Commands
+
+**Standard Regeneration** (updates index with all current rules):
+```bash
+pnpm index-rules
+```
+
+**Manual Regeneration** (if pnpm not available):
+```bash
+node scripts/generate-rule-index.mjs
+```
+
+**Prebuilt Index** (lightweight, common stacks only):
+```bash
+pnpm index-rules:prebuilt
+```
+
+### When to Regenerate
+
+Regenerate the rule index when:
+
+| Scenario | Reason | Command |
+|----------|--------|---------|
+| **Added new rules** | New rules won't be discoverable | `pnpm index-rules` |
+| **Moved rule files** | Paths in index are stale | `pnpm index-rules` |
+| **Updated rule metadata** | Descriptions/technologies changed | `pnpm index-rules` |
+| **Version mismatch warning** | Skill requires newer index | `pnpm index-rules` |
+| **After git pull** | Other developers may have added rules | `pnpm index-rules` |
+| **Index file deleted** | Need to recreate from scratch | `pnpm index-rules` |
+
+### Version Increment Guide for Maintainers
+
+When updating `scripts/generate-rule-index.mjs`, increment version as follows:
+
+**Major Version (X.0.0)** - Breaking Changes:
+```javascript
+// Example: Renamed field
+const index = {
+  version: '2.0.0', // Breaking: renamed 'technology_map' to 'tech_index'
+  tech_index: techMap, // <- Renamed from 'technology_map'
+  rules: allRules
+};
+```
+
+**Minor Version (1.X.0)** - New Features (Backward Compatible):
+```javascript
+// Example: New metadata field
+const index = {
+  version: '1.2.0', // Minor: added 'templates' metadata
+  rules: allRules.map(rule => ({
+    ...rule,
+    templates: extractTemplates(rule.path) // <- New field
+  })),
+  technology_map: techMap
+};
+```
+
+**Patch Version (1.0.X)** - Bug Fixes:
+```javascript
+// Example: Fixed technology detection bug
+function extractTechnologies(filePath, content) {
+  // Fixed: Now correctly detects 'nextjs' from 'next.js'
+  const normalized = tech === 'next.js' ? 'nextjs' : tech;
+  return normalized;
+}
+// Version: 1.0.1 (patch bump for bug fix)
+```
+
+### Self-Healing Index
+
+If a requested rule is not found in the index, the skill will:
+
+1. **Log the missing rule** with file path
+2. **Suggest regeneration** via `pnpm index-rules`
+3. **Offer auto-regeneration** (if running interactively)
+4. **Fall back to directory scan** (if index regeneration fails)
+
+This ensures the skill remains functional even with stale or missing indexes.
+
+### Testing Version Compatibility
+
+**Test Scenario 1: Current Index**
+```bash
+# Check current index version
+cat .claude/context/rule-index.json | jq '.version'
+# Output: "1.1.0"
+
+# Check skill requirements
+cat .claude/skills/rule-selector/SKILL.md | grep min_required_version
+# Output: min_required_version: 1.0.0
+
+# Result: ✅ Compatible (1.1.0 >= 1.0.0)
+```
+
+**Test Scenario 2: Outdated Index**
+```bash
+# Simulate outdated index (edit version to 0.9.0)
+# Run skill - should show warning and offer regeneration
+```
+
 ## Best Practices
 
 1. **Run on Setup**: Always run rule-selector when starting a new project
@@ -395,3 +706,5 @@ stack_profiles:
 3. **Review Exclusions**: Check excluded rules to ensure nothing important is missed
 4. **Customize Priorities**: Adjust rule priority based on team preferences
 5. **Document Decisions**: Keep notes on why certain rules were included/excluded
+6. **Keep Index Fresh**: Regenerate index after adding/moving rules (`pnpm index-rules`)
+7. **Check Version Compatibility**: Validate index version matches skill requirements

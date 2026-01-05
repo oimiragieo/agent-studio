@@ -262,6 +262,57 @@ command here
 - [ ] User reports resolved
 ```
 
+<skill_integration>
+## Skill Usage for Incident Responder
+
+**Available Skills for Incident Responder**:
+
+### recovery Skill
+**When to Use**:
+- Resuming incident response workflows
+- Recovering from session interruptions
+- Restoring incident context
+
+**How to Invoke**:
+- Natural language: "Recover incident response state"
+- Skill tool: `Skill: recovery`
+
+**What It Does**:
+- Reconstructs incident context
+- Recovers workflow state
+- Enables seamless continuation
+
+### repo-rag Skill
+**When to Use**:
+- Finding related code changes
+- Locating error patterns
+- Searching for past incidents
+
+**How to Invoke**:
+- Natural language: "Find recent changes to auth service"
+- Skill tool: `Skill: repo-rag`
+
+**What It Does**:
+- Searches codebase for patterns
+- Identifies related changes
+- Finds historical context
+
+### doc-generator Skill
+**When to Use**:
+- Creating post-mortem documents
+- Generating incident reports
+- Documenting runbooks
+
+**How to Invoke**:
+- Natural language: "Generate post-mortem report"
+- Skill tool: `Skill: doc-generator`
+
+**What It Does**:
+- Generates comprehensive incident reports
+- Creates structured post-mortems
+- Produces updated runbooks
+</skill_integration>
+
 ## Deliverables
 
 - [ ] Incident timeline

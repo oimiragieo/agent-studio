@@ -32,8 +32,27 @@ mcp_registry:
     - name: "Curl"
       description: "Network requests and API testing"
 
+# Enhanced Agent Routing Configuration
+agent_routing_config:
+  matrix_file: .claude/tools/agent-routing-matrix.json
+  triggers_file: .claude/tools/cross-cutting-triggers.json
+  default_task_type: IMPLEMENTATION
+  max_chain_length: 5
+  enable_cross_cutting: true
+  enable_escalation: true
+  routing_strategy: task_based_with_triggers
+
 # Agent Routing Configuration
 agent_routing:
+  router:
+    trigger_words: []  # Always triggered first for workflow selection
+    complexity: low
+    model: claude-3-5-haiku-20241022
+    temperature: 0.1
+    priority: highest
+    context_strategy: minimal
+    description: "Lightweight intent classification and workflow routing agent"
+
   planner:
     trigger_words:
       - "plan"
@@ -47,7 +66,7 @@ agent_routing:
     model: claude-3-opus-20240229
     temperature: 0.5
     extended_thinking: true
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   analyst:
     trigger_words:
@@ -63,7 +82,7 @@ agent_routing:
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.7
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   pm:
     trigger_words:
@@ -85,7 +104,7 @@ agent_routing:
     temperature: 0.7
     context_files:
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   architect:
     trigger_words:
@@ -103,7 +122,7 @@ agent_routing:
     extended_thinking: true
     context_files:
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   database-architect:
     trigger_words:
@@ -129,7 +148,7 @@ agent_routing:
     extended_thinking: true
     context_files:
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   developer:
     trigger_words:
@@ -149,7 +168,7 @@ agent_routing:
     context_files:
       - .claude/rules-master/TECH_STACK_NEXTJS.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   qa:
     trigger_words:
@@ -170,7 +189,7 @@ agent_routing:
       - .claude/rules-master/TOOL_CYPRESS_MASTER.md
       - .claude/rules-master/TOOL_PLAYWRIGHT_MASTER.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   ux-expert:
     trigger_words:
@@ -188,7 +207,7 @@ agent_routing:
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.7
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   orchestrator:
     trigger_words:
@@ -203,7 +222,7 @@ agent_routing:
     model: claude-3-opus-20240229
     temperature: 0.6
     extended_thinking: true
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   model-orchestrator:
     trigger_words:
@@ -228,7 +247,7 @@ agent_routing:
       - Grep
       - Glob
       - Sequential Thinking
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   security-architect:
     trigger_words:
@@ -250,7 +269,7 @@ agent_routing:
     context_files:
       - .claude/rules-master/LANG_SOLIDITY.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   devops:
     trigger_words:
@@ -273,7 +292,7 @@ agent_routing:
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.4
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   technical-writer:
     trigger_words:
@@ -290,7 +309,7 @@ agent_routing:
     complexity: low
     model: claude-3-5-haiku-20241022
     temperature: 0.7
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   # New High-Impact Agents (v2.0)
 
@@ -312,7 +331,7 @@ agent_routing:
     model: claude-3-opus-20240229
     temperature: 0.6
     extended_thinking: true
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   code-reviewer:
     trigger_words:
@@ -328,7 +347,24 @@ agent_routing:
     model: claude-3-opus-20240229
     temperature: 0.3
     extended_thinking: true
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+
+  code-simplifier:
+    trigger_words:
+      - "simplify"
+      - "simplification"
+      - "too complex"
+      - "over-engineered"
+      - "make it simple"
+      - "readability"
+      - "cognitive load"
+      - "complexity score"
+      - "hard to understand"
+      - "junior developer"
+    complexity: medium
+    model: claude-3-5-sonnet-20241022
+    temperature: 0.3
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   performance-engineer:
     trigger_words:
@@ -347,7 +383,7 @@ agent_routing:
     model: claude-3-opus-20240229
     temperature: 0.4
     extended_thinking: true
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   api-designer:
     trigger_words:
@@ -364,7 +400,7 @@ agent_routing:
     model: claude-3-opus-20240229
     temperature: 0.5
     extended_thinking: true
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   legacy-modernizer:
     trigger_words:
@@ -381,7 +417,7 @@ agent_routing:
     model: claude-3-opus-20240229
     temperature: 0.5
     extended_thinking: true
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   accessibility-expert:
     trigger_words:
@@ -396,7 +432,7 @@ agent_routing:
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.4
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   compliance-auditor:
     trigger_words:
@@ -414,7 +450,7 @@ agent_routing:
     model: claude-3-opus-20240229
     temperature: 0.3
     extended_thinking: true
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   incident-responder:
     trigger_words:
@@ -431,7 +467,7 @@ agent_routing:
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.2
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   refactoring-specialist:
     trigger_words:
@@ -448,7 +484,7 @@ agent_routing:
     model: claude-3-opus-20240229
     temperature: 0.4
     extended_thinking: true
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   mobile-developer:
     trigger_words:
@@ -464,7 +500,68 @@ agent_routing:
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.5
-    context_strategy: "lazy_load"
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+
+  master-orchestrator:
+    trigger_words: []  # Master orchestrator is the entry point for all requests
+    complexity: high
+    model: claude-3-opus-20240229
+    temperature: 0.6
+    extended_thinking: true
+    priority: highest
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+
+  cloud-integrator:
+    trigger_words:
+      - "cloud integration"
+      - "gcp"
+      - "aws"
+      - "azure"
+      - "cloud service"
+      - "service account"
+      - "adc"
+      - "application default credentials"
+      - "iam"
+      - "cloud storage"
+      - "pub/sub"
+      - "cloud sql"
+      - "cloud run"
+    complexity: medium
+    model: claude-3-5-sonnet-20241022
+    temperature: 0.3
+    context_files:
+      - .claude/rules-master/PROTOCOL_ENGINEERING.md
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+
+  impact-analyzer:
+    trigger_words:
+      - "impact analysis"
+      - "breaking change"
+      - "dependency analysis"
+      - "blast radius"
+      - "risk assessment"
+      - "change impact"
+      - "migration risk"
+    complexity: high
+    model: claude-3-opus-20240229
+    temperature: 0.3
+    extended_thinking: true
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+
+  react-component-developer:
+    trigger_words:
+      - "react component"
+      - "component development"
+      - "ui component"
+      - "react hooks"
+      - "component library"
+    complexity: medium
+    model: claude-3-5-sonnet-20241022
+    temperature: 0.3
+    context_files:
+      - .claude/rules-master/TECH_STACK_NEXTJS.md
+      - .claude/rules-master/PROTOCOL_ENGINEERING.md
+    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
 
 # Workflow Selection Configuration
 workflow_selection:
@@ -516,14 +613,37 @@ workflow_selection:
       - "tech debt"
       - "code smell"
       - "clean up"
+      - "simplify"
+      - "simplification"
+      - "too complex"
+      - "over-engineered"
     complexity: medium
     workflow_file: .claude/workflows/code-quality-flow.yaml
     agents_sequence:
       - planner
-      - code-reviewer
-      - refactoring-specialist
-      - compliance-auditor
+      - developer
+      - code-simplifier
       - qa
+
+  browser_testing:
+    priority: 5
+    keywords:
+      - "browser test"
+      - "chrome devtools"
+      - "test all UI features"
+      - "browser automation"
+      - "test page"
+      - "find bugs browser"
+      - "test UI and optimize"
+      - "browser performance"
+    complexity: high
+    workflow_file: .claude/workflows/browser-testing-flow.yaml
+    agents_sequence:
+      - planner
+      - developer
+      - qa
+      - performance-engineer
+      - ux-expert
 
   performance:
     priority: 3
@@ -655,13 +775,32 @@ model_config:
 # Tool Restrictions by Agent
 # UPDATED: Mapping new MCP tools to specific agents
 tool_restrictions:
-  orchestrator:
+  planner:
     allowed_tools:
       - Sequential Thinking
-      - Memory
+      - Exa (web_search_exa, get_code_context_exa)
+      - Ref (ref_search_documentation, ref_read_url)
+      - Graph Orchestrator
       - Read
       - Search
       - Grep
+      - Glob
+      - Write
+      - Task
+    restricted_tools:
+      - Edit (code)
+      - Bash (dangerous commands)
+
+  orchestrator:
+    allowed_tools:
+      - Task
+      - Read
+      - Search
+      - Grep
+    restricted_tools:
+      - Edit (code)
+      - Bash
+      - All MCP tools (delegate to subagents)
 
   analyst:
     allowed_tools:
@@ -703,6 +842,9 @@ tool_restrictions:
       - Glob
       - Filesystem
       - SQLite
+      - Exa (web_search_exa, get_code_context_exa)
+      - WebFetch
+      - Ref (ref_search_documentation, ref_read_url)
     restricted_tools:
       - Bash (dangerous: rm -rf, sudo, etc.)
 
@@ -715,6 +857,17 @@ tool_restrictions:
       - Grep
     restricted_tools:
       - Edit (Direct editing discouraged)
+
+  code-simplifier:
+    allowed_tools:
+      - Read
+      - Search
+      - Grep
+      - Glob
+      - Edit
+      - Git
+    restricted_tools:
+      - Bash (dangerous commands)
 
   qa:
     allowed_tools:
@@ -769,6 +922,238 @@ tool_restrictions:
       - Bash
       - Docker
 
+  # Additional agents from plan
+  pm:
+    allowed_tools:
+      - Read
+      - Search
+      - Grep
+      - Glob
+      - Write
+      - Memory
+    restricted_tools:
+      - Edit (code)
+      - Bash
+
+  llm-architect:
+    allowed_tools:
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - Exa (get_code_context_exa)
+      - Ref (ref_search_documentation)
+      - Paper Search
+    restricted_tools:
+      - Edit (code)
+      - Bash
+
+  database-architect:
+    allowed_tools:
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - SQLite
+      - Edit (schema docs only)
+    restricted_tools:
+      - Edit (code)
+      - Bash
+
+  api-designer:
+    allowed_tools:
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - Edit (API docs only)
+      - GitHub Official
+    restricted_tools:
+      - Edit (code)
+      - Bash
+
+  mobile-developer:
+    allowed_tools:
+      - Git
+      - GitHub Official
+      - Read
+      - Edit
+      - Bash
+      - Grep
+      - Glob
+      - Filesystem
+    restricted_tools:
+      - Bash (dangerous commands)
+
+  security-architect:
+    allowed_tools:
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - Paper Search
+      - Exa (web_search_exa)
+    restricted_tools:
+      - Edit (code)
+      - Bash
+
+  compliance-auditor:
+    allowed_tools:
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - Paper Search
+    restricted_tools:
+      - Edit (code)
+      - Bash
+
+  performance-engineer:
+    allowed_tools:
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - Bash (profiling tools)
+      - Curl
+      - Docker
+    restricted_tools:
+      - Edit (code)
+
+  accessibility-expert:
+    allowed_tools:
+      - Read
+      - Search
+      - Grep
+      - Edit (accessibility fixes only)
+      - Exa (web_search_exa for WCAG)
+    restricted_tools:
+      - Bash
+      - Docker
+
+  incident-responder:
+    allowed_tools:
+      - Docker
+      - Curl
+      - Git
+      - Read
+      - Search
+      - Bash
+      - Grep
+      - SQLite
+    restricted_tools:
+      - Edit (code - emergency fixes only)
+
+  refactoring-specialist:
+    allowed_tools:
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - Edit
+      - Git
+      - Ref (ref_search_documentation)
+    restricted_tools:
+      - Bash (dangerous commands)
+
+  legacy-modernizer:
+    allowed_tools:
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - Edit
+      - Git
+      - Exa (get_code_context_exa)
+    restricted_tools:
+      - Bash (dangerous commands)
+
+  model-orchestrator:
+    allowed_tools:
+      - Read
+      - Bash
+      - Grep
+      - Glob
+      - Sequential Thinking
+    restricted_tools:
+      - Edit (code)
+
+  gcp-cloud-agent:
+    allowed_tools:
+      - gcloud MCP (run_gcloud_command, observability tools)
+      - Cloud Run MCP (deploy, manage services)
+      - Read
+      - Search
+      - Grep
+      - Bash (gcloud CLI only)
+      - Sequential Thinking
+    restricted_tools:
+      - Edit (code)
+      - Bash (dangerous commands)
+
+  ai-council:
+    allowed_tools:
+      - Headless AI CLI (llm-council integration)
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - Memory
+    restricted_tools:
+      - Edit (code)
+      - Bash (except headless-ai-cli)
+
+  master-orchestrator:
+    allowed_tools:
+      - Task
+      - Read
+      - Search
+      - Grep
+    restricted_tools:
+      - Edit (code)
+      - Write (code)
+      - Bash
+      - All MCP tools (delegate to subagents)
+
+  cloud-integrator:
+    allowed_tools:
+      - Read
+      - Write
+      - Edit
+      - Bash (cloud CLI only)
+      - gcloud MCP
+      - Cloud Run MCP
+      - Git
+    restricted_tools:
+      - Bash (dangerous commands)
+
+  impact-analyzer:
+    allowed_tools:
+      - Sequential Thinking
+      - Read
+      - Search
+      - Grep
+      - Glob
+      - Git
+      - GitHub Official
+    restricted_tools:
+      - Edit (code)
+      - Write (code)
+      - Bash
+
+  react-component-developer:
+    allowed_tools:
+      - shadcn
+      - Read
+      - Edit
+      - Bash
+      - Grep
+      - Glob
+      - Git
+      - Filesystem
+    restricted_tools:
+      - Bash (dangerous commands)
+
 # Session Management
 session:
   context_file: .claude/context/session.json
@@ -776,7 +1161,7 @@ session:
   reasoning_dir: .claude/context/history/reasoning
   gates_dir: .claude/context/history/gates
   auto_save: true
-  max_context_length: 100000
+  max_context_length: 200000
 
 # Memory Tool Configuration (Dual Persistence with CLAUDE.md)
 memory_tool:
@@ -788,6 +1173,7 @@ memory_tool:
   agents_with_memory:
     - planner
     - orchestrator
+    - master-orchestrator
     - analyst
     - pm
     - architect
@@ -799,6 +1185,7 @@ memory_tool:
     - devops
     - technical-writer
     - code-reviewer
+    - code-simplifier
     - refactoring-specialist
     - performance-engineer
     - llm-architect
@@ -809,6 +1196,9 @@ memory_tool:
     - compliance-auditor
     - incident-responder
     - model-orchestrator
+    - cloud-integrator
+    - impact-analyzer
+    - react-component-developer
   security:
     validate_paths: true
     allowed_extensions: [".md", ".json", ".yaml"]
@@ -843,6 +1233,17 @@ token_monitoring:
   apply_to_agents:
     - orchestrator
 
+# Workflow Thresholds Configuration
+workflow_thresholds:
+  feature_distillation_file_size: 15000  # bytes - threshold for triggering feature distillation
+  phase_size_max_lines: 3000  # maximum lines per phase before splitting
+  phase_size_optimal_lines: 2000  # optimal lines per phase
+  checkpoint_interval_seconds: 300  # checkpoint creation interval (5 minutes)
+  conflict_resolution_timeout_seconds: 30  # timeout for conflict resolution
+  validation_consensus_threshold_analyst: 0.8  # analyst validation consensus threshold
+  validation_consensus_threshold_architect: 0.7  # architect validation consensus threshold
+  max_retries: 3  # maximum retry attempts for failed steps
+
 # Quality Gates Configuration
 quality_gates:
   enabled: true
@@ -858,3 +1259,28 @@ templates:
   implementation_plan: implementation-plan.md
   test_plan: test-plan.md
   ui_spec: ui-spec.md
+
+# MCP Server Configuration
+mcp_servers:
+  gcloud-mcp:
+    command: npx
+    args:
+      - "@google-cloud/gcloud-mcp"
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${GCP_CREDENTIALS_PATH}
+  
+  cloud-run-mcp:
+    command: npx
+    args:
+      - "@google-cloud/cloud-run-mcp"
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${GCP_CREDENTIALS_PATH}
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+  
+  headless-ai-cli:
+    command: node
+    args:
+      - ${HEADLESS_AI_CLI_PATH}/bin/cli.js
+    env:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}

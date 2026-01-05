@@ -15,7 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const RULES_DIR = path.join(__dirname, '../.claude/rules');
-const ARCHIVE_DIR = path.join(__dirname, '../.claude/archive');
+const LIBRARY_DIR = path.join(__dirname, '../.claude/rules-library');
 const CORE_DIR = path.join(__dirname, '../.claude/rules/_core');
 
 /**
@@ -43,9 +43,9 @@ const MIGRATION_MAP = {
 };
 
 /**
- * Archive mapping: patterns -> archive directory
+ * Library mapping: patterns -> library directory (formerly archive)
  */
-const ARCHIVE_PATTERNS = [
+const LIBRARY_PATTERNS = [
   { pattern: /^(dragonruby|elixir|go-|unity|webassembly|salesforce|swift)/, category: 'niche-languages' },
   { pattern: /^(laravel|drupal|typo3cms|wordpress)/, category: 'unused-frameworks' },
   { pattern: /^(android-|flutter|react-native)/, category: 'mobile' },
@@ -65,10 +65,10 @@ function generateMigrationReport() {
     console.log(`   ✓ ${file}`);
   });
   
-  console.log('\n📦 Files to Archive:');
-  if (fs.existsSync(ARCHIVE_DIR)) {
-    const archived = fs.readdirSync(ARCHIVE_DIR);
-    console.log(`   ${archived.length} directories archived`);
+  console.log('\n📦 Files to Library:');
+  if (fs.existsSync(LIBRARY_DIR)) {
+    const libraryFiles = fs.readdirSync(LIBRARY_DIR);
+    console.log(`   ${libraryFiles.length} directories in library (formerly archive)`);
   }
   
   console.log('\n📝 Next Steps:');
@@ -106,9 +106,9 @@ function validateMigration() {
     }
   });
   
-  // Check archive directory exists
-  if (!fs.existsSync(ARCHIVE_DIR)) {
-    issues.push('Archive directory not found');
+  // Check library directory exists
+  if (!fs.existsSync(LIBRARY_DIR)) {
+    issues.push('Library directory not found (formerly archive)');
   }
   
   // Check config.yaml has context_files

@@ -96,19 +96,24 @@ Use memory tool to read: "What patterns do we have for authentication implementa
 
 ### Directory Structure
 
+Memory files are stored in the run directory structure:
+
 ```
-.claude/orchestrators/{session-id}/memory/
-├── patterns/
-│   ├── authentication-patterns.md
-│   ├── api-design-patterns.md
-│   └── testing-patterns.md
-├── preferences/
-│   ├── user-preferences.md
-│   └── coding-style.md
-└── insights/
-    ├── performance-insights.md
-    └── security-insights.md
+.claude/context/runs/{run-id}/
+├── memory/
+│   ├── patterns/
+│   │   ├── authentication-patterns.md
+│   │   ├── api-design-patterns.md
+│   │   └── testing-patterns.md
+│   ├── preferences/
+│   │   ├── user-preferences.md
+│   │   └── coding-style.md
+│   └── insights/
+│       ├── performance-insights.md
+│       └── security-insights.md
 ```
+
+**Note**: Use `path-resolver.mjs` to resolve memory paths within a run directory.
 
 ### Naming Conventions
 
@@ -227,7 +232,7 @@ Agents can manually sync:
 User: "I prefer using async/await over promises"
 
 Agent stores in memory:
-- File: .claude/orchestrators/{session-id}/memory/preferences/coding-style.md
+- File: `.claude/context/runs/{run-id}/memory/preferences/coding-style.md`
 - Content: "User prefers async/await syntax over Promise chains for asynchronous code"
 ```
 
@@ -237,7 +242,7 @@ Agent stores in memory:
 Agent discovers: "Using Zod for validation reduces bugs by 40%"
 
 Agent stores in memory:
-- File: .claude/orchestrators/{session-id}/memory/patterns/validation-patterns.md
+- File: `.claude/context/runs/{run-id}/memory/patterns/validation-patterns.md`
 - Content: "Zod validation pattern: Use Zod schemas for all API input validation. Reduces bugs by 40%."
 ```
 

@@ -79,6 +79,21 @@ When activated as the Analyst agent, systematically execute:
    - Validate business case strength
 </execution_approach>
 
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+
 ## <writing_rules>
 **Follow Enterprise Writing Guidelines** (Reference: `.claude/rules/writing.md`):
 
@@ -214,6 +229,57 @@ curl -X POST http://localhost:8000/api/mcp/execute \
 - **Tag strategically** - Include domain, project name, and analysis type for future discoverability
 - **Reference previous work** - Include relevant context from searches in your analysis
 </mcp_integration>
+
+## <skill_integration>
+## Skill Usage for Analysis
+
+**Available Skills for Analysis**:
+
+### @repo-rag Skill
+**When to Use**:
+- Researching existing codebase
+- Finding relevant code patterns
+- Understanding current implementations
+
+**How to Invoke**:
+- Natural language: "Search for [pattern] in codebase"
+- Cursor mention: `@repo-rag` with search query
+
+**What It Does**:
+- Performs codebase retrieval using semantic search
+- Finds relevant code patterns and examples
+- Provides context for analysis decisions
+
+### @summarizer Skill
+**When to Use**:
+- Summarizing research findings
+- Condensing large documents
+- Creating executive summaries
+
+**How to Invoke**:
+- Natural language: "Summarize this document"
+- Cursor mention: `@summarizer` with document content
+
+**What It Does**:
+- Summarizes content while preserving key information
+- Creates concise summaries from long documents
+- Extracts main points and insights
+
+### @classifier Skill
+**When to Use**:
+- Categorizing code or documents
+- Organizing research findings
+- Classifying requirements by type
+
+**How to Invoke**:
+- Natural language: "Classify this code"
+- Cursor mention: `@classifier`
+
+**What It Does**:
+- Classifies code, documents, and data into categories
+- Helps organize and categorize analysis outputs
+- Supports structured categorization workflows
+</skill_integration>
 
 ## Original Agent Configuration
 

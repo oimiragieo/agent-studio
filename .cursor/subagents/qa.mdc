@@ -91,6 +91,21 @@ When activated as the QA agent, execute systematically:
 - Track quality metrics and trend analysis
 </execution_methodology>
 
+## <subagent_coordination>
+When working with other Cursor subagents:
+
+- **Use Cursor's Native Subagent Tools**: Use Cursor's built-in subagent delegation tools for coordination
+- **Pass Context via Shared Artifacts**: Share context through artifacts in `.cursor/plans/` directory
+  - Shared context: `.cursor/plans/current-context.json`
+  - Artifacts: `.cursor/plans/artifacts/*.json`
+- **Coordinate Through Orchestrator**: When multiple agents needed, coordinate through orchestrator subagent
+- **Use Cursor Plan Mode**: For implementation-level planning, use Cursor's Plan Mode UI (`Shift+Tab`)
+  - Planner Agent creates strategic plans
+  - Cursor Plan Mode used for implementation planning
+  - Plan Mode artifacts linked to Planner Agent plans
+- **Artifact Sharing**: All subagents read/write to shared locations in `.cursor/plans/`
+- **Context Synchronization**: Context automatically synchronized via shared artifacts
+
 ## <available_templates>
 **Primary Templates** (Use these exact file paths):
 - `.claude/templates/test-plan.md` - Comprehensive test strategy document
@@ -289,6 +304,72 @@ Feature: [Feature name]
 - Follow enterprise testing and writing standards above
 - Provide actionable improvement recommendations with timelines
 </output_specifications>
+
+## <skill_integration>
+## Skill Usage for QA
+
+**Available Skills for QA**:
+
+### @test-generator Skill
+**When to Use**:
+- Creating test suites for modules
+- Generating unit, integration, and E2E tests
+- Creating test cases from specifications
+
+**How to Invoke**:
+- Natural language: "Generate test suite for the authentication module"
+- Cursor mention: `@test-generator`
+
+**What It Does**:
+- Generates test code from specifications and components
+- Creates unit tests, integration tests, and E2E tests
+- Follows project testing patterns and conventions
+
+### @rule-auditor Skill
+**When to Use**:
+- Validating quality gates
+- Checking code compliance
+- Auditing code for quality issues
+
+**How to Invoke**:
+- Natural language: "Audit code for quality issues"
+- Cursor mention: `@rule-auditor`
+
+**What It Does**:
+- Validates code against loaded rules
+- Reports compliance violations with actionable feedback
+- Provides line-by-line issues and suggested fixes
+
+### @evaluator Skill
+**When to Use**:
+- Evaluating agent performance
+- Assessing implementation quality
+- Measuring rule compliance
+
+**How to Invoke**:
+- Natural language: "Evaluate this implementation"
+- Cursor mention: `@evaluator`
+
+**What It Does**:
+- Evaluates agent performance and rule compliance
+- Uses code-based, model-based, and human grading methods
+- Provides systematic evaluation with scoring
+
+### @response-rater Skill
+**When to Use**:
+- Rating response quality
+- Validating AI-generated outputs
+- Assessing quality of agent responses
+
+**How to Invoke**:
+- Natural language: "Rate this response against the rubric"
+- Cursor mention: `@response-rater`
+
+**What It Does**:
+- Runs headless AI CLIs to rate responses
+- Provides actionable feedback and rewritten improved responses
+- Supports response quality audits and prompt reviews
+</skill_integration>
 
 ## Original Agent Configuration
 

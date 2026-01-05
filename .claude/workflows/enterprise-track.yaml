@@ -206,11 +206,36 @@ steps:
       compliance attestations, and audit trail documentation.
 
   - step: 10
+    name: "Code Review"
+    agent: code-reviewer
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - dev-manifest.json (from step 8)
+      - system-architecture.json (from step 4)
+      - security-architecture.json (from step 3)
+      - compliance-mapping.json (from step 2)
+    outputs:
+      - code-review-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/10-code-reviewer.json
+    validation:
+      schema: .claude/schemas/code-review.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/10-code-reviewer.json
+    on_failure: "Return to implementation step with feedback"
+    description: |
+      Review enterprise implementation for quality, security, and compliance impact:
+      - Verify security controls implementation
+      - Check compliance requirements adherence
+      - Review audit logging and monitoring
+      - Validate encryption and data protection
+      - Ensure enterprise coding standards followed
+
+  - step: 11
     name: "Quality Assurance & Security Validation"
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 8)
+      - code-review-{{workflow_id}}.json (from step 10)
       - test-plan.json (from step 7)
       - security-test-plan.json (from step 7)
     outputs:
@@ -218,9 +243,9 @@ steps:
       - test-results.json
       - security-validation.json
       - compliance-attestation.json
-      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/10-qa-final.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/11-qa-final.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/10-qa-final.json
+      gate: .claude/context/history/gates/{{workflow_id}}/11-qa-final.json
 
 completion_criteria:
   - All artifacts validated against schemas

@@ -8,30 +8,53 @@ Workflow Guide - Explains how to use workflows to coordinate multiple agents for
 
 **Note**: All workflows now start with the **Planner agent** (Step 0) to create comprehensive plans before execution. The Planner coordinates with specialists and generates validated plans that guide subsequent steps.
 
+### Implementation Status
+
+Below are all available workflows with their implementation status:
+
+| Workflow | Status | File | Purpose |
+|----------|--------|------|---------|
+| Quick Flow | ✅ Implemented | `quick-flow.yaml` | Bugfix/hotfix/small change |
+| Full Stack Flow | ✅ Implemented | `greenfield-fullstack.yaml` | New features/greenfield projects |
+| Code Quality Flow | ✅ Implemented | `code-quality-flow.yaml` | Code health/review/refactor |
+| Performance Flow | ✅ Implemented | `performance-flow.yaml` | Perf tuning/SLI/SLO |
+| AI System Flow | ✅ Implemented | `ai-system-flow.yaml` | LLM/AI feature development |
+| Mobile Flow | ✅ Implemented | `mobile-flow.yaml` | Mobile feature work |
+| Incident Flow | ✅ Implemented | `incident-flow.yaml` | Reliability/incident response |
+| UI Perfection Loop | ✅ Implemented | `ui-perfection-loop.yaml` | Iterative UI quality improvement (95%+ target) |
+| Browser Testing Flow | ✅ Implemented | `browser-testing-flow.yaml` | Browser-based UI testing with Chrome DevTools |
+| Legacy Modernization Flow | ✅ Implemented | `legacy-modernization-flow.yaml` | Modernize legacy systems |
+| Brownfield Full Stack | ✅ Implemented | `brownfield-fullstack.yaml` | Add features to existing projects |
+| Enterprise Track | ✅ Implemented | `enterprise-track.yaml` | Enterprise-grade deployments |
+| Automated Enterprise Flow | ✅ Implemented | `automated-enterprise-flow.yaml` | Full automation for enterprise projects |
+| BMAD Greenfield | ✅ Implemented | `bmad-greenfield-standard.yaml` | Greenfield with BMAD patterns |
+
+### Workflow Details
+
 - **Quick Flow**: Bugfix/hotfix/small change. Agents: **planner** → developer → qa. Outputs: plan + dev change + basic validation. **Templates**: Uses plan template from `.claude/templates/plan-template.md` for planning phase.
-- **Full Stack Flow**: New features/greenfield. Agents: **planner** → analyst → pm → ux → architect → developer → qa. Outputs: plan + brief/PRD/UX/arch/test plan. **Templates**: 
+- **Full Stack Flow**: New features/greenfield. Agents: **planner** → analyst → pm → ux → architect → developer → qa. Outputs: plan + brief/PRD/UX/arch/test plan. **Templates**:
   - Planning: `.claude/templates/plan-template.md`
   - Project Brief: `.claude/templates/project-brief.md`
   - PRD: `.claude/templates/prd.md`
   - UX Spec: `.claude/templates/ui-spec.md`
   - Architecture: `.claude/templates/architecture.md`
   - Test Plan: `.claude/templates/test-plan.md`
-- **Code Quality Flow**: Code health/review/refactor. Agents: **planner** → code-reviewer → refactoring-specialist → compliance-auditor → qa. **Templates**: 
+- **Code Quality Flow**: Code health/review/refactor. Agents: **planner** → code-reviewer → refactoring-specialist → compliance-auditor → qa. **Templates**:
   - Planning: `.claude/templates/plan-template.md`
   - Code Review: `.claude/templates/code-review-report.md`
   - Refactoring: `.claude/templates/refactor-plan.md`
   - Compliance: `.claude/templates/compliance-report.md`
-- **Performance Flow**: Perf tuning/SLI/SLO. Agents: **planner** → performance-engineer → architect → developer → qa. **Templates**: 
+- **Performance Flow**: Perf tuning/SLI/SLO. Agents: **planner** → performance-engineer → architect → developer → qa. **Templates**:
   - Planning: `.claude/templates/plan-template.md`
   - Performance Plan: `.claude/templates/performance-plan.md`
-- **AI System Flow**: LLM/AI features. Agents: **planner** → model-orchestrator → llm-architect → api-designer → developer → qa. **Templates**: 
+- **AI System Flow**: LLM/AI features. Agents: **planner** → model-orchestrator → llm-architect → api-designer → developer → qa. **Templates**:
   - Planning: `.claude/templates/plan-template.md`
   - LLM Architecture: `.claude/templates/llm-architecture.md`
-- **Mobile Flow**: Mobile feature work. Agents: **planner** → mobile-developer → ux-expert → developer → qa. **Templates**: 
+- **Mobile Flow**: Mobile feature work. Agents: **planner** → mobile-developer → ux-expert → developer → qa. **Templates**:
   - Planning: `.claude/templates/plan-template.md`
   - UI Spec: `.claude/templates/ui-spec.md` (reused from Full Stack Flow)
 - **UI Perfection Loop**: Iterative UI quality improvement (95%+ target). Agents: **planner** → ux-expert + accessibility-expert (parallel) → model-orchestrator (Gemini validation) → developer + mobile-developer → qa → orchestrator (iteration check). Iterates until score >= 95 or max iterations (5). Outputs: plan + `ui-audit-report.json`, `grading-score.json`, `implementation-manifest.json`, `verification-report.json`, `final-score.json`. **Templates**: Uses plan template and UI spec templates. See `.claude/docs/UI_PERFECTION_TOOLS.md` for tool integration.
-- **Incident Flow**: Reliability/incident response. Agents: **planner** → incident-responder → devops → security-architect → qa. **Templates**: 
+- **Incident Flow**: Reliability/incident response. Agents: **planner** → incident-responder → devops → security-architect → qa. **Templates**:
   - Planning: `.claude/templates/plan-template.md`
   - Incident Report: `.claude/templates/incident-report.md`
 
@@ -78,6 +101,796 @@ Workflows are automatically selected based on user prompt keywords. The system:
 - Executes: Planner (Step 0) → Full Stack Flow with all agents (Steps 1-N)
 
 **See Also**: For a detailed visual flow diagram, see `.claude/CLAUDE.md` section "Workflow Execution Flow"
+
+## Running Customer User Journeys (CUJs)
+
+Customer User Journeys (CUJs) represent complete user workflows from initial request to successful completion. They provide a fast, deterministic way to execute common tasks without relying on semantic routing.
+
+### How to Reference a CUJ
+
+CUJs can be referenced in prompts using any of these syntax styles:
+
+**Slash Command Format**:
+```
+/cuj-005
+/cuj-013
+```
+
+**Natural Language Format**:
+```
+"Run CUJ-005"
+"Execute CUJ-013"
+"Test CUJ-027 for recovery"
+```
+
+**Standalone Reference**:
+```
+CUJ-005
+CUJ-022
+```
+
+### How the Orchestrator Uses CUJ-INDEX.md
+
+When the orchestrator detects a CUJ reference in your prompt, it follows this process:
+
+1. **CUJ Detection**: Identifies CUJ pattern (e.g., `CUJ-005`) in the user prompt
+2. **Mapping Lookup**: Looks up the CUJ in the Run CUJ Mapping table in `.claude/docs/cujs/CUJ-INDEX.md`
+3. **Determine Execution Mode**: Checks the execution mode for that CUJ:
+   - `workflow`: Load and execute specified workflow file
+   - `skill`: Invoke the primary skill directly
+   - `manual`: Use semantic routing (for CUJs without automated execution)
+4. **Route & Execute**: Routes to the appropriate workflow file or skill
+5. **Fallback**: If CUJ not found, falls back to semantic routing
+
+**Example Mapping Lookup**:
+- CUJ-005 → Execution Mode: `workflow` → File: `.claude/workflows/greenfield-fullstack.yaml`
+- CUJ-013 → Execution Mode: `skill` → Skill: `code-reviewer`
+- CUJ-042 → Execution Mode: `manual` → Use semantic routing
+
+### Workflow-Based vs. Skill-Only CUJs
+
+CUJs are executed in two different modes:
+
+#### Workflow-Based CUJs
+
+These CUJs use a full workflow with multiple agents coordinating across steps:
+
+```
+CUJ-005: Greenfield Project Planning
+├── Step 0: Planner (plan creation)
+├── Step 1: Analyst (project brief)
+├── Step 2: PM (product requirements)
+├── Step 3: UX Expert (interface spec)
+├── Step 4: Architect (system architecture)
+├── Step 5: Database Architect (schema design)
+├── Step 6: QA (test plan)
+└── Step 7: Developer (implementation)
+
+Execution: Load greenfield-fullstack.yaml workflow and execute all steps
+```
+
+**Common Workflow-Based CUJs**:
+- CUJ-004: New Feature Planning
+- CUJ-005: Greenfield Project Planning
+- CUJ-007: Technical Debt Planning
+- CUJ-011: Bug Fix Workflow
+- CUJ-019: Performance Optimization
+- CUJ-022: AI System Development
+- CUJ-024: Incident Response
+
+#### Skill-Only CUJs
+
+These CUJs invoke a single skill directly without a full workflow:
+
+```
+CUJ-013: Code Review
+├── Input: Code files to review
+├── Skill: code-reviewer
+└── Output: Code review report
+
+Execution: Invoke code-reviewer skill directly
+```
+
+**Common Skill-Only CUJs**:
+- CUJ-002: Rule Configuration (rule-selector skill)
+- CUJ-009: Component Scaffolding (scaffolder skill)
+- CUJ-013: Code Review (code-reviewer skill)
+- CUJ-014: Rule Compliance Audit (rule-auditor skill)
+- CUJ-015: Test Generation (test-generator skill)
+- CUJ-016: API Documentation (doc-generator skill)
+- CUJ-017: Module Documentation (claude-md-generator skill)
+- CUJ-027: Workflow Recovery (recovery skill)
+
+### Validating a CUJ Without Execution (Dry-Run)
+
+You can validate a CUJ's workflow without executing it using the `--cuj-simulation` flag:
+
+```bash
+# Validate CUJ-005 workflow without executing
+node .claude/tools/workflow_runner.js \
+  --cuj CUJ-005 \
+  --cuj-simulation
+
+# Validates:
+# ✓ CUJ mapping exists in CUJ-INDEX.md
+# ✓ Workflow file exists at specified path
+# ✓ All workflow steps have required agents
+# ✓ All artifact dependencies are valid
+# ✓ Validation schemas exist
+# Outputs: CUJ simulation report (no workflow execution)
+```
+
+**What Dry-Run Validates**:
+- CUJ exists in CUJ-INDEX.md
+- Execution mode is correctly specified
+- For workflows: All steps, agents, and schemas exist
+- For skills: Skill is available and properly configured
+- All artifact dependencies are resolvable
+- No execution of steps or skill invocation
+
+**Use Cases**:
+- Verify CUJ configuration before running
+- Check for missing workflows or skills
+- Validate artifact dependency chains
+- Ensure all agents exist for workflow-based CUJs
+
+### Examples
+
+#### Example 1: Run CUJ-005 (Greenfield Project)
+
+**User Prompt**:
+```
+"Run CUJ-005 to plan the new mobile platform"
+```
+
+**Orchestrator Processing**:
+1. Detects CUJ-005 in prompt
+2. Looks up CUJ-005 in CUJ-INDEX.md
+3. Finds: Execution Mode = `workflow`, File = `.claude/workflows/greenfield-fullstack.yaml`
+4. Loads greenfield-fullstack.yaml
+5. Executes all workflow steps (Planner → Analyst → PM → UX → Architect → DB → QA → Developer)
+
+**Output**:
+- plan-{id}.md and plan-{id}.json
+- project-brief.json
+- prd.json
+- ui-spec.json
+- system-architecture.json
+- schema-design.json
+- test-plan.json
+- Implementation artifacts
+
+#### Example 2: Run CUJ-013 (Code Review)
+
+**User Prompt**:
+```
+"/cuj-013"
+```
+
+**Orchestrator Processing**:
+1. Detects CUJ-013 from slash command
+2. Looks up CUJ-013 in CUJ-INDEX.md
+3. Finds: Execution Mode = `skill`, Skill = `code-reviewer`
+4. Invokes code-reviewer skill directly
+5. Skill analyzes code and generates review
+
+**Output**:
+- Code review report with findings
+
+#### Example 3: Dry-Run Validation
+
+**User Prompt**:
+```
+"Validate CUJ-022 without running it"
+```
+
+**Command**:
+```bash
+node .claude/tools/workflow_runner.js \
+  --cuj CUJ-022 \
+  --cuj-simulation
+```
+
+**Output**:
+```
+CUJ-022 Simulation Report:
+✓ CUJ found in CUJ-INDEX.md
+✓ Execution mode: workflow
+✓ Workflow file: .claude/workflows/ai-system-flow.yaml
+✓ File exists at path
+✓ All steps present (0-6)
+✓ All agents configured
+✓ All schemas valid
+✓ Artifact dependencies valid
+
+Ready to execute: "Run CUJ-022"
+```
+
+### Benefits of Using CUJs
+
+- **Fast**: Direct routing without semantic analysis overhead
+- **Deterministic**: Pre-validated workflows ensure consistent execution
+- **Traceable**: CUJ ID tracked throughout execution for debugging
+- **User-Friendly**: Multiple syntax options (slash commands, natural language, references)
+- **Discoverable**: See `.claude/docs/cujs/CUJ-INDEX.md` for all available CUJs
+
+### Complete CUJ Reference
+
+See `.claude/docs/cujs/CUJ-INDEX.md` for:
+- Complete list of all 51+ CUJs
+- Quick reference table with triggers and agents
+- Run CUJ Mapping showing execution modes
+- Detailed documentation for each CUJ
+
+### Finding the Right CUJ for Your Task
+
+| Task | CUJ | Trigger |
+|------|-----|---------|
+| Start new project | CUJ-005 | "Run CUJ-005" |
+| Add new feature | CUJ-004 | "Run CUJ-004" |
+| Fix bugs quickly | CUJ-011 | "/cuj-011" |
+| Review code | CUJ-013 | "/cuj-013" |
+| Audit rule compliance | CUJ-014 | "/cuj-014" |
+| Generate tests | CUJ-015 | "Run CUJ-015" |
+| Document API | CUJ-016 | "Run CUJ-016" |
+| Optimize performance | CUJ-019 | "/performance" |
+| Handle incidents | CUJ-024 | "/incident" |
+| Plan large project | CUJ-026 | "Run CUJ-026" |
+| Recover from error | CUJ-027 | "Run CUJ-027" |
+| Mobile development | CUJ-021 | "/mobile" |
+| AI system development | CUJ-022 | "/ai-system" |
+
+See `.claude/docs/cujs/CUJ-INDEX.md` for the complete list of 51+ CUJs.
+
+## Executing Skill-Only CUJs
+
+Skill-only CUJs invoke a single skill directly without a full workflow. These CUJs are faster than workflow-based CUJs because they skip the planning phase and multi-agent coordination.
+
+### How Skill-Only CUJs Work
+
+**Execution Flow**:
+1. **CUJ Detection**: Orchestrator detects CUJ reference in prompt
+2. **Mapping Lookup**: Looks up execution mode in CUJ-INDEX.md
+3. **Skill Invocation**: Directly invokes the skill without workflow
+4. **Output**: Skill produces result directly
+
+**Comparison to Workflow-Based CUJs**:
+
+| Aspect | Skill-Only CUJs | Workflow-Based CUJs |
+|--------|-----------------|---------------------|
+| Execution | Direct skill invocation | Multi-step workflow with agents |
+| Speed | Fast (seconds) | Moderate (minutes) |
+| Planning | No planning phase | Includes Planner step |
+| Agent Coordination | Single skill, no agents | Multiple agents coordinating |
+| Use Case | Simple, focused tasks | Complex, multi-faceted projects |
+| Complexity | Low | High |
+
+### Common Skill-Only CUJs
+
+| CUJ | Skill | Trigger | Input | Output |
+|-----|-------|---------|-------|--------|
+| CUJ-002 | rule-selector | `/select-rules` | Project directory or tech stack description | Updated manifest.yaml, rule config report |
+| CUJ-009 | scaffolder | `/scaffold ComponentName` | Component name, type | Generated component boilerplate |
+| CUJ-013 | code-reviewer | `/review` or `/review src/` | File/directory path | Code review report with issues |
+| CUJ-014 | rule-auditor | `/audit` | File/directory path | Compliance report, rule violations |
+| CUJ-015 | test-generator | `Generate tests for X` | Code/feature to test | Generated test files/test plan |
+| CUJ-016 | doc-generator | `Document API X` | Code/API to document | API documentation |
+| CUJ-017 | claude-md-generator | `Generate claude.md for module X` | Module path | Generated claude.md file |
+| CUJ-023 | dependency-analyzer | `Check dependencies` | Project directory | Dependency audit report |
+| CUJ-027 | recovery | `Recover workflow` | Workflow context | Recovery plan and state restoration |
+
+### Skill-Only CUJ Execution Examples
+
+#### Example 1: CUJ-002 - Rule Configuration
+
+**When to Use**: Starting a new project or when tech stack changes.
+
+**User Prompt**:
+```
+/select-rules
+```
+
+**What Happens**:
+1. Orchestrator detects CUJ-002
+2. Looks up in CUJ-INDEX.md: execution mode = `skill`, skill = `rule-selector`
+3. Invokes `rule-selector` skill directly
+4. Skill scans project for `package.json`, `requirements.txt`, etc.
+5. Detects: Next.js, TypeScript, React, Node.js
+6. Loads rule index and finds matching rules
+7. Generates/updates `manifest.yaml`
+
+**Expected Output**:
+```
+Rule Configuration Complete:
+✅ Detected technologies: Next.js, React, TypeScript, Node.js
+✅ Selected 15 relevant rules from rule-library
+✅ Excluded 8 irrelevant rules (Python, Rust, etc.)
+✅ Updated manifest.yaml with new rules
+✅ Rule hierarchy configured
+
+Active Rules:
+- TECH_STACK_NEXTJS.md
+- LANG_TYPESCRIPT_GENERAL.md
+- TOOL_JEST_MASTER.md
+- PROTOCOL_ENGINEERING.md
+```
+
+**Execution Time**: ~2-5 seconds
+
+---
+
+#### Example 2: CUJ-013 - Code Review
+
+**When to Use**: Before merging code, after implementing a feature, or for security reviews.
+
+**User Prompt**:
+```
+/review src/components/auth
+```
+
+**What Happens**:
+1. Orchestrator detects CUJ-013
+2. Looks up in CUJ-INDEX.md: execution mode = `skill`, skill = `code-reviewer`
+3. Invokes `code-reviewer` skill directly
+4. Skill analyzes all files in `src/components/auth/`
+5. Checks against active rules
+6. Identifies issues: naming conventions, security concerns, performance problems
+7. Generates comprehensive review report
+
+**Expected Output**:
+```json
+{
+  "summary": "Code review completed: 3 critical issues, 7 high-priority issues",
+  "files_reviewed": ["Login.tsx", "Logout.tsx", "useAuth.ts"],
+  "issues": [
+    {
+      "file": "Login.tsx",
+      "line": 45,
+      "severity": "critical",
+      "issue": "Unencrypted password logging to console",
+      "rule_violated": "SECURITY_SECRETS_MANAGEMENT",
+      "suggested_fix": "Remove console.log(password) before production"
+    },
+    {
+      "file": "useAuth.ts",
+      "line": 12,
+      "severity": "high",
+      "issue": "Missing error handling for failed auth",
+      "rule_violated": "ERROR_HANDLING_PROTOCOL",
+      "suggested_fix": "Add try-catch block with error state management"
+    }
+  ],
+  "security_issues": 2,
+  "performance_issues": 1,
+  "recommendations": ["Add unit tests", "Document auth flow", "Use secrets manager"]
+}
+```
+
+**Execution Time**: ~10-30 seconds (depends on code size)
+
+---
+
+#### Example 3: CUJ-017 - Module Documentation
+
+**When to Use**: Creating documentation for a new module or updating claude.md files.
+
+**User Prompt**:
+```
+Generate claude.md for src/services/StorageService
+```
+
+**What Happens**:
+1. Orchestrator detects CUJ-017
+2. Looks up in CUJ-INDEX.md: execution mode = `skill`, skill = `claude-md-generator`
+3. Invokes `claude-md-generator` skill directly
+4. Skill reads `src/services/StorageService/` directory
+5. Extracts patterns: exports, key functions, dependencies
+6. Reads parent `claude.md` (if exists) for context
+7. Generates `claude.md` with:
+   - Purpose/overview
+   - Key functions and classes
+   - Dependencies
+   - Usage examples
+   - Patterns and conventions
+
+**Expected Output** (generates `src/services/StorageService/claude.md`):
+```markdown
+# StorageService
+
+## Purpose
+Handles cloud storage operations for file uploads/downloads with encryption and CDN integration.
+
+## Key Functions
+
+### uploadFile(bucket, file)
+Uploads file to cloud storage with automatic encryption.
+- Returns: Promise<string> - CDN URL of uploaded file
+- Throws: StorageError if upload fails
+
+### downloadFile(url)
+Downloads file from CDN with decryption.
+- Returns: Promise<Buffer> - Decrypted file content
+- Caches locally for performance
+
+## Dependencies
+- @google-cloud/storage (cloud operations)
+- crypto (file encryption)
+- axios (HTTP requests)
+
+## Usage Examples
+```typescript
+const service = new StorageService();
+const url = await service.uploadFile('my-bucket', file);
+```
+
+## Patterns
+- Uses dependency injection for cloud client
+- Implements retry logic with exponential backoff
+- Caches frequently accessed files
+
+## Testing
+- Unit tests in __tests__/StorageService.test.ts
+- Mocks cloud storage for local testing
+```
+
+**Execution Time**: ~5-10 seconds
+
+---
+
+#### Example 4: CUJ-015 - Test Generation
+
+**When to Use**: Generating comprehensive test coverage for new code.
+
+**User Prompt**:
+```
+Generate tests for src/utils/validation.ts
+```
+
+**What Happens**:
+1. Orchestrator detects CUJ-015
+2. Looks up in CUJ-INDEX.md: execution mode = `skill`, skill = `test-generator`
+3. Invokes `test-generator` skill directly
+4. Skill analyzes `src/utils/validation.ts`
+5. Identifies functions: `validateEmail`, `validatePhone`, `validatePassword`
+6. Generates tests covering:
+   - Happy paths (valid inputs)
+   - Edge cases (boundary values)
+   - Error cases (invalid inputs)
+   - Security considerations
+7. Creates test file with 100%+ coverage
+
+**Expected Output** (generates `src/utils/__tests__/validation.test.ts`):
+```typescript
+describe('validation', () => {
+  describe('validateEmail', () => {
+    it('should accept valid email addresses', () => {
+      expect(validateEmail('user@example.com')).toBe(true);
+      expect(validateEmail('user.name+tag@example.co.uk')).toBe(true);
+    });
+
+    it('should reject invalid email addresses', () => {
+      expect(validateEmail('invalid.email')).toBe(false);
+      expect(validateEmail('user@')).toBe(false);
+      expect(validateEmail('')).toBe(false);
+    });
+
+    it('should be case-insensitive', () => {
+      expect(validateEmail('User@Example.COM')).toBe(true);
+    });
+  });
+
+  describe('validatePassword', () => {
+    it('should require minimum 8 characters', () => {
+      expect(validatePassword('short')).toBe(false);
+      expect(validatePassword('12345678')).toBe(true);
+    });
+
+    it('should require at least one uppercase letter', () => {
+      expect(validatePassword('lowercase123')).toBe(false);
+      expect(validatePassword('ValidPass123')).toBe(true);
+    });
+  });
+});
+```
+
+**Execution Time**: ~15-30 seconds (depends on code complexity)
+
+---
+
+### When to Use Skill-Only vs. Workflow-Based CUJs
+
+**Use Skill-Only CUJs When**:
+- Task is focused and single-purpose (review, scaffold, generate docs)
+- You need fast results (seconds to minutes)
+- No planning or multi-agent coordination needed
+- You want direct, deterministic output
+
+**Use Workflow-Based CUJs When**:
+- Task is complex and multi-faceted (new feature, architecture)
+- You need planning, design, and validation
+- Multiple agents need to collaborate
+- You want comprehensive documentation and oversight
+
+### Combining Skill-Only and Workflow-Based CUJs
+
+You can combine them in a workflow:
+1. **Use CUJ-004** (workflow) to plan a new feature
+2. **Use CUJ-009** (skill) to scaffold components
+3. **Use CUJ-015** (skill) to generate tests
+4. **Use CUJ-013** (skill) to review code
+5. **Use CUJ-011** (workflow) to finalize and validate
+
+This hybrid approach gives you the benefits of both: planning + speed for specific tasks.
+
+## Semantic Routing (NEW)
+
+The system now uses **semantic routing** to intelligently classify user intent before selecting workflows, replacing brittle keyword matching.
+
+### How It Works
+
+1. **Router Agent Classification**: Lightweight router agent analyzes user prompt
+2. **Intent Detection**: Classifies intent (web_app, script, analysis, infrastructure, mobile, ai_system)
+3. **Complexity Assessment**: Determines complexity (high, medium, low)
+4. **Cloud Provider Detection**: Identifies cloud provider (gcp, aws, azure, null)
+5. **Workflow Mapping**: Maps classification to appropriate workflow file
+6. **Fallback**: Falls back to keyword matching if confidence < 0.8
+
+### Benefits
+
+- **Prevents False Positives**: "enterprise python script" correctly routes to script workflow, not fullstack
+- **Context-Aware**: Understands intent beyond simple keywords
+- **Cloud-Aware**: Detects cloud provider requirements automatically
+
+### Example
+
+**Input**: "Write an enterprise-grade python script to backup my laptop"
+
+**Router Classification**:
+```json
+{
+  "intent": "script",
+  "complexity": "low",
+  "cloud_provider": null,
+  "workflow_selection": ".claude/workflows/script-flow.yaml",
+  "confidence": 0.90,
+  "reasoning": "Despite 'enterprise-grade', this is a script task, not a full application"
+}
+```
+
+**Result**: Routes to script workflow, not fullstack workflow (which would be incorrect)
+
+## Infrastructure-First Approach (NEW)
+
+**CRITICAL**: Infrastructure resources are now defined **before** implementation to prevent the "Infrastructure Paradox."
+
+### The Problem
+
+Previously, developers wrote code before infrastructure resources were defined, leading to:
+- Coding against hypothetical resources
+- Rework when actual resource names are determined
+- Missing connection strings and environment variables
+
+### The Solution
+
+**Step 4.5: Infrastructure Resource Definition** (NEW)
+
+Immediately after System Architecture (Step 4), the DevOps agent:
+1. Converts logical architecture to concrete resources
+2. Generates resource names following naming conventions
+3. Creates connection strings and environment variables
+4. Outputs `infrastructure-config.json` with all concrete details
+
+**Benefits**:
+- Developers receive concrete resource names in Step 7
+- No rework needed when infrastructure is provisioned
+- Environment variables are defined upfront
+- Connection strings use actual resource names
+
+### Workflow Integration
+
+**Step 4.5** outputs `infrastructure-config.json` which is used by:
+- **Step 5** (Database Architecture): Knows actual database connection details
+- **Step 6** (Test Planning): Can plan tests with concrete resource names
+- **Step 7** (Implementation): Developer uses actual resource names
+- **Step 7.5** (Cloud Integration): Cloud-integrator uses concrete resource names
+- **Step 10** (QA): Tests use actual resource configurations
+- **Step 11** (Infrastructure Provisioning): Provisions resources defined in Step 4.5
+
+## Emulator-First Development (NEW)
+
+**CRITICAL**: All cloud-connected applications use emulators for local development and testing.
+
+### Why Emulator-First?
+
+1. **No Cloud Costs**: Develop and test without incurring cloud charges
+2. **No Credentials Required**: Work without active cloud credentials
+3. **Faster Feedback**: Local emulators are faster than cloud API calls
+4. **Offline Development**: Work without internet connectivity
+5. **Consistent Environment**: Same behavior across all developers
+
+### Implementation
+
+**Developer Agent** (Step 7):
+- Uses emulators for local development
+- Configures environment variables for emulator endpoints
+- Writes code that works with both emulators and production
+
+**Cloud-Integrator Agent** (Step 7.5):
+- Implements cloud clients that automatically detect emulators
+- Uses `PUBSUB_EMULATOR_HOST`, `DATASTORE_EMULATOR_HOST`, etc.
+- Supports both emulator and production modes
+
+**QA Agent** (Step 6, Step 10):
+- Creates test plans with emulator strategy
+- Tests run against emulators, not live cloud
+- Includes emulator setup instructions
+
+### GCP Emulator Setup
+
+```bash
+# Pub/Sub Emulator
+gcloud components install pubsub-emulator
+gcloud beta emulators pubsub start --project=test-project
+export PUBSUB_EMULATOR_HOST=localhost:8085
+
+# Datastore Emulator
+gcloud components install cloud-datastore-emulator
+gcloud beta emulators datastore start --project=test-project
+export DATASTORE_EMULATOR_HOST=localhost:8081
+
+# Storage Emulator
+# Use fake-gcs-server or gcs-emulator
+export STORAGE_EMULATOR_HOST=http://localhost:9023
+```
+
+### Docker Compose
+
+Include `docker-compose.dev.yml` for local emulator stack:
+```yaml
+version: '3.8'
+services:
+  pubsub-emulator:
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:emulators
+    command: gcloud beta emulators pubsub start --host-port=0.0.0.0:8085
+    ports:
+      - "8085:8085"
+```
+
+## Cloud Integrator Agent (NEW)
+
+**Purpose**: Separates cloud integration from business logic implementation.
+
+### The Problem
+
+Previously, the Developer agent handled both:
+- Business logic (UI, API routes, features)
+- Cloud integration (GCP clients, IAM, authentication)
+
+This caused overload and mixed concerns.
+
+### The Solution
+
+**Step 7: Implementation** (Developer Agent):
+- Focuses on business logic, UI, API routes
+- Creates interfaces/stubs for cloud services
+- Uses cloud services via interfaces
+
+**Step 7.5: Cloud Integration** (Cloud-Integrator Agent):
+- Implements GCP/AWS/Azure client libraries
+- Configures authentication (ADC, service accounts, IAM)
+- Creates cloud service modules (storage, pubsub, database)
+- Implements error handling and retry logic
+
+### Workflow Pattern
+
+1. **Developer** (Step 7): Creates business logic and identifies cloud service needs
+2. **Developer** (Step 7): Creates interfaces for cloud services (e.g., `interface StorageService`)
+3. **Cloud-Integrator** (Step 7.5): Implements actual cloud service clients
+4. **Developer**: Uses cloud services in business logic via interfaces
+
+### Example
+
+```typescript
+// Developer creates interface (Step 7)
+interface StorageService {
+  uploadFile(bucket: string, file: File): Promise<string>;
+}
+
+// Cloud-Integrator implements (Step 7.5)
+// services/gcp-storage.ts
+export class GCPStorageService implements StorageService {
+  // Implementation using @google-cloud/storage
+}
+
+// Developer uses in API route (Step 7)
+app.post('/upload', async (req, res) => {
+  const storage = new GCPStorageService(); // From cloud-integrator
+  const url = await storage.uploadFile('my-bucket', req.file);
+  res.json({ url });
+});
+```
+
+## Workflow ID Resolution
+
+Workflow IDs are used throughout the system to uniquely identify workflow executions and organize artifacts, gates, and reasoning files.
+
+### Template Variable Syntax
+
+Workflow YAML files use `{{workflow_id}}` as a template variable that gets replaced during execution:
+
+```yaml
+outputs:
+  - plan-{{workflow_id}}.md
+  - plan-{{workflow_id}}.json
+gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+```
+
+### Resolution Process
+
+The workflow runner (`workflow_runner.js`) automatically resolves `{{workflow_id}}` placeholders:
+
+1. **Workflow ID Source**:
+   - Provided via `--id <workflow-id>` command line argument
+   - **Auto-generated** if not provided (format: `workflow-{timestamp}-{random}`)
+   - Auto-generated IDs are logged for reference in future steps
+   - Always valid format and safe for file paths
+
+2. **Interpolation**:
+   - All `{{workflow_id}}` occurrences in output paths are replaced
+   - All `{{workflow_id}}` occurrences in gate paths are replaced
+   - All `{{workflow_id}}` occurrences in reasoning paths are replaced
+   - Validation ensures required variables are resolved before execution
+
+3. **Validation**:
+   - If `{{workflow_id}}` is present but not provided, workflow fails with clear error
+   - Un-interpolated variables trigger warnings
+   - Template variable syntax is validated before execution
+
+### Workflow ID Format
+
+Workflow IDs should follow these conventions:
+- Use alphanumeric characters, hyphens, and underscores
+- Examples: `web-app-2025-01-17`, `feature-auth-001`, `bugfix-login-123`
+- Avoid special characters that might cause path issues
+
+### Usage Examples
+
+**Command Line**:
+```bash
+# Provide workflow ID explicitly (recommended for production)
+node .claude/tools/workflow_runner.js \
+  --workflow .claude/workflows/greenfield-fullstack.yaml \
+  --step 0 \
+  --id web-app-2025-01-17
+
+# Without ID (auto-generates unique ID)
+node .claude/tools/workflow_runner.js \
+  --workflow .claude/workflows/greenfield-fullstack.yaml \
+  --step 0
+# Output: 📋 Generated workflow ID: workflow-1705507200000-abc123
+#         Use --id workflow-1705507200000-abc123 to reference this workflow in future steps
+```
+
+**Generated Paths**:
+- With `--id web-app-2025-01-17`:
+  - Output: `plan-web-app-2025-01-17.md`
+  - Gate: `.claude/context/history/gates/web-app-2025-01-17/00-planner.json`
+  - Reasoning: `.claude/context/history/reasoning/web-app-2025-01-17/00-planner.json`
+
+**Error Handling**:
+- Workflow IDs are now auto-generated if not provided, so this error should rarely occur
+- If it does occur, it indicates an internal error in the workflow runner
+- The system will always generate a valid workflow ID before processing steps
+
+### Integration with Shift-Work System
+
+In shift-work orchestration, workflow IDs are preserved across handoffs:
+- Handoff packages include workflow ID
+- New orchestrator instances continue with same workflow ID
+- Artifacts remain accessible using original workflow ID
+- Context recovery uses workflow ID to locate plan files
+
+See `.claude/docs/ENTERPRISE_AUTOMATION.md` for shift-work details.
 </workflow_selection>
 
 <execution_process>
@@ -267,6 +1080,103 @@ if (optionalArtifact) {
   // Proceed without optional data
   processWithDefaults();
 }
+```
+
+### Artifact Publishing Policy
+
+**When to Publish Artifacts**:
+
+Critical artifacts should be published using the `artifact-publisher` skill after validation:
+
+1. **Always Publish**:
+   - Plans (Step 0): `plan-{{workflow_id}}.md` and `plan-{{workflow_id}}.json`
+   - Architecture (Step 4): `system-architecture.json` (critical for Factory Droids)
+   - Final implementations: Complete feature artifacts for handoff
+
+2. **Optional Publish**:
+   - Test results: `test-results.json`, `quality-report.json`
+   - Documentation: API docs, user guides
+   - Intermediate artifacts: Project briefs, PRDs (if needed for sharing)
+
+3. **Never Publish**:
+   - Reasoning files: Internal decision-making documents
+   - Gate files: Validation results (internal only)
+   - Temporary artifacts: Intermediate processing files
+
+**How to Publish**:
+
+After artifact validation passes, invoke the `artifact-publisher` skill:
+
+**Publishing Policy Configuration**:
+
+The `artifact-publisher` skill supports three publishing policies:
+
+1. **Manual Publishing** (`publish_policy: manual`):
+   - Artifacts are only published when explicitly requested
+   - Use when: User wants to review artifacts before publishing
+   - Example: "Publish this plan" or `publish_artifact` tool call
+   - Configuration:
+   ```yaml
+   # In workflow YAML
+   publish_policy: manual
+   ```
+
+2. **Auto-on-Pass** (`publish_policy: auto-on-pass`):
+   - Artifacts are automatically published when validation status is 'pass'
+   - Use when: You want to publish all validated artifacts automatically
+   - Example: After gate file validation passes, artifact is automatically published
+   - Configuration:
+   ```yaml
+   # In workflow YAML
+   publish_policy: auto-on-pass
+   ```
+   - Implementation: Skill checks `validation_status: 'pass'` and publishes automatically
+
+3. **Auto-on-Complete** (`publish_policy: auto-on-complete`):
+   - Artifacts are automatically published when workflow completes
+   - Use when: You want to publish all artifacts at workflow end
+   - Example: At workflow completion, all artifacts with `publishable: true` are published
+   - Configuration:
+   ```yaml
+   # In workflow YAML
+   publish_policy: auto-on-complete
+   ```
+   - Implementation: Skill publishes all `publishable: true` artifacts at workflow completion
+
+**Configuring Publish Targets Per Artifact**:
+
+When registering artifacts, specify publish targets:
+```javascript
+// In workflow step or agent code
+await registerArtifact(runId, {
+  name: 'plan-123.json',
+  step: 0,
+  agent: 'planner',
+  publishable: true,
+  publish_targets: ['project_feed', 'cursor'], // Multiple targets
+  // ... other fields
+});
+```
+
+**Handling Publishing Failures in Workflows**:
+
+- Publishing failures are non-blocking (workflow continues)
+- Errors are logged in registry: `publish_error` and `publish_status: 'failed'`
+- Failed artifacts can be retried manually or in next workflow run
+- Gate files include publishing status for visibility
+- Retry logic: Up to 3 attempts with exponential backoff (1s, 2s, 4s)
+- Use `create_artifact` to finalize the artifact
+- Use `share_artifact` to push to project feed
+- Include `workflow_id` and `step_number` in metadata
+- Publish to targets: `["project_feed", "cursor"]` for cross-platform access
+
+**Integration Pattern**:
+```yaml
+# In workflow step description:
+description: |
+  Create system architecture:
+  - Design components and interactions
+  - **Publishing**: After validation, use `artifact-publisher` skill to publish system-architecture.json
 ```
 
 ### Output Types
@@ -531,6 +1441,98 @@ Gate files contain validation results:
 - **Location**: Path specified in `validation.gate` (e.g., `.claude/context/history/gates/<workflow_id>/01-analyst.json`)
 - **Content**: Validation status, errors, warnings, metadata
 - **Format**: JSON with validation results and feedback
+
+**Enhanced Error Feedback** (NEW):
+Gate files now provide actionable feedback:
+- **Field-Level Errors**: Exact field path and correction instructions
+- **Type Mismatch Details**: Current value, expected type, example of correct format
+- **Schema Path**: JSON path to the violating field
+- **Correction Examples**: Example of correct value format
+
+### Artifact Registry (MANDATORY)
+
+**CRITICAL**: Artifact registry is now mandatory for all workflows.
+
+**Purpose**: Track all artifacts created during workflow execution for dependency management and context passing.
+
+**Registry Location**: `.claude/context/artifacts/registry-{workflow_id}.json`
+
+**Mandatory Requirements**:
+- **MUST initialize registry** at workflow start (before any step execution)
+- **MUST register every artifact** after creation (no exceptions)
+- **MUST check registry** before delegating to subagents (never assume artifacts exist)
+- **MUST verify validation status** before passing artifacts (only pass artifacts with status "pass")
+
+**Registry Structure**:
+```json
+{
+  "workflow_id": "workflow-123",
+  "artifacts": {
+    "project-brief.json": {
+      "name": "project-brief.json",
+      "step": 1,
+      "agent": "analyst",
+      "created_at": "2025-01-17T10:00:00Z",
+      "path": ".claude/context/artifacts/project-brief.json",
+      "dependencies": [],
+      "version": 1,
+      "metadata": {
+        "size": 8234,
+        "type": "project_brief",
+        "validation_status": "pass"
+      }
+    }
+  }
+}
+```
+
+**Usage**:
+- Before delegating to subagent, check artifact registry for required inputs
+- After subagent completes, register new artifacts in registry
+- When passing artifacts between steps, verify they exist in registry
+- Use registry to identify missing dependencies
+
+### Checkpoint Protocol (For Long-Running Tasks)
+
+**Purpose**: Enable recovery from mid-workflow interruption for long-running tasks.
+
+**When to Use**: Tasks expected to take >10 minutes should use checkpoint protocol.
+
+**Checkpoint Creation**:
+- **Interval**: Create checkpoints every 5 minutes for long-running tasks
+- **Location**: `.claude/context/checkpoints/{{workflow_id}}/step-{{n}}-checkpoint.json`
+- **Content**: Current task state, completed work, remaining work, file modifications
+
+**Checkpoint Structure**:
+```json
+{
+  "workflow_id": "workflow-123",
+  "step": 3,
+  "agent": "developer",
+  "checkpoint_timestamp": "2025-01-17T10:30:00Z",
+  "task_status": "in_progress",
+  "completed_work": {
+    "files_created": ["src/components/Button.tsx"],
+    "tests_written": 2,
+    "lines_of_code": 150
+  },
+  "remaining_work": {
+    "files_to_create": ["src/components/Modal.tsx"],
+    "tests_to_write": 1
+  }
+}
+```
+
+**Resume from Checkpoint**:
+1. Load checkpoint state if interruption detected
+2. Verify completed work matches checkpoint
+3. Continue from checkpoint state
+4. Complete remaining work
+
+**Benefits**:
+- No work lost on interruption
+- Seamless recovery from mid-task interruption
+- Support for very long-running tasks
 </execution_process>
 
 <examples>
@@ -540,10 +1542,14 @@ Gate files contain validation results:
 **Common Issues**:
 
 1. **Schema Validation Failures**:
-   - Check gate file for specific field errors
+   - Check gate file for specific field errors (now includes field-level details)
    - Verify artifact structure matches schema
    - Review agent output for missing required fields
-   - **Recovery**: Provide feedback to agent with specific field errors, agent corrects and re-validates
+   - **Enhanced Recovery**: Gate files now provide:
+     - Field-level errors with exact paths
+     - Type mismatch details with correction examples
+     - Schema path to violating fields
+   - **Recovery**: Provide enhanced feedback to agent with specific field errors and correction examples, agent corrects and re-validates
 
 2. **Agent Output Issues**:
    - Review agent's reasoning/logs
@@ -552,10 +1558,15 @@ Gate files contain validation results:
    - **Recovery**: Re-read agent prompt, clarify requirements, re-execute step
 
 3. **Context Passing Problems**:
+   - **Check Artifact Registry**: Verify artifacts exist in artifact registry (MANDATORY)
    - Verify artifacts exist in `.claude/context/artifacts/`
    - Check artifact file names match references (including template variable resolution)
    - Ensure JSON structure is valid
-   - **Recovery**: Manually create missing artifacts or re-run previous step
+   - Verify artifact validation status is "pass" before passing to next step
+   - **Recovery**: 
+     - If artifact missing: Follow missing artifact recovery protocol (see Orchestrator agent)
+     - If artifact invalid: Request artifact recreation with validation
+     - If artifact corrupted: Request artifact recreation
 
 4. **Workflow Execution Errors**:
    - Check session state for current step
@@ -573,6 +1584,25 @@ Gate files contain validation results:
    - Missing required variables cause execution failure
    - **Recovery**: Ensure workflow_id is provided, check variable names are correct (case-sensitive)
 
+7. **Missing Required Artifacts**:
+   - Required artifact not found in artifact registry
+   - Previous step failed to create artifact
+   - Artifact deleted or corrupted
+   - **Recovery**: Follow missing artifact recovery protocol (see Orchestrator agent):
+     - Check if previous step completed successfully
+     - Re-run previous step if incomplete
+     - Request artifact recreation if step complete but artifact missing
+     - Request artifact recreation with validation if corrupted
+
+8. **Workflow Interruption**:
+   - Workflow interrupted mid-step
+   - Long-running task partially complete
+   - **Recovery**: 
+     - Check for checkpoint artifacts in `.claude/context/checkpoints/{{workflow_id}}/`
+     - Load checkpoint state if available
+     - Resume from checkpoint
+     - Complete remaining work
+
 **Error Recovery Process**:
 
 1. **Identify Error Type**: Check gate files and logs to determine error category
@@ -587,7 +1617,8 @@ Gate files contain validation results:
 <validation>
 ## Additional Validation
 
-- **Config Validation**: `pnpm validate` - Validates all configuration files
+- **Fast Validation**: `pnpm validate` - Validates core configuration files (config.yaml, model names) - fast
+- **Full Validation**: `pnpm validate:all` - Validates all files including workflows, references, CUJs, and generates rule index - comprehensive
 - **Sync Validation**: `pnpm validate:sync` - Validates cross-platform agent/skill parity
 </validation>
 </instructions>

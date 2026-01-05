@@ -4,6 +4,39 @@ This directory contains **native Claude Code hooks** - shell scripts that execut
 
 ## Available Hooks
 
+### skill-injection-hook.js (PreToolUse) - **Phase 2B**
+
+**NEW**: Automatically injects skill requirements into Task tool calls.
+
+When an orchestrator spawns a subagent using the Task tool, this hook intercepts the call and enhances the prompt with required and triggered skills from skill-integration-matrix.json.
+
+**Benefits**:
+- Zero orchestrator overhead (no manual skill management)
+- Guaranteed consistency (always uses latest skill matrix)
+- 90%+ context savings (only loads relevant skills)
+- <100ms performance overhead (~7ms actual)
+- Fail-safe (never blocks on errors)
+
+**Documentation**: See `.claude/docs/SKILL_INJECTION_HOOK.md`
+**Example**: See `.claude/docs/examples/skill-injection-example.md`
+**Testing**: Run `node .claude/hooks/test-skill-injection-hook.js`
+
+**Configuration**:
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "tool": "Task",
+        "command": ".claude/hooks/skill-injection-hook.sh"  // Linux/macOS
+        // OR
+        "command": ".claude/hooks/skill-injection-hook.ps1"  // Windows
+      }
+    ]
+  }
+}
+```
+
 ### security-pre-tool.sh (PreToolUse)
 Validates tool usage before execution:
 - Blocks dangerous bash commands (`rm -rf`, `sudo rm`, `mkfs`, `dd`, etc.)

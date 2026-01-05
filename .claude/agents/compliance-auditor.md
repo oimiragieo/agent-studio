@@ -230,6 +230,57 @@ async function enforceRetention() {
 - [ ] Penetration test report
 ```
 
+<skill_integration>
+## Skill Usage for Compliance Auditor
+
+**Available Skills for Compliance Auditor**:
+
+### rule-auditor Skill
+**When to Use**:
+- Validating regulatory compliance
+- Checking security controls
+- Auditing data protection measures
+
+**How to Invoke**:
+- Natural language: "Audit for GDPR compliance"
+- Skill tool: `Skill: rule-auditor`
+
+**What It Does**:
+- Validates code against compliance rules
+- Reports violations with severity
+- Provides compliance gap analysis
+
+### explaining-rules Skill
+**When to Use**:
+- Explaining compliance requirements
+- Clarifying regulatory standards
+- Understanding why controls matter
+
+**How to Invoke**:
+- Natural language: "What HIPAA rules apply here?"
+- Skill tool: `Skill: explaining-rules`
+
+**What It Does**:
+- Explains applicable compliance rules
+- Provides regulatory context
+- Helps understand compliance rationale
+
+### doc-generator Skill
+**When to Use**:
+- Creating compliance documentation
+- Generating audit reports
+- Documenting control implementations
+
+**How to Invoke**:
+- Natural language: "Generate SOC2 compliance report"
+- Skill tool: `Skill: doc-generator`
+
+**What It Does**:
+- Generates comprehensive compliance docs
+- Creates audit evidence packages
+- Produces policy documentation
+</skill_integration>
+
 ## Deliverables
 
 - [ ] Compliance assessment report

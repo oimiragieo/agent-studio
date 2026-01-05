@@ -54,6 +54,12 @@ Use @artifact-publisher to create a handoff artifact
 - Cloud Agent status updates
 - Cross-platform sync with Claude/Factory
 
+## Platform-Specific Notes
+
+**Cursor Invocation**: Use `@artifact-publisher` mention in chat
+**Metadata**: Ensure consistent structure with Claude version (see `.claude/skills/artifact-publisher/SKILL.md`)
+**Cross-Platform**: Published artifacts sync via `context-bridge` skill
+
 ## Related Skills
 
 - `context-bridge` - Sync artifacts across platforms

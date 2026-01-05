@@ -190,6 +190,57 @@ components:
           format: email
 ```
 
+<skill_integration>
+## Skill Usage for API Designer
+
+**Available Skills for API Designer**:
+
+### api-contract-generator Skill
+**When to Use**:
+- Generating OpenAPI specs
+- Creating API contracts
+- Building Swagger documentation
+
+**How to Invoke**:
+- Natural language: "Generate OpenAPI schema"
+- Skill tool: `Skill: api-contract-generator`
+
+**What It Does**:
+- Generates OpenAPI/Swagger schemas
+- Creates API contracts from endpoints
+- Ensures consistency between code and docs
+
+### doc-generator Skill
+**When to Use**:
+- Creating API documentation
+- Generating endpoint guides
+- Producing developer documentation
+
+**How to Invoke**:
+- Natural language: "Document API endpoints"
+- Skill tool: `Skill: doc-generator`
+
+**What It Does**:
+- Generates comprehensive API documentation
+- Creates developer guides and tutorials
+- Produces API reference documentation
+
+### diagram-generator Skill
+**When to Use**:
+- Creating API flow diagrams
+- Generating sequence diagrams
+- Visualizing API interactions
+
+**How to Invoke**:
+- Natural language: "Generate API sequence diagram"
+- Skill tool: `Skill: diagram-generator`
+
+**What It Does**:
+- Generates diagrams using Mermaid syntax
+- Creates sequence and flow diagrams
+- Produces API interaction visualizations
+</skill_integration>
+
 ## Deliverables
 
 - [ ] API design document

@@ -83,6 +83,7 @@ steps:
       - ui-audit-ux.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-ux-expert.json
     validation:
+      schema: .claude/schemas/ui-audit-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-ux-expert.json
     description: |
       UX analysis and visual assessment:
@@ -106,6 +107,7 @@ steps:
       - ui-audit-a11y.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-accessibility-expert.json
     validation:
+      schema: .claude/schemas/ui-audit-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-accessibility-expert.json
     description: |
       Accessibility and WCAG compliance:
@@ -119,30 +121,36 @@ steps:
 
   # Phase 2: Grading & Validation
   - step: 3
-    name: "Score Calculation & Gemini Validation"
+    name: "Score Calculation & Multi-AI Validation"
     agent: model-orchestrator
+    tool: multi-ai-validator
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - ui-audit-ux.json (from step 1)
       - ui-audit-a11y.json (from step 2)
       - target_score
       - iteration_count
+      - target_component
     outputs:
       - grading-score.json
       - gemini-validation.json
+      - validation-report.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-model-orchestrator.json
     validation:
+      schema: .claude/schemas/multi-ai-validation.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-model-orchestrator.json
     description: |
-      Scoring and external validation:
+      Scoring and multi-AI validation:
       - Calculate visual hierarchy score (0-100)
       - Calculate consistency score (0-100)
       - Calculate accessibility score (0-100)
       - Calculate enterprise polish score (0-100)
-      - Route to Gemini for external validation
+      - Run multi-AI validation (Cursor/Gemini/Codex) using gemini-validator agent
+      - Use Gemini CLI for validation: `gemini validate --target <component> --model gemini-pro`
       - Apply consensus rule (if Gemini score >10 points lower, use Gemini score)
       - Calculate total weighted score
       - Generate penalty and recommendation lists
+      - Generate validation report with consensus issues
 
   # Phase 3: Execution
   - step: 4

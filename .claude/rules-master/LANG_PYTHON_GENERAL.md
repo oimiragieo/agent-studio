@@ -2,7 +2,75 @@
 description: General Python development best practices and patterns (framework-agnostic)
 globs: **/*.py, src/**/*.py, tests/**/*.py
 priority: high
+validation:
+  forbidden_patterns:
+    - pattern: "from typing import List, Dict"
+      message: "Use built-in generics (list[], dict[]) in Python 3.9+."
+      severity: "warning"
+    - pattern: "print\\("
+      message: "Use logging instead of print() in production code."
+      severity: "warning"
+    - pattern: "except:\\s*$"
+      message: "Avoid bare except; catch specific exceptions."
+      severity: "error"
+    - pattern: "# type: ignore"
+      message: "Fix type errors instead of ignoring them."
+      severity: "warning"
 ---
+
+<template name="pydantic-model">
+```python
+from pydantic import BaseModel, Field
+
+class {{Name}}(BaseModel):
+    """{{Description}}"""
+
+    id: str = Field(..., description="Unique identifier")
+    name: str = Field(..., min_length=1, max_length=100)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    model_config = ConfigDict(
+        str_strip_whitespace=True,
+        validate_assignment=True,
+    )
+```
+</template>
+
+<template name="class">
+```python
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class {{Name}}:
+    """{{Description}}"""
+
+    def __init__(self, {{params}}) -> None:
+        self.{{attr}} = {{attr}}
+
+    def __repr__(self) -> str:
+        return f"{{Name}}({self.{{attr}}!r})"
+```
+</template>
+
+<template name="function">
+```python
+def {{name}}({{params}}) -> {{ReturnType}}:
+    """{{Description}}
+
+    Args:
+        {{param}}: {{param_description}}
+
+    Returns:
+        {{return_description}}
+
+    Raises:
+        ValueError: If {{error_condition}}.
+    """
+    # Implementation
+    return result
+```
+</template>
 
 # Python General Development Master Rules
 

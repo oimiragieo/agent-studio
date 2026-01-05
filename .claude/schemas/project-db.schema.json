@@ -1,0 +1,236 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Project Database",
+  "description": "Schema for Project Database - hot-swappable memory core for workflow execution state",
+  "required": ["run_id", "created_at", "last_updated"],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Unique identifier for this run",
+      "pattern": "^run-[a-zA-Z0-9_-]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when Project Database was created"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when Project Database was last updated"
+    },
+    "current_phase": {
+      "type": ["string", "null"],
+      "description": "Current phase identifier (e.g., 'phase-2') or null if not in phase-based workflow"
+    },
+    "current_step": {
+      "type": "integer",
+      "description": "Current step number in workflow execution",
+      "minimum": 0,
+      "default": 0
+    },
+    "active_tasks": {
+      "type": "array",
+      "description": "Currently active tasks",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "description", "agent", "status"],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "Unique task identifier"
+          },
+          "description": {
+            "type": "string",
+            "description": "Task description"
+          },
+          "agent": {
+            "type": "string",
+            "description": "Agent assigned to this task"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Step number this task belongs to"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "completed", "failed", "blocked"],
+            "description": "Current task status"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When task started"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Task IDs this task depends on"
+          }
+        }
+      }
+    },
+    "completed_tasks": {
+      "type": "array",
+      "description": "Completed tasks",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "agent": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["completed", "failed"]
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "result": {
+            "type": "object",
+            "description": "Task result data"
+          }
+        }
+      }
+    },
+    "completed_artifacts": {
+      "type": "array",
+      "description": "Artifacts created during workflow execution",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Artifact name"
+          },
+          "path": {
+            "type": "string",
+            "description": "File path to artifact"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Step number that created this artifact"
+          },
+          "agent": {
+            "type": "string",
+            "description": "Agent that created this artifact"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validation_status": {
+            "type": "string",
+            "enum": ["pending", "pass", "fail"],
+            "description": "Validation status"
+          }
+        }
+      }
+    },
+    "workflow_state": {
+      "type": "object",
+      "description": "Workflow-specific state",
+      "additionalProperties": true
+    },
+    "document_approvals": {
+      "type": "object",
+      "description": "Document approval status",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "approved": {
+            "type": "boolean",
+            "description": "Whether document is approved"
+          },
+          "approved_by": {
+            "type": "string",
+            "description": "Agent that approved the document"
+          },
+          "approved_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When document was approved"
+          }
+        },
+        "required": ["approved", "approved_by", "approved_at"]
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "description": "Current blockers preventing progress",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Blocker identifier"
+          },
+          "description": {
+            "type": "string",
+            "description": "Blocker description"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "description": "Blocker severity"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of next steps to take"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "properties": {
+        "workflow_id": {
+          "type": "string",
+          "description": "Workflow identifier"
+        },
+        "selected_workflow": {
+          "type": "string",
+          "description": "Path to selected workflow file"
+        },
+        "user_request": {
+          "type": "string",
+          "description": "Original user request"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "paused", "completed", "failed", "cancelled"],
+          "description": "Overall project status"
+        }
+      }
+    },
+    "phase_started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When current phase started"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When project completed"
+    }
+  }
+}
+

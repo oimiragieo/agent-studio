@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.com/schemas/accessibility-requirements.schema.json",
+  "title": "Accessibility Requirements",
+  "description": "Accessibility requirements artifact for WCAG compliance and a11y testing",
+  "type": "object",
+  "required": [
+    "requirements_id",
+    "timestamp",
+    "wcag_level",
+    "requirements",
+    "compliance_status"
+  ],
+  "properties": {
+    "requirements_id": {
+      "type": "string",
+      "description": "Unique identifier for the accessibility requirements"
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "ISO 8601 timestamp of requirements creation",
+      "format": "date-time"
+    },
+    "wcag_level": {
+      "type": "string",
+      "description": "WCAG compliance level target",
+      "enum": ["A", "AA", "AAA"]
+    },
+    "requirements": {
+      "type": "array",
+      "description": "Accessibility requirements and guidelines",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "description", "wcag_criterion", "priority"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique requirement identifier"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "perceivable",
+              "operable",
+              "understandable",
+              "robust",
+              "keyboard_navigation",
+              "screen_reader",
+              "color_contrast",
+              "focus_management",
+              "semantic_html",
+              "aria_labels",
+              "forms",
+              "multimedia",
+              "responsive_design"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 20,
+            "description": "Detailed requirement description"
+          },
+          "wcag_criterion": {
+            "type": "string",
+            "description": "WCAG success criterion reference (e.g., 1.1.1, 2.4.7)",
+            "pattern": "^[1-4]\\.[0-9]+\\.[0-9]+$"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Implementation priority"
+          },
+          "affected_components": {
+            "type": "array",
+            "description": "Components affected by this requirement",
+            "items": {
+              "type": "string"
+            }
+          },
+          "implementation_guidance": {
+            "type": "string",
+            "description": "How to implement this requirement"
+          },
+          "testing_approach": {
+            "type": "string",
+            "description": "How to test this requirement"
+          }
+        }
+      }
+    },
+    "compliance_status": {
+      "type": "object",
+      "description": "Current compliance status",
+      "required": ["overall_compliance", "compliance_score"],
+      "properties": {
+        "overall_compliance": {
+          "type": "string",
+          "enum": ["compliant", "partial", "non_compliant", "not_assessed"]
+        },
+        "compliance_score": {
+          "type": "number",
+          "description": "Compliance score (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "compliant_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "non_compliant_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assistive_technologies": {
+      "type": "array",
+      "description": "Assistive technologies to support",
+      "items": {
+        "type": "object",
+        "required": ["name", "support_level"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Assistive technology name (e.g., JAWS, NVDA, VoiceOver)"
+          },
+          "support_level": {
+            "type": "string",
+            "enum": ["full", "partial", "limited", "planned", "not_supported"]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "testing_tools": {
+      "type": "array",
+      "description": "Tools used for accessibility testing",
+      "items": {
+        "type": "string"
+      }
+    },
+    "remediation_plan": {
+      "type": "array",
+      "description": "Plan for remediating accessibility issues",
+      "items": {
+        "type": "object",
+        "required": ["issue", "priority", "remediation", "estimated_effort"],
+        "properties": {
+          "issue": {
+            "type": "string",
+            "description": "Accessibility issue identified"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          },
+          "remediation": {
+            "type": "string",
+            "description": "How to fix the issue"
+          },
+          "estimated_effort": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "assigned_to": {
+            "type": "string",
+            "description": "Agent or team responsible"
+          }
+        }
+      }
+    },
+    "keyboard_navigation": {
+      "type": "object",
+      "description": "Keyboard navigation requirements",
+      "properties": {
+        "focus_order": {
+          "type": "string",
+          "description": "Focus order strategy"
+        },
+        "skip_links": {
+          "type": "boolean",
+          "description": "Whether skip links are required"
+        },
+        "keyboard_shortcuts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "color_contrast": {
+      "type": "object",
+      "description": "Color contrast requirements",
+      "properties": {
+        "minimum_ratio": {
+          "type": "string",
+          "description": "Minimum contrast ratio (e.g., 4.5:1, 7:1)"
+        },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes and considerations"
+    }
+  }
+}

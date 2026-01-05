@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Handoff Package",
+  "description": "Schema for orchestrator handoff packages (two-phase commit protocol)",
+  "required": ["run_id", "workflow_id", "current_step", "timestamp", "status"],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Run ID for this handoff"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID"
+    },
+    "current_step": {
+      "type": "integer",
+      "description": "Current step number in workflow execution",
+      "minimum": 0
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when handoff package was created"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["freeze", "snapshot", "spawn", "ack", "shutdown"],
+      "description": "Current handoff status (two-phase commit protocol)"
+    },
+    "run_record": {
+      "type": "object",
+      "description": "Run record state (from run-manager)"
+    },
+    "artifact_registry": {
+      "type": "object",
+      "description": "Artifact registry state (authoritative artifact index)"
+    },
+    "context": {
+      "type": "object",
+      "description": "Context state for handoff",
+      "properties": {
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "path": { "type": "string" },
+              "step": { "type": "integer" },
+              "agent": { "type": "string" },
+              "validation_status": { "type": "string" },
+              "created_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "gates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": { "type": "string" },
+              "path": { "type": "string" },
+              "step": { "type": "integer" },
+              "validation_status": { "type": "string" },
+              "errors": { "type": "array" }
+            }
+          }
+        },
+        "reasoning": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": { "type": "string" },
+              "path": { "type": "string" },
+              "step": { "type": "integer" },
+              "agent": { "type": "string" }
+            }
+          }
+        },
+        "plan": {
+          "type": "object",
+          "description": "Plan document state"
+        }
+      }
+    },
+    "current_task": {
+      "type": "object",
+      "description": "Current task being executed",
+      "properties": {
+        "task_id": { "type": "string" },
+        "step": { "type": "integer" },
+        "agent": { "type": "string" },
+        "status": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Open questions that need to be addressed"
+    },
+    "validation_summary": {
+      "type": "object",
+      "properties": {
+        "total_artifacts": { "type": "integer" },
+        "validated_artifacts": { "type": "integer" },
+        "failed_validations": { "type": "integer" }
+      }
+    },
+    "what_to_do_next": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Checklist of what to do next in the new orchestrator"
+    },
+    "handoff_hash": {
+      "type": "string",
+      "description": "Hash of handoff package for verification (used in ack phase)"
+    }
+  }
+}
+
