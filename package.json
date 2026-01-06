@@ -13,6 +13,9 @@
     "validate:workflow": "node scripts/validate-workflow.mjs",
     "validate:references": "node scripts/validate-all-references.mjs",
     "validate:cujs": "node scripts/validate-cujs.mjs",
+    "validate:cuj": "node .claude/tools/validate-cuj.mjs",
+    "validate:cujs:e2e": "node .claude/tools/validate-cuj-e2e.mjs",
+    "validate:cujs:dry-run": "node scripts/validate-cuj-dry-run.mjs",
     "validate:index": "node scripts/validate-index.mjs",
     "validate:index-version": "node scripts/validate-rule-index-paths.mjs --check-version",
     "validate:index-paths": "node scripts/validate-rule-index-paths.mjs",
@@ -20,7 +23,15 @@
     "test:version-validation": "node scripts/test-version-validation.mjs",
     "install-agents": "node scripts/install.mjs",
     "index-rules": "node scripts/generate-rule-index.mjs",
-    "index-rules:prebuilt": "node scripts/generate-prebuilt-rule-index.mjs"
+    "index-rules:prebuilt": "node scripts/generate-prebuilt-rule-index.mjs",
+    "sync-cuj-registry": "node .claude/tools/sync-cuj-registry.mjs",
+    "sync-cuj-registry:validate": "node .claude/tools/sync-cuj-registry.mjs --validate-only",
+    "cuj": "node .claude/tools/run-cuj.mjs",
+    "cuj:list": "node .claude/tools/run-cuj.mjs --list",
+    "cuj:simulate": "node .claude/tools/run-cuj.mjs --simulate",
+    "cuj:validate": "node .claude/tools/run-cuj.mjs --validate",
+    "cuj:doctor": "node .claude/tools/cuj-doctor.mjs",
+    "cuj:doctor:json": "node .claude/tools/cuj-doctor.mjs --json"
   },
   "keywords": [
     "claude",
