@@ -3,6 +3,29 @@ description: Automated plan → implement → debug → fix cycle with multi-AI 
 type: enterprise
 project_type: enterprise
 
+# Error Recovery Configuration
+recovery:
+  enabled: true
+  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+
+retry_config:
+  max_attempts: 3
+  backoff_strategy: exponential
+  initial_delay_ms: 1000
+  retryable_errors: [timeout, network_error, rate_limit]
+
+fallback_agents:
+  developer: [code-reviewer, qa]
+  architect: [developer, security-architect]
+  qa: [developer, code-reviewer]
+  planner: [architect, pm]
+  model-orchestrator: [code-reviewer, qa]
+  ai-council: [model-orchestrator, architect]
+  security-architect: [compliance-auditor, code-reviewer]
+  compliance-auditor: [security-architect, qa]
+  code-reviewer: [developer, security-architect]
+  devops: [architect, developer]
+
 # NOTE: trigger_keywords here are for documentation only.
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 trigger_keywords:
@@ -167,6 +190,18 @@ steps:
       - Run validation again on fixed code
       - Verify fixes resolved issues
       - Generate final status report
+
+  - step: 4.5
+    name: "Publish Artifacts"
+    agent: orchestrator
+    skill: artifact-publisher
+    condition: "validation_status == 'pass'"
+    inputs:
+      - artifact-registry.json
+    policy: auto-on-pass
+    retry:
+      max_attempts: 3
+      on_failure: log_and_continue
 
 # Iteration configuration
 iteration:

@@ -3,6 +3,30 @@ description: Workflow for enhancing existing codebases with new features or refa
 type: brownfield
 project_type: fullstack
 
+# Error Recovery Configuration
+recovery:
+  enabled: true
+  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+
+retry_config:
+  max_attempts: 3
+  backoff_strategy: exponential
+  initial_delay_ms: 1000
+  retryable_errors: [timeout, network_error, rate_limit]
+
+fallback_agents:
+  developer: [code-reviewer, qa]
+  architect: [developer, security-architect]
+  qa: [developer, code-reviewer]
+  planner: [architect, pm]
+  analyst: [pm, architect]
+  impact-analyzer: [architect, developer]
+  refactoring-specialist: [developer, architect]
+  security-architect: [compliance-auditor, code-reviewer]
+  code-reviewer: [developer, security-architect]
+  code-simplifier: [code-reviewer, developer]
+  technical-writer: [developer, pm]
+
 # NOTE: This workflow is selected via keywords defined in .claude/config.yaml workflow_selection section.
 # The routing system matches user prompts against keywords in config.yaml, not this file.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
@@ -32,6 +56,32 @@ steps:
       - Analyze requirements and existing codebase
       - Coordinate enhancement strategy
       - Create structured improvement plan
+
+  - step: 0.1
+    name: "Plan Rating Gate"
+    agent: orchestrator
+    type: validation
+    skill: response-rater
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+    outputs:
+      - plan-rating-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
+    validation:
+      minimum_score: 7
+      rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
+    retry:
+      max_attempts: 3
+      on_failure: escalate_to_human
+    description: |
+      Rate plan quality using response-rater skill.
+      - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+      - Minimum passing score: 7/10
+      - If score < 7: Return to Planner with feedback, request improvements, re-rate until passing
+      - If score >= 7: Proceed with workflow execution
+      - Log rating in reasoning file and artifact metadata
+      - Never execute an unrated plan - this is a hard requirement
 
   - step: 1
     name: "Codebase Discovery & Impact Analysis"
@@ -188,6 +238,18 @@ steps:
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/08-qa-final.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/08-qa-final.json
+
+  - step: 8.5
+    name: "Publish Artifacts"
+    agent: orchestrator
+    skill: artifact-publisher
+    condition: "validation_status == 'pass'"
+    inputs:
+      - artifact-registry.json
+    policy: auto-on-pass
+    retry:
+      max_attempts: 3
+      on_failure: log_and_continue
 
 completion_criteria:
   - All artifacts validated against schemas

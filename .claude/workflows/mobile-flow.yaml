@@ -3,6 +3,30 @@ description: Mobile app development for iOS, Android, and cross-platform framewo
 type: mobile
 project_type: mobile
 
+# Error Recovery Configuration
+recovery:
+  enabled: true
+  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+
+retry_config:
+  max_attempts: 3
+  backoff_strategy: exponential
+  initial_delay_ms: 1000
+  retryable_errors: [timeout, network_error, rate_limit]
+
+fallback_agents:
+  developer: [code-reviewer, qa]
+  architect: [developer, security-architect]
+  qa: [developer, code-reviewer]
+  planner: [architect, pm]
+  mobile-developer: [developer, ux-expert]
+  pm: [analyst, ux-expert]
+  ux-expert: [pm, accessibility-expert]
+  accessibility-expert: [ux-expert, qa]
+  security-architect: [compliance-auditor, code-reviewer]
+  code-reviewer: [developer, security-architect]
+  technical-writer: [developer, pm]
+
 # NOTE: trigger_keywords here are for documentation only.
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
@@ -35,6 +59,32 @@ steps:
       - Analyze app requirements and platforms
       - Coordinate mobile development strategy
       - Create structured development plan
+
+  - step: 0.1
+    name: "Plan Rating Gate"
+    agent: orchestrator
+    type: validation
+    skill: response-rater
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+    outputs:
+      - plan-rating-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
+    validation:
+      minimum_score: 7
+      rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
+    retry:
+      max_attempts: 3
+      on_failure: escalate_to_human
+    description: |
+      Rate plan quality using response-rater skill.
+      - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+      - Minimum passing score: 7/10
+      - If score < 7: Return to Planner with feedback, request improvements, re-rate until passing
+      - If score >= 7: Proceed with workflow execution
+      - Log rating in reasoning file and artifact metadata
+      - Never execute an unrated plan - this is a hard requirement
 
   - step: 1
     name: "Mobile Development"
@@ -195,6 +245,18 @@ steps:
       - Network condition testing
       - App store compliance check
       - Accessibility audit
+
+  - step: 5.5
+    name: "Publish Artifacts"
+    agent: orchestrator
+    skill: artifact-publisher
+    condition: "validation_status == 'pass'"
+    inputs:
+      - artifact-registry.json
+    policy: auto-on-pass
+    retry:
+      max_attempts: 3
+      on_failure: log_and_continue
 
 completion_criteria:
   - App builds successfully for target platforms

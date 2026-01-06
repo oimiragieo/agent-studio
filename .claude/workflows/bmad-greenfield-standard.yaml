@@ -3,6 +3,31 @@ description: Complete BMad Method workflow with all phases, decisions, and loops
 type: bmad-greenfield
 method: standard
 
+# Error Recovery Configuration
+recovery:
+  enabled: true
+  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+
+retry_config:
+  max_attempts: 3
+  backoff_strategy: exponential
+  initial_delay_ms: 1000
+  retryable_errors: [timeout, network_error, rate_limit]
+
+fallback_agents:
+  developer: [code-reviewer, qa]
+  architect: [developer, security-architect]
+  qa: [developer, code-reviewer]
+  planner: [architect, pm]
+  analyst: [pm, architect]
+  pm: [analyst, ux-expert]
+  ux-expert: [pm, accessibility-expert]
+  database-architect: [architect, developer]
+  security-architect: [compliance-auditor, code-reviewer]
+  code-reviewer: [developer, security-architect]
+  technical-writer: [developer, pm]
+  devops: [architect, developer]
+
 # NOTE: This workflow is selected via keywords defined in .claude/config.yaml workflow_selection section.
 # The routing system matches user prompts against keywords in config.yaml, not this file.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
@@ -276,6 +301,18 @@ phases:
               loop_back: 4.1
             if_no:
               end: true
+      - step: 4.7
+        agent: orchestrator
+        task: Publish Artifacts
+        optional: false
+        skill: artifact-publisher
+        condition: "validation_status == 'pass'"
+        inputs:
+          - artifact-registry.json
+        policy: auto-on-pass
+        retry:
+          max_attempts: 3
+          on_failure: log_and_continue
 
 completion_criteria:
   - All epics completed

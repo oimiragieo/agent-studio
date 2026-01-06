@@ -3,6 +3,28 @@ description: Production incident response, crisis management, and post-mortem an
 type: incident
 project_type: operations
 
+# Error Recovery Configuration
+recovery:
+  enabled: true
+  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+
+retry_config:
+  max_attempts: 3
+  backoff_strategy: exponential
+  initial_delay_ms: 1000
+  retryable_errors: [timeout, network_error, rate_limit]
+
+fallback_agents:
+  developer: [code-reviewer, qa]
+  architect: [developer, security-architect]
+  qa: [developer, code-reviewer]
+  planner: [architect, pm]
+  incident-responder: [devops, developer]
+  devops: [architect, developer]
+  security-architect: [compliance-auditor, devops]
+  code-reviewer: [developer, security-architect]
+  technical-writer: [developer, pm]
+
 # NOTE: trigger_keywords here are for documentation only.
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
@@ -181,6 +203,18 @@ steps:
       - Root cause documentation
       - Prevention recommendations
       - Process improvements
+
+  - step: 5.5
+    name: "Publish Artifacts"
+    agent: orchestrator
+    skill: artifact-publisher
+    condition: "validation_status == 'pass'"
+    inputs:
+      - artifact-registry.json
+    policy: auto-on-pass
+    retry:
+      max_attempts: 3
+      on_failure: log_and_continue
 
 completion_criteria:
   - Incident severity assessed

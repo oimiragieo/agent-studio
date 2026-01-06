@@ -4,6 +4,37 @@ type: greenfield
 project_type: fullstack
 publish_policy: auto-on-pass  # Automatically publish artifacts after validation passes
 
+# Error Recovery Configuration
+recovery:
+  enabled: true
+  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+
+retry_config:
+  max_attempts: 3
+  backoff_strategy: exponential
+  initial_delay_ms: 1000
+  retryable_errors: [timeout, network_error, rate_limit]
+
+fallback_agents:
+  developer: [code-reviewer, qa]
+  architect: [developer, security-architect]
+  qa: [developer, code-reviewer]
+  planner: [architect, pm]
+  analyst: [pm, architect]
+  pm: [analyst, ux-expert]
+  ux-expert: [pm, accessibility-expert]
+  database-architect: [architect, developer]
+  security-architect: [compliance-auditor, code-reviewer]
+  accessibility-expert: [ux-expert, qa]
+  performance-engineer: [developer, architect]
+  devops: [architect, developer]
+  cloud-integrator: [devops, developer]
+  model-orchestrator: [code-reviewer, qa]
+  code-reviewer: [developer, security-architect]
+  code-simplifier: [code-reviewer, developer]
+  technical-writer: [developer, pm]
+  gcp-cloud-agent: [devops, cloud-integrator]
+
 # NOTE: This workflow is selected via keywords defined in .claude/config.yaml workflow_selection section.
 # The routing system matches user prompts against keywords in config.yaml, not this file.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
@@ -33,38 +64,30 @@ steps:
       - **Publishing**: After validation, use `artifact-publisher` skill to publish plan artifacts to project feed
 
   - step: 0.1
-    name: "Plan Review Gate"
+    name: "Plan Rating Gate"
     agent: orchestrator
-    type: parallel_review
+    type: validation
+    skill: response-rater
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
-      - user_requirements
-      - business_objectives
-    reviewers:
-      - architect
-      - security-architect
-      - pm (conditional: if plan includes product features)
-      - qa
-      - database-architect (conditional: if plan includes database components)
-      - accessibility-expert (conditional: if plan includes UI components)
     outputs:
-      - plan-review-{{workflow_id}}.json
+      - plan-rating-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
-      schema: .claude/schemas/plan-review.schema.json
+      minimum_score: 7
+      rubric_file: .claude/context/artifacts/standard-plan-rubric.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
+    retry:
+      max_attempts: 3
+      on_failure: escalate_to_human
     description: |
-      Parallel plan review by specialist agents:
-      - Orchestrator spawns reviewer subagents in parallel
-      - Each specialist reviews plan from their domain perspective
-      - Architect reviews technical feasibility and architecture decisions
-      - Security-architect reviews security considerations and threat model
-      - PM reviews product alignment (if applicable)
-      - QA reviews testability and quality gates
-      - Database-architect reviews data architecture (if applicable)
-      - Accessibility-expert reviews UI accessibility (if applicable)
-      - Consolidate feedback into plan-review artifact
-      - Block plan execution if critical issues found (severity: critical)
+      Rate plan quality using response-rater skill.
+      - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+      - Minimum passing score: 7/10
+      - If score < 7: Return to Planner with feedback, request improvements, re-rate until passing
+      - If score >= 7: Proceed with workflow execution
+      - Log rating in reasoning file and artifact metadata
+      - Never execute an unrated plan - this is a hard requirement
 
   - step: 0.5
     name: "Feature Distillation"
@@ -538,6 +561,18 @@ steps:
       - Check for architectural debt or anti-patterns
       - Sign off on architecture for deployment
       - Block deployment if architectural issues remain
+
+  - step: 15.5
+    name: "Publish Artifacts"
+    agent: orchestrator
+    skill: artifact-publisher
+    condition: "validation_status == 'pass'"
+    inputs:
+      - artifact-registry.json
+    policy: auto-on-pass
+    retry:
+      max_attempts: 3
+      on_failure: log_and_continue
 
 completion_criteria:
   - All artifacts validated against schemas
