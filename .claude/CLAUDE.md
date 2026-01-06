@@ -555,6 +555,36 @@ See @.claude/workflows/WORKFLOW-GUIDE.md for detailed execution instructions, YA
 - **MUST NOT** push directly to protected branches; use reviewed pull requests
 - **MUST NOT** rely on hallucinated APIs—verify via docs or code search MCP
 
+## Subagent File Rules (SLOP Prevention)
+
+**CRITICAL: All subagents MUST follow these file location rules to prevent SLOP (files in wrong locations).**
+
+See @.claude/rules/subagent-file-rules.md for complete documentation.
+
+### Top 5 Critical Rules (HARD BLOCK)
+
+1. **Never create reports/tasks/artifacts in project root** - Use `.claude/context/` hierarchy
+2. **Validate paths on Windows** - Check for malformed paths like `C:devprojects` (missing backslash)
+3. **Use proper path separators** - Always use `/` or `path.join()`, never concatenate strings
+4. **Match file type to location**:
+   - Reports: `.claude/context/reports/`
+   - Tasks: `.claude/context/tasks/`
+   - Artifacts: `.claude/context/artifacts/`
+   - Temporary: `.claude/context/tmp/` (prefix with `tmp-`)
+5. **Clean up temporary files** - Remove all `tmp-*` files after task completion
+
+### Root Directory Allowlist
+
+**ONLY these files permitted in project root**: `package.json`, `README.md`, `GETTING_STARTED.md`, `LICENSE`, `.gitignore`, `tsconfig.json`, `CHANGELOG.md`
+
+### Enforcement
+
+- **Hard Block**: Malformed paths, root directory violations, prohibited directories
+- **Warning**: Non-standard subdirectory, temporary files not cleaned
+- **Validation**: `node .claude/tools/enforcement-gate.mjs validate-file-location --path "<path>"`
+
+See also: `.claude/schemas/file-location.schema.json`, `.claude/system/guardrails/file-location-guardrails.md`
+
 ## Default Action Behavior
 
 By default, implement changes rather than only suggesting them. If the user's intent is unclear, infer the most useful likely action and proceed, using tools to discover any missing details instead of guessing.

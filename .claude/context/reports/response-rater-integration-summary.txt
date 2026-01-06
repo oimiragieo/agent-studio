@@ -1,0 +1,49 @@
+RESPONSE-RATER INTEGRATION COMPLETE
+====================================
+
+Task: Add response-rater skill integration to ALL CUJs with planning phases
+
+Status: ✅ 100% COMPLETE
+
+Files Modified: 40 CUJs + 1 report
+- Added Step 0.1: Plan Rating Gate to all 40 CUJs with Step 0
+- Updated Success Criteria with plan rating validation (40 CUJs)
+- Added response-rater to Skills Used sections (where applicable)
+
+Coverage:
+- Total CUJs: 54
+- CUJs with Step 0: 40 (100% updated)
+- CUJs without Step 0: 12 (correctly skipped)
+- CUJs with Step 0.1 Rating Gate: 40/40 (100%)
+- CUJs with rating criteria: 40/40 (100%)
+
+Key Changes:
+1. Step 0.1: Plan Rating Gate
+   - Agent: orchestrator
+   - Skill: response-rater
+   - Minimum score: 7/10
+   - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+
+2. Success Criteria Updates
+   - Plan rating >= 7/10
+   - Rating recorded in run state
+
+3. Skills Documentation
+   - response-rater skill listed in applicable CUJs
+
+Validation:
+Run: python .claude/tools/validate-response-rater-updates.py
+Result: ✅ ALL CUJs with Step 0 have complete response-rater integration!
+
+Alignment with CLAUDE.md:
+This implementation enforces the critical requirement:
+"All plans MUST be rated before execution (min score: 7/10)"
+
+Updated CUJs:
+Core: CUJ-005, CUJ-009 through CUJ-024
+Advanced: CUJ-025, CUJ-026, CUJ-034 through CUJ-055
+
+Report: .claude/docs/cujs/RESPONSE-RATER-INTEGRATION-REPORT.md
+
+Date: 2026-01-05
+Priority: HIGH (enforcement requirement)
