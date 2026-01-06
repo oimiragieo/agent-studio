@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "Maps agents to their required and recommended skills with specific triggers",
-  "last_updated": "2026-01-04T00:00:00Z",
+  "last_updated": "2026-01-05T00:00:00Z",
   "agents": {
     "orchestrator": {
       "required_skills": ["response-rater", "recovery", "artifact-publisher"],
@@ -305,6 +305,323 @@
         "complexity_diagram": "diagram-generator"
       },
       "description": "Code simplifier reduces complexity. Uses repo-rag for complexity patterns, code-style-validator for consistency."
+    }
+  },
+  "skills": {
+    "aws-cloud-ops": {
+      "primary_agents": ["devops", "cloud-integrator"],
+      "secondary_agents": ["gcp-cloud-agent", "incident-responder"],
+      "triggers": ["aws", "cloudwatch", "s3", "lambda", "ec2", "iam"]
+    },
+    "stripe-billing": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["analyst"],
+      "triggers": ["stripe", "billing", "subscription", "payment", "invoice"]
+    },
+    "terraform-infra": {
+      "primary_agents": ["devops"],
+      "secondary_agents": ["architect", "cloud-integrator"],
+      "triggers": ["terraform", "infrastructure", "iac", "tfstate"]
+    },
+    "kubernetes-flux": {
+      "primary_agents": ["devops", "incident-responder"],
+      "secondary_agents": ["cloud-integrator"],
+      "triggers": ["kubernetes", "k8s", "kubectl", "pod", "deployment"]
+    },
+    "huggingface-hub": {
+      "primary_agents": ["llm-architect"],
+      "secondary_agents": ["developer", "analyst"],
+      "triggers": ["huggingface", "hf", "model hub", "transformers"]
+    },
+    "nextjs-devtools": {
+      "primary_agents": ["developer", "react-component-developer"],
+      "secondary_agents": ["performance-engineer"],
+      "triggers": ["nextjs", "next.js", "vercel", "app router"]
+    },
+    "sentry-monitoring": {
+      "primary_agents": ["devops", "incident-responder"],
+      "secondary_agents": ["developer", "qa"],
+      "triggers": ["sentry", "error tracking", "performance monitoring"]
+    },
+    "datadog-observability": {
+      "primary_agents": ["devops", "incident-responder"],
+      "secondary_agents": ["performance-engineer", "developer"],
+      "triggers": ["datadog", "apm", "metrics", "logs", "infrastructure"]
+    },
+    "grafana-dashboards": {
+      "primary_agents": ["devops", "performance-engineer"],
+      "secondary_agents": ["incident-responder", "analyst"],
+      "triggers": ["grafana", "dashboard", "visualization", "alerting"]
+    },
+    "linear-pm": {
+      "primary_agents": ["pm", "analyst"],
+      "secondary_agents": ["developer", "architect"],
+      "triggers": ["linear", "issues", "cycles", "sprints", "roadmap"]
+    },
+    "notion-workspace": {
+      "primary_agents": ["pm", "technical-writer"],
+      "secondary_agents": ["analyst", "developer"],
+      "triggers": ["notion", "pages", "databases", "workspace"]
+    },
+    "slack-notifications": {
+      "primary_agents": ["devops", "incident-responder"],
+      "secondary_agents": ["pm", "developer"],
+      "triggers": ["slack", "messaging", "notifications", "channels"]
+    },
+    "docker-compose": {
+      "primary_agents": ["devops", "developer"],
+      "secondary_agents": ["qa", "incident-responder"],
+      "triggers": ["docker", "compose", "containers", "services"]
+    },
+    "ansible-config": {
+      "primary_agents": ["devops"],
+      "secondary_agents": ["security-architect", "cloud-integrator"],
+      "triggers": ["ansible", "playbook", "configuration", "automation"]
+    },
+    "vault-secrets": {
+      "primary_agents": ["security-architect", "devops"],
+      "secondary_agents": ["developer"],
+      "triggers": ["vault", "secrets", "hashicorp", "credentials"]
+    },
+    "openai-api": {
+      "primary_agents": ["llm-architect", "developer"],
+      "secondary_agents": ["analyst"],
+      "triggers": ["openai", "gpt", "embeddings", "assistants", "fine-tuning"]
+    },
+    "langchain-tools": {
+      "primary_agents": ["llm-architect"],
+      "secondary_agents": ["developer", "architect"],
+      "triggers": ["langchain", "chains", "agents", "rag", "vectorstore"]
+    },
+    "pinecone-vector": {
+      "primary_agents": ["llm-architect", "database-architect"],
+      "secondary_agents": ["developer"],
+      "triggers": ["pinecone", "vector", "similarity", "embeddings", "rag"]
+    },
+    "vercel-agent-template": {
+      "primary_agents": ["orchestrator"],
+      "secondary_agents": ["developer"],
+      "triggers": ["vercel", "template", "agent"]
+    },
+    "nextjs-mcp": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["react-component-developer"],
+      "triggers": ["nextjs", "next.js", "mcp", "server"]
+    },
+    "redis-cache": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["performance-engineer"],
+      "triggers": ["redis", "cache", "caching", "key-value"]
+    },
+    "sqlite-db": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["database-architect"],
+      "triggers": ["sqlite", "database", "sql", "local db"]
+    },
+    "gcloud-cli": {
+      "primary_agents": ["devops", "gcp-cloud-agent"],
+      "secondary_agents": ["cloud-integrator"],
+      "triggers": ["gcloud", "gcp", "google cloud", "cli"]
+    },
+    "semgrep-security": {
+      "primary_agents": ["security-architect", "qa"],
+      "secondary_agents": ["code-reviewer"],
+      "triggers": ["semgrep", "security", "sast", "static analysis"]
+    },
+    "vuln-nist": {
+      "primary_agents": ["security-architect", "compliance-auditor"],
+      "secondary_agents": ["developer"],
+      "triggers": ["vulnerability", "nist", "cve", "nvd", "security"]
+    },
+    "workflow-conductor": {
+      "primary_agents": ["orchestrator"],
+      "secondary_agents": ["devops"],
+      "triggers": ["workflow", "conductor", "orchestration", "automation"]
+    },
+    "n8n-workflow": {
+      "primary_agents": ["llm-architect"],
+      "secondary_agents": ["orchestrator", "developer"],
+      "triggers": ["n8n", "workflow", "automation", "integration"]
+    },
+    "upstash-context7": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["llm-architect"],
+      "triggers": ["upstash", "context", "serverless", "redis"]
+    },
+    "arxiv-research": {
+      "primary_agents": ["analyst"],
+      "secondary_agents": ["llm-architect"],
+      "triggers": ["arxiv", "research", "papers", "academic"]
+    },
+    "spec-flow": {
+      "primary_agents": ["analyst", "pm"],
+      "secondary_agents": ["architect"],
+      "triggers": ["specification", "spec", "requirements", "flow"]
+    },
+    "gemini-flow": {
+      "primary_agents": ["llm-architect", "model-orchestrator"],
+      "secondary_agents": ["developer"],
+      "triggers": ["gemini", "google ai", "flow", "llm"]
+    },
+    "gemini-blueprint": {
+      "primary_agents": ["architect"],
+      "secondary_agents": ["llm-architect"],
+      "triggers": ["gemini", "blueprint", "architecture", "design"]
+    },
+    "claude-devtools": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["qa"],
+      "triggers": ["claude", "devtools", "development", "tools"]
+    },
+    "e2e-uuv-testing": {
+      "primary_agents": ["qa"],
+      "secondary_agents": ["ux-expert"],
+      "triggers": ["e2e", "uuv", "testing", "end-to-end", "user"]
+    },
+    "gcloud-observability": {
+      "primary_agents": ["devops", "incident-responder"],
+      "secondary_agents": ["performance-engineer"],
+      "triggers": ["gcloud", "observability", "monitoring", "logging", "tracing"]
+    },
+    "reddit-research": {
+      "primary_agents": ["analyst"],
+      "secondary_agents": ["pm"],
+      "triggers": ["reddit", "research", "social", "discussion"]
+    },
+    "code-analyzer": {
+      "primary_agents": ["code-reviewer", "refactoring-specialist"],
+      "secondary_agents": ["architect"],
+      "triggers": ["code", "analyzer", "analysis", "quality"]
+    },
+    "vercel-workflow-builder": {
+      "primary_agents": ["devops"],
+      "secondary_agents": ["developer"],
+      "triggers": ["vercel", "workflow", "builder", "deployment"]
+    },
+    "gemini-api-docs": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["technical-writer"],
+      "triggers": ["gemini", "api", "documentation", "docs"]
+    },
+    "google-datacommons": {
+      "primary_agents": ["analyst"],
+      "secondary_agents": ["pm"],
+      "triggers": ["google", "datacommons", "data", "statistics"]
+    },
+    "clix-devflow": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["devops"],
+      "triggers": ["clix", "devflow", "development", "workflow"]
+    },
+    "persona-profiles": {
+      "primary_agents": ["ux-expert", "pm"],
+      "secondary_agents": ["analyst"],
+      "triggers": ["persona", "profiles", "user", "ux"]
+    },
+    "billing-integration": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["pm"],
+      "triggers": ["billing", "integration", "payment", "invoicing"]
+    },
+    "art-generation": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["ux-expert"],
+      "triggers": ["art", "generation", "image", "creative"]
+    },
+    "gemini-code-review": {
+      "primary_agents": ["code-reviewer", "gemini-validator"],
+      "secondary_agents": ["qa"],
+      "triggers": ["gemini", "code review", "validation", "quality"]
+    },
+    "kubectl": {
+      "primary_agents": ["devops"],
+      "secondary_agents": ["developer"],
+      "triggers": ["kubectl", "kubernetes", "k8s", "pods", "deployments"]
+    },
+    "prometheus-metrics": {
+      "primary_agents": ["devops", "incident-responder"],
+      "secondary_agents": ["performance-engineer"],
+      "triggers": ["prometheus", "metrics", "promql", "alerts", "monitoring"]
+    },
+    "elasticsearch-logs": {
+      "primary_agents": ["devops", "incident-responder"],
+      "secondary_agents": ["developer"],
+      "triggers": ["elasticsearch", "logs", "elk", "kibana", "search"]
+    },
+    "mongodb-atlas": {
+      "primary_agents": ["database-architect"],
+      "secondary_agents": ["developer"],
+      "triggers": ["mongodb", "mongo", "atlas", "nosql", "documents"]
+    },
+    "postgres-db": {
+      "primary_agents": ["database-architect", "developer"],
+      "secondary_agents": ["performance-engineer"],
+      "triggers": ["postgres", "postgresql", "psql", "sql", "database"]
+    },
+    "vercel-agent-skills": {
+      "primary_agents": ["llm-architect"],
+      "secondary_agents": ["developer"],
+      "triggers": ["vercel", "agent", "skills", "ai sdk"]
+    },
+    "gemini-ssh": {
+      "primary_agents": ["devops"],
+      "secondary_agents": ["incident-responder"],
+      "triggers": ["ssh", "remote", "server", "gemini"]
+    },
+    "jira-pm": {
+      "primary_agents": ["pm"],
+      "secondary_agents": ["developer"],
+      "triggers": ["jira", "issues", "tickets", "project", "sprint"]
+    },
+    "brave-search": {
+      "primary_agents": ["analyst"],
+      "secondary_agents": ["developer"],
+      "triggers": ["search", "web search", "brave", "lookup"]
+    },
+    "google-drive": {
+      "primary_agents": ["pm"],
+      "secondary_agents": ["analyst", "developer"],
+      "triggers": ["google drive", "gdrive", "docs", "sheets", "drive files"]
+    },
+    "azure-devops": {
+      "primary_agents": ["devops"],
+      "secondary_agents": ["pm", "developer"],
+      "triggers": ["azure devops", "ado", "work items", "azure repos", "azure pipelines"]
+    },
+    "supabase-db": {
+      "primary_agents": ["database-architect"],
+      "secondary_agents": ["developer"],
+      "triggers": ["supabase", "postgres", "database", "realtime", "supabase auth"]
+    },
+    "firebase-services": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["mobile-developer"],
+      "triggers": ["firebase", "firestore", "firebase auth", "cloud functions", "fcm"]
+    },
+    "twilio-sms": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["devops"],
+      "triggers": ["twilio", "sms", "text message", "verification", "phone"]
+    },
+    "sendgrid-email": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["devops"],
+      "triggers": ["sendgrid", "email", "transactional email", "email template"]
+    },
+    "algolia-search": {
+      "primary_agents": ["developer"],
+      "secondary_agents": ["performance-engineer"],
+      "triggers": ["algolia", "search", "full-text search", "index", "search optimization"]
+    },
+    "netlify-deploy": {
+      "primary_agents": ["devops"],
+      "secondary_agents": ["developer"],
+      "triggers": ["netlify", "deploy", "static site", "serverless functions", "netlify functions"]
+    },
+    "cloudflare-workers": {
+      "primary_agents": ["devops"],
+      "secondary_agents": ["developer"],
+      "triggers": ["cloudflare", "workers", "edge functions", "kv storage", "edge computing"]
     }
   },
   "skill_categories": {

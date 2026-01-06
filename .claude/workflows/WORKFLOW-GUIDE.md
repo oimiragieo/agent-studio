@@ -60,7 +60,7 @@ Below are all available workflows with their implementation status:
 
 ## Planner Integration
 
-All workflows now follow a **plan-first** approach:
+All workflows now follow a **plan-first** approach with mandatory quality gates:
 
 ### Step 0: Planning Phase (NEW)
 - **Agent**: planner
@@ -75,12 +75,159 @@ All workflows now follow a **plan-first** approach:
   - `plan-<id>.json` - Structured plan data
   - Plan summary
 
+### Step 0.1: Plan Rating Gate (NEW - MANDATORY)
+
+**CRITICAL**: All plans MUST be rated before workflow execution proceeds.
+
+#### Purpose
+The Plan Rating Gate ensures plan quality through automated scoring using the response-rater skill. This gate validates that plans meet minimum quality standards before agents begin implementation work, preventing rework and scope creep.
+
+#### Process Flow
+
+```
+Step 0 (Planning)
+    ↓
+Step 0.1 (Rating Gate) ← response-rater skill
+    ↓
+Score >= 7/10?
+    ├─→ YES → Proceed to Step 1
+    └─→ NO  → Return to Planner with feedback
+              Planner revises plan
+              Re-run Step 0.1 until score >= 7/10
+              (Max 3 attempts, then escalate to human review)
+```
+
+#### Rating Rubric
+
+The response-rater skill uses a **5-dimensional rubric** to evaluate plans:
+
+| Dimension | Description | Evaluation Criteria |
+|-----------|-------------|-------------------|
+| **Completeness** | Does the plan cover all required aspects? | All steps defined, dependencies identified, success criteria stated |
+| **Feasibility** | Is the plan realistic and achievable? | Resources identified, timeline reasonable, risks acknowledged |
+| **Risk Mitigation** | Are potential risks identified and addressed? | Risks documented, mitigation strategies provided, fallbacks defined |
+| **Agent Coverage** | Are the right agents assigned to each step? | Specialized agents selected, supporting agents included, no gaps |
+| **Integration** | Does the plan integrate with existing systems/workflows? | Dependencies on existing systems documented, integration points clear |
+
+**Scoring**: Each dimension scored 1-10, average becomes overall score (minimum: 7/10 to pass)
+
+#### Rating Artifacts
+
+**Location**: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+
+**Structure**:
+```json
+{
+  "plan_id": "plan-web-app-2025-01-17",
+  "workflow_id": "workflow-web-app-2025-01-17",
+  "rating_timestamp": "2025-01-17T10:30:00Z",
+  "overall_score": 8.2,
+  "rubric_scores": {
+    "completeness": 8,
+    "feasibility": 8,
+    "risk_mitigation": 7,
+    "agent_coverage": 9,
+    "integration": 8
+  },
+  "feedback": "Strong plan with clear steps and appropriate agent assignments. Consider more detail on risk mitigation strategies for deployment phase.",
+  "passed": true,
+  "status": "pass",
+  "attempt": 1,
+  "max_attempts": 3,
+  "rewritten_plan": null,
+  "rating_agent": "response-rater",
+  "skill_version": "1.0"
+}
+```
+
+**Key Fields**:
+- `overall_score`: Average of all rubric scores (0-10)
+- `rubric_scores`: Individual dimension scores
+- `feedback`: Constructive feedback from response-rater
+- `passed`: Boolean indicating if score >= 7/10
+- `attempt`: Which attempt number this is (1-3)
+- `rewritten_plan`: If planner revises, this contains the updated plan (optional)
+
+#### Execution Steps
+
+**Step 1: Plan Rating**
+```bash
+# Invoke response-rater skill on the plan
+# Input: plan-<id>.md and plan-<id>.json
+# Output: <plan_id>-rating.json
+node .claude/tools/enforcement-gate.mjs validate-plan \
+  --run-id <id> \
+  --plan-id <plan_id>
+```
+
+**Step 2: Evaluate Result**
+- If score >= 7/10: Rating passes, proceed to workflow step 1
+- If score < 7/10: Rating fails, return to Planner
+
+**Step 3: Handle Failures**
+- **Attempt 1-2**: Planner revises plan based on feedback, resubmit for rating
+- **Attempt 3+**: Escalate to human review (orchestrator/PM) for approval
+
+#### Retry Logic
+
+**Max Attempts**: 3 attempts per plan
+
+**Retry Conditions**:
+1. **After Attempt 1**: If score < 7, return plan to Planner with feedback
+   - Planner must address feedback in rubric dimensions where score was low
+   - Example: If "completeness" scored 5, planner adds missing steps
+
+2. **After Attempt 2**: If still < 7, return again with additional context
+   - Provide comparison to successful plans
+   - Highlight specific areas needing improvement
+
+3. **After Attempt 3**: If still < 7, escalate to human review
+   - Orchestrator or PM reviews plan manually
+   - Human decision: approve plan as-is OR request major revisions
+   - Document justification for override
+
+#### Rubric Location
+
+The standardized plan rating rubric is defined in:
+- **File**: `.claude/context/artifacts/standard-plan-rubric.json`
+- **Contains**: Rating dimensions, scoring scales, evaluation criteria, examples
+- **Updated**: When plan evaluation standards change (rare)
+
+#### Distinguishing Plan Review from Plan Rating
+
+**Plan Review Gate** (parallel review by multiple agents):
+- When: Some workflows include architectural review by specialist agents
+- Who: Architect, security-architect, or other specialists review in parallel
+- Output: Approval/rejection from each reviewer
+- Purpose: Specialized domain validation
+
+**Plan Rating Gate** (automated scoring):
+- When: Every workflow, mandatory, before step 1
+- Who: response-rater skill (automated)
+- Output: Numeric score (0-10) with dimensional feedback
+- Purpose: Quality assurance and completeness validation
+
+**Both are used together**:
+1. Plan Rating Gate: Ensures minimum quality (7/10)
+2. Plan Review Gate (optional): Gets specialist approval on design decisions
+
+#### Integration with Orchestrator
+
+The Orchestrator is responsible for:
+1. After Planner produces plan → Invoke Step 0.1 (Plan Rating Gate)
+2. Rate plan using response-rater skill
+3. Record rating in artifact registry
+4. If score >= 7: Proceed to workflow step 1
+5. If score < 7: Return to Planner with feedback (max 3 times)
+6. Log all rating attempts in reasoning file
+
 ### Subsequent Steps
 All workflow steps (1-N) now execute according to the plan created in Step 0:
 - Steps reference the plan for context
 - Agents follow plan steps
 - Progress is tracked against plan
 - Plan is updated as work progresses
+- **Note**: Execution only begins AFTER plan passes Step 0.1 rating gate
 
 ## Automatic Workflow Selection
 
@@ -1335,6 +1482,88 @@ if (mobileOpt) {
 </code_example>
 
 <code_example>
+**Plan Rating Gate Example**
+
+When Orchestrator invokes the Plan Rating Gate:
+
+```bash
+# Step 1: Planner creates plan
+# Output: plan-web-app-001.md and plan-web-app-001.json
+
+# Step 2: Orchestrator rates the plan
+node .claude/tools/enforcement-gate.mjs validate-plan \
+  --run-id workflow-web-app-2025 \
+  --plan-id plan-web-app-001
+
+# Step 3a: If score >= 7/10 (PASS)
+# Output:
+{
+  "plan_id": "plan-web-app-001",
+  "overall_score": 8.4,
+  "passed": true,
+  "status": "pass",
+  "attempt": 1,
+  "feedback": "Excellent plan with clear steps, realistic timeline, and appropriate agent assignments."
+}
+
+# Result: Proceed to workflow Step 1 (analyst phase)
+
+# Step 3b: If score < 7/10 (FAIL - Attempt 1)
+# Output:
+{
+  "plan_id": "plan-web-app-001",
+  "overall_score": 6.2,
+  "passed": false,
+  "status": "fail",
+  "attempt": 1,
+  "rubric_scores": {
+    "completeness": 7,
+    "feasibility": 8,
+    "risk_mitigation": 4,    // LOW SCORE - needs improvement
+    "agent_coverage": 7,
+    "integration": 6
+  },
+  "feedback": "Plan needs stronger risk mitigation. Identify potential blockers (external dependencies, data migration, compliance). Add fallback strategies for high-risk areas like database migration phase."
+}
+
+# Result: Return to Planner with feedback to improve risk_mitigation dimension
+# Planner revises plan to add:
+# - Identification of database migration risks
+# - Rollback strategy if migration fails
+# - Data validation checkpoints
+# - Team availability contingencies
+
+# Step 4: Planner resubmits revised plan (Attempt 2)
+# Output: plan-web-app-001-v2.md and plan-web-app-001-v2.json
+# Run Step 0.1 again with revised plan
+
+# Attempt 2 rating:
+{
+  "plan_id": "plan-web-app-001-v2",
+  "overall_score": 7.8,
+  "passed": true,
+  "status": "pass",
+  "attempt": 2,
+  "rubric_scores": {
+    "completeness": 8,
+    "feasibility": 8,
+    "risk_mitigation": 8,    // IMPROVED
+    "agent_coverage": 7,
+    "integration": 8
+  }
+}
+
+# Result: Plan passes, proceed to Step 1
+```
+
+**Key Learnings**:
+- First attempt often identifies missing risk considerations
+- Planner learns which dimensions need attention
+- By attempt 2, most plans achieve 7/10+ threshold
+- Only rare plans require escalation to human review after attempt 3
+</code_example>
+
+<code_example>
 **Reasoning Files**
 
 Each workflow step can produce a reasoning file documenting the agent's decision-making process:
@@ -1620,5 +1849,40 @@ Gate files now provide actionable feedback:
 - **Fast Validation**: `pnpm validate` - Validates core configuration files (config.yaml, model names) - fast
 - **Full Validation**: `pnpm validate:all` - Validates all files including workflows, references, CUJs, and generates rule index - comprehensive
 - **Sync Validation**: `pnpm validate:sync` - Validates cross-platform agent/skill parity
+
+### Plan Rating Gate Validation (Step 0.1)
+
+**Mandatory for all workflows**:
+
+```bash
+# Rate a plan after planner completes Step 0
+node .claude/tools/enforcement-gate.mjs validate-plan \
+  --run-id <workflow_id> \
+  --plan-id <plan_id>
+
+# Exit codes:
+# 0 = Plan passed rating (score >= 7/10)
+# 1 = Plan failed rating (score < 7/10)
+```
+
+**What Gets Validated**:
+- Plan completeness (all steps defined)
+- Feasibility (realistic timeline and resources)
+- Risk mitigation (identified risks with fallbacks)
+- Agent coverage (correct agents assigned)
+- Integration (dependencies documented)
+
+**Output**: Rating artifact saved to `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+
+**Failure Handling**:
+- Score < 7/10 on first attempt → Planner revises and resubmits
+- Score < 7/10 on second attempt → Provide targeted feedback on low-scoring dimensions
+- Score < 7/10 on third attempt → Escalate to human review (orchestrator/PM approval required)
+- Max 3 attempts per plan, then must switch to manual approval process
+
+**Integration with Workflow Execution**:
+- Step 0.1 must complete successfully before Step 1 can execute
+- If plan rating fails all 3 attempts, workflow cannot proceed without human override
+- All rating attempts are logged in reasoning files for audit trail
 </validation>
 </instructions>

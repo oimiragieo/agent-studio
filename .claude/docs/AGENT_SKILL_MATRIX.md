@@ -20,7 +20,7 @@ For the authoritative JSON mapping, see `.claude/context/skill-integration-matri
 | **pm** | plan-generator, classifier | summarizer, excel-generator, powerpoint-generator | requirement_planning, feature_classification |
 | **ux-expert** | diagram-generator, claude-md-generator | doc-generator, powerpoint-generator, summarizer | user_flow_diagram, component_docs, design_presentation |
 | **database-architect** | diagram-generator, text-to-sql, dependency-analyzer | doc-generator, repo-rag | schema_diagram, query_generation, orm_analysis |
-| **devops** | cloud-run, dependency-analyzer | doc-generator, diagram-generator, git | deployment, dependency_check, infrastructure_docs |
+| **devops** | cloud-run, kubernetes-flux, dependency-analyzer | doc-generator, diagram-generator, git | deployment, dependency_check, infrastructure_docs, k8s_management |
 | **llm-architect** | sequential-thinking, diagram-generator, doc-generator | repo-rag, api-contract-generator, response-rater | llm_design, architecture_diagram, prompt_evaluation |
 | **api-designer** | api-contract-generator, diagram-generator, doc-generator | repo-rag, sequential-thinking | api_contract, api_diagram, api_docs |
 | **mobile-developer** | scaffolder, rule-auditor, repo-rag | test-generator, chrome-devtools, dependency-analyzer | new_component, code_review, pattern_search |
@@ -29,12 +29,12 @@ For the authoritative JSON mapping, see `.claude/context/skill-integration-matri
 | **legacy-modernizer** | repo-rag, dependency-analyzer, migrating-rules | diagram-generator, sequential-thinking, doc-generator | legacy_analysis, dependency_upgrade, rule_migration |
 | **accessibility-expert** | rule-auditor, chrome-devtools, computer-use | repo-rag, doc-generator, diagram-generator | a11y_audit, browser_testing, ui_testing |
 | **compliance-auditor** | rule-auditor, dependency-analyzer, explaining-rules | doc-generator, excel-generator, pdf-generator | compliance_audit, vulnerability_scan, audit_report |
-| **incident-responder** | repo-rag, dependency-analyzer, sequential-thinking | doc-generator, diagram-generator, github | incident_analysis, root_cause_analysis, postmortem_docs |
+| **incident-responder** | kubernetes-flux, repo-rag, dependency-analyzer, sequential-thinking | doc-generator, diagram-generator, github | incident_analysis, root_cause_analysis, postmortem_docs, k8s_troubleshooting |
 | **model-orchestrator** | response-rater, context-bridge | recovery, conflict-resolution | response_evaluation, platform_routing, workflow_recovery |
 | **code-simplifier** | repo-rag, code-style-validator, rule-auditor | fixing-rule-violations, diagram-generator | complexity_analysis, style_validation, rule_compliance |
 | **master-orchestrator** | response-rater, recovery, artifact-publisher | context-bridge, conflict-resolution | plan_validation, workflow_orchestration, task_complete |
 | **impact-analyzer** | sequential-thinking, repo-rag, diagram-generator | evaluator, response-rater | impact_assessment, change_analysis, risk_evaluation |
-| **cloud-integrator** | cloud-run, dependency-analyzer, doc-generator | sequential-thinking, diagram-generator | cloud_integration, infrastructure_setup, deployment |
+| **cloud-integrator** | cloud-run, kubernetes-flux, dependency-analyzer, doc-generator | sequential-thinking, diagram-generator | cloud_integration, infrastructure_setup, deployment, k8s_setup |
 | **react-component-developer** | scaffolder, rule-auditor, test-generator | code-style-validator, repo-rag | component_creation, pattern_implementation, testing |
 | **router** | response-rater, context-bridge | recovery, conflict-resolution | model_routing, platform_routing, workflow_selection |
 | **gcp-cloud-agent** | cloud-run, dependency-analyzer, sequential-thinking | doc-generator, diagram-generator | gcp_integration, cloud_setup, infrastructure |
@@ -75,3 +75,4 @@ MCP servers converted to Skills for 90%+ context savings:
 - **memory**: Knowledge graph storage
 - **cloud-run**: Cloud Run deployment
 - **computer-use**: Playwright automation
+- **kubernetes-flux**: Kubernetes cluster management
