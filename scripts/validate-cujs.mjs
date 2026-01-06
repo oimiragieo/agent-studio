@@ -292,12 +292,36 @@ function extractCUJId(fileName) {
 }
 
 /**
+ * Normalize execution mode to schema-compliant values
+ */
+function normalizeExecutionMode(mode) {
+  if (!mode) return null;
+
+  const modeMap = {
+    'workflow': 'workflow',
+    'automated-workflow': 'workflow',
+    'delegated-skill': 'skill-only',
+    'skill-only': 'skill-only',
+    'skill': 'skill-only',
+    'manual-setup': 'manual-setup',
+    'manual': 'manual-setup'
+  };
+
+  // Handle raw .yaml references as 'workflow'
+  if (mode.endsWith('.yaml')) {
+    return 'workflow';
+  }
+
+  return modeMap[mode] || mode;
+}
+
+/**
  * Extract execution mode from CUJ content
  */
 function extractExecutionMode(content) {
   // Look for "**Execution Mode**: `mode`" or "**Execution Mode**: mode"
-  const match = content.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|manual-setup|manual)`?/i);
-  return match ? match[1] : null;
+  const match = content.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)`?/i);
+  return match ? normalizeExecutionMode(match[1]) : null;
 }
 
 /**
@@ -488,23 +512,27 @@ async function validateCUJ(filePath) {
       }
 
       if (workflowRef) {
-        // Validate workflow file exists (if not skill-only or manual)
-        if (workflowRef !== 'skill-only' && workflowRef !== 'manual-setup' && workflowRef !== 'manual') {
-          const workflowName = workflowRef.replace('.yaml', '');
+        // Normalize both CUJ-declared mode and extract workflow file if present
+        const normalizedMode = normalizeExecutionMode(workflowRef);
+        const workflowFile = workflowRef.endsWith('.yaml') ? workflowRef : null;
+
+        // Validate workflow file exists (if workflow mode with explicit file reference)
+        if (workflowFile) {
+          const workflowName = workflowFile.replace('.yaml', '');
           const exists = await validateWorkflow(workflowName);
           if (!exists) {
-            issues.push(`Referenced workflow file does not exist: ${workflowRef} (checked .claude/workflows/${workflowName}.yaml)`);
+            issues.push(`Referenced workflow file does not exist: ${workflowFile} (checked .claude/workflows/${workflowName}.yaml)`);
           }
         }
 
         // Validate execution mode matches CUJ-INDEX.md mapping
         if (cujId && cujMapping.has(cujId)) {
           const mappingEntry = cujMapping.get(cujId);
-          const mappedMode = mappingEntry.executionMode;
+          const mappedMode = normalizeExecutionMode(mappingEntry.executionMode);
 
-          // Compare execution modes
-          if (workflowRef !== mappedMode) {
-            warnings.push(`Execution mode mismatch: CUJ declares "${workflowRef}" but CUJ-INDEX.md maps to "${mappedMode}"`);
+          // Compare normalized execution modes
+          if (normalizedMode !== mappedMode) {
+            warnings.push(`Execution mode mismatch: CUJ declares "${workflowRef}" (normalized: ${normalizedMode}) but CUJ-INDEX.md maps to "${mappingEntry.executionMode}" (normalized: ${mappedMode})`);
           }
 
           // If mapped mode is a workflow, validate it exists

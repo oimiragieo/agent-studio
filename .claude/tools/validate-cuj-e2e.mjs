@@ -337,6 +337,72 @@ function getPlatformCompatibility(cujEntry) {
 }
 
 /**
+ * Check execution mode contradiction
+ */
+function checkExecutionModeContradiction(cujId, executionMode, hasStep0) {
+  const warnings = [];
+  if (executionMode === 'skill-only' && hasStep0) {
+    warnings.push(`CUJ ${cujId}: Has planning step but is skill-only (contradiction)`);
+  }
+  return warnings;
+}
+
+/**
+ * Check error recovery for workflow CUJs
+ */
+function checkErrorRecovery(cujId, executionMode, hasErrorRecovery) {
+  const warnings = [];
+  if (executionMode === 'workflow' && !hasErrorRecovery) {
+    warnings.push(`CUJ ${cujId}: Workflow CUJ missing error recovery steps`);
+  }
+  return warnings;
+}
+
+/**
+ * Validate schema references
+ */
+function validateSchemaReferences(cujId, schemas) {
+  const errors = [];
+  for (const schema of schemas) {
+    const schemaPath = join(ROOT, '.claude/schemas', schema);
+    if (!existsSync(schemaPath)) {
+      errors.push(`CUJ ${cujId}: Schema not found: ${schema}`);
+    }
+  }
+  return errors;
+}
+
+/**
+ * Check plan rating step for workflow CUJs
+ */
+function checkPlanRatingStep(cujId, executionMode, cujContent) {
+  const errors = [];
+  const warnings = [];
+  const hasStep0 = cujContent.includes('## Step 0:') || cujContent.includes('**Step 0**');
+  const hasStep0_1 = cujContent.includes('## Step 0.1:') || cujContent.includes('**Step 0.1**');
+
+  if (executionMode === 'workflow' && hasStep0) {
+    if (!hasStep0_1) {
+      // TASK 1: Promote to error for workflow CUJs
+      errors.push(`CUJ ${cujId}: Has Step 0 but missing Step 0.1 (Plan Rating Gate)`);
+    } else {
+      // TASK 2: Verify Step 0.1 actually contains response-rater skill
+      const step01Match = cujContent.match(/## Step 0\.1:[\s\S]*?(?=## Step|$)/);
+      if (step01Match) {
+        const step01Content = step01Match[0];
+        const hasResponseRater = step01Content.toLowerCase().includes('skill: response-rater') ||
+                                 step01Content.toLowerCase().includes('response-rater');
+        if (!hasResponseRater) {
+          errors.push(`CUJ ${cujId}: Step 0.1 exists but does not contain "Skill: response-rater" - correct mechanism required`);
+        }
+      }
+    }
+  }
+
+  return { errors, warnings };
+}
+
+/**
  * Validate individual CUJ
  */
 function validateCUJ(cujId, cujEntry) {
@@ -349,6 +415,31 @@ function validateCUJ(cujId, cujEntry) {
     issues: [],
     warnings: []
   };
+
+  // TASK 3: Verify CUJ doc file exists (fix false green for CUJ-056)
+  const cujDocPath = resolve(ROOT, '.claude/docs/cujs', `${cujId}.md`);
+  if (!existsSync(cujDocPath)) {
+    status.status = 'blocked';
+    status.issues.push(`CUJ documentation file not found: ${cujId}.md`);
+    validationResults.summary.blocked++;
+    return status;
+  }
+
+  // Read CUJ content for plan rating validation
+  let cujContent = '';
+  try {
+    cujContent = readFileSync(cujDocPath, 'utf-8');
+  } catch (error) {
+    status.status = 'blocked';
+    status.issues.push(`Failed to read CUJ file: ${error.message}`);
+    validationResults.summary.blocked++;
+    return status;
+  }
+
+  // Validate plan rating step for workflow CUJs
+  const planRatingResult = checkPlanRatingStep(cujId, executionMode, cujContent);
+  status.issues.push(...planRatingResult.errors);
+  status.warnings.push(...planRatingResult.warnings);
 
   // Determine execution mode type
   if (executionMode === 'manual-setup' || executionMode === 'manual') {

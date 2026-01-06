@@ -63,18 +63,42 @@ function resolveSchemaPath(schemaName) {
 }
 
 /**
+ * Normalize execution mode to schema-compliant values
+ */
+function normalizeExecutionMode(mode) {
+  if (!mode) return null;
+
+  const modeMap = {
+    'workflow': 'workflow',
+    'automated-workflow': 'workflow',
+    'delegated-skill': 'skill-only',
+    'skill-only': 'skill-only',
+    'skill': 'skill-only',
+    'manual-setup': 'manual-setup',
+    'manual': 'manual-setup'
+  };
+
+  // Handle raw .yaml references as 'workflow'
+  if (mode.endsWith('.yaml')) {
+    return 'workflow';
+  }
+
+  return modeMap[mode] || mode;
+}
+
+/**
  * Extract execution mode from CUJ content
  */
 function extractExecutionMode(content) {
-  const executionModeMatch = content.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|manual-setup|manual)`?/i);
+  const executionModeMatch = content.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)`?/i);
   if (executionModeMatch) {
-    return executionModeMatch[1];
+    return normalizeExecutionMode(executionModeMatch[1]);
   }
 
   // Fallback to legacy format
-  const legacyMatch = content.match(/(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|skill-only|manual-setup|manual)(?:`)?/i);
+  const legacyMatch = content.match(/(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)(?:`)?/i);
   if (legacyMatch) {
-    return legacyMatch[1];
+    return normalizeExecutionMode(legacyMatch[1]);
   }
 
   return null;
@@ -147,29 +171,147 @@ function extractSkillReferences(content) {
 }
 
 /**
+ * Check for execution mode contradiction
+ */
+function checkExecutionModeContradiction(content, executionMode) {
+  const errors = [];
+  const hasStep0 = content.includes('## Step 0:') || content.includes('**Step 0**');
+
+  // Use normalized mode for checks
+  const normalizedMode = normalizeExecutionMode(executionMode);
+
+  if (normalizedMode === 'skill-only' && hasStep0) {
+    errors.push('Execution mode mismatch: skill-only CUJ has planning step (Step 0)');
+  }
+
+  return errors;
+}
+
+/**
+ * Check for plan rating step
+ */
+function checkPlanRatingStep(content, executionMode) {
+  const errors = [];
+  const warnings = [];
+  const hasStep0 = content.includes('## Step 0:') || content.includes('**Step 0**');
+  const hasStep0_1 = content.includes('## Step 0.1:') || content.includes('**Step 0.1**');
+
+  if (executionMode === 'workflow' && hasStep0) {
+    if (!hasStep0_1) {
+      // TASK 1: Promote to error for workflow CUJs
+      errors.push('Workflow CUJ has Step 0 but missing Step 0.1 (Plan Rating Gate)');
+    } else {
+      // TASK 2: Verify Step 0.1 actually contains response-rater skill
+      const step01Match = content.match(/## Step 0\.1:[\s\S]*?(?=## Step|$)/);
+      if (step01Match) {
+        const step01Content = step01Match[0];
+        const hasResponseRater = step01Content.toLowerCase().includes('skill: response-rater') ||
+                                 step01Content.toLowerCase().includes('response-rater');
+        if (!hasResponseRater) {
+          errors.push('Step 0.1 exists but does not contain "Skill: response-rater" - correct mechanism required');
+        }
+      }
+    }
+  }
+
+  return { errors, warnings };
+}
+
+/**
+ * Check for error recovery
+ */
+function checkErrorRecovery(content, executionMode) {
+  const warnings = [];
+
+  if (executionMode === 'workflow') {
+    const hasRecovery = content.toLowerCase().includes('error recovery') ||
+                       content.toLowerCase().includes('failure handling') ||
+                       content.toLowerCase().includes('retry');
+
+    if (!hasRecovery) {
+      warnings.push('Workflow CUJ missing error recovery steps');
+    }
+  }
+
+  return warnings;
+}
+
+/**
+ * Validate schema references
+ */
+async function validateSchemaReferences(content) {
+  const errors = [];
+  const schemaMatches = content.match(/`([a-z0-9-]+\.schema\.json)`/gi) || [];
+
+  for (const match of schemaMatches) {
+    const schemaName = match.replace(/`/g, '');
+    const schemaPath = path.join(SCHEMAS_DIR, schemaName);
+    const exists = await fileExists(schemaPath);
+
+    if (!exists) {
+      errors.push(`Schema not found: ${schemaName}`);
+    }
+  }
+
+  return errors;
+}
+
+/**
  * Validate a single CUJ file (dry-run)
  */
 async function validateCUJDryRun(filePath) {
   const fileName = path.basename(filePath);
   const issues = [];
   const warnings = [];
-  
+
   try {
     const content = await fs.readFile(filePath, 'utf-8');
     const sections = extractSections(content);
-    
+
     // Extract execution mode
     const executionMode = extractExecutionMode(content);
     if (!executionMode) {
       issues.push('Missing execution mode declaration');
-    } else if (executionMode !== 'skill-only' && executionMode !== 'manual-setup' && executionMode !== 'manual') {
-      // Validate workflow file exists
-      const workflowName = executionMode.replace('.yaml', '');
+    }
+
+    // Store normalized mode for later use
+    const normalizedMode = executionMode;
+
+    // Extract workflow file if present (for validation)
+    const rawModeMatch = content.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml)`?/i);
+    const workflowFile = rawModeMatch ? rawModeMatch[1] : null;
+
+    // Validate workflow file exists if referenced
+    if (workflowFile) {
+      const workflowName = workflowFile.replace('.yaml', '');
       const workflowPath = path.join(WORKFLOWS_DIR, `${workflowName}.yaml`);
       const workflowExists = await fileExists(workflowPath);
       if (!workflowExists) {
-        issues.push(`Referenced workflow file does not exist: ${executionMode} (checked ${workflowPath})`);
+        issues.push(`Referenced workflow file does not exist: ${workflowFile} (checked ${workflowPath})`);
       }
+    }
+
+    // Check execution mode contradiction (CRITICAL - fails CI)
+    if (executionMode) {
+      const contradictionErrors = checkExecutionModeContradiction(content, executionMode);
+      issues.push(...contradictionErrors);
+    }
+
+    // Validate schema references (CRITICAL - fails CI)
+    const schemaErrors = await validateSchemaReferences(content);
+    issues.push(...schemaErrors);
+
+    // Check plan rating step (CRITICAL for workflow CUJs)
+    if (executionMode) {
+      const planRatingResult = checkPlanRatingStep(content, executionMode);
+      issues.push(...planRatingResult.errors);
+      warnings.push(...planRatingResult.warnings);
+    }
+
+    // Check error recovery (WARNING)
+    if (executionMode) {
+      const recoveryWarnings = checkErrorRecovery(content, executionMode);
+      warnings.push(...recoveryWarnings);
     }
     
     // Validate agent references
