@@ -134,7 +134,9 @@ function getInstalledSkills(skillsPath) {
       let name = entry.name;
       let description = "";
 
-      const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+      // Normalize line endings to handle both LF and CRLF
+      const normalizedContent = content.replace(/\r\n/g, '\n');
+      const frontmatterMatch = normalizedContent.match(/^---\n([\s\S]*?)\n---/);
       if (frontmatterMatch) {
         const nameMatch = frontmatterMatch[1].match(/^name:\s*(.+)$/m);
         const descMatch = frontmatterMatch[1].match(/^description:\s*(.+)$/m);

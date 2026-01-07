@@ -359,12 +359,22 @@ async function validateSchema(schemaName) {
 }
 
 /**
+ * Validate rubric file reference
+ */
+async function validateRubricFile(rubricPath) {
+  const fullPath = path.join(ROOT, rubricPath);
+  return await fileExists(fullPath);
+}
+
+/**
  * Validate a single CUJ file
  */
 async function validateCUJ(filePath) {
   const fileName = path.basename(filePath);
   const issues = [];
   const warnings = [];
+  let hasStep0 = false;
+  let hasStep01 = false;
 
   try {
     const content = await fs.readFile(filePath, 'utf-8');
@@ -493,6 +503,11 @@ async function validateCUJ(filePath) {
     // Validate workflow reference and execution mode
     if (sections['## Workflow']) {
       const workflowSection = sections['## Workflow'];
+
+      // Check for Step 0 and Step 0.1 (Plan Rating Gate) in workflow section
+      hasStep0 = /Step\s+0[:\s]/i.test(workflowSection);
+      hasStep01 = /Step\s+0\.1[:\s]|Plan\s+Rating\s+Gate/i.test(workflowSection);
+
       // Check for explicit execution mode reference - prefer "Execution Mode" format
       // Accept: "Execution Mode: name.yaml", "**Execution Mode**: `name.yaml`"
       // Also accept legacy: "Workflow Reference: name.yaml", "**Workflow**: `name.yaml`" (with warning)
@@ -516,7 +531,13 @@ async function validateCUJ(filePath) {
         const normalizedMode = normalizeExecutionMode(workflowRef);
         const workflowFile = workflowRef.endsWith('.yaml') ? workflowRef : null;
 
-        // Validate workflow file exists (if workflow mode with explicit file reference)
+        // NEW VALIDATION 1: Execution Mode Validation (workflow, skill-only, manual-setup)
+        const validExecutionModes = ['workflow', 'skill-only', 'manual-setup'];
+        if (!validExecutionModes.includes(normalizedMode)) {
+          warnings.push(`Execution mode "${workflowRef}" normalized to "${normalizedMode}" which is not a standard execution mode. Expected: workflow, skill-only, or manual-setup`);
+        }
+
+        // NEW VALIDATION 2: Workflow File Existence Check
         if (workflowFile) {
           const workflowName = workflowFile.replace('.yaml', '');
           const exists = await validateWorkflow(workflowName);
@@ -525,7 +546,17 @@ async function validateCUJ(filePath) {
           }
         }
 
-        // Validate execution mode matches CUJ-INDEX.md mapping
+        // NEW VALIDATION 3: Skill-only CUJs should NOT have Step 0/0.1 as mandatory
+        if (normalizedMode === 'skill-only' && (hasStep0 || hasStep01)) {
+          warnings.push('Skill-only CUJs typically do not require Step 0 (Planning) or Step 0.1 (Plan Rating Gate). Consider removing or marking as optional.');
+        }
+
+        // NEW VALIDATION 4: Workflow-based CUJs should have Step 0.1 (Plan Rating Gate)
+        if (normalizedMode === 'workflow' && !hasStep01) {
+          warnings.push('Workflow-based CUJs should document Step 0.1 (Plan Rating Gate) to ensure plan quality validation');
+        }
+
+        // NEW VALIDATION 2 (enhanced): Execution Mode Match Between CUJ and CUJ-INDEX.md
         if (cujId && cujMapping.has(cujId)) {
           const mappingEntry = cujMapping.get(cujId);
           const mappedMode = normalizeExecutionMode(mappingEntry.executionMode);
@@ -536,15 +567,17 @@ async function validateCUJ(filePath) {
           }
 
           // If mapped mode is a workflow, validate it exists
-          if (mappedMode && mappedMode !== 'skill-only' && mappedMode !== 'manual-setup' && mappedMode !== 'manual') {
-            const mappedWorkflowName = mappedMode.replace('.yaml', '');
-            const workflowExists = await validateWorkflow(mappedWorkflowName);
+          // Use workflowPath from mapping table, not the normalized mode string
+          if (mappingEntry.workflowPath && mappingEntry.workflowPath !== 'null') {
+            // Extract filename from full path (e.g., ".claude/workflows/greenfield.yaml" -> "greenfield")
+            const workflowFileName = path.basename(mappingEntry.workflowPath, '.yaml');
+            const workflowExists = await validateWorkflow(workflowFileName);
             if (!workflowExists) {
-              warnings.push(`CUJ-INDEX.md references workflow "${mappedMode}" which does not exist at .claude/workflows/${mappedWorkflowName}.yaml`);
+              warnings.push(`CUJ-INDEX.md references workflow "${mappingEntry.workflowPath}" which does not exist at .claude/workflows/${workflowFileName}.yaml`);
             }
           }
 
-          // If mapped mode has a primary skill, validate it exists
+          // NEW VALIDATION 3: Skill Reference Validation
           if (mappingEntry.primarySkill) {
             const skillExists = await validateSkill(mappingEntry.primarySkill);
             if (!skillExists) {
@@ -553,6 +586,34 @@ async function validateCUJ(filePath) {
           }
         } else if (cujId) {
           warnings.push(`CUJ "${cujId}" not found in CUJ-INDEX.md mapping table`);
+        }
+
+        // NEW VALIDATION 5: Plan Rating Artifact Path Validation
+        if (normalizedMode === 'workflow' && hasStep01) {
+          const planRatingArtifactMatch = workflowSection.match(/\.claude\/context\/runs\/[^/]+\/plans\/[^/]+-rating\.json/);
+          if (!planRatingArtifactMatch) {
+            warnings.push('Step 0.1 (Plan Rating Gate) should reference plan rating artifact path: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`');
+          }
+        }
+
+        // NEW VALIDATION 6: Rubric File Reference Validation
+        const rubricMatch = workflowSection.match(/Rubric:\s*`?([^`\n]+rubric[^`\n]*\.json)`?/i);
+        if (rubricMatch) {
+          const rubricPath = rubricMatch[1].trim();
+          const rubricExists = await validateRubricFile(rubricPath);
+          if (!rubricExists) {
+            warnings.push(`Referenced rubric file does not exist: ${rubricPath}`);
+          }
+        }
+
+        // NEW VALIDATION 7: Plan Rating Threshold Validation
+        const thresholdMatch = workflowSection.match(/(?:minimum[_\s]score|threshold):\s*(\d+)/i);
+        if (thresholdMatch) {
+          const threshold = parseInt(thresholdMatch[1], 10);
+          const validThresholds = [5, 7, 8];
+          if (!validThresholds.includes(threshold)) {
+            warnings.push(`Plan rating threshold ${threshold} is non-standard. Expected: 5 (emergency), 7 (standard), or 8 (enterprise)`);
+          }
         }
       }
     } else {
@@ -684,6 +745,28 @@ async function validateAllCUJs() {
       console.log(`   Run 'node scripts/fix-encoding.mjs' to normalize encoding.\n`);
     }
     
+    // Count new validation metrics
+    let executionModeInvalid = 0;
+    let workflowFilesMissing = 0;
+    let skillReferencesMissing = 0;
+    let planRatingStepMissing = 0;
+    let rubricFilesMissing = 0;
+    let planRatingThresholdInvalid = 0;
+
+    for (const result of results) {
+      result.warnings.forEach(w => {
+        if (w.includes('not a standard execution mode')) executionModeInvalid++;
+        if (w.includes('workflow file does not exist')) workflowFilesMissing++;
+        if (w.includes('skill') && w.includes('does not exist')) skillReferencesMissing++;
+        if (w.includes('should document Step 0.1')) planRatingStepMissing++;
+        if (w.includes('rubric file does not exist')) rubricFilesMissing++;
+        if (w.includes('Plan rating threshold') && w.includes('non-standard')) planRatingThresholdInvalid++;
+      });
+      result.issues.forEach(i => {
+        if (i.includes('workflow file does not exist')) workflowFilesMissing++;
+      });
+    }
+
     console.log(`\n${'='.repeat(60)}`);
     console.log(`Summary:`);
     console.log(`  ✅ Valid: ${validCount}/${results.length}`);
@@ -694,6 +777,24 @@ async function validateAllCUJs() {
     }
     if (missingMappingEntries > 0) {
       console.log(`  📋 Missing CUJ-INDEX.md Entries: ${missingMappingEntries}`);
+    }
+    if (executionModeInvalid > 0) {
+      console.log(`  ⚙️  Invalid Execution Modes: ${executionModeInvalid}`);
+    }
+    if (workflowFilesMissing > 0) {
+      console.log(`  📄 Missing Workflow Files: ${workflowFilesMissing}`);
+    }
+    if (skillReferencesMissing > 0) {
+      console.log(`  🛠️  Missing Skill References: ${skillReferencesMissing}`);
+    }
+    if (planRatingStepMissing > 0) {
+      console.log(`  📊 Plan Rating Step Missing: ${planRatingStepMissing}`);
+    }
+    if (rubricFilesMissing > 0) {
+      console.log(`  📋 Missing Rubric Files: ${rubricFilesMissing}`);
+    }
+    if (planRatingThresholdInvalid > 0) {
+      console.log(`  🎯 Invalid Plan Rating Thresholds: ${planRatingThresholdInvalid}`);
     }
     console.log(`${'='.repeat(60)}\n`);
 
@@ -731,6 +832,12 @@ if (args.includes('--help') || args.includes('-h')) {
   console.log('  - Execution mode matches CUJ-INDEX.md mapping');
   console.log('  - Workflow files exist for workflow execution modes');
   console.log('  - Skills exist for skill-only execution modes');
+  console.log('  - Execution mode validation (workflow, skill-only, manual-setup)');
+  console.log('  - Skill-only CUJs do not have mandatory Step 0/0.1');
+  console.log('  - Workflow-based CUJs have Step 0.1 (Plan Rating Gate)');
+  console.log('  - Plan rating artifact path validation');
+  console.log('  - Rubric file reference validation');
+  console.log('  - Plan rating threshold validation (5, 7, or 8)');
   console.log('');
   console.log('Exit codes:');
   console.log('  0 - All CUJs valid (warnings allowed)');

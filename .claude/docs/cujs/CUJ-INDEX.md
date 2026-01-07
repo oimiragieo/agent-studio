@@ -144,17 +144,24 @@ This matrix shows which platforms support each CUJ:
 All other CUJs work on both Claude and Cursor platforms with equivalent functionality.
 
 **Factory Droid Compatibility**:
-Currently, no CUJs are supported on Factory Droid. Factory support is planned for Phase 2+.
+Currently, 0 CUJs have explicit Factory support (`platform_compatibility.factory: true`). However, 42 CUJs may be runnable on Factory Droid with manual adaptation:
+- **Skill-only CUJs** (13 total): May work if skills are ported to Factory
+- **Manual CUJs** (3 total): Require manual setup regardless of platform
+- **Workflow CUJs** (44 total): Require Factory workflow engine support
+
+Factory native support is planned for Phase 2+. Current status: 0/59 CUJs with official Factory support.
 
 ### Compatibility Summary
 
-| Platform | Total CUJs Supported | Exclusive CUJs | Universal CUJs |
-|----------|---------------------|----------------|----------------|
-| **Claude** | 50/52 (96%) | 10 Claude-only | 40 universal |
-| **Cursor** | 42/52 (81%) | 2 Cursor-only | 40 universal |
-| **Factory** | 0/52 (0%) | 0 | 0 |
+| Platform | Total CUJs Supported | Exclusive CUJs | Universal CUJs | Potentially Runnable |
+|----------|---------------------|----------------|----------------|---------------------|
+| **Claude** | 50/59 (85%) | 10 Claude-only | 40 universal | N/A |
+| **Cursor** | 42/59 (71%) | 2 Cursor-only | 40 universal | N/A |
+| **Factory** | 0/59 (0%) | 0 | 0 | 42 (with adaptation) |
 
-**Note**: Factory Droid support is planned for future releases. Claude remains the primary platform with the most comprehensive CUJ coverage.
+**Note**:
+- Factory Droid support is planned for future releases. Claude remains the primary platform with the most comprehensive CUJ coverage.
+- Factory "potentially runnable" count (42) includes skill-only and manual CUJs that may work with skill porting and manual adaptation.
 
 ## CUJ Categories
 
@@ -695,6 +702,218 @@ Some skills are Claude-only and do not have Cursor equivalents:
 - `api-contract-generator` - OpenAPI/Swagger generation (Claude-only)
 
 CUJs that reference these skills are Claude-specific. For Cursor compatibility, equivalent capabilities may be available through agent coordination or manual steps.
+
+## Response-Rater Provider Configuration
+
+The `response-rater` skill is used for validating plan quality with a minimum score of 7/10. Provider configuration and selection strategies are critical for consistent plan validation.
+
+### Default Provider Configuration
+
+```json
+{
+  "default_providers": ["claude", "gemini"],
+  "provider_timeout": 180,
+  "min_consensus_score": 7.0,
+  "consensus_strategy": "average"
+}
+```
+
+### Provider Selection Strategy
+
+**Plan Rating (CUJ-005, CUJ-035, CUJ-057)**:
+- **Default**: Use 2+ providers (["claude", "gemini"]) for consensus validation
+- **Consensus Method**: Average scores from multiple providers
+- **Minimum Score**: 7/10 across consensus
+- **Timeout**: 180 seconds per provider, 360 seconds total
+
+**Response Review (Validation Tasks)**:
+- **Default**: Use 1 provider (fast path) - Primary: "claude"
+- **Purpose**: Quick validation without consensus overhead
+- **Timeout**: 60 seconds
+- **Use Case**: CUJ-036, CUJ-038 validation steps
+
+**Critical Plans (Multi-Phase, Enterprise)**:
+- **Default**: Use all available providers (["claude", "gemini", "gpt-4"]) for maximum validation
+- **Consensus Method**: Highest score of multiple providers
+- **Minimum Score**: 7/10 from primary provider (Claude)
+- **Timeout**: 180 seconds per provider, 540 seconds total
+- **Use Case**: CUJ-026, CUJ-037, CUJ-048, CUJ-050 (complex enterprise workflows)
+
+### Timeout Handling Per Provider
+
+| Provider | Timeout (seconds) | Retry Policy | Fallback |
+|----------|------------------|--------------|----------|
+| Claude | 180 | 1 retry with exponential backoff | Continue with other providers |
+| Gemini | 180 | 1 retry with exponential backoff | Continue with other providers |
+| GPT-4 | 180 | No retry (slower) | Use Claude score as primary |
+
+**Timeout Recovery**: If primary provider times out, system automatically escalates to fallback provider(s). If all providers timeout, use cached score from previous rating or manual review.
+
+## Platform-Specific Execution Notes
+
+### What Makes a CUJ Claude-Only?
+
+Certain CUJs require Claude-specific features that are not yet ported to other platforms:
+
+**Claude-Only Due to Skills**:
+- **CUJ-010** (API Endpoint Development): Requires `api-contract-generator` skill
+- **CUJ-024** (Incident Response): Requires `recovery` skill for workflow recovery
+- **CUJ-027** (Workflow Recovery): Requires `recovery` skill (core functionality)
+- **CUJ-038** (Optional Artifact Handling): Requires `optional-artifact-handler` skill
+- **CUJ-039** (Cross-Agent Validation): Requires `conflict-resolution` skill
+- **CUJ-040** (Stateless Recovery): Requires `recovery` skill
+- **CUJ-043** (Workflow Interruption Recovery): Requires `recovery` skill
+- **CUJ-045** (Missing Artifact Recovery): Requires `recovery` skill
+- **CUJ-047** (Multi-Agent Conflict Resolution): Requires `conflict-resolution` skill
+- **CUJ-050** (End-to-End Robustness): Requires `recovery` skill
+
+**Claude-Only Due to Agents**:
+- These CUJs use specialized agents that coordinate complex multi-step workflows requiring Claude-level reasoning
+
+### Cursor Workarounds
+
+For CUJs that are Claude-only, Cursor users have the following alternatives:
+
+| Claude-Only CUJ | Cursor Workaround | Notes |
+|-----------------|-------------------|-------|
+| **CUJ-010** (API Endpoint Development) | Manual OpenAPI/Swagger generation via Swagger Editor | Use online Swagger Editor to define API contracts manually; developer agent still available for implementation |
+| **CUJ-024** (Incident Response) | Manual incident response workflow via Cursor Plan Mode | Use Cursor's Plan Mode to manually coordinate incident response steps |
+| **CUJ-027** (Workflow Recovery) | Manual recovery workflow via checkpoints | Save checkpoints manually; resume from last known good state |
+| **CUJ-038** (Optional Artifact Handling) | Manual optional input handling | Check for artifact existence manually; skip optional inputs if missing |
+| **CUJ-039** (Cross-Agent Validation) | AI Council via manual agent calls | Use Cursor's subagent feature to manually call validator agents |
+| **CUJ-040** (Stateless Recovery) | Manual state reconstruction | Reconstruct state from checkpoint files and git history |
+| **CUJ-043** (Workflow Interruption) | Manual checkpoint recovery | Load checkpoint manually from run state |
+| **CUJ-045** (Missing Artifact Recovery) | Regenerate artifacts manually | Manually invoke agents to recreate missing artifacts |
+| **CUJ-047** (Multi-Agent Conflict) | Manual conflict resolution via debate | Use Cursor's AI Council feature to mediate agent disagreements |
+| **CUJ-050** (End-to-End Robustness) | Manual testing via Plan Mode | Use Cursor Plan Mode to manually execute end-to-end test scenarios |
+
+### Factory Droid Compatibility
+
+**Current Status**: 0/62 CUJs have explicit Factory Droid support
+
+**Potential for Adaptation**:
+- **Skill-Only CUJs** (13 total): May work if skills are ported to Factory
+  - CUJ-002, CUJ-003, CUJ-006, CUJ-009, CUJ-013, CUJ-014, CUJ-015, CUJ-016, CUJ-017, CUJ-018, CUJ-023, CUJ-030, CUJ-044, CUJ-046, CUJ-048, CUJ-051, CUJ-052, CUJ-054, CUJ-055, CUJ-056
+  - **Path to Support**: Port core skills to Factory; integrate with Factory's native skill system
+
+- **Manual CUJs** (3 total): Work without platform-specific features
+  - CUJ-001, CUJ-008, CUJ-020, CUJ-025, CUJ-028, CUJ-029, CUJ-030, CUJ-042, CUJ-044, CUJ-049
+  - **Path to Support**: Minimal - just follow manual steps, no automation needed
+
+- **Workflow CUJs** (44 total): Require Factory workflow engine support
+  - **Path to Support**: Implement workflow engine in Factory; port agent system; integrate enforcement gates
+
+**Recommended Factory Support Phases**:
+1. **Phase 1**: Port core skills → Enable skill-only CUJs
+2. **Phase 2**: Implement lightweight workflow engine → Enable simple workflow CUJs
+3. **Phase 3**: Full agent orchestration → Enable complex enterprise CUJs
+
+### Error Messages for Platform Limitations
+
+**When CUJ is Not Supported on Current Platform**:
+
+```
+❌ ERROR: CUJ Not Supported on This Platform
+
+CUJ: CUJ-010 (API Endpoint Development)
+Reason: Requires 'api-contract-generator' skill (Claude-only)
+Current Platform: Cursor
+
+Workaround:
+1. Use Swagger Editor (https://editor.swagger.io/) for API contract generation
+2. Define endpoints, request/response schemas manually
+3. Use Developer agent for implementation
+
+Alternative CUJs that work on Cursor:
+- CUJ-011 (Bug Fix Workflow)
+- CUJ-012 (Feature Implementation)
+- CUJ-013 (Code Review)
+- CUJ-019 (Performance Optimization)
+```
+
+**When Recovery Skill is Not Available**:
+
+```
+⚠️ WARNING: Recovery Skill Not Available
+
+CUJ: CUJ-027 (Workflow Recovery After Context Loss)
+Required Skill: 'recovery' (Claude-only)
+Current Platform: Cursor
+
+Fallback Procedure:
+1. Load checkpoint: .claude/context/runs/<run_id>/checkpoint.json
+2. Identify last successful step
+3. Check artifact registry for available artifacts
+4. Resume from last artifact using manual agent coordination
+5. Use Cursor Plan Mode to track recovery progress
+
+Recovery Steps:
+- List available checkpoints: ls .claude/context/runs/<run_id>/checkpoint*.json
+- Inspect checkpoint: cat .claude/context/runs/<run_id>/checkpoint.json
+- Identify missing artifacts: grep -E "^status: (missing|pending)" artifact-registry.json
+- Regenerate missing artifacts via agent calls
+- Resume workflow from next step
+```
+
+## Performance Guidance
+
+Execution time varies significantly based on CUJ type and complexity. Understanding these ranges helps with workflow planning and timeout configuration.
+
+### Expected Performance Ranges
+
+**Skill-Only CUJs** (Fastest - Direct Execution):
+- **Range**: 2-60 seconds
+- **Average**: 10-30 seconds
+- **Examples**:
+  - CUJ-002 (Rule Configuration): 2-5 seconds
+  - CUJ-013 (Code Review): 10-30 seconds
+  - CUJ-015 (Test Generation): 15-30 seconds
+  - CUJ-017 (Module Documentation): 5-10 seconds
+- **Optimization**: Use for quick, focused tasks; no planning overhead
+- **Trigger**: Direct skill invocation without agent orchestration
+
+**Workflow CUJs** (Medium - Multi-Step Execution):
+- **Range**: 2-10 minutes
+- **Average**: 4-6 minutes
+- **Examples**:
+  - CUJ-004 (Feature Planning): 3-5 minutes
+  - CUJ-011 (Bug Fix Workflow): 2-4 minutes
+  - CUJ-019 (Performance Optimization): 5-8 minutes
+  - CUJ-034 (Browser UI Testing): 5-10 minutes
+- **Optimization**: Use for multi-agent coordination; includes planning and validation gates
+- **Trigger**: Workflow YAML execution with agent handoffs
+
+**Complex Workflow CUJs** (Slowest - Enterprise-Scale):
+- **Range**: 10-30 minutes
+- **Average**: 15-20 minutes
+- **Examples**:
+  - CUJ-005 (Greenfield Project Planning): 15-25 minutes (9 agents)
+  - CUJ-026 (Multi-Phase Project Planning): 20-30 minutes (hierarchical planning)
+  - CUJ-050 (End-to-End Workflow Robustness): 15-20 minutes (full test suite)
+- **Optimization**: Leverage parallel execution where possible; structure tasks as independent phases
+- **Trigger**: Enterprise-scale workflows with full agent orchestration and plan rating
+
+### Performance Optimization Recommendations
+
+1. **Task Selection**:
+   - For quick tasks (< 5 minutes): Use skill-only CUJs (CUJ-002, CUJ-013, CUJ-017)
+   - For medium tasks (5-10 minutes): Use workflow CUJs (CUJ-004, CUJ-011, CUJ-019)
+   - For complex tasks (> 10 minutes): Use enterprise CUJs (CUJ-005, CUJ-026, CUJ-050)
+
+2. **Parallel Execution**:
+   - Skill-only CUJs can execute in parallel without contention
+   - Workflow steps in same phase can run parallel (e.g., UX design and architecture in CUJ-005)
+   - Use `parallel: true` in workflow YAML for compatible steps
+
+3. **Caching & Memoization**:
+   - Rule-selector results cached per project (CUJ-002)
+   - Architecture decisions reused across phases (CUJ-005)
+   - Test cases retained for regression testing
+
+4. **Plan Rating Performance**:
+   - Single-provider rating: 30-60 seconds (use for simple plans)
+   - Multi-provider consensus: 90-180 seconds (use for critical plans)
+   - Cached ratings: < 5 seconds (reuse when plan unchanged)
 
 ## Related Documentation
 

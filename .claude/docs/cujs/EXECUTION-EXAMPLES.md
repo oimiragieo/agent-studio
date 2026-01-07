@@ -685,6 +685,210 @@ Next steps:
 
 ---
 
+## Plan Rating Failure and Retry Example
+
+**Scenario**: Greenfield project plan fails initial rating, gets feedback, and is improved.
+
+### Initial Plan Rating (Score < 7)
+
+```bash
+# After Planner creates plan, Orchestrator uses response-rater
+node .claude/tools/response-rater.mjs \
+  --plan .claude/context/runs/run-20260103-160000/artifacts/plan.json \
+  --providers claude,gemini \
+  --rubric completeness,feasibility,risk_mitigation,agent_coverage,integration
+```
+
+**Output**:
+```
+🔍 Rating plan: plan-run-20260103-160000.json
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Provider: Claude
+⏱️ Rating... (45s)
+
+📊 Rubric Scores:
+Completeness: 6/10 ❌ (Missing detailed testing strategy)
+Feasibility: 7/10 ✅
+Risk Mitigation: 5/10 ❌ (Insufficient risk mitigation for cloud costs)
+Agent Coverage: 8/10 ✅ (All agents assigned)
+Integration: 6/10 ❌ (Missing error recovery details)
+
+Overall Score (Claude): 6.4/10 ❌ BELOW MINIMUM
+
+Provider: Gemini
+⏱️ Rating... (52s)
+
+📊 Rubric Scores:
+Completeness: 6.5/10 ❌
+Feasibility: 7/10 ✅
+Risk Mitigation: 5.5/10 ❌
+Agent Coverage: 8/10 ✅
+Integration: 5.5/10 ❌
+
+Overall Score (Gemini): 6.5/10 ❌ BELOW MINIMUM
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Consensus Score: 6.45/10
+Minimum Required: 7/10
+Status: FAILED ❌
+
+Feedback:
+1. Completeness (6.4/10): Add detailed testing strategy for all 3 QA agents
+   - Unit test coverage targets
+   - Integration test scenarios
+   - E2E test plan with acceptance criteria
+
+2. Risk Mitigation (5.45/10): Strengthen cloud cost management
+   - Add cost monitoring to infrastructure plan
+   - Define cost thresholds and alerts
+   - Include contingency budget
+
+3. Integration (5.75/10): Add error recovery for workflow failures
+   - Define recovery procedures for each step
+   - Add rollback procedures
+   - Document manual intervention steps
+
+Action Required: Return plan to Planner with feedback for improvements
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Planner Improves Plan
+
+Planner receives feedback and improves plan:
+
+```
+🤖 Planner is revising the plan based on feedback...
+
+Addressing completeness (6.4→8.5):
+✓ Added detailed QA strategy:
+  - Unit tests: 90% coverage target (per module)
+  - Integration tests: 50+ test cases covering workflows
+  - E2E tests: 12 user journey tests
+
+Addressing risk mitigation (5.45→8):
+✓ Added cost management to infrastructure:
+  - Cloud Run: auto-scaling with max instances = 10
+  - Cloud SQL: committed use discounts configured
+  - Alert: daily cost notifications if > $50/day
+  - Contingency: 20% budget buffer ($2K/month)
+
+Addressing integration (5.75→8.5):
+✓ Added error recovery:
+  - Step failure: auto-retry with exponential backoff (max 3x)
+  - Artifact missing: regenerate from previous step
+  - Agent timeout: escalate to human with full context
+  - Rollback: checkpoint after each step for recovery
+
+📤 Revised plan saved: plan-run-20260103-160000-v2.json
+```
+
+### Retry Plan Rating (Score >= 7)
+
+```bash
+# Orchestrator re-rates improved plan
+node .claude/tools/response-rater.mjs \
+  --plan .claude/context/runs/run-20260103-160000/artifacts/plan-v2.json \
+  --providers claude,gemini \
+  --rubric completeness,feasibility,risk_mitigation,agent_coverage,integration
+```
+
+**Output**:
+```
+🔍 Rating plan: plan-run-20260103-160000-v2.json
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Provider: Claude
+⏱️ Rating... (48s)
+
+📊 Rubric Scores:
+Completeness: 8.5/10 ✅ (Comprehensive QA strategy added)
+Feasibility: 8/10 ✅
+Risk Mitigation: 8/10 ✅ (Cost management with monitoring)
+Agent Coverage: 9/10 ✅ (All agents with detailed responsibilities)
+Integration: 8.5/10 ✅ (Recovery procedures defined)
+
+Overall Score (Claude): 8.4/10 ✅ ABOVE MINIMUM
+
+Provider: Gemini
+⏱️ Rating... (55s)
+
+📊 Rubric Scores:
+Completeness: 8/10 ✅
+Feasibility: 8/10 ✅
+Risk Mitigation: 7.5/10 ✅
+Agent Coverage: 8.5/10 ✅
+Integration: 8/10 ✅
+
+Overall Score (Gemini): 8.1/10 ✅ ABOVE MINIMUM
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Consensus Score: 8.25/10
+Minimum Required: 7/10
+Status: PASSED ✅
+
+Summary:
+✓ Completeness improved: 6.4 → 8.25 (+1.85)
+✓ Risk mitigation improved: 5.45 → 7.75 (+2.3)
+✓ Integration improved: 5.75 → 8.25 (+2.5)
+✓ Overall consensus: 6.45 → 8.25 (+1.8)
+
+Recording rating...
+📁 Location: .claude/context/runs/run-20260103-160000/plans/plan-run-20260103-160000-v2-rating.json
+
+{
+  "plan_id": "plan-run-20260103-160000-v2",
+  "status": "approved",
+  "consensus_score": 8.25,
+  "min_required_score": 7.0,
+  "provider_scores": {
+    "claude": 8.4,
+    "gemini": 8.1
+  },
+  "rubric_scores": {
+    "completeness": 8.25,
+    "feasibility": 8,
+    "risk_mitigation": 7.75,
+    "agent_coverage": 8.75,
+    "integration": 8.25
+  },
+  "improvement_notes": "Plan significantly improved across all rubrics",
+  "approved_by": "orchestrator",
+  "timestamp": "2026-01-03T16:15:00Z"
+}
+
+Action: Proceeding with workflow execution
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Plan rating passed after revision (2 attempts total)
+```
+
+### Retry Statistics
+
+```
+Plan Rating Retry Summary:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Attempt 1: Score 6.45/10 ❌ FAILED
+├─ Time: 97s
+├─ Providers: Claude (6.4), Gemini (6.5)
+└─ Issues: Completeness, risk mitigation, integration
+
+Attempt 2: Score 8.25/10 ✅ PASSED
+├─ Time: 103s
+├─ Providers: Claude (8.4), Gemini (8.1)
+└─ Improvements: +1.8 avg score improvement
+
+Total Time: 200s (3m 20s)
+Improvement Iterations: 1
+Success Rate: 50% (1/2 attempts)
+
+Key Learning: Plan quality improvements directly correlate with scope clarity
+and risk mitigation planning. Initial plans often lack these details.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+---
+
 ## CUJ Simulation and Validation
 
 Use `--cuj-simulation` to validate CUJ execution without actually running workflow steps.

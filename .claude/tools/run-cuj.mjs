@@ -79,10 +79,20 @@ function runCUJ(cujId) {
   console.log(`\nRunning ${cujId}: ${cuj.name}`);
   console.log(`Workflow: ${cuj.workflow}\n`);
 
+  // Normalize workflow path - avoid double .claude/workflows/ prefix
+  let workflowPath;
+  if (cuj.workflow.startsWith('.claude/workflows/')) {
+    // Already has full path, use as-is
+    workflowPath = path.join(__dirname, '..', cuj.workflow.replace('.claude/workflows/', 'workflows/'));
+  } else {
+    // Just filename, prepend workflows directory
+    workflowPath = path.join(__dirname, '../workflows', cuj.workflow);
+  }
+
   const child = spawn('node', [
     path.join(__dirname, 'workflow_runner.js'),
     '--workflow',
-    path.join(__dirname, '../workflows', cuj.workflow),
+    workflowPath,
     '--id',
     `${cujId}-${Date.now()}`
   ], { stdio: 'inherit' });

@@ -68,10 +68,11 @@ steps:
     agent: orchestrator
     type: validation
     skill: response-rater
+    provider_config: .claude/config/response-rater.yaml
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - plan-rating-{{workflow_id}}.json
+      - .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7
@@ -80,10 +81,16 @@ steps:
     retry:
       max_attempts: 3
       on_failure: escalate_to_human
+    timeout_escalation:
+      enabled: true
+      use_cache_on_timeout: true
     description: |
       Rate plan quality using response-rater skill.
       - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
       - Minimum passing score: 7/10
+      - Providers: Auto-selected based on workflow type (enterprise-track → enterprise tier: claude, gemini, codex)
+      - Timeout: 180s per provider, 600s total max
+      - Fallback: Use cached rating if all providers timeout
       - If score < 7: Return to Planner with feedback, request improvements, re-rate until passing
       - If score >= 7: Proceed with workflow execution
       - Log rating in reasoning file and artifact metadata

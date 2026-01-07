@@ -115,6 +115,30 @@ steps:
       - Plan log-feature correlation strategy
       - Create structured testing plan
 
+  - step: 0.1
+    name: "Plan Rating Gate"
+    agent: orchestrator
+    type: validation
+    skill: response-rater
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+    outputs:
+      - .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
+    validation:
+      minimum_score: 7
+      rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
+    retry:
+      max_attempts: 3
+      on_failure: escalate_to_human
+    description: |
+      Rate plan quality using response-rater skill.
+      - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+      - Minimum passing score: 7/10
+      - If score < 7: Return to Planner with feedback, request improvements, re-rate
+      - If score >= 7: Proceed with workflow execution
+
   # Phase 1: Browser Initialization & Page Load
   - step: 1
     name: "Browser Initialization & Page Load"

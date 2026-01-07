@@ -301,18 +301,18 @@ phases:
               loop_back: 4.1
             if_no:
               end: true
-      - step: 4.7
-        agent: orchestrator
-        task: Publish Artifacts
-        optional: false
-        skill: artifact-publisher
-        condition: "validation_status == 'pass'"
-        inputs:
-          - artifact-registry.json
-        policy: auto-on-pass
-        retry:
-          max_attempts: 3
-          on_failure: log_and_continue
+        - step: 4.7
+          agent: orchestrator
+          task: Publish Artifacts
+          optional: false
+          skill: artifact-publisher
+          condition: "validation_status == 'pass'"
+          inputs:
+            - artifact-registry.json
+          policy: auto-on-pass
+          retry:
+            max_attempts: 3
+            on_failure: log_and_continue
 
 completion_criteria:
   - All epics completed

@@ -60,6 +60,32 @@ steps:
       - Create structured response plan
       - Coordinate response team activation
 
+  - step: 0.1
+    name: "Plan Rating Gate"
+    agent: orchestrator
+    type: validation
+    skill: response-rater
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+    outputs:
+      - .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
+    validation:
+      minimum_score: 5
+      rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
+      emergency_bypass: true
+    retry:
+      max_attempts: 3
+      on_failure: escalate_to_human
+    description: |
+      Rate plan quality using response-rater skill.
+      - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+      - Minimum passing score: 5/10 (lowered threshold for incident response)
+      - Emergency bypass: Critical incidents can skip rating if time-sensitive
+      - If score < 5: Return to Planner with feedback, request improvements, re-rate
+      - If score >= 5: Proceed with workflow execution
+
   - step: 1
     name: "Incident Triage"
     agent: incident-responder

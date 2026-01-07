@@ -182,11 +182,18 @@ async function parseCUJFile(filePath) {
 
   // Pattern 3: **Execution Mode**: `file.yaml` (already handled above)
   // Pattern 4: References to .yaml files in Workflow section
+  // IMPORTANT: Only match if the .yaml file actually exists in .claude/workflows/
+  // to avoid false positives from skill references (e.g., manifest.yaml)
   if (!metadata.workflow) {
     workflowMatch = content.match(/##\s+Workflow[\s\S]*?`([^`]+\.yaml)`/);
     if (workflowMatch) {
-      metadata.workflow = `.claude/workflows/${workflowMatch[1]}`;
-      metadata.execution_mode = 'workflow';
+      const yamlFile = workflowMatch[1];
+      // Only treat as workflow if file doesn't contain path separators
+      // (real workflow references are just filenames like "greenfield-fullstack.yaml")
+      if (!yamlFile.includes('/') && !yamlFile.includes('\\')) {
+        metadata.workflow = `.claude/workflows/${yamlFile}`;
+        metadata.execution_mode = 'workflow';
+      }
     }
   }
 

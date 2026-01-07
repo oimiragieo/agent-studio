@@ -51,6 +51,37 @@ steps:
       - Validate plan feasibility
       - **Publishing**: After validation, use `artifact-publisher` skill to publish plan artifacts to project feed
 
+  - step: 0.1
+    name: "Plan Rating Gate"
+    agent: orchestrator
+    type: validation
+    skill: response-rater
+    provider_config: .claude/config/response-rater.yaml
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+    outputs:
+      - .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
+    validation:
+      minimum_score: 7
+      rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
+    retry:
+      max_attempts: 3
+      on_failure: escalate_to_human
+    timeout_escalation:
+      enabled: true
+      use_cache_on_timeout: true
+    description: |
+      Rate plan quality using response-rater skill.
+      - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+      - Minimum passing score: 7/10
+      - Providers: Auto-selected based on workflow type (quick-flow → standard tier: claude, gemini)
+      - Timeout: 180s per provider, 600s total max
+      - Fallback: Use cached rating if all providers timeout
+      - If score < 7: Return to Planner with feedback, request improvements, re-rate
+      - If score >= 7: Proceed with workflow execution
+
   - step: 1
     name: "Implementation"
     agent: developer

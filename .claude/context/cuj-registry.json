@@ -1,8 +1,8 @@
 {
   "$schema": "../schemas/cuj-registry.schema.json",
   "version": "1.0.0",
-  "generated": "2026-01-06T04:40:23.683Z",
-  "total_cujs": 59,
+  "generated": "2026-01-06T08:25:16.936Z",
+  "total_cujs": 60,
   "cujs": [
     {
       "id": "CUJ-001",
@@ -35,8 +35,8 @@
       "name": "Rule Configuration",
       "description": "Auto-detect project tech stack and configure appropriate rules.",
       "category": "Onboarding & Setup",
-      "execution_mode": "workflow",
-      "workflow": ".claude/workflows/manifest.yaml",
+      "execution_mode": "skill-only",
+      "workflow": null,
       "agents": [],
       "skills": [
         "rule-selector"
@@ -173,13 +173,13 @@
       "name": "Architecture Review",
       "description": "Review and analyze existing system architecture.",
       "category": "Planning & Architecture",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "diagram-generator"
       ],
-      "primary_skill": "diagram-generator",
+      "primary_skill": null,
       "schemas": [
         ".claude/schemas/architecture-review.schema.json"
       ],
@@ -198,7 +198,7 @@
         "Architecture diagrams",
         "Recommendations document"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-006.md"
     },
     {
@@ -206,13 +206,13 @@
       "name": "Technical Debt Planning",
       "description": "Plan refactoring of legacy code and technical debt.",
       "category": "Planning & Architecture",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "plan-generator"
       ],
-      "primary_skill": "plan-generator",
+      "primary_skill": null,
       "schemas": [
         ".claude/schemas/refactoring-plan.schema.json"
       ],
@@ -231,7 +231,7 @@
         "Technical debt inventory",
         "Migration roadmap"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-007.md"
     },
     {
@@ -239,13 +239,13 @@
       "name": "Database Schema Planning",
       "description": "Design database schema for a feature or system.",
       "category": "Planning & Architecture",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "diagram-generator"
       ],
-      "primary_skill": "diagram-generator",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Design database for user management",
@@ -263,7 +263,7 @@
         "Migration scripts",
         "Schema documentation"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-008.md"
     },
     {
@@ -271,7 +271,7 @@
       "name": "Component Scaffolding",
       "description": "Generate rule-compliant component boilerplate.",
       "category": "Development",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
@@ -279,7 +279,7 @@
         "rule-auditor",
         "response-rater"
       ],
-      "primary_skill": "scaffolder",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Scaffold a UserProfile component",
@@ -297,7 +297,7 @@
         "Test files",
         "Supporting files"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-009.md"
     },
     {
@@ -411,14 +411,14 @@
       "name": "Code Review",
       "description": "Comprehensive code review with systematic analysis.",
       "category": "Quality Assurance",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "rule-auditor",
         "response-rater"
       ],
-      "primary_skill": "rule-auditor",
+      "primary_skill": null,
       "schemas": [
         ".claude/schemas/code-review.schema.json"
       ],
@@ -437,7 +437,7 @@
         "Issue list with priorities",
         "Fix suggestions"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-013.md"
     },
     {
@@ -445,14 +445,14 @@
       "name": "Rule Compliance Audit",
       "description": "Validate code against project rules and standards.",
       "category": "Quality Assurance",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "rule-auditor",
         "response-rater"
       ],
-      "primary_skill": "rule-auditor",
+      "primary_skill": null,
       "schemas": [
         ".claude/schemas/skill-rule-auditor-output.schema.json"
       ],
@@ -472,7 +472,7 @@
         "Fix suggestions",
         "Compliance score"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-014.md"
     },
     {
@@ -480,14 +480,14 @@
       "name": "Test Generation",
       "description": "Generate comprehensive test suite for code.",
       "category": "Quality Assurance",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "test-generator",
         "response-rater"
       ],
-      "primary_skill": "test-generator",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Generate tests for UserProfile",
@@ -505,7 +505,7 @@
         "E2E tests (if applicable)",
         "Test coverage report"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-015.md"
     },
     {
@@ -513,14 +513,14 @@
       "name": "API Documentation",
       "description": "Generate comprehensive API documentation.",
       "category": "Documentation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "doc-generator",
         "response-rater"
       ],
-      "primary_skill": "doc-generator",
+      "primary_skill": null,
       "schemas": [
         ".claude/schemas/api-docs.schema.json"
       ],
@@ -540,7 +540,7 @@
         "Code examples",
         "Interactive docs"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-016.md"
     },
     {
@@ -579,7 +579,7 @@
       "name": "Architecture Documentation",
       "description": "Document system architecture with diagrams.",
       "category": "Documentation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
@@ -587,7 +587,7 @@
         "doc-generator",
         "response-rater"
       ],
-      "primary_skill": "diagram-generator",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Document system architecture",
@@ -605,7 +605,7 @@
         "Component diagrams",
         "ADR templates"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-018.md"
     },
     {
@@ -645,14 +645,14 @@
       "name": "Security Audit",
       "description": "Audit system security and identify vulnerabilities.",
       "category": "Specialized Workflows",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "rule-auditor",
         "response-rater"
       ],
-      "primary_skill": "rule-auditor",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Audit authentication security",
@@ -670,7 +670,7 @@
         "Remediation plan",
         "Compliance checklist"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-020.md"
     },
     {
@@ -738,14 +738,14 @@
       "name": "Dependency Updates",
       "description": "Safely update project dependencies.",
       "category": "Maintenance & Operations",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "dependency-analyzer",
         "response-rater"
       ],
-      "primary_skill": "dependency-analyzer",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Update dependencies safely",
@@ -763,7 +763,7 @@
         "Updated dependencies",
         "Compatibility validation"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-023.md"
     },
     {
@@ -804,14 +804,14 @@
       "name": "Large Requirements Document Processing",
       "description": "Process a large requirements document (>15KB) without context window overflow.",
       "category": "Advanced Workflows",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "summarizer",
         "response-rater"
       ],
-      "primary_skill": "summarizer",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "User provides a markdown file > 15KB as requirements",
@@ -828,7 +828,7 @@
         "plan-{{workflow_id}}.md (Step 0)",
         "plan-{{workflow_id}}.json (Step 0)"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-025.md"
     },
     {
@@ -1029,14 +1029,14 @@
       "name": "Planner-First Workflow Validation",
       "description": "Validate the complete planner-first workflow process end-to-end, ensuring plans are created, artifacts flow correctly, and execution follows the plan.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "plan-generator",
         "response-rater"
       ],
-      "primary_skill": "plan-generator",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test planner-first workflow",
@@ -1055,7 +1055,7 @@
         "Plan execution tracking report",
         "Artifact flow validation report"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-035.md"
     },
     {
@@ -1063,7 +1063,7 @@
       "name": "Validation Failure Recovery",
       "description": "Test validation gate failures and retry logic to ensure the system handles validation errors gracefully and recovers automatically.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [],
@@ -1087,7 +1087,7 @@
         "Retry attempt logs",
         "Recovery validation report"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-036.md"
     },
     {
@@ -1131,14 +1131,14 @@
       "name": "Optional Artifact Handling",
       "description": "Test workflows with optional inputs to ensure graceful degradation when optional artifacts are missing and defaults are used appropriately.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "optional-artifact-handler",
         "response-rater"
       ],
-      "primary_skill": "optional-artifact-handler",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test optional artifact handling",
@@ -1156,7 +1156,7 @@
         "Reasoning files documenting optional input handling",
         "Validation report confirming graceful degradation"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-038.md"
     },
     {
@@ -1164,14 +1164,14 @@
       "name": "Cross-Agent Validation",
       "description": "Test cross-agent validation protocol to ensure agents can validate each other's work, resolve conflicts, and enforce quality gates with multiple validators.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "conflict-resolution",
         "response-rater"
       ],
-      "primary_skill": "conflict-resolution",
+      "primary_skill": null,
       "schemas": [
         ".claude/schemas/prd.schema.json"
       ],
@@ -1193,7 +1193,7 @@
         "Quality gate evaluation",
         "Validation report"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-039.md"
     },
     {
@@ -1201,14 +1201,14 @@
       "name": "Stateless Recovery Test",
       "description": "Verify the system can recover from scratch without any conversation history, ensuring all agents read from file system state rather than relying on memory or chat history.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "recovery",
         "response-rater"
       ],
-      "primary_skill": "recovery",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test stateless recovery",
@@ -1230,7 +1230,7 @@
         "Updated plan document after recovery",
         "Recovery validation report"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-040.md"
     },
     {
@@ -1238,7 +1238,7 @@
       "name": "Complex Artifact Dependency Chain",
       "description": "Test deep artifact dependency chains (A→B→C→D→E) to ensure artifacts are properly passed between workflow steps and the artifact registry tracks all dependencies correctly.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [],
@@ -1263,7 +1263,7 @@
         "Artifact registry: `registry-{{workflow_id}}.json`",
         "Dependency chain validation report"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-041.md"
     },
     {
@@ -1302,14 +1302,14 @@
       "name": "Workflow Interruption Recovery",
       "description": "Test mid-workflow interruption and recovery to ensure no work is lost when workflows are interrupted mid-step, and the system can resume from checkpoints.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "recovery",
         "response-rater"
       ],
-      "primary_skill": "recovery",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test workflow interruption recovery",
@@ -1331,7 +1331,7 @@
         "Final artifacts after resume",
         "Recovery validation report"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-043.md"
     },
     {
@@ -1373,7 +1373,7 @@
       "name": "Missing Required Artifact Recovery",
       "description": "Test recovery when required artifacts are missing, ensuring the system can detect missing artifacts, recreate them when possible, and recover gracefully.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
@@ -1381,7 +1381,7 @@
         "optional-artifact-handler",
         "response-rater"
       ],
-      "primary_skill": "recovery",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test missing artifact recovery",
@@ -1403,7 +1403,7 @@
         "Recovery validation report",
         "Final workflow outputs"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-045.md"
     },
     {
@@ -1411,7 +1411,7 @@
       "name": "Feature Distillation Edge Cases",
       "description": "Test feature distillation process with edge cases: very large documents, malformed markdown, missing critical information, multiple document formats, and validation failures.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [],
@@ -1434,7 +1434,7 @@
         "Validation results for each scenario",
         "Recovery documentation"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-046.md"
     },
     {
@@ -1442,14 +1442,14 @@
       "name": "Multi-Agent Conflict Resolution",
       "description": "Test conflict detection and resolution when multiple agents produce conflicting outputs, ensuring conflicts are detected, escalated appropriately, and resolved through consensus or authority.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "conflict-resolution",
         "response-rater"
       ],
-      "primary_skill": "conflict-resolution",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test multi-agent conflict resolution",
@@ -1469,7 +1469,7 @@
         "Updated artifacts",
         "Resolution documentation"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-047.md"
     },
     {
@@ -1477,7 +1477,7 @@
       "name": "Artifact Registry Comprehensive Test",
       "description": "Test artifact registry robustness: corruption recovery, concurrent artifact registration, validation failures, missing registry recovery, and registry synchronization.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [],
@@ -1501,7 +1501,7 @@
         "Synchronization reports",
         "Final workflow outputs"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-048.md"
     },
     {
@@ -1509,7 +1509,7 @@
       "name": "Cursor Plan Mode Deep Integration",
       "description": "Test deep integration between Planner Agent (strategic planning) and Cursor Plan Mode (implementation planning), ensuring seamless handoff, artifact linking, and coordinated execution.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [],
@@ -1533,7 +1533,7 @@
         "Implementation code files",
         "Integration validation report"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-049.md"
     },
     {
@@ -1541,14 +1541,14 @@
       "name": "End-to-End Workflow Robustness",
       "description": "Test complete workflow resilience: multiple failure points, recovery at each stage, context loss at different points, validation failures throughout, and complete workflow completion after failures.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "recovery",
         "response-rater"
       ],
-      "primary_skill": "recovery",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test end-to-end workflow robustness",
@@ -1568,7 +1568,7 @@
         "Final workflow outputs",
         "End-to-end resilience report"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-050.md"
     },
     {
@@ -1576,7 +1576,7 @@
       "name": "Artifact Publishing Validation",
       "description": "Validate that artifact-publisher skill correctly publishes artifacts and integrates with artifact registry.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
@@ -1584,7 +1584,7 @@
         "plan-generator",
         "response-rater"
       ],
-      "primary_skill": "artifact-publisher",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test artifact publishing",
@@ -1603,7 +1603,7 @@
         "Registry metadata with publishing status",
         "Error handling test results"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-051.md"
     },
     {
@@ -1611,14 +1611,14 @@
       "name": "Artifact Registry Migration Test",
       "description": "Test migration from legacy artifact-registry.mjs to run-manager.mjs, ensuring backward compatibility and data integrity.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
         "plan-generator",
         "response-rater"
       ],
-      "primary_skill": "plan-generator",
+      "primary_skill": null,
       "schemas": [
         ".claude/schemas/artifact-registry.schema.json"
       ],
@@ -1639,7 +1639,7 @@
         "Migration validation report: `migration-validation-report.json`",
         "Backward compatibility test results"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-052.md"
     },
     {
@@ -1647,7 +1647,7 @@
       "name": "Publishing Metadata Persistence Test",
       "description": "Validate that publishing metadata persists correctly across workflow runs and system restarts.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
@@ -1655,7 +1655,7 @@
         "plan-generator",
         "response-rater"
       ],
-      "primary_skill": "artifact-publisher",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test publishing persistence",
@@ -1673,7 +1673,7 @@
         "Registry files: `.claude/context/runs/<run_id>/artifact-registry.json`",
         "Persistence validation report: `publishing-persistence-report.json`"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-053.md"
     },
     {
@@ -1681,7 +1681,7 @@
       "name": "Cross-Platform Publishing Sync Test",
       "description": "Validate that publishing metadata syncs correctly across Claude, Cursor, and other platforms using context-bridge skill.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
@@ -1690,7 +1690,7 @@
         "plan-generator",
         "response-rater"
       ],
-      "primary_skill": "artifact-publisher",
+      "primary_skill": null,
       "schemas": [
         ".claude/schemas/artifact-metadata.schema.json"
       ],
@@ -1711,7 +1711,7 @@
         "Sync validation report: `cross-platform-sync-report.json`",
         "Conflict resolution logs"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-054.md"
     },
     {
@@ -1719,7 +1719,7 @@
       "name": "Publishing Retry Logic Test",
       "description": "Validate that publishing retry logic works correctly with exponential backoff and tracks all attempts in registry.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
@@ -1727,7 +1727,7 @@
         "plan-generator",
         "response-rater"
       ],
-      "primary_skill": "artifact-publisher",
+      "primary_skill": null,
       "schemas": [
         ".claude/schemas/artifact-registry.schema.json"
       ],
@@ -1748,7 +1748,7 @@
         "Retry validation report: `publishing-retry-report.json`",
         "Timing measurements for backoff delays"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-055.md"
     },
     {
@@ -1756,7 +1756,7 @@
       "name": "Workflow Recovery Protocol Test",
       "description": "Test the recovery skill's ability to restore workflow state from file system artifacts after context loss or session interruption.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [
@@ -1764,7 +1764,7 @@
         "plan-generator",
         "response-rater"
       ],
-      "primary_skill": "recovery",
+      "primary_skill": null,
       "schemas": [],
       "triggers": [
         "Test recovery protocol",
@@ -1784,7 +1784,7 @@
         "Recovered workflow state documentation",
         "Completed workflow artifacts"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-056.md"
     },
     {
@@ -1928,7 +1928,7 @@
       "description": "Publish workflow artifacts to the project feed for cross-platform visibility and collaboration.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": ".claude/workflows/.claude/workflows/artifact-publishing-flow.yaml",
+      "workflow": null,
       "agents": [],
       "skills": [
         "artifact-publisher",
@@ -1997,6 +1997,52 @@
       ],
       "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-062.md"
+    },
+    {
+      "id": "CUJ-063",
+      "name": "Error Recovery and Checkpoint Restoration",
+      "description": "Test error recovery mechanisms including checkpoints, fallback routing, state preservation, and recovery documentation.",
+      "category": "Resilience Testing",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
+      "agents": [],
+      "skills": [
+        "recovery",
+        "response-rater",
+        "optional-artifact-handler",
+        "conflict-resolution"
+      ],
+      "primary_skill": null,
+      "schemas": [
+        ".claude/schemas/checkpoint.schema.json",
+        ".claude/schemas/fallback-agents.schema.json",
+        ".claude/schemas/checkpoint-restoration-report.schema.json",
+        ".claude/schemas/multi-level-fallback-report.schema.json",
+        ".claude/schemas/full-recovery-report.schema.json",
+        ".claude/schemas/recovery-performance-metrics.schema.json",
+        ".claude/schemas/recovery-test-summary.schema.json"
+      ],
+      "triggers": [
+        "Test error recovery",
+        "Test checkpoint restoration",
+        "Test fallback routing",
+        "Validate recovery mechanisms",
+        "Test resilience",
+        "Recovery testing"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Checkpoint files: `.claude/context/runs/{{run_id}}/checkpoints/checkpoint-*.json`",
+        "Recovery reports: `.claude/context/runs/{{run_id}}/reports/*-report.json`",
+        "Performance metrics: `.claude/context/runs/{{run_id}}/reports/recovery-performance-metrics.json`",
+        "Test summary: `.claude/context/reports/error-recovery-implementation-report.md`"
+      ],
+      "estimated_duration": "30-45 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-063.md"
     }
   ]
 }
