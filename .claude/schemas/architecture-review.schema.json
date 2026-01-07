@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Architecture Review",
+  "type": "object",
+  "required": ["review_id", "timestamp", "architecture", "findings"],
+  "properties": {
+    "review_id": {
+      "type": "string",
+      "pattern": "^arch-review-[a-z0-9-]+$",
+      "description": "Unique identifier for the architecture review"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the review"
+    },
+    "architecture": {
+      "type": "string",
+      "description": "Description or reference to the architecture being reviewed"
+    },
+    "reviewer": {
+      "type": "string",
+      "description": "Name or identifier of the reviewer (optional)"
+    },
+    "findings": {
+      "type": "array",
+      "description": "List of findings from the architecture review",
+      "items": {
+        "type": "object",
+        "required": ["category", "severity", "description"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category of the finding (e.g., 'scalability', 'security', 'maintainability')"
+          },
+          "severity": {
+            "enum": ["critical", "major", "minor", "info"],
+            "description": "Severity level of the finding"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the finding"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommended action to address the finding (optional)"
+          },
+          "location": {
+            "type": "string",
+            "description": "Component or module affected by this finding (optional)"
+          }
+        }
+      }
+    },
+    "overall_assessment": {
+      "enum": ["approved", "approved_with_changes", "needs_rework", "rejected"],
+      "description": "Overall assessment of the architecture"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "General recommendations for the architecture"
+    },
+    "strengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Identified strengths of the architecture"
+    },
+    "weaknesses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Identified weaknesses of the architecture"
+    }
+  }
+}

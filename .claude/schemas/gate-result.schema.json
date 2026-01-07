@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Gate Result",
+  "description": "Schema for validation gate results from enforcement-gate.mjs",
+  "required": ["gate_id", "run_id", "workflow", "step", "timestamp", "status", "agent"],
+  "properties": {
+    "gate_id": {
+      "type": "string",
+      "pattern": "^gate-[a-z0-9-]+$",
+      "description": "Unique gate identifier following pattern: gate-{workflow}-{step}-{agent}"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Run identifier this gate belongs to"
+    },
+    "workflow": {
+      "type": "string",
+      "description": "Workflow name (e.g., 'fullstack', 'quick-flow')"
+    },
+    "step": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Workflow step number"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when gate was executed"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["passed", "failed", "warning", "skipped"],
+      "description": "Overall gate status"
+    },
+    "agent": {
+      "type": "string",
+      "description": "Agent that executed this step (e.g., 'developer', 'architect')"
+    },
+    "validations": {
+      "type": "array",
+      "description": "Individual validation results",
+      "items": {
+        "type": "object",
+        "required": ["name", "passed"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Validation name (e.g., 'plan_rating', 'signoffs', 'security')"
+          },
+          "passed": {
+            "type": "boolean",
+            "description": "Whether this validation passed"
+          },
+          "message": {
+            "type": "string",
+            "description": "Validation message or error details"
+          },
+          "score": {
+            "type": "number",
+            "description": "Optional numeric score for ratings"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional validation details"
+          }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "description": "Critical issues that block execution",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "description": "Non-blocking warnings",
+      "items": {
+        "type": "string"
+      }
+    },
+    "allowed": {
+      "type": "boolean",
+      "description": "Whether execution is allowed to proceed (blockers.length === 0)"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Human-readable summary of gate result"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "description": "Plan ID if plan validation was performed"
+        },
+        "task_description": {
+          "type": "string",
+          "description": "Task description used for security triggers"
+        },
+        "assigned_agents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Agents assigned to this step"
+        }
+      }
+    }
+  }
+}

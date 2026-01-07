@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/fallback-agents.schema.json",
+  "title": "Fallback Agents Configuration Schema",
+  "description": "Maps primary agents to fallback agents for error recovery and routing",
+  "type": "object",
+  "required": ["version", "fallback_map", "fallback_rules"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of this configuration",
+      "examples": ["1.0.0", "1.2.3"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of this configuration"
+    },
+    "fallback_map": {
+      "type": "object",
+      "description": "Maps each agent to an ordered list of fallback agents",
+      "patternProperties": {
+        "^[a-z-]+$": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z-]+$"
+          },
+          "minItems": 1,
+          "maxItems": 3,
+          "description": "Ordered list of fallback agents (max 3)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "fallback_rules": {
+      "type": "object",
+      "required": ["max_fallback_attempts", "preserve_context", "log_fallback"],
+      "properties": {
+        "max_fallback_attempts": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 3,
+          "description": "Maximum number of fallback attempts before escalation"
+        },
+        "preserve_context": {
+          "type": "boolean",
+          "description": "Whether to preserve task context when routing to fallback"
+        },
+        "log_fallback": {
+          "type": "boolean",
+          "description": "Whether to log fallback routing events"
+        },
+        "notify_on_fallback": {
+          "type": "boolean",
+          "description": "Whether to notify user when fallback occurs"
+        },
+        "escalation_strategy": {
+          "type": "string",
+          "enum": ["manual_review", "orchestrator", "halt"],
+          "description": "What to do when all fallbacks exhausted"
+        }
+      }
+    },
+    "agent_capabilities": {
+      "type": "object",
+      "description": "Optional capability matrix for intelligent fallback selection",
+      "patternProperties": {
+        "^[a-z-]+$": {
+          "type": "object",
+          "properties": {
+            "primary_capabilities": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "secondary_capabilities": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "model": {
+              "type": "string",
+              "enum": ["opus", "sonnet", "haiku"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "$schema": "./fallback-agents.schema.json",
+      "version": "1.0.0",
+      "description": "Production fallback agent configuration",
+      "fallback_map": {
+        "architect": ["developer", "planner"],
+        "developer": ["refactoring-specialist", "code-simplifier"],
+        "qa": ["developer", "code-reviewer"]
+      },
+      "fallback_rules": {
+        "max_fallback_attempts": 2,
+        "preserve_context": true,
+        "log_fallback": true,
+        "notify_on_fallback": true,
+        "escalation_strategy": "orchestrator"
+      }
+    }
+  ]
+}

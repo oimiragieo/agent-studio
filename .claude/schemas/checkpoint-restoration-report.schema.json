@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Checkpoint Restoration Report",
+  "type": "object",
+  "required": ["report_id", "checkpoint_id", "restoration_timestamp", "status"],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "description": "Unique identifier for this restoration report"
+    },
+    "checkpoint_id": {
+      "type": "string",
+      "description": "ID of the checkpoint being restored"
+    },
+    "restoration_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the restoration was performed"
+    },
+    "status": {
+      "enum": ["success", "partial", "failed"],
+      "description": "Overall restoration status"
+    },
+    "checkpoint_metadata": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "workflow_id": {
+          "type": "string"
+        },
+        "step": {
+          "type": "integer"
+        },
+        "agent": {
+          "type": "string"
+        }
+      }
+    },
+    "restored_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "artifact_name": {
+            "type": "string"
+          },
+          "restoration_status": {
+            "enum": ["success", "failed", "skipped"]
+          },
+          "size_bytes": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "validation_results": {
+      "type": "object",
+      "properties": {
+        "schemas_validated": {
+          "type": "integer"
+        },
+        "validation_passed": {
+          "type": "boolean"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "duration_ms": {
+      "type": "integer",
+      "description": "Total restoration duration in milliseconds"
+    }
+  }
+}
