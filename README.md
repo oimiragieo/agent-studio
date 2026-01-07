@@ -1,66 +1,50 @@
-# Agent Studio
+# LLM Rules Production Pack
 
-**Copy-paste agent configurations** for Claude Code, Cursor, and Factory Droids.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20%7C%20Cursor%20%7C%20Factory-purple.svg)]()
+[![Agents](https://img.shields.io/badge/Agents-34-green.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-107-orange.svg)]()
+
+**Enterprise-grade AI agent orchestration system** for Claude Code, Cursor IDE, and Factory Droid with comprehensive enforcement gates, security validation, and workflow automation.
 
 ## What This Is
 
-**A drop-in configuration bundle** with native Agent SDK integration - NOT an SDK or MCP server.
+A production-ready, drop-in configuration bundle providing:
 
-Copy these folders into your project and immediately gain access to:
-- **34 specialized AI agents** with defined roles and responsibilities (24 core + 10 extended/specialized including Planner, impact-analyzer, cloud-integrator, and model validators)
-- **43 utility skills** for rule management, code generation, planning, and documentation (34 native + 9 MCP-converted)
-- **1,081+ technology rule packs** with dynamic discovery:
-  - **8 master rules** in `.claude/rules-master/` - Core protocol rules for engineering practices
-  - **1,073+ library rules** in `.claude/rules-library/` - Technology-specific rules (formerly archive)
-- **7 native tools** (Bash, Code Execution, Text Editor, Web Fetch, Web Search, Memory, Computer Use) with streaming support
-- **14 workflow definitions** for project orchestration (legacy modernization, code quality, incident response, etc.)
-- **55 Customer User Journeys (CUJs)** - Complete workflows documented from start to finish (52 core + 3 extended)
-- **Enhanced hooks system** (PreToolUse, PostToolUse, UserPromptSubmit, Notification, Stop)
-- **Enterprise APIs** (Administration, Usage Cost, Analytics)
-- **Knowledge Base-Aware (KBA) Orchestration** - Dynamic, privacy-preserving agent routing based on agent knowledge bases (see [KBA_ORCHESTRATION.md](.claude/docs/KBA_ORCHESTRATION.md))
-- **Agent-as-a-Graph Retrieval** - Knowledge graph-based tool and agent retrieval with 14.9% improvement in Recall@5 (see [AGENT_AS_GRAPH.md](.claude/docs/AGENT_AS_GRAPH.md))
-- **MCP integration** with connection pooling and failover
-- **Cross-platform support** for Claude Code, Cursor IDE, and Factory Droid
+- **34 specialized AI agents** with defined roles (core development, enterprise, code quality, specialized)
+- **107 utility skills** for code generation, validation, planning, and recovery
+- **14 workflow definitions** with enforcement gates and security validation
+- **62 Customer User Journeys (CUJs)** documenting complete workflows
+- **93 JSON schemas** for artifact validation
+- **1,081+ technology rule packs** with dynamic discovery (8 master + 1,073 library rules)
+- **Enforcement system** with plan rating, signoffs, and security triggers
+- **Error recovery** with checkpoints and fallback routing
 
 ## What This Is NOT
 
-- **NOT an SDK** - No TypeScript/JavaScript library to import
-- **NOT an MCP server** - No server to run (though configs integrate WITH Claude's MCP)
-- **NOT a CLI tool** - Just configuration files you copy
-- **NOT a framework** - Works with your existing tools and workflows
+- **NOT an SDK** - No library to import
+- **NOT an MCP server** - No server to run
+- **NOT a CLI tool** - Just configuration files
+- **NOT a framework** - Works with existing tools
 
-## New: Advanced Orchestration Methods
+## Key Features
 
-### Knowledge Base-Aware (KBA) Orchestration
+### Orchestration Enforcement (Phase 1)
 
-Based on recent research ([Knowledge Base-Aware Orchestration](https://arxiv.org/html/2509.19599v1)), the orchestrator supports dynamic, privacy-preserving agent routing that:
+- **Plan Rating**: All plans rated by `response-rater` skill (minimum 7/10 score required)
+- **Security Triggers**: 12 security categories with 136+ keywords, automatic agent routing
+- **Signoff Validation**: Workflow steps require signoffs from specific agents
+- **Master Gate Function**: Unified validation combining plans, signoffs, security
+- **Error Recovery**: Checkpoint system and fallback routing for failed workflows
 
-- **Improves Routing Accuracy**: Significantly outperforms static description-driven methods
-- **Adapts to Evolving Knowledge**: Automatically adjusts as agents learn new capabilities
-- **Preserves Privacy**: Agents return lightweight relevance signals without exposing full knowledge bases
-- **Reduces Description Dependency**: Less sensitive to the quality of agent descriptions
+### Core Capabilities
 
-See [KBA_ORCHESTRATION.md](.claude/docs/KBA_ORCHESTRATION.md) for details.
-
-### Agent-as-a-Graph Retrieval
-
-Based on research ([Agent-as-a-Graph](https://arxiv.org/html/2511.18194v1)), the orchestrator uses knowledge graph-based retrieval that:
-
-- **14.9% Improvement in Recall@5**: Over agent-only retrieval methods
-- **Fine-Grained Tool Matching**: Queries match against individual tools, not just agent descriptions
-- **Graph Traversal**: Tool matches automatically find their parent agents
-- **Type-Specific Weighting**: Optimized weights for agents (1.5) vs tools (1.0)
-
-See [AGENT_AS_GRAPH.md](.claude/docs/AGENT_AS_GRAPH.md) for details.
-
-### Combined Approach
-
-The orchestrator can combine both methods for optimal routing:
-- **Graph Retrieval**: Fine-grained tool-agent matching
-- **KBA Orchestration**: Dynamic knowledge base signals
-- **Weighted Combination**: Best of both approaches
-
-Simply copy the `.claude/`, `.cursor/`, or `.factory/` folders into your project root and start using the agents immediately.
+- **Master Orchestrator**: Single entry point routing all requests
+- **Rule Index System**: Dynamic rule discovery (progressive disclosure)
+- **Cross-Platform**: Claude Code, Cursor IDE, Factory Droid support
+- **Security Hooks**: Command validation, audit logging, file protection
+- **Knowledge Base-Aware Orchestration**: Dynamic agent routing based on agent expertise
+- **Agent-as-a-Graph Retrieval**: 14.9% improvement in tool matching accuracy
 
 ## Quick Start
 
@@ -70,418 +54,213 @@ cp -r .claude/ your-project/
 cp -r .cursor/ your-project/   # Optional: Cursor support
 cp -r .factory/ your-project/  # Optional: Factory support
 
-# Start using immediately
-# Agents activate based on task keywords
+# Install dependencies (optional, for validation)
+pnpm install
+
+# Configure for your stack
+# In Claude Code, run:
+# 1. "Select rules for this project" (auto-detects tech stack)
+# 2. "Audit the codebase against our rules"
+# 3. Start building!
 ```
-
-### First-Time Setup (Recommended)
-
-1. **Install Dependencies**:
-   ```bash
-   pnpm install
-   ```
-
-2. **Configure for Your Stack**:
-   Run these commands in Claude Code:
-
-```
-Step 1: Rule index (pre-built, works out-of-the-box)
-        → A pre-built rule-index.json ships with the repo (common stacks included)
-        → Rule-selector works immediately without running pnpm index-rules
-        → Optional: Run `pnpm index-rules` to generate full index with all 1,081+ rules
-        → Optional: Run `pnpm index-rules:prebuilt` to regenerate lightweight pre-built index
-
-Step 2: "Select rules for this project"
-        → Auto-detects your tech stack
-        → Configures optimal rules in manifest.yaml
-
-Step 3: "Audit the codebase against our rules"
-        → Validates existing code
-        → Shows what needs attention
-
-Step 4: Start building!
-        → "Scaffold a new UserProfile component"
-        → "Implement the login feature"
-        → "Audit my changes before commit"
-```
-
-### Hook Registration (Recommended)
-
-Hooks provide security validation and audit logging for all tool executions. Register them to enable:
-
-- **Security Protection**: Blocks dangerous commands (`rm -rf`, `sudo`, etc.)
-- **Audit Trail**: Logs all tool executions for compliance
-- **File Protection**: Prevents editing of `.env` files and credentials
-
-**Registration Steps**:
-
-1. Open **Claude Code** in your project directory
-2. Go to **Preferences → Claude Code → Hooks** (or Settings → Hooks)
-3. Point hooks directory to `.claude/hooks`
-4. Enable the hooks:
-   - **PreToolUse**: `.claude/hooks/security-pre-tool.sh` - Validates commands before execution
-   - **PostToolUse**: `.claude/hooks/audit-post-tool.sh` - Logs tool usage after execution
-5. Verify hooks are working:
-   - Try a safe command (e.g., `ls -la`)
-   - Check audit log: `~/.claude/audit/tool-usage.log`
-   - Try a blocked command (e.g., `rm -rf /`) - should be blocked
-
-**What Each Hook Does**:
-
-- **security-pre-tool.sh**: 
-  - Validates bash commands before execution
-  - Blocks dangerous patterns (file deletion, system modification, code injection)
-  - Protects sensitive files (`.env*`, `secrets/`, credentials)
-  - Returns `{"decision": "allow"}` or `{"decision": "block", "reason": "..."}`
-
-- **audit-post-tool.sh**:
-  - Logs all tool executions with timestamp and summary
-  - Stores logs in `~/.claude/audit/tool-usage.log`
-  - Auto-rotates logs to prevent disk bloat
-  - Provides audit trail for compliance
-
-**Troubleshooting**:
-
-- **Hooks not executing**: Check Claude Code preferences to ensure hooks directory is set correctly
-- **Commands being blocked**: Review `security-pre-tool.sh` to understand blocked patterns
-- **No audit logs**: Verify `audit-post-tool.sh` has execute permissions (`chmod +x`)
-- **Permission errors**: Ensure hook scripts are executable and paths are correct
-
-For detailed hook documentation, see `.claude/hooks/README.md`.
-
-## Agents (23 Specialized Roles)
-
-**NEW**: Planner agent for comprehensive planning before execution!
-
-```
-Planner - Creates comprehensive plans (NEW!)
-Orchestrator - Routes tasks to specialists
-  ├── Core Development:
-  │   ├── Analyst - Research and discovery
-  │   ├── PM - Product requirements and roadmaps
-  │   ├── Architect - System design
-  │   ├── Database Architect - Database design and optimization
-  │   ├── Developer - Implementation
-  │   ├── QA - Quality assurance
-  │   └── UX Expert - Interface design
-  ├── Enterprise:
-  │   ├── Security Architect - Security and compliance
-  │   ├── DevOps - Infrastructure and deployment
-  │   ├── Model Orchestrator - Multi-model routing
-  │   └── Technical Writer - Documentation
-  ├── Code Quality:
-  │   ├── Code Reviewer - Systematic code review
-  │   ├── Refactoring Specialist - Code transformation
-  │   └── Performance Engineer - Optimization
-  ├── Specialized:
-  │   ├── LLM Architect - AI/LLM system design
-  │   ├── API Designer - API design patterns
-  │   ├── Legacy Modernizer - System modernization
-  │   ├── Mobile Developer - iOS/Android/cross-platform
-  │   ├── Accessibility Expert - WCAG compliance
-  │   ├── Compliance Auditor - GDPR/HIPAA/SOC2
-  │   └── Incident Responder - Crisis management
-```
-
-## Skills (13 Utilities)
-
-**NEW**: 5 new skills added for planning, diagrams, testing, dependencies, and documentation!
-
-Skills are invoked with natural language or the Skill tool. They work WITH your rules.
-
-| Skill | Purpose | Invocation |
-|-------|---------|------------|
-| `repo-rag` | Codebase retrieval and symbol indexing | "search for auth patterns" |
-| `artifact-publisher` | Publish artifacts to project feed | "publish this artifact" |
-| `context-bridge` | Sync state across Claude, Cursor, Factory | "sync to Cursor" |
-| `rule-auditor` | Validate code against loaded rules | "audit this file" |
-| `rule-selector` | Auto-detect stack and configure rules | "select rules for this project" |
-| `scaffolder` | Generate rule-compliant boilerplate | "scaffold a component" |
-| `claude-md-generator` | Auto-generate claude.md files (NEW!) | "generate claude.md for [path]" |
-| `plan-generator` | Create structured plans (NEW!) | "generate plan for [feature]" |
-| `diagram-generator` | Generate architecture/database diagrams (NEW!) | "generate diagram for [system]" |
-| `test-generator` | Generate test code (NEW!) | "generate tests for [component]" |
-| `dependency-analyzer` | Analyze and update dependencies (NEW!) | "analyze dependencies" |
-| `doc-generator` | Generate comprehensive documentation (NEW!) | "generate docs for [api]" |
-| `commit-validator` | Validate commit messages | "validate commit message" |
-| `code-style-validator` | AST-based style validation | "validate code style" |
-
-### Skill Usage Examples
-
-```bash
-# Project Setup - Auto-detect your stack and configure rules
-"Select the right rules for this project"
-→ Scans package.json, requirements.txt, go.mod
-→ Generates optimized manifest.yaml
-→ Excludes irrelevant rule packs
-
-# Code Generation - Create rule-compliant code
-"Scaffold a UserProfile component"
-→ Reads nextjs.mdc, typescript.mdc, react.mdc
-→ Generates Server Component with Suspense
-→ Creates types.ts, skeleton.tsx, index.tsx
-
-# Code Validation - Check compliance
-"Audit src/components/ against our rules"
-→ Scans files against active rules
-→ Reports violations with line numbers
-→ Suggests fixes for each issue
-
-# Cross-Platform Sync
-"Bridge this context to Cursor"
-→ Exports session state
-→ Syncs with .cursor/ configuration
-```
-
-## Slash Commands
-
-| Command | Purpose |
-|---------|---------|
-| `/review` | Comprehensive code review |
-| `/fix-issue <n>` | Fix GitHub issue by number |
-| `/quick-ship` | Fast iteration for small changes |
-| `/select-rules` | Run rule-selector skill |
-| `/audit` | Run rule-auditor skill |
-| `/scaffold` | Run scaffolder skill |
-| `/code-quality` | Invoke code-quality workflow |
-| `/performance` | Invoke performance workflow |
-| `/mobile` | Invoke mobile workflow |
-| `/ai-system` | Invoke AI system workflow |
-| `/incident` | Invoke incident workflow |
-| `/run-workflow` | Execute a workflow step with validation |
-
-## Workflows
-
-Workflows orchestrate multiple agents to complete complex tasks. All workflows now start with the **Planner agent** (Step 0) to create comprehensive plans before execution.
-
-### How Workflows Work
-
-**Triggering Workflows:**
-- **Automatic**: Use natural language - system matches keywords to workflows
-- **Manual**: Use slash commands (e.g., `/code-quality`, `/quick-ship`)
-
-**Execution Flow:**
-1. **Workflow Selection**: Keywords matched against `config.yaml`, priority determines selection
-2. **Session Initialization**: Unique workflow ID created, directories set up
-3. **Step Execution**: Each step (0-N):
-   - Loads agent definition
-   - Prepares inputs from previous steps
-   - Executes agent task
-   - Saves outputs as artifacts
-   - Validates with schema (if specified)
-4. **Artifact Passing**: Each step's outputs become inputs for subsequent steps
-5. **Validation**: Each step validated before proceeding (with retry on failure)
-
-**See**: `GETTING_STARTED.md` for complete workflow execution guide with examples.
-
-### Quick Flow
-**For**: Bug fixes, hotfixes, small features
-**Agents**: Planner → Developer → QA
-**Trigger**: `/quick-ship` or keywords like "bug fix", "hotfix"
-
-### Full Stack Flow
-**For**: New features, greenfield projects
-**Agents**: Planner → Analyst → PM → UX → Architect → Developer → QA
-**Trigger**: "new project", "greenfield", "full stack"
 
 ## Directory Structure
 
 ```
 .claude/
-├── agents/        # 23 agent definitions
-├── skills/        # 13 utility skills
-├── commands/      # 12 slash commands
-├── workflows/     # 9 workflow definitions
-├── templates/     # 9 artifact templates
-├── schemas/       # 10 validation schemas
-├── rules/         # 200+ technology rule packs
-├── hooks/         # Native Claude Code hooks
-├── config.yaml    # Agent routing configuration
-└── CLAUDE.md      # Core instructions
-
-.cursor/           # Cursor IDE configuration (mirrored)
-.factory/          # Factory Droid configuration (mirrored)
+├── agents/           # 34 specialized agent definitions
+├── skills/           # 107 utility skills
+├── workflows/        # 14 workflow definitions
+├── templates/        # 30 artifact templates
+├── schemas/          # 93 JSON validation schemas
+├── rules-master/     # 8 master rules (core protocols)
+├── rules-library/    # 1,073+ library rules (tech-specific)
+├── context/          # Enforcement matrices, security triggers
+├── tools/            # Enforcement gates, run manager, validation
+├── hooks/            # Security validation, audit logging
+├── system/           # Guardrails, permissions
+├── config.yaml       # Agent routing configuration
+└── CLAUDE.md         # Core instructions (authoritative)
 ```
 
-## Skills Architecture
+## Agents (34 Specialized Roles)
 
-Skills are located in `.claude/skills/` with a consistent structure:
+| Category | Agents |
+|----------|--------|
+| **Core Development** | orchestrator, model-orchestrator, analyst, pm, architect, database-architect, developer, qa, ux-expert |
+| **Enterprise** | security-architect, devops, technical-writer |
+| **Code Quality** | code-reviewer, code-simplifier, refactoring-specialist, performance-engineer |
+| **Specialized** | llm-architect, api-designer, legacy-modernizer, mobile-developer, accessibility-expert, compliance-auditor, incident-responder |
+| **Extended (Phase 1+)** | planner, impact-analyzer, cloud-integrator, react-component-developer, router, gcp-cloud-agent, ai-council, codex-validator, cursor-validator, gemini-validator, master-orchestrator |
 
+See `.claude/agents/` for detailed agent documentation.
+
+## Skills (43 Utilities)
+
+Skills provide 90%+ context savings vs MCP servers. Invoke with natural language or the Skill tool.
+
+| Category | Skills |
+|----------|--------|
+| **Core** | repo-rag, artifact-publisher, context-bridge, rule-auditor, rule-selector, scaffolder |
+| **Memory** | memory-manager, memory |
+| **Documents** | excel-generator, powerpoint-generator, pdf-generator |
+| **Analysis** | evaluator, classifier, summarizer, text-to-sql |
+| **Tools** | tool-search, mcp-converter, skill-manager |
+| **Code Gen** | claude-md-generator, plan-generator, diagram-generator, test-generator, api-contract-generator, dependency-analyzer, doc-generator |
+| **Validation** | code-style-validator, commit-validator, response-rater |
+| **Recovery** | recovery, conflict-resolution, optional-artifact-handler |
+| **Enforcement** | migrating-rules, explaining-rules, fixing-rule-violations |
+
+See `.claude/skills/` for detailed skill documentation.
+
+## Workflows
+
+14 workflow definitions for complex multi-agent orchestration:
+
+- **Quick Flow**: Bug fixes, hotfixes, small features (Planner → Developer → QA)
+- **Full Stack Flow**: New features, greenfield projects (Planner → Analyst → PM → UX → Architect → Developer → QA)
+- **Code Quality Flow**: Code review, refactoring, optimization
+- **Performance Flow**: Performance profiling, optimization
+- **AI System Flow**: AI/LLM system development
+- **Mobile Flow**: Mobile application development
+- **Incident Flow**: Crisis management, post-mortems
+- **Legacy Modernization Flow**: System modernization, tech debt reduction
+
+See `.claude/workflows/WORKFLOW-GUIDE.md` for detailed documentation.
+
+## Enforcement System
+
+### Plan Rating Enforcement
+
+All plans MUST be rated before execution:
+
+```bash
+node .claude/tools/enforcement-gate.mjs validate-plan --run-id <id> --plan-id <id>
 ```
-.claude/skills/
-├── rule-auditor/
-│   └── SKILL.md          # Validates code against rules
-├── rule-selector/
-│   └── SKILL.md          # Auto-configures rules for your stack
-├── scaffolder/
-│   └── SKILL.md          # Generates compliant boilerplate
-├── repo-rag/
-│   └── SKILL.md          # Semantic code search
-├── artifact-publisher/
-│   └── SKILL.md          # Publishes to project feed
-└── context-bridge/
-    └── SKILL.md          # Cross-platform sync
+
+- Minimum score: **7/10** (via `response-rater` skill)
+- If score < 7: Return to Planner with feedback
+- If score >= 7: Proceed with execution
+
+### Security Trigger Enforcement
+
+12 security categories with 136+ keywords automatically enforce security requirements:
+
+```bash
+node .claude/tools/enforcement-gate.mjs validate-security --task "<description>" --agents <agents>
 ```
 
-### Skill File Format
+- **Critical priority**: BLOCKS execution if required agents missing
+- **High/Medium/Low priority**: WARNING only, execution proceeds
 
-Each SKILL.md contains:
-```yaml
----
-name: skill-name
-description: What the skill does
-allowed-tools: read, write, glob, search
----
+### Signoff Validation
 
-# Instructions and templates follow...
+Workflow steps require signoffs from specific agents:
+
+```bash
+node .claude/tools/enforcement-gate.mjs validate-signoffs --run-id <id> --workflow <name> --step <n>
 ```
 
-### Customizing Skills
+### Master Gate Function
 
-1. Edit the SKILL.md file to add your patterns
-2. Add project-specific templates
-3. Skills automatically inherit from rules in `manifest.yaml`
+Combine all validations:
 
-## Rules Library (200+ Packs)
+```bash
+node .claude/tools/enforcement-gate.mjs validate-all \
+  --run-id <id> \
+  --workflow <name> \
+  --step <n> \
+  --plan-id <id> \
+  --task "<description>" \
+  --agents <agent1,agent2>
+```
 
-Technology-specific rules for:
-- **Frontend**: React, Next.js, Vue, Angular, Svelte
-- **Backend**: Node.js, Python, Go, Rust, Java
-- **Testing**: Jest, Cypress, Playwright, pytest
-- **Infrastructure**: Docker, Kubernetes, Terraform
-- **And more...**
+## Key Tools
 
-Rules auto-apply based on your project's tech stack. Use `rule-selector` to configure.
+- **enforcement-gate.mjs**: Hard validation gates (plan ratings, signoffs, security)
+- **run-manager.mjs**: Canonical run state management
+- **fallback-router.mjs**: Error recovery and workflow fallback
+- **security-enforcement.mjs**: Security trigger integration
+- **workflow_runner.js**: Workflow execution with validation
+
+## Rule Index System
+
+Dynamic rule discovery system enabling Skills to find relevant rules without hard-coding:
+
+1. **Index Generation**: `pnpm index-rules` scans all rules and generates `.claude/context/rule-index.json`
+2. **Rule Discovery**: Skills load index and query `technology_map`
+3. **Progressive Disclosure**: Only 5-10 relevant rules loaded (not all 1,081)
+4. **Self-Healing**: Regenerate index if rule not found
+
+Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rules, fixing-rule-violations, migrating-rules, recommending-rules
+
+## Slash Commands
+
+| Category | Commands |
+|----------|----------|
+| **Core** | `/review`, `/fix-issue <n>`, `/quick-ship`, `/run-workflow`, `/validate-gates` |
+| **Skill** | `/select-rules`, `/audit`, `/scaffold`, `/rate-plan` |
+| **Workflow** | `/code-quality`, `/performance`, `/ai-system`, `/mobile`, `/incident`, `/legacy-modernize` |
+| **Enforcement** | `/check-security`, `/enforce-security`, `/approve-security`, `/validate-plan-rating`, `/validate-signoffs` |
 
 ## Security
 
-### Native Hooks
-Security validation hooks run automatically:
-- Dangerous command blocking (`rm -rf`, `sudo`, etc.)
-- Secret detection in commits
-- Protected file validation
+### Security Hooks
+
+Native hooks provide security validation and audit logging:
+
+- **security-pre-tool.sh**: Blocks dangerous commands, validates file access
+- **audit-post-tool.sh**: Logs all tool executions with timestamps
+
+### Protected Operations
+
+- **BLOCKED**: `.env*` files, `secrets/` directory, credential files
+- **BLOCKED**: Dangerous commands (`rm -rf`, `sudo rm`, `mkfs`, `dd`)
+- **BLOCKED**: Force push to main/master
 
 ### Tool Permissions
-Agents have scoped permissions:
-- Analysts: Read-only
-- Developers: Read/Write/Bash (safe commands)
-- Architects: Read/Write (documentation)
+
+- **Always Allowed**: Read, Search
+- **Require Confirmation**: Edit, Bash
+- **Always Blocked**: Destructive operations
 
 ## Documentation
 
-- **First-Time User Guide**: `FIRST_TIME_USER.md` - Start here for new users!
-- **CUJ Index**: `.claude/docs/cujs/CUJ-INDEX.md` - All 47 Customer User Journeys (CUJ-031/032/033 reserved/removed)
 - **Setup Guide**: `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md`
-- **Agent Details**: `.claude/agents/` (each agent has full documentation)
-- **Instructions**: `.claude/instructions/` (operational playbooks)
-- **Workflow Guide**: `.claude/workflows/WORKFLOW-GUIDE.md` - Now with Planner integration!
+- **Workflow Guide**: `.claude/workflows/WORKFLOW-GUIDE.md`
+- **Agent-Skill Matrix**: `.claude/docs/AGENT_SKILL_MATRIX.md`
+- **Enforcement Examples**: `.claude/docs/ENFORCEMENT_EXAMPLES.md`
+- **Security Triggers**: `.claude/docs/SECURITY_TRIGGERS.md`
+- **CUJ Index**: `.claude/docs/cujs/CUJ-INDEX.md` (56 user journeys)
+- **First-Time User Guide**: `FIRST_TIME_USER.md`
 
-## Usage Examples
+## Validation (Optional)
 
-### Agent Workflows
+Requires Node.js 18+ and pnpm:
+
+```bash
+# Install dependencies
+pnpm install
+
+# Validate configuration
+pnpm validate              # Fast validation (config, models)
+pnpm validate:all          # Full validation (includes workflows, CUJs, rule index)
+pnpm validate:verbose      # Detailed output
+pnpm validate:sync         # Cross-platform agent/skill parity
+
+# Validate specific workflow step
+node .claude/tools/workflow_runner.js --workflow .claude/workflows/greenfield-fullstack.yaml --step 1
 ```
-User: Fix the login button alignment
-→ [Quick Flow] Developer fixes → QA validates
-
-User: Build a task management dashboard
-→ [Full Stack] Analyst → PM → UX → Architect → Developer → QA
-
-User: /review
-→ Comprehensive 5-step code review
-```
-
-### Skill Workflows
-```
-User: Set up this Next.js project with proper rules
-→ [rule-selector] Detects Next.js + TypeScript + Tailwind
-→ Generates stack profile in manifest.yaml
-→ Configures 5 primary rules, excludes 180+ irrelevant ones
-
-User: Create a new API endpoint for users
-→ [scaffolder] Reads nextjs.mdc patterns
-→ Generates app/api/users/route.ts
-→ Includes Zod validation, error handling, TypeScript types
-
-User: Check if my code follows our standards
-→ [rule-auditor] Loads active rules from manifest
-→ Scans target files for violations
-→ Outputs: 12 pass, 3 warn, 2 fail with fixes
-
-User: I need to search for how auth is implemented
-→ [repo-rag] Indexes codebase symbols
-→ Returns relevant files with context
-→ Shows auth patterns across the project
-```
-
-### Combined Agent + Skill Flow
-```
-User: Build a user management feature for our Next.js app
-
-Step 1: [rule-selector] Configures rules for Next.js stack
-Step 2: [analyst] Researches existing user patterns
-Step 3: [architect] Designs feature architecture
-Step 4: [scaffolder] Generates compliant components
-Step 5: [developer] Implements business logic
-Step 6: [rule-auditor] Validates against standards
-Step 7: [qa] Tests and validates quality gates
-```
-
-## Templates & Safety
-
-- Templates: code-review-report, performance-plan, llm-architecture, incident-report, refactor-plan (see `.claude/templates/`).
-- Guardrails/permissions: documented in `.claude/system/guardrails/guardrails.md` and `.claude/system/permissions/permissions.md`.
-- Hooks: native shell hooks in `.claude/hooks/` (`security-pre-tool.sh`, `audit-post-tool.sh`) for command safety and audit logging.
-- Optional MCP: `.claude/.mcp.json` lists optional endpoints for Claude Code; no server is shipped.
 
 ## Requirements
 
 **Required**:
 - Claude Code, Cursor IDE, or Factory Droid
 
-**Optional** (for validation and workflow gates):
+**Optional** (for validation and enforcement):
 - Node.js 18+
 - pnpm (for dependency management)
 - Dependencies: `ajv`, `js-yaml` (installed via `pnpm install`)
-
-The core agent configuration works without Node.js. Validation scripts and workflow gating require the optional dependencies.
-
-## Validation (Optional)
-
-```bash
-# Install dependencies first
-pnpm install
-
-# Validate configuration files
-pnpm validate          # Fast validation (config, models)
-pnpm validate:all      # Full validation (includes workflows, references, CUJs, rule index)
-pnpm validate:verbose   # Detailed output
-
-# Cross-platform agent/skill parity
-pnpm validate:sync
-
-# Validate a specific workflow step
-node .claude/tools/workflow_runner.js --workflow .claude/workflows/greenfield-fullstack.yaml --step 1
-```
-
-These scripts are optional; the configuration works without running them.
-
-## MCP Servers (Optional)
-
-The configuration includes optional MCP server integrations in `.claude/.mcp.json`:
-
-| Server | Purpose | Required Environment Variable |
-|--------|---------|------------------------------|
-| `repo` | Codebase search (repo-rag skill) | None (auto-configured) |
-| `artifacts` | Artifact publishing | None (auto-configured) |
-| `github` | GitHub integration | `GITHUB_TOKEN` |
-| `linear` | Linear issue tracking | `LINEAR_API_KEY` |
-| `slack` | Slack notifications | `SLACK_BOT_TOKEN` |
-
-**To enable optional servers**:
-1. Set the required environment variable
-2. MCP servers auto-launch via `npx` when needed
-
-**Note**: This project is NOT an MCP server itself. It integrates WITH Claude's MCP protocol for extended capabilities.
 
 ## License
 

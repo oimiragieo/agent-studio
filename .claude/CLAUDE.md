@@ -247,10 +247,10 @@ You are violating this rule if you:
 - **Type**: Multi-platform agent configuration bundle
 - **Stack**: Claude Code, Cursor, Factory Droid with shared rule base
 - **Agents**: 34 specialized agents (24 core + 10 extended/specialized) - See @.claude/agents/
-- **Skills**: 43 utility skills (34 native + 9 MCP-converted) - @.claude/skills/ and @.claude/docs/AGENT_SKILL_MATRIX.md
+- **Skills**: 107 utility skills - @.claude/skills/ and @.claude/docs/AGENT_SKILL_MATRIX.md
 - **Workflows**: 14 workflow definitions - See @.claude/workflows/WORKFLOW-GUIDE.md
-- **CUJs**: 55 Customer User Journeys (52 core + 3 extended)
-- **Schemas**: 83 JSON validation schemas for artifact validation
+- **CUJs**: 62 Customer User Journeys
+- **Schemas**: 93 JSON validation schemas for artifact validation
 - **Rules**: 1,081+ technology-specific rule packs (8 master + 1,073 rules-library)
 - **Rule Index**: Dynamic discovery system via `.claude/context/rule-index.json`
 
