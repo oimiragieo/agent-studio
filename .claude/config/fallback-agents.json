@@ -1,0 +1,75 @@
+{
+  "$schema": "../schemas/fallback-agents.schema.json",
+  "version": "1.0.0",
+  "description": "Maps primary agents to fallback agents for error recovery",
+  "fallback_map": {
+    "architect": ["developer", "planner"],
+    "developer": ["refactoring-specialist", "code-simplifier"],
+    "database-architect": ["architect", "developer"],
+    "api-designer": ["architect", "developer"],
+    "security-architect": ["compliance-auditor", "architect"],
+    "performance-engineer": ["developer", "architect"],
+    "ux-expert": ["pm", "developer"],
+    "qa": ["developer", "code-reviewer"],
+    "code-reviewer": ["qa", "developer"],
+    "technical-writer": ["developer", "pm"],
+    "llm-architect": ["architect", "developer"],
+    "mobile-developer": ["developer", "ux-expert"],
+    "devops": ["developer", "cloud-integrator"],
+    "incident-responder": ["devops", "developer"],
+    "planner": ["architect", "orchestrator"],
+    "analyst": ["pm", "developer"],
+    "pm": ["analyst", "planner"],
+    "refactoring-specialist": ["developer", "code-reviewer"],
+    "code-simplifier": ["refactoring-specialist", "developer"],
+    "legacy-modernizer": ["architect", "developer"],
+    "accessibility-expert": ["ux-expert", "qa"],
+    "compliance-auditor": ["security-architect", "qa"],
+    "cloud-integrator": ["devops", "developer"],
+    "react-component-developer": ["developer", "ux-expert"],
+    "impact-analyzer": ["analyst", "architect"],
+    "gcp-cloud-agent": ["cloud-integrator", "devops"],
+    "orchestrator": ["planner", "master-orchestrator"],
+    "master-orchestrator": ["orchestrator", "planner"],
+    "model-orchestrator": ["orchestrator", "master-orchestrator"],
+    "router": ["orchestrator", "model-orchestrator"],
+    "ai-council": ["orchestrator", "architect"],
+    "codex-validator": ["qa", "code-reviewer"],
+    "cursor-validator": ["qa", "code-reviewer"],
+    "gemini-validator": ["qa", "code-reviewer"]
+  },
+  "fallback_rules": {
+    "max_fallback_attempts": 2,
+    "preserve_context": true,
+    "log_fallback": true,
+    "notify_on_fallback": true,
+    "escalation_strategy": "orchestrator"
+  },
+  "agent_capabilities": {
+    "architect": {
+      "primary_capabilities": ["system_design", "api_design", "architecture"],
+      "secondary_capabilities": ["planning", "technical_guidance"],
+      "model": "opus"
+    },
+    "developer": {
+      "primary_capabilities": ["implementation", "coding", "debugging"],
+      "secondary_capabilities": ["refactoring", "testing"],
+      "model": "sonnet"
+    },
+    "qa": {
+      "primary_capabilities": ["testing", "quality_assurance", "validation"],
+      "secondary_capabilities": ["code_review", "automation"],
+      "model": "opus"
+    },
+    "security-architect": {
+      "primary_capabilities": ["security_design", "compliance", "threat_modeling"],
+      "secondary_capabilities": ["code_review", "architecture"],
+      "model": "opus"
+    },
+    "planner": {
+      "primary_capabilities": ["planning", "scoping", "workflow_design"],
+      "secondary_capabilities": ["strategy", "coordination"],
+      "model": "opus"
+    }
+  }
+}
