@@ -654,7 +654,13 @@ Make all independent tool calls in parallel. Prioritize calling tools simultaneo
 - `.claude/skills/`: 43 utility skills
 - `.claude/workflows/`: 14 workflow definitions
 - `.claude/templates/`: 14 artifact templates
-- `.claude/schemas/`: 83 JSON validation schemas
+- `.claude/schemas/`: 93 JSON validation schemas
+
+### State Management (Context Poisoning Prevention)
+- `.claude/tools/state-manager.mjs`: Compressed state management for multi-agent runs
+- `.claude/agents/context-compressor.md`: Intelligent compression agent (haiku)
+- `.claude/schemas/run-state.schema.json`: State validation schema
+- `.claude/docs/STATE_MANAGEMENT.md`: Architecture and usage guide
 
 ### Security
 - `.claude/hooks/security-pre-tool.sh`: Security validation hook
