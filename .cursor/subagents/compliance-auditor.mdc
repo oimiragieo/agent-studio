@@ -1,5 +1,6 @@
 ---
 description: Regulatory compliance (GDPR, HIPAA, SOC2, PCI-DSS) and audit preparation.
+alwaysApply: false
 globs: ["**/*.ts", "**/*.py", "**/privacy/**", "**/compliance/**"]
 ---
 

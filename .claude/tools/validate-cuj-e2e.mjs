@@ -590,25 +590,25 @@ async function validateCUJSystem() {
     console.log('='.repeat(60));
   }
 
-  // Step 1: Config validation
+  // Step 1: Config validation (non-critical - warnings only)
   const configResult = execCommand(
     'node scripts/validate-config.mjs',
     'Config validation',
     true // Allow fail - non-critical
   );
 
-  // Step 2: CUJ file validation
+  // Step 2: CUJ file validation (CRITICAL - schema validation)
   const cujResult = execCommand(
     'node scripts/validate-cujs.mjs',
     'CUJ file validation',
-    true // Allow fail - non-critical
+    false // CRITICAL - must pass
   );
 
-  // Step 3: Reference integrity validation
+  // Step 3: Reference integrity validation (CRITICAL - broken links fail build)
   const refResult = execCommand(
     'node scripts/validate-all-references.mjs',
     'Reference integrity validation',
-    true // Allow fail - non-critical
+    false // CRITICAL - must pass
   );
 
   if (!JSON_OUTPUT) {

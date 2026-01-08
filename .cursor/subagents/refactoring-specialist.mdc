@@ -1,5 +1,6 @@
 ---
 description: Code refactoring, technical debt reduction, and design pattern application.
+alwaysApply: false
 globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.py", "**/*.go"]
 ---
 

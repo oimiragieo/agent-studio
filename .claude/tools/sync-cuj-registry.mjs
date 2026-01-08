@@ -92,7 +92,8 @@ const CATEGORIES = {
   'CUJ-059': 'Testing & Validation',
   'CUJ-060': 'Testing & Validation',
   'CUJ-061': 'Testing & Validation',
-  'CUJ-062': 'Testing & Validation'
+  'CUJ-062': 'Testing & Validation',
+  'CUJ-063': 'Testing & Validation'
 };
 
 /**

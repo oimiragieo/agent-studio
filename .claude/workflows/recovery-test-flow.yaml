@@ -28,7 +28,7 @@ steps:
       - Create test run directory structure
       - Initialize recovery log
     validation:
-      schema: test-config.schema.json
+      schema: .claude/schemas/test-config.schema.json
       required_files:
         - .claude/config/fallback-agents.json
         - .claude/schemas/checkpoint.schema.json
@@ -67,7 +67,7 @@ steps:
       - Verify artifact paths valid
       - Check state snapshot accuracy
     validation:
-      schema: checkpoint.schema.json
+      schema: .claude/schemas/checkpoint.schema.json
       critical: true
 
   # Step 2: Test Fallback Routing
@@ -89,7 +89,7 @@ steps:
       - Verify context preservation
       - Log fallback event
     validation:
-      schema: fallback-routing-report.schema.json
+      schema: .claude/schemas/fallback-routing-report.schema.json
       critical: true
 
   # Checkpoint after Phase 1 tests
@@ -130,7 +130,7 @@ steps:
       - Verify completed_steps accurate
       - Continue workflow from checkpoint
     validation:
-      schema: checkpoint-restoration-report.schema.json
+      schema: .claude/schemas/checkpoint-restoration-report.schema.json
       critical: true
 
   # Step 4: Test Multi-Level Fallback
@@ -152,7 +152,7 @@ steps:
       - Verify max attempts enforced
       - Verify escalation when fallbacks exhausted
     validation:
-      schema: multi-level-fallback-report.schema.json
+      schema: .claude/schemas/multi-level-fallback-report.schema.json
       critical: true
 
   # Checkpoint after Phase 2 tests
@@ -201,7 +201,7 @@ steps:
       - Complete remaining workflow steps
       - Verify final state matches expected
     validation:
-      schema: full-recovery-report.schema.json
+      schema: .claude/schemas/full-recovery-report.schema.json
       critical: true
 
   # Step 6: Performance Metrics Collection
@@ -223,7 +223,7 @@ steps:
       - Calculate state accuracy percentage
       - Generate performance dashboard
     validation:
-      schema: recovery-performance-metrics.schema.json
+      schema: .claude/schemas/recovery-performance-metrics.schema.json
 
   # Step 7: Final Validation and Report
   - step: 7
@@ -244,7 +244,7 @@ steps:
       - Generate recommendations
       - Create human-readable summary report
     validation:
-      schema: recovery-test-summary.schema.json
+      schema: .claude/schemas/recovery-test-summary.schema.json
       critical: true
 
   # Final checkpoint
@@ -267,23 +267,23 @@ steps:
 validation_gates:
   - step: 1
     type: schema_validation
-    schema: checkpoint.schema.json
+    schema: .claude/schemas/checkpoint.schema.json
     on_failure: halt
   - step: 2
     type: schema_validation
-    schema: fallback-routing-report.schema.json
+    schema: .claude/schemas/fallback-routing-report.schema.json
     on_failure: halt
   - step: 3
     type: schema_validation
-    schema: checkpoint-restoration-report.schema.json
+    schema: .claude/schemas/checkpoint-restoration-report.schema.json
     on_failure: halt
   - step: 4
     type: schema_validation
-    schema: multi-level-fallback-report.schema.json
+    schema: .claude/schemas/multi-level-fallback-report.schema.json
     on_failure: halt
   - step: 5
     type: schema_validation
-    schema: full-recovery-report.schema.json
+    schema: .claude/schemas/full-recovery-report.schema.json
     on_failure: halt
   - step: 7
     type: comprehensive_validation

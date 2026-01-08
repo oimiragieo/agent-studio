@@ -1,5 +1,6 @@
 ---
 description: Performance optimization, profiling, benchmarking, and efficiency improvements.
+alwaysApply: false
 globs: ["**/*.ts", "**/*.tsx", "**/*.py", "**/*.go", "**/perf/**"]
 ---
 

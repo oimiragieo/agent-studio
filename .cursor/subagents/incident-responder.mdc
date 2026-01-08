@@ -1,5 +1,6 @@
 ---
 description: Production incident response, crisis management, and post-mortems.
+alwaysApply: false
 globs: ["**/runbooks/**", "**/incidents/**", "**/*.md"]
 ---
 

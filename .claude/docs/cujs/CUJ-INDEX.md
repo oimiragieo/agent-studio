@@ -1,19 +1,19 @@
 # Customer User Journey (CUJ) Index
 
-This index maps all 60 Customer User Journeys (CUJs) to agents, skills, workflows, and expected outcomes.
+This index maps all 62 Customer User Journeys (CUJs) to agents, skills, workflows, and expected outcomes.
 
 **Note**: CUJ-031, CUJ-032, CUJ-033 are reserved for future use and not included in active documentation.
 
 ## Implementation Status Summary
 
-**All CUJs Implemented**: ✅ 60/60 CUJs defined and documented
-- **Workflow-Based CUJs**: 44 (multi-agent workflows)
-- **Skill-Only CUJs**: 13 (direct skill invocation without workflow)
+**All CUJs Implemented**: ✅ 62/62 CUJs defined and documented
+- **Workflow-Based CUJs**: 49 (multi-agent workflows)
+- **Skill-Only CUJs**: 10 (direct skill invocation without workflow)
 - **Manual CUJs**: 3 (require manual setup/execution)
 
 **Execution Modes**:
-- ✅ `workflow`: Direct YAML workflow execution (39 CUJs) - Load and execute full multi-step workflows
-- ✅ `skill`: Direct skill invocation (12 CUJs) - Invoke single skill without agents or planning
+- ✅ `workflow`: Direct YAML workflow execution (49 CUJs) - Load and execute full multi-step workflows
+- ✅ `skill`: Direct skill invocation (10 CUJs) - Invoke single skill without agents or planning
 - ✅ `manual`: Manual setup/execution (3 CUJs) - Require user-driven steps
 
 **Performance Comparison**:
@@ -70,7 +70,7 @@ This matrix shows which platforms support each CUJ:
 | CUJ-011 | Bug Fix Workflow | ✅ | ✅ | ❌ | Workflow-based - quick-flow |
 | CUJ-012 | Feature Implementation | ✅ | ✅ | ❌ | Workflow-based |
 | **Quality Assurance** |
-| CUJ-013 | Code Review | ✅ | ✅ | ❌ | Skill-only - rule-auditor |
+| CUJ-013 | Code Review | ✅ | ✅ | ❌ | Workflow-based |
 | CUJ-014 | Rule Compliance Audit | ✅ | ✅ | ❌ | Skill-only - rule-auditor |
 | CUJ-015 | Test Generation | ✅ | ✅ | ❌ | Skill-only - test-generator |
 | CUJ-034 | Browser-Based UI Testing | ✅ | ✅ | ❌ | Workflow-based - browser-testing-flow |
@@ -103,28 +103,30 @@ This matrix shows which platforms support each CUJ:
 | CUJ-041 | Complex Artifact Dependency Chain | ✅ | ✅ | ❌ | Skill-only |
 | CUJ-042 | Cursor Subagent Coordination | ❌ | ✅ | ❌ | Cursor-specific |
 | CUJ-043 | Workflow Interruption Recovery | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
-| CUJ-044 | Agent Fallback Chain | ✅ | ✅ | ❌ | Skill-only |
+| CUJ-044 | Agent Fallback Chain | ✅ | ✅ | ❌ | Workflow-based |
 | CUJ-045 | Missing Required Artifact Recovery | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
 | CUJ-046 | Feature Distillation Edge Cases | ✅ | ✅ | ❌ | Skill-only |
 | CUJ-047 | Multi-Agent Conflict Resolution | ✅ | ❌ | ❌ | Requires conflict-resolution (Claude-only) |
 | CUJ-048 | Artifact Registry Comprehensive Test | ✅ | ✅ | ❌ | Skill-only |
-| CUJ-049 | Cursor Plan Mode Deep Integration | ❌ | ✅ | ❌ | Cursor-specific |
+| CUJ-049 | Cursor Plan Mode Deep Integration | ❌ | ✅ | ❌ | Workflow-based (Cursor-specific) |
 | CUJ-050 | End-to-End Workflow Robustness | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
-| CUJ-051 | Artifact Publishing Validation | ✅ | ✅ | ❌ | Skill-only - artifact-publisher |
-| CUJ-052 | Artifact Registry Migration Test | ✅ | ✅ | ❌ | Skill-only - plan-generator |
-| CUJ-053 | Publishing Metadata Persistence Test | ✅ | ✅ | ❌ | Skill-only - artifact-publisher |
-| CUJ-054 | Cross-Platform Publishing Sync Test | ✅ | ✅ | ❌ | Skill-only - artifact-publisher + context-bridge |
-| CUJ-055 | Publishing Retry Logic Test | ✅ | ✅ | ❌ | Skill-only - artifact-publisher |
+| CUJ-051 | Artifact Publishing Validation | ✅ | ✅ | ❌ | Workflow-based - artifact-publisher |
+| CUJ-052 | Artifact Registry Migration Test | ✅ | ✅ | ❌ | Workflow-based |
+| CUJ-053 | Publishing Metadata Persistence Test | ✅ | ✅ | ❌ | Workflow-based - artifact-publisher |
+| CUJ-054 | Cross-Platform Publishing Sync Test | ✅ | ✅ | ❌ | Workflow-based - artifact-publisher + context-bridge |
+| CUJ-055 | Publishing Retry Logic Test | ✅ | ✅ | ❌ | Workflow-based - artifact-publisher |
+| CUJ-056 | Workflow Recovery Protocol Test | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
 | CUJ-057 | Plan Rating Validation | ✅ | ✅ | ❌ | Workflow-based - response-rater |
 | CUJ-058 | Error Recovery and Workflow Resilience | ✅ | ✅ | ❌ | Workflow-based - recovery |
 | CUJ-059 | Workflow Performance Optimization | ✅ | ✅ | ❌ | Workflow-based - performance-flow |
 | CUJ-060 | Cross-Platform CUJ Testing | ✅ | ✅ | ❌ | Workflow-based - context-bridge |
 | CUJ-061 | Artifact Publishing Workflow | ✅ | ✅ | ❌ | Workflow-based - artifact-publisher |
 | CUJ-062 | Skill Integration Validation | ✅ | ✅ | ❌ | Workflow-based - skill-manager |
+| CUJ-063 | Error Recovery and Checkpoint Restoration | ✅ | ❌ | ❌ | Workflow-based - recovery |
 
 ### Platform-Specific Notes
 
-**Claude-Only CUJs** (10 CUJs):
+**Claude-Only CUJs** (12 CUJs):
 - **CUJ-010**: Requires `api-contract-generator` skill (Cursor: use manual OpenAPI/Swagger generation)
 - **CUJ-024**: Requires `recovery` skill (Cursor: use manual incident response workflow)
 - **CUJ-027**: Requires `recovery` skill (Cursor: use manual recovery workflow)
@@ -135,29 +137,31 @@ This matrix shows which platforms support each CUJ:
 - **CUJ-045**: Requires `recovery` skill (Cursor: use manual artifact recovery)
 - **CUJ-047**: Requires `conflict-resolution` skill (Cursor: use manual conflict resolution)
 - **CUJ-050**: Requires `recovery` skill (Cursor: use manual end-to-end recovery)
+- **CUJ-056**: Requires `recovery` skill (Cursor: use manual recovery protocol)
+- **CUJ-063**: Requires `recovery` skill (Cursor: use manual checkpoint restoration)
 
 **Cursor-Only CUJs** (2 CUJs):
 - **CUJ-042**: Cursor subagent coordination and Plan Mode integration (Claude: N/A)
 - **CUJ-049**: Cursor Plan Mode deep integration (Claude: N/A)
 
-**Universal CUJs** (40 CUJs):
+**Universal CUJs** (48 CUJs):
 All other CUJs work on both Claude and Cursor platforms with equivalent functionality.
 
 **Factory Droid Compatibility**:
-Currently, 0 CUJs have explicit Factory support (`platform_compatibility.factory: true`). However, 42 CUJs may be runnable on Factory Droid with manual adaptation:
-- **Skill-only CUJs** (13 total): May work if skills are ported to Factory
+Currently, 0 CUJs have explicit Factory support (`platform_compatibility.factory: true`). However, 50 CUJs may be runnable on Factory Droid with manual adaptation:
+- **Skill-only CUJs** (10 total): May work if skills are ported to Factory
 - **Manual CUJs** (3 total): Require manual setup regardless of platform
-- **Workflow CUJs** (44 total): Require Factory workflow engine support
+- **Workflow CUJs** (49 total): Require Factory workflow engine support
 
-Factory native support is planned for Phase 2+. Current status: 0/59 CUJs with official Factory support.
+Factory native support is planned for Phase 2+. Current status: 0/62 CUJs with official Factory support.
 
 ### Compatibility Summary
 
 | Platform | Total CUJs Supported | Exclusive CUJs | Universal CUJs | Potentially Runnable |
 |----------|---------------------|----------------|----------------|---------------------|
-| **Claude** | 50/59 (85%) | 10 Claude-only | 40 universal | N/A |
-| **Cursor** | 42/59 (71%) | 2 Cursor-only | 40 universal | N/A |
-| **Factory** | 0/59 (0%) | 0 | 0 | 42 (with adaptation) |
+| **Claude** | 60/62 (97%) | 12 Claude-only | 48 universal | N/A |
+| **Cursor** | 50/62 (81%) | 2 Cursor-only | 48 universal | N/A |
+| **Factory** | 0/62 (0%) | 0 | 0 | 50 (with adaptation) |
 
 **Note**:
 - Factory Droid support is planned for future releases. Claude remains the primary platform with the most comprehensive CUJ coverage.
@@ -231,12 +235,17 @@ Factory native support is planned for Phase 2+. Current status: 0/59 CUJs with o
 - [CUJ-050: End-to-End Workflow Robustness](#cuj-050-end-to-end-workflow-robustness)
 - [CUJ-051: Orchestration Enforcement Gate Validation](#cuj-051-orchestration-enforcement-gate-validation)
 - [CUJ-052: Artifact Publishing Validation](#cuj-052-artifact-publishing-validation)
+- [CUJ-053: Publishing Metadata Persistence Test](#cuj-053-publishing-metadata-persistence-test)
+- [CUJ-054: Cross-Platform Publishing Sync Test](#cuj-054-cross-platform-publishing-sync-test)
+- [CUJ-055: Publishing Retry Logic Test](#cuj-055-publishing-retry-logic-test)
+- [CUJ-056: Workflow Recovery Protocol Test](#cuj-056-workflow-recovery-protocol-test)
 - [CUJ-057: Plan Rating Validation](#cuj-057-plan-rating-validation)
 - [CUJ-058: Error Recovery and Workflow Resilience](#cuj-058-error-recovery-and-workflow-resilience)
 - [CUJ-059: Workflow Performance Optimization](#cuj-059-workflow-performance-optimization)
 - [CUJ-060: Cross-Platform CUJ Testing](#cuj-060-cross-platform-cuj-testing)
 - [CUJ-061: Artifact Publishing Workflow](#cuj-061-artifact-publishing-workflow)
 - [CUJ-062: Skill Integration Validation](#cuj-062-skill-integration-validation)
+- [CUJ-063: Error Recovery and Checkpoint Restoration](#cuj-063-error-recovery-and-checkpoint-restoration)
 
 ## Quick Reference
 
@@ -291,16 +300,17 @@ Factory native support is planned for Phase 2+. Current status: 0/59 CUJs with o
 | CUJ-050 | End-to-End Workflow Robustness | "Test end-to-end workflow resilience" | Planner → Orchestrator → [All agents] | End-to-end resilience |
 | CUJ-051 | Orchestration Enforcement Gate Validation | "Test orchestration enforcement gates" | Orchestrator → Task Classifier → [All agents] | Enforcement gate validation |
 | CUJ-052 | Artifact Publishing Validation | "Test artifact publishing" | Planner → QA | Artifact publishing validation |
-| CUJ-053 | Artifact Registry Migration Test | "Test registry migration" | Planner → QA | Registry migration validation |
-| CUJ-054 | Publishing Metadata Persistence Test | "Test publishing persistence" | Planner → QA | Publishing persistence validation |
-| CUJ-055 | Cross-Platform Publishing Sync Test | "Test cross-platform sync" | Planner → QA | Cross-platform sync validation |
-| CUJ-056 | Publishing Retry Logic Test | "Test publishing retry" | Planner → QA | Retry logic validation |
+| CUJ-053 | Publishing Metadata Persistence Test | "Test publishing persistence" | Planner → QA | Publishing persistence validation |
+| CUJ-054 | Cross-Platform Publishing Sync Test | "Test cross-platform sync" | Planner → QA | Cross-platform sync validation |
+| CUJ-055 | Publishing Retry Logic Test | "Test publishing retry" | Planner → QA | Retry logic validation |
+| CUJ-056 | Workflow Recovery Protocol Test | "Test recovery protocol" | Planner → Orchestrator → QA | Stateless recovery validation |
 | CUJ-057 | Plan Rating Validation | "Test plan rating" | Planner → Orchestrator → QA | response-rater validation |
 | CUJ-058 | Error Recovery and Workflow Resilience | "Test workflow recovery" | Orchestrator → [All agents with fallbacks] | Recovery and resilience |
 | CUJ-059 | Workflow Performance Optimization | "Optimize workflow performance" | Planner → Performance Engineer → Architect → DevOps | Performance optimization |
 | CUJ-060 | Cross-Platform CUJ Testing | "Test CUJ across platforms" | Planner → QA → Cursor-Validator → Analyst | Cross-platform validation |
 | CUJ-061 | Artifact Publishing Workflow | "Publish artifacts to project feed" | Planner → Developer → QA → Technical Writer | Artifact publishing |
 | CUJ-062 | Skill Integration Validation | "Validate skill integration" | Planner → Developer → QA → Performance Engineer | Skill integration testing |
+| CUJ-063 | Error Recovery and Checkpoint Restoration | "Test error recovery" | Planner → Orchestrator → [All agents with fallbacks] | Checkpoint recovery |
 
 ## Skill-Only CUJ Execution
 
@@ -673,17 +683,18 @@ This table maps each CUJ to its execution mode (workflow file or skill-only), wo
 | CUJ-049 | manual-setup | null | null |
 | CUJ-050 | workflow | `.claude/workflows/enterprise-track.yaml` | null |
 | CUJ-051 | workflow | `.claude/workflows/brownfield-fullstack.yaml` | null |
-| CUJ-052 | skill-only | null | artifact-publisher |
-| CUJ-053 | workflow | `.claude/workflows/legacy-modernization-flow.yaml` | null |
-| CUJ-054 | skill-only | null | artifact-publisher |
-| CUJ-055 | skill-only | null | context-bridge |
-| CUJ-056 | skill-only | null | recovery |
+| CUJ-052 | workflow | `.claude/workflows/legacy-modernization-flow.yaml` | artifact-publisher |
+| CUJ-053 | workflow | `.claude/workflows/artifact-publishing-flow.yaml` | artifact-publisher |
+| CUJ-054 | workflow | `.claude/workflows/artifact-publishing-flow.yaml` | context-bridge |
+| CUJ-055 | workflow | `.claude/workflows/artifact-publishing-flow.yaml` | artifact-publisher |
+| CUJ-056 | workflow | `.claude/workflows/recovery-test-flow.yaml` | recovery |
 | CUJ-057 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | response-rater |
 | CUJ-058 | workflow | `.claude/workflows/enterprise-track.yaml` | recovery |
 | CUJ-059 | workflow | `.claude/workflows/performance-flow.yaml` | null |
 | CUJ-060 | workflow | `.claude/workflows/automated-enterprise-flow.yaml` | context-bridge |
 | CUJ-061 | workflow | `.claude/workflows/brownfield-fullstack.yaml` | artifact-publisher |
 | CUJ-062 | workflow | `.claude/workflows/automated-enterprise-flow.yaml` | skill-manager |
+| CUJ-063 | workflow | `.claude/workflows/recovery-test-flow.yaml` | recovery |
 
 **Notes**:
 - **skill-only**: CUJ executes via skill invocation without workflow
@@ -766,6 +777,8 @@ Certain CUJs require Claude-specific features that are not yet ported to other p
 - **CUJ-045** (Missing Artifact Recovery): Requires `recovery` skill
 - **CUJ-047** (Multi-Agent Conflict Resolution): Requires `conflict-resolution` skill
 - **CUJ-050** (End-to-End Robustness): Requires `recovery` skill
+- **CUJ-056** (Workflow Recovery Protocol): Requires `recovery` skill
+- **CUJ-063** (Error Recovery and Checkpoint Restoration): Requires `recovery` skill
 
 **Claude-Only Due to Agents**:
 - These CUJs use specialized agents that coordinate complex multi-step workflows requiring Claude-level reasoning
@@ -786,6 +799,8 @@ For CUJs that are Claude-only, Cursor users have the following alternatives:
 | **CUJ-045** (Missing Artifact Recovery) | Regenerate artifacts manually | Manually invoke agents to recreate missing artifacts |
 | **CUJ-047** (Multi-Agent Conflict) | Manual conflict resolution via debate | Use Cursor's AI Council feature to mediate agent disagreements |
 | **CUJ-050** (End-to-End Robustness) | Manual testing via Plan Mode | Use Cursor Plan Mode to manually execute end-to-end test scenarios |
+| **CUJ-056** (Workflow Recovery Protocol) | Manual recovery protocol via checkpoints | Load recovery protocol manually; validate state from file system |
+| **CUJ-063** (Error Recovery and Checkpoint Restoration) | Manual checkpoint restoration | Restore from checkpoint files manually; use fallback routing for agent failures |
 
 ### Factory Droid Compatibility
 

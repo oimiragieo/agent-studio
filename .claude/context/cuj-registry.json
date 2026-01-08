@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/cuj-registry.schema.json",
   "version": "1.0.0",
-  "generated": "2026-01-06T08:25:16.936Z",
+  "generated": "2026-01-08T03:51:02.315Z",
   "total_cujs": 60,
   "cujs": [
     {
@@ -35,8 +35,8 @@
       "name": "Rule Configuration",
       "description": "Auto-detect project tech stack and configure appropriate rules.",
       "category": "Onboarding & Setup",
-      "execution_mode": "skill-only",
-      "workflow": null,
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/manifest.yaml",
       "agents": [],
       "skills": [
         "rule-selector"
@@ -105,7 +105,9 @@
         "response-rater"
       ],
       "primary_skill": null,
-      "schemas": [],
+      "schemas": [
+        ".claude/schemas/plan.schema.json"
+      ],
       "triggers": [
         "I want to build a user dashboard",
         "Plan feature X",
@@ -1619,9 +1621,7 @@
         "response-rater"
       ],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/artifact-registry.schema.json"
-      ],
+      "schemas": [],
       "triggers": [
         "Test registry migration",
         "Validate run-manager migration",
@@ -1728,9 +1728,7 @@
         "response-rater"
       ],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/artifact-registry.schema.json"
-      ],
+      "schemas": [],
       "triggers": [
         "Test publishing retry logic",
         "Validate retry with backoff",
@@ -2001,47 +1999,25 @@
     {
       "id": "CUJ-063",
       "name": "Error Recovery and Checkpoint Restoration",
-      "description": "Test error recovery mechanisms including checkpoints, fallback routing, state preservation, and recovery documentation.",
-      "category": "Resilience Testing",
+      "description": "",
+      "category": "Testing & Validation",
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
-      "skills": [
-        "recovery",
-        "response-rater",
-        "optional-artifact-handler",
-        "conflict-resolution"
-      ],
+      "skills": [],
       "primary_skill": null,
       "schemas": [
         ".claude/schemas/checkpoint.schema.json",
-        ".claude/schemas/fallback-agents.schema.json",
-        ".claude/schemas/checkpoint-restoration-report.schema.json",
-        ".claude/schemas/multi-level-fallback-report.schema.json",
-        ".claude/schemas/full-recovery-report.schema.json",
-        ".claude/schemas/recovery-performance-metrics.schema.json",
-        ".claude/schemas/recovery-test-summary.schema.json"
+        ".claude/schemas/fallback-agents.schema.json"
       ],
-      "triggers": [
-        "Test error recovery",
-        "Test checkpoint restoration",
-        "Test fallback routing",
-        "Validate recovery mechanisms",
-        "Test resilience",
-        "Recovery testing"
-      ],
+      "triggers": [],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
         "factory": false
       },
-      "expected_outputs": [
-        "Checkpoint files: `.claude/context/runs/{{run_id}}/checkpoints/checkpoint-*.json`",
-        "Recovery reports: `.claude/context/runs/{{run_id}}/reports/*-report.json`",
-        "Performance metrics: `.claude/context/runs/{{run_id}}/reports/recovery-performance-metrics.json`",
-        "Test summary: `.claude/context/reports/error-recovery-implementation-report.md`"
-      ],
-      "estimated_duration": "30-45 minutes",
+      "expected_outputs": [],
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-063.md"
     }
   ]

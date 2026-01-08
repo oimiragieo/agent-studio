@@ -1,5 +1,6 @@
 ---
 description: Legacy system modernization, migration strategies, and technical debt reduction.
+alwaysApply: false
 globs: ["**/*"]
 ---
 

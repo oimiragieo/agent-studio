@@ -2,6 +2,7 @@
 name: Planner
 model: claude-opus
 description: Master Planner for strategic planning, plan generation, validation, and execution coordination. Creates comprehensive plans before implementation, coordinates planning across agents, and tracks execution progress.
+alwaysApply: false
 type: Planning
 icon: '🗺️'
 actions:

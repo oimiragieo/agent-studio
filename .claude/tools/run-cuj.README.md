@@ -102,7 +102,7 @@ Workflow: greenfield-fullstack.yaml
 pnpm cuj:list
 ```
 
-Shows a table of all 52 available CUJs with their IDs, names, execution modes, and workflows.
+Shows a table of all 60 available CUJs with their IDs, names, execution modes, and workflows.
 
 ### Example 3: Simulate Browser Testing
 

@@ -51,6 +51,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
     "ajv-formats": "^3.0.1",
+    "glob": "^13.0.0",
     "ws": "^8.14.0",
     "zod": "^3.22.0"
   },

@@ -1,5 +1,6 @@
 ---
 description: API design, REST/GraphQL/gRPC patterns, OpenAPI specs, and versioning strategies.
+alwaysApply: false
 globs: ["**/api/**", "**/routes/**", "**/*.openapi.*", "**/schema.graphql"]
 ---
 

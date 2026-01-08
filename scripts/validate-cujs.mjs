@@ -1,8 +1,17 @@
 #!/usr/bin/env node
 /**
- * CUJ Validation Script
- * Validates all Customer User Journey (CUJ) files against the standard template.
- * Ensures consistency, correct structure, and valid references.
+ * CUJ Validation Script - Static Validation
+ *
+ * PURPOSE: Static validation of CUJ markdown files
+ * - Validates CUJ file structure against template
+ * - Checks links and references (agents, skills, workflows, schemas)
+ * - Verifies execution mode consistency with CUJ-INDEX.md
+ * - Validates plan rating steps for workflow CUJs
+ *
+ * DOES NOT: Execute workflows, create artifacts, or mutate .claude/context/
+ *
+ * USE CASE: Pre-commit validation, CI/CD pipeline validation
+ * COMPLEMENTS: validate-cuj-dry-run.mjs (execution simulation), workflow_runner.js (actual execution)
  */
 
 import fs from 'fs/promises';
@@ -84,26 +93,29 @@ async function fileExists(filePath) {
  * Resolve relative path from CUJ directory
  */
 function resolvePath(relativePath, fromFile) {
+  // Strip fragment identifier (#anchor) before checking file existence
+  const pathWithoutFragment = relativePath.split('#')[0];
+
   // Handle different path formats
-  if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
-    return { type: 'url', path: relativePath, exists: true }; // Assume URLs exist
+  if (pathWithoutFragment.startsWith('http://') || pathWithoutFragment.startsWith('https://')) {
+    return { type: 'url', path: pathWithoutFragment, exists: true }; // Assume URLs exist
   }
-  
-  if (relativePath.startsWith('../')) {
+
+  if (pathWithoutFragment.startsWith('../')) {
     // Relative to CUJ directory
-    const resolved = path.resolve(CUJ_DIR, relativePath);
-    return { type: 'file', path: resolved, relative: relativePath };
-  } else if (relativePath.startsWith('./')) {
-    const resolved = path.resolve(path.dirname(fromFile), relativePath);
-    return { type: 'file', path: resolved, relative: relativePath };
-  } else if (relativePath.startsWith('/')) {
+    const resolved = path.resolve(CUJ_DIR, pathWithoutFragment);
+    return { type: 'file', path: resolved, relative: pathWithoutFragment };
+  } else if (pathWithoutFragment.startsWith('./')) {
+    const resolved = path.resolve(path.dirname(fromFile), pathWithoutFragment);
+    return { type: 'file', path: resolved, relative: pathWithoutFragment };
+  } else if (pathWithoutFragment.startsWith('/')) {
     // Absolute from repo root
-    const resolved = path.join(ROOT, relativePath);
-    return { type: 'file', path: resolved, relative: relativePath };
+    const resolved = path.join(ROOT, pathWithoutFragment);
+    return { type: 'file', path: resolved, relative: pathWithoutFragment };
   } else {
     // Assume relative to CUJ directory
-    const resolved = path.resolve(CUJ_DIR, relativePath);
-    return { type: 'file', path: resolved, relative: relativePath };
+    const resolved = path.resolve(CUJ_DIR, pathWithoutFragment);
+    return { type: 'file', path: resolved, relative: pathWithoutFragment };
   }
 }
 
@@ -425,7 +437,9 @@ async function validateCUJ(filePath) {
     // Validate links
     const links = extractLinks(content);
     for (const link of links) {
-      const resolved = resolvePath(link.url, filePath);
+      // Strip anchor fragments before resolving paths
+      const pathWithoutFragment = link.url.split('#')[0];
+      const resolved = resolvePath(pathWithoutFragment, filePath);
       if (resolved.type === 'file') {
         const exists = await fileExists(resolved.path);
         if (!exists) {
