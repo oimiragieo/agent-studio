@@ -6,6 +6,8 @@
  *   node .claude/tools/run-cuj.mjs --list
  *   node .claude/tools/run-cuj.mjs --simulate CUJ-005
  *   node .claude/tools/run-cuj.mjs --validate CUJ-005
+ *   node .claude/tools/run-cuj.mjs --no-cache CUJ-005   # Disable skill caching
+ *   node .claude/tools/run-cuj.mjs --cache-stats       # Show cache statistics
  */
 
 import fs from 'fs';
@@ -13,6 +15,7 @@ import path from 'path';
 import { spawn, exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import { promisify } from 'util';
+import { getCachedResult, setCachedResult, getCacheStats, pruneExpiredCache } from './skill-cache.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const execPromise = promisify(exec);
@@ -20,8 +23,73 @@ const registryPath = path.join(__dirname, '../context/cuj-registry.json');
 const projectRoot = path.join(__dirname, '../..');
 const analyticsPath = path.join(__dirname, '../context/analytics/cuj-performance.json');
 
+// Cache configuration
+const SKILL_CACHE_TTL_MS = 3600000; // 1 hour default
+const cacheEnabled = !process.argv.includes('--no-cache') && !process.env.NO_SKILL_CACHE;
+
 function loadRegistry() {
   return JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+}
+
+/**
+ * Execute a skill with caching support
+ * @param {string} skillName - Name of the skill to execute
+ * @param {Object} params - Skill parameters
+ * @param {Object} options - Execution options
+ * @param {boolean} options.cache - Whether to use caching (default: true)
+ * @param {number} options.ttlMs - Cache TTL in milliseconds
+ * @param {Function} options.executor - Function to execute the skill
+ * @returns {Promise<Object>} Skill execution result
+ */
+async function executeSkillWithCache(skillName, params, options = {}) {
+  const { cache = cacheEnabled, ttlMs = SKILL_CACHE_TTL_MS, executor } = options;
+
+  if (!executor || typeof executor !== 'function') {
+    throw new Error('executor function is required for skill execution');
+  }
+
+  // Check cache first
+  if (cache) {
+    const cached = getCachedResult(skillName, params, ttlMs);
+    if (cached) {
+      console.log(`  [CACHE HIT] ${skillName} (saved ~${(cached._cached_duration_ms || 0)}ms)`);
+      return { ...cached, _from_cache: true };
+    }
+    console.log(`  [CACHE MISS] ${skillName}`);
+  }
+
+  // Execute skill and measure time
+  const startTime = Date.now();
+  const result = await executor(skillName, params);
+  const duration = Date.now() - startTime;
+
+  // Cache successful results
+  if (cache && result && !result.error) {
+    setCachedResult(skillName, params, { ...result, _cached_duration_ms: duration });
+    console.log(`  [CACHED] ${skillName} (${duration}ms)`);
+  }
+
+  return { ...result, _from_cache: false, _duration_ms: duration };
+}
+
+/**
+ * Display cache statistics
+ */
+function showCacheStats() {
+  const stats = getCacheStats();
+  console.log('\n📊 Skill Cache Statistics:\n');
+  console.log(`  Files:        ${stats.files}`);
+  console.log(`  Total Size:   ${stats.totalSizeMB || '0.00'} MB`);
+  console.log(`  Oldest Entry: ${stats.oldest || 'N/A'}`);
+  console.log(`  Newest Entry: ${stats.newest || 'N/A'}`);
+
+  // Prune expired entries
+  const pruned = pruneExpiredCache(SKILL_CACHE_TTL_MS);
+  if (pruned > 0) {
+    console.log(`\n  Pruned ${pruned} expired entries`);
+  }
+
+  console.log('');
 }
 
 /**
@@ -435,6 +503,17 @@ if (args[0] === '--list') {
   simulateCUJ(args[1]);
 } else if (args[0] === '--validate') {
   validateCUJ(args[1]);
+} else if (args[0] === '--cache-stats') {
+  showCacheStats();
+} else if (args[0] === '--no-cache') {
+  // --no-cache flag should be followed by CUJ ID
+  if (args[1]) {
+    console.log('🚫 Skill caching disabled for this run\n');
+    runCUJ(args[1]);
+  } else {
+    console.error('Error: CUJ ID required after --no-cache');
+    process.exit(1);
+  }
 } else {
   runCUJ(args[0]);
 }
