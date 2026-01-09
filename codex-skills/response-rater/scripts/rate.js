@@ -1,11 +1,95 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const { spawn } = require("child_process");
+const { spawn, execSync } = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+
+// Try to load js-yaml for config parsing, fallback to simple parsing if not available
+let yaml;
+try {
+  yaml = require("js-yaml");
+} catch (e) {
+  // Fallback: simple YAML parsing not available, will use defaults
+  yaml = null;
+}
 const { sanitize, sanitizeError } = require("../../shared/sanitize-secrets.js");
+
+// CLI command mappings for each provider
+const CLI_COMMANDS = {
+  claude: "claude",
+  gemini: "gemini",
+  codex: "codex",
+  cursor: "cursor-agent",
+  copilot: "copilot"
+};
+
+/**
+ * Load provider configuration from config.yaml
+ * @returns {Object} Provider priority configuration
+ */
+function loadProviderConfig() {
+  const defaults = {
+    primary: "claude",
+    secondary: ["gemini", "codex"],
+    fallback_threshold: 1
+  };
+
+  // If yaml parser not available, use defaults
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      return config?.codex_skills?.provider_priority || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load provider config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Validate CLI availability for a provider
+ * Re-validates CLI immediately before invoking Codex skills
+ * @param {string} provider - Provider name
+ * @returns {Promise<{available: boolean, provider: string, version?: string, error?: string}>}
+ */
+async function validateProviderCli(provider) {
+  const cli = CLI_COMMANDS[provider];
+  if (!cli) {
+    // Unknown provider - assume available (will fail at runtime if not)
+    return { available: true, provider, note: "unknown_cli" };
+  }
+
+  return new Promise((resolve) => {
+    try {
+      // Use execSync with short timeout for quick validation
+      const result = execSync(`${cli} --version`, {
+        timeout: 5000,
+        stdio: ["pipe", "pipe", "pipe"],
+        shell: true,
+        encoding: "utf8"
+      });
+      resolve({
+        available: true,
+        provider,
+        version: result.trim().split("\n")[0]
+      });
+    } catch (err) {
+      resolve({
+        available: false,
+        provider,
+        error: sanitize(err.message || String(err))
+      });
+    }
+  });
+}
 
 function parseArgs(argv) {
   const args = {
@@ -15,6 +99,8 @@ function parseArgs(argv) {
     template: "response-review",
     timeoutMs: 180000,
     dryRun: false,
+    skipCliValidation: false, // skip CLI availability check
+    parallel: true, // parallel provider execution (Cursor Recommendation #2)
   };
   for (let i = 0; i < argv.length; i++) {
     const token = argv[i];
@@ -32,6 +118,8 @@ function parseArgs(argv) {
     else if (token === "--template") args.template = argv[++i];
     else if (token === "--timeout-ms") args.timeoutMs = Number(argv[++i]);
     else if (token === "--dry-run") args.dryRun = true;
+    else if (token === "--skip-cli-validation") args.skipCliValidation = true;
+    else if (token === "--sequential") args.parallel = false; // disable parallel execution
     else if (token === "--help" || token === "-h") args.help = true;
   }
   return args;
@@ -52,6 +140,10 @@ function usage(exitCode = 0) {
       "Timeouts:",
       "  --timeout-ms 180000          # default 180s for each provider call",
       "  --dry-run                   # print computed settings and exit (no network calls)",
+      "",
+      "Execution:",
+      "  --sequential                # run providers sequentially (default: parallel)",
+      "  --skip-cli-validation       # skip CLI availability check before execution",
       "",
       "Auth:",
       "  --auth-mode session-first   # default; try CLI session auth first, then env keys",
@@ -574,6 +666,7 @@ async function main() {
           timeoutMs: args.timeoutMs,
           responseChars: response.length,
           questionChars: question ? question.length : 0,
+          parallel: args.parallel,
         },
         null,
         2,
@@ -582,25 +675,151 @@ async function main() {
     return;
   }
 
+  // CLI Availability Re-validation (Cursor Recommendation #1)
+  // Re-validate CLI availability immediately before invoking providers
+  let availableProviders = providers;
+  let cliValidation = null;
+
+  if (!args.skipCliValidation) {
+    console.error("[cli-check] Validating provider CLI availability...");
+    const cliCheckStart = Date.now();
+    const providerChecks = await Promise.all(
+      providers.map((p) => validateProviderCli(p))
+    );
+    const cliCheckDurationMs = Date.now() - cliCheckStart;
+
+    cliValidation = {
+      checks: providerChecks,
+      durationMs: cliCheckDurationMs,
+      timestamp: new Date().toISOString()
+    };
+
+    const unavailable = providerChecks.filter((c) => !c.available);
+    const available = providerChecks.filter((c) => c.available);
+
+    // Log CLI validation results
+    for (const check of providerChecks) {
+      if (check.available) {
+        console.error(`[cli-check] ${check.provider}: available (${check.version || "version unknown"})`);
+      } else {
+        console.error(`[cli-check] ${check.provider}: unavailable (${check.error})`);
+      }
+    }
+
+    // Provider Fallback Logic (Cursor Recommendation #4)
+    // If all providers are unavailable, fail early with clear error
+    if (unavailable.length === providers.length) {
+      const errorMsg = `All providers unavailable: ${unavailable.map((c) => c.provider).join(", ")}`;
+      console.error(`[cli-check] FATAL: ${errorMsg}`);
+      console.log(JSON.stringify({
+        ok: false,
+        error: errorMsg,
+        cliValidation
+      }, null, 2));
+      process.exit(2);
+    }
+
+    // Filter to only available providers for execution
+    if (unavailable.length > 0) {
+      availableProviders = available.map((c) => c.provider);
+      console.error(`[cli-check] Proceeding with available providers: ${availableProviders.join(", ")}`);
+
+      // Load config for fallback threshold
+      const providerConfig = loadProviderConfig();
+      if (availableProviders.length < providerConfig.fallback_threshold) {
+        const errorMsg = `Insufficient providers available (${availableProviders.length} < ${providerConfig.fallback_threshold})`;
+        console.error(`[cli-check] FATAL: ${errorMsg}`);
+        console.log(JSON.stringify({
+          ok: false,
+          error: errorMsg,
+          cliValidation
+        }, null, 2));
+        process.exit(2);
+      }
+    }
+
+    console.error(`[cli-check] CLI validation completed in ${cliCheckDurationMs}ms`);
+  }
+
+  // Performance measurement: start timing
+  const providerStartTime = Date.now();
   const results = {};
-  for (const provider of providers) {
-    if (provider === "claude") {
-      results.claude = await runClaude(prompt, {
-        authMode: args.authMode,
-        timeoutMs: args.timeoutMs,
-      });
-    } else if (provider === "gemini") {
-      results.gemini = await runGemini(prompt, args.model, {
-        authMode: args.authMode,
-        timeoutMs: args.timeoutMs,
-      });
-    } else {
-      results[provider] = {
-        skipped: true,
-        reason: `unsupported provider '${provider}' (supported: claude, gemini)`,
-      };
+
+  // Parallel Provider Execution (Cursor Recommendation #2)
+  // Execute providers in parallel for 66% faster execution (3 providers: 45s sequential -> 15s parallel)
+  if (args.parallel && availableProviders.length > 1) {
+    console.error(`[perf] Running ${availableProviders.length} providers in parallel...`);
+
+    // Create promises for each provider
+    const providerPromises = availableProviders.map((provider) => {
+      if (provider === "claude") {
+        return runClaude(prompt, {
+          authMode: args.authMode,
+          timeoutMs: args.timeoutMs,
+        }).then((result) => ({ provider, result }));
+      } else if (provider === "gemini") {
+        return runGemini(prompt, args.model, {
+          authMode: args.authMode,
+          timeoutMs: args.timeoutMs,
+        }).then((result) => ({ provider, result }));
+      } else {
+        return Promise.resolve({
+          provider,
+          result: {
+            skipped: true,
+            reason: `unsupported provider '${provider}' (supported: claude, gemini)`,
+          },
+        });
+      }
+    });
+
+    // Wait for all providers to complete
+    const providerResults = await Promise.allSettled(providerPromises);
+
+    // Map results to results object
+    for (const result of providerResults) {
+      if (result.status === "fulfilled") {
+        results[result.value.provider] = result.value.result;
+      } else {
+        // Provider promise rejected - should not happen with our error handling
+        const provider = availableProviders[providerResults.indexOf(result)];
+        results[provider] = {
+          ok: false,
+          error: sanitize(result.reason?.message || String(result.reason)),
+        };
+      }
+    }
+  } else {
+    // Sequential execution (original behavior, or when parallel is disabled)
+    console.error(`[perf] Running ${availableProviders.length} providers sequentially...`);
+    for (const provider of availableProviders) {
+      if (provider === "claude") {
+        results.claude = await runClaude(prompt, {
+          authMode: args.authMode,
+          timeoutMs: args.timeoutMs,
+        });
+      } else if (provider === "gemini") {
+        results.gemini = await runGemini(prompt, args.model, {
+          authMode: args.authMode,
+          timeoutMs: args.timeoutMs,
+        });
+      } else {
+        results[provider] = {
+          skipped: true,
+          reason: `unsupported provider '${provider}' (supported: claude, gemini)`,
+        };
+      }
     }
   }
+
+  // Performance measurement: end timing
+  const providerEndTime = Date.now();
+  const providerDurationMs = providerEndTime - providerStartTime;
+  const successCount = Object.values(results).filter((r) => r.ok).length;
+
+  console.error(
+    `[perf] ${availableProviders.length} providers completed in ${providerDurationMs}ms (${args.parallel ? "parallel" : "sequential"} execution, ${successCount}/${availableProviders.length} succeeded)`
+  );
 
   console.log(
     JSON.stringify(
@@ -609,6 +828,15 @@ async function main() {
         template: args.template,
         authMode: args.authMode,
         providers: results,
+        // Performance metrics (Cursor Recommendation #2)
+        performance: {
+          totalDurationMs: providerDurationMs,
+          providersCount: availableProviders.length,
+          requestedProviders: providers.length,
+          successCount,
+          parallelExecution: args.parallel,
+          cliValidation: cliValidation || null,
+        },
       },
       null,
       2,

@@ -1,12 +1,96 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const { spawn } = require("child_process");
+const { spawn, execSync } = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+
+// Try to load js-yaml for config parsing, fallback to simple parsing if not available
+let yaml;
+try {
+  yaml = require("js-yaml");
+} catch (e) {
+  // Fallback: simple YAML parsing not available, will use defaults
+  yaml = null;
+}
 const { withRetry } = require("../../shared/retry-utils.js");
 const { sanitize, sanitizeError } = require("../../shared/sanitize-secrets.js");
+
+// CLI command mappings for each provider
+const CLI_COMMANDS = {
+  claude: "claude",
+  gemini: "gemini",
+  codex: "codex",
+  cursor: "cursor-agent",
+  copilot: "copilot"
+};
+
+/**
+ * Load provider configuration from config.yaml
+ * @returns {Object} Provider priority configuration
+ */
+function loadProviderConfig() {
+  const defaults = {
+    primary: "claude",
+    secondary: ["gemini", "codex"],
+    fallback_threshold: 1
+  };
+
+  // If yaml parser not available, use defaults
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      return config?.codex_skills?.provider_priority || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load provider config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Validate CLI availability for a provider
+ * Re-validates CLI immediately before invoking Codex skills
+ * @param {string} provider - Provider name
+ * @returns {Promise<{available: boolean, provider: string, version?: string, error?: string}>}
+ */
+async function validateProviderCli(provider) {
+  const cli = CLI_COMMANDS[provider];
+  if (!cli) {
+    // Unknown provider - assume available (will fail at runtime if not)
+    return { available: true, provider, note: "unknown_cli" };
+  }
+
+  return new Promise((resolve) => {
+    try {
+      // Use execSync with short timeout for quick validation
+      const result = execSync(`${cli} --version`, {
+        timeout: 5000,
+        stdio: ["pipe", "pipe", "pipe"],
+        shell: true,
+        encoding: "utf8"
+      });
+      resolve({
+        available: true,
+        provider,
+        version: result.trim().split("\n")[0]
+      });
+    } catch (err) {
+      resolve({
+        available: false,
+        provider,
+        error: sanitize(err.message || String(err))
+      });
+    }
+  });
+}
 
 // JSON Schema validation (Ajv or simple fallback)
 let ajv, validate;
@@ -24,39 +108,55 @@ try {
 
 /**
  * Validate output against schema
- * Warns if validation fails but doesn't block execution
+ * Supports both warning mode (default) and blocking mode
+ * @param {Object} output - The output object to validate
+ * @param {string} mode - Validation mode: 'warning' (default) or 'blocking'
+ * @returns {Object} Validated output with _validation field
+ * @throws {Error} In blocking mode, throws if validation fails
  */
-function validateOutput(output) {
+function validateOutput(output, mode = "warning") {
   if (!validate) {
     // Validation not available - no Ajv or no schema
     return {
       ...output,
-      _validation: { valid: false, reason: "validator_unavailable" }
+      _validation: { valid: false, reason: "validator_unavailable", mode }
     };
   }
 
   const valid = validate(output);
   if (!valid) {
+    const errors = validate.errors || [];
     console.warn("⚠️  Output validation failed:");
-    (validate.errors || []).forEach((error, index) => {
+    errors.forEach((error, index) => {
       console.warn(`   ${index + 1}. ${error.instancePath || "/"}: ${error.message}`);
       if (error.params) {
         console.warn(`      params: ${JSON.stringify(error.params)}`);
       }
     });
+
+    // In blocking mode, throw an error to fail fast
+    if (mode === "blocking") {
+      const errorSummary = errors
+        .slice(0, 5)
+        .map((e) => `${e.instancePath || "/"}: ${e.message}`)
+        .join("; ");
+      throw new Error(`Schema validation failed (blocking mode): ${errorSummary}`);
+    }
+
     return {
       ...output,
       _validation: {
         valid: false,
-        errors: validate.errors,
-        errorCount: validate.errors ? validate.errors.length : 0
+        errors,
+        errorCount: errors.length,
+        mode
       }
     };
   }
 
   return {
     ...output,
-    _validation: { valid: true }
+    _validation: { valid: true, mode }
   };
 }
 
@@ -75,6 +175,8 @@ function parseArgs(argv) {
     strictJsonOnly: false,
     ci: false,
     dryRun: false,
+    validationMode: "warning", // warning | blocking
+    skipCliValidation: false, // skip CLI availability check
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -92,6 +194,8 @@ function parseArgs(argv) {
     else if (t === "--strict-json-only") args.strictJsonOnly = true;
     else if (t === "--ci") args.ci = true;
     else if (t === "--dry-run") args.dryRun = true;
+    else if (t === "--validation-mode") args.validationMode = argv[++i];
+    else if (t === "--skip-cli-validation") args.skipCliValidation = true;
     else if (t === "--help" || t === "-h") args.help = true;
   }
 
@@ -121,6 +225,11 @@ function usage(exitCode = 0) {
       "Synthesis:",
       "  --no-synthesis (skip final dedupe/synthesis step)",
       "  --synthesize-with <provider> (default: first provider)",
+      "",
+      "Validation:",
+      "  --validation-mode warning (default): log validation errors but continue",
+      "  --validation-mode blocking: fail fast if schema validation fails",
+      "  --skip-cli-validation: skip CLI availability check (use when CLIs are known to be available)",
       "",
       "Safety:",
       "  --dry-run (no network calls; prints collected diff stats and exits)",
@@ -516,13 +625,90 @@ async function main() {
     process.exit(0);
   }
 
+  // CLI Availability Re-validation (Cursor Recommendation #1)
+  // Re-validate CLI availability immediately before invoking providers
+  // This prevents cryptic failures when CLIs become unavailable during execution
+  let availableProviders = providers;
+  let cliValidation = null;
+
+  if (!args.skipCliValidation) {
+    console.error("[cli-check] Validating provider CLI availability...");
+    const cliCheckStart = Date.now();
+    const providerChecks = await Promise.all(
+      providers.map((p) => validateProviderCli(p))
+    );
+    const cliCheckDurationMs = Date.now() - cliCheckStart;
+
+    cliValidation = {
+      checks: providerChecks,
+      durationMs: cliCheckDurationMs,
+      timestamp: new Date().toISOString()
+    };
+
+    const unavailable = providerChecks.filter((c) => !c.available);
+    const available = providerChecks.filter((c) => c.available);
+
+    // Log CLI validation results
+    for (const check of providerChecks) {
+      if (check.available) {
+        console.error(`[cli-check] ${check.provider}: available (${check.version || "version unknown"})`);
+      } else {
+        console.error(`[cli-check] ${check.provider}: unavailable (${check.error})`);
+      }
+    }
+
+    // Provider Fallback Logic (Cursor Recommendation #4)
+    // If all providers are unavailable, fail early with clear error
+    if (unavailable.length === providers.length) {
+      const errorMsg = `All providers unavailable: ${unavailable.map((c) => c.provider).join(", ")}`;
+      console.error(`[cli-check] FATAL: ${errorMsg}`);
+
+      if (args.strictJsonOnly || args.ci) {
+        console.log(JSON.stringify({
+          ok: false,
+          mode: "strict-json-only",
+          error: errorMsg,
+          cliValidation
+        }, null, 2));
+        process.exit(2);
+      }
+      throw new Error(errorMsg);
+    }
+
+    // Filter to only available providers for execution
+    if (unavailable.length > 0) {
+      availableProviders = available.map((c) => c.provider);
+      console.error(`[cli-check] Proceeding with available providers: ${availableProviders.join(", ")}`);
+
+      // Load config for fallback threshold
+      const providerConfig = loadProviderConfig();
+      if (availableProviders.length < providerConfig.fallback_threshold) {
+        const errorMsg = `Insufficient providers available (${availableProviders.length} < ${providerConfig.fallback_threshold})`;
+        console.error(`[cli-check] FATAL: ${errorMsg}`);
+
+        if (args.strictJsonOnly || args.ci) {
+          console.log(JSON.stringify({
+            ok: false,
+            mode: "strict-json-only",
+            error: errorMsg,
+            cliValidation
+          }, null, 2));
+          process.exit(2);
+        }
+        throw new Error(errorMsg);
+      }
+    }
+
+    console.error(`[cli-check] CLI validation completed in ${cliCheckDurationMs}ms`);
+  }
+
   // Performance measurement: start timing
   const providerStartTime = Date.now();
 
   // Parallel execution of provider calls using Promise.allSettled()
   // This reduces total time from sum(provider_times) to max(provider_times)
   // Each provider still has independent retry logic (up to 3 attempts)
-  const providerPromises = providers.map((p) => {
+  const providerPromises = availableProviders.map((p) => {
     if (p === "claude") return runClaude(prompt, args);
     if (p === "gemini") return runGemini(prompt, args);
     if (p === "copilot") return runCopilot(prompt, args);
@@ -541,7 +727,7 @@ async function main() {
     }
     // Rejected promise - provider threw an unexpected error
     return {
-      provider: providers[index],
+      provider: availableProviders[index],
       ok: false,
       stdout: "",
       stderr: result.reason?.message || result.reason?.stderr || String(result.reason),
@@ -556,7 +742,7 @@ async function main() {
 
   // Log performance metrics (useful for debugging and optimization tracking)
   console.error(
-    `[perf] ${providers.length} providers completed in ${providerDurationMs}ms (parallel execution, ${successCount}/${providers.length} succeeded)`
+    `[perf] ${availableProviders.length} providers completed in ${providerDurationMs}ms (parallel execution, ${successCount}/${availableProviders.length} succeeded)`
   );
 
   const parsed = perProvider.map((r) => {
@@ -581,13 +767,15 @@ async function main() {
         providerDurationMs,
         synthesisDurationMs: 0,
         totalDurationMs: providerDurationMs,
-        providersCount: providers.length,
+        providersCount: availableProviders.length,
+        requestedProviders: providers.length,
         successCount,
         parallelExecution: true,
+        cliValidation: cliValidation || null,
       },
     });
-    // Validate output before returning
-    const validatedReport = validateOutput(report);
+    // Validate output before returning (use blocking mode in CI)
+    const validatedReport = validateOutput(report, args.validationMode);
     console.log(JSON.stringify(validatedReport, null, 2));
     process.exit(validatedReport.ok ? 0 : 2);
   }
@@ -596,7 +784,8 @@ async function main() {
   let synthesisDurationMs = 0;
   if (args.synthesize) {
     const synthesisStartTime = Date.now();
-    const synthProvider = args.synthesizeWith || providers[0];
+    // Use first available provider for synthesis if synthesizeWith is not specified
+    const synthProvider = args.synthesizeWith || availableProviders[0];
     const synthPrompt = [
       "You are synthesizing multiple independent AI code review JSON outputs into a single deduped report.",
       "Prefer the safest interpretation when there is disagreement; keep usability in mind for low/medium issues.",
@@ -641,7 +830,7 @@ async function main() {
     perProvider: parsed,
     synthesis: synthesized
       ? {
-          provider: args.synthesizeWith || providers[0],
+          provider: args.synthesizeWith || availableProviders[0],
           ok: synthesized.ok,
           stderr: synthesized.stderr,
           ...synthesizedExtracted,
@@ -652,18 +841,21 @@ async function main() {
       providerDurationMs,
       synthesisDurationMs,
       totalDurationMs,
-      providersCount: providers.length,
+      providersCount: availableProviders.length,
+      requestedProviders: providers.length,
       successCount,
       parallelExecution: true,
       // Estimated sequential time (for comparison)
-      estimatedSequentialMs: providerDurationMs * providers.length,
+      estimatedSequentialMs: providerDurationMs * availableProviders.length,
       // Estimated time saved through parallelization
-      estimatedTimeSavedMs: Math.max(0, (providerDurationMs * providers.length) - providerDurationMs),
+      estimatedTimeSavedMs: Math.max(0, (providerDurationMs * availableProviders.length) - providerDurationMs),
+      // CLI validation info (Cursor Recommendation #1)
+      cliValidation: cliValidation || null,
     },
   };
 
-  // Validate output before returning
-  const validatedOutput = validateOutput(finalOutput);
+  // Validate output before returning (Cursor Recommendation #3: support blocking mode)
+  const validatedOutput = validateOutput(finalOutput, args.validationMode);
   console.log(JSON.stringify(validatedOutput, null, 2));
 }
 
