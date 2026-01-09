@@ -1,6 +1,7 @@
 ---
 name: doc-generator
 description: Generates comprehensive documentation from code, APIs, and specifications. Creates API documentation, developer guides, architecture docs, and user manuals with examples and tutorials.
+model: sonnet
 allowed-tools: read, write, glob, search, codebase_search
 version: 1.0
 best_practices:

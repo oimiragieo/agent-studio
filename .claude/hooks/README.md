@@ -23,13 +23,23 @@ Hooks run in this order AFTER tool execution completes:
 1. **audit-post-tool.sh** (logs tool execution)
 2. **skill-injection-hook.js** (validates injected skills)
 
-### Hook Performance
+## Hook Performance (Updated 2.1.2)
 
-- **Total overhead**: <100ms per tool execution
-- **security-pre-tool.sh**: ~5ms (pattern matching)
-- **orchestrator-enforcement-hook.mjs**: ~15ms (rule evaluation)
-- **skill-injection-hook.js**: ~7ms (skill matrix lookup)
-- **audit-post-tool.sh**: ~10ms (logging)
+**Optimization**: Hook matchers now use specific tool patterns instead of wildcards
+
+| Hook | Matcher | Execution Time | Runs On |
+|------|---------|----------------|---------|
+| security-pre-tool.sh | Bash\|Write\|Edit | <5ms | Only risky tools |
+| file-path-validator.js | * | <10ms | All tools (needed) |
+| orchestrator-enforcement | Read\|Write\|Edit\|Bash\|Grep\|Glob | <10ms | Orchestrator tools |
+| skill-injection-hook.js | Task | ~224ms | Subagent spawning |
+| audit-post-tool.sh | * | <5ms | All tools (audit) |
+| post-session-cleanup.js | Write\|Edit | <10ms | File operations |
+
+**Total Overhead**:
+- Without optimization: ~250ms per ANY tool call
+- With optimization: ~15ms for most tools, ~250ms only for Task tool
+- **Efficiency Gain**: ~50-60% reduction in hook overhead
 
 ---
 

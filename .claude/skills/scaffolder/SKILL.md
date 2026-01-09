@@ -2,6 +2,7 @@
 name: scaffolder
 description: Generates boilerplate code following loaded rules. Creates new components, modules, APIs, and features that automatically comply with your coding standards. Extracts patterns from rules and applies them consistently.
 context:fork: true
+model: sonnet
 allowed-tools: read, write, glob, search, codebase_search
 version: 2.1
 executable: .claude/skills/scaffolder/scripts/scaffold.mjs

@@ -53,6 +53,33 @@ tags:
 - `context:fork` (boolean): If true, skill can be automatically injected into subagent contexts via skill-injection-hook.js. Reduces subagent context by 80% while maintaining functionality.
 - `model` (string): Optimal model for this skill (haiku for lightweight tasks, sonnet for general, opus for complex reasoning). Helps router select appropriate agents.
 
+### Model Affinity (2.1.2+)
+
+Skills can specify their preferred model for optimal performance and cost:
+
+```yaml
+---
+name: rule-auditor
+model: haiku  # Fast, cheap validation
+---
+```
+
+**Model Selection Guidelines**:
+- **haiku**: Simple validation, fast execution, low cost (3 skills)
+- **sonnet**: Balanced implementation, moderate complexity (7 skills)
+- **opus**: Critical thinking, complex planning, high quality (2 skills)
+
+**12 skills currently have model affinity assigned:**
+- **Haiku** (3): rule-auditor, code-style-validator, commit-validator
+- **Sonnet** (7): scaffolder, test-generator, doc-generator, api-contract-generator, dependency-analyzer, diagram-generator, pdf-generator
+- **Opus** (2): plan-generator, response-rater
+
+**Benefits**:
+- Faster execution for lightweight validation tasks (haiku)
+- Better quality and reasoning for complex generation (opus)
+- Optimized cost per skill type
+- Router can select appropriate model based on skill needs
+
 ### Count
 
 **108 Agent Studio Skills** covering:

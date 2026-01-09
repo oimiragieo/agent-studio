@@ -2,6 +2,7 @@
 name: test-generator
 description: Generates test code from specifications, components, and API endpoints. Creates unit tests, integration tests, and E2E tests following project testing patterns and conventions.
 context:fork: true
+model: sonnet
 allowed-tools: read, write, glob, search, codebase_search
 version: 1.0
 best_practices:

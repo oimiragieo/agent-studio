@@ -791,6 +791,36 @@ See `.claude/docs/cujs/CUJ-INDEX.md` for the complete index and individual CUJ f
 - Validates against Conventional Commits format
 - Returns pass/fail with suggestions if invalid
 
+## Slash Commands (2.1.2+)
+
+Quick access to frequently-used skills and workflows via slash commands.
+
+### Available Commands
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/rule-auditor` | Audit code against rules | `/rule-auditor src/` |
+| `/rate-plan` | Rate plan quality | `/rate-plan plan.md` |
+| `/generate-tests` | Generate test code | `/generate-tests Button.tsx` |
+| `/generate-docs` | Generate documentation | `/generate-docs api/` |
+| `/validate-security` | Security validation | `/validate-security auth/` |
+
+### Usage
+
+Simply type the command in Claude Code:
+```
+/rule-auditor src/components/
+```
+
+For detailed help on any command:
+```
+/rule-auditor --help
+```
+
+See `.claude/commands/` for all available commands.
+
+---
+
 ## Troubleshooting
 
 ### Workflow Issues
@@ -1181,6 +1211,11 @@ See `.claude/docs/ENTERPRISE_FEATURES.md` for complete enterprise feature docume
 | `/mobile` | Mobile development | `/mobile` |
 | `/incident` | Incident response | `/incident` |
 | `/ui-perfection` | UI perfection loop | `/ui-perfection --component Dashboard.tsx --score 98` |
+| `/rule-auditor` | Audit code against rules | `/rule-auditor src/` |
+| `/rate-plan` | Rate plan quality | `/rate-plan plan.md` |
+| `/generate-tests` | Generate test code | `/generate-tests Button.tsx` |
+| `/generate-docs` | Generate documentation | `/generate-docs api/` |
+| `/validate-security` | Security validation | `/validate-security auth/` |
 
 ### All Hooks
 

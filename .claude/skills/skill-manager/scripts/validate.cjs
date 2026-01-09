@@ -30,6 +30,13 @@ const ALLOWED_FRONTMATTER_KEYS = new Set([
   "templates",
   "best_practices",
   "error_handling",
+  "context:fork",      // Phase 2.1.2: Allow skill forking
+  "model",             // Phase 2.1.2: Preferred model
+  "executable",        // Path to executable script
+  "test_suite",        // Path to test script
+  "category",          // Skill category
+  "compatible_versions", // Compatible versions
+  "min_required_version", // Minimum required version
 ]);
 
 function parseArgs(argv) {
@@ -81,8 +88,8 @@ function parseYamlFrontmatter(content) {
   let inMultiline = false;
 
   for (const line of lines) {
-    // Check for key: value
-    const keyMatch = line.match(/^([a-z-]+):\s*(.*)$/i);
+    // Check for key: value (allow colons in key names like context:fork)
+    const keyMatch = line.match(/^([a-z_:-]+):\s*(.*)$/i);
     if (keyMatch) {
       // Save previous multiline if any
       if (currentKey && inMultiline) {

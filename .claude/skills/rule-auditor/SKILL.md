@@ -2,6 +2,7 @@
 name: rule-auditor
 description: Validates code against currently loaded rules and reports compliance violations. Supports auto-fixing violations with confirmation, dry-run mode, and automatic backups. Use after implementing features, during code review, or to ensure coding standards are followed. Provides actionable feedback with line-by-line issues and suggested fixes.
 context:fork: true
+model: haiku
 allowed-tools: read, grep, glob, search, codebase_search, edit, write
 version: 3.1
 executable: scripts/audit.mjs

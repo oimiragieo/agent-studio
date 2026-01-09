@@ -444,12 +444,27 @@ function validateConfig() {
           if (parsed.name && parsed.name !== name) {
             warnings.push(`Skill ${name}: Frontmatter name "${parsed.name}" doesn't match directory name`);
           }
-          
+
+          // Validate context:fork field (Phase 2.1.2)
+          if (parsed['context:fork'] !== undefined) {
+            if (typeof parsed['context:fork'] !== 'boolean') {
+              errors.push(`Skill ${name}: context:fork must be boolean, got ${typeof parsed['context:fork']}`);
+            }
+          }
+
+          // Validate model field (Phase 2.1.2)
+          if (parsed.model !== undefined) {
+            const validModels = ['haiku', 'sonnet', 'opus'];
+            if (!validModels.includes(parsed.model)) {
+              errors.push(`Skill ${name}: model must be one of: ${validModels.join(', ')}, got '${parsed.model}'`);
+            }
+          }
+
           // Check template references if present
           if (parsed.templates && Array.isArray(parsed.templates)) {
             // Templates are just type names, not file paths, so no validation needed
           }
-          
+
           console.log(`  ✓ Skill validated: ${name}`);
         } catch (yamlError) {
           errors.push(`Skill ${name}: Invalid YAML frontmatter - ${yamlError.message}`);

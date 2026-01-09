@@ -1,6 +1,7 @@
 ---
 name: plan-generator
 description: Creates structured plans from requirements. Generates comprehensive plans with steps, dependencies, risks, and success criteria. Coordinates with specialist agents for planning input and validates plan completeness.
+model: opus
 allowed-tools: read, write, glob, search, codebase_search, Task
 version: 1.0
 best_practices:
