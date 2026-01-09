@@ -10,10 +10,12 @@
 
 import fs from 'fs';
 import path from 'path';
-import { spawn } from 'child_process';
+import { spawn, exec } from 'child_process';
 import { fileURLToPath } from 'url';
+import { promisify } from 'util';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const execPromise = promisify(exec);
 const registryPath = path.join(__dirname, '../context/cuj-registry.json');
 const projectRoot = path.join(__dirname, '../..');
 const analyticsPath = path.join(__dirname, '../context/analytics/cuj-performance.json');
@@ -41,10 +43,37 @@ function findSkillPath(skillName) {
 }
 
 /**
+ * Check if a CLI tool is available
+ * @param {string} cli - CLI tool name (e.g., 'claude', 'gemini')
+ * @returns {Promise<Object>} - { available: boolean, version?: string, error?: string }
+ */
+async function checkCliAvailability(cli) {
+  try {
+    // Windows-friendly: use shell: true to handle .cmd shims
+    const result = await execPromise(`${cli} --version`, {
+      timeout: 5000,
+      shell: true,
+      windowsHide: true
+    });
+    return {
+      available: true,
+      version: result.stdout.trim() || result.stderr.trim()
+    };
+  } catch (error) {
+    return {
+      available: false,
+      error: error.code === 'ENOENT'
+        ? `${cli} command not found`
+        : error.message
+    };
+  }
+}
+
+/**
  * Pre-flight check before CUJ execution
  * Validates workflow, agents, schemas, artifacts, and skills
  */
-function preflightCheck(cuj) {
+async function preflightCheck(cuj) {
   const errors = [];
   const warnings = [];
 
@@ -122,6 +151,30 @@ function preflightCheck(cuj) {
       errors.push(`Primary skill not found: ${cuj.primary_skill}. Expected in .claude/skills/ (Agent Studio) or codex-skills/ (Codex CLI).`);
     } else if (skillInfo.type === 'codex') {
       warnings.push(`Primary skill ${cuj.primary_skill} is a Codex CLI skill. Ensure required CLI tools (claude, gemini) are installed.`);
+    }
+  }
+
+  // Check CLI availability for Codex skills
+  const usesCodexSkills = cuj.skill_type === 'codex' ||
+    cuj.uses_codex_skills ||
+    (cuj.primary_skill && findSkillPath(cuj.primary_skill)?.type === 'codex');
+
+  if (usesCodexSkills) {
+    const claudeCli = await checkCliAvailability('claude');
+    const geminiCli = await checkCliAvailability('gemini');
+
+    if (!claudeCli.available) {
+      warnings.push(`⚠️  Claude CLI not available: ${claudeCli.error}. Multi-AI review may fail.`);
+      warnings.push(`   Install: npm install -g @anthropic-ai/claude-cli`);
+    } else {
+      warnings.push(`✓ Claude CLI available: ${claudeCli.version}`);
+    }
+
+    if (!geminiCli.available) {
+      warnings.push(`⚠️  Gemini CLI not available: ${geminiCli.error}. Multi-AI review may be limited.`);
+      warnings.push(`   Install: npm install -g @google/generative-ai-cli`);
+    } else {
+      warnings.push(`✓ Gemini CLI available: ${geminiCli.version}`);
     }
   }
 
@@ -209,7 +262,7 @@ function validateCUJ(cujId) {
   child.on('exit', code => process.exit(code));
 }
 
-function runCUJ(cujId) {
+async function runCUJ(cujId) {
   const registry = loadRegistry();
   const cuj = registry.cujs.find(c => c.id === cujId);
   if (!cuj) {
@@ -219,7 +272,7 @@ function runCUJ(cujId) {
 
   // Run pre-flight check
   console.log(`\n🔍 Pre-flight check for ${cujId}...\n`);
-  const preflightResult = preflightCheck(cuj);
+  const preflightResult = await preflightCheck(cuj);
 
   if (preflightResult.warnings.length > 0) {
     console.log('⚠️  Warnings:');
