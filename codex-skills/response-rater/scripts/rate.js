@@ -5,6 +5,7 @@ const { spawn } = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { sanitize, sanitizeError } = require("../../shared/sanitize-secrets.js");
 
 function parseArgs(argv) {
   const args = {
@@ -367,13 +368,16 @@ function tryParseJson(text) {
 }
 
 function redactNewlines(text, maxLen = 1200) {
-  const t = String(text || "").replace(/\r?\n/g, "\\n");
+  // Sanitize to remove potential API keys before processing
+  const sanitized = sanitize(String(text || ""));
+  const t = sanitized.replace(/\r?\n/g, "\\n");
   if (t.length <= maxLen) return t;
   return `${t.slice(0, maxLen)}…`;
 }
 
 function truncate(text, maxLen = 8000) {
-  const t = String(text || "");
+  // Sanitize to remove potential API keys before truncation
+  const t = sanitize(String(text || ""));
   if (t.length <= maxLen) return t;
   return `${t.slice(0, maxLen)}…`;
 }
@@ -613,6 +617,7 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.error(`fatal: ${e?.message || e}`);
+  // Sanitize error output to prevent credential exposure
+  console.error(`fatal: ${sanitize(e?.message || String(e))}`);
   process.exit(1);
 });

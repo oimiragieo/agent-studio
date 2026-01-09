@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { withRetry } = require("../../shared/retry-utils.js");
+const { sanitize, sanitizeError } = require("../../shared/sanitize-secrets.js");
 
 // JSON Schema validation (Ajv or simple fallback)
 let ajv, validate;
@@ -305,17 +306,19 @@ async function runClaude(prompt, { timeoutMs, authMode }) {
       baseDelayMs: 1000,
       maxDelayMs: 10000,
       onRetry: (attempt, error, delay) => {
-        console.error(`⚠️  Claude CLI attempt ${attempt} failed: ${error.message}`);
+        // Sanitize error messages to prevent API key leakage
+        console.error(`⚠️  Claude CLI attempt ${attempt} failed: ${sanitize(error.message)}`);
         console.error(`   Retrying in ${delay}ms...`);
       }
     });
   } catch (error) {
     // Return error result instead of throwing
+    // Sanitize all error output to prevent credential exposure
     return {
       provider: "claude",
       ok: false,
       stdout: "",
-      stderr: error.stderr || error.message || String(error)
+      stderr: sanitize(error.stderr || error.message || String(error))
     };
   }
 }
@@ -351,17 +354,19 @@ async function runGemini(prompt, { timeoutMs, authMode }) {
       baseDelayMs: 1000,
       maxDelayMs: 10000,
       onRetry: (attempt, error, delay) => {
-        console.error(`⚠️  Gemini CLI attempt ${attempt} failed: ${error.message}`);
+        // Sanitize error messages to prevent API key leakage
+        console.error(`⚠️  Gemini CLI attempt ${attempt} failed: ${sanitize(error.message)}`);
         console.error(`   Retrying in ${delay}ms...`);
       }
     });
   } catch (error) {
     // Return error result instead of throwing
+    // Sanitize all error output to prevent credential exposure
     return {
       provider: "gemini",
       ok: false,
       stdout: "",
-      stderr: error.stderr || error.message || String(error)
+      stderr: sanitize(error.stderr || error.message || String(error))
     };
   }
 }
@@ -667,12 +672,13 @@ main().catch((e) => {
   const argv = process.argv.slice(2);
   const strict = argv.includes("--ci") || argv.includes("--strict-json-only");
   if (strict) {
+    // Sanitize error output to prevent credential exposure in CI logs
     console.log(
       JSON.stringify(
         {
           ok: false,
           mode: "strict-json-only",
-          error: e && e.message ? e.message : String(e),
+          error: sanitize(e && e.message ? e.message : String(e)),
         },
         null,
         2,
@@ -680,6 +686,7 @@ main().catch((e) => {
     );
     process.exit(2);
   }
-  console.error(e && e.stack ? e.stack : String(e));
+  // Sanitize stack traces to prevent credential exposure
+  console.error(sanitize(e && e.stack ? e.stack : String(e)));
   process.exit(1);
 });
