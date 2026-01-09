@@ -203,20 +203,40 @@ function savePerformanceMetrics(metrics) {
 }
 
 /**
- * Record CUJ execution performance
+ * Record CUJ execution performance with granular Codex skill timing
+ * @param {string} cujId - CUJ identifier
+ * @param {string} status - success/failure
+ * @param {number} duration - Total duration in milliseconds
+ * @param {Array} agents - List of agents used
+ * @param {Array} warnings - Warnings encountered
+ * @param {Object} codexSkillTimings - Detailed timings for Codex skills (optional)
  */
-function recordPerformance(cujId, status, duration, agents = [], warnings = []) {
+function recordPerformance(cujId, status, duration, agents = [], warnings = [], codexSkillTimings = {}) {
   const metrics = loadPerformanceMetrics();
 
-  metrics.runs.push({
+  const runEntry = {
     cuj_id: cujId,
     timestamp: new Date().toISOString(),
     duration_ms: duration,
     status,
     agents_used: agents,
     warnings
-  });
+  };
 
+  // Add granular Codex skill timings if available
+  if (Object.keys(codexSkillTimings).length > 0) {
+    runEntry.codex_skills = codexSkillTimings;
+
+    // Calculate aggregated Codex skill timing
+    const codexTotalMs = Object.values(codexSkillTimings).reduce((sum, timing) => {
+      return sum + (timing.duration_ms || 0);
+    }, 0);
+
+    runEntry.codex_total_ms = codexTotalMs;
+    runEntry.agent_studio_ms = duration - codexTotalMs;
+  }
+
+  metrics.runs.push(runEntry);
   savePerformanceMetrics(metrics);
 }
 
@@ -340,9 +360,48 @@ async function runCUJ(cujId) {
       agents = [...new Set([...agentMatches].map(m => m[1]))]; // Deduplicate
     }
 
-    recordPerformance(cujId, status, duration, agents, warnings);
+    // Collect Codex skill timings from CUJ if available
+    const codexSkillTimings = {};
+    const registry = loadRegistry();
+    const cuj = registry.cujs.find(c => c.id === cujId);
 
-    console.log(`\n⏱️  Execution completed in ${(duration / 1000).toFixed(2)}s`);
+    if (cuj && (cuj.skill_type === 'codex' || cuj.skill_type === 'hybrid')) {
+      // Check for Codex skills in CUJ
+      const codexSkills = (cuj.skills || []).filter(s => {
+        const skillName = typeof s === 'object' ? s.name : s;
+        const skillType = typeof s === 'object' ? s.type : null;
+        return skillType === 'codex' || skillName === 'multi-ai-code-review' || skillName === 'response-rater';
+      });
+
+      // For now, we don't have exact per-skill timing from the workflow runner
+      // But we can at least record which Codex skills were used
+      codexSkills.forEach(skill => {
+        const skillName = typeof skill === 'object' ? skill.name : skill;
+        const providers = typeof skill === 'object' ? skill.requires_cli || [] : [];
+
+        codexSkillTimings[skillName] = {
+          duration_ms: 0, // Placeholder - actual timing would come from skill execution
+          providers: providers,
+          provider_timings: {}, // Placeholder
+          cli_check_ms: 0, // Placeholder
+          parallel_execution: providers.length > 1
+        };
+      });
+    }
+
+    recordPerformance(cujId, status, duration, agents, warnings, codexSkillTimings);
+
+    // Enhanced console output with timing breakdown
+    console.log(`\n[${cujId}] Execution complete in ${(duration / 1000).toFixed(1)}s`);
+
+    if (Object.keys(codexSkillTimings).length > 0) {
+      console.log(`  Codex skills: ${Object.keys(codexSkillTimings).join(', ')}`);
+      Object.entries(codexSkillTimings).forEach(([skillName, timing]) => {
+        const providers = timing.providers.join(', ');
+        console.log(`    ├─ ${skillName} (providers: ${providers})`);
+      });
+    }
+
     console.log(`📊 Performance data saved to ${analyticsPath}`);
 
     process.exit(code);
