@@ -5,6 +5,7 @@ const { spawn } = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { withRetry } = require("../../shared/retry-utils.js");
 
 function parseArgs(argv) {
   const args = {
@@ -225,28 +226,92 @@ function looksLikeAuthFailure(stderrText) {
 async function runClaude(prompt, { timeoutMs, authMode }) {
   const args = ["-p", "--output-format", "json", "--permission-mode", "bypassPermissions"];
   // Prefer stdin to avoid Windows command length limits.
-  for (const attempt of [1, 2]) {
-    const env = providerEnvForAttempt("claude", authMode, attempt);
-    const res = await runCommand("claude", args, prompt, { timeoutMs, env });
-    if (res.ok) return { provider: "claude", ...res };
-    if (attempt === 1 && looksLikeAuthFailure(res.stderr)) continue;
-    return { provider: "claude", ...res };
+
+  const attemptClaude = async () => {
+    for (const attempt of [1, 2]) {
+      const env = providerEnvForAttempt("claude", authMode, attempt);
+      const res = await runCommand("claude", args, prompt, { timeoutMs, env });
+      if (res.ok) return { provider: "claude", ...res };
+      if (attempt === 1 && looksLikeAuthFailure(res.stderr)) continue;
+
+      // If not successful and not an auth failure, throw to trigger retry
+      if (!res.ok) {
+        const error = new Error(res.stderr || "Claude CLI failed");
+        error.code = res.stderr?.includes("TIMEOUT") ? "ETIMEDOUT" : "UNKNOWN";
+        error.stderr = res.stderr;
+        throw error;
+      }
+
+      return { provider: "claude", ...res };
+    }
+    return { provider: "claude", ok: false, stdout: "", stderr: "Unknown error" };
+  };
+
+  try {
+    return await withRetry(attemptClaude, {
+      maxRetries: 3,
+      baseDelayMs: 1000,
+      maxDelayMs: 10000,
+      onRetry: (attempt, error, delay) => {
+        console.error(`⚠️  Claude CLI attempt ${attempt} failed: ${error.message}`);
+        console.error(`   Retrying in ${delay}ms...`);
+      }
+    });
+  } catch (error) {
+    // Return error result instead of throwing
+    return {
+      provider: "claude",
+      ok: false,
+      stdout: "",
+      stderr: error.stderr || error.message || String(error)
+    };
   }
-  return { provider: "claude", ok: false, stdout: "", stderr: "Unknown error" };
 }
 
 async function runGemini(prompt, { timeoutMs, authMode }) {
   // gemini can read stdin for large payloads; keep the positional prompt short.
   const args = ["--output-format", "json", "--model", "gemini-2.5-flash", "Review this diff and return ONLY valid JSON per the provided schema."];
   const input = prompt;
-  for (const attempt of [1, 2]) {
-    const env = providerEnvForAttempt("gemini", authMode, attempt);
-    const res = await runCommand("gemini", args, input, { timeoutMs, env });
-    if (res.ok) return { provider: "gemini", ...res };
-    if (attempt === 1 && looksLikeAuthFailure(res.stderr)) continue;
-    return { provider: "gemini", ...res };
+
+  const attemptGemini = async () => {
+    for (const attempt of [1, 2]) {
+      const env = providerEnvForAttempt("gemini", authMode, attempt);
+      const res = await runCommand("gemini", args, input, { timeoutMs, env });
+      if (res.ok) return { provider: "gemini", ...res };
+      if (attempt === 1 && looksLikeAuthFailure(res.stderr)) continue;
+
+      // If not successful and not an auth failure, throw to trigger retry
+      if (!res.ok) {
+        const error = new Error(res.stderr || "Gemini CLI failed");
+        error.code = res.stderr?.includes("TIMEOUT") ? "ETIMEDOUT" : "UNKNOWN";
+        error.stderr = res.stderr;
+        throw error;
+      }
+
+      return { provider: "gemini", ...res };
+    }
+    return { provider: "gemini", ok: false, stdout: "", stderr: "Unknown error" };
+  };
+
+  try {
+    return await withRetry(attemptGemini, {
+      maxRetries: 3,
+      baseDelayMs: 1000,
+      maxDelayMs: 10000,
+      onRetry: (attempt, error, delay) => {
+        console.error(`⚠️  Gemini CLI attempt ${attempt} failed: ${error.message}`);
+        console.error(`   Retrying in ${delay}ms...`);
+      }
+    });
+  } catch (error) {
+    // Return error result instead of throwing
+    return {
+      provider: "gemini",
+      ok: false,
+      stdout: "",
+      stderr: error.stderr || error.message || String(error)
+    };
   }
-  return { provider: "gemini", ok: false, stdout: "", stderr: "Unknown error" };
 }
 
 async function runCopilot(prompt, { timeoutMs }) {
