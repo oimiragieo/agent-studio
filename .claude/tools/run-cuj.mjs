@@ -23,6 +23,24 @@ function loadRegistry() {
 }
 
 /**
+ * Find skill path in both Agent Studio and Codex locations
+ * @param {string} skillName - Name of the skill
+ * @returns {Object|null} - { path, type } or null if not found
+ */
+function findSkillPath(skillName) {
+  const agentStudioPath = path.join(projectRoot, '.claude/skills', skillName, 'SKILL.md');
+  const codexPath = path.join(projectRoot, 'codex-skills', skillName, 'SKILL.md');
+
+  if (fs.existsSync(agentStudioPath)) {
+    return { path: agentStudioPath, type: 'agent-studio' };
+  }
+  if (fs.existsSync(codexPath)) {
+    return { path: codexPath, type: 'codex' };
+  }
+  return null;
+}
+
+/**
  * Pre-flight check before CUJ execution
  * Validates workflow, agents, schemas, artifacts, and skills
  */
@@ -79,24 +97,31 @@ function preflightCheck(cuj) {
         }
       }
 
-      // 5. Verify skill availability (basic YAML parsing)
+      // 5. Verify skill availability (basic YAML parsing) - check both locations
       const skillMatches = workflowContent.matchAll(/skill:\s+([a-z-]+)/g);
       const skills = [...skillMatches].map(m => m[1]);
 
       for (const skill of skills) {
-        const skillPath = path.join(projectRoot, '.claude/skills', skill, 'SKILL.md');
-        if (!fs.existsSync(skillPath)) {
-          errors.push(`Skill not found: ${skill} (referenced in workflow ${cuj.workflow})`);
+        const skillInfo = findSkillPath(skill);
+        if (!skillInfo) {
+          errors.push(`Skill not found: ${skill} (referenced in workflow ${cuj.workflow}). Expected in .claude/skills/ (Agent Studio) or codex-skills/ (Codex CLI).`);
+        } else {
+          // Log skill type for informational purposes
+          if (skillInfo.type === 'codex') {
+            warnings.push(`Skill ${skill} is a Codex CLI skill. Ensure required CLI tools (claude, gemini) are installed.`);
+          }
         }
       }
     }
   }
 
-  // For skill-only CUJs, verify primary skill exists
+  // For skill-only CUJs, verify primary skill exists - check both locations
   if (cuj.execution_mode === 'skill-only' && cuj.primary_skill) {
-    const skillPath = path.join(projectRoot, '.claude/skills', cuj.primary_skill, 'SKILL.md');
-    if (!fs.existsSync(skillPath)) {
-      errors.push(`Primary skill not found: ${cuj.primary_skill}`);
+    const skillInfo = findSkillPath(cuj.primary_skill);
+    if (!skillInfo) {
+      errors.push(`Primary skill not found: ${cuj.primary_skill}. Expected in .claude/skills/ (Agent Studio) or codex-skills/ (Codex CLI).`);
+    } else if (skillInfo.type === 'codex') {
+      warnings.push(`Primary skill ${cuj.primary_skill} is a Codex CLI skill. Ensure required CLI tools (claude, gemini) are installed.`);
     }
   }
 
