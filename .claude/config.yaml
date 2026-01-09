@@ -1284,3 +1284,37 @@ mcp_servers:
     env:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+
+# Multi-AI Rating Configuration (Plan Rating Fallback)
+multi_ai_rating:
+  enabled: true
+  fallback_to_single_model: true
+  required_providers:
+    - claude  # primary
+  optional_providers:
+    - gemini
+    - copilot
+  # Workflows requiring multi-AI rating (minimum 2 providers)
+  workflows_requiring_multi_ai:
+    - security-review.yaml
+    - legacy-modernization.yaml
+    - ai-system-flow.yaml
+    - compliance-flow.yaml
+    - auth-flow.yaml
+    - data-protection-flow.yaml
+  # Fallback behavior when multi-AI unavailable
+  fallback_behavior:
+    use_single_model: true
+    log_warning: true
+    required_minimum_providers: 1  # Allow fallback to single model
+    preferred_providers: ["claude", "gemini"]
+  # Integration with plan-review-matrix.json
+  rating_mode_selection:
+    critical: "multi"      # task_types.critical requires multi-AI
+    enterprise: "multi"    # task_types.enterprise requires multi-AI
+    standard: "single"     # task_types.standard uses single model
+  # CI/CD integration
+  ci_mode:
+    strict_json_only: true
+    fail_on_provider_unavailable: false  # Allow fallback in CI
+    timeout_ms: 240000
