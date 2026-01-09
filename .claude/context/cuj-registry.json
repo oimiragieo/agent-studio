@@ -28,7 +28,8 @@
         "Hooks enabled (optional)"
       ],
       "estimated_duration": "varies",
-      "file_path": ".claude/docs/cujs/CUJ-001.md"
+      "file_path": ".claude/docs/cujs/CUJ-001.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-002",
@@ -39,7 +40,11 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "rule-selector"
+        {
+          "name": "rule-selector",
+          "type": "agent-studio",
+          "location": ".claude/skills/rule-selector"
+        }
       ],
       "primary_skill": "rule-selector",
       "schemas": [],
@@ -59,7 +64,8 @@
         "List of active rules"
       ],
       "estimated_duration": "2-60 seconds",
-      "file_path": ".claude/docs/cujs/CUJ-002.md"
+      "file_path": ".claude/docs/cujs/CUJ-002.md",
+      "skill_type": "agent-studio"
     },
     {
       "id": "CUJ-003",
@@ -70,7 +76,11 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "context-bridge"
+        {
+          "name": "context-bridge",
+          "type": "agent-studio",
+          "location": ".claude/skills/context-bridge"
+        }
       ],
       "primary_skill": "context-bridge",
       "schemas": [],
@@ -90,7 +100,8 @@
         "Cross-platform compatibility verified"
       ],
       "estimated_duration": "2-60 seconds",
-      "file_path": ".claude/docs/cujs/CUJ-003.md"
+      "file_path": ".claude/docs/cujs/CUJ-003.md",
+      "skill_type": "agent-studio"
     },
     {
       "id": "CUJ-004",
@@ -101,8 +112,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "plan-generator",
-        "response-rater"
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -124,7 +146,8 @@
         "Plan summary"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-004.md"
+      "file_path": ".claude/docs/cujs/CUJ-004.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-005",
@@ -135,11 +158,34 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        "plan-generator",
-        "scaffolder",
-        "rule-auditor",
-        "doc-generator",
-        "response-rater"
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "scaffolder",
+          "type": "agent-studio",
+          "location": ".claude/skills/scaffolder"
+        },
+        {
+          "name": "rule-auditor",
+          "type": "agent-studio",
+          "location": ".claude/skills/rule-auditor"
+        },
+        {
+          "name": "doc-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/doc-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -168,7 +214,8 @@
         "Documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-005.md"
+      "file_path": ".claude/docs/cujs/CUJ-005.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-006",
@@ -179,7 +226,11 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "diagram-generator"
+        {
+          "name": "diagram-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/diagram-generator"
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -201,7 +252,8 @@
         "Recommendations document"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-006.md"
+      "file_path": ".claude/docs/cujs/CUJ-006.md",
+      "skill_type": "agent-studio"
     },
     {
       "id": "CUJ-007",
@@ -212,7 +264,11 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "plan-generator"
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -234,7 +290,8 @@
         "Migration roadmap"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-007.md"
+      "file_path": ".claude/docs/cujs/CUJ-007.md",
+      "skill_type": "agent-studio"
     },
     {
       "id": "CUJ-008",
@@ -245,7 +302,11 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "diagram-generator"
+        {
+          "name": "diagram-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/diagram-generator"
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -268,7 +329,8 @@
         "Schema documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-008.md"
+      "file_path": ".claude/docs/cujs/CUJ-008.md",
+      "skill_type": "agent-studio"
     },
     {
       "id": "CUJ-009",
@@ -279,9 +341,24 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "scaffolder",
-        "rule-auditor",
-        "response-rater"
+        {
+          "name": "scaffolder",
+          "type": "agent-studio",
+          "location": ".claude/skills/scaffolder"
+        },
+        {
+          "name": "rule-auditor",
+          "type": "agent-studio",
+          "location": ".claude/skills/rule-auditor"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -302,7 +379,8 @@
         "Supporting files"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-009.md"
+      "file_path": ".claude/docs/cujs/CUJ-009.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-010",
@@ -313,10 +391,29 @@
       "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        "scaffolder",
-        "api-contract-generator",
-        "doc-generator",
-        "response-rater"
+        {
+          "name": "scaffolder",
+          "type": "agent-studio",
+          "location": ".claude/skills/scaffolder"
+        },
+        {
+          "name": "api-contract-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/api-contract-generator"
+        },
+        {
+          "name": "doc-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/doc-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -340,7 +437,8 @@
         "OpenAPI specification"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-010.md"
+      "file_path": ".claude/docs/cujs/CUJ-010.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-011",
@@ -351,8 +449,19 @@
       "workflow": ".claude/workflows/quick-flow.yaml",
       "agents": [],
       "skills": [
-        "rule-auditor",
-        "response-rater"
+        {
+          "name": "rule-auditor",
+          "type": "agent-studio",
+          "location": ".claude/skills/rule-auditor"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -372,7 +481,8 @@
         "Validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-011.md"
+      "file_path": ".claude/docs/cujs/CUJ-011.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-012",
@@ -383,11 +493,34 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        "plan-generator",
-        "scaffolder",
-        "test-generator",
-        "doc-generator",
-        "response-rater"
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "scaffolder",
+          "type": "agent-studio",
+          "location": ".claude/skills/scaffolder"
+        },
+        {
+          "name": "test-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/test-generator"
+        },
+        {
+          "name": "doc-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/doc-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -408,7 +541,8 @@
         "Usage examples"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-012.md"
+      "file_path": ".claude/docs/cujs/CUJ-012.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-013",
@@ -419,10 +553,30 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "rule-auditor",
-        "response-rater",
-        "multi-ai-code-review"
+        {
+          "name": "rule-auditor",
+          "type": "agent-studio",
+          "location": ".claude/skills/rule-auditor"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        },
+        {
+          "name": "multi-ai-code-review",
+          "type": "codex",
+          "location": "codex-skills/multi-ai-code-review",
+          "requires_cli": [
+            "claude",
+            "gemini"
+          ]
+        }
       ],
+      "skill_type": "hybrid",
       "primary_skill": null,
       "schemas": [
         ".claude/schemas/code-review.schema.json"
@@ -455,8 +609,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "rule-auditor",
-        "response-rater"
+        {
+          "name": "rule-auditor",
+          "type": "agent-studio",
+          "location": ".claude/skills/rule-auditor"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -479,7 +644,8 @@
         "Compliance score"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-014.md"
+      "file_path": ".claude/docs/cujs/CUJ-014.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-015",
@@ -490,8 +656,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "test-generator",
-        "response-rater"
+        {
+          "name": "test-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/test-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -512,7 +689,8 @@
         "Test coverage report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-015.md"
+      "file_path": ".claude/docs/cujs/CUJ-015.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-016",
@@ -523,8 +701,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "doc-generator",
-        "response-rater"
+        {
+          "name": "doc-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/doc-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -547,7 +736,8 @@
         "Interactive docs"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-016.md"
+      "file_path": ".claude/docs/cujs/CUJ-016.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-017",
@@ -558,7 +748,11 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "claude-md-generator"
+        {
+          "name": "claude-md-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/claude-md-generator"
+        }
       ],
       "primary_skill": "claude-md-generator",
       "schemas": [],
@@ -578,7 +772,8 @@
         "Usage examples"
       ],
       "estimated_duration": "2-60 seconds",
-      "file_path": ".claude/docs/cujs/CUJ-017.md"
+      "file_path": ".claude/docs/cujs/CUJ-017.md",
+      "skill_type": "agent-studio"
     },
     {
       "id": "CUJ-018",
@@ -589,9 +784,24 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "diagram-generator",
-        "doc-generator",
-        "response-rater"
+        {
+          "name": "diagram-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/diagram-generator"
+        },
+        {
+          "name": "doc-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/doc-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -612,7 +822,8 @@
         "ADR templates"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-018.md"
+      "file_path": ".claude/docs/cujs/CUJ-018.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-019",
@@ -623,7 +834,14 @@
       "workflow": ".claude/workflows/performance-flow.yaml",
       "agents": [],
       "skills": [
-        "response-rater"
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -644,7 +862,8 @@
         "Performance metrics"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-019.md"
+      "file_path": ".claude/docs/cujs/CUJ-019.md",
+      "skill_type": "codex"
     },
     {
       "id": "CUJ-020",
@@ -655,8 +874,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "rule-auditor",
-        "response-rater"
+        {
+          "name": "rule-auditor",
+          "type": "agent-studio",
+          "location": ".claude/skills/rule-auditor"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -677,7 +907,8 @@
         "Compliance checklist"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-020.md"
+      "file_path": ".claude/docs/cujs/CUJ-020.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-021",
@@ -707,7 +938,8 @@
         "Mobile documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-021.md"
+      "file_path": ".claude/docs/cujs/CUJ-021.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-022",
@@ -737,7 +969,8 @@
         "AI API implementation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-022.md"
+      "file_path": ".claude/docs/cujs/CUJ-022.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-023",
@@ -748,8 +981,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "dependency-analyzer",
-        "response-rater"
+        {
+          "name": "dependency-analyzer",
+          "type": "agent-studio",
+          "location": ".claude/skills/dependency-analyzer"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -770,7 +1014,8 @@
         "Compatibility validation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-023.md"
+      "file_path": ".claude/docs/cujs/CUJ-023.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-024",
@@ -781,8 +1026,19 @@
       "workflow": ".claude/workflows/incident-flow.yaml",
       "agents": [],
       "skills": [
-        "recovery",
-        "response-rater"
+        {
+          "name": "recovery",
+          "type": "agent-studio",
+          "location": ".claude/skills/recovery"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -803,7 +1059,8 @@
         "Remediation plan"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-024.md"
+      "file_path": ".claude/docs/cujs/CUJ-024.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-025",
@@ -814,8 +1071,19 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        "summarizer",
-        "response-rater"
+        {
+          "name": "summarizer",
+          "type": "agent-studio",
+          "location": ".claude/skills/summarizer"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -835,7 +1103,8 @@
         "plan-{{workflow_id}}.json (Step 0)"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-025.md"
+      "file_path": ".claude/docs/cujs/CUJ-025.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-026",
@@ -846,9 +1115,24 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        "plan-generator",
-        "dependency-analyzer",
-        "response-rater"
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "dependency-analyzer",
+          "type": "agent-studio",
+          "location": ".claude/skills/dependency-analyzer"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -869,7 +1153,8 @@
         "[Additional phase plans as needed]"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-026.md"
+      "file_path": ".claude/docs/cujs/CUJ-026.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-027",
@@ -880,7 +1165,11 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "recovery"
+        {
+          "name": "recovery",
+          "type": "agent-studio",
+          "location": ".claude/skills/recovery"
+        }
       ],
       "primary_skill": "recovery",
       "schemas": [],
@@ -900,7 +1189,8 @@
         "New artifacts from resumed steps"
       ],
       "estimated_duration": "2-60 seconds",
-      "file_path": ".claude/docs/cujs/CUJ-027.md"
+      "file_path": ".claude/docs/cujs/CUJ-027.md",
+      "skill_type": "agent-studio"
     },
     {
       "id": "CUJ-028",
@@ -930,7 +1220,8 @@
         "Code using concrete resource names (Step 7)"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-028.md"
+      "file_path": ".claude/docs/cujs/CUJ-028.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-029",
@@ -960,7 +1251,8 @@
         "Emulator configuration"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-029.md"
+      "file_path": ".claude/docs/cujs/CUJ-029.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-030",
@@ -989,7 +1281,8 @@
         "disagreements.json"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-030.md"
+      "file_path": ".claude/docs/cujs/CUJ-030.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-034",
@@ -1000,15 +1293,51 @@
       "workflow": ".claude/workflows/browser-testing-flow.yaml",
       "agents": [],
       "skills": [
-        "navigate_page",
-        "take_screenshot",
-        "click",
-        "fill",
-        "list_console_messages",
-        "list_network_requests",
-        "performance_start_trace",
-        "performance_stop_trace",
-        "performance_analyze_insight"
+        {
+          "name": "navigate_page",
+          "type": "agent-studio",
+          "location": ".claude/skills/navigate_page"
+        },
+        {
+          "name": "take_screenshot",
+          "type": "agent-studio",
+          "location": ".claude/skills/take_screenshot"
+        },
+        {
+          "name": "click",
+          "type": "agent-studio",
+          "location": ".claude/skills/click"
+        },
+        {
+          "name": "fill",
+          "type": "agent-studio",
+          "location": ".claude/skills/fill"
+        },
+        {
+          "name": "list_console_messages",
+          "type": "agent-studio",
+          "location": ".claude/skills/list_console_messages"
+        },
+        {
+          "name": "list_network_requests",
+          "type": "agent-studio",
+          "location": ".claude/skills/list_network_requests"
+        },
+        {
+          "name": "performance_start_trace",
+          "type": "agent-studio",
+          "location": ".claude/skills/performance_start_trace"
+        },
+        {
+          "name": "performance_stop_trace",
+          "type": "agent-studio",
+          "location": ".claude/skills/performance_stop_trace"
+        },
+        {
+          "name": "performance_analyze_insight",
+          "type": "agent-studio",
+          "location": ".claude/skills/performance_analyze_insight"
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1029,7 +1358,8 @@
       },
       "expected_outputs": [],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-034.md"
+      "file_path": ".claude/docs/cujs/CUJ-034.md",
+      "skill_type": "agent-studio"
     },
     {
       "id": "CUJ-035",
@@ -1040,8 +1370,19 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        "plan-generator",
-        "response-rater"
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1063,7 +1404,8 @@
         "Artifact flow validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-035.md"
+      "file_path": ".claude/docs/cujs/CUJ-035.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-036",
@@ -1095,7 +1437,8 @@
         "Recovery validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-036.md"
+      "file_path": ".claude/docs/cujs/CUJ-036.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-037",
@@ -1106,9 +1449,24 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        "plan-generator",
-        "dependency-analyzer",
-        "response-rater"
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "dependency-analyzer",
+          "type": "agent-studio",
+          "location": ".claude/skills/dependency-analyzer"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1131,7 +1489,8 @@
         "Phase boundary validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-037.md"
+      "file_path": ".claude/docs/cujs/CUJ-037.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-038",
@@ -1142,8 +1501,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "optional-artifact-handler",
-        "response-rater"
+        {
+          "name": "optional-artifact-handler",
+          "type": "agent-studio",
+          "location": ".claude/skills/optional-artifact-handler"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1164,7 +1534,8 @@
         "Validation report confirming graceful degradation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-038.md"
+      "file_path": ".claude/docs/cujs/CUJ-038.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-039",
@@ -1175,8 +1546,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "conflict-resolution",
-        "response-rater"
+        {
+          "name": "conflict-resolution",
+          "type": "agent-studio",
+          "location": ".claude/skills/conflict-resolution"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -1201,7 +1583,8 @@
         "Validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-039.md"
+      "file_path": ".claude/docs/cujs/CUJ-039.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-040",
@@ -1212,8 +1595,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "recovery",
-        "response-rater"
+        {
+          "name": "recovery",
+          "type": "agent-studio",
+          "location": ".claude/skills/recovery"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1238,7 +1632,8 @@
         "Recovery validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-040.md"
+      "file_path": ".claude/docs/cujs/CUJ-040.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-041",
@@ -1271,7 +1666,8 @@
         "Dependency chain validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-041.md"
+      "file_path": ".claude/docs/cujs/CUJ-041.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-042",
@@ -1302,7 +1698,8 @@
         "Coordination validation report"
       ],
       "estimated_duration": "varies",
-      "file_path": ".claude/docs/cujs/CUJ-042.md"
+      "file_path": ".claude/docs/cujs/CUJ-042.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-043",
@@ -1313,8 +1710,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "recovery",
-        "response-rater"
+        {
+          "name": "recovery",
+          "type": "agent-studio",
+          "location": ".claude/skills/recovery"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1339,7 +1747,8 @@
         "Recovery validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-043.md"
+      "file_path": ".claude/docs/cujs/CUJ-043.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-044",
@@ -1373,7 +1782,8 @@
         "Updated plan document"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-044.md"
+      "file_path": ".claude/docs/cujs/CUJ-044.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-045",
@@ -1384,9 +1794,24 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "recovery",
-        "optional-artifact-handler",
-        "response-rater"
+        {
+          "name": "recovery",
+          "type": "agent-studio",
+          "location": ".claude/skills/recovery"
+        },
+        {
+          "name": "optional-artifact-handler",
+          "type": "agent-studio",
+          "location": ".claude/skills/optional-artifact-handler"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1411,7 +1836,8 @@
         "Final workflow outputs"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-045.md"
+      "file_path": ".claude/docs/cujs/CUJ-045.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-046",
@@ -1442,7 +1868,8 @@
         "Recovery documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-046.md"
+      "file_path": ".claude/docs/cujs/CUJ-046.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-047",
@@ -1453,8 +1880,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "conflict-resolution",
-        "response-rater"
+        {
+          "name": "conflict-resolution",
+          "type": "agent-studio",
+          "location": ".claude/skills/conflict-resolution"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1477,7 +1915,8 @@
         "Resolution documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-047.md"
+      "file_path": ".claude/docs/cujs/CUJ-047.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-048",
@@ -1509,7 +1948,8 @@
         "Final workflow outputs"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-048.md"
+      "file_path": ".claude/docs/cujs/CUJ-048.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-049",
@@ -1541,7 +1981,8 @@
         "Integration validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-049.md"
+      "file_path": ".claude/docs/cujs/CUJ-049.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-050",
@@ -1552,8 +1993,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "recovery",
-        "response-rater"
+        {
+          "name": "recovery",
+          "type": "agent-studio",
+          "location": ".claude/skills/recovery"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1576,7 +2028,8 @@
         "End-to-end resilience report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-050.md"
+      "file_path": ".claude/docs/cujs/CUJ-050.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-051",
@@ -1587,9 +2040,24 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "artifact-publisher",
-        "plan-generator",
-        "response-rater"
+        {
+          "name": "artifact-publisher",
+          "type": "agent-studio",
+          "location": ".claude/skills/artifact-publisher"
+        },
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1611,7 +2079,8 @@
         "Error handling test results"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-051.md"
+      "file_path": ".claude/docs/cujs/CUJ-051.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-052",
@@ -1622,8 +2091,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "plan-generator",
-        "response-rater"
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1645,7 +2125,8 @@
         "Backward compatibility test results"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-052.md"
+      "file_path": ".claude/docs/cujs/CUJ-052.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-053",
@@ -1656,9 +2137,24 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "artifact-publisher",
-        "plan-generator",
-        "response-rater"
+        {
+          "name": "artifact-publisher",
+          "type": "agent-studio",
+          "location": ".claude/skills/artifact-publisher"
+        },
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1679,7 +2175,8 @@
         "Persistence validation report: `publishing-persistence-report.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-053.md"
+      "file_path": ".claude/docs/cujs/CUJ-053.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-054",
@@ -1690,10 +2187,29 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "artifact-publisher",
-        "context-bridge",
-        "plan-generator",
-        "response-rater"
+        {
+          "name": "artifact-publisher",
+          "type": "agent-studio",
+          "location": ".claude/skills/artifact-publisher"
+        },
+        {
+          "name": "context-bridge",
+          "type": "agent-studio",
+          "location": ".claude/skills/context-bridge"
+        },
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -1717,7 +2233,8 @@
         "Conflict resolution logs"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-054.md"
+      "file_path": ".claude/docs/cujs/CUJ-054.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-055",
@@ -1728,9 +2245,24 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "artifact-publisher",
-        "plan-generator",
-        "response-rater"
+        {
+          "name": "artifact-publisher",
+          "type": "agent-studio",
+          "location": ".claude/skills/artifact-publisher"
+        },
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1752,7 +2284,8 @@
         "Timing measurements for backoff delays"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-055.md"
+      "file_path": ".claude/docs/cujs/CUJ-055.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-056",
@@ -1763,9 +2296,24 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "recovery",
-        "plan-generator",
-        "response-rater"
+        {
+          "name": "recovery",
+          "type": "agent-studio",
+          "location": ".claude/skills/recovery"
+        },
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1788,7 +2336,8 @@
         "Completed workflow artifacts"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-056.md"
+      "file_path": ".claude/docs/cujs/CUJ-056.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-057",
@@ -1799,8 +2348,19 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "response-rater",
-        "plan-generator"
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        },
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1821,7 +2381,8 @@
         "Validation report: `.claude/context/artifacts/rating-validation-{id}.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-057.md"
+      "file_path": ".claude/docs/cujs/CUJ-057.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-058",
@@ -1846,7 +2407,8 @@
         "`.claude/context/runs/{{run_id}}/workflow-state.json`: Updated workflow state after recovery"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-058.md"
+      "file_path": ".claude/docs/cujs/CUJ-058.md",
+      "skill_type": "none"
     },
     {
       "id": "CUJ-059",
@@ -1857,11 +2419,34 @@
       "workflow": ".claude/workflows/performance-flow.yaml",
       "agents": [],
       "skills": [
-        "plan-generator",
-        "response-rater",
-        "dependency-analyzer",
-        "diagram-generator",
-        "recovery"
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        },
+        {
+          "name": "dependency-analyzer",
+          "type": "agent-studio",
+          "location": ".claude/skills/dependency-analyzer"
+        },
+        {
+          "name": "diagram-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/diagram-generator"
+        },
+        {
+          "name": "recovery",
+          "type": "agent-studio",
+          "location": ".claude/skills/recovery"
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1884,7 +2469,8 @@
         "Performance report: `.claude/context/artifacts/performance-results-{id}.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-059.md"
+      "file_path": ".claude/docs/cujs/CUJ-059.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-060",
@@ -1895,10 +2481,29 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "context-bridge",
-        "plan-generator",
-        "response-rater",
-        "artifact-publisher"
+        {
+          "name": "context-bridge",
+          "type": "agent-studio",
+          "location": ".claude/skills/context-bridge"
+        },
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        },
+        {
+          "name": "artifact-publisher",
+          "type": "agent-studio",
+          "location": ".claude/skills/artifact-publisher"
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1923,7 +2528,8 @@
         "Sync validation: `.claude/context/artifacts/context-sync-results-{id}.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-060.md"
+      "file_path": ".claude/docs/cujs/CUJ-060.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-061",
@@ -1934,10 +2540,29 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "artifact-publisher",
-        "context-bridge",
-        "plan-generator",
-        "response-rater"
+        {
+          "name": "artifact-publisher",
+          "type": "agent-studio",
+          "location": ".claude/skills/artifact-publisher"
+        },
+        {
+          "name": "context-bridge",
+          "type": "agent-studio",
+          "location": ".claude/skills/context-bridge"
+        },
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1961,7 +2586,8 @@
         "Published artifacts: Available in project feed with sharing links"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-061.md"
+      "file_path": ".claude/docs/cujs/CUJ-061.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-062",
@@ -1972,10 +2598,29 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        "skill-manager",
-        "plan-generator",
-        "response-rater",
-        "dependency-analyzer"
+        {
+          "name": "skill-manager",
+          "type": "agent-studio",
+          "location": ".claude/skills/skill-manager"
+        },
+        {
+          "name": "plan-generator",
+          "type": "agent-studio",
+          "location": ".claude/skills/plan-generator"
+        },
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        },
+        {
+          "name": "dependency-analyzer",
+          "type": "agent-studio",
+          "location": ".claude/skills/dependency-analyzer"
+        }
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1999,7 +2644,8 @@
         "Cross-platform report: `.claude/context/artifacts/skill-cross-platform-{id}.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-062.md"
+      "file_path": ".claude/docs/cujs/CUJ-062.md",
+      "skill_type": "hybrid"
     },
     {
       "id": "CUJ-063",
@@ -2010,8 +2656,19 @@
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
-        "response-rater",
-        "recovery"
+        {
+          "name": "response-rater",
+          "type": "codex",
+          "location": "codex-skills/response-rater",
+          "requires_cli": [
+            "claude"
+          ]
+        },
+        {
+          "name": "recovery",
+          "type": "agent-studio",
+          "location": ".claude/skills/recovery"
+        }
       ],
       "primary_skill": null,
       "schemas": [
@@ -2036,7 +2693,8 @@
         "Recovery playbook"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-063.md"
+      "file_path": ".claude/docs/cujs/CUJ-063.md",
+      "skill_type": "hybrid"
     }
   ]
 }
