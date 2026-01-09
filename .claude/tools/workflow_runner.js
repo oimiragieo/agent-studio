@@ -943,6 +943,124 @@ function getStepConfig(workflow, stepNumber) {
 }
 
 /**
+ * Evaluate step condition expression to determine if step should execute
+ * @param {string} condition - Condition expression from workflow YAML
+ * @param {Object} context - Context containing artifacts, config, env, providers
+ * @returns {boolean} - true if step should execute, false if should skip
+ */
+function evaluateCondition(condition, context = {}) {
+  if (!condition || typeof condition !== 'string') {
+    return true; // No condition means always execute
+  }
+
+  // Build safe evaluation context
+  const safeContext = {
+    providers: context.providers || [],
+    step: context.step || {},
+    config: context.config || {},
+    env: {
+      MULTI_AI_ENABLED: process.env.MULTI_AI_ENABLED === 'true',
+      CI: process.env.CI === 'true',
+      NODE_ENV: process.env.NODE_ENV || 'development'
+    },
+    artifacts: context.artifacts || {}
+  };
+
+  try {
+    // Pattern matching for common condition types (no eval() for security)
+    const trimmed = condition.trim();
+
+    // Pattern: providers.includes('provider_name')
+    if (trimmed.includes('providers.includes')) {
+      const match = trimmed.match(/providers\.includes\(['"]([^'"]+)['"]\)/);
+      if (match) {
+        return safeContext.providers.includes(match[1]);
+      }
+    }
+
+    // Pattern: step.output.field === 'value'
+    if (trimmed.includes('step.output.')) {
+      const match = trimmed.match(/step\.output\.([a-zA-Z_]+)\s*===?\s*['"]([^'"]+)['"]/);
+      if (match) {
+        const fieldName = match[1];
+        const expectedValue = match[2];
+        const actualValue = safeContext.step.output?.[fieldName];
+        return actualValue === expectedValue;
+      }
+    }
+
+    // Pattern: config.field === true|false
+    if (trimmed.includes('config.')) {
+      const matchBool = trimmed.match(/config\.([a-zA-Z_]+)\s*===?\s*(true|false)/);
+      if (matchBool) {
+        const fieldName = matchBool[1];
+        const expectedValue = matchBool[2] === 'true';
+        return safeContext.config[fieldName] === expectedValue;
+      }
+
+      // Pattern: config.field === 'value'
+      const matchStr = trimmed.match(/config\.([a-zA-Z_]+)\s*===?\s*['"]([^'"]+)['"]/);
+      if (matchStr) {
+        const fieldName = matchStr[1];
+        const expectedValue = matchStr[2];
+        return safeContext.config[fieldName] === expectedValue;
+      }
+    }
+
+    // Pattern: env.VARIABLE === 'value'
+    if (trimmed.includes('env.')) {
+      const match = trimmed.match(/env\.([A-Z_]+)\s*===?\s*['"]([^'"]+)['"]/);
+      if (match) {
+        const varName = match[1];
+        const expectedValue = match[2];
+        return safeContext.env[varName] === expectedValue;
+      }
+    }
+
+    // Pattern: simple boolean flags (user_requested_multi_ai_review, critical_security_changes, etc.)
+    // These are common patterns in code-review-flow.yaml
+    if (/^[a-z_]+$/.test(trimmed)) {
+      // Check in config first, then artifacts
+      if (safeContext.config[trimmed] !== undefined) {
+        return !!safeContext.config[trimmed];
+      }
+      if (safeContext.artifacts[trimmed] !== undefined) {
+        return !!safeContext.artifacts[trimmed];
+      }
+      // Check environment variables (uppercase version)
+      const envKey = trimmed.toUpperCase();
+      if (safeContext.env[envKey] !== undefined) {
+        return safeContext.env[envKey] === 'true' || safeContext.env[envKey] === true;
+      }
+    }
+
+    // Pattern: OR conditions (A OR B)
+    if (trimmed.includes(' OR ')) {
+      const parts = trimmed.split(' OR ').map(p => p.trim());
+      return parts.some(part => evaluateCondition(part, context));
+    }
+
+    // Pattern: AND conditions (A AND B)
+    if (trimmed.includes(' AND ')) {
+      const parts = trimmed.split(' AND ').map(p => p.trim());
+      return parts.every(part => evaluateCondition(part, context));
+    }
+
+    // If we can't parse the condition, fail open (execute by default)
+    console.warn(`⚠️  Warning: Could not parse condition: "${condition}"`);
+    console.warn(`   Defaulting to execute step (fail-open behavior)`);
+    return true;
+
+  } catch (error) {
+    // On any error, fail open (execute step)
+    console.warn(`⚠️  Warning: Condition evaluation failed: ${error.message}`);
+    console.warn(`   Condition: "${condition}"`);
+    console.warn(`   Defaulting to execute step (fail-open behavior)`);
+    return true;
+  }
+}
+
+/**
  * Run custom validation checks for a step
  * @param {Array<string>} checks - List of custom check names to run
  * @param {Object} artifactData - The artifact data to validate
@@ -2315,6 +2433,71 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
 
   // Declare execution result at higher scope for skill validation
   let executionResult = null;
+
+  // Check if step has a condition that needs to be evaluated
+  const stepCondition = stepInfo?.condition || null;
+
+  if (stepCondition) {
+    console.log(`\n🔍 Evaluating step condition: "${stepCondition}"`);
+
+    // Build context for condition evaluation
+    // Try to load previous step outputs if available
+    let previousStepOutput = {};
+    try {
+      // Load plan artifact if available (common dependency for conditional steps)
+      const planPath = resolveArtifactPath(runId, `plan-${workflowId}.json`);
+      if (existsSync(planPath)) {
+        const planData = JSON.parse(readFileSync(planPath, 'utf-8'));
+        previousStepOutput = planData;
+      }
+    } catch (error) {
+      // Ignore errors loading previous outputs
+    }
+
+    const conditionContext = {
+      config: {
+        user_requested_multi_ai_review: process.env.MULTI_AI_REVIEW === 'true',
+        critical_security_changes: previousStepOutput.overall_risk === 'high' || previousStepOutput.overall_risk === 'critical',
+        security_focus: previousStepOutput.security_focus === true,
+        critical_security_issues_found: previousStepOutput.critical_issues_count > 0
+      },
+      env: {
+        MULTI_AI_ENABLED: process.env.MULTI_AI_ENABLED === 'true',
+        CI: process.env.CI === 'true'
+      },
+      providers: (process.env.MULTI_AI_PROVIDERS || 'claude,gemini').split(','),
+      step: { output: previousStepOutput },
+      artifacts: previousStepOutput
+    };
+
+    const shouldExecute = evaluateCondition(stepCondition, conditionContext);
+
+    if (!shouldExecute) {
+      console.log(`   ⏭️  Condition not met - skipping step ${args.step}`);
+      console.log(`   Step will not execute: ${stepName}\n`);
+
+      // Create a gate file indicating the step was skipped
+      const skipGateResult = {
+        valid: true,
+        skipped: true,
+        reason: `Condition not met: ${stepCondition}`,
+        timestamp: new Date().toISOString(),
+        step: args.step,
+        condition: stepCondition,
+        evaluated_context: conditionContext
+      };
+
+      if (!isDryRun) {
+        writeFileSync(gatePath, JSON.stringify(skipGateResult, null, 2));
+        console.log(`   ✅ Gate file created: ${gatePathRaw} (marked as skipped)`);
+      }
+
+      // Exit successfully - skipped steps are not failures
+      process.exit(0);
+    }
+
+    console.log(`   ✅ Condition met - proceeding with step execution\n`);
+  }
 
   // Execute agent if not a tool-based step and run-id is provided (skip in dry-run)
   if (runId && !config.tool && agentName) {
