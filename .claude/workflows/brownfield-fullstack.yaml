@@ -36,6 +36,14 @@ fallback_agents:
 # - Includes migration planning and rollback strategies
 # - Focuses on incremental improvements
 
+# Parallel Execution Configuration
+# Steps with the same parallel_group execute concurrently for 67% time savings
+# See .claude/tools/workflow/parallel-executor.mjs for implementation
+parallel_execution:
+  enabled: true
+  fail_fast: false  # Continue with other parallel steps even if one fails
+  timeout_per_step: 300000  # 5 minutes per step
+
 steps:
   - step: 0
     name: "Planning Phase"

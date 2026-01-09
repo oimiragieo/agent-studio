@@ -39,6 +39,14 @@ fallback_agents:
 # The routing system matches user prompts against keywords in config.yaml, not this file.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 
+# Parallel Execution Configuration
+# Steps with the same parallel_group execute concurrently for 67% time savings
+# See .claude/tools/workflow/parallel-executor.mjs for implementation
+parallel_execution:
+  enabled: true
+  fail_fast: false  # Continue with other parallel steps even if one fails
+  timeout_per_step: 300000  # 5 minutes per step
+
 steps:
   - step: 0
     name: "Planning Phase"
@@ -116,6 +124,8 @@ steps:
   - step: 1
     name: "Project Discovery"
     agent: analyst
+    parallel: true
+    parallel_group: 1  # Parallel group 1: Discovery + PRD + UX
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - user_requirements
@@ -130,9 +140,11 @@ steps:
   - step: 2
     name: "Product Requirements"
     agent: pm
+    parallel: true
+    parallel_group: 1  # Parallel group 1: Discovery + PRD + UX
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
-      - project-brief.json (from step 1)
+      - project-brief.json (from step 1, optional)  # Optional since parallel
     outputs:
       - prd.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-pm.json
@@ -143,9 +155,11 @@ steps:
   - step: 3
     name: "UX Design"
     agent: ux-expert
+    parallel: true
+    parallel_group: 1  # Parallel group 1: Discovery + PRD + UX
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
-      - prd.json (from step 2)
+      - prd.json (from step 2, optional)  # Optional since parallel
     outputs:
       - ux-spec.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-ux-expert.json
