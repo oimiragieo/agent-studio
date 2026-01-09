@@ -1,67 +1,335 @@
 ---
 name: multi-ai-code-review
 description: Run multi-provider code reviews over git diffs/PR changes using headless AI CLIs (Claude Code `claude`, Google `gemini`, optionally GitHub `copilot`) and output structured findings + an optional synthesized report; use for security/bug/perf review of recent changes and for generating PR-ready review comments.
+context:fork: true
+type: codex-adapter
+model: sonnet
+allowed-tools: bash, git
+version: 2.0
+best_practices:
+  - Use for PR reviews and security audits
+  - Run against staged changes or commit ranges
+  - Enable synthesis for consensus findings
+  - Use CI mode for automated pipelines
+error_handling: graceful
+streaming: not_supported
 ---
 
-# Multi-AI Code Review
+<identity>
+Multi-AI Code Review - Agent Studio adapter for Codex CLI skill that performs multi-provider code reviews using external AI CLIs.
+</identity>
 
-This skill runs independent code reviews using external headless AI CLIs and produces a structured report you can paste into a PR.
+<capabilities>
+- Multi-provider code review (Claude, Gemini, Copilot)
+- Git diff analysis (staged, unstaged, commit ranges)
+- Structured JSON output conforming to `.claude/schemas/multi-ai-review-report.schema.json`
+- Markdown PR comment generation
+- CI-friendly strict JSON mode
+- Consensus synthesis from multiple AI providers
+- Session-first or env-first authentication
+- Large diff sampling and truncation
+</capabilities>
 
-## Quick start (git diff)
+<instructions>
+<execution_process>
+## Adapter Pattern
 
-Unstaged diff:
+This is an **Agent Studio-compatible wrapper** for the Codex CLI skill located in `codex-skills/multi-ai-code-review/`.
 
-`node .claude/skills/multi-ai-code-review/scripts/review.js --providers claude,gemini`
+### Invocation Methods
 
-Staged diff:
+**Natural Language**:
+```
+Run multi-AI code review on these changes
+Review this PR with Claude and Gemini
+```
 
-`node .claude/skills/multi-ai-code-review/scripts/review.js --staged --providers claude,gemini`
+**Direct Skill Invocation**:
+```javascript
+// Via Agent Studio Skill tool
+{
+  "skill": "multi-ai-code-review",
+  "params": {
+    "providers": ["claude", "gemini"],
+    "output": "json",
+    "range": "origin/main...HEAD"
+  }
+}
+```
 
-Diff range (example: typical PR branch):
+**Direct CLI (Codex pattern)**:
+```bash
+node codex-skills/multi-ai-code-review/scripts/review.js --providers claude,gemini --range origin/main...HEAD
+```
 
-`node .claude/skills/multi-ai-code-review/scripts/review.js --range origin/main...HEAD --providers claude,gemini`
+## Parameters
 
-## Output formats
+### Required
+- None (defaults to unstaged diff with claude,gemini)
 
-- `--output json` (default): machine-readable results + optional synthesis
-- `--output markdown`: PR comment format
+### Optional
+- `providers` (Array|String): AI providers to use (default: `["claude", "gemini"]`)
+- `output` (String): Output format - `"json"` or `"markdown"` (default: `"json"`)
+- `staged` (Boolean): Review staged changes instead of unstaged (default: `false`)
+- `range` (String): Git commit range (e.g., `"origin/main...HEAD"`)
+- `diffFile` (String): Path to diff file instead of git diff
+- `authMode` (String): `"session-first"` or `"env-first"` (default: `"session-first"`)
+- `timeoutMs` (Number): Provider timeout in milliseconds (default: `240000`)
+- `synthesize` (Boolean): Enable consensus synthesis (default: `true`)
+- `synthesizeWith` (String): Provider for synthesis (default: first provider)
+- `maxDiffChars` (Number): Max diff characters before sampling (default: `220000`)
+- `ci` (Boolean): CI mode - implies `--no-synthesis`, `--output json`, strict JSON-only (default: `false`)
+- `strictJsonOnly` (Boolean): Strict JSON mode with non-zero exit on failure (default: `false`)
+- `dryRun` (Boolean): No network calls, prints collected diff stats (default: `false`)
 
-## CI-friendly mode (strict JSON-only)
+## Output Schema
 
-Use `--ci` to force stable CI behavior:
+All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`.
 
-- implies `--no-synthesis`
-- forces `--output json`
-- exits non-zero if any provider fails or returns non-parseable JSON
+**Success Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "diffMeta": {
+      "bytes": 12345,
+      "sha256": "abc123...",
+      "staged": false,
+      "range": "origin/main...HEAD",
+      "truncated": false
+    },
+    "providers": [
+      { "provider": "claude", "ok": true },
+      { "provider": "gemini", "ok": true }
+    ],
+    "perProvider": [
+      {
+        "provider": "claude",
+        "ok": true,
+        "parsed": {
+          "overall_risk": "low",
+          "summary": "Code changes look good...",
+          "findings": [...]
+        }
+      }
+    ],
+    "synthesis": {
+      "provider": "claude",
+      "ok": true,
+      "parsed": {
+        "overall_risk": "low",
+        "summary": "Synthesized review...",
+        "findings": [...]
+      }
+    }
+  },
+  "format": "json"
+}
+```
 
-Example:
+**Error Response**:
+```json
+{
+  "success": false,
+  "error": "Codex CLI execution failed",
+  "exitCode": 1
+}
+```
 
-`node codex-skills/multi-ai-code-review/scripts/review.js --ci --range origin/main...HEAD --providers claude,gemini > ai-review.json`
+## Authentication
 
-## Auth behavior (session-first)
+### Session-First (Default)
+1. Try CLI using logged-in session (API keys hidden)
+2. If fails and env keys exist, retry with env keys
 
-Default is `--auth-mode session-first`:
+### Environment Variables
+- Claude: `ANTHROPIC_API_KEY` (optional if logged in)
+- Gemini: `GEMINI_API_KEY` or `GOOGLE_API_KEY` (optional if logged in)
+- Copilot: Uses its own CLI auth flow
 
-1) Try CLI using your existing logged-in session/subscription (keys temporarily hidden)
-2) If that fails and env keys exist, retry using env keys
+### Override to Env-First
+```javascript
+{
+  "skill": "multi-ai-code-review",
+  "params": {
+    "authMode": "env-first"
+  }
+}
+```
+</execution_process>
 
-To flip:
+<usage_patterns>
+## Common Use Cases
 
-`node codex-skills/multi-ai-code-review/scripts/review.js --auth-mode env-first --providers claude,gemini`
+### PR Review (Standard)
+```javascript
+{
+  "skill": "multi-ai-code-review",
+  "params": {
+    "range": "origin/main...HEAD",
+    "providers": ["claude", "gemini"],
+    "output": "markdown"
+  }
+}
+```
 
-## Environment variables
+### Security Audit (High Stakes)
+```javascript
+{
+  "skill": "multi-ai-code-review",
+  "params": {
+    "providers": ["claude", "gemini", "copilot"],
+    "synthesize": true,
+    "output": "json"
+  }
+}
+```
 
-- Claude: `ANTHROPIC_API_KEY` (optional if already logged in)
-- Gemini: `GEMINI_API_KEY` or `GOOGLE_API_KEY` (optional if already logged in)
-- Copilot: uses its own CLI auth flow
+### CI Pipeline (Automated)
+```javascript
+{
+  "skill": "multi-ai-code-review",
+  "params": {
+    "ci": true,
+    "range": "origin/main...HEAD",
+    "providers": ["claude", "gemini"]
+  }
+}
+```
 
-## Optional: critique the review itself
+### Quick Staged Review
+```javascript
+{
+  "skill": "multi-ai-code-review",
+  "params": {
+    "staged": true,
+    "providers": ["claude"]
+  }
+}
+```
+</usage_patterns>
+</instructions>
 
-Pipe the generated review into the existing `response-rater` skill:
+<examples>
+<code_example>
+**Agent Studio Invocation**:
 
-`node codex-skills/multi-ai-code-review/scripts/review.js --output markdown | node codex-skills/response-rater/scripts/rate.js --providers claude,gemini`
+```javascript
+// Via Skill tool in Agent Studio
+const result = await invoke({
+  skill: "multi-ai-code-review",
+  params: {
+    providers: ["claude", "gemini"],
+    range: "origin/main...HEAD",
+    output: "json"
+  }
+});
 
-## Notes / constraints
+console.log(result.data.synthesis.parsed.summary);
+```
 
-- Requires network access to contact providers.
-- For very large diffs, the runner samples hunks and reports what was omitted.
+**Natural Language Invocation**:
+
+```
+Run multi-AI code review on the PR branch with Claude and Gemini
+```
+
+**Direct CLI (Codex Pattern)**:
+
+```bash
+# Unstaged diff
+node codex-skills/multi-ai-code-review/scripts/review.js --providers claude,gemini
+
+# Staged diff
+node codex-skills/multi-ai-code-review/scripts/review.js --staged --providers claude,gemini
+
+# PR branch
+node codex-skills/multi-ai-code-review/scripts/review.js --range origin/main...HEAD --providers claude,gemini
+
+# CI mode
+node codex-skills/multi-ai-code-review/scripts/review.js --ci --range origin/main...HEAD --providers claude,gemini > ai-review.json
+```
+</code_example>
+</examples>
+
+## Implementation Details
+
+### Adapter Architecture
+
+```
+Agent Studio Skill Invocation
+         ↓
+.claude/skills/multi-ai-code-review/invoke.mjs (Adapter)
+         ↓
+codex-skills/multi-ai-code-review/scripts/review.js (Codex CLI)
+         ↓
+External AI CLIs (claude, gemini, copilot)
+         ↓
+Structured JSON Output
+```
+
+### Bridging Patterns
+
+1. **Parameter Mapping**: Agent Studio params → CLI args
+2. **Output Formatting**: CLI stdout → Agent Studio response
+3. **Error Handling**: CLI errors → Agent Studio error format
+4. **Schema Validation**: Output conforms to `.claude/schemas/multi-ai-review-report.schema.json`
+
+### Codex CLI Location
+
+The underlying Codex CLI skill is located at:
+- **Script**: `codex-skills/multi-ai-code-review/scripts/review.js`
+- **Documentation**: `codex-skills/multi-ai-code-review/SKILL.md`
+
+### Windows Compatibility
+
+- Uses `spawn` with `shell: true` for Windows `.cmd` shims
+- Proper path resolution with `path.join()`
+- No path concatenation issues
+
+## Integration with Workflows
+
+### Step 0.1: Plan Rating (Multi-AI Fallback)
+
+When high-stakes plans require multi-AI validation, this skill can be used as a fallback:
+
+```yaml
+# In workflow YAML
+step: 0.1
+agent: planner
+validation:
+  multi_ai_rating:
+    enabled: true
+    skill: multi-ai-code-review
+    fallback_to_single_model: true
+```
+
+### Step 6: Code Review
+
+Standard integration for code review steps:
+
+```yaml
+step: 6
+agent: code-reviewer
+tools:
+  - multi-ai-code-review
+params:
+  providers: ["claude", "gemini"]
+  range: "origin/main...HEAD"
+```
+
+## Notes / Constraints
+
+- **Network Access Required**: Contacts external AI provider APIs
+- **Large Diff Sampling**: For diffs > `maxDiffChars`, samples head+tail with marker
+- **Provider Availability**: Gracefully handles provider failures with per-provider status
+- **Retry Logic**: Automatic retry with exponential backoff (3 attempts per provider)
+- **Session vs API Keys**: Session-first auth avoids hitting API rate limits for logged-in users
+- **CI Mode**: Strict JSON-only mode for automated pipelines (non-zero exit on failure)
+
+## Related Skills
+
+- **response-rater**: Rate the quality of review outputs
+- **repo-rag**: Search codebase for context before review
+- **git**: Git operations for diff generation
+- **code-style-validator**: Style validation to complement review
