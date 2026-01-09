@@ -390,7 +390,7 @@ function toMarkdownReport({ synthesized, perProvider }) {
   return lines.join("\n");
 }
 
-function toStrictJsonReport({ diffMeta, perProvider, synthesisDisabledReason }) {
+function toStrictJsonReport({ diffMeta, perProvider, synthesisDisabledReason, performance }) {
   const minimal = perProvider.map((p) => ({
     provider: p.provider,
     ok: p.ok,
@@ -409,6 +409,8 @@ function toStrictJsonReport({ diffMeta, perProvider, synthesisDisabledReason }) 
     diffMeta,
     providers: minimal.map((p) => ({ provider: p.provider, ok: p.ok, parsedOk: p.parsedOk })),
     perProvider: minimal,
+    // Include performance metrics in CI/strict mode output
+    performance: performance || null,
   };
 }
 
@@ -457,13 +459,48 @@ async function main() {
     process.exit(0);
   }
 
-  const perProvider = [];
-  for (const p of providers) {
-    if (p === "claude") perProvider.push(await runClaude(prompt, args));
-    else if (p === "gemini") perProvider.push(await runGemini(prompt, args));
-    else if (p === "copilot") perProvider.push(await runCopilot(prompt, args));
-    else perProvider.push({ provider: p, ok: false, stdout: "", stderr: `Unknown provider: ${p}` });
-  }
+  // Performance measurement: start timing
+  const providerStartTime = Date.now();
+
+  // Parallel execution of provider calls using Promise.allSettled()
+  // This reduces total time from sum(provider_times) to max(provider_times)
+  // Each provider still has independent retry logic (up to 3 attempts)
+  const providerPromises = providers.map((p) => {
+    if (p === "claude") return runClaude(prompt, args);
+    if (p === "gemini") return runGemini(prompt, args);
+    if (p === "copilot") return runCopilot(prompt, args);
+    // Return resolved promise for unknown providers (handles gracefully)
+    return Promise.resolve({ provider: p, ok: false, stdout: "", stderr: `Unknown provider: ${p}` });
+  });
+
+  // Promise.allSettled() ensures ALL providers complete, even if some fail
+  // This is preferred over Promise.all() which would reject on first failure
+  const providerResults = await Promise.allSettled(providerPromises);
+
+  // Map results to consistent format, handling both fulfilled and rejected promises
+  const perProvider = providerResults.map((result, index) => {
+    if (result.status === "fulfilled") {
+      return result.value;
+    }
+    // Rejected promise - provider threw an unexpected error
+    return {
+      provider: providers[index],
+      ok: false,
+      stdout: "",
+      stderr: result.reason?.message || result.reason?.stderr || String(result.reason),
+      code: result.reason?.code || "REJECTED",
+    };
+  });
+
+  // Performance measurement: end timing
+  const providerEndTime = Date.now();
+  const providerDurationMs = providerEndTime - providerStartTime;
+  const successCount = perProvider.filter((p) => p.ok).length;
+
+  // Log performance metrics (useful for debugging and optimization tracking)
+  console.error(
+    `[perf] ${providers.length} providers completed in ${providerDurationMs}ms (parallel execution, ${successCount}/${providers.length} succeeded)`
+  );
 
   const parsed = perProvider.map((r) => {
     const extracted = extractModelJson(r.provider, r.stdout);
@@ -483,13 +520,23 @@ async function main() {
       diffMeta,
       perProvider: parsed,
       synthesisDisabledReason: "skipped_in_strict_mode",
+      performance: {
+        providerDurationMs,
+        synthesisDurationMs: 0,
+        totalDurationMs: providerDurationMs,
+        providersCount: providers.length,
+        successCount,
+        parallelExecution: true,
+      },
     });
     console.log(JSON.stringify(report, null, 2));
     process.exit(report.ok ? 0 : 2);
   }
 
   let synthesized = null;
+  let synthesisDurationMs = 0;
   if (args.synthesize) {
+    const synthesisStartTime = Date.now();
     const synthProvider = args.synthesizeWith || providers[0];
     const synthPrompt = [
       "You are synthesizing multiple independent AI code review JSON outputs into a single deduped report.",
@@ -505,7 +552,14 @@ async function main() {
     if (synthProvider === "claude") synthesized = await runClaude(synthPrompt, args);
     else if (synthProvider === "gemini") synthesized = await runGemini(synthPrompt, args);
     else if (synthProvider === "copilot") synthesized = await runCopilot(synthPrompt, args);
+
+    synthesisDurationMs = Date.now() - synthesisStartTime;
+    console.error(`[perf] Synthesis completed in ${synthesisDurationMs}ms`);
   }
+
+  // Calculate total execution time
+  const totalDurationMs = providerDurationMs + synthesisDurationMs;
+  console.error(`[perf] Total multi-AI review: ${totalDurationMs}ms`);
 
   const synthesizedExtracted = synthesized
     ? extractModelJson("synthesis", synthesized.stdout)
@@ -536,6 +590,19 @@ async function main() {
               ...synthesizedExtracted,
             }
           : null,
+        // Performance metrics for tracking and optimization
+        performance: {
+          providerDurationMs,
+          synthesisDurationMs,
+          totalDurationMs,
+          providersCount: providers.length,
+          successCount,
+          parallelExecution: true,
+          // Estimated sequential time (for comparison)
+          estimatedSequentialMs: providerDurationMs * providers.length,
+          // Estimated time saved through parallelization
+          estimatedTimeSavedMs: Math.max(0, (providerDurationMs * providers.length) - providerDurationMs),
+        },
       },
       null,
       2,

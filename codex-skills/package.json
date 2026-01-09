@@ -1,0 +1,7 @@
+{
+  "name": "codex-skills",
+  "version": "1.0.0",
+  "description": "Codex CLI skills for multi-AI code review and response rating",
+  "type": "commonjs",
+  "private": true
+}
