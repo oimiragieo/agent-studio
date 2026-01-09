@@ -2,6 +2,7 @@
 name: sequential-thinking
 version: 1.0.0
 description: Sequential thinking and structured problem solving. Break down complex problems into steps with revision and branching capabilities. Use for multi-step analysis, planning, and hypothesis verification.
+context:fork: true
 allowed-tools: read, write, bash
 ---
 

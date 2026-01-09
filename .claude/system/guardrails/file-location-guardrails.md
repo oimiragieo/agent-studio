@@ -21,11 +21,14 @@ File location violations result in immediate operation failure. The agent must c
 **Block if**: Path contains any of these patterns:
 
 ```regex
-# Windows drive without separator
-^C:[a-zA-Z]
+# Windows drive without separator (negative lookahead excludes proper paths)
+^[A-Z]:(?![/\\])
 
-# Duplicate drive letters  
+# Duplicate drive letters
 ^[A-Z]:[A-Z]:
+
+# Windows path with concatenated segments after drive letter
+^[A-Z]:[a-zA-Z]+[A-Z][a-zA-Z]+
 
 # Concatenated path segments (missing separators)
 [a-z]{4,}[A-Z][a-z].*[a-z]{4,}[A-Z]
@@ -94,7 +97,25 @@ coverage/
 
 ---
 
-### Rule 5: Warn on Non-Standard Locations
+### Rule 5: Block Windows Reserved Names
+
+**Trigger**: File write with reserved Windows device name
+**Check**: Filename is not a Windows reserved device name
+**Block if**: Filename (case-insensitive, with or without extension) matches:
+
+```
+CON, PRN, AUX, NUL
+COM1, COM2, COM3, COM4, COM5, COM6, COM7, COM8, COM9
+LPT1, LPT2, LPT3, LPT4, LPT5, LPT6, LPT7, LPT8, LPT9
+```
+
+Note: These names are reserved with any extension (e.g., `CON.txt`, `COM5.json`, `LPT7.md`)
+
+**Error Message**: `BLOCKED: Filename "{filename}" is a Windows reserved device name and cannot be used.`
+
+---
+
+### Rule 6: Warn on Non-Standard Locations
 
 **Trigger**: File write to `.claude/context/` but not standard subdirectory
 **Check**: Path uses standard subdirectory
@@ -124,18 +145,36 @@ Add to `.claude/hooks/security-pre-tool.sh`:
 
 validate_file_location() {
     local file_path="$1"
-    
-    # Check for malformed Windows paths
-    if [[ "$file_path" =~ ^C:[a-zA-Z] ]] && [[ ! "$file_path" =~ ^C:[/\\] ]]; then
+
+    # Check for malformed Windows paths (improved detection)
+    if [[ "$file_path" =~ ^[A-Z]:([a-zA-Z]|[^/\\]) ]] && [[ ! "$file_path" =~ ^[A-Z]:[/\\] ]]; then
         echo "BLOCKED: Malformed Windows path - missing separator after drive letter"
         return 1
     fi
-    
-    # Check for concatenated segments
+
+    # Check for Windows path with concatenated segments after drive letter
+    if [[ "$file_path" =~ ^[A-Z]:[a-zA-Z]+[A-Z][a-zA-Z]+ ]]; then
+        echo "BLOCKED: Windows path with concatenated segments after drive letter"
+        return 1
+    fi
+
+    # Check for concatenated segments (general case)
     if [[ "$file_path" =~ [a-z]{4,}[A-Z][a-z].*[a-z]{4,}[A-Z] ]] && [[ ! "$file_path" =~ [/\\] ]]; then
         echo "BLOCKED: Path appears to have concatenated segments without separators"
         return 1
     fi
+
+    # Check for Windows reserved device names
+    local basename=$(basename "$file_path")
+    local basename_upper=$(echo "$basename" | tr '[:lower:]' '[:upper:]')
+    local basename_no_ext="${basename_upper%.*}"
+
+    case "$basename_no_ext" in
+      CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])
+        echo "BLOCKED: Filename uses Windows reserved device name: $basename"
+        return 1
+        ;;
+    esac
     
     # Check for root directory writes
     local basename=$(basename "$file_path")
@@ -170,89 +209,29 @@ fi
 
 ## Node.js Validation Function
 
-For use in `enforcement-gate.mjs`:
+**IMPORTANT: The authoritative implementation is in `.claude/tools/enforcement-gate.mjs`**
 
+All validation constants are sourced from `.claude/schemas/file-location.schema.json` to ensure a single source of truth.
+
+The `validateFileLocation()` function:
+- Loads constants dynamically from the schema
+- Implements correct Windows path detection (fixed `isInProjectRoot` logic)
+- Returns `{ allowed: boolean, blockers: string[], warnings: string[], suggestedPath: string }`
+- Integrated with CLI via `node .claude/tools/enforcement-gate.mjs validate-file-location`
+
+**Key Fix**: The `isInProjectRoot` check now correctly compares the file's directory to the project root, not path segment count. This fixes the Windows edge case where paths like `C:\dev\projects\LLM-RULES\file.md` were incorrectly identified.
+
+**Usage**:
 ```javascript
-/**
- * Validate file location for subagent writes
- * @param {string} filePath - Path to validate
- * @param {string} [fileType] - Optional file type for stricter validation
- * @returns {{ allowed: boolean, blockers: string[], warnings: string[] }}
- */
-function validateFileLocation(filePath, fileType = null) {
-  const blockers = [];
-  const warnings = [];
-  
-  // Normalize path for comparison
-  const normalizedPath = filePath.replace(/\\/g, '/');
-  const basename = normalizedPath.split('/').pop();
-  const pathParts = normalizedPath.split('/').filter(Boolean);
-  
-  // Rule 1: Check for malformed paths
-  const malformedPatterns = [
-    { regex: /^C:[a-zA-Z]/, msg: 'Windows path missing separator after drive letter' },
-    { regex: /^[A-Z]:[A-Z]:/, msg: 'Duplicate drive letters detected' },
-    { regex: /[a-z]{4,}[A-Z][a-z].*[a-z]{4,}[A-Z]/, msg: 'Path segments appear concatenated without separators' },
-    { regex: /^[^/\\]+[a-z]{3,}\.claude/, msg: 'Path to .claude missing separator' }
-  ];
-  
-  for (const { regex, msg } of malformedPatterns) {
-    if (regex.test(filePath)) {
-      blockers.push(`Malformed path: ${msg}`);
-    }
-  }
-  
-  // Rule 2: Check for prohibited directories
-  const prohibitedDirs = ['node_modules', '.git', 'dist', 'build', 'out', '.next', '.nuxt', 'coverage'];
-  for (const dir of prohibitedDirs) {
-    if (normalizedPath.includes(`/${dir}/`) || normalizedPath.startsWith(`${dir}/`)) {
-      blockers.push(`Cannot write to prohibited directory: ${dir}/`);
-    }
-  }
-  
-  // Rule 3: Check root directory writes
-  const allowedRootFiles = new Set([
-    'package.json', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock',
-    'README.md', 'GETTING_STARTED.md', 'LICENSE', '.gitignore',
-    '.npmrc', '.nvmrc', '.editorconfig', 'tsconfig.json',
-    'eslint.config.js', '.eslintrc.json', 'prettier.config.js', '.prettierrc',
-    'CHANGELOG.md', 'CONTRIBUTING.md', 'CODE_OF_CONDUCT.md', 'SECURITY.md'
-  ]);
-  
-  const isRootFile = pathParts.length === 1 || 
-    (pathParts.length === 2 && /^[A-Z]:$/.test(pathParts[0]));
-  
-  if (isRootFile && !allowedRootFiles.has(basename)) {
-    blockers.push(`File "${basename}" not allowed in project root. Use .claude/ hierarchy.`);
-  }
-  
-  // Rule 4: Check file type locations
-  if (fileType || basename.match(/-report\.(md|json)$/)) {
-    if (!normalizedPath.includes('.claude/context/reports/') && 
-        !normalizedPath.includes('.claude/context/artifacts/')) {
-      blockers.push('Report files must be in .claude/context/reports/ or .claude/context/artifacts/');
-    }
-  }
-  
-  if (fileType === 'task' || basename.match(/-task\.(md|json)$/)) {
-    if (!normalizedPath.includes('.claude/context/tasks/') &&
-        !normalizedPath.includes('.claude/context/')) {
-      blockers.push('Task files must be in .claude/context/tasks/');
-    }
-  }
-  
-  if (basename.startsWith('tmp-') && !normalizedPath.includes('.claude/context/tmp/')) {
-    warnings.push('Temporary files should be in .claude/context/tmp/');
-  }
-  
-  return {
-    allowed: blockers.length === 0,
-    blockers,
-    warnings
-  };
-}
+import { validateFileLocation } from './.claude/tools/enforcement-gate.mjs';
 
-module.exports = { validateFileLocation };
+const result = await validateFileLocation(filePath, fileType, projectRoot);
+if (!result.allowed) {
+  console.error('Blocked:', result.blockers.join('; '));
+  if (result.suggestedPath) {
+    console.log('Suggested path:', result.suggestedPath);
+  }
+}
 ```
 
 ---
@@ -299,4 +278,6 @@ ls -la . | grep -E "\.(md|json)$"
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.2.0 | 2025-01-08 | Extracted shared constants to schema; Implemented in enforcement-gate.mjs; Fixed Windows root path detection |
+| 1.1.0 | 2025-01-08 | Improved malformed path detection with negative lookahead; Added Windows reserved names COM5-COM9 and LPT5-LPT9 |
 | 1.0.0 | 2025-01-05 | Initial release |

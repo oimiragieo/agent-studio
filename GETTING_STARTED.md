@@ -78,6 +78,111 @@ See `.claude/hooks/README.md` for detailed hook documentation.
 → [Routes to database-architect agent]
 ```
 
+## ⚠️ Claude Code 2.1.2: Windows Managed Settings Migration
+
+**BREAKING CHANGE**: Claude Code 2.1.2 changes the Windows managed settings path.
+
+### Migration Required for Windows Users
+
+If you're using Claude Code on Windows, you must migrate your managed settings:
+
+**Old Path** (deprecated): `C:\ProgramData\ClaudeCode\managed-settings.json`
+**New Path**: `C:\Program Files\ClaudeCode\managed-settings.json`
+
+### Migration Steps
+
+1. **Backup your settings**:
+   ```powershell
+   Copy-Item -Path "C:\ProgramData\ClaudeCode\managed-settings.json" `
+     -Destination "C:\ProgramData\ClaudeCode\managed-settings.json.backup"
+   ```
+
+2. **Copy to new location**:
+   ```powershell
+   Copy-Item -Path "C:\ProgramData\ClaudeCode\managed-settings.json" `
+     -Destination "C:\Program Files\ClaudeCode\managed-settings.json"
+   ```
+
+3. **Update deployment scripts** (if applicable):
+   - Update any CI/CD pipelines referencing the old path
+   - Update any automation scripts using the old path
+   - Update documentation referencing the old path
+
+4. **Verify new path works**:
+   - Restart Claude Code
+   - Check that your settings are applied
+   - Confirm hooks and configurations are active
+
+5. **Clean up** (after verification):
+   ```powershell
+   # Only after confirming new path works
+   Remove-Item -Path "C:\ProgramData\ClaudeCode\managed-settings.json"
+   ```
+
+### Verification
+
+After migration, verify the new path is working:
+```powershell
+# Check that new file exists and has content
+Get-Content "C:\Program Files\ClaudeCode\managed-settings.json" | ConvertFrom-Json
+```
+
+---
+
+## New Features in 2.1.2
+
+### Skill Auto-Injection (Phase 2B)
+
+Skills can now be automatically injected into subagent contexts via the `skill-injection-hook.js`. This provides:
+
+- **Zero overhead**: Automatic skill enhancement without orchestrator involvement
+- **Token savings**: 80% context savings through smart skill forking
+- **Consistency**: Always uses the latest skill-integration-matrix.json
+- **Performance**: Less than 100ms overhead
+
+See [Skill Injection](#skill-injection) section below for details.
+
+### context:fork Feature
+
+Skills now support a `context:fork` field that enables smart context optimization:
+
+```yaml
+# In skill frontmatter
+context:fork: true  # Allow forking into subagent contexts
+```
+
+Benefits:
+- Skills can be selectively forked to reduce subagent context bloat
+- Only skills with `context:fork: true` are injected
+- Reduces subagent prompt size by 80% while maintaining functionality
+- Automatic in workflows via skill-injection-hook
+
+### Hook Execution Order
+
+Hooks now execute in a predictable order:
+
+1. **PreToolUse** (before tool execution):
+   - security-pre-tool.sh - Blocks dangerous commands
+   - orchestrator-enforcement-hook.mjs - Enforces orchestrator rules
+   - skill-injection-hook.js - Injects skills into Task calls
+
+2. **PostToolUse** (after tool execution):
+   - audit-post-tool.sh - Logs all tool executions
+   - skill-injection-hook.js - Validates injected skills
+
+**Note**: TodoWrite and Task tools are excluded from most hooks to prevent recursion.
+
+### Additional 2.1.2 Features
+
+- **Large outputs to disk**: Supports writing large outputs directly to disk
+- **Binary file support**: Binary files can now be processed and stored
+- **Zod 4.0 requirement**: Updated schema validation (see UPGRADE_GUIDE_2.1.2.md)
+- **Context compressing**: Automatic state compression for long-running tasks
+
+See `.claude/docs/UPGRADE_GUIDE_2.1.2.md` for complete migration guide.
+
+---
+
 ## Validation (Optional)
 
 Validate your configuration after copying:

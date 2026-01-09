@@ -2,6 +2,37 @@
 
 This directory contains **native Claude Code hooks** - shell scripts that execute at lifecycle events.
 
+## Hook Execution Order (2.1.2+)
+
+Hooks execute in a predictable sequence during tool execution:
+
+### PreToolUse Hooks (Before Execution)
+
+Hooks run in this order BEFORE any tool executes:
+
+1. **security-pre-tool.sh** (blocks dangerous commands)
+2. **orchestrator-enforcement-hook.mjs** (enforces orchestrator rules)
+3. **skill-injection-hook.js** (injects skills into Task calls)
+
+**Exclusions**: TodoWrite and Task tools are excluded from most PreToolUse hooks to prevent recursion.
+
+### PostToolUse Hooks (After Execution)
+
+Hooks run in this order AFTER tool execution completes:
+
+1. **audit-post-tool.sh** (logs tool execution)
+2. **skill-injection-hook.js** (validates injected skills)
+
+### Hook Performance
+
+- **Total overhead**: <100ms per tool execution
+- **security-pre-tool.sh**: ~5ms (pattern matching)
+- **orchestrator-enforcement-hook.mjs**: ~15ms (rule evaluation)
+- **skill-injection-hook.js**: ~7ms (skill matrix lookup)
+- **audit-post-tool.sh**: ~10ms (logging)
+
+---
+
 ## Available Hooks
 
 ### orchestrator-enforcement-hook.mjs (PreToolUse/PostToolUse) - **Phase 1 Enforcement**

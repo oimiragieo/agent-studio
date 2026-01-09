@@ -1,6 +1,7 @@
 ---
 name: computer-use
 description: Browser automation with Playwright for computer use. Click, type, scroll, screenshot, and execute JavaScript. Use for web testing, automation, and visual verification tasks.
+context:fork: true
 allowed-tools: read, write, bash
 ---
 

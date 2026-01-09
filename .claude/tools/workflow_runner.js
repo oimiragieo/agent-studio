@@ -37,6 +37,9 @@ import { updateRunSummary } from './dashboard-generator.mjs';
 import { executeAgent } from './agent-executor.mjs';
 import { injectSkillsForAgent } from './skill-injector.mjs';
 import { validateSkillUsage, generateViolationReport } from './skill-validator.mjs';
+import { validateExecutionGate } from './enforcement-gate.mjs';
+import { createCheckpoint, restoreFromCheckpoint, listCheckpoints } from './checkpoint-manager.mjs';
+import { executePlanRatingGate, checkPlanRating } from './plan-rating-gate.mjs';
 
 // Import js-yaml for proper YAML parsing
 let yaml;
@@ -1527,13 +1530,41 @@ function loadCUJDefinition(cujId) {
     }
   }
 
-  // Extract success criteria
+  // Extract success criteria (support both checkbox bullets and tables)
   const criteriaSection = cujContent.match(/## Success Criteria\s*\n([\s\S]*?)(?=\n##|$)/);
   if (criteriaSection) {
-    const criteria = criteriaSection[1].match(/- \[.\]\s+(.+)/g);
-    if (criteria) {
-      cuj.success_criteria = criteria.map(c => c.replace(/- \[.\]\s+/, '').trim());
+    const sectionText = criteriaSection[1];
+    const criteria = [];
+
+    // Pattern 1: Checkbox bullets (existing)
+    const checkboxMatches = sectionText.match(/- \[.\]\s+(.+)/g);
+    if (checkboxMatches) {
+      checkboxMatches.forEach(match => {
+        criteria.push(match.replace(/- \[.\]\s+/, '').trim());
+      });
     }
+
+    // Pattern 2: Table rows (new - for CUJ-063 and others)
+    // Match table rows that aren't headers or separators
+    const tableRowMatches = sectionText.match(/\|([^|]+)\|([^|]+)\|/g);
+    if (tableRowMatches) {
+      tableRowMatches.forEach(row => {
+        // Skip header rows and separator rows
+        if (!row.includes('---') && !row.toLowerCase().includes('criteria') && !row.toLowerCase().includes('status')) {
+          // Extract first column (criteria text)
+          const columns = row.split('|').map(c => c.trim()).filter(c => c);
+          if (columns.length > 0 && columns[0]) {
+            // Avoid duplicate entries if checkbox pattern already captured this
+            const criteriaText = columns[0].trim();
+            if (!criteria.includes(criteriaText)) {
+              criteria.push(criteriaText);
+            }
+          }
+        }
+      });
+    }
+
+    cuj.success_criteria = criteria;
   }
 
   // Extract agents
@@ -1711,8 +1742,56 @@ async function main() {
     workflowPath = resolve(workflowPath);
   }
   
+  // Handle resume from checkpoint
+  if (args.resume || args['resume-step']) {
+    const runId = args['run-id'];
+    if (!runId) {
+      console.error('❌ Error: --run-id required for resume');
+      console.error('Usage: node workflow_runner.js --workflow <yaml> --resume --run-id <id> [--resume-step <step>]');
+      process.exit(1);
+    }
+    
+    try {
+      const checkpoints = await listCheckpoints(runId);
+      if (checkpoints.length === 0) {
+        console.error(`❌ Error: No checkpoints found for run ${runId}`);
+        process.exit(1);
+      }
+      
+      let checkpointToRestore;
+      if (args['resume-step']) {
+        const targetStep = parseInt(args['resume-step'], 10);
+        checkpointToRestore = checkpoints.find(c => c.step === targetStep);
+        if (!checkpointToRestore) {
+          console.error(`❌ Error: No checkpoint found for step ${targetStep}`);
+          console.error(`   Available checkpoints:`);
+          checkpoints.forEach(c => console.error(`     - Step ${c.step}: ${c.checkpoint_id}`));
+          process.exit(1);
+        }
+      } else {
+        // Use most recent checkpoint
+        checkpointToRestore = checkpoints[0];
+      }
+      
+      console.log(`\n🔄 Restoring from checkpoint: ${checkpointToRestore.checkpoint_id}`);
+      console.log(`   Step: ${checkpointToRestore.step}`);
+      console.log(`   Timestamp: ${checkpointToRestore.timestamp}\n`);
+      
+      const restored = await restoreFromCheckpoint(runId, checkpointToRestore.checkpoint_id);
+      console.log(`✅ Restored ${restored.artifacts_restored} artifact(s) from checkpoint`);
+      console.log(`   Resume from step ${restored.restored_step + 1}\n`);
+      
+      // Update args to continue from restored step
+      args.step = String(restored.restored_step + 1);
+      args.id = runId; // Use run-id as workflow-id for continuation
+    } catch (resumeError) {
+      console.error(`❌ Error: Resume failed: ${resumeError.message}`);
+      process.exit(1);
+    }
+  }
+  
   // Auto-generate workflow ID if not provided
-  const workflowId = args.id || generateWorkflowId();
+  const workflowId = args.id || args['run-id'] || generateWorkflowId();
   
   // Always validate format
   const idValidation = validateWorkflowIdFormat(workflowId);
@@ -1722,7 +1801,7 @@ async function main() {
   }
   
   // Log generated ID for user reference
-  if (!args.id) {
+  if (!args.id && !args['run-id']) {
     console.log(`📋 Generated workflow ID: ${workflowId}`);
     console.log(`   Use --id ${workflowId} to reference this workflow in future steps\n`);
   }
@@ -1860,6 +1939,90 @@ async function main() {
     }
   }
   
+  // ========================================================================
+  // PLAN RATING GATE (Step 0.1)
+  // Enforces "never execute an unrated plan" rule from CLAUDE.md
+  // Executes before Step 1 if Step 0 (Planning) has completed
+  // ========================================================================
+  const runId = args['run-id'] || null;
+  const stepNumber = parseInt(args.step, 10);
+
+  // Execute Plan Rating Gate for steps >= 1 (after planning)
+  if (stepNumber >= 1 && runId && !isDryRun) {
+    console.log(`\n${'='.repeat(60)}`);
+    console.log('STEP 0.1: PLAN RATING GATE');
+    console.log('Enforcing: "Never execute an unrated plan" (CLAUDE.md)');
+    console.log(`${'='.repeat(60)}`);
+
+    try {
+      // First check if a rating already exists and passes
+      const existingRating = await checkPlanRating(runId, 'plan');
+
+      if (existingRating.valid && existingRating.rated) {
+        console.log(`\n✅ Plan Rating Gate: PASSED (existing rating)`);
+        console.log(`   Score: ${existingRating.score}/10 (minimum: ${existingRating.minimumRequired})`);
+      } else if (!existingRating.rated) {
+        // No rating exists - execute the plan rating gate
+        console.log(`\n⚠️  No plan rating found. Invoking response-rater skill...`);
+
+        const ratingResult = await executePlanRatingGate(runId, null, {
+          workflowId,
+          minimumScore: 7,
+          providers: 'claude,gemini'
+        });
+
+        if (ratingResult.success) {
+          console.log(`\n✅ Plan Rating Gate: PASSED`);
+          console.log(`   Score: ${ratingResult.score}/10 (minimum: 7)`);
+          console.log(`   Rating saved: ${ratingResult.rating_path}`);
+        } else {
+          console.error(`\n❌ Plan Rating Gate: FAILED`);
+          console.error(`   Score: ${ratingResult.score}/10 (minimum required: 7)`);
+
+          if (ratingResult.feedback) {
+            console.error(`\n   Feedback for Planner:`);
+            if (ratingResult.feedback.weak_areas && ratingResult.feedback.weak_areas.length > 0) {
+              console.error(`   Weak areas:`);
+              ratingResult.feedback.weak_areas.forEach(area => {
+                console.error(`     - ${area.component}: ${area.score}/10 - ${area.suggestion}`);
+              });
+            }
+            if (ratingResult.feedback.improvements_required && ratingResult.feedback.improvements_required.length > 0) {
+              console.error(`\n   Required improvements:`);
+              ratingResult.feedback.improvements_required.forEach((imp, i) => {
+                console.error(`     ${i + 1}. ${imp}`);
+              });
+            }
+          }
+
+          console.error(`\n   Action Required: Return plan to Planner for revision.`);
+          console.error(`   Command: node workflow_runner.js --workflow ${args.workflow} --step 0 --id ${workflowId}`);
+          console.error(`${'='.repeat(60)}\n`);
+          process.exit(1);
+        }
+      } else {
+        // Rating exists but doesn't pass
+        console.error(`\n❌ Plan Rating Gate: FAILED (existing rating below threshold)`);
+        console.error(`   Score: ${existingRating.score}/10 (minimum required: ${existingRating.minimumRequired})`);
+        console.error(`\n   Action Required: Return plan to Planner for revision.`);
+        process.exit(1);
+      }
+    } catch (ratingError) {
+      // Handle gracefully - log warning but allow execution to continue
+      // This prevents breaking existing workflows while rating infrastructure is being set up
+      console.warn(`\n⚠️  Plan Rating Gate: Could not validate (${ratingError.message})`);
+      console.warn(`   Proceeding with execution (non-blocking on errors)`);
+      console.warn(`   To fix: Ensure response-rater skill is properly configured`);
+    }
+
+    console.log(`${'='.repeat(60)}\n`);
+  } else if (stepNumber >= 1 && !runId) {
+    // Warn if run-id is missing for steps that should have rating
+    console.warn(`\n⚠️  Warning: --run-id not provided for Step ${stepNumber}`);
+    console.warn(`   Plan rating gate requires --run-id to validate plans.`);
+    console.warn(`   Usage: node workflow_runner.js --workflow <yaml> --step ${stepNumber} --run-id <id>\n`);
+  }
+
   // Validate step dependencies before proceeding
   // Context monitoring: Check context usage before step execution
   const stepInfo = getStepInfo(workflow, args.step);
@@ -2161,6 +2324,59 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
       console.log(`   📋 Step:   ${stepName}`);
       console.log(`   ⚠️  Agent execution skipped in dry-run mode\n`);
     } else {
+      // Validate enforcement gates before step execution
+      if (config.validation?.gate) {
+        console.log(`\n🔒 Validating Enforcement Gates for Step ${args.step}...`);
+        try {
+          const workflowName = basename(workflowPath, '.yaml');
+          const taskDescription = config.description || stepName;
+          const planId = args['plan-id'] || 'plan';
+          
+          const gateResult = await validateExecutionGate({
+            runId,
+            workflowName,
+            stepNumber: parseInt(args.step, 10),
+            planId,
+            taskDescription,
+            assignedAgents: [agentName],
+            options: {
+              agentType: agentName,
+              taskType: config.taskType,
+              complexity: config.complexity
+            }
+          });
+          
+          if (!gateResult.allowed) {
+            console.error(`\n❌ BLOCKED: Enforcement gate validation failed for Step ${args.step}`);
+            console.error(`   Summary: ${gateResult.summary}`);
+            if (gateResult.blockers.length > 0) {
+              console.error(`\n   Blockers:`);
+              gateResult.blockers.forEach(blocker => {
+                console.error(`   - ${blocker.type}: ${blocker.message}`);
+              });
+            }
+            if (gateResult.warnings.length > 0) {
+              console.warn(`\n   Warnings:`);
+              gateResult.warnings.forEach(warning => {
+                console.warn(`   - ${warning.type}: ${warning.message}`);
+              });
+            }
+            process.exit(1);
+          } else {
+            console.log(`   ✅ All gates passed`);
+            if (gateResult.warnings.length > 0) {
+              console.warn(`   ⚠️  ${gateResult.warnings.length} warning(s):`);
+              gateResult.warnings.forEach(warning => {
+                console.warn(`      - ${warning.message}`);
+              });
+            }
+          }
+        } catch (gateError) {
+          console.error(`\n❌ Error: Enforcement gate validation failed: ${gateError.message}`);
+          console.error(`   Continuing with step execution (gate validation is non-blocking on errors)`);
+        }
+      }
+      
       console.log(`\n🤖 Executing Agent for Step ${args.step}: ${stepName}`);
       console.log(`   👤 Agent:  ${agentName}`);
       console.log(`   📋 Step:   ${stepName}\n`);
@@ -2735,6 +2951,20 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             await updateRunSummary(runId);
           } catch (dashboardError) {
             console.warn(`⚠️  Warning: Could not update dashboard: ${dashboardError.message}`);
+          }
+          
+          // Create checkpoint after successful step execution
+          try {
+            const checkpoint = await createCheckpoint(runId, parseInt(args.step), {
+              step_name: stepName,
+              agent: agentName,
+              artifacts: [interpolatedOutput],
+              validation_status: validationStatus
+            });
+            console.log(`\n💾 Checkpoint created: ${checkpoint.checkpoint_id}`);
+          } catch (checkpointError) {
+            console.warn(`⚠️  Warning: Could not create checkpoint: ${checkpointError.message}`);
+            // Continue - checkpoint creation is not critical
           }
           
           console.log(`\n📝 Artifacts registered in run ${runId}`);

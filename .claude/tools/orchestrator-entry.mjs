@@ -17,6 +17,7 @@ import { existsSync } from 'fs';
 import { createRun, readRun, updateRun, registerArtifact, getRunDirectoryStructure } from './run-manager.mjs';
 import { routeWorkflow } from './workflow-router.mjs';
 import { updateRunSummary } from './dashboard-generator.mjs';
+import { detectAllSkills } from './skill-trigger-detector.mjs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 // Generate simple UUID-like ID
@@ -108,26 +109,84 @@ function generateRunId() {
 }
 
 /**
+ * Detect and log triggered skills for a task
+ * @param {string} agentType - Agent type (e.g., "developer", "orchestrator")
+ * @param {string} taskDescription - Task description to match against triggers
+ * @param {string} runId - Run ID for logging
+ * @returns {Promise<Object>} Triggered skills info
+ */
+async function detectAndLogSkills(agentType, taskDescription, runId) {
+  try {
+    const skillsInfo = await detectAllSkills(agentType, taskDescription);
+
+    // Log triggered skills
+    console.log(`[Orchestrator Entry] Skill detection for ${agentType}:`);
+    console.log(`  Required skills: ${skillsInfo.required.join(', ') || 'none'}`);
+    console.log(`  Triggered skills: ${skillsInfo.triggered.join(', ') || 'none'}`);
+    console.log(`  Recommended skills: ${skillsInfo.recommended.join(', ') || 'none'}`);
+    console.log(`  Matched triggers: ${skillsInfo.matchedTriggers.join(', ') || 'none'}`);
+
+    // Save skill detection artifact
+    const runDirs = getRunDirectoryStructure(runId);
+    const skillArtifactPath = join(runDirs.artifacts_dir, 'skill-detection.json');
+
+    await writeFile(
+      skillArtifactPath,
+      JSON.stringify({
+        agent: agentType,
+        task: taskDescription,
+        detection_timestamp: new Date().toISOString(),
+        ...skillsInfo
+      }, null, 2),
+      'utf-8'
+    );
+
+    // Register artifact
+    await registerArtifact(runId, {
+      name: 'skill-detection.json',
+      step: 0,
+      agent: 'orchestrator',
+      path: skillArtifactPath,
+      dependencies: [],
+      validationStatus: 'pass'
+    });
+
+    return skillsInfo;
+  } catch (error) {
+    console.error(`[Orchestrator Entry] Skill detection failed: ${error.message}`);
+    // Non-fatal error - continue execution
+    return {
+      required: [],
+      triggered: [],
+      recommended: [],
+      all: [],
+      matchedTriggers: [],
+      error: error.message
+    };
+  }
+}
+
+/**
  * Execute step 0 via workflow runner
  */
 async function executeStep0(runId, workflowPath) {
   const runtime = detectRuntime();
   const runDirs = getRunDirectoryStructure(runId);
-  
+
   // Build command
   const workflowRunnerPath = join(__dirname, 'workflow_runner.js');
   const command = `node "${workflowRunnerPath}" --workflow "${workflowPath}" --step 0 --id "${runId}" --run-id "${runId}"`;
-  
+
   try {
     const { stdout, stderr } = await execAsync(command, {
       cwd: join(__dirname, '../..'),
       maxBuffer: 10 * 1024 * 1024 // 10MB
     });
-    
+
     if (stderr) {
       console.warn(`Workflow runner stderr: ${stderr}`);
     }
-    
+
     return {
       success: true,
       output: stdout,
@@ -231,7 +290,7 @@ export async function resolveCUJExecutionMode(cujId) {
         const primarySkill = cells[3] && cells[3] !== '-' && cells[3] !== 'null' ? cells[3] : null;
 
         // Validate execution mode
-        const validModes = ['workflow', 'skill', 'manual', 'skill-only', 'manual-setup'];
+        const validModes = ['workflow', 'skill-only', 'manual', 'manual-setup'];
         if (!validModes.includes(executionMode)) {
           console.warn(`[CUJ Resolver] Invalid execution mode '${executionMode}' for ${cujId}. Expected one of: ${validModes.join(', ')}`);
         }
@@ -306,33 +365,88 @@ export async function processUserPrompt(userPrompt, options = {}) {
         intent: `Execute ${cujId}`,
         complexity: 'medium'
       };
-    } else if (cujMapping.executionMode === 'skill' && cujMapping.primarySkill) {
-      // Use CUJ-specified skill (route to skill-based workflow)
-      routingResult = {
-        selected_workflow: null,
-        workflow_selection: null,
-        routing_method: 'cuj_skill',
-        cuj_id: cujId,
-        primary_skill: cujMapping.primarySkill,
-        confidence: 1.0,
-        intent: `Execute ${cujId} via ${cujMapping.primarySkill} skill`,
-        complexity: 'low'
-      };
+    } else if (cujMapping.executionMode === 'skill-only' && cujMapping.primarySkill) {
+      // Skill-only CUJ execution - direct skill invocation without workflow
+      console.log(`[Orchestrator Entry] Executing skill-only CUJ: ${cujId} via ${cujMapping.primarySkill} skill`);
 
-      console.log(`[Orchestrator Entry] CUJ uses skill: ${cujMapping.primarySkill}`);
-      console.warn(`[Orchestrator Entry] Skill-based CUJ execution not yet implemented. Falling back to semantic routing.`);
-
-      // Fall back to semantic routing for now
       try {
-        routingResult = await routeWorkflow(userPrompt);
-        routingResult.routing_method = 'semantic_fallback_from_cuj';
-        routingResult.cuj_id = cujId;
+        // Import and execute the skill directly
+        const skillPath = join(__dirname, '..', 'skills', cujMapping.primarySkill, 'SKILL.md');
+
+        if (!existsSync(skillPath)) {
+          throw new Error(`Skill not found: ${cujMapping.primarySkill} at ${skillPath}`);
+        }
+
+        // For skill-only execution, we create a minimal routing result
+        // that indicates no workflow is needed
+        routingResult = {
+          selected_workflow: null,
+          workflow_selection: null,
+          routing_method: 'skill_only',
+          cuj_id: cujId,
+          primary_skill: cujMapping.primarySkill,
+          confidence: 1.0,
+          intent: `Execute ${cujId} via ${cujMapping.primarySkill} skill (direct invocation)`,
+          complexity: 'low',
+          skill_execution_mode: 'direct'
+        };
+
+        // Save routing decision
+        const routingArtifact = {
+          name: 'route_decision.json',
+          step: 0,
+          agent: 'router',
+          path: join(getRunDirectoryStructure(runId).artifacts_dir, 'route_decision.json'),
+          dependencies: [],
+          validationStatus: 'pass'
+        };
+
+        await writeFile(
+          routingArtifact.path,
+          JSON.stringify(routingResult, null, 2),
+          'utf-8'
+        );
+
+        await registerArtifact(runId, routingArtifact);
+
+        // Update run with skill-only execution mode
+        await updateRun(runId, {
+          selected_workflow: null,
+          execution_mode: 'skill_only',
+          primary_skill: cujMapping.primarySkill,
+          metadata: {
+            routing_confidence: routingResult.confidence,
+            routing_method: 'skill_only',
+            intent: routingResult.intent,
+            complexity: routingResult.complexity,
+            cuj_id: cujId
+          }
+        });
+
+        // For skill-only CUJs, return early with skill invocation instructions
+        console.log(`[Orchestrator Entry] Skill-only CUJ ${cujId} prepared for execution`);
+        console.log(`[Orchestrator Entry] User should invoke: Skill: ${cujMapping.primarySkill}`);
+
+        // Generate initial run-summary.md
+        await updateRunSummary(runId);
+
+        return {
+          runId,
+          routing: routingResult,
+          executionMode: 'skill_only',
+          primarySkill: cujMapping.primarySkill,
+          skillInvocationCommand: `Skill: ${cujMapping.primarySkill}`,
+          message: `CUJ ${cujId} is skill-only. Invoke with: Skill: ${cujMapping.primarySkill}`,
+          runRecord: await readRun(runId)
+        };
+
       } catch (error) {
-        console.error(`[Orchestrator Entry] Routing failed: ${error.message}`);
+        console.error(`[Orchestrator Entry] Skill-only execution failed: ${error.message}`);
         await updateRun(runId, {
           status: 'failed',
           metadata: {
-            error: error.message
+            error: error.message,
+            failed_at_stage: 'skill_only_preparation'
           }
         });
         throw error;
@@ -374,51 +488,78 @@ export async function processUserPrompt(userPrompt, options = {}) {
       throw error;
     }
   }
-  
-  // Validate routing result
-  if (!routingResult.selected_workflow && !routingResult.workflow_selection) {
+
+  // Validate routing result (allow null workflow for skill-only execution)
+  const isSkillOnly = routingResult.routing_method === 'skill_only';
+
+  if (!isSkillOnly && !routingResult.selected_workflow && !routingResult.workflow_selection) {
     throw new Error('Router did not return a workflow selection');
   }
-  
+
   const selectedWorkflow = routingResult.selected_workflow || routingResult.workflow_selection;
   
-  // Save routing decision as artifact
-  const routingArtifact = {
-    name: 'route_decision.json',
-    step: 0,
-    agent: 'router',
-    path: join(getRunDirectoryStructure(runId).artifacts_dir, 'route_decision.json'),
-    dependencies: [],
-    validationStatus: 'pass'
-  };
-  
-  await writeFile(
-    routingArtifact.path,
-    JSON.stringify(routingResult, null, 2),
-    'utf-8'
-  );
-  
-  await registerArtifact(runId, routingArtifact);
-  
-  // Update run with workflow selection
-  await updateRun(runId, {
-    selected_workflow: selectedWorkflow,
-    metadata: {
-      routing_confidence: routingResult.confidence,
-      routing_method: routingResult.routing_method || routingResult.method,
-      intent: routingResult.intent,
-      complexity: routingResult.complexity
-    }
-  });
-  
-  // Step 3: Execute step 0
+  // Save routing decision as artifact (if not already saved by skill-only path)
+  if (!isSkillOnly) {
+    const routingArtifact = {
+      name: 'route_decision.json',
+      step: 0,
+      agent: 'router',
+      path: join(getRunDirectoryStructure(runId).artifacts_dir, 'route_decision.json'),
+      dependencies: [],
+      validationStatus: 'pass'
+    };
+
+    await writeFile(
+      routingArtifact.path,
+      JSON.stringify(routingResult, null, 2),
+      'utf-8'
+    );
+
+    await registerArtifact(runId, routingArtifact);
+  }
+
+  // Update run with workflow selection (if not already updated by skill-only path)
+  if (!isSkillOnly) {
+    await updateRun(runId, {
+      selected_workflow: selectedWorkflow,
+      metadata: {
+        routing_confidence: routingResult.confidence,
+        routing_method: routingResult.routing_method || routingResult.method,
+        intent: routingResult.intent,
+        complexity: routingResult.complexity
+      }
+    });
+  }
+
+  // Step 2.5: Detect triggered skills for orchestrator
+  console.log(`[Orchestrator Entry] Detecting triggered skills for orchestrator`);
+  const skillsInfo = await detectAndLogSkills('orchestrator', userPrompt, runId);
+
+  // Step 3: Execute step 0 (skip for skill-only CUJs)
+  if (isSkillOnly) {
+    console.log(`[Orchestrator Entry] Skipping step 0 execution (skill-only mode)`);
+
+    // Generate initial run-summary.md
+    await updateRunSummary(runId);
+
+    return {
+      runId,
+      routing: routingResult,
+      executionMode: 'skill_only',
+      primarySkill: routingResult.primary_skill,
+      skillInvocationCommand: `Skill: ${routingResult.primary_skill}`,
+      message: `Skill-only execution prepared. Invoke with: Skill: ${routingResult.primary_skill}`,
+      runRecord: await readRun(runId)
+    };
+  }
+
   console.log(`[Orchestrator Entry] Executing step 0: ${selectedWorkflow}`);
   try {
     const stepResult = await executeStep0(runId, selectedWorkflow);
-    
+
     // Step 4: Generate initial run-summary.md
     await updateRunSummary(runId);
-    
+
     return {
       runId,
       routing: routingResult,

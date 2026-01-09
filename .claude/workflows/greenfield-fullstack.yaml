@@ -71,7 +71,7 @@ steps:
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
+      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7

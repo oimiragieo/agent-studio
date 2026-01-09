@@ -119,8 +119,11 @@ function checkMissingWorkflows() {
     const missingWorkflows = new Map(); // workflow -> [CUJ IDs]
 
     for (const cuj of registry.cujs) {
-      if (cuj.workflows && Array.isArray(cuj.workflows)) {
-        for (const workflow of cuj.workflows) {
+      // Support both singular (workflow) and plural (workflows) for backwards compatibility
+      const workflowList = cuj.workflow ? [cuj.workflow] : (cuj.workflows || []);
+
+      if (Array.isArray(workflowList)) {
+        for (const workflow of workflowList) {
           const workflowName = workflow.replace(/\.(yaml|yml)$/, '');
           if (!workflowFiles.includes(workflowName)) {
             if (!missingWorkflows.has(workflow)) {
@@ -160,8 +163,11 @@ function checkMissingSkills() {
     const missingSkills = new Map(); // skill -> [CUJ IDs]
 
     for (const cuj of registry.cujs) {
-      if (cuj.required_skills && Array.isArray(cuj.required_skills)) {
-        for (const skill of cuj.required_skills) {
+      // Support both singular (skills) and plural (required_skills) for backwards compatibility
+      const skillList = cuj.skills || cuj.required_skills || [];
+
+      if (Array.isArray(skillList)) {
+        for (const skill of skillList) {
           if (!skillDirs.includes(skill)) {
             if (!missingSkills.has(skill)) {
               missingSkills.set(skill, []);

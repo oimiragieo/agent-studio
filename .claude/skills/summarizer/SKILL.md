@@ -1,6 +1,7 @@
 ---
 name: summarizer
 description: Generate summaries of documents, code, and conversations. Use for documentation, reports, and content condensation.
+context:fork: true
 allowed-tools: read, write, grep, glob
 version: 1.0
 best_practices:

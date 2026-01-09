@@ -1,6 +1,7 @@
 ---
 name: rule-selector
 description: Analyzes project tech stack and recommends optimal rule configuration. Detects frameworks from package.json, requirements.txt, go.mod, and other config files. Generates custom manifest.yaml profiles for your specific stack.
+context:fork: true
 allowed-tools: read, glob, grep, search
 min_required_version: 1.0.0
 compatible_versions: "^1.0.0"

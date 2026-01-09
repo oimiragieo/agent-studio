@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/cuj-registry.schema.json",
   "version": "1.0.0",
-  "generated": "2026-01-08T03:51:02.315Z",
+  "generated": "2026-01-09T05:14:45.143Z",
   "total_cujs": 60,
   "cujs": [
     {
@@ -35,13 +35,13 @@
       "name": "Rule Configuration",
       "description": "Auto-detect project tech stack and configure appropriate rules.",
       "category": "Onboarding & Setup",
-      "execution_mode": "workflow",
-      "workflow": ".claude/workflows/manifest.yaml",
+      "execution_mode": "skill-only",
+      "workflow": null,
       "agents": [],
       "skills": [
         "rule-selector"
       ],
-      "primary_skill": null,
+      "primary_skill": "rule-selector",
       "schemas": [],
       "triggers": [
         "`/select-rules` command",
@@ -58,7 +58,7 @@
         "Rule configuration report",
         "List of active rules"
       ],
-      "estimated_duration": "2-10 minutes",
+      "estimated_duration": "2-60 seconds",
       "file_path": ".claude/docs/cujs/CUJ-002.md"
     },
     {
@@ -248,7 +248,9 @@
         "diagram-generator"
       ],
       "primary_skill": null,
-      "schemas": [],
+      "schemas": [
+        ".claude/schemas/database-schema.schema.json"
+      ],
       "triggers": [
         "Design database for user management",
         "Create database schema",
@@ -308,7 +310,7 @@
       "description": "Create a new API endpoint with proper structure.",
       "category": "Development",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "scaffolder",
@@ -418,7 +420,8 @@
       "agents": [],
       "skills": [
         "rule-auditor",
-        "response-rater"
+        "response-rater",
+        "multi-ai-code-review"
       ],
       "primary_skill": null,
       "schemas": [
@@ -437,7 +440,8 @@
       "expected_outputs": [
         "Code review report",
         "Issue list with priorities",
-        "Fix suggestions"
+        "Fix suggestions",
+        "Multi-AI review report (optional) - `.claude/context/artifacts/multi-ai-review-report.json`"
       ],
       "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-013.md"
@@ -807,7 +811,7 @@
       "description": "Process a large requirements document (>15KB) without context window overflow.",
       "category": "Advanced Workflows",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "summarizer",
@@ -963,8 +967,8 @@
       "name": "Multi-AI Validation Workflow",
       "description": "Validate code quality using multiple AI models for consensus.",
       "category": "Advanced Workflows",
-      "execution_mode": "skill-only",
-      "workflow": null,
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -984,13 +988,13 @@
         "consensus-issues.json",
         "disagreements.json"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-030.md"
     },
     {
       "id": "CUJ-034",
       "name": "Browser-Based UI Testing & Optimization",
-      "description": "Find bugs, test all UI features, compare with documentation, review logs, measure performance, and get optimization recommendations for a web application.\r \r **Persona**: Developer\r \r **Execution Mode**: `browser-testing-flow.yaml`",
+      "description": "Find bugs, test all UI features, compare with documentation, review logs, measure performance, and get optimization recommendations for a web application.\r \r **Persona**: Developer",
       "category": "Quality Assurance",
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/browser-testing-flow.yaml",
@@ -998,12 +1002,13 @@
       "skills": [
         "navigate_page",
         "take_screenshot",
-        "click_element",
-        "type_text",
-        "get_console_logs",
-        "get_network_logs",
-        "performance_profiling",
-        "get_memory_usage"
+        "click",
+        "fill",
+        "list_console_messages",
+        "list_network_requests",
+        "performance_start_trace",
+        "performance_stop_trace",
+        "performance_analyze_insight"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1032,7 +1037,7 @@
       "description": "Validate the complete planner-first workflow process end-to-end, ensuring plans are created, artifacts flow correctly, and execution follows the plan.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "plan-generator",
@@ -1341,7 +1346,7 @@
       "name": "Agent Fallback Chain",
       "description": "Test fallback agent routing when primary agents fail, ensuring fallback agents receive correct context, artifacts are preserved, and the system recovers gracefully.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
+      "execution_mode": "workflow",
       "workflow": null,
       "agents": [],
       "skills": [],
@@ -1367,7 +1372,7 @@
         "Fallback routing documentation",
         "Updated plan document"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-044.md"
     },
     {
@@ -1999,24 +2004,37 @@
     {
       "id": "CUJ-063",
       "name": "Error Recovery and Checkpoint Restoration",
-      "description": "",
+      "description": "Tests the error recovery mechanisms to ensure workflows can recover from failures gracefully.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
-      "skills": [],
+      "skills": [
+        "response-rater",
+        "recovery"
+      ],
       "primary_skill": null,
       "schemas": [
         ".claude/schemas/checkpoint.schema.json",
         ".claude/schemas/fallback-agents.schema.json"
       ],
-      "triggers": [],
+      "triggers": [
+        "Test error recovery mechanisms",
+        "Validate checkpoint restoration",
+        "Test workflow resilience"
+      ],
       "platform_compatibility": {
         "claude": true,
-        "cursor": true,
+        "cursor": false,
         "factory": false
       },
-      "expected_outputs": [],
+      "expected_outputs": [
+        "Checkpoint files (`.claude/context/runs/<run_id>/checkpoints/checkpoint-phase-*.json`)",
+        "Restoration validation report",
+        "Fallback routing log",
+        "Recovery documentation (`.claude/context/logs/recovery.log`)",
+        "Recovery playbook"
+      ],
       "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-063.md"
     }

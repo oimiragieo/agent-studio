@@ -4,16 +4,30 @@
  * CUJ Registry Sync Tool
  *
  * Parses all CUJ markdown files and generates a comprehensive registry JSON.
- * This provides a single source of truth for all Customer User Journeys (CUJs).
+ * CUJ markdown files (.claude/docs/cujs/CUJ-*.md) are the SOURCE OF TRUTH.
+ * This script syncs the registry from markdown to ensure consistency.
  *
  * Usage:
  *   node .claude/tools/sync-cuj-registry.mjs
  *   node .claude/tools/sync-cuj-registry.mjs --validate-only
  *   node .claude/tools/sync-cuj-registry.mjs --output path/to/registry.json
  *
+ * Source of Truth Hierarchy:
+ * 1. CUJ markdown files (.claude/docs/cujs/CUJ-*.md) - PRIMARY SOURCE
+ * 2. Registry JSON (.claude/context/cuj-registry.json) - SYNCED FROM MARKDOWN
+ * 3. CUJ-INDEX.md (.claude/docs/cujs/CUJ-INDEX.md) - DOCUMENTATION ONLY
+ *
+ * Workflow Path Extraction:
+ * - Pattern 1: **Execution Mode**: `workflow-name.yaml` (in Workflow section)
+ * - Pattern 2: workflow: `.claude/workflows/workflow-name.yaml`
+ * - Pattern 3: Uses workflow: `workflow-name.yaml`
+ * - Pattern 4: [workflow-name Workflow](../../workflows/workflow-name.yaml)
+ * - Pattern 5: Any markdown link to workflows directory
+ * - All workflow files are verified to exist before assignment
+ *
  * Features:
  * - Parses all CUJ-*.md files in .claude/docs/cujs/
- * - Extracts metadata (execution mode, agents, skills, schemas, triggers)
+ * - Extracts metadata (execution mode, agents, skills, schemas, triggers, workflow paths)
  * - Generates comprehensive registry JSON
  * - Validates against cuj-registry.schema.json
  * - Provides statistics and validation report
@@ -28,6 +42,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Paths
+const ROOT = path.join(__dirname, '..', '..');
 const CUJ_DOCS_DIR = path.join(__dirname, '..', 'docs', 'cujs');
 const REGISTRY_OUTPUT = path.join(__dirname, '..', 'context', 'cuj-registry.json');
 const SCHEMA_PATH = path.join(__dirname, '..', 'schemas', 'cuj-registry.schema.json');
@@ -142,25 +157,30 @@ async function parseCUJFile(filePath) {
     metadata.description = goalMatch[1].trim().replace(/\n/g, ' ');
   }
 
-  // Extract execution mode
+  // Extract execution mode from "Workflow" section
+  // Pattern: **Execution Mode**: `workflow` or **Execution Mode**: `brownfield-fullstack.yaml`
   const execModeMatch = content.match(/\*\*Execution Mode\*\*:\s*`([^`]+)`/);
   if (execModeMatch) {
     const mode = execModeMatch[1];
     // Normalize execution modes to schema-allowed values
-    if (mode === 'skill' || mode.includes('skill')) {
+    if (mode === 'skill' || mode === 'skill-only') {
       metadata.execution_mode = 'skill-only';
     } else if (mode.includes('delegated')) {
       metadata.execution_mode = 'delegated-skill';
     } else if (mode.includes('manual') || mode.includes('setup')) {
       metadata.execution_mode = 'manual-setup';
-    } else if (mode.includes('workflow') || mode.endsWith('.yaml')) {
+    } else if (mode.endsWith('.yaml')) {
+      // This is a workflow file reference in execution mode
       metadata.execution_mode = 'workflow';
-      // Extract workflow filename from execution mode if it's a .yaml file
-      if (mode.endsWith('.yaml')) {
-        metadata.workflow = `.claude/workflows/${mode}`;
-      }
+      metadata.workflow = `.claude/workflows/${mode}`;
+    } else if (mode === 'workflow' || mode.includes('workflow')) {
+      // Generic workflow mode (includes "automated-workflow", "workflow-based", etc.)
+      metadata.execution_mode = 'workflow';
+      // Workflow path will be extracted from Related Documentation or markdown links
     } else {
-      metadata.execution_mode = mode;
+      // Fallback: if mode doesn't match any pattern, treat as workflow
+      console.warn(`⚠️  Unknown execution mode "${mode}" for ${cujId}, defaulting to "workflow"`);
+      metadata.execution_mode = 'workflow';
     }
   }
 
@@ -181,19 +201,92 @@ async function parseCUJFile(filePath) {
     }
   }
 
-  // Pattern 3: **Execution Mode**: `file.yaml` (already handled above)
-  // Pattern 4: References to .yaml files in Workflow section
-  // IMPORTANT: Only match if the .yaml file actually exists in .claude/workflows/
-  // to avoid false positives from skill references (e.g., manifest.yaml)
+  // Pattern 3: **Execution Mode**: `file.yaml` (already handled above in execution mode extraction)
+
+  // Pattern 4: References in Workflow section header
+  // Match: ## Workflow\n\n**Execution Mode**: `file.yaml`
   if (!metadata.workflow) {
-    workflowMatch = content.match(/##\s+Workflow[\s\S]*?`([^`]+\.yaml)`/);
+    workflowMatch = content.match(/##\s+Workflow[\s\S]*?\*\*Execution Mode\*\*:\s*`([^`]+\.yaml)`/);
+    if (workflowMatch) {
+      const yamlFile = workflowMatch[1];
+      metadata.workflow = `.claude/workflows/${yamlFile}`;
+      metadata.execution_mode = 'workflow';
+    }
+  }
+
+  // Pattern 5: Related Documentation section with workflow links
+  // Match: [workflow-name Workflow](../../workflows/workflow-name.yaml)
+  if (!metadata.workflow) {
+    workflowMatch = content.match(/\[.*?\s+Workflow\]\(\.\.\/\.\.\/workflows\/([^)]+\.yaml)\)/i);
+    if (workflowMatch) {
+      const yamlFile = workflowMatch[1];
+      // Verify the workflow file exists to avoid false positives
+      const workflowPath = path.join(ROOT, '.claude', 'workflows', yamlFile);
+      try {
+        await fs.access(workflowPath);
+        metadata.workflow = `.claude/workflows/${yamlFile}`;
+        metadata.execution_mode = 'workflow';
+      } catch {
+        // File doesn't exist - skip
+      }
+    }
+  }
+
+  // Pattern 6: Generic workflow references in Workflow section
+  // Match: `workflow-name.yaml` in the Workflow section (but verify it's a real workflow)
+  if (!metadata.workflow) {
+    workflowMatch = content.match(/##\s+Workflow[\s\S]{0,500}?`([a-z-]+\.yaml)`/);
     if (workflowMatch) {
       const yamlFile = workflowMatch[1];
       // Only treat as workflow if file doesn't contain path separators
       // (real workflow references are just filenames like "greenfield-fullstack.yaml")
       if (!yamlFile.includes('/') && !yamlFile.includes('\\')) {
+        // Verify the workflow file actually exists before assigning
+        const workflowPath = path.join(ROOT, '.claude', 'workflows', yamlFile);
+        try {
+          await fs.access(workflowPath);
+          // File exists - this is a real workflow reference
+          metadata.workflow = `.claude/workflows/${yamlFile}`;
+          metadata.execution_mode = 'workflow';
+        } catch {
+          // File doesn't exist - likely a skill reference or other YAML file
+          // Don't assign workflow mode
+        }
+      }
+    }
+  }
+
+  // Pattern 7: Extract from Related Documentation section
+  // Match: [workflow-name Workflow](../../workflows/workflow-name.yaml) or similar
+  if (!metadata.workflow && metadata.execution_mode === 'workflow') {
+    // Look for links in Related Documentation section
+    const relatedDocsMatch = content.match(/##\s+Related Documentation[\s\S]*?\[.*?Workflow\]\(\.\.\/\.\.\/workflows\/([^)]+\.yaml)\)/i);
+    if (relatedDocsMatch) {
+      const yamlFile = relatedDocsMatch[1];
+      // Verify the workflow file exists
+      const workflowPath = path.join(ROOT, '.claude', 'workflows', yamlFile);
+      try {
+        await fs.access(workflowPath);
         metadata.workflow = `.claude/workflows/${yamlFile}`;
-        metadata.execution_mode = 'workflow';
+      } catch {
+        // File doesn't exist - skip
+      }
+    }
+  }
+
+  // Pattern 8: Extract from any markdown link to workflows
+  // Match any link pattern: (...workflows/file.yaml)
+  if (!metadata.workflow && metadata.execution_mode === 'workflow') {
+    const anyWorkflowLink = content.match(/\((?:\.\.\/)*workflows\/([^)]+\.yaml)\)/i);
+    if (anyWorkflowLink) {
+      const yamlFile = anyWorkflowLink[1];
+      // Verify the workflow file exists
+      const workflowPath = path.join(ROOT, '.claude', 'workflows', yamlFile);
+      try {
+        await fs.access(workflowPath);
+        metadata.workflow = `.claude/workflows/${yamlFile}`;
+      } catch {
+        // File doesn't exist - skip
       }
     }
   }

@@ -1,0 +1,318 @@
+name: Cursor Plan Mode Integration Workflow
+description: Test deep integration between Planner Agent and Cursor Plan Mode for seamless strategic to implementation planning
+type: integration-test
+project_type: validation
+publish_policy: auto-on-pass  # Automatically publish artifacts after validation passes
+
+# Error Recovery Configuration
+recovery:
+  enabled: true
+  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+
+retry_config:
+  max_attempts: 3
+  backoff_strategy: exponential
+  initial_delay_ms: 1000
+  retryable_errors: [timeout, network_error, rate_limit]
+
+fallback_agents:
+  planner: [architect, pm]
+  developer: [code-reviewer, qa]
+  orchestrator: [planner]
+  qa: [developer, code-reviewer]
+
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
+trigger_keywords:
+  - "cursor plan mode"
+  - "plan mode integration"
+  - "strategic to implementation"
+  - "cursor integration test"
+  - "planner to plan mode"
+
+# Workflow-Level Context Inputs
+workflow_inputs:
+  required:
+    - project_requirements  # Project requirements for strategic planning
+    - implementation_scope  # Scope of implementation
+  optional:
+    - cursor_workspace_path  # Path to Cursor workspace (default: current directory)
+
+steps:
+  - step: 0
+    name: "Strategic Planning (Planner Agent)"
+    agent: planner
+    inputs:
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - project_requirements  # Project requirements
+      - implementation_scope  # Implementation scope
+    outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    # Phase 2A: Skill requirements for this step
+    skill_requirements:
+      required:
+        - plan-generator
+        - sequential-thinking
+      recommended:
+        - diagram-generator
+        - classifier
+      triggered:
+        - pattern: "complex|large-scale|multi-phase"
+          skills: [sequential-thinking, diagram-generator]
+          priority: required
+      outputs:
+        plan-generator:
+          primary: "plan-{{workflow_id}}.json"
+          schema: ".claude/schemas/plan.schema.json"
+          required_for_completion: true
+      validation:
+        mode: blocking
+        min_compliance: 100
+        on_failure: block
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Strategic planning with Cursor Plan Mode integration:
+      - Create comprehensive strategic plan
+      - Include high-level steps and agent assignments
+      - Define dependencies and workflow structure
+      - Set plan_mode_ready: true flag
+      - Prepare for Plan Mode handoff
+      - Save plan to .claude/context/artifacts/plan-{{workflow_id}}.json
+
+  - step: 0.1
+    name: "Plan Rating Gate"
+    agent: orchestrator
+    type: validation
+    skill: response-rater
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+    outputs:
+      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
+    validation:
+      minimum_score: 7
+      rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
+    retry:
+      max_attempts: 3
+      on_failure: escalate_to_human
+    description: |
+      Rate plan quality using response-rater skill.
+      - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+      - Minimum passing score: 7/10
+      - If score < 7: Return to Planner with feedback, request improvements, re-rate until passing
+      - If score >= 7: Proceed with workflow execution
+      - Log rating in reasoning file and artifact metadata
+      - Never execute an unrated plan - this is a hard requirement
+
+  - step: 1
+    name: "Plan Mode Handoff Preparation"
+    agent: planner
+    inputs:
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - cursor_workspace_path  # (optional) Cursor workspace path
+    outputs:
+      - plan-mode-handoff-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-planner.json
+    validation:
+      schema: .claude/schemas/plan-mode-handoff.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/01-planner.json
+    description: |
+      Prepare Plan Mode handoff package:
+      - Strategic plan file path: .claude/context/artifacts/plan-{{workflow_id}}.json
+      - Plan summary for Plan Mode description
+      - Link to plan markdown: .claude/context/artifacts/plan-{{workflow_id}}.md
+      - Workflow ID for traceability
+      - Context for Plan Mode to reference
+
+  - step: 2
+    name: "Implementation Planning (Cursor Plan Mode Simulation)"
+    agent: developer
+    plan_mode_integration: true
+    inputs:
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - plan-mode-handoff-{{workflow_id}}.json (from step 1)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - implementation_scope  # Implementation scope
+    outputs:
+      - implementation-plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-developer.json
+    validation:
+      schema: .claude/schemas/implementation-plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/02-developer.json
+    description: |
+      Simulate Cursor Plan Mode implementation planning:
+      - Create implementation-level plan
+      - Link back to strategic plan via strategic_plan_id field
+      - Use same workflow_id for traceability
+      - Create detailed implementation tasks
+      - Save plan to .cursor/plans/plan-{{workflow_id}}.json (or configured location)
+      - Include file-level change specifications
+
+  - step: 3
+    name: "Artifact Linking Validation"
+    agent: qa
+    inputs:
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - implementation-plan-{{workflow_id}}.json (from step 2)
+      - plan-mode-handoff-{{workflow_id}}.json (from step 1)
+    outputs:
+      - artifact-linking-validation-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-qa.json
+    validation:
+      schema: .claude/schemas/artifact-linking-validation.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/03-qa.json
+    description: |
+      Validate bidirectional artifact linking:
+      - Verify strategic plan references implementation plan location
+      - Verify implementation plan references strategic plan ID
+      - Validate both plans use same workflow ID
+      - Check link integrity and traceability
+      - Verify Plan Mode artifact persistence
+
+  - step: 4
+    name: "Implementation Execution Simulation"
+    agent: developer
+    inputs:
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - implementation-plan-{{workflow_id}}.json (from step 2)
+      - artifact-linking-validation-{{workflow_id}}.json (from step 3)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - implementation_scope  # Implementation scope
+    outputs:
+      - dev-manifest.json
+      - code-artifacts (simulated)
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-developer.json
+    validation:
+      schema: .claude/schemas/artifact_manifest.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-developer.json
+    description: |
+      Simulate implementation execution using Plan Mode plan:
+      - Use implementation plan for execution
+      - Follow both strategic and implementation plans
+      - Reference both plans in artifacts created
+      - Document plan adherence
+      - Create dev-manifest linking to both plans
+
+  - step: 5
+    name: "Multi-File Change Coordination Validation"
+    agent: qa
+    inputs:
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - implementation-plan-{{workflow_id}}.json (from step 2)
+      - dev-manifest.json (from step 4)
+    outputs:
+      - multi-file-coordination-validation-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05-qa.json
+    validation:
+      schema: .claude/schemas/multi-file-coordination-validation.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
+    description: |
+      Validate multi-file change coordination:
+      - Verify changes reference strategic plan for context
+      - Verify changes follow implementation plan structure
+      - Check all changes linked to both plans
+      - Validate coordination across files
+      - Ensure consistency with plan specifications
+
+  - step: 6
+    name: "Plan Mode Artifact Persistence Validation"
+    agent: qa
+    inputs:
+      # Artifact inputs (from previous steps)
+      - implementation-plan-{{workflow_id}}.json (from step 2)
+      - artifact-linking-validation-{{workflow_id}}.json (from step 3)
+    outputs:
+      - artifact-persistence-validation-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/06-qa.json
+    validation:
+      schema: .claude/schemas/artifact-persistence-validation.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/06-qa.json
+    description: |
+      Validate Plan Mode artifact persistence:
+      - Verify artifacts saved to .cursor/plans/
+      - Check artifacts persist across sessions
+      - Validate artifacts linked to strategic plan
+      - Ensure artifacts accessible for future reference
+      - Verify artifact integrity and completeness
+
+  - step: 7
+    name: "Integration Validation Report"
+    agent: qa
+    inputs:
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - implementation-plan-{{workflow_id}}.json (from step 2)
+      - artifact-linking-validation-{{workflow_id}}.json (from step 3)
+      - multi-file-coordination-validation-{{workflow_id}}.json (from step 5)
+      - artifact-persistence-validation-{{workflow_id}}.json (from step 6)
+      - dev-manifest.json (from step 4)
+    outputs:
+      - integration-validation-report-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/07-qa.json
+    validation:
+      schema: .claude/schemas/integration-validation-report.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/07-qa.json
+    description: |
+      Generate comprehensive integration validation report:
+      - Verify strategic plan → Plan Mode handoff successful
+      - Verify Plan Mode → Implementation execution successful
+      - Verify artifact linking between Planner and Plan Mode
+      - Verify multi-file change coordination
+      - Verify Plan Mode artifact persistence
+      - Document integration success criteria
+      - Identify any integration gaps or issues
+
+  - step: 7.5
+    name: "Publish Artifacts"
+    agent: orchestrator
+    skill: artifact-publisher
+    condition: "validation_status == 'pass'"
+    inputs:
+      - artifact-registry.json
+    policy: auto-on-pass
+    retry:
+      max_attempts: 3
+      on_failure: log_and_continue
+
+completion_criteria:
+  - Strategic plan created with plan_mode_ready: true
+  - Plan Mode handoff successful with correct references
+  - Implementation plan created with strategic plan link
+  - Artifact linking bidirectional (both plans reference each other)
+  - Multi-file changes coordinated successfully
+  - Plan Mode artifacts persist across sessions
+  - Implementation follows both strategic and implementation plans
+  - Integration seamless and transparent
+
+integration_test_scenarios:
+  strategic_to_plan_mode_handoff:
+    description: "Test strategic plan → Plan Mode handoff"
+    validate: "Seamless handoff, no information loss"
+
+  plan_mode_to_implementation:
+    description: "Test Plan Mode → Implementation execution"
+    validate: "Coordinated execution, both plans referenced"
+
+  artifact_linking:
+    description: "Test bidirectional artifact linking"
+    validate: "Both fields reference each other correctly"
+
+  multi_file_coordination:
+    description: "Test multi-file change coordination"
+    validate: "Changes reference both plans"
+
+  artifact_persistence:
+    description: "Test Plan Mode artifact persistence"
+    validate: "Artifacts persist, links maintained"

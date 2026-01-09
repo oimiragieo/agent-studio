@@ -1,6 +1,7 @@
 ---
 name: filesystem
 description: File system operations - read, write, list directories. Converted from MCP server for 90%+ context savings.
+context:fork: true
 allowed-tools: read, write, bash
 version: 1.0
 best_practices:

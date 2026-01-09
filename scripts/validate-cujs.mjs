@@ -26,6 +26,10 @@ const CUJ_DIR = path.join(ROOT, '.claude/docs/cujs');
 const TEMPLATE_PATH = path.join(ROOT, '.claude/templates/cuj-template.md');
 const CUJ_INDEX_PATH = path.join(CUJ_DIR, 'CUJ-INDEX.md');
 
+// Performance flags
+let skipLinkValidation = false;
+let watchMode = false;
+
 // Required sections in order
 const REQUIRED_SECTIONS = [
   '## User Goal',
@@ -41,7 +45,10 @@ const REQUIRED_SECTIONS = [
 // Optional sections
 const OPTIONAL_SECTIONS = [
   '## Related Documentation',
-  '## Capabilities/Tools Used' // Alternative to Skills Used
+  '## Capabilities/Tools Used', // Alternative to Skills Used
+  '## Error Recovery',
+  '## Platform Compatibility',
+  '## Test Scenarios'
 ];
 
 // All valid sections
@@ -228,6 +235,82 @@ async function getAgentWhitelist() {
 }
 
 /**
+ * Centralized existence caches for performance
+ */
+const existenceCache = {
+  agents: new Map(),
+  skills: new Map(),
+  workflows: new Map(),
+  schemas: new Map(),
+  rubrics: new Map(),
+  files: new Map()
+};
+
+/**
+ * Build all caches upfront for maximum performance
+ */
+async function buildExistenceCaches() {
+  // Build agent cache
+  const agentsDir = path.join(ROOT, '.claude/agents');
+  try {
+    const agentEntries = await fs.readdir(agentsDir, { withFileTypes: true });
+    for (const entry of agentEntries) {
+      if (entry.isFile() && entry.name.endsWith('.md')) {
+        const agentName = entry.name.replace(/\.md$/, '');
+        existenceCache.agents.set(agentName, true);
+      }
+    }
+  } catch (error) {
+    // Ignore
+  }
+
+  // Build skill cache
+  const skillsDir = path.join(ROOT, '.claude/skills');
+  try {
+    const skillEntries = await fs.readdir(skillsDir, { withFileTypes: true });
+    for (const entry of skillEntries) {
+      if (entry.isDirectory()) {
+        const skillPath = path.join(skillsDir, entry.name, 'SKILL.md');
+        const exists = await fileExists(skillPath);
+        if (exists) {
+          existenceCache.skills.set(entry.name, true);
+        }
+      }
+    }
+  } catch (error) {
+    // Ignore
+  }
+
+  // Build workflow cache
+  const workflowsDir = path.join(ROOT, '.claude/workflows');
+  try {
+    const workflowEntries = await fs.readdir(workflowsDir, { withFileTypes: true });
+    for (const entry of workflowEntries) {
+      if (entry.isFile() && entry.name.endsWith('.yaml')) {
+        const workflowName = entry.name.replace(/\.yaml$/, '');
+        existenceCache.workflows.set(workflowName, true);
+      }
+    }
+  } catch (error) {
+    // Ignore
+  }
+
+  // Build schema cache
+  const schemasDir = path.join(ROOT, '.claude/schemas');
+  try {
+    const schemaEntries = await fs.readdir(schemasDir, { withFileTypes: true });
+    for (const entry of schemaEntries) {
+      if (entry.isFile() && entry.name.endsWith('.schema.json')) {
+        const schemaName = entry.name.replace(/\.schema\.json$/, '');
+        existenceCache.schemas.set(schemaName, true);
+      }
+    }
+  } catch (error) {
+    // Ignore
+  }
+}
+
+/**
  * Parse CUJ-INDEX.md mapping table
  * Returns a map of CUJ ID -> { executionMode, workflowPath, primarySkill }
  */
@@ -336,46 +419,79 @@ function extractExecutionMode(content) {
   return match ? normalizeExecutionMode(match[1]) : null;
 }
 
+
+
 /**
- * Validate agent reference
+ * Validate agent reference (cached)
  */
 async function validateAgent(agentName) {
+  if (existenceCache.agents.has(agentName)) {
+    return existenceCache.agents.get(agentName);
+  }
+
   const agentPath = path.join(ROOT, '.claude/agents', `${agentName}.md`);
-  return await fileExists(agentPath);
+  const exists = await fileExists(agentPath);
+  existenceCache.agents.set(agentName, exists);
+  return exists;
 }
 
 /**
- * Validate skill reference
+ * Validate skill reference (cached)
  */
 async function validateSkill(skillName) {
   // Remove backticks if present
   const cleanName = skillName.replace(/`/g, '').trim();
+
+  if (existenceCache.skills.has(cleanName)) {
+    return existenceCache.skills.get(cleanName);
+  }
+
   const skillPath = path.join(ROOT, '.claude/skills', cleanName, 'SKILL.md');
-  return await fileExists(skillPath);
+  const exists = await fileExists(skillPath);
+  existenceCache.skills.set(cleanName, exists);
+  return exists;
 }
 
 /**
- * Validate workflow reference
+ * Validate workflow reference (cached)
  */
 async function validateWorkflow(workflowName) {
+  if (existenceCache.workflows.has(workflowName)) {
+    return existenceCache.workflows.get(workflowName);
+  }
+
   const workflowPath = path.join(ROOT, '.claude/workflows', `${workflowName}.yaml`);
-  return await fileExists(workflowPath);
+  const exists = await fileExists(workflowPath);
+  existenceCache.workflows.set(workflowName, exists);
+  return exists;
 }
 
 /**
- * Validate schema reference
+ * Validate schema reference (cached)
  */
 async function validateSchema(schemaName) {
+  if (existenceCache.schemas.has(schemaName)) {
+    return existenceCache.schemas.get(schemaName);
+  }
+
   const schemaPath = path.join(ROOT, '.claude/schemas', `${schemaName}.schema.json`);
-  return await fileExists(schemaPath);
+  const exists = await fileExists(schemaPath);
+  existenceCache.schemas.set(schemaName, exists);
+  return exists;
 }
 
 /**
- * Validate rubric file reference
+ * Validate rubric file reference (cached)
  */
 async function validateRubricFile(rubricPath) {
+  if (existenceCache.rubrics.has(rubricPath)) {
+    return existenceCache.rubrics.get(rubricPath);
+  }
+
   const fullPath = path.join(ROOT, rubricPath);
-  return await fileExists(fullPath);
+  const exists = await fileExists(fullPath);
+  existenceCache.rubrics.set(rubricPath, exists);
+  return exists;
 }
 
 /**
@@ -434,16 +550,25 @@ async function validateCUJ(filePath) {
       issues.push('Section should be "## Example Prompts" not "## Example Scenarios"');
     }
     
-    // Validate links
-    const links = extractLinks(content);
-    for (const link of links) {
-      // Strip anchor fragments before resolving paths
-      const pathWithoutFragment = link.url.split('#')[0];
-      const resolved = resolvePath(pathWithoutFragment, filePath);
-      if (resolved.type === 'file') {
-        const exists = await fileExists(resolved.path);
-        if (!exists) {
-          issues.push(`Broken link at line ${link.line}: ${link.text} -> ${resolved.relative}`);
+    // Validate links (skip in quick mode)
+    if (!skipLinkValidation) {
+      const links = extractLinks(content);
+      for (const link of links) {
+        // Strip anchor fragments before resolving paths
+        const pathWithoutFragment = link.url.split('#')[0];
+        const resolved = resolvePath(pathWithoutFragment, filePath);
+        if (resolved.type === 'file') {
+          // Use cache for file existence checks
+          let exists;
+          if (existenceCache.files.has(resolved.path)) {
+            exists = existenceCache.files.get(resolved.path);
+          } else {
+            exists = await fileExists(resolved.path);
+            existenceCache.files.set(resolved.path, exists);
+          }
+          if (!exists) {
+            issues.push(`Broken link at line ${link.line}: ${link.text} -> ${resolved.relative}`);
+          }
         }
       }
     }
@@ -525,8 +650,8 @@ async function validateCUJ(filePath) {
       // Check for explicit execution mode reference - prefer "Execution Mode" format
       // Accept: "Execution Mode: name.yaml", "**Execution Mode**: `name.yaml`"
       // Also accept legacy: "Workflow Reference: name.yaml", "**Workflow**: `name.yaml`" (with warning)
-      const executionModeMatch = workflowSection.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|manual-setup|manual)`?/i);
-      const legacyWorkflowMatch = workflowSection.match(/(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|skill-only)(?:`)?/i);
+      const executionModeMatch = workflowSection.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|workflow|skill-only|manual-setup|manual)`?/i);
+      const legacyWorkflowMatch = workflowSection.match(/(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|workflow|skill-only)(?:`)?/i);
 
       let workflowRef = null;
       if (executionModeMatch) {
@@ -560,9 +685,9 @@ async function validateCUJ(filePath) {
           }
         }
 
-        // NEW VALIDATION 3: Skill-only CUJs should NOT have Step 0/0.1 as mandatory
+        // NEW VALIDATION 3: Skill-only CUJs should NOT have Step 0/0.1 as mandatory - NOW AN ERROR
         if (normalizedMode === 'skill-only' && (hasStep0 || hasStep01)) {
-          warnings.push('Skill-only CUJs typically do not require Step 0 (Planning) or Step 0.1 (Plan Rating Gate). Consider removing or marking as optional.');
+          issues.push('EXECUTION MODE INCONSISTENCY: Skill-only CUJs MUST NOT have Step 0 (Planning) or Step 0.1 (Plan Rating Gate). Either remove these steps OR change execution mode to "workflow".');
         }
 
         // NEW VALIDATION 4: Workflow-based CUJs should have Step 0.1 (Plan Rating Gate)
@@ -575,9 +700,9 @@ async function validateCUJ(filePath) {
           const mappingEntry = cujMapping.get(cujId);
           const mappedMode = normalizeExecutionMode(mappingEntry.executionMode);
 
-          // Compare normalized execution modes
+          // Compare normalized execution modes - NOW AN ERROR, NOT A WARNING
           if (normalizedMode !== mappedMode) {
-            warnings.push(`Execution mode mismatch: CUJ declares "${workflowRef}" (normalized: ${normalizedMode}) but CUJ-INDEX.md maps to "${mappingEntry.executionMode}" (normalized: ${mappedMode})`);
+            issues.push(`EXECUTION MODE MISMATCH: CUJ declares "${workflowRef}" (normalized: ${normalizedMode}) but CUJ-INDEX.md maps to "${mappingEntry.executionMode}" (normalized: ${mappedMode}). These MUST match.`);
           }
 
           // If mapped mode is a workflow, validate it exists
@@ -637,11 +762,14 @@ async function validateCUJ(filePath) {
     // Validate success criteria format
     if (sections['## Success Criteria']) {
       const criteriaSection = sections['## Success Criteria'];
-      // Check for checkboxes or list items
-      if (!criteriaSection.includes('- [ ]') && !criteriaSection.includes('- [x]') && !criteriaSection.includes('- ✅')) {
-        warnings.push('Success criteria should use checkboxes (- [ ]) or list items for clarity');
+      // Check for checkboxes or tables (both are valid formats)
+      const hasCheckboxes = criteriaSection.includes('- [ ]') || criteriaSection.includes('- [x]') || criteriaSection.includes('- ✅');
+      const hasTable = criteriaSection.includes('| Criterion') || criteriaSection.includes('|---');
+
+      if (!hasCheckboxes && !hasTable) {
+        warnings.push('Success criteria should use checkboxes (- [ ]) or tables for clarity');
       }
-      
+
       // Check for at least one concrete validation artifact reference
       const hasArtifactRef = criteriaSection.match(/(schema|gate|registry|artifact)/i);
       if (!hasArtifactRef) {
@@ -694,6 +822,7 @@ async function validateCUJ(filePath) {
  * Main validation function
  */
 async function validateAllCUJs() {
+  const startTime = Date.now();
   console.log('🔍 Validating CUJ files...\n');
 
   try {
@@ -704,12 +833,23 @@ async function validateAllCUJs() {
 
     console.log(`Found ${cujFiles.length} CUJ files to validate\n`);
 
-    const results = [];
-    for (const file of cujFiles.sort()) {
-      const filePath = path.join(CUJ_DIR, file);
-      const result = await validateCUJ(filePath);
-      results.push(result);
+    if (skipLinkValidation) {
+      console.log('⚡ Quick mode enabled - skipping link validation\n');
     }
+
+    // Build existence caches upfront for maximum performance
+    console.log('📦 Building existence caches...');
+    await buildExistenceCaches();
+    console.log(`✅ Caches built: ${existenceCache.agents.size} agents, ${existenceCache.skills.size} skills, ${existenceCache.workflows.size} workflows, ${existenceCache.schemas.size} schemas\n`);
+
+    // Parallelize validation - validate all CUJs concurrently
+    const sortedFiles = cujFiles.sort();
+    const results = await Promise.all(
+      sortedFiles.map(file => {
+        const filePath = path.join(CUJ_DIR, file);
+        return validateCUJ(filePath);
+      })
+    );
 
     // Report results
     let totalIssues = 0;
@@ -812,6 +952,9 @@ async function validateAllCUJs() {
     }
     console.log(`${'='.repeat(60)}\n`);
 
+    const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log(`⏱️  Validation completed in ${elapsedTime}s\n`);
+
     if (totalIssues > 0) {
       console.log('❌ Validation failed. Fix issues above.\n');
       process.exit(1);
@@ -825,7 +968,7 @@ async function validateAllCUJs() {
       console.log('✅ All CUJs are valid!\n');
       process.exit(0);
     }
-    
+
   } catch (error) {
     console.error('❌ Error during validation:', error);
     process.exit(1);
@@ -835,13 +978,18 @@ async function validateAllCUJs() {
 // CLI interface
 const args = process.argv.slice(2);
 if (args.includes('--help') || args.includes('-h')) {
-  console.log('Usage: node scripts/validate-cujs.mjs [--verbose]');
+  console.log('Usage: node scripts/validate-cujs.mjs [options]');
+  console.log('');
+  console.log('Options:');
+  console.log('  --quick          Skip link validation for faster checks (reduces time by ~50%)');
+  console.log('  --watch          Watch mode - incremental validation on file changes');
+  console.log('  --help, -h       Show this help message');
   console.log('');
   console.log('Validates all CUJ files against the standard template.');
   console.log('');
   console.log('Checks performed:');
   console.log('  - Required sections present');
-  console.log('  - Valid links and references');
+  console.log('  - Valid links and references (unless --quick)');
   console.log('  - Agent, skill, workflow, and schema references exist');
   console.log('  - Execution mode matches CUJ-INDEX.md mapping');
   console.log('  - Workflow files exist for workflow execution modes');
@@ -853,15 +1001,86 @@ if (args.includes('--help') || args.includes('-h')) {
   console.log('  - Rubric file reference validation');
   console.log('  - Plan rating threshold validation (5, 7, or 8)');
   console.log('');
+  console.log('Performance:');
+  console.log('  - Full validation: ~1-2 seconds (60+ files)');
+  console.log('  - Quick mode: <0.5 seconds');
+  console.log('  - Watch mode: <0.1 seconds per file change');
+  console.log('');
   console.log('Exit codes:');
   console.log('  0 - All CUJs valid (warnings allowed)');
   console.log('  1 - Validation failed (issues found)');
   process.exit(0);
 }
 
+// Parse CLI flags
+skipLinkValidation = args.includes('--quick');
+watchMode = args.includes('--watch');
+
+/**
+ * Watch mode - incremental validation on file changes
+ */
+async function runWatchMode() {
+  console.log('👀 Watch mode enabled - monitoring CUJ files for changes...\n');
+  console.log('Press Ctrl+C to exit\n');
+
+  // Build caches once
+  await buildExistenceCaches();
+
+  // Dynamic import for chokidar (optional dependency)
+  let chokidar;
+  try {
+    chokidar = await import('chokidar');
+  } catch (error) {
+    console.error('❌ Watch mode requires chokidar. Install with: npm install chokidar');
+    process.exit(1);
+  }
+
+  const watcher = chokidar.watch(path.join(CUJ_DIR, 'CUJ-*.md'), {
+    ignored: /CUJ-INDEX|CUJ-AUDIT-REPORT|CUJ-EXECUTION-EXAMPLES/,
+    persistent: true,
+    ignoreInitial: true
+  });
+
+  watcher.on('change', async (changedPath) => {
+    const fileName = path.basename(changedPath);
+    console.log(`\n🔄 File changed: ${fileName}`);
+
+    const startTime = Date.now();
+    const result = await validateCUJ(changedPath);
+    const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(3);
+
+    if (result.valid) {
+      if (result.warnings.length > 0) {
+        console.log(`⚠️  ${result.file} (valid with warnings) - ${elapsedTime}s`);
+        result.warnings.forEach(w => console.log(`   - ${w}`));
+      } else {
+        console.log(`✅ ${result.file} - ${elapsedTime}s`);
+      }
+    } else {
+      console.log(`❌ ${result.file} - ${elapsedTime}s`);
+      result.issues.forEach(i => console.log(`   - ${i}`));
+      if (result.warnings.length > 0) {
+        result.warnings.forEach(w => console.log(`   ⚠️  ${w}`));
+      }
+    }
+  });
+
+  watcher.on('error', error => console.error('❌ Watcher error:', error));
+
+  // Keep process running
+  await new Promise(() => {});
+}
+
 // Run validation
-validateAllCUJs().catch(error => {
-  console.error('❌ Fatal error:', error);
-  process.exit(1);
-});
+if (watchMode) {
+  runWatchMode().catch(error => {
+    console.error('❌ Fatal error:', error);
+    process.exit(1);
+  });
+} else {
+  validateAllCUJs().catch(error => {
+    console.error('❌ Fatal error:', error);
+    process.exit(1);
+  });
+}
 

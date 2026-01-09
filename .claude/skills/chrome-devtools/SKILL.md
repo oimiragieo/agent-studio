@@ -1,6 +1,7 @@
 ---
 name: chrome-devtools
 description: Chrome DevTools for AI agents. Control and inspect live Chrome browsers with performance tracing, network inspection, DOM snapshots, and automated interactions. Use for web debugging, performance analysis, and browser automation.
+context:fork: true
 allowed-tools: read, write, bash
 version: 1.0
 best_practices:

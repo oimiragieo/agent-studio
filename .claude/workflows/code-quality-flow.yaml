@@ -140,7 +140,7 @@ steps:
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
+      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7
@@ -286,6 +286,54 @@ steps:
       - Incremental migration paths
       - Risk mitigation strategies
 
+  - step: 2.5
+    name: "Multi-AI Code Review (Optional)"
+    agent: code-reviewer
+    skill: multi-ai-code-review
+    condition: "user_requested_multi_ai_review OR critical_security_changes"
+    inputs:
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - code-review-{{workflow_id}}.json (from step 1)
+      - refactoring-plan-{{workflow_id}}.json (from step 2)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - target_files  # List of files/directories to analyze
+    outputs:
+      - multi-ai-review-report-{{workflow_id}}.json
+      - multi-ai-review-synthesis-{{workflow_id}}.md (optional)
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02.5-code-reviewer.json
+    # Phase 2A: Skill requirements for this step
+    skill_requirements:
+      required:
+        - multi-ai-code-review
+      recommended: []
+      triggered: []
+      outputs:
+        multi-ai-code-review:
+          primary: "multi-ai-review-report-{{workflow_id}}.json"
+          secondary: ["multi-ai-review-synthesis-{{workflow_id}}.md"]
+          schema: ".claude/schemas/multi-ai-review-report.schema.json"
+          required_for_completion: true
+      validation:
+        mode: blocking
+        min_compliance: 100
+        on_failure: block
+    validation:
+      schema: .claude/schemas/multi-ai-review-report.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/02.5-code-reviewer.json
+    description: |
+      Multi-provider code review using Claude, Gemini, and optionally Codex:
+      - Run independent reviews via headless AI CLIs
+      - Aggregate findings across providers for consensus
+      - Identify security, bug, and performance issues
+      - Generate structured report with severity ratings
+      - Optionally produce PR-ready Markdown synthesis
+      - Default providers: claude,gemini (fast, reliable)
+      - Enterprise providers: claude,gemini,codex (more perspectives)
+      - CI mode: --ci flag for automated reviews with strict JSON output
+      - This step is triggered when user explicitly requests multi-AI validation
+      - Automatically triggered when security triggers indicate critical changes
+
   - step: 3
     name: "Implementation"
     agent: developer
@@ -295,6 +343,7 @@ steps:
       - refactoring-plan-{{workflow_id}}.json (from step 2)
       - code-review-{{workflow_id}}.json (from step 1)
       - breaking-changes-research-{{workflow_id}}.json (optional, from step 1.5)
+      - multi-ai-review-report-{{workflow_id}}.json (optional, from step 2.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
       - target_files  # List of files/directories to refactor
       - coding_standards  # Coding standards to apply
@@ -357,6 +406,7 @@ steps:
       - dev-manifest.json (from step 3)
       - refactoring-plan-{{workflow_id}}.json (from step 2)
       - code-review-{{workflow_id}}.json (from step 1)
+      - multi-ai-review-report-{{workflow_id}}.json (optional, from step 2.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
       - target_files  # List of files/directories analyzed
       - coding_standards  # Coding standards to apply

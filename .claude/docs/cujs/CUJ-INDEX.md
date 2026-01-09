@@ -1,20 +1,20 @@
 # Customer User Journey (CUJ) Index
 
-This index maps all 62 Customer User Journeys (CUJs) to agents, skills, workflows, and expected outcomes.
+This index maps all 60 Customer User Journeys (CUJs) to agents, skills, workflows, and expected outcomes (63 reserved IDs).
 
-**Note**: CUJ-031, CUJ-032, CUJ-033 are reserved for future use and not included in active documentation.
+**Note**: CUJ-031, CUJ-032, CUJ-033 are reserved for future use and not included in active documentation. The project has 60 implemented CUJs with 3 reserved slots for a total of 63 CUJ IDs.
 
 ## Implementation Status Summary
 
-**All CUJs Implemented**: ✅ 62/62 CUJs defined and documented
-- **Workflow-Based CUJs**: 49 (multi-agent workflows)
-- **Skill-Only CUJs**: 10 (direct skill invocation without workflow)
-- **Manual CUJs**: 3 (require manual setup/execution)
+**All CUJs Implemented**: ✅ 60/60 CUJs defined and documented (3 reserved)
+- **Workflow-Based CUJs**: 53 (multi-agent workflows)
+- **Skill-Only CUJs**: 5 (direct skill invocation without workflow)
+- **Manual CUJs**: 2 (require manual setup/execution)
 
 **Execution Modes**:
-- ✅ `workflow`: Direct YAML workflow execution (49 CUJs) - Load and execute full multi-step workflows
-- ✅ `skill`: Direct skill invocation (10 CUJs) - Invoke single skill without agents or planning
-- ✅ `manual`: Manual setup/execution (3 CUJs) - Require user-driven steps
+- ✅ `workflow`: Direct YAML workflow execution (53 CUJs) - Load and execute full multi-step workflows
+- ✅ `skill`: Direct skill invocation (5 CUJs) - Invoke single skill without agents or planning
+- ✅ `manual`: Manual setup/execution (2 CUJs) - Require user-driven steps
 
 **Performance Comparison**:
 - Workflow-based: 2-10 minutes (includes planning and multi-agent coordination)
@@ -61,53 +61,53 @@ This matrix shows which platforms support each CUJ:
 | **Planning & Architecture** |
 | CUJ-004 | New Feature Planning | ✅ | ✅ | ❌ | Workflow-based |
 | CUJ-005 | Greenfield Project Planning | ✅ | ✅ | ❌ | Workflow-based |
-| CUJ-006 | Architecture Review | ✅ | ✅ | ❌ | Skill-only - diagram-generator |
-| CUJ-007 | Technical Debt Planning | ✅ | ✅ | ❌ | Skill-only - plan-generator |
-| CUJ-008 | Database Schema Planning | ✅ | ✅ | ❌ | Skill-only - diagram-generator |
+| CUJ-006 | Architecture Review | ✅ | ✅ | ❌ | Workflow-based - code-quality-flow |
+| CUJ-007 | Technical Debt Planning | ✅ | ✅ | ❌ | Workflow-based - code-quality-flow |
+| CUJ-008 | Database Schema Planning | ✅ | ✅ | ❌ | Workflow-based - greenfield-fullstack |
 | **Development** |
-| CUJ-009 | Component Scaffolding | ✅ | ✅ | ❌ | Skill-only - scaffolder |
+| CUJ-009 | Component Scaffolding | ✅ | ✅ | ❌ | Workflow-based - brownfield-fullstack |
 | CUJ-010 | API Endpoint Development | ✅ | ❌ | ❌ | Requires api-contract-generator (Claude-only) |
 | CUJ-011 | Bug Fix Workflow | ✅ | ✅ | ❌ | Workflow-based - quick-flow |
 | CUJ-012 | Feature Implementation | ✅ | ✅ | ❌ | Workflow-based |
 | **Quality Assurance** |
 | CUJ-013 | Code Review | ✅ | ✅ | ❌ | Workflow-based |
-| CUJ-014 | Rule Compliance Audit | ✅ | ✅ | ❌ | Skill-only - rule-auditor |
-| CUJ-015 | Test Generation | ✅ | ✅ | ❌ | Skill-only - test-generator |
+| CUJ-014 | Rule Compliance Audit | ✅ | ✅ | ❌ | Workflow-based - code-quality-flow |
+| CUJ-015 | Test Generation | ✅ | ✅ | ❌ | Workflow-based - code-quality-flow |
 | CUJ-034 | Browser-Based UI Testing | ✅ | ✅ | ❌ | Workflow-based - browser-testing-flow |
 | **Documentation** |
-| CUJ-016 | API Documentation | ✅ | ✅ | ❌ | Skill-only - doc-generator |
+| CUJ-016 | API Documentation | ✅ | ✅ | ❌ | Workflow-based - brownfield-fullstack |
 | CUJ-017 | Module Documentation | ✅ | ✅ | ❌ | Skill-only - claude-md-generator |
-| CUJ-018 | Architecture Documentation | ✅ | ✅ | ❌ | Skill-only - diagram-generator |
+| CUJ-018 | Architecture Documentation | ✅ | ✅ | ❌ | Workflow-based - code-quality-flow |
 | **Specialized Workflows** |
 | CUJ-019 | Performance Optimization | ✅ | ✅ | ❌ | Workflow-based - performance-flow |
-| CUJ-020 | Security Audit | ✅ | ✅ | ❌ | Skill-only - rule-auditor |
+| CUJ-020 | Security Audit | ✅ | ✅ | ❌ | Workflow-based - code-quality-flow |
 | CUJ-021 | Mobile Development | ✅ | ✅ | ❌ | Workflow-based - mobile-flow |
 | CUJ-022 | AI System Development | ✅ | ✅ | ❌ | Workflow-based - ai-system-flow |
 | **Maintenance & Operations** |
-| CUJ-023 | Dependency Updates | ✅ | ✅ | ❌ | Skill-only - dependency-analyzer |
+| CUJ-023 | Dependency Updates | ✅ | ✅ | ❌ | Workflow-based - code-quality-flow |
 | CUJ-024 | Incident Response | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
 | **Advanced Workflows** |
-| CUJ-025 | Large Requirements Document Processing | ✅ | ✅ | ❌ | Skill-only - summarizer |
+| CUJ-025 | Large Requirements Document Processing | ✅ | ✅ | ❌ | Workflow-based - greenfield-fullstack |
 | CUJ-026 | Multi-Phase Project Planning | ✅ | ✅ | ❌ | Workflow-based - enterprise-track |
 | CUJ-027 | Workflow Recovery After Context Loss | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
 | CUJ-028 | Infrastructure-First Development | ✅ | ✅ | ❌ | Workflow-based |
 | CUJ-029 | Cloud Integration Workflow | ✅ | ✅ | ❌ | Workflow-based |
 | CUJ-030 | Multi-AI Validation Workflow | ✅ | ✅ | ❌ | Skill-only |
 | **Testing & Validation** |
-| CUJ-035 | Planner-First Workflow Validation | ✅ | ✅ | ❌ | Skill-only - plan-generator |
-| CUJ-036 | Validation Failure Recovery | ✅ | ✅ | ❌ | Skill-only |
+| CUJ-035 | Planner-First Workflow Validation | ✅ | ✅ | ❌ | Workflow-based - greenfield-fullstack |
+| CUJ-036 | Validation Failure Recovery | ✅ | ✅ | ❌ | Workflow-based - greenfield-fullstack |
 | CUJ-037 | Multi-Phase Project Execution | ✅ | ✅ | ❌ | Workflow-based - enterprise-track |
-| CUJ-038 | Optional Artifact Handling | ✅ | ❌ | ❌ | Requires optional-artifact-handler (Claude-only) |
+| CUJ-038 | Optional Artifact Handling | ✅ | ❌ | ❌ | Workflow-based - Requires optional-artifact-handler (Claude-only) |
 | CUJ-039 | Cross-Agent Validation | ✅ | ❌ | ❌ | Requires conflict-resolution (Claude-only) |
-| CUJ-040 | Stateless Recovery Test | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
-| CUJ-041 | Complex Artifact Dependency Chain | ✅ | ✅ | ❌ | Skill-only |
+| CUJ-040 | Stateless Recovery Test | ✅ | ❌ | ❌ | Workflow-based - Requires recovery skill (Claude-only) |
+| CUJ-041 | Complex Artifact Dependency Chain | ✅ | ✅ | ❌ | Workflow-based - greenfield-fullstack |
 | CUJ-042 | Cursor Subagent Coordination | ❌ | ✅ | ❌ | Cursor-specific |
-| CUJ-043 | Workflow Interruption Recovery | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
+| CUJ-043 | Workflow Interruption Recovery | ✅ | ❌ | ❌ | Workflow-based - Requires recovery skill (Claude-only) |
 | CUJ-044 | Agent Fallback Chain | ✅ | ✅ | ❌ | Workflow-based |
-| CUJ-045 | Missing Required Artifact Recovery | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
-| CUJ-046 | Feature Distillation Edge Cases | ✅ | ✅ | ❌ | Skill-only |
-| CUJ-047 | Multi-Agent Conflict Resolution | ✅ | ❌ | ❌ | Requires conflict-resolution (Claude-only) |
-| CUJ-048 | Artifact Registry Comprehensive Test | ✅ | ✅ | ❌ | Skill-only |
+| CUJ-045 | Missing Required Artifact Recovery | ✅ | ❌ | ❌ | Workflow-based - Requires recovery skill (Claude-only) |
+| CUJ-046 | Feature Distillation Edge Cases | ✅ | ✅ | ❌ | Workflow-based - greenfield-fullstack |
+| CUJ-047 | Multi-Agent Conflict Resolution | ✅ | ❌ | ❌ | Workflow-based - Requires conflict-resolution (Claude-only) |
+| CUJ-048 | Artifact Registry Comprehensive Test | ✅ | ✅ | ❌ | Workflow-based - automated-enterprise-flow |
 | CUJ-049 | Cursor Plan Mode Deep Integration | ❌ | ✅ | ❌ | Workflow-based (Cursor-specific) |
 | CUJ-050 | End-to-End Workflow Robustness | ✅ | ❌ | ❌ | Requires recovery skill (Claude-only) |
 | CUJ-051 | Artifact Publishing Validation | ✅ | ✅ | ❌ | Workflow-based - artifact-publisher |
@@ -148,10 +148,10 @@ This matrix shows which platforms support each CUJ:
 All other CUJs work on both Claude and Cursor platforms with equivalent functionality.
 
 **Factory Droid Compatibility**:
-Currently, 0 CUJs have explicit Factory support (`platform_compatibility.factory: true`). However, 50 CUJs may be runnable on Factory Droid with manual adaptation:
-- **Skill-only CUJs** (10 total): May work if skills are ported to Factory
-- **Manual CUJs** (3 total): Require manual setup regardless of platform
-- **Workflow CUJs** (49 total): Require Factory workflow engine support
+Currently, 0 CUJs have explicit Factory support (`platform_compatibility.factory: true`). However, 7 CUJs may be runnable on Factory Droid with manual adaptation:
+- **Skill-only CUJs** (5 total): May work if skills are ported to Factory
+- **Manual CUJs** (2 total): Require manual setup regardless of platform
+- **Workflow CUJs** (53 total): Require Factory workflow engine support
 
 Factory native support is planned for Phase 2+. Current status: 0/62 CUJs with official Factory support.
 
@@ -161,11 +161,11 @@ Factory native support is planned for Phase 2+. Current status: 0/62 CUJs with o
 |----------|---------------------|----------------|----------------|---------------------|
 | **Claude** | 60/62 (97%) | 12 Claude-only | 48 universal | N/A |
 | **Cursor** | 50/62 (81%) | 2 Cursor-only | 48 universal | N/A |
-| **Factory** | 0/62 (0%) | 0 | 0 | 50 (with adaptation) |
+| **Factory** | 0/62 (0%) | 0 | 0 | 7 (with adaptation) |
 
 **Note**:
 - Factory Droid support is planned for future releases. Claude remains the primary platform with the most comprehensive CUJ coverage.
-- Factory "potentially runnable" count (42) includes skill-only and manual CUJs that may work with skill porting and manual adaptation.
+- Factory "potentially runnable" count (7) includes skill-only and manual CUJs that may work with skill porting and manual adaptation.
 
 ## CUJ Categories
 
@@ -560,16 +560,9 @@ describe('validation', () => {
 |-----|-------|---------|-------|----------|
 | CUJ-002 | rule-selector | `/select-rules` | 2-5 sec | Configure rules for tech stack |
 | CUJ-003 | context-bridge | "Sync to Cursor" | 5-10 sec | Sync context to Cursor |
-| CUJ-009 | scaffolder | `/scaffold ComponentName` | 5-10 sec | Generate component boilerplate |
-| CUJ-013 | code-reviewer | `/review src/` | 10-30 sec | Code review with issues |
-| CUJ-014 | rule-auditor | `/audit` | 10-30 sec | Compliance check |
-| CUJ-015 | test-generator | "Generate tests for X" | 15-30 sec | Generate test files |
-| CUJ-016 | doc-generator | "Document API X" | 10-20 sec | Generate API docs |
 | CUJ-017 | claude-md-generator | "Generate claude.md for X" | 5-10 sec | Generate module docs |
-| CUJ-023 | dependency-analyzer | "Check dependencies" | 5-10 sec | Audit dependencies |
 | CUJ-027 | recovery | "Recover workflow" | 10-20 sec | Recover from context loss |
-| CUJ-038 | optional-artifact-handler | "Handle optional artifacts" | 5-10 sec | Test optional inputs |
-| CUJ-047 | conflict-resolution | "Resolve conflicts" | 10-20 sec | Resolve agent conflicts |
+| CUJ-030 | multi-ai-validation | "Validate implementation" | 30-60 sec | Multi-AI code review |
 
 ## How to Run CUJs Directly
 
@@ -640,53 +633,53 @@ This table maps each CUJ to its execution mode (workflow file or skill-only), wo
 | CUJ-003 | skill-only | null | context-bridge |
 | CUJ-004 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
 | CUJ-005 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
-| CUJ-006 | skill-only | null | diagram-generator |
+| CUJ-006 | workflow | `.claude/workflows/code-quality-flow.yaml` | diagram-generator |
 | CUJ-007 | workflow | `.claude/workflows/code-quality-flow.yaml` | null |
-| CUJ-008 | manual-setup | null | null |
-| CUJ-009 | skill-only | null | scaffolder |
+| CUJ-008 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | diagram-generator |
+| CUJ-009 | workflow | `.claude/workflows/brownfield-fullstack.yaml` | scaffolder |
 | CUJ-010 | workflow | `.claude/workflows/brownfield-fullstack.yaml` | scaffolder |
 | CUJ-011 | workflow | `.claude/workflows/quick-flow.yaml` | null |
 | CUJ-012 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
-| CUJ-013 | skill-only | null | rule-auditor |
-| CUJ-014 | skill-only | null | rule-auditor |
-| CUJ-015 | skill-only | null | test-generator |
-| CUJ-016 | skill-only | null | doc-generator |
+| CUJ-013 | workflow | `.claude/workflows/code-review-flow.yaml` | rule-auditor |
+| CUJ-014 | workflow | `.claude/workflows/code-quality-flow.yaml` | rule-auditor |
+| CUJ-015 | workflow | `.claude/workflows/code-quality-flow.yaml` | test-generator |
+| CUJ-016 | workflow | `.claude/workflows/brownfield-fullstack.yaml` | doc-generator |
 | CUJ-017 | skill-only | null | claude-md-generator |
-| CUJ-018 | skill-only | null | diagram-generator |
+| CUJ-018 | workflow | `.claude/workflows/code-quality-flow.yaml` | diagram-generator |
 | CUJ-019 | workflow | `.claude/workflows/performance-flow.yaml` | null |
-| CUJ-020 | manual-setup | null | null |
+| CUJ-020 | workflow | `.claude/workflows/code-quality-flow.yaml` | rule-auditor |
 | CUJ-021 | workflow | `.claude/workflows/mobile-flow.yaml` | null |
 | CUJ-022 | workflow | `.claude/workflows/ai-system-flow.yaml` | null |
-| CUJ-023 | skill-only | null | dependency-analyzer |
+| CUJ-023 | workflow | `.claude/workflows/code-quality-flow.yaml` | dependency-analyzer |
 | CUJ-024 | workflow | `.claude/workflows/incident-flow.yaml` | null |
-| CUJ-025 | manual-setup | null | null |
+| CUJ-025 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | summarizer |
 | CUJ-026 | workflow | `.claude/workflows/enterprise-track.yaml` | null |
 | CUJ-027 | skill-only | null | recovery |
-| CUJ-028 | manual-setup | null | null |
-| CUJ-029 | manual-setup | null | null |
-| CUJ-030 | manual-setup | null | null |
+| CUJ-028 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
+| CUJ-029 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
+| CUJ-030 | skill-only | null | null |
 | CUJ-034 | workflow | `.claude/workflows/browser-testing-flow.yaml` | null |
 | CUJ-035 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
 | CUJ-036 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
 | CUJ-037 | workflow | `.claude/workflows/enterprise-track.yaml` | null |
-| CUJ-038 | skill-only | null | optional-artifact-handler |
+| CUJ-038 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | optional-artifact-handler |
 | CUJ-039 | workflow | `.claude/workflows/code-quality-flow.yaml` | null |
-| CUJ-040 | skill-only | null | recovery |
+| CUJ-040 | workflow | `.claude/workflows/recovery-test-flow.yaml` | recovery |
 | CUJ-041 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
 | CUJ-042 | manual-setup | null | null |
-| CUJ-043 | skill-only | null | recovery |
-| CUJ-044 | manual-setup | null | null |
-| CUJ-045 | skill-only | null | recovery |
+| CUJ-043 | workflow | `.claude/workflows/recovery-test-flow.yaml` | recovery |
+| CUJ-044 | workflow | `.claude/workflows/fallback-routing-flow.yaml` | null |
+| CUJ-045 | workflow | `.claude/workflows/recovery-test-flow.yaml` | recovery |
 | CUJ-046 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
-| CUJ-047 | skill-only | null | conflict-resolution |
+| CUJ-047 | workflow | `.claude/workflows/code-quality-flow.yaml` | conflict-resolution |
 | CUJ-048 | workflow | `.claude/workflows/automated-enterprise-flow.yaml` | null |
-| CUJ-049 | manual-setup | null | null |
+| CUJ-049 | workflow | `.claude/workflows/cursor-plan-mode-integration-flow.yaml` | null |
 | CUJ-050 | workflow | `.claude/workflows/enterprise-track.yaml` | null |
 | CUJ-051 | workflow | `.claude/workflows/brownfield-fullstack.yaml` | null |
 | CUJ-052 | workflow | `.claude/workflows/legacy-modernization-flow.yaml` | artifact-publisher |
-| CUJ-053 | workflow | `.claude/workflows/artifact-publishing-flow.yaml` | artifact-publisher |
-| CUJ-054 | workflow | `.claude/workflows/artifact-publishing-flow.yaml` | context-bridge |
-| CUJ-055 | workflow | `.claude/workflows/artifact-publishing-flow.yaml` | artifact-publisher |
+| CUJ-053 | workflow | `.claude/workflows/automated-enterprise-flow.yaml` | artifact-publisher |
+| CUJ-054 | workflow | `.claude/workflows/automated-enterprise-flow.yaml` | context-bridge |
+| CUJ-055 | workflow | `.claude/workflows/automated-enterprise-flow.yaml` | artifact-publisher |
 | CUJ-056 | workflow | `.claude/workflows/recovery-test-flow.yaml` | recovery |
 | CUJ-057 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | response-rater |
 | CUJ-058 | workflow | `.claude/workflows/enterprise-track.yaml` | recovery |
@@ -807,15 +800,15 @@ For CUJs that are Claude-only, Cursor users have the following alternatives:
 **Current Status**: 0/62 CUJs have explicit Factory Droid support
 
 **Potential for Adaptation**:
-- **Skill-Only CUJs** (13 total): May work if skills are ported to Factory
-  - CUJ-002, CUJ-003, CUJ-006, CUJ-009, CUJ-013, CUJ-014, CUJ-015, CUJ-016, CUJ-017, CUJ-018, CUJ-023, CUJ-030, CUJ-044, CUJ-046, CUJ-048, CUJ-051, CUJ-052, CUJ-054, CUJ-055, CUJ-056
+- **Skill-Only CUJs** (5 total): May work if skills are ported to Factory
+  - CUJ-002, CUJ-003, CUJ-017, CUJ-027, CUJ-030
   - **Path to Support**: Port core skills to Factory; integrate with Factory's native skill system
 
-- **Manual CUJs** (3 total): Work without platform-specific features
-  - CUJ-001, CUJ-008, CUJ-020, CUJ-025, CUJ-028, CUJ-029, CUJ-030, CUJ-042, CUJ-044, CUJ-049
+- **Manual CUJs** (2 total): Work without platform-specific features
+  - CUJ-001, CUJ-042
   - **Path to Support**: Minimal - just follow manual steps, no automation needed
 
-- **Workflow CUJs** (44 total): Require Factory workflow engine support
+- **Workflow CUJs** (53 total): Require Factory workflow engine support
   - **Path to Support**: Implement workflow engine in Factory; port agent system; integrate enforcement gates
 
 **Recommended Factory Support Phases**:

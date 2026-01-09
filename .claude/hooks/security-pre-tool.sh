@@ -9,6 +9,12 @@ INPUT=$(cat)
 TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
 TOOL_INPUT=$(echo "$INPUT" | jq -r '.tool_input // empty')
 
+# Skip validation for TodoWrite and Task tools
+if [ "$TOOL_NAME" = "TodoWrite" ] || [ "$TOOL_NAME" = "Task" ]; then
+    echo '{"decision": "allow"}'
+    exit 0
+fi
+
 # For Bash tool, check command
 if [ "$TOOL_NAME" = "Bash" ]; then
     COMMAND=$(echo "$TOOL_INPUT" | jq -r '.command // empty')
