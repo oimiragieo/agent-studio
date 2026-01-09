@@ -113,6 +113,83 @@ Skills provide 90%+ context savings vs MCP servers. Invoke with natural language
 
 See `.claude/skills/` for detailed skill documentation.
 
+## Codex Skills Integration
+
+**NEW in Phase 2.1.2**: This project includes integration with OpenAI Codex CLI and multi-AI validation tools.
+
+### What are Codex Skills?
+
+Codex skills are specialized skills that invoke external AI CLI tools (Claude Code, Gemini CLI, OpenAI Codex, Cursor Agent, GitHub Copilot) for multi-model validation and consensus.
+
+**Two Types of Skills**:
+- **Agent Studio Skills** (`.claude/skills/`): Native Claude Code skills (108 total)
+- **Codex Skills** (`codex-skills/`): CLI-based multi-AI tools (2 total: multi-ai-code-review, response-rater)
+
+See `.claude/docs/SKILLS_TAXONOMY.md` for detailed comparison and decision criteria.
+
+### Available Codex Skills
+
+| Skill | Purpose | Providers | Use Case |
+|-------|---------|-----------|----------|
+| **multi-ai-code-review** | Multi-AI code review | Claude, Gemini, Codex, Cursor, Copilot | High-stakes code changes, production fixes |
+| **response-rater** | Multi-AI plan rating | Claude, Gemini, Codex | Critical plans requiring consensus |
+
+### Key Features (Phase 2.1.2)
+
+1. **Dual-Location Skill Resolution**: Skills found in both `.claude/skills/` and `codex-skills/` directories
+2. **CLI Availability Validation**: Preflight checks warn if CLI tools unavailable
+3. **Automatic Retry Logic**: Transient failures retried with exponential backoff
+4. **Parallel Execution**: Multiple providers called in parallel (66% faster)
+5. **Agent Studio Adapter**: Unified interface for invoking Codex skills
+6. **Output Validation**: JSON schema validation for all Codex skill outputs
+7. **API Key Sanitization**: Error messages automatically redact credentials
+
+### Performance
+
+**Before Optimization** (Sequential):
+- 3 providers × 15s each = 45s total
+
+**After Optimization** (Parallel):
+- 3 providers in parallel = ~15s total
+- **66% reduction** in execution time
+
+### When to Use Codex Skills
+
+**Use Codex Skills (multi-model) for**:
+- Security-critical changes (auth, encryption, data protection)
+- Production incident fixes
+- Legacy modernization plans
+- Compliance-related work
+- High-stakes architectural decisions
+
+**Use Agent Studio Skills (single-model) for**:
+- Routine code reviews
+- Standard feature development
+- Documentation updates
+- Quick iterations
+- Cost-sensitive workflows
+
+See `.claude/docs/SKILLS_TAXONOMY.md` for complete decision tree.
+
+### Integration with Workflows
+
+Codex skills integrate seamlessly with the workflow system:
+
+```yaml
+# Example workflow step
+- step: 1.5
+  name: "Multi-AI Code Review"
+  agent: qa
+  skill: multi-ai-code-review
+  inputs:
+    - code_changes (from step 1)
+  outputs:
+    - multi-ai-review-report.json
+  condition: "user_requested_multi_ai_review OR critical_security_changes"
+```
+
+See `.claude/workflows/code-review-flow.yaml` for complete example.
+
 ## Workflows
 
 14 workflow definitions for complex multi-agent orchestration:
@@ -234,6 +311,13 @@ Native hooks provide security validation and audit logging:
 - **CUJ Index**: `.claude/docs/cujs/CUJ-INDEX.md` (56 user journeys)
 - **First-Time User Guide**: `FIRST_TIME_USER.md`
 
+## New Features in Phase 2.1.2
+
+| Feature | Purpose | Documentation |
+|---------|---------|---------------|
+| **Codex Skills Integration** | Multi-AI validation via CLI tools | `.claude/docs/SKILLS_TAXONOMY.md` |
+| **Comprehensive CUJ Fixes** | 15 integration fixes for Codex skills | `.claude/docs/PHASE1_CODEX_FIXES_SUMMARY.md` |
+
 ## Validation (Optional)
 
 Requires Node.js 18+ and pnpm:
@@ -250,6 +334,9 @@ pnpm validate:sync         # Cross-platform agent/skill parity
 
 # Validate specific workflow step
 node .claude/tools/workflow_runner.js --workflow .claude/workflows/greenfield-fullstack.yaml --step 1
+
+# Validate Codex skills integration (optional)
+pnpm test:codex-integration  # Run integration tests
 ```
 
 ## Requirements

@@ -129,6 +129,142 @@ Get-Content "C:\Program Files\ClaudeCode\managed-settings.json" | ConvertFrom-Js
 
 ---
 
+## Codex Skills Setup (Optional)
+
+Codex skills enable multi-AI validation by invoking external CLI tools. This is **optional** - Agent Studio skills work without any CLI installation.
+
+### Why Use Codex Skills?
+
+- **Multi-model consensus**: Get validation from Claude + Gemini + Codex simultaneously
+- **Higher confidence**: Critical decisions validated by multiple AI models
+- **Reduced false positives**: Agreement across models indicates genuine issues
+
+### Prerequisites
+
+- Node.js >= 18.x
+- npm or pnpm
+- (Windows) PowerShell or CMD, WSL recommended
+
+### CLI Installation
+
+#### 1. Claude Code CLI (Required)
+
+```bash
+# Install globally
+npm install -g @anthropic-ai/claude-code
+
+# Verify installation
+claude --version
+
+# Authenticate
+claude login
+```
+
+#### 2. Gemini CLI (Required)
+
+```bash
+# Install globally
+npm install -g @anthropic-ai/gemini
+
+# Verify installation
+gemini --version
+
+# Authenticate (requires Google Cloud API key)
+export GEMINI_API_KEY=your-api-key-here
+# or use session-based auth
+gemini login
+```
+
+#### 3. OpenAI Codex (Optional)
+
+```bash
+# Install globally
+npm install -g @openai/codex
+
+# Verify installation
+codex --version
+
+# Authenticate
+export OPENAI_API_KEY=your-api-key-here
+```
+
+#### 4. Cursor Agent (Optional, via WSL on Windows)
+
+```bash
+# Inside WSL
+wsl bash -lc "curl https://cursor.com/install -fsS | bash"
+
+# Verify installation
+cursor-agent --version
+```
+
+#### 5. GitHub Copilot (Optional)
+
+```bash
+# Install globally
+npm install -g @github/copilot
+
+# Authenticate with GitHub
+gh auth login
+
+# Verify installation
+copilot --version
+```
+
+### Windows-Specific Setup
+
+See `.claude/docs/WINDOWS_SETUP.md` for detailed Windows instructions, including:
+- PATH configuration
+- .cmd shim handling
+- WSL setup and usage
+- Troubleshooting common issues
+
+### Verification
+
+Run the integration tests to verify Codex skills work:
+
+```bash
+# Run Codex skills integration tests
+pnpm test:codex-integration
+
+# Run Windows compatibility tests (Windows only)
+pnpm test:windows-compat
+```
+
+### Authentication Modes
+
+Codex skills support two authentication modes:
+
+1. **Session-First** (default): Uses CLI session/subscription, falls back to env keys
+2. **Env-First**: Uses environment keys first, falls back to session
+
+Configure in `.claude/config.yaml`:
+
+```yaml
+codex_skills:
+  auth_mode: session-first  # or "env-first"
+```
+
+### Troubleshooting
+
+**Issue**: `claude: command not found`
+- **Solution**: Ensure CLI installed and in PATH
+- **Windows**: Add `%APPDATA%\npm` to PATH
+
+**Issue**: `spawn claude ENOENT`
+- **Solution**: Codex skills automatically use `shell: true` on Windows
+- **If persists**: Use WSL for best compatibility
+
+**Issue**: CLI installed but still not found
+- **Solution**: Restart terminal or IDE to pick up PATH changes
+
+For more troubleshooting, see:
+- `.claude/docs/WINDOWS_SETUP.md` (Windows-specific)
+- `.claude/docs/SKILLS_TAXONOMY.md` (Skill comparison)
+- `codex-skills/multi-ai-code-review/SKILL.md` (Skill documentation)
+
+---
+
 ## New Features in 2.1.2
 
 ### Skill Auto-Injection (Phase 2B)

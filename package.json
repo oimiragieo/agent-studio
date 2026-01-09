@@ -32,7 +32,9 @@
     "cuj:validate": "node .claude/tools/run-cuj.mjs --validate",
     "cuj:doctor": "node .claude/tools/cuj-doctor.mjs",
     "cuj:doctor:json": "node .claude/tools/cuj-doctor.mjs --json",
-    "validate:workflow-gates": "node .claude/tools/validate-workflow-rating-gates.mjs"
+    "validate:workflow-gates": "node .claude/tools/validate-workflow-rating-gates.mjs",
+    "test:codex-integration": "node .claude/tools/test-codex-skills-integration.mjs",
+    "test:codex-integration:mock": "node .claude/tools/test-codex-skills-integration.mjs --mock"
   },
   "keywords": [
     "claude",
