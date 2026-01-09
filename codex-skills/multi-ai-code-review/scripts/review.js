@@ -7,6 +7,58 @@ const fs = require("fs");
 const path = require("path");
 const { withRetry } = require("../../shared/retry-utils.js");
 
+// JSON Schema validation (Ajv or simple fallback)
+let ajv, validate;
+try {
+  const Ajv = require("ajv");
+  ajv = new Ajv({ allErrors: true });
+  const schemaPath = path.join(__dirname, "../../../.claude/schemas/multi-ai-review-report.schema.json");
+  if (fs.existsSync(schemaPath)) {
+    const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+    validate = ajv.compile(schema);
+  }
+} catch (err) {
+  console.warn(`⚠️  Schema validation unavailable: ${err.message}`);
+}
+
+/**
+ * Validate output against schema
+ * Warns if validation fails but doesn't block execution
+ */
+function validateOutput(output) {
+  if (!validate) {
+    // Validation not available - no Ajv or no schema
+    return {
+      ...output,
+      _validation: { valid: false, reason: "validator_unavailable" }
+    };
+  }
+
+  const valid = validate(output);
+  if (!valid) {
+    console.warn("⚠️  Output validation failed:");
+    (validate.errors || []).forEach((error, index) => {
+      console.warn(`   ${index + 1}. ${error.instancePath || "/"}: ${error.message}`);
+      if (error.params) {
+        console.warn(`      params: ${JSON.stringify(error.params)}`);
+      }
+    });
+    return {
+      ...output,
+      _validation: {
+        valid: false,
+        errors: validate.errors,
+        errorCount: validate.errors ? validate.errors.length : 0
+      }
+    };
+  }
+
+  return {
+    ...output,
+    _validation: { valid: true }
+  };
+}
+
 function parseArgs(argv) {
   const args = {
     providers: "claude,gemini",
@@ -529,8 +581,10 @@ async function main() {
         parallelExecution: true,
       },
     });
-    console.log(JSON.stringify(report, null, 2));
-    process.exit(report.ok ? 0 : 2);
+    // Validate output before returning
+    const validatedReport = validateOutput(report);
+    console.log(JSON.stringify(validatedReport, null, 2));
+    process.exit(validatedReport.ok ? 0 : 2);
   }
 
   let synthesized = null;
@@ -576,38 +630,36 @@ async function main() {
     return;
   }
 
-  console.log(
-    JSON.stringify(
-      {
-        diffMeta,
-        providers: parsed.map((p) => ({ provider: p.provider, ok: p.ok })),
-        perProvider: parsed,
-        synthesis: synthesized
-          ? {
-              provider: args.synthesizeWith || providers[0],
-              ok: synthesized.ok,
-              stderr: synthesized.stderr,
-              ...synthesizedExtracted,
-            }
-          : null,
-        // Performance metrics for tracking and optimization
-        performance: {
-          providerDurationMs,
-          synthesisDurationMs,
-          totalDurationMs,
-          providersCount: providers.length,
-          successCount,
-          parallelExecution: true,
-          // Estimated sequential time (for comparison)
-          estimatedSequentialMs: providerDurationMs * providers.length,
-          // Estimated time saved through parallelization
-          estimatedTimeSavedMs: Math.max(0, (providerDurationMs * providers.length) - providerDurationMs),
-        },
-      },
-      null,
-      2,
-    ),
-  );
+  const finalOutput = {
+    diffMeta,
+    providers: parsed.map((p) => ({ provider: p.provider, ok: p.ok })),
+    perProvider: parsed,
+    synthesis: synthesized
+      ? {
+          provider: args.synthesizeWith || providers[0],
+          ok: synthesized.ok,
+          stderr: synthesized.stderr,
+          ...synthesizedExtracted,
+        }
+      : null,
+    // Performance metrics for tracking and optimization
+    performance: {
+      providerDurationMs,
+      synthesisDurationMs,
+      totalDurationMs,
+      providersCount: providers.length,
+      successCount,
+      parallelExecution: true,
+      // Estimated sequential time (for comparison)
+      estimatedSequentialMs: providerDurationMs * providers.length,
+      // Estimated time saved through parallelization
+      estimatedTimeSavedMs: Math.max(0, (providerDurationMs * providers.length) - providerDurationMs),
+    },
+  };
+
+  // Validate output before returning
+  const validatedOutput = validateOutput(finalOutput);
+  console.log(JSON.stringify(validatedOutput, null, 2));
 }
 
 main().catch((e) => {
