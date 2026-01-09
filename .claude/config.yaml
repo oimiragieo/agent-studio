@@ -1285,7 +1285,7 @@ mcp_servers:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
 
-# Codex Skills Configuration (Cursor Recommendations #1-4)
+# Codex Skills Configuration (Cursor Recommendations #1-4, #10-14)
 # Provider priority for multi-AI code review and response-rater skills
 codex_skills:
   # Provider Priority Configuration (Cursor Recommendation #4)
@@ -1310,6 +1310,43 @@ codex_skills:
     default_mode: warning    # Default validation mode (warning | blocking)
     ci_mode: blocking        # Validation mode in CI (always blocking)
   retry_on_fallback: true
+  # Partial Failure Configuration (Cursor Recommendation #11)
+  # Allow multi-provider operations to succeed with partial results
+  partial_failure:
+    enabled: true            # Enable partial failure recovery
+    min_success_count: 2     # Minimum providers that must succeed
+    min_success_rate: 0.67   # 67% of providers must succeed (2 of 3)
+  # Circuit Breaker Configuration (Cursor Recommendation #14)
+  # Prevents repeated calls to failing providers
+  circuit_breaker:
+    enabled: true            # Enable circuit breaker pattern
+    failure_threshold: 3     # Number of failures before opening circuit
+    reset_timeout_ms: 60000  # Time before attempting to close circuit (1 minute)
+    half_open_max_attempts: 2 # Max attempts in half-open state
+    persistent: true         # Persist circuit breaker state to disk
+
+# Workflow Timeout Configuration (Cursor Recommendation #13)
+# Configurable timeouts for long-running workflow steps
+workflow:
+  timeouts:
+    default: 300000          # 5 minutes default
+    by_agent:
+      analyst: 600000        # 10 minutes for analysis
+      architect: 900000      # 15 minutes for architecture
+      developer: 1200000     # 20 minutes for development
+      qa: 600000             # 10 minutes for testing
+      llm-architect: 900000  # 15 minutes for LLM architecture
+      security-architect: 600000  # 10 minutes for security review
+      code-reviewer: 480000  # 8 minutes for code review
+      planner: 600000        # 10 minutes for planning
+  # Retry Configuration (Cursor Recommendation #12)
+  # Validation error recovery with feedback
+  validation_retry:
+    enabled: true            # Enable validation retry with feedback
+    max_retries: 2           # Maximum retry attempts
+    include_feedback: true   # Include validation errors in retry context
+    backoff_base_ms: 1000    # Base delay for exponential backoff
+    backoff_max_ms: 5000     # Maximum delay for backoff
 
 # Multi-AI Rating Configuration (Plan Rating Fallback)
 multi_ai_rating:

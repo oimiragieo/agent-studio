@@ -1,5 +1,13 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
+/**
+ * Multi-AI Code Review
+ *
+ * Enhanced with:
+ * - Partial Failure Recovery (Cursor Recommendation #11)
+ * - Circuit Breaker Pattern (Cursor Recommendation #14)
+ * - Enhanced Error Context (Cursor Recommendation #10)
+ */
 
 const { spawn, execSync } = require("child_process");
 const crypto = require("crypto");
@@ -16,6 +24,73 @@ try {
 }
 const { withRetry } = require("../../shared/retry-utils.js");
 const { sanitize, sanitizeError } = require("../../shared/sanitize-secrets.js");
+
+// Try to import circuit breaker (ESM module)
+let CircuitBreaker = null;
+let getProviderCircuitBreaker = null;
+try {
+  // Dynamic import for ESM module from CommonJS
+  const circuitBreakerPath = path.join(__dirname, "../../../.claude/tools/circuit-breaker.mjs");
+  if (fs.existsSync(circuitBreakerPath)) {
+    // We'll use a synchronous check and async import later
+    // For now, we'll implement a simple inline circuit breaker for CommonJS compatibility
+  }
+} catch (e) {
+  // Circuit breaker not available
+}
+
+// Simple inline Circuit Breaker for CommonJS compatibility
+class SimpleCircuitBreaker {
+  constructor(options = {}) {
+    this.failureThreshold = options.failureThreshold || 3;
+    this.resetTimeout = options.resetTimeout || 60000;
+    this.states = new Map();
+  }
+
+  canExecute(provider) {
+    const state = this.getState(provider);
+    if (state.state === "open") {
+      if (Date.now() > state.openUntil) {
+        state.state = "half-open";
+        this.states.set(provider, state);
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+
+  recordSuccess(provider) {
+    const state = this.getState(provider);
+    state.failures = 0;
+    state.state = "closed";
+    this.states.set(provider, state);
+  }
+
+  recordFailure(provider) {
+    const state = this.getState(provider);
+    state.failures++;
+    if (state.failures >= this.failureThreshold) {
+      state.state = "open";
+      state.openUntil = Date.now() + this.resetTimeout;
+      console.warn(`[circuit-breaker] ${provider}: Circuit OPEN (${state.failures} failures)`);
+    }
+    this.states.set(provider, state);
+  }
+
+  getState(provider) {
+    if (!this.states.has(provider)) {
+      this.states.set(provider, { failures: 0, state: "closed", openUntil: null });
+    }
+    return this.states.get(provider);
+  }
+}
+
+// Global circuit breaker instance
+const providerCircuitBreaker = new SimpleCircuitBreaker({
+  failureThreshold: 3,
+  resetTimeout: 60000
+});
 
 // CLI command mappings for each provider
 const CLI_COMMANDS = {
@@ -53,6 +128,114 @@ function loadProviderConfig() {
     console.warn(`[config] Could not load provider config: ${err.message}`);
   }
   return defaults;
+}
+
+/**
+ * Load partial failure configuration from config.yaml (Cursor Recommendation #11)
+ * @returns {Object} Partial failure configuration
+ */
+function loadPartialFailureConfig() {
+  const defaults = {
+    enabled: true,
+    min_success_count: 2,
+    min_success_rate: 0.67
+  };
+
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      return config?.codex_skills?.partial_failure || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load partial failure config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Load circuit breaker configuration from config.yaml (Cursor Recommendation #14)
+ * @returns {Object} Circuit breaker configuration
+ */
+function loadCircuitBreakerConfig() {
+  const defaults = {
+    enabled: true,
+    failure_threshold: 3,
+    reset_timeout_ms: 60000,
+    half_open_max_attempts: 2
+  };
+
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      const cbConfig = config?.codex_skills?.circuit_breaker;
+      if (cbConfig) {
+        // Update global circuit breaker with config values
+        providerCircuitBreaker.failureThreshold = cbConfig.failure_threshold || defaults.failure_threshold;
+        providerCircuitBreaker.resetTimeout = cbConfig.reset_timeout_ms || defaults.reset_timeout_ms;
+      }
+      return cbConfig || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load circuit breaker config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Log error with enhanced context (Cursor Recommendation #10)
+ * @param {Error} error - The error to log
+ * @param {Object} context - Error context
+ */
+function logErrorWithContext(error, context = {}) {
+  const errorDir = path.join(__dirname, "../../../.claude/context/errors");
+
+  try {
+    if (!fs.existsSync(errorDir)) {
+      fs.mkdirSync(errorDir, { recursive: true });
+    }
+
+    const timestamp = Date.now();
+    const provider = context.provider || "unknown";
+    const errorFile = path.join(errorDir, `review-${provider}-${timestamp}.json`);
+
+    const errorData = {
+      timestamp: new Date().toISOString(),
+      operation: "multi_ai_code_review",
+      provider: context.provider,
+      error: {
+        message: sanitize(error.message || String(error)),
+        name: error.name || "Error",
+        code: error.code || null,
+        stack: sanitize(error.stack || "").split("\n").slice(0, 10).join("\n")
+      },
+      context: {
+        diffMeta: context.diffMeta || null,
+        attempt: context.attempt || 1,
+        authMode: context.authMode || null
+      },
+      system: {
+        platform: process.platform,
+        nodeVersion: process.version
+      }
+    };
+
+    fs.writeFileSync(errorFile, JSON.stringify(errorData, null, 2));
+    console.error(`[error-logger] Error logged to: ${errorFile}`);
+  } catch (logError) {
+    console.error(`[error-logger] Failed to log error: ${logError.message}`);
+  }
 }
 
 /**
@@ -702,18 +885,69 @@ async function main() {
     console.error(`[cli-check] CLI validation completed in ${cliCheckDurationMs}ms`);
   }
 
+  // Load configurations (Cursor Recommendations #11, #14)
+  const partialFailureConfig = loadPartialFailureConfig();
+  const circuitBreakerConfig = loadCircuitBreakerConfig();
+
   // Performance measurement: start timing
   const providerStartTime = Date.now();
+
+  // Circuit Breaker Check (Cursor Recommendation #14)
+  // Skip providers with open circuit breakers
+  const circuitBreakerResults = [];
+  const providersToExecute = [];
+
+  if (circuitBreakerConfig.enabled) {
+    for (const p of availableProviders) {
+      if (providerCircuitBreaker.canExecute(p)) {
+        providersToExecute.push(p);
+      } else {
+        const cbState = providerCircuitBreaker.getState(p);
+        console.warn(`[circuit-breaker] Skipping ${p}: circuit OPEN (reset at ${new Date(cbState.openUntil).toISOString()})`);
+        circuitBreakerResults.push({
+          provider: p,
+          ok: false,
+          skipped: true,
+          reason: "circuit_breaker_open",
+          circuit_state: cbState.state,
+          open_until: cbState.openUntil
+        });
+      }
+    }
+  } else {
+    providersToExecute.push(...availableProviders);
+  }
 
   // Parallel execution of provider calls using Promise.allSettled()
   // This reduces total time from sum(provider_times) to max(provider_times)
   // Each provider still has independent retry logic (up to 3 attempts)
-  const providerPromises = availableProviders.map((p) => {
-    if (p === "claude") return runClaude(prompt, args);
-    if (p === "gemini") return runGemini(prompt, args);
-    if (p === "copilot") return runCopilot(prompt, args);
-    // Return resolved promise for unknown providers (handles gracefully)
-    return Promise.resolve({ provider: p, ok: false, stdout: "", stderr: `Unknown provider: ${p}` });
+  const providerPromises = providersToExecute.map((p) => {
+    const executeProvider = async () => {
+      let result;
+      if (p === "claude") result = await runClaude(prompt, args);
+      else if (p === "gemini") result = await runGemini(prompt, args);
+      else if (p === "copilot") result = await runCopilot(prompt, args);
+      else result = { provider: p, ok: false, stdout: "", stderr: `Unknown provider: ${p}` };
+
+      // Record success/failure in circuit breaker (Cursor Recommendation #14)
+      if (circuitBreakerConfig.enabled) {
+        if (result.ok) {
+          providerCircuitBreaker.recordSuccess(p);
+        } else {
+          providerCircuitBreaker.recordFailure(p);
+          // Log error with context (Cursor Recommendation #10)
+          logErrorWithContext(new Error(result.stderr || "Provider failed"), {
+            provider: p,
+            diffMeta,
+            authMode: args.authMode
+          });
+        }
+      }
+
+      return result;
+    };
+
+    return executeProvider();
   });
 
   // Promise.allSettled() ensures ALL providers complete, even if some fail
@@ -721,24 +955,74 @@ async function main() {
   const providerResults = await Promise.allSettled(providerPromises);
 
   // Map results to consistent format, handling both fulfilled and rejected promises
-  const perProvider = providerResults.map((result, index) => {
+  const executedProviders = providerResults.map((result, index) => {
     if (result.status === "fulfilled") {
       return result.value;
     }
     // Rejected promise - provider threw an unexpected error
+    const error = result.reason;
+    const provider = providersToExecute[index];
+
+    // Log error with context (Cursor Recommendation #10)
+    logErrorWithContext(error, {
+      provider,
+      diffMeta,
+      authMode: args.authMode
+    });
+
+    // Record failure in circuit breaker
+    if (circuitBreakerConfig.enabled) {
+      providerCircuitBreaker.recordFailure(provider);
+    }
+
     return {
-      provider: availableProviders[index],
+      provider,
       ok: false,
       stdout: "",
-      stderr: result.reason?.message || result.reason?.stderr || String(result.reason),
-      code: result.reason?.code || "REJECTED",
+      stderr: error?.message || error?.stderr || String(error),
+      code: error?.code || "REJECTED",
     };
   });
+
+  // Combine circuit breaker skipped results with executed results
+  const perProvider = [...circuitBreakerResults, ...executedProviders];
 
   // Performance measurement: end timing
   const providerEndTime = Date.now();
   const providerDurationMs = providerEndTime - providerStartTime;
   const successCount = perProvider.filter((p) => p.ok).length;
+  const skippedCount = perProvider.filter((p) => p.skipped).length;
+
+  // Partial Failure Recovery (Cursor Recommendation #11)
+  // Determine if we have enough successful providers
+  let partialFailureStatus = null;
+  if (partialFailureConfig.enabled) {
+    const executedCount = perProvider.length - skippedCount;
+    const successRate = executedCount > 0 ? successCount / executedCount : 0;
+    const meetsCount = successCount >= partialFailureConfig.min_success_count;
+    const meetsRate = successRate >= partialFailureConfig.min_success_rate;
+
+    partialFailureStatus = {
+      enabled: true,
+      success_count: successCount,
+      executed_count: executedCount,
+      success_rate: successRate,
+      meets_count_threshold: meetsCount,
+      meets_rate_threshold: meetsRate,
+      partial_success: !meetsCount && !meetsRate ? false : (skippedCount > 0 || successCount < executedCount)
+    };
+
+    if (!meetsCount && !meetsRate && successCount > 0) {
+      console.warn(
+        `[partial-failure] Insufficient providers succeeded: ${successCount}/${executedCount} ` +
+        `(need ${partialFailureConfig.min_success_count} or ${(partialFailureConfig.min_success_rate * 100).toFixed(0)}%)`
+      );
+    } else if (partialFailureStatus.partial_success) {
+      console.error(
+        `[partial-failure] Proceeding with partial success: ${successCount}/${executedCount} providers`
+      );
+    }
+  }
 
   // Log performance metrics (useful for debugging and optimization tracking)
   console.error(
@@ -770,8 +1054,19 @@ async function main() {
         providersCount: availableProviders.length,
         requestedProviders: providers.length,
         successCount,
+        skippedCount,
         parallelExecution: true,
         cliValidation: cliValidation || null,
+        // Cursor Recommendation #11 - Partial Failure Recovery
+        partialFailure: partialFailureStatus,
+        // Cursor Recommendation #14 - Circuit Breaker Status
+        circuitBreaker: circuitBreakerConfig.enabled ? {
+          enabled: true,
+          skipped_providers: circuitBreakerResults.length,
+          providers_state: Object.fromEntries(
+            availableProviders.map(p => [p, providerCircuitBreaker.getState(p)])
+          )
+        } : null,
       },
     });
     // Validate output before returning (use blocking mode in CI)
@@ -844,6 +1139,7 @@ async function main() {
       providersCount: availableProviders.length,
       requestedProviders: providers.length,
       successCount,
+      skippedCount,
       parallelExecution: true,
       // Estimated sequential time (for comparison)
       estimatedSequentialMs: providerDurationMs * availableProviders.length,
@@ -851,6 +1147,16 @@ async function main() {
       estimatedTimeSavedMs: Math.max(0, (providerDurationMs * availableProviders.length) - providerDurationMs),
       // CLI validation info (Cursor Recommendation #1)
       cliValidation: cliValidation || null,
+      // Cursor Recommendation #11 - Partial Failure Recovery
+      partialFailure: partialFailureStatus,
+      // Cursor Recommendation #14 - Circuit Breaker Status
+      circuitBreaker: circuitBreakerConfig.enabled ? {
+        enabled: true,
+        skipped_providers: circuitBreakerResults.length,
+        providers_state: Object.fromEntries(
+          availableProviders.map(p => [p, providerCircuitBreaker.getState(p)])
+        )
+      } : null,
     },
   };
 
