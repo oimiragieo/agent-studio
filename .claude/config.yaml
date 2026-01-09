@@ -1285,6 +1285,32 @@ mcp_servers:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
 
+# Codex Skills Configuration (Cursor Recommendations #1-4)
+# Provider priority for multi-AI code review and response-rater skills
+codex_skills:
+  # Provider Priority Configuration (Cursor Recommendation #4)
+  # Used by multi-ai-code-review and response-rater skills for fallback logic
+  provider_priority:
+    primary: claude          # Primary provider (tried first)
+    secondary:
+      - gemini               # Fallback providers (tried if primary fails)
+      - codex
+    fallback_threshold: 1    # Minimum providers required for success
+  # CLI Validation Configuration (Cursor Recommendation #1)
+  cli_validation:
+    enabled: true            # Re-validate CLI availability before execution
+    timeout_ms: 5000         # Timeout for CLI version check
+    cache_duration_ms: 60000 # Cache CLI availability for 60 seconds
+  # Parallel Execution Configuration (Cursor Recommendation #2)
+  parallel_execution:
+    enabled: true            # Execute providers in parallel by default
+    max_concurrent: 5        # Maximum concurrent provider calls
+  # Schema Validation Configuration (Cursor Recommendation #3)
+  validation:
+    default_mode: warning    # Default validation mode (warning | blocking)
+    ci_mode: blocking        # Validation mode in CI (always blocking)
+  retry_on_fallback: true
+
 # Multi-AI Rating Configuration (Plan Rating Fallback)
 multi_ai_rating:
   enabled: true
