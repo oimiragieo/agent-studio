@@ -186,6 +186,14 @@ steps:
       - multi-ai-review-report-{{workflow_id}}.json
       - multi-ai-review-synthesis-{{workflow_id}}.md (optional)
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01.5-code-reviewer.json
+    # Multi-AI review skill configuration (Cursor Recommendations #1-4)
+    skill_config:
+      # CLI validation before execution (Cursor Recommendation #1)
+      skip_cli_validation: false
+      # Schema validation mode (Cursor Recommendation #3)
+      validation_mode: blocking  # fail fast on invalid schema
+      # Provider configuration with fallback (Cursor Recommendation #4)
+      # Provider priority defined in .claude/config.yaml codex_skills.provider_priority
     # Phase 2A: Skill requirements for this step
     skill_requirements:
       required:
@@ -199,11 +207,12 @@ steps:
           schema: ".claude/schemas/multi-ai-review-report.schema.json"
           required_for_completion: true
       validation:
-        mode: blocking
+        mode: blocking  # NEW: fail fast on invalid outputs (Cursor Recommendation #3)
         min_compliance: 100
         on_failure: block
     validation:
       schema: .claude/schemas/multi-ai-review-report.schema.json
+      mode: blocking  # NEW: Schema validation blocking mode (Cursor Recommendation #3)
       gate: .claude/context/history/gates/{{workflow_id}}/01.5-code-reviewer.json
     description: |
       Multi-provider code review using Claude, Gemini, and optionally Codex:
