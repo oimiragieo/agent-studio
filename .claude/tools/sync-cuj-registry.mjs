@@ -289,29 +289,37 @@ async function parseCUJFile(filePath) {
     }
   }
 
-  // Fallback: Extract workflow from CUJ-INDEX.md "Run CUJ Mapping" table
-  // This is the source of truth when heuristics fail
+  // PRIMARY SOURCE OF TRUTH: Extract workflow from CUJ-INDEX.md "Run CUJ Mapping" table
+  // This table is the canonical mapping and MUST be used for workflow assignments
+  // Only use heuristics as a fallback if the index doesn't have the mapping
   if (!metadata.workflow && metadata.execution_mode === 'workflow') {
     const indexPath = path.join(CUJ_DOCS_DIR, 'CUJ-INDEX.md');
     try {
       const indexContent = await fs.readFile(indexPath, 'utf-8');
-      // Find the "Run CUJ Mapping" table
-      // Match: | CUJ-030 | workflow | `.claude/workflows/file.yaml` | skill |
-      const tableRegex = new RegExp(`\\|\\s*${cujId}\\s*\\|\\s*workflow\\s*\\|\\s*\`([^\`]+\\.yaml)\`\\s*\\|`, 'i');
-      const tableMatch = indexContent.match(tableRegex);
-      if (tableMatch) {
-        const workflowPath = tableMatch[1].trim();
-        // Verify the workflow file exists
-        const absolutePath = path.join(ROOT, workflowPath);
-        try {
-          await fs.access(absolutePath);
-          metadata.workflow = workflowPath;
-        } catch {
-          // File doesn't exist - skip
+      // Find the "Run CUJ Mapping" table section
+      const tableSection = indexContent.match(/##\s+Run CUJ Mapping[\s\S]*?(?=\n##|$)/);
+      if (tableSection) {
+        // Match: | CUJ-030 | workflow | `.claude/workflows/file.yaml` | skill |
+        // The workflow path is in the third column
+        const tableRegex = new RegExp(`\\|\\s*${cujId}\\s*\\|\\s*workflow\\s*\\|\\s*\`([^\`]+\\.yaml)\`\\s*\\|`, 'i');
+        const tableMatch = tableSection[0].match(tableRegex);
+        if (tableMatch) {
+          const workflowPath = tableMatch[1].trim();
+          // Verify the workflow file exists before assignment
+          const absolutePath = path.join(ROOT, workflowPath);
+          try {
+            await fs.access(absolutePath);
+            metadata.workflow = workflowPath;
+            console.log(`  📋 ${cujId}: Using workflow from CUJ-INDEX.md: ${workflowPath}`);
+          } catch {
+            console.warn(`  ⚠️  ${cujId}: Workflow in CUJ-INDEX.md not found: ${workflowPath}`);
+            // File doesn't exist - heuristics already ran, leave workflow as-is
+          }
         }
       }
-    } catch {
-      // CUJ-INDEX.md doesn't exist or couldn't be read - skip fallback
+    } catch (err) {
+      console.warn(`  ⚠️  Could not read CUJ-INDEX.md for ${cujId}: ${err.message}`);
+      // CUJ-INDEX.md doesn't exist or couldn't be read - heuristics already ran
     }
   }
 

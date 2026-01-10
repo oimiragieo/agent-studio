@@ -280,7 +280,7 @@ Factory native support is planned for Phase 2+. Current status: 0/62 CUJs with o
 | CUJ-027 | Workflow Recovery After Context Loss | Context exhausted/session lost | Orchestrator → Planner | Recovery protocol |
 | CUJ-028 | Infrastructure-First Development | "Build cloud-connected application" | Architect → DevOps → Developer → Cloud-Integrator | Infrastructure-first |
 | CUJ-029 | Cloud Integration Workflow | "Implement cloud storage integration" | Developer → Cloud-Integrator | Cloud integration |
-| CUJ-030 | Multi-AI Validation Workflow | "Validate the implementation" | Model-Orchestrator → Validators | Multi-AI validation |
+| CUJ-030 | Multi-AI Validation Workflow | "Validate the implementation" | Model-Orchestrator → Validators | multi-ai-code-review |
 | CUJ-034 | Browser-Based UI Testing | "Find bugs using Chrome DevTools, test all UI features" | Developer → QA → Performance Engineer | browser-testing-flow |
 | CUJ-035 | Planner-First Workflow Validation | "Test planner-first workflow" | Planner → Orchestrator | Planner-first validation |
 | CUJ-036 | Validation Failure Recovery | "Test validation failure recovery" | Planner → [Test agents] → QA | Validation retry |

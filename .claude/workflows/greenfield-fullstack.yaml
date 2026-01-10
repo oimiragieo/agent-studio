@@ -49,7 +49,6 @@ parallel_execution:
 
 steps:
   - step: 0
-    publish_targets: ["project_feed", "cursor"]
     name: "Planning Phase"
     agent: planner
     inputs:
@@ -99,6 +98,7 @@ steps:
       - Never execute an unrated plan - this is a hard requirement
 
   - step: 0.5
+    publish_targets: ["project_feed", "cursor"]
     name: "Feature Distillation"
     agent: analyst
     condition: "file_size(user_requirements) > 15KB"
@@ -123,6 +123,7 @@ steps:
       - Output: features-distilled.json passed to Step 0 (Planner) instead of raw markdown
 
   - step: 1
+    publish_targets: ["project_feed", "cursor"]
     name: "Project Discovery"
     agent: analyst
     parallel: true
@@ -139,6 +140,7 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
 
   - step: 2
+    publish_targets: ["project_feed", "cursor"]
     name: "Product Requirements"
     agent: pm
     parallel: true
@@ -154,6 +156,7 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/02-pm.json
 
   - step: 3
+    publish_targets: ["project_feed", "cursor"]
     name: "UX Design"
     agent: ux-expert
     parallel: true

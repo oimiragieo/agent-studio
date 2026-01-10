@@ -275,18 +275,64 @@ async function validateProviderCli(provider) {
   });
 }
 
-// JSON Schema validation (Ajv or simple fallback)
+// JSON Schema validation (Ajv with 2020-12 support or simple fallback)
 let ajv, validate;
 try {
-  const Ajv = require("ajv");
-  ajv = new Ajv({ allErrors: true });
+  const Ajv = require("ajv/dist/2020");  // Use 2020-12 version of Ajv
+  const addFormats = require("ajv-formats");
+
+  // Configure Ajv for JSON Schema 2020-12 support
+  ajv = new Ajv({
+    allErrors: true,
+    verbose: true,
+    strict: false  // Allow keywords from 2020-12 that aren't in draft-07
+  });
+
+  // Add standard formats (date-time, email, uri, etc.)
+  addFormats(ajv);
+
+  // Load schema
   const schemaPath = path.join(__dirname, "../../../.claude/schemas/multi-ai-review-report.schema.json");
   if (fs.existsSync(schemaPath)) {
     const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
-    validate = ajv.compile(schema);
+
+    // Compile schema with 2020-12 meta-schema support
+    try {
+      validate = ajv.compile(schema);
+      console.error(`[schema] JSON Schema validation enabled (${schema.$schema || 'unknown version'})`);
+    } catch (compileErr) {
+      console.warn(`⚠️  Schema compilation failed: ${compileErr.message}`);
+      console.warn(`    Schema path: ${schemaPath}`);
+      console.warn(`    Schema $schema: ${schema.$schema || 'not specified'}`);
+      validate = null;
+    }
+  } else {
+    console.warn(`⚠️  Schema file not found: ${schemaPath}`);
   }
 } catch (err) {
   console.warn(`⚠️  Schema validation unavailable: ${err.message}`);
+  if (err.code === 'MODULE_NOT_FOUND') {
+    if (err.message.includes('ajv-formats')) {
+      console.warn(`    Install ajv-formats: npm install ajv-formats`);
+    } else if (err.message.includes('ajv/dist/2020')) {
+      console.warn(`    Ajv 2020-12 support not available. Using basic validation.`);
+      // Fallback to standard Ajv (draft-07)
+      try {
+        const AjvFallback = require("ajv");
+        ajv = new AjvFallback({ allErrors: true, verbose: true, strict: false });
+        const addFormatsFallback = require("ajv-formats");
+        addFormatsFallback(ajv);
+        const schemaPath = path.join(__dirname, "../../../.claude/schemas/multi-ai-review-report.schema.json");
+        if (fs.existsSync(schemaPath)) {
+          const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+          validate = ajv.compile(schema);
+          console.error(`[schema] JSON Schema validation enabled (draft-07 fallback)`);
+        }
+      } catch {
+        // Complete fallback failure - validation disabled
+      }
+    }
+  }
 }
 
 /**

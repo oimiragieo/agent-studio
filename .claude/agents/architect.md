@@ -2,6 +2,7 @@
 name: architect
 description: System architecture design, technology selection, API design, and infrastructure planning. Use for creating technical specifications, evaluating technology stacks, designing scalable systems, and security architecture. Specializes in bridging business requirements with optimal technical solutions.
 tools: Read, Search, Grep, Glob, Edit, MCP_search_code, MCP_search_knowledge, MCP_search_agent_context
+allowed-tools: artifact-publisher, publish_artifact
 model: opus
 temperature: 0.5
 extended_thinking: true

@@ -171,10 +171,22 @@ function checkMissingSkills() {
 
       if (Array.isArray(skillList)) {
         for (const skill of skillList) {
-          // Handle object-based skill entries: { name, type, location }
-          const skillName = typeof skill === 'object' && skill.name ? skill.name : skill;
+          // Normalize skill to string name
+          // Skills can be either strings or objects with a 'name' property
+          let skillName;
 
-          if (!skillDirs.includes(skillName)) {
+          if (typeof skill === 'string') {
+            skillName = skill;
+          } else if (typeof skill === 'object' && skill !== null) {
+            // Object-based skill entry: { name, type, location } or similar
+            skillName = skill.name || String(skill);
+          } else {
+            // Unexpected type - convert to string as fallback
+            skillName = String(skill);
+          }
+
+          // Validate the normalized skill name
+          if (skillName && !skillDirs.includes(skillName)) {
             if (!missingSkills.has(skillName)) {
               missingSkills.set(skillName, []);
             }

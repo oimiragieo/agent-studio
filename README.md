@@ -14,7 +14,7 @@ A production-ready, drop-in configuration bundle providing:
 - **34 specialized AI agents** with defined roles (core development, enterprise, code quality, specialized)
 - **107 utility skills** for code generation, validation, planning, and recovery
 - **14 workflow definitions** with enforcement gates and security validation
-- **62 Customer User Journeys (CUJs)** documenting complete workflows
+- **60 Customer User Journeys (CUJs)** documenting complete workflows
 - **93 JSON schemas** for artifact validation
 - **1,081+ technology rule packs** with dynamic discovery (8 master + 1,073 library rules)
 - **Enforcement system** with plan rating, signoffs, and security triggers
