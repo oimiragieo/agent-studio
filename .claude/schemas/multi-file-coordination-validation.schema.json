@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Multi-File Coordination Validation",
+  "description": "Schema for validating multi-file change coordination between strategic and implementation plans",
+  "required": ["validation_id", "validated_at", "workflow_id", "coordination_status", "file_changes"],
+  "properties": {
+    "validation_id": {
+      "type": "string",
+      "description": "Unique identifier for this validation"
+    },
+    "validated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when validation was performed"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID being validated"
+    },
+    "coordination_status": {
+      "type": "string",
+      "enum": ["coordinated", "uncoordinated", "partial"],
+      "description": "Overall coordination status"
+    },
+    "file_changes": {
+      "type": "array",
+      "description": "Validation of file changes",
+      "items": {
+        "type": "object",
+        "required": ["file_path", "strategic_context_present", "implementation_plan_present"],
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Path to file being changed"
+          },
+          "strategic_context_present": {
+            "type": "boolean",
+            "description": "Whether change references strategic plan for context"
+          },
+          "implementation_plan_present": {
+            "type": "boolean",
+            "description": "Whether change follows implementation plan structure"
+          },
+          "both_plans_linked": {
+            "type": "boolean",
+            "description": "Whether change is linked to both strategic and implementation plans"
+          },
+          "strategic_step_reference": {
+            "type": "string",
+            "description": "Strategic plan step this change relates to"
+          },
+          "implementation_task_reference": {
+            "type": "string",
+            "description": "Implementation task this change relates to"
+          },
+          "coordination_score": {
+            "type": "number",
+            "description": "Coordination quality score (0-10)",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Issues found with this file's coordination"
+          }
+        }
+      }
+    },
+    "coordination_metrics": {
+      "type": "object",
+      "description": "Metrics about coordination quality",
+      "properties": {
+        "total_files_changed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_with_strategic_context": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_with_implementation_plan": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_with_both_links": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coordination_percentage": {
+          "type": "number",
+          "description": "Percentage of files properly coordinated (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "consistency_checks": {
+      "type": "array",
+      "description": "Consistency checks across files",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check_name": {
+            "type": "string",
+            "description": "Name of consistency check"
+          },
+          "passed": {
+            "type": "boolean",
+            "description": "Whether check passed"
+          },
+          "details": {
+            "type": "string",
+            "description": "Details about the check"
+          },
+          "affected_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Files affected by this check"
+          }
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning", "info"]
+          },
+          "file": {
+            "type": "string",
+            "description": "File where issue was found"
+          },
+          "message": {
+            "type": "string",
+            "description": "Issue description"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "How to fix the issue"
+          }
+        }
+      },
+      "description": "List of coordination issues"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommendations for improving coordination"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/cuj-registry.schema.json",
   "version": "1.0.0",
-  "generated": "2026-01-09T05:14:45.143Z",
+  "generated": "2026-01-10T02:30:39.743Z",
   "total_cujs": 60,
   "cujs": [
     {
@@ -28,8 +28,7 @@
         "Hooks enabled (optional)"
       ],
       "estimated_duration": "varies",
-      "file_path": ".claude/docs/cujs/CUJ-001.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-001.md"
     },
     {
       "id": "CUJ-002",
@@ -40,11 +39,7 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        {
-          "name": "rule-selector",
-          "type": "agent-studio",
-          "location": ".claude/skills/rule-selector"
-        }
+        "rule-selector"
       ],
       "primary_skill": "rule-selector",
       "schemas": [],
@@ -64,8 +59,7 @@
         "List of active rules"
       ],
       "estimated_duration": "2-60 seconds",
-      "file_path": ".claude/docs/cujs/CUJ-002.md",
-      "skill_type": "agent-studio"
+      "file_path": ".claude/docs/cujs/CUJ-002.md"
     },
     {
       "id": "CUJ-003",
@@ -76,11 +70,7 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        {
-          "name": "context-bridge",
-          "type": "agent-studio",
-          "location": ".claude/skills/context-bridge"
-        }
+        "context-bridge"
       ],
       "primary_skill": "context-bridge",
       "schemas": [],
@@ -100,8 +90,7 @@
         "Cross-platform compatibility verified"
       ],
       "estimated_duration": "2-60 seconds",
-      "file_path": ".claude/docs/cujs/CUJ-003.md",
-      "skill_type": "agent-studio"
+      "file_path": ".claude/docs/cujs/CUJ-003.md"
     },
     {
       "id": "CUJ-004",
@@ -109,22 +98,11 @@
       "description": "Create a comprehensive plan for implementing a new feature.",
       "category": "Planning & Architecture",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "plan-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [
@@ -146,8 +124,7 @@
         "Plan summary"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-004.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-004.md"
     },
     {
       "id": "CUJ-005",
@@ -158,34 +135,11 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "scaffolder",
-          "type": "agent-studio",
-          "location": ".claude/skills/scaffolder"
-        },
-        {
-          "name": "rule-auditor",
-          "type": "agent-studio",
-          "location": ".claude/skills/rule-auditor"
-        },
-        {
-          "name": "doc-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/doc-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "plan-generator",
+        "scaffolder",
+        "rule-auditor",
+        "doc-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [
@@ -214,8 +168,7 @@
         "Documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-005.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-005.md"
     },
     {
       "id": "CUJ-006",
@@ -223,14 +176,10 @@
       "description": "Review and analyze existing system architecture.",
       "category": "Planning & Architecture",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "diagram-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/diagram-generator"
-        }
+        "diagram-generator"
       ],
       "primary_skill": null,
       "schemas": [
@@ -252,8 +201,7 @@
         "Recommendations document"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-006.md",
-      "skill_type": "agent-studio"
+      "file_path": ".claude/docs/cujs/CUJ-006.md"
     },
     {
       "id": "CUJ-007",
@@ -261,14 +209,10 @@
       "description": "Plan refactoring of legacy code and technical debt.",
       "category": "Planning & Architecture",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        }
+        "plan-generator"
       ],
       "primary_skill": null,
       "schemas": [
@@ -290,8 +234,7 @@
         "Migration roadmap"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-007.md",
-      "skill_type": "agent-studio"
+      "file_path": ".claude/docs/cujs/CUJ-007.md"
     },
     {
       "id": "CUJ-008",
@@ -299,14 +242,10 @@
       "description": "Design database schema for a feature or system.",
       "category": "Planning & Architecture",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "diagram-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/diagram-generator"
-        }
+        "diagram-generator"
       ],
       "primary_skill": null,
       "schemas": [
@@ -329,8 +268,7 @@
         "Schema documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-008.md",
-      "skill_type": "agent-studio"
+      "file_path": ".claude/docs/cujs/CUJ-008.md"
     },
     {
       "id": "CUJ-009",
@@ -338,27 +276,12 @@
       "description": "Generate rule-compliant component boilerplate.",
       "category": "Development",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "scaffolder",
-          "type": "agent-studio",
-          "location": ".claude/skills/scaffolder"
-        },
-        {
-          "name": "rule-auditor",
-          "type": "agent-studio",
-          "location": ".claude/skills/rule-auditor"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "scaffolder",
+        "rule-auditor",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -379,8 +302,7 @@
         "Supporting files"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-009.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-009.md"
     },
     {
       "id": "CUJ-010",
@@ -391,29 +313,10 @@
       "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "scaffolder",
-          "type": "agent-studio",
-          "location": ".claude/skills/scaffolder"
-        },
-        {
-          "name": "api-contract-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/api-contract-generator"
-        },
-        {
-          "name": "doc-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/doc-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "scaffolder",
+        "api-contract-generator",
+        "doc-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [
@@ -437,8 +340,7 @@
         "OpenAPI specification"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-010.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-010.md"
     },
     {
       "id": "CUJ-011",
@@ -449,19 +351,8 @@
       "workflow": ".claude/workflows/quick-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "rule-auditor",
-          "type": "agent-studio",
-          "location": ".claude/skills/rule-auditor"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "rule-auditor",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -481,8 +372,7 @@
         "Validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-011.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-011.md"
     },
     {
       "id": "CUJ-012",
@@ -493,34 +383,11 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "scaffolder",
-          "type": "agent-studio",
-          "location": ".claude/skills/scaffolder"
-        },
-        {
-          "name": "test-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/test-generator"
-        },
-        {
-          "name": "doc-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/doc-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "plan-generator",
+        "scaffolder",
+        "test-generator",
+        "doc-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -541,8 +408,7 @@
         "Usage examples"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-012.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-012.md"
     },
     {
       "id": "CUJ-013",
@@ -550,33 +416,13 @@
       "description": "Comprehensive code review with systematic analysis.",
       "category": "Quality Assurance",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-review-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "rule-auditor",
-          "type": "agent-studio",
-          "location": ".claude/skills/rule-auditor"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        },
-        {
-          "name": "multi-ai-code-review",
-          "type": "codex",
-          "location": "codex-skills/multi-ai-code-review",
-          "requires_cli": [
-            "claude",
-            "gemini"
-          ]
-        }
+        "rule-auditor",
+        "response-rater",
+        "multi-ai-code-review"
       ],
-      "skill_type": "hybrid",
       "primary_skill": null,
       "schemas": [
         ".claude/schemas/code-review.schema.json"
@@ -606,22 +452,11 @@
       "description": "Validate code against project rules and standards.",
       "category": "Quality Assurance",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "rule-auditor",
-          "type": "agent-studio",
-          "location": ".claude/skills/rule-auditor"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "rule-auditor",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [
@@ -644,8 +479,7 @@
         "Compliance score"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-014.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-014.md"
     },
     {
       "id": "CUJ-015",
@@ -653,22 +487,11 @@
       "description": "Generate comprehensive test suite for code.",
       "category": "Quality Assurance",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "test-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/test-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "test-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -689,8 +512,7 @@
         "Test coverage report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-015.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-015.md"
     },
     {
       "id": "CUJ-016",
@@ -698,22 +520,11 @@
       "description": "Generate comprehensive API documentation.",
       "category": "Documentation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "doc-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/doc-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "doc-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [
@@ -736,8 +547,7 @@
         "Interactive docs"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-016.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-016.md"
     },
     {
       "id": "CUJ-017",
@@ -748,11 +558,7 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        {
-          "name": "claude-md-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/claude-md-generator"
-        }
+        "claude-md-generator"
       ],
       "primary_skill": "claude-md-generator",
       "schemas": [],
@@ -772,8 +578,7 @@
         "Usage examples"
       ],
       "estimated_duration": "2-60 seconds",
-      "file_path": ".claude/docs/cujs/CUJ-017.md",
-      "skill_type": "agent-studio"
+      "file_path": ".claude/docs/cujs/CUJ-017.md"
     },
     {
       "id": "CUJ-018",
@@ -781,27 +586,12 @@
       "description": "Document system architecture with diagrams.",
       "category": "Documentation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "diagram-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/diagram-generator"
-        },
-        {
-          "name": "doc-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/doc-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "diagram-generator",
+        "doc-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -822,8 +612,7 @@
         "ADR templates"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-018.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-018.md"
     },
     {
       "id": "CUJ-019",
@@ -834,14 +623,7 @@
       "workflow": ".claude/workflows/performance-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -862,8 +644,7 @@
         "Performance metrics"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-019.md",
-      "skill_type": "codex"
+      "file_path": ".claude/docs/cujs/CUJ-019.md"
     },
     {
       "id": "CUJ-020",
@@ -871,22 +652,11 @@
       "description": "Audit system security and identify vulnerabilities.",
       "category": "Specialized Workflows",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "rule-auditor",
-          "type": "agent-studio",
-          "location": ".claude/skills/rule-auditor"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "rule-auditor",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -907,8 +677,7 @@
         "Compliance checklist"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-020.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-020.md"
     },
     {
       "id": "CUJ-021",
@@ -938,8 +707,7 @@
         "Mobile documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-021.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-021.md"
     },
     {
       "id": "CUJ-022",
@@ -969,8 +737,7 @@
         "AI API implementation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-022.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-022.md"
     },
     {
       "id": "CUJ-023",
@@ -978,22 +745,11 @@
       "description": "Safely update project dependencies.",
       "category": "Maintenance & Operations",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "dependency-analyzer",
-          "type": "agent-studio",
-          "location": ".claude/skills/dependency-analyzer"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "dependency-analyzer",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1014,8 +770,7 @@
         "Compatibility validation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-023.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-023.md"
     },
     {
       "id": "CUJ-024",
@@ -1026,19 +781,8 @@
       "workflow": ".claude/workflows/incident-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "recovery",
-          "type": "agent-studio",
-          "location": ".claude/skills/recovery"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "recovery",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1059,8 +803,7 @@
         "Remediation plan"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-024.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-024.md"
     },
     {
       "id": "CUJ-025",
@@ -1071,19 +814,8 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "summarizer",
-          "type": "agent-studio",
-          "location": ".claude/skills/summarizer"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "summarizer",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1103,8 +835,7 @@
         "plan-{{workflow_id}}.json (Step 0)"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-025.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-025.md"
     },
     {
       "id": "CUJ-026",
@@ -1115,24 +846,9 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "dependency-analyzer",
-          "type": "agent-studio",
-          "location": ".claude/skills/dependency-analyzer"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "plan-generator",
+        "dependency-analyzer",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1153,8 +869,7 @@
         "[Additional phase plans as needed]"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-026.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-026.md"
     },
     {
       "id": "CUJ-027",
@@ -1165,11 +880,7 @@
       "workflow": null,
       "agents": [],
       "skills": [
-        {
-          "name": "recovery",
-          "type": "agent-studio",
-          "location": ".claude/skills/recovery"
-        }
+        "recovery"
       ],
       "primary_skill": "recovery",
       "schemas": [],
@@ -1189,8 +900,7 @@
         "New artifacts from resumed steps"
       ],
       "estimated_duration": "2-60 seconds",
-      "file_path": ".claude/docs/cujs/CUJ-027.md",
-      "skill_type": "agent-studio"
+      "file_path": ".claude/docs/cujs/CUJ-027.md"
     },
     {
       "id": "CUJ-028",
@@ -1220,8 +930,7 @@
         "Code using concrete resource names (Step 7)"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-028.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-028.md"
     },
     {
       "id": "CUJ-029",
@@ -1251,19 +960,20 @@
         "Emulator configuration"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-029.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-029.md"
     },
     {
       "id": "CUJ-030",
       "name": "Multi-AI Validation Workflow",
       "description": "Validate code quality using multiple AI models for consensus.",
       "category": "Advanced Workflows",
-      "execution_mode": "workflow",
-      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "execution_mode": "skill-only",
+      "workflow": null,
       "agents": [],
-      "skills": [],
-      "primary_skill": null,
+      "skills": [
+        "multi-ai-code-review"
+      ],
+      "primary_skill": "multi-ai-code-review",
       "schemas": [],
       "triggers": [
         "Validate the implementation",
@@ -1280,9 +990,8 @@
         "consensus-issues.json",
         "disagreements.json"
       ],
-      "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-030.md",
-      "skill_type": "none"
+      "estimated_duration": "2-60 seconds",
+      "file_path": ".claude/docs/cujs/CUJ-030.md"
     },
     {
       "id": "CUJ-034",
@@ -1293,51 +1002,15 @@
       "workflow": ".claude/workflows/browser-testing-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "navigate_page",
-          "type": "agent-studio",
-          "location": ".claude/skills/navigate_page"
-        },
-        {
-          "name": "take_screenshot",
-          "type": "agent-studio",
-          "location": ".claude/skills/take_screenshot"
-        },
-        {
-          "name": "click",
-          "type": "agent-studio",
-          "location": ".claude/skills/click"
-        },
-        {
-          "name": "fill",
-          "type": "agent-studio",
-          "location": ".claude/skills/fill"
-        },
-        {
-          "name": "list_console_messages",
-          "type": "agent-studio",
-          "location": ".claude/skills/list_console_messages"
-        },
-        {
-          "name": "list_network_requests",
-          "type": "agent-studio",
-          "location": ".claude/skills/list_network_requests"
-        },
-        {
-          "name": "performance_start_trace",
-          "type": "agent-studio",
-          "location": ".claude/skills/performance_start_trace"
-        },
-        {
-          "name": "performance_stop_trace",
-          "type": "agent-studio",
-          "location": ".claude/skills/performance_stop_trace"
-        },
-        {
-          "name": "performance_analyze_insight",
-          "type": "agent-studio",
-          "location": ".claude/skills/performance_analyze_insight"
-        }
+        "navigate_page",
+        "take_screenshot",
+        "click",
+        "fill",
+        "list_console_messages",
+        "list_network_requests",
+        "performance_start_trace",
+        "performance_stop_trace",
+        "performance_analyze_insight"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1358,8 +1031,7 @@
       },
       "expected_outputs": [],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-034.md",
-      "skill_type": "agent-studio"
+      "file_path": ".claude/docs/cujs/CUJ-034.md"
     },
     {
       "id": "CUJ-035",
@@ -1370,19 +1042,8 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "plan-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1404,8 +1065,7 @@
         "Artifact flow validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-035.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-035.md"
     },
     {
       "id": "CUJ-036",
@@ -1413,7 +1073,7 @@
       "description": "Test validation gate failures and retry logic to ensure the system handles validation errors gracefully and recovers automatically.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1437,8 +1097,7 @@
         "Recovery validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-036.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-036.md"
     },
     {
       "id": "CUJ-037",
@@ -1449,24 +1108,9 @@
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "dependency-analyzer",
-          "type": "agent-studio",
-          "location": ".claude/skills/dependency-analyzer"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "plan-generator",
+        "dependency-analyzer",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1489,8 +1133,7 @@
         "Phase boundary validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-037.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-037.md"
     },
     {
       "id": "CUJ-038",
@@ -1498,22 +1141,11 @@
       "description": "Test workflows with optional inputs to ensure graceful degradation when optional artifacts are missing and defaults are used appropriately.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "optional-artifact-handler",
-          "type": "agent-studio",
-          "location": ".claude/skills/optional-artifact-handler"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "optional-artifact-handler",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1534,8 +1166,7 @@
         "Validation report confirming graceful degradation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-038.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-038.md"
     },
     {
       "id": "CUJ-039",
@@ -1543,22 +1174,11 @@
       "description": "Test cross-agent validation protocol to ensure agents can validate each other's work, resolve conflicts, and enforce quality gates with multiple validators.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "conflict-resolution",
-          "type": "agent-studio",
-          "location": ".claude/skills/conflict-resolution"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "conflict-resolution",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [
@@ -1583,8 +1203,7 @@
         "Validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-039.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-039.md"
     },
     {
       "id": "CUJ-040",
@@ -1592,22 +1211,11 @@
       "description": "Verify the system can recover from scratch without any conversation history, ensuring all agents read from file system state rather than relying on memory or chat history.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "recovery",
-          "type": "agent-studio",
-          "location": ".claude/skills/recovery"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "recovery",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1632,8 +1240,7 @@
         "Recovery validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-040.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-040.md"
     },
     {
       "id": "CUJ-041",
@@ -1641,7 +1248,7 @@
       "description": "Test deep artifact dependency chains (A→B→C→D→E) to ensure artifacts are properly passed between workflow steps and the artifact registry tracks all dependencies correctly.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1666,8 +1273,7 @@
         "Dependency chain validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-041.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-041.md"
     },
     {
       "id": "CUJ-042",
@@ -1698,8 +1304,7 @@
         "Coordination validation report"
       ],
       "estimated_duration": "varies",
-      "file_path": ".claude/docs/cujs/CUJ-042.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-042.md"
     },
     {
       "id": "CUJ-043",
@@ -1707,22 +1312,11 @@
       "description": "Test mid-workflow interruption and recovery to ensure no work is lost when workflows are interrupted mid-step, and the system can resume from checkpoints.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "recovery",
-          "type": "agent-studio",
-          "location": ".claude/skills/recovery"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "recovery",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1747,8 +1341,7 @@
         "Recovery validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-043.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-043.md"
     },
     {
       "id": "CUJ-044",
@@ -1756,7 +1349,7 @@
       "description": "Test fallback agent routing when primary agents fail, ensuring fallback agents receive correct context, artifacts are preserved, and the system recovers gracefully.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/fallback-routing-flow.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1782,8 +1375,7 @@
         "Updated plan document"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-044.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-044.md"
     },
     {
       "id": "CUJ-045",
@@ -1791,27 +1383,12 @@
       "description": "Test recovery when required artifacts are missing, ensuring the system can detect missing artifacts, recreate them when possible, and recover gracefully.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "recovery",
-          "type": "agent-studio",
-          "location": ".claude/skills/recovery"
-        },
-        {
-          "name": "optional-artifact-handler",
-          "type": "agent-studio",
-          "location": ".claude/skills/optional-artifact-handler"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "recovery",
+        "optional-artifact-handler",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1836,8 +1413,7 @@
         "Final workflow outputs"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-045.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-045.md"
     },
     {
       "id": "CUJ-046",
@@ -1845,7 +1421,7 @@
       "description": "Test feature distillation process with edge cases: very large documents, malformed markdown, missing critical information, multiple document formats, and validation failures.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1868,8 +1444,7 @@
         "Recovery documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-046.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-046.md"
     },
     {
       "id": "CUJ-047",
@@ -1877,22 +1452,11 @@
       "description": "Test conflict detection and resolution when multiple agents produce conflicting outputs, ensuring conflicts are detected, escalated appropriately, and resolved through consensus or authority.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "conflict-resolution",
-          "type": "agent-studio",
-          "location": ".claude/skills/conflict-resolution"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "conflict-resolution",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1915,8 +1479,7 @@
         "Resolution documentation"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-047.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-047.md"
     },
     {
       "id": "CUJ-048",
@@ -1924,7 +1487,7 @@
       "description": "Test artifact registry robustness: corruption recovery, concurrent artifact registration, validation failures, missing registry recovery, and registry synchronization.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1948,8 +1511,7 @@
         "Final workflow outputs"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-048.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-048.md"
     },
     {
       "id": "CUJ-049",
@@ -1957,7 +1519,7 @@
       "description": "Test deep integration between Planner Agent (strategic planning) and Cursor Plan Mode (implementation planning), ensuring seamless handoff, artifact linking, and coordinated execution.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/cursor-plan-mode-integration-flow.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1981,8 +1543,7 @@
         "Integration validation report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-049.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-049.md"
     },
     {
       "id": "CUJ-050",
@@ -1990,22 +1551,11 @@
       "description": "Test complete workflow resilience: multiple failure points, recovery at each stage, context loss at different points, validation failures throughout, and complete workflow completion after failures.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/enterprise-track.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "recovery",
-          "type": "agent-studio",
-          "location": ".claude/skills/recovery"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "recovery",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2028,8 +1578,7 @@
         "End-to-end resilience report"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-050.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-050.md"
     },
     {
       "id": "CUJ-051",
@@ -2037,27 +1586,12 @@
       "description": "Validate that artifact-publisher skill correctly publishes artifacts and integrates with artifact registry.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "artifact-publisher",
-          "type": "agent-studio",
-          "location": ".claude/skills/artifact-publisher"
-        },
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "artifact-publisher",
+        "plan-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2079,8 +1613,7 @@
         "Error handling test results"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-051.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-051.md"
     },
     {
       "id": "CUJ-052",
@@ -2088,22 +1621,11 @@
       "description": "Test migration from legacy artifact-registry.mjs to run-manager.mjs, ensuring backward compatibility and data integrity.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/legacy-modernization-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "plan-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2125,8 +1647,7 @@
         "Backward compatibility test results"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-052.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-052.md"
     },
     {
       "id": "CUJ-053",
@@ -2134,27 +1655,12 @@
       "description": "Validate that publishing metadata persists correctly across workflow runs and system restarts.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "artifact-publisher",
-          "type": "agent-studio",
-          "location": ".claude/skills/artifact-publisher"
-        },
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "artifact-publisher",
+        "plan-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2175,8 +1681,7 @@
         "Persistence validation report: `publishing-persistence-report.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-053.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-053.md"
     },
     {
       "id": "CUJ-054",
@@ -2184,32 +1689,13 @@
       "description": "Validate that publishing metadata syncs correctly across Claude, Cursor, and other platforms using context-bridge skill.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "artifact-publisher",
-          "type": "agent-studio",
-          "location": ".claude/skills/artifact-publisher"
-        },
-        {
-          "name": "context-bridge",
-          "type": "agent-studio",
-          "location": ".claude/skills/context-bridge"
-        },
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "artifact-publisher",
+        "context-bridge",
+        "plan-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [
@@ -2233,8 +1719,7 @@
         "Conflict resolution logs"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-054.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-054.md"
     },
     {
       "id": "CUJ-055",
@@ -2242,27 +1727,12 @@
       "description": "Validate that publishing retry logic works correctly with exponential backoff and tracks all attempts in registry.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "artifact-publisher",
-          "type": "agent-studio",
-          "location": ".claude/skills/artifact-publisher"
-        },
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "artifact-publisher",
+        "plan-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2284,8 +1754,7 @@
         "Timing measurements for backoff delays"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-055.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-055.md"
     },
     {
       "id": "CUJ-056",
@@ -2293,27 +1762,12 @@
       "description": "Test the recovery skill's ability to restore workflow state from file system artifacts after context loss or session interruption.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "recovery",
-          "type": "agent-studio",
-          "location": ".claude/skills/recovery"
-        },
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "recovery",
+        "plan-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2336,8 +1790,7 @@
         "Completed workflow artifacts"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-056.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-056.md"
     },
     {
       "id": "CUJ-057",
@@ -2345,22 +1798,11 @@
       "description": "Validate that the response-rater skill correctly enforces the minimum 7/10 plan quality score.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        },
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        }
+        "response-rater",
+        "plan-generator"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2381,8 +1823,7 @@
         "Validation report: `.claude/context/artifacts/rating-validation-{id}.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-057.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-057.md"
     },
     {
       "id": "CUJ-058",
@@ -2390,7 +1831,7 @@
       "description": "Validate that workflows can recover from failures using retry logic, fallback agents, and checkpoint restoration.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/enterprise-track.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -2407,8 +1848,7 @@
         "`.claude/context/runs/{{run_id}}/workflow-state.json`: Updated workflow state after recovery"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-058.md",
-      "skill_type": "none"
+      "file_path": ".claude/docs/cujs/CUJ-058.md"
     },
     {
       "id": "CUJ-059",
@@ -2419,34 +1859,11 @@
       "workflow": ".claude/workflows/performance-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        },
-        {
-          "name": "dependency-analyzer",
-          "type": "agent-studio",
-          "location": ".claude/skills/dependency-analyzer"
-        },
-        {
-          "name": "diagram-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/diagram-generator"
-        },
-        {
-          "name": "recovery",
-          "type": "agent-studio",
-          "location": ".claude/skills/recovery"
-        }
+        "plan-generator",
+        "response-rater",
+        "dependency-analyzer",
+        "diagram-generator",
+        "recovery"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2469,8 +1886,7 @@
         "Performance report: `.claude/context/artifacts/performance-results-{id}.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-059.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-059.md"
     },
     {
       "id": "CUJ-060",
@@ -2478,32 +1894,13 @@
       "description": "Validate that Customer User Journeys (CUJs) work consistently across Claude Code, Cursor, and Factory Droid platforms.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "context-bridge",
-          "type": "agent-studio",
-          "location": ".claude/skills/context-bridge"
-        },
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        },
-        {
-          "name": "artifact-publisher",
-          "type": "agent-studio",
-          "location": ".claude/skills/artifact-publisher"
-        }
+        "context-bridge",
+        "plan-generator",
+        "response-rater",
+        "artifact-publisher"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2528,8 +1925,7 @@
         "Sync validation: `.claude/context/artifacts/context-sync-results-{id}.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-060.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-060.md"
     },
     {
       "id": "CUJ-061",
@@ -2537,32 +1933,13 @@
       "description": "Publish workflow artifacts to the project feed for cross-platform visibility and collaboration.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "artifact-publisher",
-          "type": "agent-studio",
-          "location": ".claude/skills/artifact-publisher"
-        },
-        {
-          "name": "context-bridge",
-          "type": "agent-studio",
-          "location": ".claude/skills/context-bridge"
-        },
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        }
+        "artifact-publisher",
+        "context-bridge",
+        "plan-generator",
+        "response-rater"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2586,8 +1963,7 @@
         "Published artifacts: Available in project feed with sharing links"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-061.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-061.md"
     },
     {
       "id": "CUJ-062",
@@ -2595,32 +1971,13 @@
       "description": "Validate that all skills (currently 43) are correctly integrated with their respective agents and trigger properly in workflows.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "skill-manager",
-          "type": "agent-studio",
-          "location": ".claude/skills/skill-manager"
-        },
-        {
-          "name": "plan-generator",
-          "type": "agent-studio",
-          "location": ".claude/skills/plan-generator"
-        },
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        },
-        {
-          "name": "dependency-analyzer",
-          "type": "agent-studio",
-          "location": ".claude/skills/dependency-analyzer"
-        }
+        "skill-manager",
+        "plan-generator",
+        "response-rater",
+        "dependency-analyzer"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -2644,8 +2001,7 @@
         "Cross-platform report: `.claude/context/artifacts/skill-cross-platform-{id}.json`"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-062.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-062.md"
     },
     {
       "id": "CUJ-063",
@@ -2656,19 +2012,8 @@
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
-        {
-          "name": "response-rater",
-          "type": "codex",
-          "location": "codex-skills/response-rater",
-          "requires_cli": [
-            "claude"
-          ]
-        },
-        {
-          "name": "recovery",
-          "type": "agent-studio",
-          "location": ".claude/skills/recovery"
-        }
+        "response-rater",
+        "recovery"
       ],
       "primary_skill": null,
       "schemas": [
@@ -2693,8 +2038,7 @@
         "Recovery playbook"
       ],
       "estimated_duration": "2-10 minutes",
-      "file_path": ".claude/docs/cujs/CUJ-063.md",
-      "skill_type": "hybrid"
+      "file_path": ".claude/docs/cujs/CUJ-063.md"
     }
   ]
 }

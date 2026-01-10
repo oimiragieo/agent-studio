@@ -13,6 +13,7 @@ import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { loadJSONSafely, loadTextSafely } from './safe-file-loader.mjs';
 import { getRunDirectoryStructure, readRun, updateRun } from './run-manager.mjs';
 import { resolveArtifactPath, resolveGatePath, resolveReasoningPath } from './path-resolver.mjs';
 import { createContextPacket, injectContext } from './context-injector.mjs';
@@ -217,7 +218,7 @@ export class AgentContextBuilder {
       if (!existsSync(agentPath)) {
         throw new Error(`Agent file not found: ${agentName}.md (path: ${agentPath})`);
       }
-      return await readFile(agentPath, 'utf-8');
+      return await loadTextSafely(agentPath, { maxSizeMB: 10 });
     } catch (error) {
       if (error.code === 'ENOENT') {
         throw new Error(`Agent file not found: ${agentName}.md. ${error.message}`);
@@ -251,11 +252,11 @@ export class AgentContextBuilder {
       
       if (constraintPath && existsSync(constraintPath)) {
         try {
-          const content = await readFile(constraintPath, 'utf-8');
           if (constraintPath.endsWith('.json')) {
-            const json = JSON.parse(content);
+            const json = await loadJSONSafely(constraintPath, { maxSizeMB: 10 });
             constraints.push(`From ${injection}: ${JSON.stringify(json, null, 2)}`);
           } else {
+            const content = await loadTextSafely(constraintPath, { maxSizeMB: 10 });
             constraints.push(`From ${injection}:\n${content}`);
           }
         } catch (error) {

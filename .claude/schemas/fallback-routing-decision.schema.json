@@ -1,0 +1,193 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Fallback Routing Decision",
+  "description": "Schema for fallback routing decisions when primary agent fails",
+  "required": ["decision_id", "timestamp", "primary_agent", "failure_type", "fallback_agent", "routing_method", "confidence"],
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "description": "Unique identifier for this routing decision",
+      "pattern": "^routing-[a-zA-Z0-9_-]+$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when routing decision was made"
+    },
+    "primary_agent": {
+      "type": "string",
+      "description": "Agent that failed and triggered fallback routing"
+    },
+    "failure_type": {
+      "type": "string",
+      "enum": ["non_recoverable", "timeout", "invalid_output", "missing_capability", "error"],
+      "description": "Type of failure that triggered fallback"
+    },
+    "failure_details": {
+      "type": "object",
+      "description": "Detailed information about the failure",
+      "properties": {
+        "error_message": {
+          "type": "string",
+          "description": "Error message from primary agent"
+        },
+        "error_code": {
+          "type": "string",
+          "description": "Error code if available"
+        },
+        "stack_trace": {
+          "type": "string",
+          "description": "Stack trace if available"
+        },
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of retries attempted before fallback"
+        }
+      }
+    },
+    "fallback_agent": {
+      "type": "string",
+      "description": "Agent selected to handle the fallback"
+    },
+    "fallback_chain": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Ordered list of fallback agents to try (for multi-level fallback)"
+    },
+    "routing_method": {
+      "type": "string",
+      "enum": ["explicit", "capability_matrix", "semantic", "default"],
+      "description": "Method used to select fallback agent"
+    },
+    "routing_reason": {
+      "type": "string",
+      "description": "Rationale for fallback agent selection"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence level in fallback routing decision (0.0-1.0)"
+    },
+    "capability_match": {
+      "type": "object",
+      "description": "Capability matching analysis",
+      "properties": {
+        "required_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Capabilities required for the task"
+        },
+        "fallback_agent_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Capabilities provided by fallback agent"
+        },
+        "match_score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Capability match score (0.0-1.0)"
+        },
+        "missing_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Capabilities not covered by fallback agent"
+        }
+      }
+    },
+    "context_preservation": {
+      "type": "object",
+      "description": "Context preservation strategy for fallback",
+      "properties": {
+        "artifacts_to_preserve": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of artifact paths to preserve"
+        },
+        "state_to_preserve": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "State keys to preserve"
+        },
+        "error_context_included": {
+          "type": "boolean",
+          "description": "Whether error details will be included in context package"
+        }
+      }
+    },
+    "alternative_agents_considered": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "agent": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "rejection_reason": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Other agents considered but not selected"
+    },
+    "test_scenario": {
+      "type": "string",
+      "enum": ["explicit_fallback", "capability_matrix", "context_preservation", "fallback_chain", "invalid_output"],
+      "description": "Test scenario being executed (if in test mode)"
+    },
+    "expected_outcome": {
+      "type": "object",
+      "description": "Expected outcome from fallback agent",
+      "properties": {
+        "should_complete_task": {
+          "type": "boolean",
+          "description": "Whether fallback agent should complete the task"
+        },
+        "expected_artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Artifacts expected from fallback agent"
+        },
+        "recovery_time_estimate_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Estimated time for fallback agent to complete task"
+        }
+      }
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Associated workflow ID"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Associated run ID"
+    },
+    "step_number": {
+      "type": ["integer", "string"],
+      "description": "Workflow step number where fallback occurred"
+    }
+  }
+}

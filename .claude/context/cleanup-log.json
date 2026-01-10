@@ -1,0 +1,15 @@
+{
+  "cleaned_files": [
+    {
+      "file": "C:\\dev\\projects\\LLM-RULES\\.claude\\docs\\CROSS_PLATFORM_GUIDE.md",
+      "reason": "matches_slop_pattern",
+      "cleaned_at": "2026-01-09T16:55:33.029Z"
+    },
+    {
+      "file": "C:\\dev\\projects\\LLM-RULES\\.claude\\docs\\CROSS_PLATFORM_GUIDE.md",
+      "reason": "matches_slop_pattern",
+      "cleaned_at": "2026-01-09T16:57:15.516Z"
+    }
+  ],
+  "last_cleanup": "2026-01-09T16:57:15.518Z"
+}

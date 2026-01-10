@@ -124,7 +124,10 @@ function checkMissingWorkflows() {
 
       if (Array.isArray(workflowList)) {
         for (const workflow of workflowList) {
-          const workflowName = workflow.replace(/\.(yaml|yml)$/, '');
+          // Normalize workflow path: strip `.claude/workflows/` prefix if present
+          const normalizedWorkflow = workflow.replace(/^\.claude\/workflows\//, '');
+          const workflowName = normalizedWorkflow.replace(/\.(yaml|yml)$/, '');
+
           if (!workflowFiles.includes(workflowName)) {
             if (!missingWorkflows.has(workflow)) {
               missingWorkflows.set(workflow, []);
@@ -168,11 +171,14 @@ function checkMissingSkills() {
 
       if (Array.isArray(skillList)) {
         for (const skill of skillList) {
-          if (!skillDirs.includes(skill)) {
-            if (!missingSkills.has(skill)) {
-              missingSkills.set(skill, []);
+          // Handle object-based skill entries: { name, type, location }
+          const skillName = typeof skill === 'object' && skill.name ? skill.name : skill;
+
+          if (!skillDirs.includes(skillName)) {
+            if (!missingSkills.has(skillName)) {
+              missingSkills.set(skillName, []);
             }
-            missingSkills.get(skill).push(cuj.id);
+            missingSkills.get(skillName).push(cuj.id);
           }
         }
       }

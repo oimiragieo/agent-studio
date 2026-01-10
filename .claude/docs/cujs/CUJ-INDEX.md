@@ -657,7 +657,7 @@ This table maps each CUJ to its execution mode (workflow file or skill-only), wo
 | CUJ-027 | skill-only | null | recovery |
 | CUJ-028 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
 | CUJ-029 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
-| CUJ-030 | skill-only | null | null |
+| CUJ-030 | skill-only | null | multi-ai-code-review |
 | CUJ-034 | workflow | `.claude/workflows/browser-testing-flow.yaml` | null |
 | CUJ-035 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |
 | CUJ-036 | workflow | `.claude/workflows/greenfield-fullstack.yaml` | null |

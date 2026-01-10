@@ -1,0 +1,58 @@
+{
+  "title": "Phase 7 Memory Exhaustion Stress Test Results",
+  "generated": "2026-01-09T22:46:00.066Z",
+  "configuration": {
+    "numSubagentCycles": 5,
+    "toolUsesPerSubagent": 15,
+    "backgroundTasks": 2,
+    "artifactSizeMB": 5,
+    "targetDurationMinutes": 2,
+    "tokenSimulationSize": 250000,
+    "maxHeapMB": 4096,
+    "warningThresholdMB": 3500,
+    "criticalThresholdPercent": 0.9,
+    "highThresholdPercent": 0.8,
+    "checkpointIntervalMs": 60000,
+    "cleanupIntervalMs": 30000,
+    "maxConcurrentSpawns": 3,
+    "minFreeMemoryMB": 500
+  },
+  "results": {
+    "duration_minutes": "2.14",
+    "completion_status": "completed",
+    "exit_code": 0
+  },
+  "memory_metrics": {
+    "heap_start_mb": "6.04",
+    "heap_peak_mb": "10.23",
+    "heap_end_mb": "5.34",
+    "heap_limit_mb": 4096,
+    "peak_usage_percent": "0.2"
+  },
+  "event_counts": {
+    "gc_count": 6,
+    "cleanup_count": 6,
+    "spawn_count": 5,
+    "concurrent_peak_spawns": 1,
+    "pressure_events_high": 0,
+    "pressure_events_critical": 0,
+    "checkpoints_saved": 2,
+    "artifacts_created": 3,
+    "tool_simulations": 75
+  },
+  "comparison_to_original": {
+    "original_duration_minutes": 97,
+    "original_tokens": 225300,
+    "original_subagent_tools": 13,
+    "original_background_tasks": 2,
+    "original_result": "JavaScript heap out of memory",
+    "test_duration_minutes": "2.14",
+    "test_tokens_simulated": 250000,
+    "test_subagent_tools": 15,
+    "test_background_tasks": 2,
+    "test_result": "completed"
+  },
+  "pass_fail_decision": "PASS",
+  "justification": "Stress test completed successfully. Peak memory: 0.2%",
+  "recommendations": []
+}

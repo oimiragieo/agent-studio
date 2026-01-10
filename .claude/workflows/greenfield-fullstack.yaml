@@ -49,6 +49,7 @@ parallel_execution:
 
 steps:
   - step: 0
+    publish_targets: ["project_feed", "cursor"]
     name: "Planning Phase"
     agent: planner
     inputs:
@@ -192,6 +193,7 @@ steps:
       - Only executes if plan includes UI components
 
   - step: 4
+    publish_targets: ["project_feed", "cursor"]
     name: "System Architecture"
     agent: architect
     inputs:

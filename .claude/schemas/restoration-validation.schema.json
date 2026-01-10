@@ -1,0 +1,308 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Restoration Validation",
+  "description": "Schema for validating checkpoint restoration after simulated failure",
+  "required": ["validation_id", "validated_at", "workflow_id", "restoration_status", "checkpoint_restored"],
+  "properties": {
+    "validation_id": {
+      "type": "string",
+      "description": "Unique identifier for this validation"
+    },
+    "validated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when validation was performed"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID being validated"
+    },
+    "restoration_status": {
+      "type": "string",
+      "enum": ["successful", "failed", "partial"],
+      "description": "Overall restoration status"
+    },
+    "checkpoint_restored": {
+      "type": "object",
+      "required": ["checkpoint_id", "phase", "timestamp"],
+      "properties": {
+        "checkpoint_id": {
+          "type": "string",
+          "description": "ID of checkpoint that was restored"
+        },
+        "phase": {
+          "type": "integer",
+          "description": "Phase number of restored checkpoint",
+          "minimum": 1
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When checkpoint was originally created"
+        },
+        "checkpoint_path": {
+          "type": "string",
+          "description": "Path to checkpoint file"
+        }
+      }
+    },
+    "failure_simulation": {
+      "type": "object",
+      "description": "Details about the simulated failure",
+      "properties": {
+        "failure_step": {
+          "type": "integer",
+          "description": "Step where failure was simulated",
+          "minimum": 1
+        },
+        "failure_type": {
+          "type": "string",
+          "enum": ["timeout", "network_error", "validation_failure", "agent_failure"],
+          "description": "Type of simulated failure"
+        },
+        "failure_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When failure occurred"
+        }
+      }
+    },
+    "state_integrity": {
+      "type": "object",
+      "required": ["passed", "accuracy_percentage"],
+      "properties": {
+        "passed": {
+          "type": "boolean",
+          "description": "Whether state integrity check passed"
+        },
+        "accuracy_percentage": {
+          "type": "number",
+          "description": "State accuracy percentage (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "details": {
+          "type": "string",
+          "description": "Details about state integrity"
+        },
+        "discrepancies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "description": "Field with discrepancy"
+              },
+              "expected": {
+                "type": "string",
+                "description": "Expected value"
+              },
+              "actual": {
+                "type": "string",
+                "description": "Actual value after restoration"
+              }
+            }
+          },
+          "description": "List of discrepancies found"
+        }
+      }
+    },
+    "artifact_preservation": {
+      "type": "object",
+      "required": ["passed", "artifacts_restored"],
+      "properties": {
+        "passed": {
+          "type": "boolean",
+          "description": "Whether all artifacts were preserved"
+        },
+        "artifacts_restored": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["artifact_name", "restored", "valid"],
+            "properties": {
+              "artifact_name": {
+                "type": "string",
+                "description": "Name of artifact"
+              },
+              "artifact_path": {
+                "type": "string",
+                "description": "Path to artifact"
+              },
+              "restored": {
+                "type": "boolean",
+                "description": "Whether artifact was restored"
+              },
+              "valid": {
+                "type": "boolean",
+                "description": "Whether restored artifact is valid"
+              },
+              "location_correct": {
+                "type": "boolean",
+                "description": "Whether artifact is in correct location"
+              }
+            }
+          }
+        },
+        "total_artifacts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "artifacts_restored_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restoration_percentage": {
+          "type": "number",
+          "description": "Percentage of artifacts restored (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "completed_steps": {
+      "type": "object",
+      "required": ["match_checkpoint"],
+      "properties": {
+        "match_checkpoint": {
+          "type": "boolean",
+          "description": "Whether completed steps match checkpoint"
+        },
+        "checkpoint_steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps completed at checkpoint"
+        },
+        "restored_steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps after restoration"
+        },
+        "missing_steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps missing after restoration"
+        }
+      }
+    },
+    "validation_gates": {
+      "type": "object",
+      "required": ["passed"],
+      "properties": {
+        "passed": {
+          "type": "boolean",
+          "description": "Whether validation gates were passed"
+        },
+        "gates_checked": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gate_name": {
+                "type": "string"
+              },
+              "passed": {
+                "type": "boolean"
+              },
+              "details": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "data_loss": {
+      "type": "object",
+      "required": ["detected", "data_loss_percentage"],
+      "properties": {
+        "detected": {
+          "type": "boolean",
+          "description": "Whether any data loss was detected"
+        },
+        "data_loss_percentage": {
+          "type": "number",
+          "description": "Percentage of data lost (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "lost_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Items that were lost"
+        },
+        "corrupted_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Items that were corrupted"
+        }
+      }
+    },
+    "restoration_metrics": {
+      "type": "object",
+      "description": "Metrics about the restoration process",
+      "properties": {
+        "restoration_time_ms": {
+          "type": "integer",
+          "description": "Time taken to restore checkpoint (milliseconds)",
+          "minimum": 0
+        },
+        "checkpoint_size_bytes": {
+          "type": "integer",
+          "description": "Size of checkpoint file (bytes)",
+          "minimum": 0
+        },
+        "restoration_success_rate": {
+          "type": "number",
+          "description": "Success rate percentage (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning", "info"]
+          },
+          "component": {
+            "type": "string",
+            "description": "Component where issue was found"
+          },
+          "message": {
+            "type": "string",
+            "description": "Issue description"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "How to fix the issue"
+          }
+        }
+      },
+      "description": "List of issues found during restoration"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommendations for improving restoration"
+    }
+  }
+}

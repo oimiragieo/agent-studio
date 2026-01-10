@@ -1222,6 +1222,30 @@ context_editing:
   # Applied to all agents for long-running sessions
   apply_to_all_agents: true
 
+# Memory Management Configuration
+memory:
+  max_heap_size_mb: 4096
+  cache_limits:
+    git_cache_max_entries: 100
+    artifact_cache_max_entries: 500
+    skill_cache_max_entries: 200
+    artifact_cache_max_memory_mb: 50
+  cleanup:
+    enabled: true
+    interval_seconds: 600  # 10 minutes
+    cleanup_after_step: true
+  monitoring:
+    enabled: true
+    warn_threshold_mb: 3500
+    check_interval_seconds: 60
+  file_handling:
+    streaming_threshold_mb: 1
+    max_artifact_size_mb: 10
+    max_json_file_size_mb: 100
+  gc:
+    expose_gc: true  # Requires --expose-gc flag
+    gc_on_warning: true
+
 # Token Monitoring (Orchestrator Handoff)
 token_monitoring:
   enabled: true

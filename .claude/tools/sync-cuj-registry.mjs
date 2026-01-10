@@ -185,19 +185,20 @@ async function parseCUJFile(filePath) {
   }
 
   // Extract workflow file from various patterns
+  // ONLY extract workflows if execution_mode is 'workflow'
+  // This prevents false positives from Related Documentation links in skill-only CUJs
+
   // Pattern 1: workflow: `.claude/workflows/file.yaml`
   let workflowMatch = content.match(/workflow:\s*`?\.claude\/workflows\/([^`\s]+\.yaml)`?/i);
-  if (workflowMatch) {
+  if (workflowMatch && metadata.execution_mode === 'workflow') {
     metadata.workflow = `.claude/workflows/${workflowMatch[1]}`;
-    metadata.execution_mode = 'workflow';
   }
 
   // Pattern 2: Uses workflow: file.yaml (in description or anywhere)
-  if (!metadata.workflow) {
+  if (!metadata.workflow && metadata.execution_mode === 'workflow') {
     workflowMatch = content.match(/Uses workflow:\s*`?([^`\s]+\.yaml)`?/i);
     if (workflowMatch) {
       metadata.workflow = `.claude/workflows/${workflowMatch[1]}`;
-      metadata.execution_mode = 'workflow';
     }
   }
 
@@ -205,18 +206,17 @@ async function parseCUJFile(filePath) {
 
   // Pattern 4: References in Workflow section header
   // Match: ## Workflow\n\n**Execution Mode**: `file.yaml`
-  if (!metadata.workflow) {
+  if (!metadata.workflow && metadata.execution_mode === 'workflow') {
     workflowMatch = content.match(/##\s+Workflow[\s\S]*?\*\*Execution Mode\*\*:\s*`([^`]+\.yaml)`/);
     if (workflowMatch) {
       const yamlFile = workflowMatch[1];
       metadata.workflow = `.claude/workflows/${yamlFile}`;
-      metadata.execution_mode = 'workflow';
     }
   }
 
   // Pattern 5: Related Documentation section with workflow links
   // Match: [workflow-name Workflow](../../workflows/workflow-name.yaml)
-  if (!metadata.workflow) {
+  if (!metadata.workflow && metadata.execution_mode === 'workflow') {
     workflowMatch = content.match(/\[.*?\s+Workflow\]\(\.\.\/\.\.\/workflows\/([^)]+\.yaml)\)/i);
     if (workflowMatch) {
       const yamlFile = workflowMatch[1];
@@ -225,7 +225,6 @@ async function parseCUJFile(filePath) {
       try {
         await fs.access(workflowPath);
         metadata.workflow = `.claude/workflows/${yamlFile}`;
-        metadata.execution_mode = 'workflow';
       } catch {
         // File doesn't exist - skip
       }
@@ -234,7 +233,7 @@ async function parseCUJFile(filePath) {
 
   // Pattern 6: Generic workflow references in Workflow section
   // Match: `workflow-name.yaml` in the Workflow section (but verify it's a real workflow)
-  if (!metadata.workflow) {
+  if (!metadata.workflow && metadata.execution_mode === 'workflow') {
     workflowMatch = content.match(/##\s+Workflow[\s\S]{0,500}?`([a-z-]+\.yaml)`/);
     if (workflowMatch) {
       const yamlFile = workflowMatch[1];
@@ -247,7 +246,6 @@ async function parseCUJFile(filePath) {
           await fs.access(workflowPath);
           // File exists - this is a real workflow reference
           metadata.workflow = `.claude/workflows/${yamlFile}`;
-          metadata.execution_mode = 'workflow';
         } catch {
           // File doesn't exist - likely a skill reference or other YAML file
           // Don't assign workflow mode
@@ -291,6 +289,32 @@ async function parseCUJFile(filePath) {
     }
   }
 
+  // Fallback: Extract workflow from CUJ-INDEX.md "Run CUJ Mapping" table
+  // This is the source of truth when heuristics fail
+  if (!metadata.workflow && metadata.execution_mode === 'workflow') {
+    const indexPath = path.join(CUJ_DOCS_DIR, 'CUJ-INDEX.md');
+    try {
+      const indexContent = await fs.readFile(indexPath, 'utf-8');
+      // Find the "Run CUJ Mapping" table
+      // Match: | CUJ-030 | workflow | `.claude/workflows/file.yaml` | skill |
+      const tableRegex = new RegExp(`\\|\\s*${cujId}\\s*\\|\\s*workflow\\s*\\|\\s*\`([^\`]+\\.yaml)\`\\s*\\|`, 'i');
+      const tableMatch = indexContent.match(tableRegex);
+      if (tableMatch) {
+        const workflowPath = tableMatch[1].trim();
+        // Verify the workflow file exists
+        const absolutePath = path.join(ROOT, workflowPath);
+        try {
+          await fs.access(absolutePath);
+          metadata.workflow = workflowPath;
+        } catch {
+          // File doesn't exist - skip
+        }
+      }
+    } catch {
+      // CUJ-INDEX.md doesn't exist or couldn't be read - skip fallback
+    }
+  }
+
   // Extract agents
   const agentsSection = content.match(/##\s+Agents Used\s+(.+?)(?=\n##)/s);
   if (agentsSection) {
@@ -318,6 +342,31 @@ async function parseCUJFile(filePath) {
   // Extract primary skill (for skill-only CUJs)
   if (metadata.execution_mode === 'skill-only' && metadata.skills.length > 0) {
     metadata.primary_skill = metadata.skills[0];
+  }
+
+  // Fallback: Extract primary_skill from CUJ-INDEX.md "Run CUJ Mapping" table
+  // This is the source of truth when heuristics fail
+  if (metadata.execution_mode === 'skill-only' && !metadata.primary_skill) {
+    const indexPath = path.join(CUJ_DOCS_DIR, 'CUJ-INDEX.md');
+    try {
+      const indexContent = await fs.readFile(indexPath, 'utf-8');
+      // Find the "Run CUJ Mapping" table
+      // Match: | CUJ-030 | skill-only | null | skill-name |
+      const tableRegex = new RegExp(`\\|\\s*${cujId}\\s*\\|\\s*skill-only\\s*\\|[^|]*\\|\\s*([a-z-]+)\\s*\\|`, 'i');
+      const tableMatch = indexContent.match(tableRegex);
+      if (tableMatch) {
+        const skillName = tableMatch[1].trim();
+        if (skillName && skillName !== 'null') {
+          metadata.primary_skill = skillName;
+          // Also add to skills array if not already present
+          if (!metadata.skills.includes(skillName)) {
+            metadata.skills.push(skillName);
+          }
+        }
+      }
+    } catch {
+      // CUJ-INDEX.md doesn't exist or couldn't be read - skip fallback
+    }
   }
 
   // Extract schemas

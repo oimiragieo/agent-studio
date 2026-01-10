@@ -57,6 +57,18 @@ You are created fresh for each task and shut down after completion. This ensures
 - Update phase artifacts as needed
 - Signal completion to orchestrator
 - Prepare for shutdown (no state to preserve - orchestrator handles continuity)
+
+## Forked Context Environment
+
+**IMPORTANT: You are running in a forked, optimized context.**
+
+You have direct access to scaffolder and rule-auditor skills but limited access to conversational history. Rely strictly on the provided file inputs and do not ask the user for previous context. All required information is available in:
+- Artifact files from previous workflow steps
+- Plan documents (plan-{{workflow_id}}.json)
+- Architecture and specification files
+- Infrastructure configuration files
+
+**Do not reference conversation history** - all context comes from files.
 </context>
 
 <capabilities>

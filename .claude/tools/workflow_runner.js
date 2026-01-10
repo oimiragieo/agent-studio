@@ -26,6 +26,7 @@ import { readFileSync, existsSync, mkdirSync, statSync, writeFileSync, readdirSy
 import { resolve, join, dirname, basename } from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { parseLargeJSON, shouldUseStreaming } from './streaming-json-parser.mjs';
 import { evaluateDecision } from './workflow/decision-handler.mjs';
 import { initializeLoop, advanceLoop, hasMoreIterations, getCurrentItem } from './workflow/loop-handler.mjs';
 import { checkContextThreshold, recordContextUsage } from './context-monitor.mjs';
@@ -40,6 +41,9 @@ import { validateSkillUsage, generateViolationReport } from './skill-validator.m
 import { validateExecutionGate } from './enforcement-gate.mjs';
 import { createCheckpoint, restoreFromCheckpoint, listCheckpoints } from './checkpoint-manager.mjs';
 import { executePlanRatingGate, checkPlanRating } from './plan-rating-gate.mjs';
+import { cleanupAllCaches } from './memory-cleanup.mjs';
+import { logMemoryUsage, canSpawnSubagent } from './memory-monitor.mjs';
+import { saveCheckpoint } from './workflow-checkpoint.mjs';
 
 // Import js-yaml for proper YAML parsing
 let yaml;
@@ -60,6 +64,23 @@ try {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+/**
+ * Load JSON file with streaming support for large files
+ * @param {string} filePath - Path to JSON file
+ * @returns {Promise<Object>} Parsed JSON object
+ */
+async function loadJSONFile(filePath) {
+  if (!existsSync(filePath)) {
+    throw new Error(`File not found: ${filePath}`);
+  }
+  
+  if (shouldUseStreaming(filePath, 1)) {
+    return await parseLargeJSON(filePath);
+  } else {
+    return JSON.parse(readFileSync(filePath, 'utf-8'));
+  }
+}
 
 /**
  * Resolve workflow path from project root
@@ -365,7 +386,7 @@ async function recordSkillValidation(workflowId, stepNumber, skillValidation, ga
       return;
     }
 
-    const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+    const gateData = await loadJSONFile(gatePath);
 
     // Add skill validation section
     gateData.skill_validation = {
@@ -2558,6 +2579,31 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
   let gateDir;
   let runId = args['run-id'] || null;
   
+  // NEW: Check memory BEFORE loading artifacts
+  const preLoadMemCheck = canSpawnSubagent(1000); // Need 1GB for artifacts + context
+  if (!preLoadMemCheck.canSpawn) {
+    console.warn('[Workflow] Insufficient memory before artifact loading');
+    console.warn(`[Memory] RSS: ${preLoadMemCheck.currentUsageMB.toFixed(2)}MB, Free: ${preLoadMemCheck.freeMB.toFixed(2)}MB`);
+
+    // Aggressive cleanup
+    const { cleanupAllCaches } = await import('./memory-cleanup.mjs');
+    cleanupAllCaches();
+    if (global.gc) {
+      global.gc();
+      global.gc();
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    const recheckMem = canSpawnSubagent(1000);
+    if (!recheckMem.canSpawn) {
+      console.error('[Workflow] Cannot proceed: insufficient memory');
+      process.exit(1);
+    }
+
+    console.log('[Workflow] Cleanup successful, loading artifacts');
+  }
+
   // Ensure artifact registry is initialized before step execution
   if (runId) {
     try {
@@ -2745,7 +2791,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
       // Load plan artifact if available (common dependency for conditional steps)
       const planPath = resolveArtifactPath(runId, `plan-${workflowId}.json`);
       if (existsSync(planPath)) {
-        const planData = JSON.parse(readFileSync(planPath, 'utf-8'));
+        const planData = await loadJSONFile(planPath);
         previousStepOutput = planData;
       }
     } catch (error) {
@@ -2926,6 +2972,28 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             content: skillInjection.skillPrompt,
             priority: 'high'
           });
+        }
+
+        // Priority 3: Check memory before spawning subagent
+        const memCheck = canSpawnSubagent(800); // Need 800MB for subagent
+        if (!memCheck.canSpawn) {
+          console.warn('[Workflow] Insufficient memory for subagent - saving checkpoint');
+          console.warn(`[Memory] Current: ${memCheck.currentUsageMB.toFixed(2)}MB, Free: ${memCheck.freeMB.toFixed(2)}MB`);
+
+          // Save checkpoint with current state
+          const checkpointPath = await saveCheckpoint(runId, args.step, {
+            reason: 'memory_pressure',
+            step: args.step,
+            agent: agentName,
+            timestamp: new Date().toISOString()
+          });
+
+          console.log(`[Checkpoint] Saved to ${checkpointPath}`);
+          console.error('[Workflow] Exiting with code 42 - restart needed');
+
+          // Cleanup before exit
+          cleanupAllCaches();
+          process.exit(42); // Exit code 42 = memory pressure restart needed
         }
 
         // Execute agent
@@ -3142,7 +3210,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     // Check gate file validation status
     try {
       if (existsSync(gatePath)) {
-        const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+        const gateData = await loadJSONFile(gatePath);
         if (gateData.valid) {
           console.log(`\n✅ Gate validation status: PASSED`);
           if (gateData.autofix_applied && gateData.fixed_fields_count > 0) {
@@ -3189,7 +3257,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
       console.log(`\n🔍 Running ${config.custom_checks.length} custom validation check(s)...`);
       
       try {
-        const artifactData = JSON.parse(readFileSync(inputPath, 'utf-8'));
+        const artifactData = await loadJSONFile(inputPath);
         const customValidationResult = await runCustomValidationChecks(
           config.custom_checks,
           artifactData,
@@ -3209,7 +3277,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           // Update gate file with custom validation errors
           if (existsSync(gatePath)) {
             try {
-              const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+              const gateData = await loadJSONFile(gatePath);
               gateData.custom_validation = {
                 valid: false,
                 errors: customValidationResult.errors,
@@ -3328,7 +3396,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         // Read gate file to get validation status
         let validationStatus = 'pending';
         if (existsSync(gatePath)) {
-          const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+          const gateData = await loadJSONFile(gatePath);
           validationStatus = gateData.valid ? 'pass' : 'fail';
         }
         
@@ -3491,7 +3559,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     // Try to read gate file for detailed error information
     try {
       if (existsSync(gatePath)) {
-        const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+        const gateData = await loadJSONFile(gatePath);
         if (!gateData.valid && gateData.errors) {
           console.error(`\n   Validation Errors:`);
           gateData.errors.forEach((error, index) => {
@@ -3510,6 +3578,23 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     console.error(`   - Check schema file if validation errors are unclear`);
     console.error(`   - Review agent output for any warnings or issues`);
     process.exit(1);
+  } finally {
+    // Priority 1 Critical Fix: Clean up memory after step execution
+    try {
+      console.log('\n[Memory] Cleaning up after step execution...');
+      logMemoryUsage('Before cleanup');
+
+      const results = cleanupAllCaches();
+      console.log(`[Memory] Cleanup complete: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`);
+
+      // Force GC if available
+      if (global.gc) {
+        global.gc();
+        logMemoryUsage('After GC');
+      }
+    } catch (cleanupError) {
+      console.warn(`[Memory] Cleanup warning: ${cleanupError.message}`);
+    }
   }
 }
 

@@ -1,0 +1,271 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Fallback Routing Log",
+  "description": "Schema for logging fallback agent routing events",
+  "required": ["log_id", "created_at", "workflow_id", "routing_status", "routing_events"],
+  "properties": {
+    "log_id": {
+      "type": "string",
+      "description": "Unique identifier for this routing log"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when log was created"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID being logged"
+    },
+    "routing_status": {
+      "type": "string",
+      "enum": ["successful", "failed", "partial"],
+      "description": "Overall routing status"
+    },
+    "routing_events": {
+      "type": "array",
+      "description": "Array of routing events",
+      "items": {
+        "type": "object",
+        "required": ["event_id", "timestamp", "primary_agent", "failure_reason", "fallback_agent", "routing_successful"],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "description": "Unique identifier for this routing event"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When routing event occurred"
+          },
+          "step_number": {
+            "type": "integer",
+            "description": "Workflow step where routing occurred",
+            "minimum": 0
+          },
+          "primary_agent": {
+            "type": "string",
+            "description": "Primary agent that failed"
+          },
+          "failure_reason": {
+            "type": "string",
+            "enum": ["timeout", "validation_failure", "agent_unavailable", "network_error", "rate_limit", "simulated_failure"],
+            "description": "Reason for primary agent failure"
+          },
+          "failure_details": {
+            "type": "string",
+            "description": "Detailed failure information"
+          },
+          "fallback_agent": {
+            "type": "string",
+            "description": "Fallback agent that was routed to"
+          },
+          "fallback_selection_rationale": {
+            "type": "string",
+            "description": "Why this fallback agent was selected"
+          },
+          "routing_successful": {
+            "type": "boolean",
+            "description": "Whether routing to fallback agent was successful"
+          },
+          "routing_time_ms": {
+            "type": "integer",
+            "description": "Time taken to route to fallback (milliseconds)",
+            "minimum": 0
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "context_preservation": {
+      "type": "object",
+      "required": ["preserved", "preservation_percentage"],
+      "properties": {
+        "preserved": {
+          "type": "boolean",
+          "description": "Whether task context was preserved across routing"
+        },
+        "preservation_percentage": {
+          "type": "number",
+          "description": "Percentage of context preserved (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "preserved_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "item_type": {
+                "type": "string",
+                "enum": ["task_description", "artifacts", "workflow_state", "dependencies", "success_criteria"],
+                "description": "Type of context item"
+              },
+              "preserved": {
+                "type": "boolean",
+                "description": "Whether this item was preserved"
+              }
+            }
+          }
+        },
+        "lost_context": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Context items that were lost"
+        }
+      }
+    },
+    "task_context": {
+      "type": "object",
+      "description": "Details about preserved task context",
+      "properties": {
+        "original_description": {
+          "type": "string",
+          "description": "Original task description"
+        },
+        "artifacts_referenced": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Artifacts passed to fallback agent"
+        },
+        "fallback_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from_agent": {
+                "type": "string"
+              },
+              "to_agent": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "description": "History of fallback routing for this task"
+        },
+        "success_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Success criteria passed to fallback agent"
+        }
+      }
+    },
+    "task_completion": {
+      "type": "object",
+      "required": ["completed", "completed_by_fallback"],
+      "properties": {
+        "completed": {
+          "type": "boolean",
+          "description": "Whether task was completed"
+        },
+        "completed_by_fallback": {
+          "type": "boolean",
+          "description": "Whether fallback agent completed the task successfully"
+        },
+        "completion_time_ms": {
+          "type": "integer",
+          "description": "Time taken to complete task (milliseconds)",
+          "minimum": 0
+        },
+        "quality_score": {
+          "type": "number",
+          "description": "Quality score of fallback agent's output (1-10)",
+          "minimum": 1,
+          "maximum": 10
+        }
+      }
+    },
+    "routing_metrics": {
+      "type": "object",
+      "description": "Metrics about routing performance",
+      "properties": {
+        "total_routing_events": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "successful_routings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed_routings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "average_routing_time_ms": {
+          "type": "number",
+          "description": "Average routing time in milliseconds",
+          "minimum": 0
+        },
+        "context_preservation_rate": {
+          "type": "number",
+          "description": "Average context preservation rate (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "fallback_chain": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "agent": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["failed", "succeeded", "routed"]
+          }
+        }
+      },
+      "description": "Chain of fallback routing (if multiple fallbacks occurred)"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning", "info"]
+          },
+          "event_id": {
+            "type": "string",
+            "description": "Routing event where issue occurred"
+          },
+          "message": {
+            "type": "string",
+            "description": "Issue description"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "How to fix the issue"
+          }
+        }
+      },
+      "description": "Issues encountered during routing"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommendations for improving fallback routing"
+    }
+  }
+}

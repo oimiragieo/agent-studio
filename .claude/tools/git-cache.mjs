@@ -20,9 +20,39 @@ const __dirname = path.dirname(__filename);
 
 const CACHE_DIR = path.join(process.cwd(), '.claude/context/cache/git');
 const DEFAULT_TTL_MS = 300000; // 5 minutes (git state changes frequently)
+const MAX_CACHE_SIZE = 100; // Maximum entries in memory cache
 
 // In-memory cache for faster access within same process
 const memoryCache = new Map();
+
+/**
+ * Estimate size of data in bytes (simplified for performance and accuracy)
+ * Uses string length as a proxy to avoid recursion overhead
+ * @param {*} data - Data to estimate size of
+ * @returns {number} Estimated size in bytes
+ */
+function estimateSize(data) {
+  if (data === null || data === undefined) return 8;
+
+  const type = typeof data;
+
+  // Primitives
+  if (type === 'string') return data.length * 2; // UTF-16 encoding
+  if (type === 'number') return 8; // 64-bit number
+  if (type === 'boolean') return 8; // Boolean + overhead
+
+  // Objects and arrays - use JSON string length as proxy
+  // This is faster and more accurate than recursive estimation
+  try {
+    const str = JSON.stringify(data);
+    // Approximate memory: string length + object overhead
+    // JSON.stringify gives us character count, multiply by 2 for UTF-16
+    return str ? str.length * 2 : 16;
+  } catch {
+    // Circular reference or other error - return small estimate
+    return 16;
+  }
+}
 
 /**
  * Generate cache key from git diff parameters
@@ -86,6 +116,35 @@ function isCacheValid(cached) {
   const currentHead = resolveRef(cached.headRef);
 
   return currentBase === cached.baseCommit && currentHead === cached.headCommit;
+}
+
+/**
+ * Prune cache to maintain size limit (LRU eviction)
+ * @returns {number} Number of entries removed
+ */
+function pruneCache() {
+  if (memoryCache.size <= MAX_CACHE_SIZE) {
+    return 0;
+  }
+
+  // Sort by timestamp (oldest first)
+  const entries = Array.from(memoryCache.entries())
+    .map(([key, value]) => ({ key, timestamp: value.timestamp || 0 }))
+    .sort((a, b) => a.timestamp - b.timestamp);
+
+  const toRemove = entries.slice(0, entries.length - MAX_CACHE_SIZE);
+  let removed = 0;
+
+  for (const entry of toRemove) {
+    memoryCache.delete(entry.key);
+    removed++;
+  }
+
+  if (removed > 0) {
+    console.log(`[Git Cache] Pruned ${removed} entries, cache size: ${memoryCache.size}`);
+  }
+
+  return removed;
 }
 
 /**
@@ -176,6 +235,9 @@ export function setCachedDiff(baseRef, headRef, diff, options = {}) {
 
   // Store in memory cache
   memoryCache.set(cacheKey, cacheEntry);
+  
+  // Prune cache if needed
+  pruneCache();
 
   // Store in file cache
   try {
@@ -314,6 +376,7 @@ export function clearCache(baseRef = null) {
     }
   } else {
     memoryCache.clear();
+    console.log('[Git Cache] Cache cleared');
   }
 
   // Clear file cache
@@ -426,6 +489,36 @@ export function pruneExpiredCache(ttlMs = DEFAULT_TTL_MS) {
   }
 
   return pruned;
+}
+
+// Module-level cleanup interval (single instance)
+let cleanupInterval = null;
+
+/**
+ * Start automatic cleanup of expired entries
+ * @param {number} intervalMs - Cleanup interval in milliseconds (default: 5 minutes)
+ * @returns {void}
+ */
+export function startAutoCleanup(intervalMs = 5 * 60 * 1000) {
+  if (cleanupInterval) {
+    console.warn('[Git Cache] Auto-cleanup already running');
+    return;
+  }
+
+  cleanupInterval = setInterval(() => pruneExpiredCache(), intervalMs);
+  console.log(`[Git Cache] Auto-cleanup started (interval: ${intervalMs}ms)`);
+}
+
+/**
+ * Stop automatic cleanup of expired entries
+ * @returns {void}
+ */
+export function stopAutoCleanup() {
+  if (cleanupInterval) {
+    clearInterval(cleanupInterval);
+    cleanupInterval = null;
+    console.log('[Git Cache] Auto-cleanup stopped');
+  }
 }
 
 export default {
