@@ -347,7 +347,19 @@ async function releaseCompactLock() {
 async function compactSessionStateIfNeeded({ force } = { force: false }) {
   const now = Date.now();
 
-  const baseState = await loadSessionStateFromDisk();
+  let baseState = await loadSessionStateFromDisk();
+  if (!baseState && sessionStateCache) baseState = sessionStateCache;
+
+  const diskLastCompact = Number.isFinite(baseState?.last_compact_ms)
+    ? baseState.last_compact_ms
+    : 0;
+  const cacheLastCompact = Number.isFinite(sessionStateCache?.last_compact_ms)
+    ? sessionStateCache.last_compact_ms
+    : 0;
+  if (sessionStateCache && cacheLastCompact > diskLastCompact) {
+    baseState = sessionStateCache;
+  }
+
   if (!baseState) return;
 
   const lastCompact = Number.isFinite(baseState?.last_compact_ms) ? baseState.last_compact_ms : 0;
@@ -368,20 +380,22 @@ async function compactSessionStateIfNeeded({ force } = { force: false }) {
     }
 
     const snapshotDeltas = existsSync(snapshotPath)
-      ? await readFile(snapshotPath, 'utf-8').then(content => {
-          const deltas = [];
-          for (const line of content.split('\n')) {
-            const trimmed = line.trim();
-            if (!trimmed) continue;
-            try {
-              const parsed = JSON.parse(trimmed);
-              if (parsed && typeof parsed === 'object') deltas.push(parsed);
-            } catch {
-              // ignore
+      ? await readFile(snapshotPath, 'utf-8')
+          .then(content => {
+            const deltas = [];
+            for (const line of content.split('\n')) {
+              const trimmed = line.trim();
+              if (!trimmed) continue;
+              try {
+                const parsed = JSON.parse(trimmed);
+                if (parsed && typeof parsed === 'object') deltas.push(parsed);
+              } catch {
+                // ignore
+              }
             }
-          }
-          return deltas;
-        })
+            return deltas;
+          })
+          .catch(() => [])
       : [];
 
     const merged = applySessionDeltas(structuredClone(baseState), snapshotDeltas);
