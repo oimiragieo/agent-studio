@@ -14,7 +14,7 @@
  */
 
 import { existsSync } from 'fs';
-import { appendFile, mkdir, readFile, writeFile } from 'fs/promises';
+import { appendFile, mkdir, readFile, rename, stat, unlink, writeFile } from 'fs/promises';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -28,17 +28,27 @@ const SESSION_STATE_PATH = join(
   'tmp',
   'orchestrator-session-state.json'
 );
-const AUDIT_LOG_PATH = join(
+const SESSION_DELTA_PATH = join(
   __dirname,
   '..',
   'context',
-  'logs',
-  'orchestrator-violations.log'
+  'tmp',
+  'orchestrator-session-state.delta.jsonl'
 );
+const SESSION_LOCK_PATH = join(
+  __dirname,
+  '..',
+  'context',
+  'tmp',
+  'orchestrator-session-state.lock'
+);
+const AUDIT_LOG_PATH = join(__dirname, '..', 'context', 'logs', 'orchestrator-violations.log');
 
 const MAX_VIOLATIONS = 100;
 const MAX_FILES_READ = 200;
 const MAX_TOOL_INPUT_CHARS = 500;
+const STATE_CACHE_TTL_MS = 5000;
+const STATE_COMPACT_DEBOUNCE_MS = 5000;
 
 const ENFORCEMENT_RULES = {
   Write: {
@@ -143,8 +153,10 @@ function summarizeToolInput(tool, toolInput) {
     summary.file_path = filePath.slice(0, MAX_TOOL_INPUT_CHARS);
     if (filePath.length > MAX_TOOL_INPUT_CHARS) summary.file_path_truncated = true;
     if (typeof toolInput?.content === 'string') summary.content_length = toolInput.content.length;
-    if (typeof toolInput?.old_string === 'string') summary.old_string_length = toolInput.old_string.length;
-    if (typeof toolInput?.new_string === 'string') summary.new_string_length = toolInput.new_string.length;
+    if (typeof toolInput?.old_string === 'string')
+      summary.old_string_length = toolInput.old_string.length;
+    if (typeof toolInput?.new_string === 'string')
+      summary.new_string_length = toolInput.new_string.length;
     return summary;
   }
 
@@ -161,7 +173,10 @@ function summarizeToolInput(tool, toolInput) {
   return summary;
 }
 
-async function tryLoadSessionState() {
+let sessionStateCache = null;
+let sessionStateCacheAt = 0;
+
+async function loadSessionStateFromDisk() {
   try {
     if (!existsSync(SESSION_STATE_PATH)) return null;
     const content = await readFile(SESSION_STATE_PATH, 'utf-8');
@@ -172,13 +187,87 @@ async function tryLoadSessionState() {
   }
 }
 
+async function tryLoadSessionState() {
+  const now = Date.now();
+  if (sessionStateCache && now - sessionStateCacheAt < STATE_CACHE_TTL_MS) {
+    return sessionStateCache;
+  }
+
+  const state = await loadSessionStateFromDisk();
+  sessionStateCache = state;
+  sessionStateCacheAt = now;
+  return state;
+}
+
+async function readSessionDeltas() {
+  try {
+    if (!existsSync(SESSION_DELTA_PATH)) return [];
+    const content = await readFile(SESSION_DELTA_PATH, 'utf-8');
+    if (!content) return [];
+
+    const deltas = [];
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (parsed && typeof parsed === 'object') deltas.push(parsed);
+      } catch {
+        // ignore malformed line
+      }
+    }
+    return deltas;
+  } catch {
+    return [];
+  }
+}
+
+function applySessionDeltas(state, deltas) {
+  if (!state || !deltas?.length) return state;
+
+  for (const delta of deltas) {
+    if (delta?.agent_role === 'orchestrator') state.agent_role = 'orchestrator';
+
+    if (Number.isFinite(delta?.read_inc) && delta.read_inc !== 0) {
+      state.read_count =
+        (Number.isFinite(state.read_count) ? state.read_count : 0) + delta.read_inc;
+    }
+
+    if (typeof delta?.file_read === 'string' && delta.file_read) {
+      state.files_read = Array.isArray(state.files_read) ? state.files_read : [];
+      state.files_read.push(delta.file_read.slice(0, MAX_TOOL_INPUT_CHARS));
+      if (state.files_read.length > MAX_FILES_READ)
+        state.files_read = state.files_read.slice(-MAX_FILES_READ);
+    }
+
+    if (delta?.violation && typeof delta.violation === 'object') {
+      state.violations = Array.isArray(state.violations) ? state.violations : [];
+      state.violations.push(delta.violation);
+      if (state.violations.length > MAX_VIOLATIONS)
+        state.violations = state.violations.slice(-MAX_VIOLATIONS);
+    }
+  }
+
+  return state;
+}
+
+async function tryLoadEffectiveSessionState() {
+  const baseState = await tryLoadSessionState();
+  if (!baseState) return null;
+
+  const deltas = await readSessionDeltas();
+  return applySessionDeltas(structuredClone(baseState), deltas);
+}
+
 function detectRoleFromEnv() {
   if (process.env.CLAUDE_AGENT_ROLE) {
     return process.env.CLAUDE_AGENT_ROLE === 'orchestrator' ? 'orchestrator' : 'subagent';
   }
   if (process.env.CLAUDE_AGENT_NAME) {
     const agentName = process.env.CLAUDE_AGENT_NAME.toLowerCase();
-    return ['orchestrator', 'master-orchestrator'].includes(agentName) ? 'orchestrator' : 'subagent';
+    return ['orchestrator', 'master-orchestrator'].includes(agentName)
+      ? 'orchestrator'
+      : 'subagent';
   }
   return null;
 }
@@ -208,6 +297,112 @@ async function writeSessionState(state) {
     }
   } catch {
     // ignore (fail-open)
+  }
+}
+
+async function appendSessionDelta(delta) {
+  try {
+    const dir = dirname(SESSION_DELTA_PATH);
+    await mkdir(dir, { recursive: true });
+    await appendFile(SESSION_DELTA_PATH, JSON.stringify(delta) + '\n', 'utf-8');
+  } catch {
+    // ignore (fail-open)
+  }
+}
+
+async function acquireCompactLock() {
+  try {
+    await writeFile(SESSION_LOCK_PATH, String(process.pid), { encoding: 'utf-8', flag: 'wx' });
+    return true;
+  } catch (error) {
+    try {
+      if (existsSync(SESSION_LOCK_PATH)) {
+        const lockStat = await stat(SESSION_LOCK_PATH);
+        const ageMs = Date.now() - lockStat.mtimeMs;
+        if (ageMs > STATE_COMPACT_DEBOUNCE_MS * 3) {
+          await unlink(SESSION_LOCK_PATH);
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    try {
+      await writeFile(SESSION_LOCK_PATH, String(process.pid), { encoding: 'utf-8', flag: 'wx' });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+async function releaseCompactLock() {
+  try {
+    if (existsSync(SESSION_LOCK_PATH)) await unlink(SESSION_LOCK_PATH);
+  } catch {
+    // ignore
+  }
+}
+
+async function compactSessionStateIfNeeded({ force } = { force: false }) {
+  const now = Date.now();
+
+  const baseState = await loadSessionStateFromDisk();
+  if (!baseState) return;
+
+  const lastCompact = Number.isFinite(baseState?.last_compact_ms) ? baseState.last_compact_ms : 0;
+  if (!force && now - lastCompact < STATE_COMPACT_DEBOUNCE_MS) return;
+
+  const locked = await acquireCompactLock();
+  if (!locked) return;
+
+  const snapshotPath = `${SESSION_DELTA_PATH}.${now}.${process.pid}.snapshot`;
+
+  try {
+    if (existsSync(SESSION_DELTA_PATH)) {
+      try {
+        await rename(SESSION_DELTA_PATH, snapshotPath);
+      } catch {
+        return;
+      }
+    }
+
+    const snapshotDeltas = existsSync(snapshotPath)
+      ? await readFile(snapshotPath, 'utf-8').then(content => {
+          const deltas = [];
+          for (const line of content.split('\n')) {
+            const trimmed = line.trim();
+            if (!trimmed) continue;
+            try {
+              const parsed = JSON.parse(trimmed);
+              if (parsed && typeof parsed === 'object') deltas.push(parsed);
+            } catch {
+              // ignore
+            }
+          }
+          return deltas;
+        })
+      : [];
+
+    const merged = applySessionDeltas(structuredClone(baseState), snapshotDeltas);
+    merged.last_compact_ms = now;
+    merged.updated_at = new Date().toISOString();
+
+    if (merged.violations?.length > MAX_VIOLATIONS)
+      merged.violations = merged.violations.slice(-MAX_VIOLATIONS);
+    if (merged.files_read?.length > MAX_FILES_READ)
+      merged.files_read = merged.files_read.slice(-MAX_FILES_READ);
+
+    await writeSessionState(merged);
+    sessionStateCache = merged;
+    sessionStateCacheAt = now;
+  } finally {
+    try {
+      if (existsSync(snapshotPath)) await unlink(snapshotPath);
+    } catch {
+      // ignore
+    }
+    await releaseCompactLock();
   }
 }
 
@@ -258,7 +453,12 @@ async function main() {
   }
 
   const envRole = detectRoleFromEnv();
-  const existingState = envRole ? null : await tryLoadSessionState();
+  if (envRole === 'subagent') {
+    safeRespond({ decision: 'allow' });
+    return;
+  }
+
+  const existingState = await tryLoadEffectiveSessionState();
   const role =
     envRole ?? (existingState?.agent_role === 'orchestrator' ? 'orchestrator' : 'subagent');
 
@@ -267,22 +467,31 @@ async function main() {
     return;
   }
 
-  const state =
-    existingState || {
-      session_id: `sess_${Date.now()}`,
-      agent_role: 'orchestrator',
-      read_count: 0,
-      violations: [],
-      files_read: [],
-      created_at: new Date().toISOString(),
-    };
+  const state = existingState || {
+    session_id: `sess_${Date.now()}`,
+    agent_role: 'orchestrator',
+    read_count: 0,
+    violations: [],
+    files_read: [],
+    created_at: new Date().toISOString(),
+  };
+
+  // Ensure session state exists on disk for subsequent hook invocations.
+  if (!existsSync(SESSION_STATE_PATH)) {
+    state.last_compact_ms = Date.now();
+    await writeSessionState(state);
+    sessionStateCache = state;
+    sessionStateCacheAt = Date.now();
+  }
 
   state.agent_role = 'orchestrator';
   state.read_count = Number.isFinite(state.read_count) ? state.read_count : 0;
   state.violations = Array.isArray(state.violations) ? state.violations : [];
   state.files_read = Array.isArray(state.files_read) ? state.files_read : [];
-  if (state.violations.length > MAX_VIOLATIONS) state.violations = state.violations.slice(-MAX_VIOLATIONS);
-  if (state.files_read.length > MAX_FILES_READ) state.files_read = state.files_read.slice(-MAX_FILES_READ);
+  if (state.violations.length > MAX_VIOLATIONS)
+    state.violations = state.violations.slice(-MAX_VIOLATIONS);
+  if (state.files_read.length > MAX_FILES_READ)
+    state.files_read = state.files_read.slice(-MAX_FILES_READ);
 
   const rule = ENFORCEMENT_RULES[tool];
 
@@ -298,7 +507,8 @@ async function main() {
       timestamp: new Date().toISOString(),
     };
     addViolation(state, violation);
-    await writeSessionState(state);
+    await appendSessionDelta({ agent_role: 'orchestrator', violation });
+    await compactSessionStateIfNeeded({ force: true });
     await logViolation(violation);
 
     safeRespond({
@@ -335,7 +545,8 @@ async function main() {
       timestamp: new Date().toISOString(),
     };
     addViolation(state, violation);
-    await writeSessionState(state);
+    await appendSessionDelta({ agent_role: 'orchestrator', violation });
+    await compactSessionStateIfNeeded({ force: true });
     await logViolation(violation);
 
     safeRespond({
@@ -359,12 +570,18 @@ async function main() {
     const filePath = String(toolInput.file_path || '');
     if (filePath) {
       state.files_read.push(filePath.slice(0, MAX_TOOL_INPUT_CHARS));
-      if (state.files_read.length > MAX_FILES_READ) state.files_read = state.files_read.slice(-MAX_FILES_READ);
+      if (state.files_read.length > MAX_FILES_READ)
+        state.files_read = state.files_read.slice(-MAX_FILES_READ);
     }
 
     if (state.read_count > rule.max_count) {
       if (isAllowedReadFile(filePath)) {
-        await writeSessionState(state);
+        await appendSessionDelta({
+          agent_role: 'orchestrator',
+          read_inc: 1,
+          file_read: filePath || undefined,
+        });
+        await compactSessionStateIfNeeded();
         safeRespond({ decision: 'allow' });
         return;
       }
@@ -381,7 +598,13 @@ async function main() {
         timestamp: new Date().toISOString(),
       };
       addViolation(state, violation);
-      await writeSessionState(state);
+      await appendSessionDelta({
+        agent_role: 'orchestrator',
+        read_inc: 1,
+        file_read: filePath || undefined,
+        violation,
+      });
+      await compactSessionStateIfNeeded({ force: true });
       await logViolation(violation);
 
       safeRespond({
@@ -399,7 +622,12 @@ async function main() {
       return;
     }
 
-    await writeSessionState(state);
+    await appendSessionDelta({
+      agent_role: 'orchestrator',
+      read_inc: 1,
+      file_read: filePath || undefined,
+    });
+    await compactSessionStateIfNeeded();
     safeRespond({ decision: 'allow' });
     return;
   }
@@ -415,4 +643,3 @@ main()
     clearTimeout(timeout);
     delete process.env.CLAUDE_ORCHESTRATOR_HOOK_EXECUTING;
   });
-

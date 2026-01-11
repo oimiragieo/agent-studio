@@ -27,7 +27,20 @@ const timeout = setTimeout(() => {
   process.exit(0);
 }, 2000);
 
-const SESSION_STATE_PATH = join(__dirname, '..', 'context', 'tmp', 'orchestrator-session-state.json');
+const SESSION_STATE_PATH = join(
+  __dirname,
+  '..',
+  'context',
+  'tmp',
+  'orchestrator-session-state.json'
+);
+const SESSION_DELTA_PATH = join(
+  __dirname,
+  '..',
+  'context',
+  'tmp',
+  'orchestrator-session-state.delta.jsonl'
+);
 const AUDIT_LOG_PATH = join(__dirname, '..', 'context', 'logs', 'orchestrator-audit.log');
 
 /**
@@ -45,15 +58,59 @@ async function loadSessionState() {
   return null;
 }
 
+async function readSessionDeltas() {
+  try {
+    if (!existsSync(SESSION_DELTA_PATH)) return [];
+    const content = await readFile(SESSION_DELTA_PATH, 'utf-8');
+    if (!content) return [];
+
+    const deltas = [];
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (parsed && typeof parsed === 'object') deltas.push(parsed);
+      } catch {
+        // ignore malformed line
+      }
+    }
+    return deltas;
+  } catch {
+    return [];
+  }
+}
+
+function applySessionDeltas(state, deltas) {
+  if (!state || !deltas?.length) return state;
+
+  for (const delta of deltas) {
+    if (delta?.agent_role === 'orchestrator') state.agent_role = 'orchestrator';
+
+    if (Number.isFinite(delta?.read_inc) && delta.read_inc !== 0) {
+      state.read_count =
+        (Number.isFinite(state.read_count) ? state.read_count : 0) + delta.read_inc;
+    }
+
+    if (delta?.violation && typeof delta.violation === 'object') {
+      state.violations = Array.isArray(state.violations) ? state.violations : [];
+      state.violations.push(delta.violation);
+    }
+  }
+
+  return state;
+}
+
 /**
  * Log audit entry (async, non-blocking)
  */
 async function logAudit(entry) {
   const logDir = dirname(AUDIT_LOG_PATH);
-  const logEntry = JSON.stringify({
-    ...entry,
-    timestamp: new Date().toISOString(),
-  }) + '\n';
+  const logEntry =
+    JSON.stringify({
+      ...entry,
+      timestamp: new Date().toISOString(),
+    }) + '\n';
 
   try {
     await mkdir(logDir, { recursive: true });
@@ -91,28 +148,31 @@ async function main() {
       return;
     }
 
-    // Load session state (async)
+    // Load session state (async) + apply any debounced deltas
     const state = await loadSessionState();
+    const effectiveState = state
+      ? applySessionDeltas(structuredClone(state), await readSessionDeltas())
+      : null;
 
-    if (!state || state.agent_role !== 'orchestrator') {
+    if (!effectiveState || effectiveState.agent_role !== 'orchestrator') {
       // Not an orchestrator session, skip audit
       return;
     }
 
     // Log the audit entry
     const auditEntry = {
-      session_id: state.session_id,
+      session_id: effectiveState.session_id,
       agent_role: 'orchestrator',
       tool,
       tool_input: toolInput,
       outcome,
-      read_count_after: state.read_count || 0,
+      read_count_after: effectiveState.read_count || 0,
       violation: null,
     };
 
     // Check if this was a violation
     if (outcome === 'blocked' || outcome === 'error') {
-      const recentViolation = state.violations?.[state.violations.length - 1];
+      const recentViolation = effectiveState.violations?.[effectiveState.violations.length - 1];
       if (recentViolation && recentViolation.tool === tool) {
         auditEntry.violation = {
           type: recentViolation.type,

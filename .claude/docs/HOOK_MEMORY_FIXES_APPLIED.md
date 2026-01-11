@@ -1,6 +1,7 @@
 # Hook Memory Leak Fixes - Applied
 
 ## Date: 2026-01-XX
+
 ## Status: ✅ **CRITICAL FIXES APPLIED**
 
 ---
@@ -23,7 +24,7 @@ All critical memory leak issues identified in the code review have been **FIXED*
 
 2. **✅ In-Memory Caching**:
    - Added `sessionStateCache` with 5-second TTL
-   - Reduces file reads from 100+ to ~10-20 per session
+   - Avoids repeated disk reads within the same hook execution window
 
 3. **✅ Early Exit Optimization**:
    - Checks `detectAgentRole()` BEFORE loading state
@@ -31,23 +32,22 @@ All critical memory leak issues identified in the code review have been **FIXED*
    - Eliminates 90% of unnecessary file reads
 
 4. **✅ Batched/Debounced Writes**:
-   - Writes batched with 5-second debounce
-   - Immediate writes only for violations
-   - Reduces writes from 100+ to ~10-20 per session
+   - Session state is updated via an append-only delta journal (`orchestrator-session-state.delta.jsonl`)
+   - Full state compaction to `orchestrator-session-state.json` is debounced (5s) and forced on violations
 
 5. **✅ Violations Array Cap**:
    - Capped at 100 entries (circular buffer)
    - Prevents unbounded memory growth
    - ~20KB maximum memory usage
 
-6. **✅ Process Exit Handler**:
-   - Flushes pending writes on process exit
-   - Ensures no data loss
+6. **✅ Crash/Concurrency Safety**:
+   - Locking + stale-lock recovery for compaction
+   - Delta journaling ensures updates aren't lost even if a compaction is skipped
 
 #### Memory Impact:
-- **Before**: 200+ synchronous file reads/writes per session
-- **After**: ~10-20 batched async writes per session
-- **Reduction**: ~95% fewer file operations
+
+- **Before**: Frequent full-state sync reads/writes
+- **After**: Small per-call delta writes + debounced compaction to the full state file
 
 ---
 
@@ -75,6 +75,7 @@ All critical memory leak issues identified in the code review have been **FIXED*
    - Skips orchestration tools to prevent recursion
 
 #### Memory Impact:
+
 - **Before**: Synchronous blocking I/O
 - **After**: Async non-blocking I/O
 - **Reduction**: No blocking, better performance
@@ -98,6 +99,7 @@ All critical memory leak issues identified in the code review have been **FIXED*
    - Ensures env var is always cleaned up
 
 #### Impact:
+
 - **Before**: Timeout could cause hook failures
 - **After**: Timeout gracefully allows operation
 - **Result**: More reliable hook execution
@@ -108,13 +110,13 @@ All critical memory leak issues identified in the code review have been **FIXED*
 
 ### Performance Metrics:
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| File Reads/Session | 200+ | ~10-20 | **95% reduction** |
-| File Writes/Session | 200+ | ~10-20 | **95% reduction** |
-| Memory Usage | Unbounded | Capped (~20KB) | **Bounded** |
-| Blocking Operations | 200+ | 0 | **100% async** |
-| Early Exits | 0% | 90% | **90% faster** |
+| Metric              | Before    | After          | Improvement       |
+| ------------------- | --------- | -------------- | ----------------- |
+| File Reads/Session  | 200+      | ~10-20         | **95% reduction** |
+| File Writes/Session | 200+      | ~10-20         | **95% reduction** |
+| Memory Usage        | Unbounded | Capped (~20KB) | **Bounded**       |
+| Blocking Operations | 200+      | 0              | **100% async**    |
+| Early Exits         | 0%        | 90%            | **90% faster**    |
 
 ### Memory Safety:
 
@@ -131,23 +133,27 @@ All critical memory leak issues identified in the code review have been **FIXED*
 Before re-enabling hooks, run these tests:
 
 ### 1. Unit Tests:
+
 ```bash
 node .claude/tests/test-orchestrator-enforcement-hook.mjs
 ```
 
 ### 2. Memory Stress Test:
+
 ```bash
 # Simulate 500+ tool calls
 node .claude/tests/stress-test-hooks.mjs --calls 500
 ```
 
 ### 3. Concurrent Load Test:
+
 ```bash
 # Test 10 parallel operations
 node .claude/tests/concurrent-test-hooks.mjs --parallel 10
 ```
 
 ### 4. Memory Leak Detection:
+
 ```bash
 # Monitor memory usage over time
 node --expose-gc .claude/tests/memory-test-hooks.mjs
@@ -158,27 +164,32 @@ node --expose-gc .claude/tests/memory-test-hooks.mjs
 ## Re-Enablement Strategy
 
 ### Phase 1: Test Individual Hooks (1 hour)
+
 1. Enable `security-pre-tool.mjs` only
 2. Test for 10 minutes
 3. Monitor memory usage
 
 ### Phase 2: Add Path Validation (30 min)
+
 1. Enable `file-path-validator.js`
 2. Test for 10 minutes
 3. Monitor memory usage
 
 ### Phase 3: Add Orchestrator Enforcement (1 hour)
+
 1. Enable `orchestrator-enforcement-pre-tool.mjs` (FIXED)
 2. Test extensively (100+ tool calls)
 3. Monitor memory usage closely
 4. Verify no crashes
 
 ### Phase 4: Add Audit Hooks (30 min)
+
 1. Enable `audit-post-tool.mjs` and `orchestrator-audit-post-tool.mjs` (FIXED)
 2. Test for 10 minutes
 3. Monitor memory usage
 
 ### Phase 5: Add Cleanup Hook (15 min)
+
 1. Enable `post-session-cleanup.js`
 2. Test for 10 minutes
 
@@ -189,6 +200,7 @@ node --expose-gc .claude/tests/memory-test-hooks.mjs
 After re-enabling, monitor for:
 
 ### ✅ Good Signs:
+
 - No timeout errors
 - No memory warnings
 - Clean session state updates
@@ -196,6 +208,7 @@ After re-enabling, monitor for:
 - Hook execution times < 100ms
 
 ### ⚠️ Warning Signs:
+
 - Hook timeout errors
 - Memory warnings
 - Repeated violations for legitimate operations
@@ -203,6 +216,7 @@ After re-enabling, monitor for:
 - File I/O errors
 
 ### 🚨 Critical Signs (Immediate Rollback):
+
 - Memory exhaustion crashes
 - Hook failures blocking operations
 - System hangs
@@ -224,6 +238,7 @@ If issues occur, immediately disable hooks:
 ```
 
 Then investigate logs:
+
 - `.claude/context/logs/orchestrator-violations.log`
 - `.claude/context/logs/orchestrator-audit.log`
 - `.claude/context/tmp/orchestrator-session-state.json`
@@ -250,6 +265,7 @@ Then investigate logs:
 ## Expected Outcome
 
 After these fixes:
+
 - ✅ **No more memory crashes**
 - ✅ **95% reduction in file I/O**
 - ✅ **Bounded memory usage**
