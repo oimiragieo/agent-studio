@@ -1,8 +1,8 @@
 {
   "$schema": "../schemas/cuj-registry.schema.json",
   "version": "1.0.0",
-  "generated": "2026-01-10T04:21:04.308Z",
-  "total_cujs": 60,
+  "generated": "2026-01-11T00:00:00.000Z",
+  "total_cujs": 61,
   "cujs": [
     {
       "id": "CUJ-001",
@@ -1798,6 +1798,43 @@
       ],
       "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-063.md"
+    },
+    {
+      "id": "CUJ-064",
+      "name": "Search Functionality",
+      "description": "Search codebase and documentation using Algolia-powered semantic search to quickly find relevant code patterns, documentation, and implementation examples.",
+      "category": "Search & Discovery",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/search-setup-flow.yaml",
+      "agents": ["analyst", "orchestrator"],
+      "skills": ["algolia-search", "repo-rag", "plan-generator", "response-rater"],
+      "primary_skill": "algolia-search",
+      "schemas": [
+        ".claude/schemas/search_query.schema.json",
+        ".claude/schemas/search_results.schema.json"
+      ],
+      "triggers": [
+        "Find all authentication middleware implementations",
+        "Show me error handling patterns in API routes",
+        "Where is the user validation function defined?",
+        "Find documentation about the artifact publishing system",
+        "Show all usages of the response-rater skill",
+        "Search for [pattern]",
+        "Find [code/documentation]"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": true
+      },
+      "expected_outputs": [
+        "search-results.json",
+        "search-metadata.json",
+        "formatted-results.json",
+        "result-summary.md"
+      ],
+      "estimated_duration": "10-15min",
+      "file_path": ".claude/docs/cujs/CUJ-064.md"
     }
   ]
 }
