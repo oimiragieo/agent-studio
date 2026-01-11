@@ -22,7 +22,7 @@ async function ensureTempDir() {
 
 /**
  * Initiate multi-agent debate using llm-council
- * 
+ *
  * @param {string} issue - The issue/question to debate
  * @param {Array<string>} agents - List of agent names to include in council
  * @param {Object} context - Additional context for the debate
@@ -30,7 +30,7 @@ async function ensureTempDir() {
  */
 export async function initiateCouncilDebate(issue, agents, context) {
   await ensureTempDir();
-  
+
   // Prepare debate configuration
   const debateConfig = {
     issue,
@@ -38,35 +38,35 @@ export async function initiateCouncilDebate(issue, agents, context) {
     context,
     format: 'structured',
     maxRounds: 5,
-    consensusThreshold: 0.7
+    consensusThreshold: 0.7,
   };
-  
+
   // Use headless-ai-cli to execute llm-council
   const configPath = join(process.cwd(), '.claude/temp/council-config.json');
   await writeFile(configPath, JSON.stringify(debateConfig, null, 2));
-  
+
   // Execute via headless-ai-cli
   // Note: This assumes headless-ai-cli is installed and configured
   try {
     const { stdout, stderr } = await execAsync(
       `headless-ai-cli council --config ${configPath} --output .claude/temp/council-results.json`
     );
-    
+
     if (stderr && !stderr.includes('warning')) {
       throw new Error(`Council debate failed: ${stderr}`);
     }
-    
+
     // Read results
     const resultsPath = join(process.cwd(), '.claude/temp/council-results.json');
     if (existsSync(resultsPath)) {
       const results = JSON.parse(await readFile(resultsPath, 'utf-8'));
-      
+
       return {
         consensus: results.consensus,
         recommendations: results.recommendations,
         arguments: results.arguments,
         participants: results.participants,
-        rounds: results.rounds
+        rounds: results.rounds,
       };
     } else {
       // Fallback if headless-ai-cli not available
@@ -75,7 +75,7 @@ export async function initiateCouncilDebate(issue, agents, context) {
         recommendations: ['Use planner to analyze issue'],
         arguments: [],
         participants: agents,
-        rounds: 0
+        rounds: 0,
       };
     }
   } catch (error) {
@@ -86,7 +86,7 @@ export async function initiateCouncilDebate(issue, agents, context) {
       recommendations: ['Use planner to analyze issue'],
       arguments: [],
       participants: agents,
-      rounds: 0
+      rounds: 0,
     };
   }
 }
@@ -96,11 +96,10 @@ export async function initiateCouncilDebate(issue, agents, context) {
  */
 export async function debateArchitectureDecision(decision, options) {
   const agents = ['architect', 'security-architect', 'performance-engineer', 'developer'];
-  return await initiateCouncilDebate(
-    `Architecture decision: ${decision}`,
-    agents,
-    { options, type: 'architecture' }
-  );
+  return await initiateCouncilDebate(`Architecture decision: ${decision}`, agents, {
+    options,
+    type: 'architecture',
+  });
 }
 
 /**
@@ -108,11 +107,11 @@ export async function debateArchitectureDecision(decision, options) {
  */
 export async function debateBugFix(bug, proposedFixes) {
   const agents = ['developer', 'qa', 'security-architect', 'code-reviewer'];
-  return await initiateCouncilDebate(
-    `Bug fix analysis: ${bug.description}`,
-    agents,
-    { bug, proposedFixes, type: 'bug-fix' }
-  );
+  return await initiateCouncilDebate(`Bug fix analysis: ${bug.description}`, agents, {
+    bug,
+    proposedFixes,
+    type: 'bug-fix',
+  });
 }
 
 /**
@@ -120,10 +119,8 @@ export async function debateBugFix(bug, proposedFixes) {
  */
 export async function debateFeatureDesign(feature, requirements) {
   const agents = ['architect', 'ux-expert', 'developer', 'pm'];
-  return await initiateCouncilDebate(
-    `Feature design: ${feature}`,
-    agents,
-    { requirements, type: 'feature-design' }
-  );
+  return await initiateCouncilDebate(`Feature design: ${feature}`, agents, {
+    requirements,
+    type: 'feature-design',
+  });
 }
-

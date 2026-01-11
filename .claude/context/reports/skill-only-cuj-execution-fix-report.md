@@ -36,8 +36,8 @@ The orchestrator-entry.mjs had a critical P0 blocker preventing skill-only CUJ e
 
 ### Files Modified
 
-| File | Lines Changed | Description |
-|------|---------------|-------------|
+| File                                   | Lines Changed         | Description                    |
+| -------------------------------------- | --------------------- | ------------------------------ |
 | `.claude/tools/orchestrator-entry.mjs` | 293, 368-453, 492-554 | Full skill-only implementation |
 
 ---
@@ -47,11 +47,13 @@ The orchestrator-entry.mjs had a critical P0 blocker preventing skill-only CUJ e
 ### 1. Mode Validation Fix (Line 293)
 
 **Before**:
+
 ```javascript
 const validModes = ['workflow', 'skill', 'manual', 'skill-only', 'manual-setup'];
 ```
 
 **After**:
+
 ```javascript
 const validModes = ['workflow', 'skill-only', 'manual', 'manual-setup'];
 ```
@@ -63,6 +65,7 @@ const validModes = ['workflow', 'skill-only', 'manual', 'manual-setup'];
 ### 2. Skill-Only Execution Implementation (Lines 368-453)
 
 **Before**:
+
 ```javascript
 } else if (cujMapping.executionMode === 'skill' && cujMapping.primarySkill) {
   // Use CUJ-specified skill (route to skill-based workflow)
@@ -92,6 +95,7 @@ const validModes = ['workflow', 'skill-only', 'manual', 'manual-setup'];
 ```
 
 **After**:
+
 ```javascript
 } else if (cujMapping.executionMode === 'skill-only' && cujMapping.primarySkill) {
   // Skill-only CUJ execution - direct skill invocation without workflow
@@ -183,6 +187,7 @@ const validModes = ['workflow', 'skill-only', 'manual', 'manual-setup'];
 ```
 
 **Key Improvements**:
+
 - ✅ Proper skill validation (checks if SKILL.md exists)
 - ✅ Creates routing artifact with skill-only metadata
 - ✅ Updates run state with skill-only execution mode
@@ -195,6 +200,7 @@ const validModes = ['workflow', 'skill-only', 'manual', 'manual-setup'];
 ### 3. Workflow Validation Enhancement (Lines 492-497)
 
 **Before**:
+
 ```javascript
 // Validate routing result
 if (!routingResult.selected_workflow && !routingResult.workflow_selection) {
@@ -205,6 +211,7 @@ const selectedWorkflow = routingResult.selected_workflow || routingResult.workfl
 ```
 
 **After**:
+
 ```javascript
 // Validate routing result (allow null workflow for skill-only execution)
 const isSkillOnly = routingResult.routing_method === 'skill_only';
@@ -223,6 +230,7 @@ const selectedWorkflow = routingResult.selected_workflow || routingResult.workfl
 ### 4. Conditional Artifact Saving (Lines 501-532)
 
 **Before**:
+
 ```javascript
 // Save routing decision as artifact
 const routingArtifact = {
@@ -231,14 +239,10 @@ const routingArtifact = {
   agent: 'router',
   path: join(getRunDirectoryStructure(runId).artifacts_dir, 'route_decision.json'),
   dependencies: [],
-  validationStatus: 'pass'
+  validationStatus: 'pass',
 };
 
-await writeFile(
-  routingArtifact.path,
-  JSON.stringify(routingResult, null, 2),
-  'utf-8'
-);
+await writeFile(routingArtifact.path, JSON.stringify(routingResult, null, 2), 'utf-8');
 
 await registerArtifact(runId, routingArtifact);
 
@@ -249,12 +253,13 @@ await updateRun(runId, {
     routing_confidence: routingResult.confidence,
     routing_method: routingResult.routing_method || routingResult.method,
     intent: routingResult.intent,
-    complexity: routingResult.complexity
-  }
+    complexity: routingResult.complexity,
+  },
 });
 ```
 
 **After**:
+
 ```javascript
 // Save routing decision as artifact (if not already saved by skill-only path)
 if (!isSkillOnly) {
@@ -264,14 +269,10 @@ if (!isSkillOnly) {
     agent: 'router',
     path: join(getRunDirectoryStructure(runId).artifacts_dir, 'route_decision.json'),
     dependencies: [],
-    validationStatus: 'pass'
+    validationStatus: 'pass',
   };
 
-  await writeFile(
-    routingArtifact.path,
-    JSON.stringify(routingResult, null, 2),
-    'utf-8'
-  );
+  await writeFile(routingArtifact.path, JSON.stringify(routingResult, null, 2), 'utf-8');
 
   await registerArtifact(runId, routingArtifact);
 }
@@ -284,8 +285,8 @@ if (!isSkillOnly) {
       routing_confidence: routingResult.confidence,
       routing_method: routingResult.routing_method || routingResult.method,
       intent: routingResult.intent,
-      complexity: routingResult.complexity
-    }
+      complexity: routingResult.complexity,
+    },
   });
 }
 ```
@@ -297,6 +298,7 @@ if (!isSkillOnly) {
 ### 5. Conditional Step 0 Execution (Lines 538-554)
 
 **Before**:
+
 ```javascript
 // Step 3: Execute step 0
 console.log(`[Orchestrator Entry] Executing step 0: ${selectedWorkflow}`);
@@ -310,7 +312,7 @@ try {
     runId,
     routing: routingResult,
     step0Result: stepResult,
-    runRecord: await readRun(runId)
+    runRecord: await readRun(runId),
   };
 } catch (error) {
   // ... error handling
@@ -318,6 +320,7 @@ try {
 ```
 
 **After**:
+
 ```javascript
 // Step 3: Execute step 0 (skip for skill-only CUJs)
 if (isSkillOnly) {
@@ -333,7 +336,7 @@ if (isSkillOnly) {
     primarySkill: routingResult.primary_skill,
     skillInvocationCommand: `Skill: ${routingResult.primary_skill}`,
     message: `Skill-only execution prepared. Invoke with: Skill: ${routingResult.primary_skill}`,
-    runRecord: await readRun(runId)
+    runRecord: await readRun(runId),
   };
 }
 
@@ -348,7 +351,7 @@ try {
     runId,
     routing: routingResult,
     step0Result: stepResult,
-    runRecord: await readRun(runId)
+    runRecord: await readRun(runId),
   };
 } catch (error) {
   // ... error handling
@@ -363,13 +366,13 @@ try {
 
 The following 5 CUJs now execute properly:
 
-| CUJ ID | Name | Execution Mode | Primary Skill | Expected Time |
-|--------|------|----------------|---------------|---------------|
-| CUJ-002 | Rule Configuration | skill-only | rule-selector | 2-10 seconds |
-| CUJ-003 | Cross-Platform Setup | skill-only | context-bridge | 5-15 seconds |
-| CUJ-017 | Module Documentation | skill-only | claude-md-generator | 10-30 seconds |
-| CUJ-027 | Workflow Recovery After Context Loss | skill-only | recovery | 5-20 seconds |
-| CUJ-030 | Multi-AI Validation Workflow | skill-only | null | 30-60 seconds |
+| CUJ ID  | Name                                 | Execution Mode | Primary Skill       | Expected Time |
+| ------- | ------------------------------------ | -------------- | ------------------- | ------------- |
+| CUJ-002 | Rule Configuration                   | skill-only     | rule-selector       | 2-10 seconds  |
+| CUJ-003 | Cross-Platform Setup                 | skill-only     | context-bridge      | 5-15 seconds  |
+| CUJ-017 | Module Documentation                 | skill-only     | claude-md-generator | 10-30 seconds |
+| CUJ-027 | Workflow Recovery After Context Loss | skill-only     | recovery            | 5-20 seconds  |
+| CUJ-030 | Multi-AI Validation Workflow         | skill-only     | null                | 30-60 seconds |
 
 ---
 
@@ -408,6 +411,7 @@ node .claude/tools/orchestrator-entry.mjs --prompt "/cuj-030"
 ```
 
 **Expected Output**:
+
 - No "not yet implemented" warnings
 - Routing method: `skill_only`
 - Message: "Invoke with: Skill: <skill-name>"
@@ -477,12 +481,12 @@ None. This fix only affects CUJs that previously did not work at all.
 
 ### Alignment with CUJ-INDEX.md
 
-| Aspect | CUJ-INDEX.md | Implementation |
-|--------|--------------|----------------|
-| Execution mode | `skill-only` | `skill-only` ✅ |
-| Primary skill | Column 4 | `cujMapping.primarySkill` ✅ |
-| No workflow | `null` | `selected_workflow: null` ✅ |
-| Fast execution | 2-60 seconds | Direct invocation ✅ |
+| Aspect         | CUJ-INDEX.md | Implementation               |
+| -------------- | ------------ | ---------------------------- |
+| Execution mode | `skill-only` | `skill-only` ✅              |
+| Primary skill  | Column 4     | `cujMapping.primarySkill` ✅ |
+| No workflow    | `null`       | `selected_workflow: null` ✅ |
+| Fast execution | 2-60 seconds | Direct invocation ✅         |
 
 ---
 

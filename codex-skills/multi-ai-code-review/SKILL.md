@@ -42,8 +42,8 @@ Example:
 
 Default is `--auth-mode session-first`:
 
-1) Try CLI using your existing logged-in session/subscription (keys temporarily hidden)
-2) If that fails and env keys exist, retry using env keys
+1. Try CLI using your existing logged-in session/subscription (keys temporarily hidden)
+2. If that fails and env keys exist, retry using env keys
 
 To flip:
 

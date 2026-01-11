@@ -70,9 +70,9 @@ function testAccuracy() {
       data: {
         name: 'test',
         items: [1, 2, 3],
-        metadata: { created: '2025-01-09', version: 1 }
-      }
-    }
+        metadata: { created: '2025-01-09', version: 1 },
+      },
+    },
   ];
 
   let totalError = 0;
@@ -84,7 +84,9 @@ function testAccuracy() {
     const error = Math.abs(estimated - actual);
     const errorPercent = actual > 0 ? (error / actual) * 100 : 0;
 
-    console.log(`  ${test.name}: estimated=${estimated}, actual=${actual}, error=${errorPercent.toFixed(1)}%`);
+    console.log(
+      `  ${test.name}: estimated=${estimated}, actual=${actual}, error=${errorPercent.toFixed(1)}%`
+    );
 
     // UTF-16 (estimated) is roughly 2x UTF-8 (actual) for ASCII
     // Accept estimates within 3x of actual (since we're estimating memory, not serialized size)
@@ -101,7 +103,8 @@ function testAccuracy() {
   console.log(`  Average error: ${avgError.toFixed(0)} bytes`);
   console.log(`  Note: UTF-16 estimates are ~2x UTF-8 actuals (expected)`);
 
-  if (passed >= testCases.length - 1) {  // Allow 1 failure
+  if (passed >= testCases.length - 1) {
+    // Allow 1 failure
     console.log('✓ Test 1 passed: Accuracy within acceptable range');
     return true;
   } else {
@@ -121,7 +124,7 @@ function testPerformance() {
   // Create large test object
   const largeObject = {
     metadata: { size: 'large', items: 1000 },
-    data: []
+    data: [],
   };
 
   for (let i = 0; i < 1000; i++) {
@@ -129,7 +132,7 @@ function testPerformance() {
       id: i,
       name: `Item ${i}`,
       description: 'A'.repeat(100),
-      tags: ['tag1', 'tag2', 'tag3']
+      tags: ['tag1', 'tag2', 'tag3'],
     });
   }
 
@@ -180,11 +183,13 @@ function testMemoryUsage() {
 
   // Create test object
   const testObject = {
-    data: Array(1000).fill(null).map((_, i) => ({
-      id: i,
-      name: `Item ${i}`,
-      value: Math.random()
-    }))
+    data: Array(1000)
+      .fill(null)
+      .map((_, i) => ({
+        id: i,
+        name: `Item ${i}`,
+        value: Math.random(),
+      })),
   };
 
   // Force GC if available
@@ -234,7 +239,9 @@ function testMemoryUsage() {
     console.log(`  Note: Both methods use JSON.stringify internally, differences are GC timing`);
     return true;
   } else {
-    console.log(`✗ Test 3 failed: Memory usage ratio ${ratio.toFixed(2)}x and ${absoluteMemMB.toFixed(2)}MB`);
+    console.log(
+      `✗ Test 3 failed: Memory usage ratio ${ratio.toFixed(2)}x and ${absoluteMemMB.toFixed(2)}MB`
+    );
     return false;
   }
 }
@@ -252,7 +259,7 @@ function testEdgeCases() {
     { name: 'circular ref', data: null }, // Can't test circular refs with estimateSize
     { name: 'very deep nesting', data: { a: { b: { c: { d: { e: { f: 'deep' } } } } } } },
     { name: 'large array', data: Array(10000).fill(1) },
-    { name: 'unicode string', data: '你好世界 🌍' }
+    { name: 'unicode string', data: '你好世界 🌍' },
   ];
 
   let passed = 0;

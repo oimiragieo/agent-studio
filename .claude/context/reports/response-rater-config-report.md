@@ -19,6 +19,7 @@ Successfully implemented response-rater skill configuration system with provider
 **File**: `.claude/config/response-rater.yaml`
 
 **Key Features**:
+
 - **Provider Tiers**: Standard (2 providers), Enterprise (3 providers), Critical (5 providers)
 - **Timeout Configuration**: 180s per provider, 600s total max, 30s connection timeout
 - **Consensus Strategy**: Average scoring with 1.5 point disagreement threshold
@@ -28,24 +29,24 @@ Successfully implemented response-rater skill configuration system with provider
 
 **Provider Tiers**:
 
-| Tier | Providers | Use Cases |
-|------|-----------|-----------|
-| Standard | claude, gemini | Quick fixes, incident response, standard features |
-| Enterprise | claude, gemini, codex | Enterprise integrations, legacy modernization |
-| Critical | claude, gemini, codex, cursor, copilot | AI systems, security, compliance |
+| Tier       | Providers                              | Use Cases                                         |
+| ---------- | -------------------------------------- | ------------------------------------------------- |
+| Standard   | claude, gemini                         | Quick fixes, incident response, standard features |
+| Enterprise | claude, gemini, codex                  | Enterprise integrations, legacy modernization     |
+| Critical   | claude, gemini, codex, cursor, copilot | AI systems, security, compliance                  |
 
 **Workflow Mapping**:
 
-| Workflow | Tier | Rationale |
-|----------|------|-----------|
-| incident-flow | standard | Fast response needed |
-| quick-flow | standard | Quick validation for minor changes |
-| enterprise-track | enterprise | Enhanced validation for enterprise |
+| Workflow                  | Tier       | Rationale                          |
+| ------------------------- | ---------- | ---------------------------------- |
+| incident-flow             | standard   | Fast response needed               |
+| quick-flow                | standard   | Quick validation for minor changes |
+| enterprise-track          | enterprise | Enhanced validation for enterprise |
 | automated-enterprise-flow | enterprise | Enterprise compliance requirements |
-| legacy-modernization-flow | enterprise | Complex migration validation |
-| ai-system-flow | critical | Maximum validation for AI systems |
-| security-flow | critical | Critical security validation |
-| compliance-flow | critical | Regulatory compliance requirements |
+| legacy-modernization-flow | enterprise | Complex migration validation       |
+| ai-system-flow            | critical   | Maximum validation for AI systems  |
+| security-flow             | critical   | Critical security validation       |
+| compliance-flow           | critical   | Regulatory compliance requirements |
 
 ---
 
@@ -54,11 +55,13 @@ Successfully implemented response-rater skill configuration system with provider
 **File**: `.claude/tools/response-rater-provider-selector.mjs`
 
 **Usage**:
+
 ```bash
 node .claude/tools/response-rater-provider-selector.mjs --workflow <name>
 ```
 
 **Output**:
+
 ```json
 {
   "tier": "enterprise",
@@ -88,6 +91,7 @@ node .claude/tools/response-rater-provider-selector.mjs --workflow <name>
 ```
 
 **Features**:
+
 - Loads configuration from YAML
 - Selects provider tier based on workflow name
 - Returns complete configuration for orchestrator
@@ -102,6 +106,7 @@ node .claude/tools/response-rater-provider-selector.mjs --workflow <name>
 **New Section**: "Timeout Escalation"
 
 **Coverage**:
+
 - **Escalation Flow**: Primary timeout → Secondary timeout → All providers timeout
 - **Configuration**: Timeout values from config file
 - **Example Scenarios**: Concrete timeout examples with provider results
@@ -109,6 +114,7 @@ node .claude/tools/response-rater-provider-selector.mjs --workflow <name>
 - **Provider Selection**: Workflow-to-tier mapping table
 
 **Key Points**:
+
 - 180s per provider timeout
 - 600s total maximum time
 - Cached ratings valid for 1 hour
@@ -122,18 +128,20 @@ node .claude/tools/response-rater-provider-selector.mjs --workflow <name>
 Updated workflow Step 0.1 (Plan Rating Gate) to include:
 
 **Files Updated**:
+
 - `.claude/workflows/quick-flow.yaml` (standard tier)
 - `.claude/workflows/enterprise-track.yaml` (enterprise tier)
 
 **New Configuration**:
+
 ```yaml
 - step: 0.1
-  name: "Plan Rating Gate"
+  name: 'Plan Rating Gate'
   agent: orchestrator
   type: validation
   skill: response-rater
-  provider_config: .claude/config/response-rater.yaml  # NEW
-  timeout_escalation:  # NEW
+  provider_config: .claude/config/response-rater.yaml # NEW
+  timeout_escalation: # NEW
     enabled: true
     use_cache_on_timeout: true
   description: |
@@ -145,6 +153,7 @@ Updated workflow Step 0.1 (Plan Rating Gate) to include:
 ```
 
 **Benefits**:
+
 - Orchestrator can reference config file for provider selection
 - Timeout escalation explicitly enabled
 - Cache fallback configured
@@ -193,11 +202,13 @@ Updated workflow Step 0.1 (Plan Rating Gate) to include:
 ### Consensus Strategy
 
 **Average Scoring**:
+
 - All successful provider scores averaged
 - Minimum 1 provider required for valid rating
 - Disagreement flagged if score difference > 1.5 points
 
 **Example**:
+
 ```
 Provider 1 (claude): 7.5
 Provider 2 (gemini): 7.0
@@ -229,6 +240,7 @@ Disagreement: max(8.0) - min(7.0) = 1.0 < 1.5 → No flag
 ### Workflow Integration
 
 All workflows with Step 0.1 now reference:
+
 - `provider_config: .claude/config/response-rater.yaml`
 - `timeout_escalation: { enabled: true, use_cache_on_timeout: true }`
 
@@ -288,6 +300,7 @@ min_providers: 1
 ```
 
 **Expected Behavior**:
+
 - Fast validation for quick fixes
 - 2 providers ensure consensus
 - Total time: ~360s max (2 × 180s)
@@ -304,6 +317,7 @@ min_providers: 1
 ```
 
 **Expected Behavior**:
+
 - Enhanced validation for enterprise
 - 3 providers for stronger consensus
 - Total time: ~540s max (3 × 180s)
@@ -320,6 +334,7 @@ min_providers: 1
 ```
 
 **Expected Behavior**:
+
 - Maximum validation for critical systems
 - All 5 providers for comprehensive review
 - Total time: ~900s potential (5 × 180s), capped at 600s
@@ -330,26 +345,31 @@ min_providers: 1
 ## Benefits
 
 ### 1. Automatic Provider Selection
+
 - No manual provider configuration per workflow
 - Consistent tier selection based on criticality
 - Easy to add new workflows (just map to tier)
 
 ### 2. Robust Timeout Handling
+
 - Graceful degradation when providers timeout
 - Cache fallback prevents blocking
 - Manual review escalation for critical cases
 
 ### 3. Consensus Scoring
+
 - Multiple providers increase confidence
 - Disagreement detection flags edge cases
 - Configurable strategy (average/median/highest/lowest)
 
 ### 4. Maintainability
+
 - Single config file for all workflows
 - Provider selector tool simplifies orchestrator logic
 - Clear documentation of timeout flow
 
 ### 5. Flexibility
+
 - Easy to adjust timeout values
 - Easy to add/remove providers from tiers
 - Easy to remap workflows to different tiers
@@ -359,21 +379,25 @@ min_providers: 1
 ## Future Enhancements
 
 ### 1. Dynamic Timeout Adjustment
+
 - Adjust timeouts based on plan complexity
 - Increase timeout for large plans (> 1000 lines)
 - Decrease timeout for simple plans (< 100 lines)
 
 ### 2. Provider Health Tracking
+
 - Track provider success rates
 - Automatically exclude unhealthy providers
 - Reorder providers based on performance
 
 ### 3. Cost Optimization
+
 - Track provider costs per rating
 - Select cheaper providers for non-critical workflows
 - Budget-based provider selection
 
 ### 4. Advanced Consensus
+
 - Weighted provider scoring (e.g., opus > sonnet)
 - Majority voting for pass/fail decisions
 - Outlier detection and removal
@@ -394,6 +418,7 @@ min_providers: 1
 ## Conclusion
 
 The response-rater configuration system is now fully integrated and provides:
+
 - ✅ Automatic provider selection based on workflow type
 - ✅ Robust timeout handling with escalation
 - ✅ Cache fallback for reliability

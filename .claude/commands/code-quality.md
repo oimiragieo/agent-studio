@@ -57,9 +57,10 @@ Invokes the **code-quality-flow** workflow with this agent sequence:
 
 <output_format>
 **Outputs**:
+
 - `code-review.json` - Detailed code analysis
 - `refactoring-plan.json` - Prioritized improvement plan
 - `compliance-report.json` - Standards compliance status
 - `quality-report.json` - Final quality assessment
-</output_format>
-</instructions>
+  </output_format>
+  </instructions>

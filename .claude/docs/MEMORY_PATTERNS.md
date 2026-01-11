@@ -11,6 +11,7 @@ This guide explains how to use both CLAUDE.md files and the memory tool for redu
 **Purpose**: Static, version-controlled context
 
 **Characteristics**:
+
 - Hierarchical context loading (root → subdirectories)
 - Version-controlled in git
 - Project-specific, structured knowledge
@@ -18,6 +19,7 @@ This guide explains how to use both CLAUDE.md files and the memory tool for redu
 - Best for: Static rules, project structure, coding standards
 
 **Location**:
+
 - Root: `.claude/CLAUDE.md`
 - Project: `.claude/projects/{project}/CLAUDE.md`
 - Phase: `.claude/projects/{project}/phase-*/claude.md`
@@ -28,6 +30,7 @@ This guide explains how to use both CLAUDE.md files and the memory tool for redu
 **Purpose**: Dynamic, learned patterns
 
 **Characteristics**:
+
 - Cross-conversation pattern persistence
 - Dynamic knowledge accumulation
 - Session-specific learnings
@@ -35,6 +38,7 @@ This guide explains how to use both CLAUDE.md files and the memory tool for redu
 - Best for: Learned patterns, user preferences, task-specific insights
 
 **Location**:
+
 - `.claude/orchestrators/{session-id}/memory/`
 
 **Tool ID**: `memory_20250818`
@@ -69,6 +73,7 @@ This guide explains how to use both CLAUDE.md files and the memory tool for redu
 ### 1. Fault Tolerance
 
 If memory tool fails, CLAUDE.md provides context:
+
 - Memory tool unavailable → Use CLAUDE.md
 - CLAUDE.md missing → Use memory tool
 - Both available → Use both for comprehensive context
@@ -76,6 +81,7 @@ If memory tool fails, CLAUDE.md provides context:
 ### 2. Version Control
 
 CLAUDE.md changes are tracked in git:
+
 - All rule changes versioned
 - Project standards documented
 - Team collaboration enabled
@@ -83,6 +89,7 @@ CLAUDE.md changes are tracked in git:
 ### 3. Dynamic Learning
 
 Memory tool captures insights not in CLAUDE.md:
+
 - User preferences discovered during interaction
 - Task-specific solutions
 - Workflow optimizations
@@ -91,6 +98,7 @@ Memory tool captures insights not in CLAUDE.md:
 ### 4. Cross-Project Sharing
 
 Memory tool can share patterns across projects:
+
 - Patterns learned in one project
 - Can be referenced in other projects
 - Enables knowledge transfer
@@ -98,6 +106,7 @@ Memory tool can share patterns across projects:
 ### 5. Performance
 
 CLAUDE.md loads faster, memory tool provides depth:
+
 - CLAUDE.md: Fast, structured, always available
 - Memory tool: Deep, learned, on-demand
 
@@ -106,6 +115,7 @@ CLAUDE.md loads faster, memory tool provides depth:
 ### Storing Learned Patterns
 
 **When to Store in Memory**:
+
 - User preferences discovered during interaction
 - Task-specific insights and solutions
 - Patterns learned from codebase analysis
@@ -113,6 +123,7 @@ CLAUDE.md loads faster, memory tool provides depth:
 - Common mistakes to avoid
 
 **Example**:
+
 ```
 User: "I prefer using async/await over promises"
 
@@ -124,12 +135,14 @@ Agent stores in memory:
 ### Reading from Memory
 
 **When to Read from Memory**:
+
 - Starting a new task (check for relevant patterns)
 - Encountering similar problems (look for previous solutions)
 - User preferences (check for known preferences)
 - Workflow patterns (check for optimized approaches)
 
 **Example**:
+
 ```
 Agent needs to implement authentication
 
@@ -142,18 +155,21 @@ Agent reads from memory:
 ### Syncing to CLAUDE.md
 
 **When to Sync**:
+
 - Pattern is project-wide and should be version-controlled
 - Rule discovered that applies to all future work
 - Standard that should be part of project documentation
 - Important decision that affects project structure
 
 **How to Sync**:
+
 1. Read pattern from memory tool
 2. Determine if it should be in CLAUDE.md
 3. Add to appropriate CLAUDE.md file (root or phase-specific)
 4. Keep in memory tool for redundancy
 
 **Example**:
+
 ```
 Agent discovers: "Always use TypeScript strict mode"
 
@@ -192,6 +208,7 @@ Agent syncs:
 ### Path Validation
 
 **Always validate memory file paths**:
+
 - Only allow paths under `.claude/orchestrators/{session-id}/memory/`
 - Reject paths with `..` (directory traversal)
 - Reject absolute paths outside project
@@ -200,6 +217,7 @@ Agent syncs:
 ### Memory Poisoning Prevention
 
 **Prevent malicious memory content**:
+
 - Validate memory content before storing
 - Sanitize user input in memory files
 - Review memory files periodically
@@ -210,6 +228,7 @@ Agent syncs:
 ### All Agents Use Both
 
 Every agent should:
+
 1. **Load CLAUDE.md files** automatically (via Claude Code)
 2. **Use memory tool** for learned patterns
 3. **Store insights** in memory tool
@@ -227,6 +246,7 @@ Every agent should:
 ### Automatic Sync
 
 The memory sync utility (`.claude/tools/memory-sync.mjs`) can:
+
 - Sync important patterns from memory to CLAUDE.md
 - Merge memory insights into project documentation
 - Archive old memory files
@@ -249,8 +269,8 @@ Memory tool is configured in `.claude/config.yaml`:
 ```yaml
 memory_tool:
   enabled: true
-  tool_id: "memory_20250818"
-  storage_path: ".claude/orchestrators/{session-id}/memory"
+  tool_id: 'memory_20250818'
+  storage_path: '.claude/orchestrators/{session-id}/memory'
   sync_with_claude_md: true
   agents_with_memory:
     - planner
@@ -338,4 +358,3 @@ Agent syncs:
 - [Everlasting Agent System](EVERLASTING_AGENTS.md) - Context window management
 - [Phase-Based Projects](PHASE_BASED_PROJECTS.md) - Project structure
 - [Context Optimization](CONTEXT_OPTIMIZATION.md) - Context management best practices
-

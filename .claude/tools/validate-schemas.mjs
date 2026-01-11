@@ -26,7 +26,7 @@ const SCHEMAS_DIR = join(__dirname, '..', 'schemas');
 // Schema auto-detection mapping
 const SCHEMA_DETECTION_MAP = {
   // By directory
-  'artifacts': {
+  artifacts: {
     'plan-*.json': 'plan.schema.json',
     'plan-*.md': null, // Markdown plans don't have schema
     'dev-manifest.json': 'artifact_manifest.schema.json',
@@ -36,28 +36,28 @@ const SCHEMA_DETECTION_MAP = {
     'ui-spec.json': 'ui-spec.schema.json',
     'requirements.json': 'requirements.schema.json',
     'quality-report.json': 'quality-report.schema.json',
-    'artifact-registry.json': 'artifact-registry.schema.json'
+    'artifact-registry.json': 'artifact-registry.schema.json',
   },
-  'gates': {
+  gates: {
     '*-gate.json': 'gate-result.schema.json',
-    '*.json': 'gate-result.schema.json'
+    '*.json': 'gate-result.schema.json',
   },
-  'plans': {
+  plans: {
     '*-rating.json': 'plan-rating.schema.json',
-    '*.json': 'plan.schema.json'
+    '*.json': 'plan.schema.json',
   },
-  'reasoning': {
-    '*.json': 'reasoning.schema.json'
+  reasoning: {
+    '*.json': 'reasoning.schema.json',
   },
-  'reports': {
+  reports: {
     '*-report.json': 'report.schema.json',
     'browser-test-report.json': 'browser-test-report.schema.json',
-    'quality-report.json': 'quality-report.schema.json'
+    'quality-report.json': 'quality-report.schema.json',
   },
-  'tasks': {
+  tasks: {
     '*-task.json': 'task.schema.json',
-    '*.json': 'task.schema.json'
-  }
+    '*.json': 'task.schema.json',
+  },
 };
 
 /**
@@ -140,7 +140,7 @@ function validateAgainstSchema(data, schema, options = {}) {
   const ajv = new Ajv({
     allErrors: true,
     verbose: true,
-    strict: options.strict !== false
+    strict: options.strict !== false,
   });
   addFormats(ajv);
 
@@ -150,8 +150,8 @@ function validateAgainstSchema(data, schema, options = {}) {
   const result = {
     valid,
     errors: valid ? [] : validate.errors || [],
-    errorCount: valid ? 0 : (validate.errors?.length || 0),
-    warnings: []
+    errorCount: valid ? 0 : validate.errors?.length || 0,
+    warnings: [],
   };
 
   // Generate human-readable error messages
@@ -181,7 +181,7 @@ export async function validateFile(filePath, schemaName = null, options = {}) {
     valid: false,
     errors: [],
     warnings: [],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   try {
@@ -223,7 +223,6 @@ export async function validateFile(filePath, schemaName = null, options = {}) {
     result.warnings.push(...validationResult.warnings);
 
     return result;
-
   } catch (error) {
     result.valid = false;
     result.errors.push(error.message);
@@ -248,7 +247,7 @@ export async function validateFiles(filePaths, options = {}) {
     passed: results.filter(r => r.valid).length,
     failed: results.filter(r => !r.valid).length,
     results,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   summary.allPassed = summary.failed === 0;
@@ -299,17 +298,17 @@ Exit codes:
     process.exit(0);
   }
 
-  const getArg = (name) => {
+  const getArg = name => {
     const index = args.indexOf(`--${name}`);
     return index !== -1 && args[index + 1] ? args[index + 1] : null;
   };
 
-  const hasFlag = (name) => args.includes(`--${name}`);
+  const hasFlag = name => args.includes(`--${name}`);
 
   try {
     const options = {
       strict: !hasFlag('no-strict'),
-      requireSchema: hasFlag('require-schema')
+      requireSchema: hasFlag('require-schema'),
     };
 
     let result;
@@ -344,7 +343,6 @@ Exit codes:
       }
 
       process.exit(result.allPassed ? 0 : 1);
-
     } else {
       // Validate single file
       const filePath = getArg('file') || getArg('auto-detect');
@@ -382,7 +380,6 @@ Exit codes:
 
       process.exit(result.valid ? 0 : 1);
     }
-
   } catch (error) {
     console.error('Fatal error:', error.message);
     process.exit(1);
@@ -390,8 +387,9 @@ Exit codes:
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main().catch(error => {
     console.error('Fatal error:', error);
@@ -402,5 +400,5 @@ if (isMainModule) {
 export default {
   validateFile,
   validateFiles,
-  autoDetectSchema
+  autoDetectSchema,
 };

@@ -32,16 +32,19 @@ async function readStdin() {
       reject(new Error('Timeout reading stdin'));
     }, 5000);
 
-    stdin.on('data', (chunk) => {      // ❌ LISTENER NEVER REMOVED
+    stdin.on('data', chunk => {
+      // ❌ LISTENER NEVER REMOVED
       chunks.push(chunk);
     });
 
-    stdin.on('end', () => {             // ❌ LISTENER NEVER REMOVED
+    stdin.on('end', () => {
+      // ❌ LISTENER NEVER REMOVED
       clearTimeout(timeout);
       resolve(Buffer.concat(chunks).toString('utf-8'));
     });
 
-    stdin.on('error', (err) => {        // ❌ LISTENER NEVER REMOVED
+    stdin.on('error', err => {
+      // ❌ LISTENER NEVER REMOVED
       clearTimeout(timeout);
       reject(err);
     });
@@ -50,6 +53,7 @@ async function readStdin() {
 ```
 
 **The Problem**:
+
 - `stdin.on()` registers **persistent event listeners**
 - These listeners are NEVER removed with `stdin.off()` or `stdin.removeListener()`
 - Each PreToolUse hook invocation adds 3 new listeners to the same stdin stream
@@ -59,12 +63,14 @@ async function readStdin() {
 ### 1.2 Why the Timeout Triggers
 
 **Windows stdin behavior**:
+
 - On Windows, when no input is immediately available, stdin may not emit 'end' event
 - The stream can enter a **waiting state** without closing
 - After 5 seconds, the timeout triggers
 - The Promise rejects, but **listeners remain attached**
 
 **Evidence from README.md**:
+
 - Hook execution order shows skill-injection-hook.js runs on **EVERY Task tool call** (line 35)
 - Expected execution time: ~224ms (line 35)
 - In a 13-minute session spawning multiple subagents, this could be **50-100+ invocations**
@@ -89,6 +95,7 @@ async function readStdin() {
 7. **Next hook invocation** → Repeat steps 1-6
 
 **After N hook invocations**:
+
 - Event listeners: 3N
 - Buffered chunks: N arrays (each holding references to previous data)
 - Timeout handles: N (may or may not be cleared, depending on race condition)
@@ -109,19 +116,21 @@ Hooks run in this order BEFORE any tool executes:
 **Exclusions**: TodoWrite and Task tools are excluded from most PreToolUse hooks
 ```
 
-**Critical Discovery**: While TodoWrite and Task are excluded from *most* hooks, skill-injection-hook.js **explicitly targets Task tool** (line 35):
+**Critical Discovery**: While TodoWrite and Task are excluded from _most_ hooks, skill-injection-hook.js **explicitly targets Task tool** (line 35):
 
 ```
 | skill-injection-hook.js | Task | ~224ms | Subagent spawning |
 ```
 
 **Frequency Calculation**:
+
 - Session duration: 13 minutes
 - Assuming 1 subagent spawn per minute (conservative): 13 invocations
 - Assuming 5 subagent spawns per minute (realistic): 65 invocations
 - Assuming 10 subagent spawns per minute (high activity): 130 invocations
 
 **Memory Growth Estimate** (per invocation):
+
 - 3 event listeners: ~100-200 bytes each
 - Timeout handle: ~50 bytes
 - Promise/closure overhead: ~500 bytes
@@ -131,6 +140,7 @@ Hooks run in this order BEFORE any tool executes:
 **At 1000 invocations**: ~1 MB (listeners alone)
 
 **But**: Each listener holds references to:
+
 - `chunks` array
 - Previous buffer data
 - Closure scope with `timeout` reference
@@ -169,6 +179,7 @@ Hooks run in this order BEFORE any tool executes:
 ```
 
 **Why this hides the leak**:
+
 - Every timeout is caught and logged
 - Hook exits cleanly with code 0
 - No indication of memory accumulation
@@ -180,6 +191,7 @@ Hooks run in this order BEFORE any tool executes:
 **Windows stdin Behavior**:
 
 From Node.js documentation:
+
 > "On Windows, stdin may not emit 'end' event when piped from a parent process that doesn't close stdin properly"
 
 **Evidence from code**:
@@ -193,11 +205,13 @@ for await (const chunk of process.stdin) {
 ```
 
 This pattern:
+
 - ✅ Auto-cleans up listeners after iteration
 - ✅ Handles Windows stdin quirks
 - ✅ No manual event listener management
 
 **skill-injection-hook.js uses manual event listeners**:
+
 - ❌ Manual cleanup required (not implemented)
 - ❌ Vulnerable to Windows stdin hanging
 - ❌ Timeout mechanism doesn't help (listeners remain)
@@ -213,16 +227,19 @@ This pattern:
 ```
 
 **Implications**:
+
 - skill-injection-hook.js runs **after** other hooks complete
 - If previous hooks accumulate memory, this hook adds to the pressure
 - **No hook dependency cycle** detected (good - not the cause)
 
 **Hook Matcher** (from README.md line 35):
+
 ```
 skill-injection-hook.js | Task | ~224ms | Subagent spawning
 ```
 
 **This means**:
+
 - Hook runs ONLY when Task tool is used
 - Task tool is used for every subagent spawn
 - In a multi-agent workflow, this could be **dozens of calls**
@@ -245,6 +262,7 @@ skill-injection-hook.js | Task | ~224ms | Subagent spawning
 ```
 
 **What "graceful pass through" means**:
+
 - Hook catches timeout error
 - Logs error to stderr
 - Writes original input to stdout (unchanged)
@@ -252,12 +270,14 @@ skill-injection-hook.js | Task | ~224ms | Subagent spawning
 - Orchestrator continues execution
 
 **Why this is problematic**:
+
 - **Hides the memory leak**: No indication of accumulation
 - **Allows repeated failures**: Hook fails silently on every call
 - **No circuit breaker**: No mechanism to stop after N failures
 - **Memory grows until OOM**: Eventually exhausts heap
 
 **Better approach would be**:
+
 - Track timeout failures in shared state
 - After 3+ consecutive timeouts, raise alarm
 - Consider stdin broken, fallback to pass-through mode
@@ -284,6 +304,7 @@ async function main() {
 ```
 
 **Why this is better**:
+
 - Uses `for await...of` async iteration
 - **Automatic listener cleanup** after loop completes
 - No manual event listener management
@@ -307,8 +328,9 @@ async function main() {
 ### 3.3 orchestrator-enforcement-hook.mjs
 
 **Line 66**:
+
 ```javascript
-timeout: 5000
+timeout: 5000;
 ```
 
 **Context**: This appears to be a tool execution timeout, not stdin timeout. Different mechanism.
@@ -338,11 +360,13 @@ Tool execution (if hooks allow)
 **Is there a recursive loop?**
 
 **Evidence from README.md** (line 17):
+
 ```
 **Exclusions**: TodoWrite and Task tools are excluded from most PreToolUse hooks to prevent recursion.
 ```
 
 **Implications**:
+
 - Task tool is excluded from security-pre-tool and orchestrator-enforcement hooks
 - But skill-injection-hook.js **explicitly targets Task tool**
 - This is intentional - the hook is designed to intercept Task calls
@@ -350,6 +374,7 @@ Tool execution (if hooks allow)
 **Could the hook trigger itself?**
 
 **No**, because:
+
 - Hook runs on PreToolUse for Task tool
 - Hook does not call Task tool internally
 - Hook only loads files via `readFile` and calls `injectSkillsForAgent()`
@@ -358,6 +383,7 @@ Tool execution (if hooks allow)
 **Could skill-injector.mjs trigger hooks?**
 
 **Analysis of skill-injector.mjs**:
+
 - Uses `readFile` from fs/promises (line 18)
 - Loads JSON files (no tool calls)
 - No Task tool invocation
@@ -374,6 +400,7 @@ Tool execution (if hooks allow)
 **Problem**: `stdin.on()` adds listeners but never removes them.
 
 **Node.js EventEmitter behavior**:
+
 - Each `on()` call adds a listener to the emitter's listener array
 - Listeners persist until explicitly removed with `off()` or `removeListener()`
 - After 10 listeners on the same event, Node.js emits a warning: `MaxListenersExceededWarning`
@@ -393,16 +420,19 @@ Event Listener Structure (per call):
 ```
 
 **After 100 calls**:
+
 - 300 event listeners
 - 100 closure scopes
 - Estimated memory: **5-10 MB**
 
 **After 1000 calls**:
+
 - 3000 event listeners
 - 1000 closure scopes
 - Estimated memory: **50-100 MB**
 
 **After 10,000 calls** (possible in long sessions):
+
 - 30,000 event listeners
 - 10,000 closure scopes
 - Estimated memory: **500 MB - 1 GB**
@@ -424,6 +454,7 @@ clearTimeout(timeout);
 ```
 
 **Analysis**:
+
 - Timeout is cleared in 'end' and 'error' handlers
 - **BUT**: If timeout fires first (line 30-32), it rejects the Promise
 - The 'end' and 'error' handlers are **still attached**, waiting for events
@@ -431,6 +462,7 @@ clearTimeout(timeout);
 - Even though timeout is "cleared", the event listeners persist
 
 **Race Condition**:
+
 ```
 Timeout fires (5s) → reject() → catch block → exit(0)
                        ↓
@@ -445,12 +477,13 @@ stdin 'error' handler still attached, waiting forever
 
 ```javascript
 const chunks = [];
-stdin.on('data', (chunk) => {
+stdin.on('data', chunk => {
   chunks.push(chunk);
 });
 ```
 
 **Problem**:
+
 - Each readStdin() call creates a new `chunks` array
 - If stdin emits data before timeout, chunks are accumulated
 - Even after timeout, the listener remains attached
@@ -480,12 +513,14 @@ stdin emits data (from Claude Code parent process)
 ### 6.1 Windows stdin Behavior
 
 **Known Issues**:
+
 1. **stdin may not emit 'end' event** when piped from a parent process that doesn't close stdin
 2. **stdin may remain in waiting state** even when no more data is available
 3. **setRawMode() can cause issues** on Windows (not used here, but relevant)
 4. **Pipe buffering differences** between Windows and Unix
 
 **Evidence of Windows-specific issue**:
+
 - The developer agent that crashed was on Windows
 - The timeout pattern suggests stdin never emitted 'end' event
 - 5-second timeout triggered repeatedly
@@ -494,6 +529,7 @@ stdin emits data (from Claude Code parent process)
 ### 6.2 Unix stdin Behavior
 
 **Expected Behavior**:
+
 - stdin emits 'end' event when input stream closes
 - Event listeners are triggered and cleaned up naturally
 - Timeout should rarely fire (only if stdin is truly hanging)
@@ -517,6 +553,7 @@ async function readStdin() {
 ```
 
 **Why this works on both platforms**:
+
 - Node.js runtime manages stdin iteration internally
 - Handles platform differences transparently
 - Automatically cleans up listeners after iteration completes
@@ -535,9 +572,7 @@ async function readStdin() {
       }
       return Buffer.concat(chunks).toString('utf-8');
     })(),
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Timeout')), 5000)
-    )
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
   ]);
 }
 ```
@@ -568,6 +603,7 @@ async function readStdin() {
 ```
 
 **Benefits**:
+
 - ✅ No manual event listeners
 - ✅ Automatic cleanup after iteration
 - ✅ Works on Windows and Unix
@@ -594,7 +630,7 @@ async function readStdin() {
       clearTimeout(timeout);
     };
 
-    const onData = (chunk) => {
+    const onData = chunk => {
       chunks.push(chunk);
     };
 
@@ -603,7 +639,7 @@ async function readStdin() {
       resolve(Buffer.concat(chunks).toString('utf-8'));
     };
 
-    const onError = (err) => {
+    const onError = err => {
       cleanup();
       reject(err);
     };
@@ -621,6 +657,7 @@ async function readStdin() {
 ```
 
 **Key improvements**:
+
 - `stdin.resume()` to wake up paused stream
 - Named functions for listeners (required for `off()`)
 - `cleanup()` function to remove all listeners
@@ -678,31 +715,33 @@ if (executionTime > 100) {
 
 **Async Iteration Approach**:
 
-| Risk | Likelihood | Mitigation |
-|------|-----------|------------|
-| stdin in paused mode, iteration hangs | Medium | Add `stdin.resume()` before iteration |
-| stdin closed prematurely, iteration errors | Low | Wrap in try-catch, handle empty input |
-| Different behavior on Windows vs Unix | Low | Test on both platforms |
-| Performance degradation | Very Low | Async iteration is fast (< 10ms) |
+| Risk                                       | Likelihood | Mitigation                            |
+| ------------------------------------------ | ---------- | ------------------------------------- |
+| stdin in paused mode, iteration hangs      | Medium     | Add `stdin.resume()` before iteration |
+| stdin closed prematurely, iteration errors | Low        | Wrap in try-catch, handle empty input |
+| Different behavior on Windows vs Unix      | Low        | Test on both platforms                |
+| Performance degradation                    | Very Low   | Async iteration is fast (< 10ms)      |
 
 **Manual Cleanup Approach**:
 
-| Risk | Likelihood | Mitigation |
-|------|-----------|------------|
-| Listeners not cleaned up (same bug) | Low | Extensive testing, code review |
-| Cleanup called multiple times | Low | Guard with flag (already cleaned) |
-| Named functions increase memory | Very Low | Negligible vs event listener leak |
-| Race condition in cleanup | Low | Ensure cleanup is idempotent |
+| Risk                                | Likelihood | Mitigation                        |
+| ----------------------------------- | ---------- | --------------------------------- |
+| Listeners not cleaned up (same bug) | Low        | Extensive testing, code review    |
+| Cleanup called multiple times       | Low        | Guard with flag (already cleaned) |
+| Named functions increase memory     | Very Low   | Negligible vs event listener leak |
+| Race condition in cleanup           | Low        | Ensure cleanup is idempotent      |
 
 ### 8.2 Testing Strategy
 
 **Before Fix**:
+
 1. Run test-skill-injection-hook.js on Windows
 2. Monitor memory usage over 100+ test runs
 3. Check for `MaxListenersExceededWarning`
 4. Verify stdin timeout triggers
 
 **After Fix**:
+
 1. Re-run test-skill-injection-hook.js on Windows
 2. Confirm no memory growth over 100+ test runs
 3. Verify no `MaxListenersExceededWarning`
@@ -711,6 +750,7 @@ if (executionTime > 100) {
 6. Test on Unix/macOS for cross-platform compatibility
 
 **Load Test**:
+
 1. Spawn 100 subagents in a loop (simulate long session)
 2. Monitor heap usage with `process.memoryUsage()`
 3. Ensure memory remains stable (< 100 MB growth)
@@ -723,12 +763,14 @@ if (executionTime > 100) {
 ### 9.1 skill-injector.mjs Performance
 
 **Analysis of skill-injector.mjs**:
+
 - Uses `readFile` extensively to load SKILL.md files
 - No stdin interaction
 - No hook triggering
 - **Performance target**: < 100ms (from README.md line 35, actual ~224ms)
 
 **Potential Bottleneck**:
+
 - Loading multiple SKILL.md files from disk
 - Parsing JSON (skill-integration-matrix.json)
 - String concatenation for prompt generation
@@ -738,16 +780,19 @@ if (executionTime > 100) {
 ### 9.2 Hook Performance Target
 
 **From README.md** (line 13):
+
 ```
 Performance Target: <100ms execution time
 ```
 
 **Actual Performance** (from README.md line 35):
+
 ```
 skill-injection-hook.js | Task | ~224ms | Subagent spawning
 ```
 
 **Analysis**:
+
 - Hook exceeds target by **124ms** (224ms vs 100ms target)
 - This is a **2.24x slowdown** vs target
 - May be due to:
@@ -760,11 +805,13 @@ skill-injection-hook.js | Task | ~224ms | Subagent spawning
 ### 9.3 Graceful Error Handling Trade-off
 
 **Current behavior** (lines 159-172):
+
 - All errors result in "pass through unchanged"
 - Exit code 0 (success)
 - No indication of failure to orchestrator
 
 **Trade-off**:
+
 - ✅ **Pro**: Never blocks workflow execution
 - ✅ **Pro**: Resilient to transient failures
 - ❌ **Con**: Hides persistent failures (like stdin timeout)
@@ -772,6 +819,7 @@ skill-injection-hook.js | Task | ~224ms | Subagent spawning
 - ❌ **Con**: No feedback to user about degraded performance
 
 **Recommendation**:
+
 - Add **warning counter** to stderr
 - After 3+ consecutive failures, log ERROR level message
 - Consider circuit breaker pattern to disable hook after repeated failures
@@ -793,36 +841,40 @@ skill-injection-hook.js | Task | ~224ms | Subagent spawning
 
 ### 10.2 Evidence Summary
 
-| Evidence | Location | Finding |
-|----------|----------|---------|
-| Event listeners not removed | Lines 34-46 | No `stdin.off()` or `removeListener()` calls |
-| Windows stdin hanging | Platform behavior | stdin may not emit 'end' on Windows |
-| Timeout triggers repeatedly | Line 30-32 | 5-second timeout rejects, listeners remain |
-| Graceful error handling | Lines 159-172 | Hides memory leak with exit(0) |
-| Other hooks use async iteration | file-path-validator.js, post-session-cleanup.js | Correct pattern that avoids leak |
-| Hook runs frequently | README.md line 35 | Every Task tool call (~50-100+ per session) |
+| Evidence                        | Location                                        | Finding                                      |
+| ------------------------------- | ----------------------------------------------- | -------------------------------------------- |
+| Event listeners not removed     | Lines 34-46                                     | No `stdin.off()` or `removeListener()` calls |
+| Windows stdin hanging           | Platform behavior                               | stdin may not emit 'end' on Windows          |
+| Timeout triggers repeatedly     | Line 30-32                                      | 5-second timeout rejects, listeners remain   |
+| Graceful error handling         | Lines 159-172                                   | Hides memory leak with exit(0)               |
+| Other hooks use async iteration | file-path-validator.js, post-session-cleanup.js | Correct pattern that avoids leak             |
+| Hook runs frequently            | README.md line 35                               | Every Task tool call (~50-100+ per session)  |
 
 ### 10.3 Recommended Actions
 
 **Priority 1: Fix the Memory Leak**
+
 1. Replace readStdin() with async iteration pattern
 2. Test on Windows and Unix platforms
 3. Verify no memory growth over 100+ hook invocations
 4. Deploy to production
 
 **Priority 2: Add Safeguards**
+
 1. Add `stdin.setMaxListeners(20)` to detect accumulation early
 2. Implement circuit breaker after 3 consecutive timeouts
 3. Add memory usage logging for high execution times
 4. Add warning counter for repeated failures
 
 **Priority 3: Performance Optimization**
+
 1. Profile skill-injector.mjs to reduce 224ms execution time
 2. Consider caching loaded SKILL.md files
 3. Optimize JSON parsing and string concatenation
 4. Target < 100ms execution time
 
 **Priority 4: Monitoring**
+
 1. Add metrics for hook execution time
 2. Track stdin timeout frequency
 3. Monitor memory usage over time
@@ -847,8 +899,8 @@ skill-injection-hook.js | Task | ~224ms | Subagent spawning
 ```javascript
 // BAD: Listeners accumulate
 function badReadStdin() {
-  return new Promise((resolve) => {
-    process.stdin.on('data', (chunk) => {
+  return new Promise(resolve => {
+    process.stdin.on('data', chunk => {
       // This listener is never removed
     });
   });
@@ -879,6 +931,7 @@ for (let i = 0; i < 100; i++) {
 ### Appendix B: Windows stdin EOF Behavior
 
 **Node.js Issue Tracker References**:
+
 - nodejs/node#35997: "stdin doesn't emit 'end' on Windows when parent doesn't close pipe"
 - nodejs/node#21319: "process.stdin.on('end') not fired on Windows"
 - Solution: Use async iteration, which handles platform differences internally
@@ -887,14 +940,14 @@ for (let i = 0; i < 100; i++) {
 
 **Expected Performance** (from README.md):
 
-| Hook | Target | Actual | Status |
-|------|--------|--------|--------|
-| security-pre-tool.sh | <5ms | ~5ms | ✅ Pass |
-| file-path-validator.js | <10ms | ~10ms | ✅ Pass |
-| orchestrator-enforcement | <10ms | ~10ms | ✅ Pass |
-| skill-injection-hook.js | <100ms | ~224ms | ❌ Fail (2.24x target) |
-| audit-post-tool.sh | <5ms | ~5ms | ✅ Pass |
-| post-session-cleanup.js | <10ms | ~10ms | ✅ Pass |
+| Hook                     | Target | Actual | Status                 |
+| ------------------------ | ------ | ------ | ---------------------- |
+| security-pre-tool.sh     | <5ms   | ~5ms   | ✅ Pass                |
+| file-path-validator.js   | <10ms  | ~10ms  | ✅ Pass                |
+| orchestrator-enforcement | <10ms  | ~10ms  | ✅ Pass                |
+| skill-injection-hook.js  | <100ms | ~224ms | ❌ Fail (2.24x target) |
+| audit-post-tool.sh       | <5ms   | ~5ms   | ✅ Pass                |
+| post-session-cleanup.js  | <10ms  | ~10ms  | ✅ Pass                |
 
 **Total PreToolUse overhead for Task tool**: ~239ms per call
 

@@ -9,20 +9,20 @@
  * - Enhanced Error Context (Cursor Recommendation #10)
  */
 
-const { spawn, execSync } = require("child_process");
-const crypto = require("crypto");
-const fs = require("fs");
-const path = require("path");
+const { spawn, execSync } = require('child_process');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 // Try to load js-yaml for config parsing, fallback to simple parsing if not available
 let yaml;
 try {
-  yaml = require("js-yaml");
+  yaml = require('js-yaml');
 } catch (e) {
   // Fallback: simple YAML parsing not available, will use defaults
   yaml = null;
 }
-const { sanitize, sanitizeError } = require("../../shared/sanitize-secrets.js");
+const { sanitize, sanitizeError } = require('../../shared/sanitize-secrets.js');
 
 // Simple inline Circuit Breaker for CommonJS compatibility
 class SimpleCircuitBreaker {
@@ -34,9 +34,9 @@ class SimpleCircuitBreaker {
 
   canExecute(provider) {
     const state = this.getState(provider);
-    if (state.state === "open") {
+    if (state.state === 'open') {
       if (Date.now() > state.openUntil) {
-        state.state = "half-open";
+        state.state = 'half-open';
         this.states.set(provider, state);
         return true;
       }
@@ -48,7 +48,7 @@ class SimpleCircuitBreaker {
   recordSuccess(provider) {
     const state = this.getState(provider);
     state.failures = 0;
-    state.state = "closed";
+    state.state = 'closed';
     this.states.set(provider, state);
   }
 
@@ -56,7 +56,7 @@ class SimpleCircuitBreaker {
     const state = this.getState(provider);
     state.failures++;
     if (state.failures >= this.failureThreshold) {
-      state.state = "open";
+      state.state = 'open';
       state.openUntil = Date.now() + this.resetTimeout;
       console.warn(`[circuit-breaker] ${provider}: Circuit OPEN (${state.failures} failures)`);
     }
@@ -65,7 +65,7 @@ class SimpleCircuitBreaker {
 
   getState(provider) {
     if (!this.states.has(provider)) {
-      this.states.set(provider, { failures: 0, state: "closed", openUntil: null });
+      this.states.set(provider, { failures: 0, state: 'closed', openUntil: null });
     }
     return this.states.get(provider);
   }
@@ -74,16 +74,16 @@ class SimpleCircuitBreaker {
 // Global circuit breaker instance
 const providerCircuitBreaker = new SimpleCircuitBreaker({
   failureThreshold: 3,
-  resetTimeout: 60000
+  resetTimeout: 60000,
 });
 
 // CLI command mappings for each provider
 const CLI_COMMANDS = {
-  claude: "claude",
-  gemini: "gemini",
-  codex: "codex",
-  cursor: "cursor-agent",
-  copilot: "copilot"
+  claude: 'claude',
+  gemini: 'gemini',
+  codex: 'codex',
+  cursor: 'cursor-agent',
+  copilot: 'copilot',
 };
 
 /**
@@ -92,9 +92,9 @@ const CLI_COMMANDS = {
  */
 function loadProviderConfig() {
   const defaults = {
-    primary: "claude",
-    secondary: ["gemini", "codex"],
-    fallback_threshold: 1
+    primary: 'claude',
+    secondary: ['gemini', 'codex'],
+    fallback_threshold: 1,
   };
 
   // If yaml parser not available, use defaults
@@ -102,10 +102,10 @@ function loadProviderConfig() {
     return defaults;
   }
 
-  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  const configPath = path.join(__dirname, '../../../.claude/config.yaml');
   try {
     if (fs.existsSync(configPath)) {
-      const configContent = fs.readFileSync(configPath, "utf8");
+      const configContent = fs.readFileSync(configPath, 'utf8');
       const config = yaml.load(configContent);
       return config?.codex_skills?.provider_priority || defaults;
     }
@@ -123,17 +123,17 @@ function loadPartialFailureConfig() {
   const defaults = {
     enabled: true,
     min_success_count: 2,
-    min_success_rate: 0.67
+    min_success_rate: 0.67,
   };
 
   if (!yaml) {
     return defaults;
   }
 
-  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  const configPath = path.join(__dirname, '../../../.claude/config.yaml');
   try {
     if (fs.existsSync(configPath)) {
-      const configContent = fs.readFileSync(configPath, "utf8");
+      const configContent = fs.readFileSync(configPath, 'utf8');
       const config = yaml.load(configContent);
       return config?.codex_skills?.partial_failure || defaults;
     }
@@ -152,23 +152,25 @@ function loadCircuitBreakerConfig() {
     enabled: true,
     failure_threshold: 3,
     reset_timeout_ms: 60000,
-    half_open_max_attempts: 2
+    half_open_max_attempts: 2,
   };
 
   if (!yaml) {
     return defaults;
   }
 
-  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  const configPath = path.join(__dirname, '../../../.claude/config.yaml');
   try {
     if (fs.existsSync(configPath)) {
-      const configContent = fs.readFileSync(configPath, "utf8");
+      const configContent = fs.readFileSync(configPath, 'utf8');
       const config = yaml.load(configContent);
       const cbConfig = config?.codex_skills?.circuit_breaker;
       if (cbConfig) {
         // Update global circuit breaker with config values
-        providerCircuitBreaker.failureThreshold = cbConfig.failure_threshold || defaults.failure_threshold;
-        providerCircuitBreaker.resetTimeout = cbConfig.reset_timeout_ms || defaults.reset_timeout_ms;
+        providerCircuitBreaker.failureThreshold =
+          cbConfig.failure_threshold || defaults.failure_threshold;
+        providerCircuitBreaker.resetTimeout =
+          cbConfig.reset_timeout_ms || defaults.reset_timeout_ms;
       }
       return cbConfig || defaults;
     }
@@ -184,7 +186,7 @@ function loadCircuitBreakerConfig() {
  * @param {Object} context - Error context
  */
 function logErrorWithContext(error, context = {}) {
-  const errorDir = path.join(__dirname, "../../../.claude/context/errors");
+  const errorDir = path.join(__dirname, '../../../.claude/context/errors');
 
   try {
     if (!fs.existsSync(errorDir)) {
@@ -192,28 +194,31 @@ function logErrorWithContext(error, context = {}) {
     }
 
     const timestamp = Date.now();
-    const provider = context.provider || "unknown";
+    const provider = context.provider || 'unknown';
     const errorFile = path.join(errorDir, `rate-${provider}-${timestamp}.json`);
 
     const errorData = {
       timestamp: new Date().toISOString(),
-      operation: "response_rater",
+      operation: 'response_rater',
       provider: context.provider,
       template: context.template,
       error: {
         message: sanitize(error.message || String(error)),
-        name: error.name || "Error",
+        name: error.name || 'Error',
         code: error.code || null,
-        stack: sanitize(error.stack || "").split("\n").slice(0, 10).join("\n")
+        stack: sanitize(error.stack || '')
+          .split('\n')
+          .slice(0, 10)
+          .join('\n'),
       },
       context: {
         authMode: context.authMode || null,
-        attempt: context.attempt || 1
+        attempt: context.attempt || 1,
       },
       system: {
         platform: process.platform,
-        nodeVersion: process.version
-      }
+        nodeVersion: process.version,
+      },
     };
 
     fs.writeFileSync(errorFile, JSON.stringify(errorData, null, 2));
@@ -233,28 +238,28 @@ async function validateProviderCli(provider) {
   const cli = CLI_COMMANDS[provider];
   if (!cli) {
     // Unknown provider - assume available (will fail at runtime if not)
-    return { available: true, provider, note: "unknown_cli" };
+    return { available: true, provider, note: 'unknown_cli' };
   }
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     try {
       // Use execSync with short timeout for quick validation
       const result = execSync(`${cli} --version`, {
         timeout: 5000,
-        stdio: ["pipe", "pipe", "pipe"],
+        stdio: ['pipe', 'pipe', 'pipe'],
         shell: true,
-        encoding: "utf8"
+        encoding: 'utf8',
       });
       resolve({
         available: true,
         provider,
-        version: result.trim().split("\n")[0]
+        version: result.trim().split('\n')[0],
       });
     } catch (err) {
       resolve({
         available: false,
         provider,
-        error: sanitize(err.message || String(err))
+        error: sanitize(err.message || String(err)),
       });
     }
   });
@@ -262,10 +267,10 @@ async function validateProviderCli(provider) {
 
 function parseArgs(argv) {
   const args = {
-    providers: "claude,gemini",
-    model: "gemini-2.5-flash",
-    authMode: "session-first",
-    template: "response-review",
+    providers: 'claude,gemini',
+    model: 'gemini-2.5-flash',
+    authMode: 'session-first',
+    template: 'response-review',
     timeoutMs: 180000,
     dryRun: false,
     skipCliValidation: false, // skip CLI availability check
@@ -273,23 +278,23 @@ function parseArgs(argv) {
   };
   for (let i = 0; i < argv.length; i++) {
     const token = argv[i];
-    if (token === "--response-file") args.responseFile = argv[++i];
-    else if (token === "--question-file") args.questionFile = argv[++i];
-    else if (token === "--providers") {
+    if (token === '--response-file') args.responseFile = argv[++i];
+    else if (token === '--question-file') args.questionFile = argv[++i];
+    else if (token === '--providers') {
       const parts = [];
-      while (i + 1 < argv.length && !String(argv[i + 1]).startsWith("--")) {
+      while (i + 1 < argv.length && !String(argv[i + 1]).startsWith('--')) {
         parts.push(argv[++i]);
       }
-      args.providers = parts.join(",");
-    }
-    else if (token === "--gemini-model") args.model = argv[++i];
-    else if (token === "--auth-mode") args.authMode = argv[++i];
-    else if (token === "--template") args.template = argv[++i];
-    else if (token === "--timeout-ms") args.timeoutMs = Number(argv[++i]);
-    else if (token === "--dry-run") args.dryRun = true;
-    else if (token === "--skip-cli-validation") args.skipCliValidation = true;
-    else if (token === "--sequential") args.parallel = false; // disable parallel execution
-    else if (token === "--help" || token === "-h") args.help = true;
+      args.providers = parts.join(',');
+    } else if (token === '--gemini-model') args.model = argv[++i];
+    else if (token === '--auth-mode') args.authMode = argv[++i];
+    else if (token === '--template') args.template = argv[++i];
+    else if (token === '--timeout-ms') args.timeoutMs = Number(argv[++i]);
+    else if (token === '--dry-run') args.dryRun = true;
+    else if (token === '--skip-cli-validation') args.skipCliValidation = true;
+    else if (token === '--sequential')
+      args.parallel = false; // disable parallel execution
+    else if (token === '--help' || token === '-h') args.help = true;
   }
   return args;
 }
@@ -297,31 +302,31 @@ function parseArgs(argv) {
 function usage(exitCode = 0) {
   console.log(
     [
-      "Usage:",
-      "  node codex-skills/response-rater/scripts/rate.js --response-file <path> [--question-file <path>] [--providers claude,gemini] [--gemini-model gemini-2.5-flash]",
-      "  cat response.txt | node codex-skills/response-rater/scripts/rate.js [--question-file <path>] [--providers claude,gemini]",
-      "",
-      "Templates:",
-      "  --template response-review   # default; critique an assistant response using a rubric",
-      "  --template vocab-review      # review a vocabulary.json for robustness/security (Privacy Airlock stage 1)",
-      "  --template vocab-review-sampled # vocab-review but with local sampling/statistics for very large vocabularies",
-      "",
-      "Timeouts:",
-      "  --timeout-ms 180000          # default 180s for each provider call",
-      "  --dry-run                   # print computed settings and exit (no network calls)",
-      "",
-      "Execution:",
-      "  --sequential                # run providers sequentially (default: parallel)",
-      "  --skip-cli-validation       # skip CLI availability check before execution",
-      "",
-      "Auth:",
-      "  --auth-mode session-first   # default; try CLI session auth first, then env keys",
-      "  --auth-mode env-first       # try env keys first, then CLI session auth",
-      "",
-      "Env:",
-      "  ANTHROPIC_API_KEY (for claude)",
-      "  GEMINI_API_KEY or GOOGLE_API_KEY (for gemini)",
-    ].join("\n"),
+      'Usage:',
+      '  node codex-skills/response-rater/scripts/rate.js --response-file <path> [--question-file <path>] [--providers claude,gemini] [--gemini-model gemini-2.5-flash]',
+      '  cat response.txt | node codex-skills/response-rater/scripts/rate.js [--question-file <path>] [--providers claude,gemini]',
+      '',
+      'Templates:',
+      '  --template response-review   # default; critique an assistant response using a rubric',
+      '  --template vocab-review      # review a vocabulary.json for robustness/security (Privacy Airlock stage 1)',
+      '  --template vocab-review-sampled # vocab-review but with local sampling/statistics for very large vocabularies',
+      '',
+      'Timeouts:',
+      '  --timeout-ms 180000          # default 180s for each provider call',
+      '  --dry-run                   # print computed settings and exit (no network calls)',
+      '',
+      'Execution:',
+      '  --sequential                # run providers sequentially (default: parallel)',
+      '  --skip-cli-validation       # skip CLI availability check before execution',
+      '',
+      'Auth:',
+      '  --auth-mode session-first   # default; try CLI session auth first, then env keys',
+      '  --auth-mode env-first       # try env keys first, then CLI session auth',
+      '',
+      'Env:',
+      '  ANTHROPIC_API_KEY (for claude)',
+      '  GEMINI_API_KEY or GOOGLE_API_KEY (for gemini)',
+    ].join('\n')
   );
   process.exit(exitCode);
 }
@@ -329,76 +334,74 @@ function usage(exitCode = 0) {
 function readFileOrNull(filePath) {
   if (!filePath) return null;
   const resolved = path.resolve(process.cwd(), filePath);
-  return fs.readFileSync(resolved, "utf8");
+  return fs.readFileSync(resolved, 'utf8');
 }
 
 function readStdin() {
   return new Promise((resolve, reject) => {
-    let data = "";
-    process.stdin.setEncoding("utf8");
-    process.stdin.on("data", (chunk) => (data += chunk));
-    process.stdin.on("end", () => resolve(data));
-    process.stdin.on("error", reject);
+    let data = '';
+    process.stdin.setEncoding('utf8');
+    process.stdin.on('data', chunk => (data += chunk));
+    process.stdin.on('end', () => resolve(data));
+    process.stdin.on('error', reject);
   });
 }
 
 function buildResponseReviewPrompt({ question, response }) {
-  const questionBlock = question
-    ? `\nQUESTION/REQUEST:\n\"\"\"\n${question.trim()}\n\"\"\"\n`
-    : "";
+  const questionBlock = question ? `\nQUESTION/REQUEST:\n\"\"\"\n${question.trim()}\n\"\"\"\n` : '';
 
   return [
-    "You are an independent reviewer.",
-    "",
-    "Evaluate the ASSISTANT RESPONSE below against this rubric.",
-    "Return JSON with keys: scores, summary, improvements, rewrite.",
-    "",
-    "scores: 1-10 integers for: correctness, completeness, clarity, actionability, risk_management, constraint_alignment, brevity.",
-    "summary: 2-5 sentences.",
-    "improvements: 5-12 concrete bullets (strings).",
-    "rewrite: a rewritten improved response, <= 10 lines, preserving the original intent.",
+    'You are an independent reviewer.',
+    '',
+    'Evaluate the ASSISTANT RESPONSE below against this rubric.',
+    'Return JSON with keys: scores, summary, improvements, rewrite.',
+    '',
+    'scores: 1-10 integers for: correctness, completeness, clarity, actionability, risk_management, constraint_alignment, brevity.',
+    'summary: 2-5 sentences.',
+    'improvements: 5-12 concrete bullets (strings).',
+    'rewrite: a rewritten improved response, <= 10 lines, preserving the original intent.',
     questionBlock.trimEnd(),
-    "ASSISTANT RESPONSE:",
+    'ASSISTANT RESPONSE:',
     '"""',
     response.trim(),
     '"""',
-    "",
-    "Output ONLY valid JSON.",
+    '',
+    'Output ONLY valid JSON.',
   ]
     .filter(Boolean)
-    .join("\n");
+    .join('\n');
 }
 
 function buildVocabReviewPrompt({ response }) {
   return [
-    "You are a senior application security engineer reviewing a Stage-1 vocabulary allowlist for an LLM Privacy Airlock.",
-    "",
-    "Context:",
-    "- Stage 1 is a coarse allowlist gate to reduce prompt-injection / unsafe payload surface.",
-    "- Stage 2 is content moderation and Stage 3 is PII redaction; Stage 1 is NOT the only privacy control.",
+    'You are a senior application security engineer reviewing a Stage-1 vocabulary allowlist for an LLM Privacy Airlock.',
+    '',
+    'Context:',
+    '- Stage 1 is a coarse allowlist gate to reduce prompt-injection / unsafe payload surface.',
+    '- Stage 2 is content moderation and Stage 3 is PII redaction; Stage 1 is NOT the only privacy control.',
     "- The implementation normalizes tokens to lowercase and strips the SentencePiece word-boundary prefix '▁' (U+2581) before lookup.",
-    "",
-    "Input is a JSON file containing a vocabulary list used to decide whether user content should be blocked or allowed.",
-    "Assume tokenization may be SentencePiece (preferred) or a fallback word tokenizer that preserves apostrophes in contractions (e.g., \"don't\").",
-    "",
-    "Return ONLY valid JSON with keys:",
-    "- summary: 2-5 sentences",
-    "- major_risks: array of strings (5-12 items)",
-    "- recommended_changes: array of strings (8-20 items, actionable)",
-    "- remove_tokens: array of strings (tokens that should not be present, e.g. section markers/placeholders)",
-    "- add_token_sets: object mapping set_name -> array of strings (each array <= 40 tokens; focus on high-coverage safe tokens)",
+    '',
+    'Input is a JSON file containing a vocabulary list used to decide whether user content should be blocked or allowed.',
+    'Assume tokenization may be SentencePiece (preferred) or a fallback word tokenizer that preserves apostrophes in contractions (e.g., "don\'t").',
+    '',
+    'Return ONLY valid JSON with keys:',
+    '- summary: 2-5 sentences',
+    '- major_risks: array of strings (5-12 items)',
+    '- recommended_changes: array of strings (8-20 items, actionable)',
+    '- remove_tokens: array of strings (tokens that should not be present, e.g. section markers/placeholders)',
+    '- add_token_sets: object mapping set_name -> array of strings (each array <= 40 tokens; focus on high-coverage safe tokens)',
     "- normalization_notes: array of strings (casing, punctuation, SentencePiece '▁', duplicates, etc.)",
-    "",
-    "VOCABULARY JSON:",
+    '',
+    'VOCABULARY JSON:',
     '"""',
     response.trim(),
     '"""',
-  ].join("\n");
+  ].join('\n');
 }
 
 function tryParseVocabularyJson(rawText) {
   try {
-    const parsed = JSON.parse(String(rawText || ""));
+    const parsed = JSON.parse(String(rawText || ''));
     const tokens = Array.isArray(parsed?.tokens)
       ? parsed.tokens
       : Array.isArray(parsed?.vocabulary)
@@ -416,7 +419,7 @@ function seededSampleIndices(length, sampleCount, seed) {
   if (target === 0) return [];
 
   // Park–Miller LCG for deterministic sampling
-  let state = (seed % 2147483647) || 1;
+  let state = seed % 2147483647 || 1;
   const out = new Set();
   while (out.size < target) {
     state = (state * 48271) % 2147483647;
@@ -430,24 +433,28 @@ function buildVocabReviewPromptSampled({ response }) {
   if (!parsed) return buildVocabReviewPrompt({ response });
 
   const { meta, tokens } = parsed;
-  const tokenStrings = tokens.map((t) => String(t));
+  const tokenStrings = tokens.map(t => String(t));
   const uniqueCount = new Set(tokenStrings).size;
-  const nonAscii = tokenStrings.filter((t) => /[^\x00-\x7F]/.test(t));
+  const nonAscii = tokenStrings.filter(t => /[^\x00-\x7F]/.test(t));
   const longest = tokenStrings
-    .map((t) => ({ t, len: t.length }))
+    .map(t => ({ t, len: t.length }))
     .sort((a, b) => b.len - a.len)
     .slice(0, 25)
-    .map((x) => x.t);
+    .map(x => x.t);
 
   const seed = parseInt(
-    crypto.createHash("sha256").update(String(meta?.version || "") + String(tokens.length)).digest("hex").slice(0, 8),
-    16,
+    crypto
+      .createHash('sha256')
+      .update(String(meta?.version || '') + String(tokens.length))
+      .digest('hex')
+      .slice(0, 8),
+    16
   );
 
   const head = tokenStrings.slice(0, 250);
   const tail = tokenStrings.slice(-250);
   const sampleIdx = seededSampleIndices(tokenStrings.length, 750, seed);
-  const sample = sampleIdx.map((i) => tokenStrings[i]);
+  const sample = sampleIdx.map(i => tokenStrings[i]);
 
   const payload = {
     metadata: {
@@ -469,66 +476,66 @@ function buildVocabReviewPromptSampled({ response }) {
   };
 
   return [
-    "You are a senior application security engineer reviewing a Stage-1 vocabulary allowlist for an LLM Privacy Airlock.",
-    "",
-    "Context:",
-    "- Stage 1 is a coarse allowlist gate to reduce unsafe payload surface.",
-    "- Stage 2 is content moderation and Stage 3 is PII redaction; Stage 1 is NOT the only privacy control.",
+    'You are a senior application security engineer reviewing a Stage-1 vocabulary allowlist for an LLM Privacy Airlock.',
+    '',
+    'Context:',
+    '- Stage 1 is a coarse allowlist gate to reduce unsafe payload surface.',
+    '- Stage 2 is content moderation and Stage 3 is PII redaction; Stage 1 is NOT the only privacy control.',
     "- The implementation normalizes tokens to lowercase and strips the SentencePiece word-boundary prefix '▁' (U+2581) before lookup.",
-    "",
-    "The full vocabulary is too large to include inline; you are given metadata and representative samples.",
-    "",
-    "Return ONLY valid JSON with keys:",
-    "- summary: 2-5 sentences",
-    "- major_risks: array of strings (5-12 items)",
-    "- recommended_changes: array of strings (8-20 items, actionable)",
-    "- remove_tokens: array of strings (tokens that should not be present)",
-    "- add_token_sets: object mapping set_name -> array of strings (each array <= 40 tokens; focus on high-coverage safe tokens)",
-    "- normalization_notes: array of strings",
-    "",
-    "VOCABULARY SUMMARY + SAMPLES (JSON):",
+    '',
+    'The full vocabulary is too large to include inline; you are given metadata and representative samples.',
+    '',
+    'Return ONLY valid JSON with keys:',
+    '- summary: 2-5 sentences',
+    '- major_risks: array of strings (5-12 items)',
+    '- recommended_changes: array of strings (8-20 items, actionable)',
+    '- remove_tokens: array of strings (tokens that should not be present)',
+    '- add_token_sets: object mapping set_name -> array of strings (each array <= 40 tokens; focus on high-coverage safe tokens)',
+    '- normalization_notes: array of strings',
+    '',
+    'VOCABULARY SUMMARY + SAMPLES (JSON):',
     '"""',
     JSON.stringify(payload, null, 2),
     '"""',
-  ].join("\n");
+  ].join('\n');
 }
 
 function buildPrompt({ template, question, response }) {
-  const t = String(template || "response-review").toLowerCase();
-  if (t === "vocab-review") {
+  const t = String(template || 'response-review').toLowerCase();
+  if (t === 'vocab-review') {
     // Large vocabularies can exceed provider limits; automatically sample when needed.
     if (response.length > 200000) return buildVocabReviewPromptSampled({ response });
     return buildVocabReviewPrompt({ response });
   }
-  if (t === "vocab-review-sampled") return buildVocabReviewPromptSampled({ response });
+  if (t === 'vocab-review-sampled') return buildVocabReviewPromptSampled({ response });
   return buildResponseReviewPrompt({ question, response });
 }
 
 function runCommand(command, args, input, { timeoutMs = 60000, env } = {}) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const resolvedEnv = env || process.env;
-    if (process.platform === "win32") {
+    if (process.platform === 'win32') {
       const child = spawn(command, args, {
-        stdio: ["pipe", "pipe", "pipe"],
+        stdio: ['pipe', 'pipe', 'pipe'],
         env: resolvedEnv,
         shell: true, // enables running .cmd shims (npm global bins) reliably
       });
 
-      let stdout = "";
-      let stderr = "";
+      let stdout = '';
+      let stderr = '';
       const timeoutId = setTimeout(() => {
         child.kill();
         resolve({ ok: false, stdout, stderr: `${stderr}\nTIMEOUT` });
       }, timeoutMs);
 
-      child.stdout.on("data", (d) => (stdout += d.toString()));
-      child.stderr.on("data", (d) => (stderr += d.toString()));
-      child.on("close", (code) => {
+      child.stdout.on('data', d => (stdout += d.toString()));
+      child.stderr.on('data', d => (stderr += d.toString()));
+      child.on('close', code => {
         clearTimeout(timeoutId);
         resolve({ ok: code === 0, code, stdout, stderr });
       });
 
-      child.on("error", (err) => {
+      child.on('error', err => {
         clearTimeout(timeoutId);
         resolve({
           ok: false,
@@ -548,30 +555,30 @@ function runCommand(command, args, input, { timeoutMs = 60000, env } = {}) {
       ? [command, `${command}.cmd`, `${command}.exe`]
       : [command];
 
-    const trySpawn = (idx) => {
+    const trySpawn = idx => {
       const cmd = candidates[idx];
       const child = spawn(cmd, args, {
-        stdio: ["pipe", "pipe", "pipe"],
+        stdio: ['pipe', 'pipe', 'pipe'],
         env: resolvedEnv,
       });
 
-      let stdout = "";
-      let stderr = "";
+      let stdout = '';
+      let stderr = '';
       const timeoutId = setTimeout(() => {
         child.kill();
         resolve({ ok: false, stdout, stderr: `${stderr}\nTIMEOUT` });
       }, timeoutMs);
 
-      child.stdout.on("data", (d) => (stdout += d.toString()));
-      child.stderr.on("data", (d) => (stderr += d.toString()));
-      child.on("close", (code) => {
+      child.stdout.on('data', d => (stdout += d.toString()));
+      child.stderr.on('data', d => (stderr += d.toString()));
+      child.on('close', code => {
         clearTimeout(timeoutId);
         resolve({ ok: code === 0, code, stdout, stderr });
       });
 
-      child.on("error", (err) => {
+      child.on('error', err => {
         clearTimeout(timeoutId);
-        if (err?.code === "ENOENT" && idx + 1 < candidates.length) {
+        if (err?.code === 'ENOENT' && idx + 1 < candidates.length) {
           trySpawn(idx + 1);
           return;
         }
@@ -592,7 +599,7 @@ function runCommand(command, args, input, { timeoutMs = 60000, env } = {}) {
 }
 
 function tryParseJson(text) {
-  const raw = String(text || "").trim();
+  const raw = String(text || '').trim();
   if (!raw) return null;
 
   const candidates = [];
@@ -605,15 +612,15 @@ function tryParseJson(text) {
   if (fenceMatch?.[1]) candidates.push(fenceMatch[1].trim());
 
   // 3) Heuristic: extract first {...} block
-  const firstObj = raw.indexOf("{");
-  const lastObj = raw.lastIndexOf("}");
+  const firstObj = raw.indexOf('{');
+  const lastObj = raw.lastIndexOf('}');
   if (firstObj !== -1 && lastObj !== -1 && lastObj > firstObj) {
     candidates.push(raw.slice(firstObj, lastObj + 1));
   }
 
   // 4) Heuristic: extract first [...] block
-  const firstArr = raw.indexOf("[");
-  const lastArr = raw.lastIndexOf("]");
+  const firstArr = raw.indexOf('[');
+  const lastArr = raw.lastIndexOf(']');
   if (firstArr !== -1 && lastArr !== -1 && lastArr > firstArr) {
     candidates.push(raw.slice(firstArr, lastArr + 1));
   }
@@ -630,15 +637,15 @@ function tryParseJson(text) {
 
 function redactNewlines(text, maxLen = 1200) {
   // Sanitize to remove potential API keys before processing
-  const sanitized = sanitize(String(text || ""));
-  const t = sanitized.replace(/\r?\n/g, "\\n");
+  const sanitized = sanitize(String(text || ''));
+  const t = sanitized.replace(/\r?\n/g, '\\n');
   if (t.length <= maxLen) return t;
   return `${t.slice(0, maxLen)}…`;
 }
 
 function truncate(text, maxLen = 8000) {
   // Sanitize to remove potential API keys before truncation
-  const t = sanitize(String(text || ""));
+  const t = sanitize(String(text || ''));
   if (t.length <= maxLen) return t;
   return `${t.slice(0, maxLen)}…`;
 }
@@ -654,15 +661,15 @@ function summarizeRaw(raw) {
 
 function compactValue(value, { maxArray = 30, maxString = 1600 } = {}) {
   if (value === null || value === undefined) return value;
-  if (typeof value === "string") return truncate(value, maxString);
+  if (typeof value === 'string') return truncate(value, maxString);
   if (Array.isArray(value)) {
-    if (value.length <= maxArray) return value.map((v) => compactValue(v));
+    if (value.length <= maxArray) return value.map(v => compactValue(v));
     return [
-      ...value.slice(0, maxArray).map((v) => compactValue(v)),
+      ...value.slice(0, maxArray).map(v => compactValue(v)),
       `…truncated ${value.length - maxArray} items…`,
     ];
   }
-  if (typeof value === "object") {
+  if (typeof value === 'object') {
     const out = {};
     for (const [k, v] of Object.entries(value)) {
       out[k] = compactValue(v);
@@ -681,9 +688,9 @@ function withoutEnvKeys(keys) {
 }
 
 function providerAttemptOrder(authMode) {
-  const mode = String(authMode || "session-first").toLowerCase();
-  if (mode === "env-first") return ["env", "session"];
-  return ["session", "env"];
+  const mode = String(authMode || 'session-first').toLowerCase();
+  if (mode === 'env-first') return ['env', 'session'];
+  return ['session', 'env'];
 }
 
 async function runClaude(prompt, { authMode, timeoutMs }) {
@@ -692,23 +699,22 @@ async function runClaude(prompt, { authMode, timeoutMs }) {
   const hasEnvKey = !!process.env.ANTHROPIC_API_KEY;
 
   for (const mode of order) {
-    if (mode === "env" && !hasEnvKey) {
+    if (mode === 'env' && !hasEnvKey) {
       attempts.push({
         mode,
         skipped: true,
-        reason: "ANTHROPIC_API_KEY is not set",
+        reason: 'ANTHROPIC_API_KEY is not set',
       });
       continue;
     }
 
-    const env =
-      mode === "session" ? withoutEnvKeys(["ANTHROPIC_API_KEY"]) : process.env;
+    const env = mode === 'session' ? withoutEnvKeys(['ANTHROPIC_API_KEY']) : process.env;
 
     const raw = await runCommand(
-      "claude",
-      ["-p", "--output-format", "json", "--permission-mode", "bypassPermissions"],
+      'claude',
+      ['-p', '--output-format', 'json', '--permission-mode', 'bypassPermissions'],
       prompt,
-      { timeoutMs, env },
+      { timeoutMs, env }
     );
 
     attempts.push({
@@ -733,10 +739,9 @@ async function runClaude(prompt, { authMode, timeoutMs }) {
 
   return {
     ok: false,
-    error: "claude failed",
+    error: 'claude failed',
     attempts,
-    hint:
-      "If you rely on a logged-in Claude Code session, run `claude` interactively once to authenticate. If you rely on env auth, set ANTHROPIC_API_KEY.",
+    hint: 'If you rely on a logged-in Claude Code session, run `claude` interactively once to authenticate. If you rely on env auth, set ANTHROPIC_API_KEY.',
   };
 }
 
@@ -746,26 +751,22 @@ async function runGemini(prompt, model, { authMode, timeoutMs }) {
   const hasEnvKey = !!process.env.GEMINI_API_KEY || !!process.env.GOOGLE_API_KEY;
 
   for (const mode of order) {
-    if (mode === "env" && !hasEnvKey) {
+    if (mode === 'env' && !hasEnvKey) {
       attempts.push({
         mode,
         skipped: true,
-        reason: "GEMINI_API_KEY/GOOGLE_API_KEY is not set",
+        reason: 'GEMINI_API_KEY/GOOGLE_API_KEY is not set',
       });
       continue;
     }
 
     const env =
-      mode === "session"
-        ? withoutEnvKeys(["GEMINI_API_KEY", "GOOGLE_API_KEY"])
-        : process.env;
+      mode === 'session' ? withoutEnvKeys(['GEMINI_API_KEY', 'GOOGLE_API_KEY']) : process.env;
 
-    const raw = await runCommand(
-      "gemini",
-      ["--output-format", "json", "--model", model],
-      prompt,
-      { timeoutMs, env },
-    );
+    const raw = await runCommand('gemini', ['--output-format', 'json', '--model', model], prompt, {
+      timeoutMs,
+      env,
+    });
 
     attempts.push({
       mode,
@@ -789,10 +790,9 @@ async function runGemini(prompt, model, { authMode, timeoutMs }) {
 
   return {
     ok: false,
-    error: "gemini failed",
+    error: 'gemini failed',
     attempts,
-    hint:
-      "If you rely on a logged-in Gemini CLI session, run `gemini` interactively once to authenticate. If you rely on env auth, set GEMINI_API_KEY or GOOGLE_API_KEY.",
+    hint: 'If you rely on a logged-in Gemini CLI session, run `gemini` interactively once to authenticate. If you rely on env auth, set GEMINI_API_KEY or GOOGLE_API_KEY.',
   };
 }
 
@@ -808,13 +808,13 @@ async function main() {
   const question = readFileOrNull(args.questionFile);
   if (!response || !response.trim()) {
     if (!args.responseFile) usage(1);
-    console.error("error: empty response");
+    console.error('error: empty response');
     process.exit(2);
   }
 
-  const providers = String(args.providers || "")
-    .split(",")
-    .map((p) => p.trim().toLowerCase())
+  const providers = String(args.providers || '')
+    .split(',')
+    .map(p => p.trim().toLowerCase())
     .filter(Boolean);
 
   const prompt = buildPrompt({
@@ -838,8 +838,8 @@ async function main() {
           parallel: args.parallel,
         },
         null,
-        2,
-      ),
+        2
+      )
     );
     return;
   }
@@ -850,26 +850,26 @@ async function main() {
   let cliValidation = null;
 
   if (!args.skipCliValidation) {
-    console.error("[cli-check] Validating provider CLI availability...");
+    console.error('[cli-check] Validating provider CLI availability...');
     const cliCheckStart = Date.now();
-    const providerChecks = await Promise.all(
-      providers.map((p) => validateProviderCli(p))
-    );
+    const providerChecks = await Promise.all(providers.map(p => validateProviderCli(p)));
     const cliCheckDurationMs = Date.now() - cliCheckStart;
 
     cliValidation = {
       checks: providerChecks,
       durationMs: cliCheckDurationMs,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
-    const unavailable = providerChecks.filter((c) => !c.available);
-    const available = providerChecks.filter((c) => c.available);
+    const unavailable = providerChecks.filter(c => !c.available);
+    const available = providerChecks.filter(c => c.available);
 
     // Log CLI validation results
     for (const check of providerChecks) {
       if (check.available) {
-        console.error(`[cli-check] ${check.provider}: available (${check.version || "version unknown"})`);
+        console.error(
+          `[cli-check] ${check.provider}: available (${check.version || 'version unknown'})`
+        );
       } else {
         console.error(`[cli-check] ${check.provider}: unavailable (${check.error})`);
       }
@@ -878,31 +878,45 @@ async function main() {
     // Provider Fallback Logic (Cursor Recommendation #4)
     // If all providers are unavailable, fail early with clear error
     if (unavailable.length === providers.length) {
-      const errorMsg = `All providers unavailable: ${unavailable.map((c) => c.provider).join(", ")}`;
+      const errorMsg = `All providers unavailable: ${unavailable.map(c => c.provider).join(', ')}`;
       console.error(`[cli-check] FATAL: ${errorMsg}`);
-      console.log(JSON.stringify({
-        ok: false,
-        error: errorMsg,
-        cliValidation
-      }, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            ok: false,
+            error: errorMsg,
+            cliValidation,
+          },
+          null,
+          2
+        )
+      );
       process.exit(2);
     }
 
     // Filter to only available providers for execution
     if (unavailable.length > 0) {
-      availableProviders = available.map((c) => c.provider);
-      console.error(`[cli-check] Proceeding with available providers: ${availableProviders.join(", ")}`);
+      availableProviders = available.map(c => c.provider);
+      console.error(
+        `[cli-check] Proceeding with available providers: ${availableProviders.join(', ')}`
+      );
 
       // Load config for fallback threshold
       const providerConfig = loadProviderConfig();
       if (availableProviders.length < providerConfig.fallback_threshold) {
         const errorMsg = `Insufficient providers available (${availableProviders.length} < ${providerConfig.fallback_threshold})`;
         console.error(`[cli-check] FATAL: ${errorMsg}`);
-        console.log(JSON.stringify({
-          ok: false,
-          error: errorMsg,
-          cliValidation
-        }, null, 2));
+        console.log(
+          JSON.stringify(
+            {
+              ok: false,
+              error: errorMsg,
+              cliValidation,
+            },
+            null,
+            2
+          )
+        );
         process.exit(2);
       }
     }
@@ -929,13 +943,15 @@ async function main() {
         providersToExecute.push(p);
       } else {
         const cbState = providerCircuitBreaker.getState(p);
-        console.warn(`[circuit-breaker] Skipping ${p}: circuit OPEN (reset at ${new Date(cbState.openUntil).toISOString()})`);
+        console.warn(
+          `[circuit-breaker] Skipping ${p}: circuit OPEN (reset at ${new Date(cbState.openUntil).toISOString()})`
+        );
         results[p] = {
           ok: false,
           skipped: true,
-          reason: "circuit_breaker_open",
+          reason: 'circuit_breaker_open',
           circuit_state: cbState.state,
-          open_until: cbState.openUntil
+          open_until: cbState.openUntil,
         };
         circuitBreakerResults[p] = cbState;
         skippedCount++;
@@ -951,15 +967,15 @@ async function main() {
     console.error(`[perf] Running ${providersToExecute.length} providers in parallel...`);
 
     // Create promises for each provider
-    const providerPromises = providersToExecute.map((provider) => {
+    const providerPromises = providersToExecute.map(provider => {
       const executeProvider = async () => {
         let result;
-        if (provider === "claude") {
+        if (provider === 'claude') {
           result = await runClaude(prompt, {
             authMode: args.authMode,
             timeoutMs: args.timeoutMs,
           });
-        } else if (provider === "gemini") {
+        } else if (provider === 'gemini') {
           result = await runGemini(prompt, args.model, {
             authMode: args.authMode,
             timeoutMs: args.timeoutMs,
@@ -978,10 +994,10 @@ async function main() {
           } else {
             providerCircuitBreaker.recordFailure(provider);
             // Log error with context (Cursor Recommendation #10)
-            logErrorWithContext(new Error(result.error || "Provider failed"), {
+            logErrorWithContext(new Error(result.error || 'Provider failed'), {
               provider,
               template: args.template,
-              authMode: args.authMode
+              authMode: args.authMode,
             });
           }
         }
@@ -997,7 +1013,7 @@ async function main() {
 
     // Map results to results object
     for (const result of providerResults) {
-      if (result.status === "fulfilled") {
+      if (result.status === 'fulfilled') {
         results[result.value.provider] = result.value.result;
       } else {
         // Provider promise rejected - should not happen with our error handling
@@ -1008,7 +1024,7 @@ async function main() {
         logErrorWithContext(error, {
           provider,
           template: args.template,
-          authMode: args.authMode
+          authMode: args.authMode,
         });
 
         // Record failure in circuit breaker
@@ -1027,12 +1043,12 @@ async function main() {
     console.error(`[perf] Running ${providersToExecute.length} providers sequentially...`);
     for (const provider of providersToExecute) {
       let result;
-      if (provider === "claude") {
+      if (provider === 'claude') {
         result = await runClaude(prompt, {
           authMode: args.authMode,
           timeoutMs: args.timeoutMs,
         });
-      } else if (provider === "gemini") {
+      } else if (provider === 'gemini') {
         result = await runGemini(prompt, args.model, {
           authMode: args.authMode,
           timeoutMs: args.timeoutMs,
@@ -1050,10 +1066,10 @@ async function main() {
           providerCircuitBreaker.recordSuccess(provider);
         } else {
           providerCircuitBreaker.recordFailure(provider);
-          logErrorWithContext(new Error(result.error || "Provider failed"), {
+          logErrorWithContext(new Error(result.error || 'Provider failed'), {
             provider,
             template: args.template,
-            authMode: args.authMode
+            authMode: args.authMode,
           });
         }
       }
@@ -1065,7 +1081,7 @@ async function main() {
   // Performance measurement: end timing
   const providerEndTime = Date.now();
   const providerDurationMs = providerEndTime - providerStartTime;
-  const successCount = Object.values(results).filter((r) => r.ok).length;
+  const successCount = Object.values(results).filter(r => r.ok).length;
 
   // Partial Failure Recovery (Cursor Recommendation #11)
   let partialFailureStatus = null;
@@ -1082,7 +1098,8 @@ async function main() {
       success_rate: successRate,
       meets_count_threshold: meetsCount,
       meets_rate_threshold: meetsRate,
-      partial_success: !meetsCount && !meetsRate ? false : (skippedCount > 0 || successCount < executedCount)
+      partial_success:
+        !meetsCount && !meetsRate ? false : skippedCount > 0 || successCount < executedCount,
     };
 
     if (partialFailureStatus.partial_success) {
@@ -1093,7 +1110,7 @@ async function main() {
   }
 
   console.error(
-    `[perf] ${availableProviders.length} providers completed in ${providerDurationMs}ms (${args.parallel ? "parallel" : "sequential"} execution, ${successCount}/${availableProviders.length} succeeded)`
+    `[perf] ${availableProviders.length} providers completed in ${providerDurationMs}ms (${args.parallel ? 'parallel' : 'sequential'} execution, ${successCount}/${availableProviders.length} succeeded)`
   );
 
   console.log(
@@ -1115,22 +1132,24 @@ async function main() {
           // Cursor Recommendation #11 - Partial Failure Recovery
           partialFailure: partialFailureStatus,
           // Cursor Recommendation #14 - Circuit Breaker Status
-          circuitBreaker: circuitBreakerConfig.enabled ? {
-            enabled: true,
-            skipped_providers: skippedCount,
-            providers_state: Object.fromEntries(
-              availableProviders.map(p => [p, providerCircuitBreaker.getState(p)])
-            )
-          } : null,
+          circuitBreaker: circuitBreakerConfig.enabled
+            ? {
+                enabled: true,
+                skipped_providers: skippedCount,
+                providers_state: Object.fromEntries(
+                  availableProviders.map(p => [p, providerCircuitBreaker.getState(p)])
+                ),
+              }
+            : null,
         },
       },
       null,
-      2,
-    ),
+      2
+    )
   );
 }
 
-main().catch((e) => {
+main().catch(e => {
   // Sanitize error output to prevent credential exposure
   console.error(`fatal: ${sanitize(e?.message || String(e))}`);
   process.exit(1);

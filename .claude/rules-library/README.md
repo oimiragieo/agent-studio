@@ -13,6 +13,7 @@ To use an archived rule:
 ## Archived Categories
 
 ### Niche Languages
+
 - `dragonruby-*` - DragonRuby game development
 - `elixir-*` - Elixir/Phoenix
 - `go-*` - Go language
@@ -22,22 +23,26 @@ To use an archived rule:
 - `swiftui-*`, `swift-*` - Swift/SwiftUI
 
 ### Unused Frameworks
+
 - `laravel-*` - Laravel PHP
 - `drupal-*` - Drupal CMS
 - `typo3cms-*` - TYPO3 CMS
 - `wordpress-*` - WordPress
 
 ### Mobile Development
+
 - `android-*` - Android development
 - `flutter-*` - Flutter
 - `react-native-*` - React Native
 
 ### Other Frameworks
+
 - `rails-*` - Ruby on Rails
 - `svelte*` - Svelte/SvelteKit
 - `vue-*` - Vue.js
 
 ### Older Versions
+
 - `nextjs-14-*` - Next.js 14 (superseded by Next.js 15)
 
 ## Restoring Archived Rules
@@ -57,4 +62,3 @@ mv .claude/archive/[rule-name] .claude/rules/
 - Archived rules are preserved for reference
 - They don't consume context tokens unless explicitly loaded
 - Consider creating a master ruleset if you frequently need multiple archived rules
-

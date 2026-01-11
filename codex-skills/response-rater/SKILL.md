@@ -6,19 +6,19 @@ model: opus
 
 # Response Rater
 
-Use this skill to get *independent* critiques of an assistant response by calling external AI CLIs in headless mode and aggregating the results.
+Use this skill to get _independent_ critiques of an assistant response by calling external AI CLIs in headless mode and aggregating the results.
 
 ## Quick start
 
-1) Save the response you want reviewed to a file (or copy/paste it when prompted).
+1. Save the response you want reviewed to a file (or copy/paste it when prompted).
 
-2) Ensure you have at least one provider authenticated:
+2. Ensure you have at least one provider authenticated:
 
 - **Claude Code**: either (a) you’re already logged in via subscription/session, or (b) set `ANTHROPIC_API_KEY`
 - **Gemini CLI**: either (a) you’re already logged in via subscription/session, or (b) set `GEMINI_API_KEY` or `GOOGLE_API_KEY`
 - **Copilot CLI**: sign in with the CLI’s normal auth flow (varies by setup)
 
-3) Run:
+3. Run:
 
 `node codex-skills/response-rater/scripts/rate.js --response-file <path> --providers "claude,gemini"`
 
@@ -38,8 +38,8 @@ If Claude times out, increase timeout:
 
 By default the runner uses `--auth-mode session-first`:
 
-1) Try the CLI using your existing logged-in session/subscription
-2) If that fails and env keys exist, retry using env keys
+1. Try the CLI using your existing logged-in session/subscription
+2. If that fails and env keys exist, retry using env keys
 
 To flip the order:
 

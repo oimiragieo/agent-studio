@@ -7,6 +7,7 @@ Common migration patterns for rule updates and framework changes.
 ### Pages Router → App Router
 
 **Before** (Pages Router):
+
 ```typescript
 // pages/users/[id].tsx
 import { useRouter } from 'next/router';
@@ -15,18 +16,19 @@ import { useEffect, useState } from 'react';
 export default function UserPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
-  
+
   useEffect(() => {
     fetch(`/api/users/${router.query.id}`)
       .then(res => res.json())
       .then(setUser);
   }, [router.query.id]);
-  
+
   return <div>{user?.name}</div>;
 }
 ```
 
 **After** (App Router):
+
 ```typescript
 // app/users/[id]/page.tsx
 export default async function UserPage({ params }: { params: { id: string } }) {
@@ -36,6 +38,7 @@ export default async function UserPage({ params }: { params: { id: string } }) {
 ```
 
 **Key Changes**:
+
 - Move from `pages/` to `app/`
 - Use async Server Components
 - Remove `useEffect` for data fetching
@@ -44,6 +47,7 @@ export default async function UserPage({ params }: { params: { id: string } }) {
 ### Next.js 14 → 15
 
 **React 19 Changes**:
+
 ```typescript
 // Before: React 18
 'use client';
@@ -71,6 +75,7 @@ export function Counter({ countPromise }: { countPromise: Promise<number> }) {
 ### Adding Strict Mode
 
 **Before** (Loose types):
+
 ```typescript
 function processData(data: any) {
   return data.map(item => item.value);
@@ -78,6 +83,7 @@ function processData(data: any) {
 ```
 
 **After** (Strict types):
+
 ```typescript
 interface DataItem {
   value: number;
@@ -91,6 +97,7 @@ function processData(data: DataItem[]): number[] {
 ### Replacing `any` with `unknown`
 
 **Before**:
+
 ```typescript
 function handleData(data: any) {
   console.log(data.value);
@@ -98,6 +105,7 @@ function handleData(data: any) {
 ```
 
 **After**:
+
 ```typescript
 function handleData(data: unknown) {
   if (typeof data === 'object' && data !== null && 'value' in data) {
@@ -111,12 +119,14 @@ function handleData(data: unknown) {
 ### Adding Type Hints
 
 **Before**:
+
 ```python
 def process_items(items):
     return [item.value for item in items]
 ```
 
 **After**:
+
 ```python
 from typing import List
 
@@ -130,6 +140,7 @@ def process_items(items: List[Item]) -> List[int]:
 ### Async Migration
 
 **Before** (Blocking):
+
 ```python
 import requests
 
@@ -139,6 +150,7 @@ def fetch_user(user_id: str):
 ```
 
 **After** (Async):
+
 ```python
 import httpx
 
@@ -153,16 +165,17 @@ async def fetch_user(user_id: str) -> dict:
 ### Class Components → Functional Components
 
 **Before**:
+
 ```typescript
 class UserProfile extends React.Component {
   state = { user: null };
-  
+
   componentDidMount() {
     fetchUser(this.props.userId).then(user => {
       this.setState({ user });
     });
   }
-  
+
   render() {
     return <div>{this.state.user?.name}</div>;
   }
@@ -170,14 +183,15 @@ class UserProfile extends React.Component {
 ```
 
 **After**:
+
 ```typescript
 export function UserProfile({ userId }: { userId: string }) {
   const [user, setUser] = useState(null);
-  
+
   useEffect(() => {
     fetchUser(userId).then(setUser);
   }, [userId]);
-  
+
   return <div>{user?.name}</div>;
 }
 ```
@@ -193,6 +207,7 @@ export function UserProfile({ userId }: { userId: string }) {
 ## Pattern Matching
 
 When migrating:
+
 1. Identify old pattern in code
 2. Find matching migration pattern
 3. Apply transformation
@@ -205,4 +220,3 @@ When migrating:
 - **Breaking changes**: Not handling deprecated patterns
 - **Type errors**: Not updating types during migration
 - **Testing gaps**: Not verifying after migration
-

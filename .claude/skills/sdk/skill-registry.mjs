@@ -20,7 +20,7 @@ const skillsRegistry = new Map();
 function parseSkillMarkdown(content) {
   // Extract YAML frontmatter
   const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-  
+
   if (!frontmatterMatch) {
     throw new Error('Invalid skill format: missing YAML frontmatter');
   }
@@ -35,12 +35,15 @@ function parseSkillMarkdown(content) {
     if (match) {
       const key = match[1];
       let value = match[2].trim();
-      
+
       // Parse arrays
       if (value.startsWith('[') && value.endsWith(']')) {
-        value = value.slice(1, -1).split(',').map(v => v.trim().replace(/['"]/g, ''));
+        value = value
+          .slice(1, -1)
+          .split(',')
+          .map(v => v.trim().replace(/['"]/g, ''));
       }
-      
+
       metadata[key] = value;
     }
   }
@@ -54,7 +57,7 @@ function parseSkillMarkdown(content) {
     bestPractices: metadata.best_practices || [],
     errorHandling: metadata.error_handling || 'graceful',
     streaming: metadata.streaming === 'supported',
-    outputFormats: metadata.output_formats || ['markdown']
+    outputFormats: metadata.output_formats || ['markdown'],
   };
 }
 
@@ -75,7 +78,7 @@ export async function registerSkill(skillName) {
   }
 
   const skillPath = join(__dirname, `../${skillName}/SKILL.md`);
-  
+
   try {
     const skill = await loadSkillFromFile(skillPath);
     skillsRegistry.set(skillName, skill);
@@ -91,10 +94,8 @@ export async function registerSkill(skillName) {
 export async function getAllSkills() {
   const skillsDir = join(__dirname, '../');
   const entries = await readdir(skillsDir, { withFileTypes: true });
-  
-  const skillNames = entries
-    .filter(entry => entry.isDirectory())
-    .map(entry => entry.name);
+
+  const skillNames = entries.filter(entry => entry.isDirectory()).map(entry => entry.name);
 
   const skills = [];
   for (const skillName of skillNames) {
@@ -123,7 +124,7 @@ export function getSkill(skillName) {
  */
 export async function registerSkillWithSDK(skillName) {
   const skill = await registerSkill(skillName);
-  
+
   // In production, this would use SDK Skill class:
   // return new Skill({
   //   name: skill.name,
@@ -144,9 +145,9 @@ export async function registerSkillWithSDK(skillName) {
       bestPractices: skill.bestPractices,
       errorHandling: skill.errorHandling,
       streaming: skill.streaming,
-      outputFormats: skill.outputFormats
+      outputFormats: skill.outputFormats,
     },
-    registered_at: new Date().toISOString()
+    registered_at: new Date().toISOString(),
   };
 }
 
@@ -156,7 +157,7 @@ export async function registerSkillWithSDK(skillName) {
 export async function initializeSkills() {
   const skillsDir = join(__dirname, '../');
   const entries = await readdir(skillsDir, { withFileTypes: true });
-  
+
   const skillDirs = entries
     .filter(entry => entry.isDirectory() && entry.name !== 'sdk')
     .map(entry => entry.name);
@@ -179,7 +180,7 @@ export async function initializeSkills() {
  */
 export async function invokeSkill(skillName, input, context = {}) {
   const skill = await registerSkill(skillName);
-  
+
   if (!skill) {
     throw new Error(`Skill ${skillName} not found`);
   }
@@ -192,7 +193,7 @@ export async function invokeSkill(skillName, input, context = {}) {
     instructions: skill.instructions,
     input: input,
     context: context,
-    invoked_at: new Date().toISOString()
+    invoked_at: new Date().toISOString(),
   };
 }
 
@@ -211,8 +212,8 @@ export function createSDKSkill(skillConfig) {
       bestPractices: skillConfig.bestPractices,
       errorHandling: skillConfig.errorHandling,
       streaming: skillConfig.streaming,
-      outputFormats: skillConfig.outputFormats
-    }
+      outputFormats: skillConfig.outputFormats,
+    },
   };
 }
 
@@ -223,6 +224,5 @@ export default {
   createSDKSkill,
   registerSkillWithSDK,
   initializeSkills,
-  invokeSkill
+  invokeSkill,
 };
-

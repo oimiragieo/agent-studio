@@ -36,7 +36,7 @@ async function loadCache() {
       return {
         version: '1.0',
         created_at: new Date().toISOString(),
-        entries: {}
+        entries: {},
       };
     }
 
@@ -47,7 +47,7 @@ async function loadCache() {
     return {
       version: '1.0',
       created_at: new Date().toISOString(),
-      entries: {}
+      entries: {},
     };
   }
 }
@@ -132,7 +132,7 @@ export async function getRating(planId, options = {}) {
     age_ms: age,
     ttl_remaining_ms: ttl - age,
     content_hash: entry.content_hash,
-    metadata: entry.metadata || {}
+    metadata: entry.metadata || {},
   };
 }
 
@@ -152,7 +152,7 @@ export async function setRating(planId, rating, options = {}) {
     rating: rating,
     content_hash: options.contentHash || null,
     created_at: new Date().toISOString(),
-    metadata: options.metadata || {}
+    metadata: options.metadata || {},
   };
 
   cache.entries[planId] = entry;
@@ -212,7 +212,7 @@ export async function getCacheStats() {
     oldest_entry_ms: 0,
     newest_entry_ms: 0,
     cache_file: CACHE_FILE,
-    cache_exists: existsSync(CACHE_FILE)
+    cache_exists: existsSync(CACHE_FILE),
   };
 
   const ages = [];
@@ -311,17 +311,17 @@ Exit codes:
     process.exit(0);
   }
 
-  const getArg = (name) => {
+  const getArg = name => {
     const index = args.indexOf(`--${name}`);
     return index !== -1 && args[index + 1] ? args[index + 1] : null;
   };
 
-  const hasFlag = (name) => args.includes(`--${name}`);
+  const hasFlag = name => args.includes(`--${name}`);
 
   try {
     const options = {
       ttl: parseInt(getArg('ttl'), 10) || DEFAULT_TTL,
-      contentHash: getArg('hash')
+      contentHash: getArg('hash'),
     };
 
     if (hasFlag('stats')) {
@@ -460,7 +460,6 @@ Exit codes:
     console.error('Error: No valid command specified');
     console.error('Run with --help for usage information');
     process.exit(1);
-
   } catch (error) {
     console.error('Fatal error:', error.message);
     process.exit(1);
@@ -468,8 +467,9 @@ Exit codes:
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main().catch(error => {
     console.error('Fatal error:', error);
@@ -484,5 +484,5 @@ export default {
   clearCache,
   getCacheStats,
   computeContentHash,
-  hashPlanFile
+  hashPlanFile,
 };

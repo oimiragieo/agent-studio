@@ -31,7 +31,7 @@ const colors = {
   green: '\x1b[32m',
   yellow: '\x1b[33m',
   cyan: '\x1b[36m',
-  bold: '\x1b[1m'
+  bold: '\x1b[1m',
 };
 
 /**
@@ -42,7 +42,9 @@ function findWorkflowFiles() {
   const workflowDir = path.join(__dirname, '..', 'workflows');
 
   if (!fs.existsSync(workflowDir)) {
-    console.error(`${colors.red}Error: Workflow directory not found: ${workflowDir}${colors.reset}`);
+    console.error(
+      `${colors.red}Error: Workflow directory not found: ${workflowDir}${colors.reset}`
+    );
     process.exit(1);
   }
 
@@ -65,7 +67,7 @@ function parseYamlFile(filePath) {
   } catch (error) {
     return {
       success: false,
-      error: error.message || 'Unknown parsing error'
+      error: error.message || 'Unknown parsing error',
     };
   }
 }
@@ -93,7 +95,9 @@ function validateStep01(step) {
 
   // Check for response-rater skill
   if (step.skill !== 'response-rater') {
-    issues.push(`Missing or incorrect skill (expected: "response-rater", found: "${step.skill || 'none'}")`);
+    issues.push(
+      `Missing or incorrect skill (expected: "response-rater", found: "${step.skill || 'none'}")`
+    );
   }
 
   // Check for minimum_score in validation
@@ -104,16 +108,16 @@ function validateStep01(step) {
   }
 
   // Check for plan input
-  const hasPlanInput = step.inputs?.some(input =>
-    typeof input === 'string' && input.includes('plan-{{workflow_id}}.json')
+  const hasPlanInput = step.inputs?.some(
+    input => typeof input === 'string' && input.includes('plan-{{workflow_id}}.json')
   );
   if (!hasPlanInput) {
     issues.push('Missing plan-{{workflow_id}}.json input');
   }
 
   // Check for rating output
-  const hasRatingOutput = step.outputs?.some(output =>
-    typeof output === 'string' && output.includes('plan-rating')
+  const hasRatingOutput = step.outputs?.some(
+    output => typeof output === 'string' && output.includes('plan-rating')
   );
   if (!hasRatingOutput) {
     issues.push('Missing plan-rating output');
@@ -136,7 +140,7 @@ function validateWorkflow(filePath) {
     hasStep01: false,
     step01Valid: false,
     issues: [],
-    errors: []
+    errors: [],
   };
 
   // Parse YAML
@@ -208,7 +212,9 @@ function main() {
 
   // Print individual results
   results.forEach(result => {
-    const icon = result.success ? `${colors.green}✓${colors.reset}` : `${colors.red}✗${colors.reset}`;
+    const icon = result.success
+      ? `${colors.green}✓${colors.reset}`
+      : `${colors.red}✗${colors.reset}`;
     let status = '';
 
     if (!result.hasStep0) {
@@ -250,7 +256,9 @@ function main() {
   // List missing workflows
   if (failures.length > 0) {
     console.log('');
-    console.log(`${colors.bold}${colors.red}Workflows with missing or invalid Step 0.1:${colors.reset}`);
+    console.log(
+      `${colors.bold}${colors.red}Workflows with missing or invalid Step 0.1:${colors.reset}`
+    );
     failures.forEach((result, index) => {
       console.log(`${index + 1}. ${result.filename}`);
       if (result.issues.length > 0) {

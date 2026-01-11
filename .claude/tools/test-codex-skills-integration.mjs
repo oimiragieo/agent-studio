@@ -13,9 +13,20 @@ const projectRoot = path.join(__dirname, '../..');
 const MOCK_MODE = process.env.CI === 'true' || process.argv.includes('--mock');
 const VERBOSE = process.argv.includes('--verbose');
 
-const colors = { green: '\x1b[32m', red: '\x1b[31m', yellow: '\x1b[33m', blue: '\x1b[34m', reset: '\x1b[0m', bold: '\x1b[1m' };
-function assert(c, m) { if (!c) throw new Error(m); }
-function log(...a) { if (VERBOSE) console.log('  ', ...a); }
+const colors = {
+  green: '\x1b[32m',
+  red: '\x1b[31m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+};
+function assert(c, m) {
+  if (!c) throw new Error(m);
+}
+function log(...a) {
+  if (VERBOSE) console.log('  ', ...a);
+}
 
 function findSkillPath(n) {
   const a = path.join(projectRoot, '.claude/skills', n, 'SKILL.md');
@@ -47,13 +58,20 @@ async function testMissingSkill() {
 
 async function checkCli(cli) {
   if (MOCK_MODE) {
-    const m = { claude: { available: true, version: 'mock-1.0' }, gemini: { available: false, error: 'Mock' } };
+    const m = {
+      claude: { available: true, version: 'mock-1.0' },
+      gemini: { available: false, error: 'Mock' },
+    };
     return m[cli] || { available: false, error: 'Unknown' };
   }
   try {
-    await execPromise(process.platform === 'win32' ? 'where ' + cli : 'which ' + cli, { timeout: 5000 });
+    await execPromise(process.platform === 'win32' ? 'where ' + cli : 'which ' + cli, {
+      timeout: 5000,
+    });
     return { available: true, version: 'found' };
-  } catch (e) { return { available: false, error: e.message }; }
+  } catch (e) {
+    return { available: false, error: e.message };
+  }
 }
 
 async function testClaudeCliDetection() {
@@ -72,29 +90,45 @@ async function testMissingGeminiCli() {
   }
 }
 
-const RETRY_CFG = { maxRetries: 3, baseDelayMs: 10, maxDelayMs: 50, retryableErrors: ['TIMEOUT', 'RATE_LIMIT'] };
+const RETRY_CFG = {
+  maxRetries: 3,
+  baseDelayMs: 10,
+  maxDelayMs: 50,
+  retryableErrors: ['TIMEOUT', 'RATE_LIMIT'],
+};
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function withRetry(fn, cfg = RETRY_CFG) {
   for (let i = 1; i <= cfg.maxRetries; i++) {
-    try { return await fn(); }
-    catch (e) {
+    try {
+      return await fn();
+    } catch (e) {
       if (i === cfg.maxRetries || !cfg.retryableErrors.some(x => e.message.includes(x))) throw e;
-      await sleep(Math.min(cfg.baseDelayMs * Math.pow(2, i-1), cfg.maxDelayMs));
+      await sleep(Math.min(cfg.baseDelayMs * Math.pow(2, i - 1), cfg.maxDelayMs));
     }
   }
 }
 
 async function testRetryOnTimeout() {
   let a = 0;
-  const fn = async () => { a++; if (a < 3) throw new Error('TIMEOUT'); return 'ok'; };
+  const fn = async () => {
+    a++;
+    if (a < 3) throw new Error('TIMEOUT');
+    return 'ok';
+  };
   const r = await withRetry(fn);
   assert(r === 'ok' && a === 3, 'Retries on timeout');
 }
 
 async function testNoRetryOnAuth() {
   let a = 0;
-  try { await withRetry(async () => { a++; throw new Error('AUTH_FAILED'); }); }
-  catch (e) { assert(e.message.includes('AUTH_FAILED') && a === 1, 'No retry on auth'); }
+  try {
+    await withRetry(async () => {
+      a++;
+      throw new Error('AUTH_FAILED');
+    });
+  } catch (e) {
+    assert(e.message.includes('AUTH_FAILED') && a === 1, 'No retry on auth');
+  }
 }
 
 function evalCond(cond, ctx = {}) {
@@ -102,8 +136,16 @@ function evalCond(cond, ctx = {}) {
   const sc = { providers: ctx.providers || [], env: { CI: process.env.CI === 'true' } };
   const t = cond.trim();
   // Check compound first
-  if (t.includes(' OR ')) return t.split(' OR ').map(p => p.trim()).some(p => evalCond(p, ctx));
-  if (t.includes(' AND ')) return t.split(' AND ').map(p => p.trim()).every(p => evalCond(p, ctx));
+  if (t.includes(' OR '))
+    return t
+      .split(' OR ')
+      .map(p => p.trim())
+      .some(p => evalCond(p, ctx));
+  if (t.includes(' AND '))
+    return t
+      .split(' AND ')
+      .map(p => p.trim())
+      .every(p => evalCond(p, ctx));
   // Single patterns
   if (t.includes('providers.includes')) {
     const m = t.match(/providers\.includes\(['"]([^'"]+)['"]\)/);
@@ -133,15 +175,25 @@ async function testEnvCondition() {
   assert(evalCond('env.CI === true', {}) === true, 'CI true');
   process.env.CI = 'false';
   assert(evalCond('env.CI === true', {}) === false, 'CI false');
-  if (orig) process.env.CI = orig; else delete process.env.CI;
+  if (orig) process.env.CI = orig;
+  else delete process.env.CI;
 }
 
 async function testCompoundConditions() {
   const c = { providers: ['claude', 'gemini'] };
-  assert(evalCond('providers.includes("claude") OR providers.includes("copilot")', c), 'OR any true');
+  assert(
+    evalCond('providers.includes("claude") OR providers.includes("copilot")', c),
+    'OR any true'
+  );
   assert(!evalCond('providers.includes("x") OR providers.includes("y")', c), 'OR all false');
-  assert(evalCond('providers.includes("claude") AND providers.includes("gemini")', c), 'AND all true');
-  assert(!evalCond('providers.includes("claude") AND providers.includes("copilot")', c), 'AND any false');
+  assert(
+    evalCond('providers.includes("claude") AND providers.includes("gemini")', c),
+    'AND all true'
+  );
+  assert(
+    !evalCond('providers.includes("claude") AND providers.includes("copilot")', c),
+    'AND any false'
+  );
 }
 
 const tests = [
@@ -155,7 +207,7 @@ const tests = [
   { name: 'evaluates provider condition', test: testProviderCondition, category: 'Conditions' },
   { name: 'handles invalid condition', test: testInvalidCondition, category: 'Conditions' },
   { name: 'evaluates env condition', test: testEnvCondition, category: 'Conditions' },
-  { name: 'evaluates compound conditions', test: testCompoundConditions, category: 'Conditions' }
+  { name: 'evaluates compound conditions', test: testCompoundConditions, category: 'Conditions' },
 ];
 
 async function run() {
@@ -166,17 +218,41 @@ async function run() {
   const results = [];
   let cat = '';
   for (const { name, test, category } of tests) {
-    if (category !== cat) { cat = category; console.log(colors.bold + cat + colors.reset); }
-    try { await test(); console.log('  ' + colors.green + 'PASS' + colors.reset + ' ' + name); results.push({ name, category, status: 'PASS' }); }
-    catch (e) { console.log('  ' + colors.red + 'FAIL ' + name + ': ' + e.message + colors.reset); results.push({ name, category, status: 'FAIL', error: e.message }); }
+    if (category !== cat) {
+      cat = category;
+      console.log(colors.bold + cat + colors.reset);
+    }
+    try {
+      await test();
+      console.log('  ' + colors.green + 'PASS' + colors.reset + ' ' + name);
+      results.push({ name, category, status: 'PASS' });
+    } catch (e) {
+      console.log('  ' + colors.red + 'FAIL ' + name + ': ' + e.message + colors.reset);
+      results.push({ name, category, status: 'FAIL', error: e.message });
+    }
   }
   const p = results.filter(r => r.status === 'PASS').length;
   const f = results.filter(r => r.status === 'FAIL').length;
   console.log('-'.repeat(50));
   console.log('Passed:', p, ' Failed:', f);
-  const rp = path.join(projectRoot, '.claude/context/artifacts/test-codex-integration-results.json');
+  const rp = path.join(
+    projectRoot,
+    '.claude/context/artifacts/test-codex-integration-results.json'
+  );
   fs.mkdirSync(path.dirname(rp), { recursive: true });
-  fs.writeFileSync(rp, JSON.stringify({ timestamp: new Date().toISOString(), mode: MOCK_MODE ? 'mock' : 'real', summary: { total: results.length, passed: p, failed: f }, tests: results }, null, 2));
+  fs.writeFileSync(
+    rp,
+    JSON.stringify(
+      {
+        timestamp: new Date().toISOString(),
+        mode: MOCK_MODE ? 'mock' : 'real',
+        summary: { total: results.length, passed: p, failed: f },
+        tests: results,
+      },
+      null,
+      2
+    )
+  );
   console.log('Results saved to:', rp);
   process.exit(f > 0 ? 1 : 0);
 }

@@ -11,6 +11,7 @@ allowed-tools: bash, read, webfetch
 This skill provides Slack API operations with progressive disclosure for optimal context usage.
 
 **Context Savings**: ~90% reduction
+
 - **MCP Mode**: ~15,000 tokens always loaded (30+ tools)
 - **Skill Mode**: ~500 tokens metadata + on-demand loading
 
@@ -38,13 +39,13 @@ This skill provides Slack API operations with progressive disclosure for optimal
 
 The skill provides 14 tools across 5 categories:
 
-| Category | Tools | Confirmation Required |
-|----------|-------|----------------------|
-| **Messaging** | post-message, post-thread, update-message, delete-message | Yes (all) |
-| **Channels** | list-channels, get-channel, channel-history | No |
-| **Users** | list-users, get-user, user-presence | No |
-| **Files** | upload-file, list-files | Yes (upload only) |
-| **Reactions** | add-reaction, get-reactions | No |
+| Category      | Tools                                                     | Confirmation Required |
+| ------------- | --------------------------------------------------------- | --------------------- |
+| **Messaging** | post-message, post-thread, update-message, delete-message | Yes (all)             |
+| **Channels**  | list-channels, get-channel, channel-history               | No                    |
+| **Users**     | list-users, get-user, user-presence                       | No                    |
+| **Files**     | upload-file, list-files                                   | Yes (upload only)     |
+| **Reactions** | add-reaction, get-reactions                               | No                    |
 
 ## Quick Reference
 
@@ -72,15 +73,18 @@ curl -X POST https://slack.com/api/files.upload \
 ### Messaging Tools (Confirmation Required)
 
 #### post-message
+
 Send a message to a Slack channel.
 
 **Parameters**:
+
 - `channel` (required): Channel ID or name (e.g., "C1234567890" or "#general")
 - `text` (required): Message text (supports Slack markdown)
 - `thread_ts` (optional): Parent message timestamp for threading
 - `blocks` (optional): Rich message blocks (JSON array)
 
 **Example**:
+
 ```bash
 curl -X POST https://slack.com/api/chat.postMessage \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
@@ -101,14 +105,17 @@ curl -X POST https://slack.com/api/chat.postMessage \
 ```
 
 #### post-thread
+
 Reply to a message in a thread.
 
 **Parameters**:
+
 - `channel` (required): Channel ID
 - `thread_ts` (required): Parent message timestamp
 - `text` (required): Reply text
 
 **Example**:
+
 ```bash
 curl -X POST https://slack.com/api/chat.postMessage \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
@@ -121,14 +128,17 @@ curl -X POST https://slack.com/api/chat.postMessage \
 ```
 
 #### update-message
+
 Update an existing message.
 
 **Parameters**:
+
 - `channel` (required): Channel ID
 - `ts` (required): Message timestamp
 - `text` (required): New message text
 
 **Example**:
+
 ```bash
 curl -X POST https://slack.com/api/chat.update \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
@@ -141,13 +151,16 @@ curl -X POST https://slack.com/api/chat.update \
 ```
 
 #### delete-message
+
 Delete a message.
 
 **Parameters**:
+
 - `channel` (required): Channel ID
 - `ts` (required): Message timestamp
 
 **Example**:
+
 ```bash
 curl -X POST https://slack.com/api/chat.delete \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
@@ -161,41 +174,50 @@ curl -X POST https://slack.com/api/chat.delete \
 ### Channel Tools
 
 #### list-channels
+
 List all channels in workspace.
 
 **Parameters**:
+
 - `types` (optional): Comma-separated channel types (default: "public_channel")
   - Options: "public_channel", "private_channel", "mpim", "im"
 - `limit` (optional): Max channels to return (default: 100)
 
 **Example**:
+
 ```bash
 curl -X GET "https://slack.com/api/conversations.list?types=public_channel,private_channel" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN"
 ```
 
 #### get-channel
+
 Get channel information.
 
 **Parameters**:
+
 - `channel` (required): Channel ID
 
 **Example**:
+
 ```bash
 curl -X GET "https://slack.com/api/conversations.info?channel=C1234567890" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN"
 ```
 
 #### channel-history
+
 Get channel message history.
 
 **Parameters**:
+
 - `channel` (required): Channel ID
 - `limit` (optional): Max messages to return (default: 100)
 - `oldest` (optional): Start of time range (Unix timestamp)
 - `latest` (optional): End of time range (Unix timestamp)
 
 **Example**:
+
 ```bash
 curl -X GET "https://slack.com/api/conversations.history?channel=C1234567890&limit=50" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN"
@@ -206,36 +228,45 @@ curl -X GET "https://slack.com/api/conversations.history?channel=C1234567890&lim
 ### User Tools
 
 #### list-users
+
 List all users in workspace.
 
 **Parameters**:
+
 - `limit` (optional): Max users to return (default: 100)
 
 **Example**:
+
 ```bash
 curl -X GET "https://slack.com/api/users.list" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN"
 ```
 
 #### get-user
+
 Get user profile information.
 
 **Parameters**:
+
 - `user` (required): User ID
 
 **Example**:
+
 ```bash
 curl -X GET "https://slack.com/api/users.info?user=U1234567890" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN"
 ```
 
 #### user-presence
+
 Get user online status.
 
 **Parameters**:
+
 - `user` (required): User ID
 
 **Example**:
+
 ```bash
 curl -X GET "https://slack.com/api/users.getPresence?user=U1234567890" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN"
@@ -244,15 +275,18 @@ curl -X GET "https://slack.com/api/users.getPresence?user=U1234567890" \
 ### File Tools
 
 #### upload-file (Confirmation Required)
+
 Upload a file to Slack channel.
 
 **Parameters**:
+
 - `channels` (required): Comma-separated channel IDs
 - `file` (required): File path to upload
 - `title` (optional): File title
 - `initial_comment` (optional): Message text
 
 **Example**:
+
 ```bash
 curl -X POST https://slack.com/api/files.upload \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
@@ -263,14 +297,17 @@ curl -X POST https://slack.com/api/files.upload \
 ```
 
 #### list-files
+
 List files in channel.
 
 **Parameters**:
+
 - `channel` (optional): Channel ID to filter by
 - `user` (optional): User ID to filter by
 - `count` (optional): Max files to return (default: 100)
 
 **Example**:
+
 ```bash
 curl -X GET "https://slack.com/api/files.list?channel=C1234567890" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN"
@@ -279,14 +316,17 @@ curl -X GET "https://slack.com/api/files.list?channel=C1234567890" \
 ### Reaction Tools
 
 #### add-reaction
+
 Add emoji reaction to a message.
 
 **Parameters**:
+
 - `channel` (required): Channel ID
 - `timestamp` (required): Message timestamp
 - `name` (required): Emoji name (without colons, e.g., "thumbsup")
 
 **Example**:
+
 ```bash
 curl -X POST https://slack.com/api/reactions.add \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
@@ -299,13 +339,16 @@ curl -X POST https://slack.com/api/reactions.add \
 ```
 
 #### get-reactions
+
 Get reactions on a message.
 
 **Parameters**:
+
 - `channel` (required): Channel ID
 - `timestamp` (required): Message timestamp
 
 **Example**:
+
 ```bash
 curl -X GET "https://slack.com/api/reactions.get?channel=C1234567890&timestamp=1234567890.123456" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN"
@@ -314,10 +357,12 @@ curl -X GET "https://slack.com/api/reactions.get?channel=C1234567890&timestamp=1
 ## Agent Integration
 
 ### Primary Agents
+
 - **devops**: Infrastructure alerts, deployment notifications, monitoring
 - **incident-responder**: Incident alerts, status updates, escalations
 
 ### Secondary Agents
+
 - **pm**: Sprint notifications, milestone updates, team announcements
 - **developer**: Build notifications, PR alerts, test results
 - **qa**: Test failure alerts, quality reports
@@ -326,6 +371,7 @@ curl -X GET "https://slack.com/api/reactions.get?channel=C1234567890&timestamp=1
 ## Common Use Cases
 
 ### Deployment Notifications
+
 ```bash
 # Notify channel of successful deployment
 curl -X POST https://slack.com/api/chat.postMessage \
@@ -347,6 +393,7 @@ curl -X POST https://slack.com/api/chat.postMessage \
 ```
 
 ### Incident Alerts
+
 ```bash
 # Alert on-call team of incident
 curl -X POST https://slack.com/api/chat.postMessage \
@@ -368,6 +415,7 @@ curl -X POST https://slack.com/api/chat.postMessage \
 ```
 
 ### Test Results
+
 ```bash
 # Post test results
 curl -X POST https://slack.com/api/chat.postMessage \
@@ -391,18 +439,21 @@ curl -X POST https://slack.com/api/chat.postMessage \
 ## Security Considerations
 
 ### Token Security
+
 - **NEVER** expose bot token in logs or error messages
 - Store token in environment variable, not in code
 - Use least-privilege scopes for bot token
 - Rotate tokens periodically
 
 ### Message Security
+
 - All message operations require confirmation
 - Channel history may contain sensitive information (PII, credentials, etc.)
 - Validate channel permissions before posting
 - Use private channels for sensitive communications
 
 ### Data Privacy
+
 - Comply with workspace data retention policies
 - Avoid posting PII or credentials in messages
 - Use Slack's data export features for compliance
@@ -412,17 +463,18 @@ curl -X POST https://slack.com/api/chat.postMessage \
 
 ### Common Errors
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| `not_authed` | Missing or invalid token | Check `SLACK_BOT_TOKEN` is set correctly |
-| `channel_not_found` | Invalid channel ID | Verify channel ID with `list-channels` |
-| `missing_scope` | Bot lacks required permission | Add scope in Slack App settings |
-| `rate_limited` | Too many requests | Implement exponential backoff |
-| `message_not_found` | Invalid timestamp | Check message timestamp is correct |
+| Error               | Cause                         | Solution                                 |
+| ------------------- | ----------------------------- | ---------------------------------------- |
+| `not_authed`        | Missing or invalid token      | Check `SLACK_BOT_TOKEN` is set correctly |
+| `channel_not_found` | Invalid channel ID            | Verify channel ID with `list-channels`   |
+| `missing_scope`     | Bot lacks required permission | Add scope in Slack App settings          |
+| `rate_limited`      | Too many requests             | Implement exponential backoff            |
+| `message_not_found` | Invalid timestamp             | Check message timestamp is correct       |
 
 ### Retry Strategy
 
 For rate limiting errors, implement exponential backoff:
+
 1. Wait 1 second, retry
 2. Wait 2 seconds, retry
 3. Wait 4 seconds, retry
@@ -432,12 +484,14 @@ For rate limiting errors, implement exponential backoff:
 ## Rate Limits
 
 Slack API rate limits:
+
 - **Tier 1**: 1 request per second
 - **Tier 2**: 20 requests per minute
 - **Tier 3**: 50 requests per minute
 - **Tier 4**: 100 requests per minute
 
 Methods by tier:
+
 - `chat.postMessage`: Tier 3 (50/min)
 - `conversations.list`: Tier 2 (20/min)
 - `users.list`: Tier 2 (20/min)

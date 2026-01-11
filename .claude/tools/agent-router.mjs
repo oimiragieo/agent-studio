@@ -25,7 +25,7 @@ import { suggestRoutingImprovement } from './pattern-learner.mjs';
 import {
   checkSecurityTriggers,
   hasSecurityArchitectApproval,
-  validateSecurityApproval
+  validateSecurityApproval,
 } from './security-enforcement.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -46,7 +46,9 @@ function sanitizeTaskDescription(task) {
   }
 
   if (task.length > MAX_TASK_DESCRIPTION_LENGTH) {
-    throw new Error(`Task description exceeds maximum length of ${MAX_TASK_DESCRIPTION_LENGTH} characters`);
+    throw new Error(
+      `Task description exceeds maximum length of ${MAX_TASK_DESCRIPTION_LENGTH} characters`
+    );
   }
 
   // Remove any null bytes or control characters
@@ -198,7 +200,7 @@ function determinePlanReviewers(task, taskType, workflow, reviewMatrix) {
       required: ['architect', 'qa'],
       optional: ['pm'],
       minimum_score: 7,
-      blocking_threshold: 5
+      blocking_threshold: 5,
     };
   }
 
@@ -237,7 +239,7 @@ function determinePlanReviewers(task, taskType, workflow, reviewMatrix) {
     required,
     optional,
     minimum_score: minimumScore,
-    blocking_threshold: blockingThreshold
+    blocking_threshold: blockingThreshold,
   };
 }
 
@@ -256,7 +258,7 @@ function determineSignoffRequirements(workflow, task, signoffMatrix) {
     return {
       required: ['quality_signoff'],
       conditional: [],
-      agents: ['qa']
+      agents: ['qa'],
     };
   }
 
@@ -289,7 +291,7 @@ function determineSignoffRequirements(workflow, task, signoffMatrix) {
   return {
     required: requiredSignoffs,
     conditional: conditionalSignoffs,
-    agents: Array.from(agents)
+    agents: Array.from(agents),
   };
 }
 
@@ -352,7 +354,7 @@ function detectEnhancedSecurityTriggers(task, securityTriggersV2) {
     agents: Array.from(requiredAgents),
     recommended_agents: Array.from(recommendedAgents),
     priority: highestPriority,
-    triggered: categories.length > 0
+    triggered: categories.length > 0,
   };
 }
 
@@ -368,7 +370,7 @@ function buildExecutionChain(routing, matrix, taskType) {
   const seen = new Set();
 
   // Helper to add agents without duplicates
-  const addAgents = (agents) => {
+  const addAgents = agents => {
     for (const agent of agents) {
       if (!seen.has(agent)) {
         chain.push(agent);
@@ -423,7 +425,7 @@ function getAgentRouting(taskType, matrix) {
     supporting: routing.supporting || [],
     review: routing.review || [],
     approval: routing.approval || [],
-    workflow: routing.workflow || 'fullstack'
+    workflow: routing.workflow || 'fullstack',
   };
 }
 
@@ -449,7 +451,7 @@ export async function selectAgents(taskDescription, options = {}) {
     loadCrossCuttingTriggers(),
     loadPlanReviewMatrix(),
     loadSignoffMatrix(),
-    loadSecurityTriggersV2()
+    loadSecurityTriggersV2(),
   ]);
 
   // Classify task
@@ -481,10 +483,7 @@ export async function selectAgents(taskDescription, options = {}) {
   );
 
   // Detect enhanced security triggers
-  const securityTriggers = detectEnhancedSecurityTriggers(
-    sanitized,
-    securityTriggersV2
-  );
+  const securityTriggers = detectEnhancedSecurityTriggers(sanitized, securityTriggersV2);
 
   // Enhanced security enforcement check
   const securityEnforcementCheck = await checkSecurityTriggers(sanitized);
@@ -495,14 +494,17 @@ export async function selectAgents(taskDescription, options = {}) {
     ...routing.supporting,
     ...crossCuttingAgents,
     ...routing.review,
-    ...routing.approval
+    ...routing.approval,
   ]);
 
   if (securityEnforcementCheck.triggered) {
     // Force security-architect into the agent list if not already present
     const securityArchitectIncluded = assignedAgents.has('security-architect');
 
-    if (!securityArchitectIncluded && (securityEnforcementCheck.critical || securityEnforcementCheck.blocking)) {
+    if (
+      !securityArchitectIncluded &&
+      (securityEnforcementCheck.critical || securityEnforcementCheck.blocking)
+    ) {
       crossCuttingAgents.push('security-architect');
       assignedAgents.add('security-architect');
     }
@@ -565,8 +567,8 @@ export async function selectAgents(taskDescription, options = {}) {
       requiredAgents: securityEnforcementCheck.requiredAgents,
       recommendedAgents: securityEnforcementCheck.recommendedAgents,
       maxResponseTimeHours: securityEnforcementCheck.maxResponseTimeHours,
-      notifyAgents: securityEnforcementCheck.notifyAgents
-    }
+      notifyAgents: securityEnforcementCheck.notifyAgents,
+    },
   };
 
   // Add blocking status if security enforcement is blocking
@@ -586,10 +588,10 @@ export async function selectAgents(taskDescription, options = {}) {
       classification: classification,
       triggeredAgents: crossCuttingAgents.map(agent => ({
         agent,
-        trigger: triggers.triggers[agent]
+        trigger: triggers.triggers[agent],
       })),
       chainSkipConditions: matrix.chainRules.chainSkipConditions[classification.taskType] || [],
-      patternLearning: patternSuggestions
+      patternLearning: patternSuggestions,
     };
   }
 
@@ -652,7 +654,7 @@ function parseArgs(args) {
     files: null,
     verbose: false,
     help: false,
-    json: false
+    json: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -817,7 +819,7 @@ async function main() {
   try {
     const result = await selectAgents(args.task, {
       files: args.files,
-      verbose: args.verbose
+      verbose: args.verbose,
     });
 
     if (args.json) {
@@ -851,5 +853,5 @@ export default {
   selectAgents,
   getExecutionHints,
   recordExecutionOutcome,
-  validateWorkflowSecurity
+  validateWorkflowSecurity,
 };

@@ -18,12 +18,14 @@ Systematic evaluation framework for agent performance, rule compliance, and work
 **Best for**: Exact matches, structured outputs, rule compliance
 
 **Examples**:
+
 - Exact JSON schema validation
 - Rule violation detection
 - Test pass/fail counts
 - Code coverage metrics
 
 **Benefits**:
+
 - Fast and reliable
 - No API costs
 - Deterministic results
@@ -33,12 +35,14 @@ Systematic evaluation framework for agent performance, rule compliance, and work
 **Best for**: Subjective quality, complex analysis, free-form outputs
 
 **Examples**:
+
 - Code quality assessment
 - Architecture evaluation
 - Documentation quality
 - User experience evaluation
 
 **Benefits**:
+
 - Handles complex evaluation
 - Can evaluate subjective quality
 - More flexible than code-based
@@ -48,12 +52,14 @@ Systematic evaluation framework for agent performance, rule compliance, and work
 **Best for**: Final validation, critical decisions, complex scenarios
 
 **Examples**:
+
 - Production readiness assessment
 - Security review
 - Architecture approval
 - User acceptance testing
 
 **Benefits**:
+
 - Most capable evaluation method
 - Handles edge cases
 - Final authority
@@ -107,6 +113,7 @@ npx promptfoo@latest eval -c .claude/evaluation/promptfooconfig.yaml
 ### Agent Tasks Dataset
 
 Format: `agent-tasks.jsonl`
+
 ```json
 {
   "input": "Implement a user authentication API",
@@ -123,6 +130,7 @@ Format: `agent-tasks.jsonl`
 ### Rule Test Cases Dataset
 
 Format: `rule-test-cases.jsonl`
+
 ```json
 {
   "file": "src/components/Button.tsx",
@@ -135,6 +143,7 @@ Format: `rule-test-cases.jsonl`
 ### Workflow Scenarios Dataset
 
 Format: `workflow-scenarios.jsonl`
+
 ```json
 {
   "scenario": "greenfield-fullstack",
@@ -182,4 +191,3 @@ jobs:
 - [Evaluation Guide](../docs/EVALUATION_GUIDE.md) - Comprehensive evaluation guide
 - [Rule Compliance](../skills/rule-auditor/SKILL.md) - Rule auditing
 - [Agent Performance](../docs/AGENT_PERFORMANCE.md) - Agent metrics
-

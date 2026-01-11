@@ -32,7 +32,7 @@ const COMMON_STACKS = {
   react: ['react', 'nextjs', 'next.js', 'typescript', 'javascript', 'jsx', 'tsx'],
   nodejs: ['nodejs', 'node.js', 'express', 'nestjs'],
   python: ['python', 'fastapi', 'django', 'flask', 'pydantic'],
-  go: ['go', 'golang']
+  go: ['go', 'golang'],
 };
 
 // All technologies to match
@@ -41,7 +41,11 @@ const COMMON_TECH_KEYWORDS = [
   ...COMMON_STACKS.nodejs,
   ...COMMON_STACKS.python,
   ...COMMON_STACKS.go,
-  'tailwind', 'css', 'api', 'rest', 'graphql'
+  'tailwind',
+  'css',
+  'api',
+  'rest',
+  'graphql',
 ];
 
 /**
@@ -50,7 +54,7 @@ const COMMON_TECH_KEYWORDS = [
 function extractFrontmatter(content) {
   const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
   if (!frontmatterMatch) return {};
-  
+
   if (yaml) {
     try {
       return yaml.load(frontmatterMatch[1]) || {};
@@ -58,7 +62,7 @@ function extractFrontmatter(content) {
       // Fall through to simple parsing
     }
   }
-  
+
   // Fallback to simple parsing
   const metadata = {};
   const frontmatter = frontmatterMatch[1];
@@ -69,8 +73,10 @@ function extractFrontmatter(content) {
     if (colonIndex === -1) return;
     const key = trimmed.substring(0, colonIndex).trim();
     let value = trimmed.substring(colonIndex + 1).trim();
-    if ((value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))) {
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
       value = value.slice(1, -1);
     }
     if (key && value) {
@@ -87,14 +93,14 @@ function extractTechnologies(filePath, content) {
   const found = new Set();
   const lowerPath = filePath.toLowerCase();
   const lowerContent = content.toLowerCase();
-  
+
   COMMON_TECH_KEYWORDS.forEach(tech => {
     const techLower = tech.toLowerCase();
     if (lowerPath.includes(techLower) || lowerContent.substring(0, 2000).includes(techLower)) {
       found.add(tech);
     }
   });
-  
+
   // Normalize
   const normalized = new Set();
   found.forEach(tech => {
@@ -102,7 +108,7 @@ function extractTechnologies(filePath, content) {
     else if (tech === 'node.js') normalized.add('nodejs');
     else normalized.add(tech);
   });
-  
+
   return Array.from(normalized).sort();
 }
 
@@ -111,16 +117,17 @@ function extractTechnologies(filePath, content) {
  */
 function matchesCommonStack(technologies) {
   const techSet = new Set(technologies.map(t => t.toLowerCase()));
-  
+
   // Check if matches any common stack
   for (const stack of Object.values(COMMON_STACKS)) {
     const stackSet = new Set(stack.map(t => t.toLowerCase()));
     const intersection = [...techSet].filter(t => stackSet.has(t));
-    if (intersection.length >= 2) { // At least 2 technologies from a stack
+    if (intersection.length >= 2) {
+      // At least 2 technologies from a stack
       return true;
     }
   }
-  
+
   return false;
 }
 
@@ -132,7 +139,7 @@ async function extractRuleMetadata(filePath, content) {
   const fileName = path.basename(filePath, path.extname(filePath));
   const metadata = extractFrontmatter(content);
   const technologies = extractTechnologies(filePath, content);
-  
+
   return {
     path: relativePath,
     name: fileName,
@@ -142,7 +149,7 @@ async function extractRuleMetadata(filePath, content) {
     technologies,
     type: filePath.includes('rules-master') ? 'master' : 'library',
     size: content.length,
-    line_count: content.split('\n').length
+    line_count: content.split('\n').length,
   };
 }
 
@@ -152,18 +159,17 @@ async function extractRuleMetadata(filePath, content) {
 async function scanDirectory(dirPath, rules = [], includeAll = false) {
   try {
     const entries = await fs.readdir(dirPath, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
-      
+
       if (entry.isDirectory()) {
         await scanDirectory(fullPath, rules, includeAll);
-      } else if (entry.isFile() && 
-                 (entry.name.endsWith('.md') || entry.name.endsWith('.mdc'))) {
+      } else if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdc'))) {
         try {
           const content = await fs.readFile(fullPath, 'utf-8');
           const metadata = await extractRuleMetadata(fullPath, content);
-          
+
           // Include all master rules, filter library rules by common stacks
           if (includeAll || matchesCommonStack(metadata.technologies, fullPath)) {
             rules.push(metadata);
@@ -178,7 +184,7 @@ async function scanDirectory(dirPath, rules = [], includeAll = false) {
       console.warn(`⚠️  Error scanning ${dirPath}: ${error.message}`);
     }
   }
-  
+
   return rules;
 }
 
@@ -187,7 +193,7 @@ async function scanDirectory(dirPath, rules = [], includeAll = false) {
  */
 function buildTechnologyMap(rules) {
   const techMap = {};
-  
+
   rules.forEach(rule => {
     rule.technologies.forEach(tech => {
       if (!techMap[tech]) {
@@ -196,11 +202,11 @@ function buildTechnologyMap(rules) {
       techMap[tech].push(rule.path);
     });
   });
-  
+
   Object.keys(techMap).forEach(tech => {
     techMap[tech].sort();
   });
-  
+
   return techMap;
 }
 
@@ -209,29 +215,39 @@ function buildTechnologyMap(rules) {
  */
 async function generatePrebuiltIndex() {
   console.log('🔍 Generating lightweight pre-built rule index...\n');
-  
+
   // Always include all master rules
   const masterRules = [];
-  if (await fs.access(MASTER_RULES_DIR).then(() => true).catch(() => false)) {
+  if (
+    await fs
+      .access(MASTER_RULES_DIR)
+      .then(() => true)
+      .catch(() => false)
+  ) {
     await scanDirectory(MASTER_RULES_DIR, masterRules, true);
   }
-  
+
   // Filter library rules to common stacks only
   const libraryRules = [];
-  if (await fs.access(LIBRARY_DIR).then(() => true).catch(() => false)) {
+  if (
+    await fs
+      .access(LIBRARY_DIR)
+      .then(() => true)
+      .catch(() => false)
+  ) {
     await scanDirectory(LIBRARY_DIR, libraryRules, false);
   }
-  
+
   const allRules = [...masterRules, ...libraryRules];
-  
+
   if (allRules.length === 0) {
     console.error('❌ No rules found!');
     process.exit(1);
   }
-  
+
   // Build technology map
   const technologyMap = buildTechnologyMap(allRules);
-  
+
   // Create index structure
   const index = {
     version: '1.0.0',
@@ -241,34 +257,36 @@ async function generatePrebuiltIndex() {
     master_rules: masterRules.length,
     library_rules: libraryRules.length,
     rules: allRules,
-    technology_map: technologyMap
+    technology_map: technologyMap,
   };
-  
+
   // Check size
   const indexJson = JSON.stringify(index, null, 2);
   const indexSize = indexJson.length;
-  
+
   if (indexSize > MAX_SIZE_BYTES) {
     console.warn(`⚠️  Index size (${indexSize} bytes) exceeds limit (${MAX_SIZE_BYTES} bytes)`);
     console.warn('   Consider reducing library rules further');
   }
-  
+
   // Ensure output directory exists
   const outputDir = path.dirname(OUTPUT_PATH);
   await fs.mkdir(outputDir, { recursive: true });
-  
+
   // Write index file
   await fs.writeFile(OUTPUT_PATH, indexJson, 'utf-8');
-  
+
   const estimatedTokens = Math.ceil(indexSize / 4);
-  
+
   console.log(`✅ Generated pre-built index with ${allRules.length} rules`);
   console.log(`   - ${masterRules.length} master rules (all included)`);
   console.log(`   - ${libraryRules.length} library rules (common stacks only, formerly archive)`);
   console.log(`   - ${Object.keys(technologyMap).length} technologies mapped`);
-  console.log(`   - Index size: ${(indexSize / 1024).toFixed(2)} KB (~${estimatedTokens.toLocaleString()} tokens)`);
+  console.log(
+    `   - Index size: ${(indexSize / 1024).toFixed(2)} KB (~${estimatedTokens.toLocaleString()} tokens)`
+  );
   console.log(`📄 Pre-built index saved to: ${path.relative(ROOT, OUTPUT_PATH)}`);
-  
+
   return index;
 }
 
@@ -277,4 +295,3 @@ generatePrebuiltIndex().catch(error => {
   console.error('❌ Error generating pre-built index:', error);
   process.exit(1);
 });
-

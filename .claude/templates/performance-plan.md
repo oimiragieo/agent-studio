@@ -1,7 +1,9 @@
 <template_structure>
+
 # Performance Plan: {{feature_name}}
 
 ## Metadata
+
 - **Version**: {{version}}
 - **Created**: {{created_date}}
 - **Last Modified**: {{last_modified}}
@@ -10,7 +12,9 @@
 - **Related Documents**: {{related_docs}}
 
 ## Performance Goals
+
 ### Service Level Indicators (SLIs)
+
 - **Latency (p50)**: {{latency_p50_target}}ms
 - **Latency (p95)**: {{latency_p95_target}}ms
 - **Latency (p99)**: {{latency_p99_target}}ms
@@ -19,12 +23,15 @@
 - **Availability**: {{availability_target}}%
 
 ### Service Level Objectives (SLOs)
+
 - **Latency SLO**: {{latency_slo}} ({{slo_percentile}}% of requests)
 - **Error Budget**: {{error_budget}}%
 - **Availability SLO**: {{availability_slo}}%
 
 ## Current State Analysis
+
 ### Baseline Metrics
+
 - **Current Latency (p50)**: {{current_latency_p50}}ms
 - **Current Latency (p95)**: {{current_latency_p95}}ms
 - **Current Latency (p99)**: {{current_latency_p99}}ms
@@ -33,6 +40,7 @@
 - **Current Resource Usage**: {{resource_usage}}
 
 ### Performance Profiling
+
 - **CPU Bottlenecks**: {{cpu_bottlenecks}}
 - **Memory Bottlenecks**: {{memory_bottlenecks}}
 - **I/O Bottlenecks**: {{io_bottlenecks}}
@@ -40,67 +48,86 @@
 - **Database Bottlenecks**: {{database_bottlenecks}}
 
 ### Symptoms
+
 {{symptoms}}
 
 ### Metrics & Traces
+
 {{metrics_and_traces}}
 
 ## Bottleneck Analysis
-| Rank | Bottleneck | Location | Impact | Evidence | Owner |
-|------|------------|----------|--------|----------|-------|
-| 1 | {{bottleneck}} | {{location}} | {{impact}} | {{evidence}} | {{owner}} |
+
+| Rank | Bottleneck     | Location     | Impact     | Evidence     | Owner     |
+| ---- | -------------- | ------------ | ---------- | ------------ | --------- |
+| 1    | {{bottleneck}} | {{location}} | {{impact}} | {{evidence}} | {{owner}} |
 
 ## Optimization Experiments
-| Experiment | Hypothesis | Expected Gain | Measurement Method | Rollback Plan | Status |
-|------------|------------|---------------|---------------------|---------------|--------|
-| {{exp_name}} | {{hypothesis}} | {{gain}} | {{measurement}} | {{rollback}} | {{status}} |
+
+| Experiment   | Hypothesis     | Expected Gain | Measurement Method | Rollback Plan | Status     |
+| ------------ | -------------- | ------------- | ------------------ | ------------- | ---------- |
+| {{exp_name}} | {{hypothesis}} | {{gain}}      | {{measurement}}    | {{rollback}}  | {{status}} |
 
 ## Optimization Changes
+
 ### Code Optimizations
+
 {{code_optimizations}}
 
 ### Configuration Changes
+
 {{config_changes}}
 
 ### Schema/Indexing Changes
+
 {{schema_changes}}
 
 ### Caching Strategy
+
 {{caching_strategy}}
 
 ### Infrastructure Changes
+
 {{infrastructure_changes}}
 
 ## Risk Assessment
+
 - **Correctness Risks**: {{correctness_risks}}
 - **Capacity Risks**: {{capacity_risks}}
 - **Cost Risks**: {{cost_risks}}
 - **Reliability Risks**: {{reliability_risks}}
 
 ## Verification Plan
+
 ### Benchmarks
+
 {{benchmark_tests}}
 
 ### Load Testing
+
 {{load_testing_plan}}
 
 ### Monitoring Dashboards
+
 {{monitoring_dashboards}}
 
 ### Alerting
+
 {{alerting_rules}}
 
 ## Success Criteria
+
 - **Performance Targets Met**: {{performance_targets}}
 - **SLO Compliance**: {{slo_compliance}}
 - **Cost Efficiency**: {{cost_efficiency}}
 
 ## Related Documents
+
 - Architecture: {{architecture_link}}
 - Implementation Plan: {{implementation_plan_link}}
 - Test Plan: {{test_plan_link}}
 
 ---
+
 </template_structure>
 
 <usage_instructions>

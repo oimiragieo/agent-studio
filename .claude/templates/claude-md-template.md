@@ -1,4 +1,5 @@
 <template_structure>
+
 # [Module/Feature/Component Name]
 
 ## Purpose
@@ -18,15 +19,18 @@
 [Module-specific rules and guidelines that should be followed]
 
 ### Code Style
+
 - [Rule 1]
 - [Rule 2]
 - [Rule 3]
 
 ### Architecture
+
 - [Architectural guideline 1]
 - [Architectural guideline 2]
 
 ### Best Practices
+
 - [Best practice 1]
 - [Best practice 2]
 
@@ -35,20 +39,24 @@
 [Key dependencies and relationships]
 
 ### Internal Dependencies
+
 - `@/lib/[module]` - [Purpose]
 - `@/components/[component]` - [Purpose]
 - `@/hooks/[hook]` - [Purpose]
 
 ### External Dependencies
+
 - `[package]` - [Purpose]
 - `[package]` - [Purpose]
 
 ### Related Modules
+
 - `[related-module]` - [Relationship description]
 
 ## Usage Examples
 
 ### Basic Usage
+
 ```typescript
 // Example of basic usage
 import { [Component/Function] } from '[path]'
@@ -57,11 +65,13 @@ import { [Component/Function] } from '[path]'
 ```
 
 ### Advanced Usage
+
 ```typescript
 // Example of advanced usage
 ```
 
 ### Common Patterns
+
 ```typescript
 // Example of common patterns
 ```
@@ -71,6 +81,7 @@ import { [Component/Function] } from '[path]'
 [If applicable, document the API]
 
 ### Functions/Components
+
 - `[Function/Component Name]`: [Description]
   - Parameters: [List parameters]
   - Returns: [Return type/description]
@@ -81,10 +92,12 @@ import { [Component/Function] } from '[path]'
 [Testing guidelines and examples]
 
 ### Unit Tests
+
 - [Testing approach]
 - [Example test]
 
 ### Integration Tests
+
 - [Testing approach]
 - [Example test]
 
@@ -93,10 +106,12 @@ import { [Component/Function] } from '[path]'
 [Common issues and solutions]
 
 ### Issue 1
+
 **Problem**: [Description]
 **Solution**: [Solution]
 
 ### Issue 2
+
 **Problem**: [Description]
 **Solution**: [Solution]
 
@@ -120,4 +135,3 @@ import { [Component/Function] } from '[path]'
 
 **Integration**: This template is used by the claude-md-generator skill to automatically generate claude.md files for new modules.
 </usage_instructions>
-

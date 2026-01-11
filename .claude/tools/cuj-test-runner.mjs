@@ -51,7 +51,7 @@ async function parseCujMarkdown(cujId) {
     dependencies: [],
     expectedArtifacts: [],
     skills: [],
-    agentSequence: []
+    agentSequence: [],
   };
 
   let currentSection = null;
@@ -82,7 +82,7 @@ async function parseCujMarkdown(cujId) {
         description: '',
         steps: [],
         expectedResult: '',
-        validations: []
+        validations: [],
       };
       cuj.scenarios.push(currentScenario);
       continue;
@@ -93,7 +93,7 @@ async function parseCujMarkdown(cujId) {
       currentStep = {
         description: trimmed.substring(5).trim(),
         commands: [],
-        validations: []
+        validations: [],
       };
       currentScenario.steps.push(currentStep);
       continue;
@@ -137,7 +137,7 @@ async function parseCujMarkdown(cujId) {
         cuj.expectedArtifacts.push({
           name: match[1],
           step: parseInt(match[2], 10),
-          raw: artifact
+          raw: artifact,
         });
       }
     }
@@ -172,7 +172,7 @@ async function executeStep(step, context) {
     passed: true,
     commands: [],
     errors: [],
-    validations: []
+    validations: [],
   };
 
   for (const command of step.commands) {
@@ -181,19 +181,19 @@ async function executeStep(step, context) {
         result.commands.push({
           command,
           dryRun: true,
-          skipped: true
+          skipped: true,
         });
       } else {
         const { stdout, stderr } = await execAsync(command, {
           cwd: context.projectRoot,
-          timeout: context.timeout || 60000
+          timeout: context.timeout || 60000,
         });
 
         result.commands.push({
           command,
           stdout: stdout.trim(),
           stderr: stderr.trim(),
-          success: true
+          success: true,
         });
       }
     } catch (error) {
@@ -202,7 +202,7 @@ async function executeStep(step, context) {
         command,
         error: error.message,
         code: error.code,
-        stderr: error.stderr
+        stderr: error.stderr,
       });
     }
   }
@@ -223,7 +223,7 @@ async function executeScenario(scenario, context) {
     steps: [],
     startTime: new Date().toISOString(),
     endTime: null,
-    duration: 0
+    duration: 0,
   };
 
   const startMs = Date.now();
@@ -257,14 +257,14 @@ function validateSuccessCriteria(cuj, scenarioResults, context) {
   const validations = {
     passed: true,
     criteria: [],
-    errors: []
+    errors: [],
   };
 
   for (const criterion of cuj.successCriteria) {
     const validation = {
       criterion,
       passed: false,
-      message: ''
+      message: '',
     };
 
     // Simple validation logic (can be extended)
@@ -275,7 +275,9 @@ function validateSuccessCriteria(cuj, scenarioResults, context) {
       // Check if all scenarios passed
       const allScenariosPassed = scenarioResults.every(r => r.passed);
       validation.passed = allScenariosPassed;
-      validation.message = allScenariosPassed ? 'All scenarios passed' : 'One or more scenarios failed';
+      validation.message = allScenariosPassed
+        ? 'All scenarios passed'
+        : 'One or more scenarios failed';
     }
 
     validations.criteria.push(validation);
@@ -311,15 +313,15 @@ function generateTestReport(cuj, scenarioResults, validations, context) {
       scenarios_failed: scenarioResults.filter(r => !r.passed).length,
       total_criteria: cuj.successCriteria.length,
       criteria_passed: validations.criteria.filter(c => c.passed).length,
-      criteria_failed: validations.criteria.filter(c => !c.passed).length
+      criteria_failed: validations.criteria.filter(c => !c.passed).length,
     },
     scenario_results: scenarioResults,
     success_criteria_validations: validations,
     metadata: {
       skills_required: cuj.skills,
       agent_sequence: cuj.agentSequence,
-      expected_artifacts: cuj.expectedArtifacts
-    }
+      expected_artifacts: cuj.expectedArtifacts,
+    },
   };
 
   return report;
@@ -356,7 +358,7 @@ export async function runCujTest(cujId, options = {}) {
     dryRun: options.dryRun || false,
     failFast: options.failFast !== false,
     timeout: options.timeout || 60000,
-    testRunId: options.testRunId
+    testRunId: options.testRunId,
   };
 
   try {
@@ -365,9 +367,8 @@ export async function runCujTest(cujId, options = {}) {
 
     // Execute scenarios
     const scenarioResults = [];
-    const scenariosToRun = options.scenario !== undefined
-      ? [cuj.scenarios[options.scenario - 1]]
-      : cuj.scenarios;
+    const scenariosToRun =
+      options.scenario !== undefined ? [cuj.scenarios[options.scenario - 1]] : cuj.scenarios;
 
     for (const scenario of scenariosToRun) {
       if (!scenario) continue;
@@ -386,13 +387,12 @@ export async function runCujTest(cujId, options = {}) {
     report.report_path = reportPath;
 
     return report;
-
   } catch (error) {
     return {
       cuj_id: cujId,
       status: 'error',
       error: error.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -439,19 +439,19 @@ Exit codes:
     process.exit(0);
   }
 
-  const getArg = (name) => {
+  const getArg = name => {
     const index = args.indexOf(`--${name}`);
     return index !== -1 && args[index + 1] ? args[index + 1] : null;
   };
 
-  const hasFlag = (name) => args.includes(`--${name}`);
+  const hasFlag = name => args.includes(`--${name}`);
 
   try {
     const options = {
       dryRun: hasFlag('dry-run'),
       failFast: !hasFlag('no-fail-fast'),
       timeout: parseInt(getArg('timeout'), 10) || 60000,
-      scenario: getArg('scenario') ? parseInt(getArg('scenario'), 10) : undefined
+      scenario: getArg('scenario') ? parseInt(getArg('scenario'), 10) : undefined,
     };
 
     const cujId = getArg('cuj');
@@ -480,14 +480,17 @@ Exit codes:
         console.log(`Error: ${result.error}`);
       } else {
         console.log(`\nSummary:`);
-        console.log(`  Scenarios: ${result.summary.scenarios_passed}/${result.summary.total_scenarios} passed`);
-        console.log(`  Criteria: ${result.summary.criteria_passed}/${result.summary.total_criteria} passed`);
+        console.log(
+          `  Scenarios: ${result.summary.scenarios_passed}/${result.summary.total_scenarios} passed`
+        );
+        console.log(
+          `  Criteria: ${result.summary.criteria_passed}/${result.summary.total_criteria} passed`
+        );
         console.log(`\nReport saved to: ${result.report_path}`);
       }
     }
 
     process.exit(result.status === 'passed' ? 0 : 1);
-
   } catch (error) {
     console.error('Fatal error:', error.message);
     process.exit(1);
@@ -495,8 +498,9 @@ Exit codes:
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main().catch(error => {
     console.error('Fatal error:', error);
@@ -506,5 +510,5 @@ if (isMainModule) {
 
 export default {
   runCujTest,
-  parseCujMarkdown
+  parseCujMarkdown,
 };

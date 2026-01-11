@@ -10,7 +10,7 @@ const DEFAULT_RETRY_CONFIG = {
   maxRetries: 3,
   baseDelayMs: 1000,
   maxDelayMs: 10000,
-  retryableErrors: ['TIMEOUT', 'RATE_LIMIT', 'ECONNRESET', 'ETIMEDOUT', 'ENOTFOUND']
+  retryableErrors: ['TIMEOUT', 'RATE_LIMIT', 'ECONNRESET', 'ETIMEDOUT', 'ENOTFOUND'],
 };
 
 /**
@@ -81,7 +81,7 @@ async function withRetry(fn, config = {}) {
     baseDelayMs = DEFAULT_RETRY_CONFIG.baseDelayMs,
     maxDelayMs = DEFAULT_RETRY_CONFIG.maxDelayMs,
     retryableErrors = DEFAULT_RETRY_CONFIG.retryableErrors,
-    onRetry = null
+    onRetry = null,
   } = config;
 
   let lastError;
@@ -108,10 +108,7 @@ async function withRetry(fn, config = {}) {
       }
 
       // Calculate exponential backoff delay
-      const delay = Math.min(
-        baseDelayMs * Math.pow(2, attempt - 1),
-        maxDelayMs
-      );
+      const delay = Math.min(baseDelayMs * Math.pow(2, attempt - 1), maxDelayMs);
 
       // Call retry callback if provided
       if (onRetry) {
@@ -132,5 +129,5 @@ module.exports = {
   sleep,
   isRetryable,
   isAuthFailure,
-  DEFAULT_RETRY_CONFIG
+  DEFAULT_RETRY_CONFIG,
 };

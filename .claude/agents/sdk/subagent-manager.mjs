@@ -52,7 +52,7 @@ async function loadAgentTools(toolConfig) {
 
   // Import native tools
   const { nativeTools } = await import('../../tools/native/registry.mjs');
-  
+
   const tools = [];
   for (const toolName of toolConfig) {
     // Check native tools first
@@ -65,7 +65,7 @@ async function loadAgentTools(toolConfig) {
         description: `Tool: ${toolName}`,
         execute: async () => {
           throw new Error(`Tool ${toolName} not implemented`);
-        }
+        },
       });
     }
   }
@@ -80,7 +80,7 @@ async function loadAgentTools(toolConfig) {
  */
 export async function createSubagent(agentName, options = {}) {
   const config = await loadAgentConfig(agentName);
-  
+
   if (!config) {
     throw new Error(`Agent ${agentName} not found in configuration`);
   }
@@ -110,8 +110,8 @@ export async function createSubagent(agentName, options = {}) {
     config,
     metadata: {
       created: new Date().toISOString(),
-      version: '1.0.0'
-    }
+      version: '1.0.0',
+    },
   };
 }
 
@@ -142,13 +142,12 @@ export async function getAgentMetadata(agentName) {
     complexity: config.complexity,
     extended_thinking: config.extended_thinking || false,
     context_strategy: config.context_strategy,
-    trigger_words: config.trigger_words || []
+    trigger_words: config.trigger_words || [],
   };
 }
 
 export default {
   createSubagent,
   getAllAgents,
-  getAgentMetadata
+  getAgentMetadata,
 };
-

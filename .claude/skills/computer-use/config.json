@@ -13,10 +13,6 @@
   "source": "https://github.com/automateyournetwork/GeminiCLI_ComputerUse_Extension",
   "package": "fastmcp + playwright",
   "package_manager": "pip",
-  "requirements": [
-    "fastmcp>=2.12",
-    "playwright>=1.55",
-    "pillow>=11.0"
-  ],
+  "requirements": ["fastmcp>=2.12", "playwright>=1.55", "pillow>=11.0"],
   "notes": "Requires Python 3.10+. Run 'playwright install chromium' after pip install. Set CU_HEADFUL=1 for visible browser."
 }

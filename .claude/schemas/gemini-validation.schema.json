@@ -67,7 +67,10 @@
         "properties": {
           "issue": { "type": "string" },
           "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
-          "category": { "type": "string", "enum": ["visual", "accessibility", "consistency", "performance", "usability"] },
+          "category": {
+            "type": "string",
+            "enum": ["visual", "accessibility", "consistency", "performance", "usability"]
+          },
           "location": { "type": "string" },
           "recommendation": { "type": "string" },
           "auto_fixable": { "type": "boolean" }
@@ -80,7 +83,10 @@
         "claude_score": { "type": "number", "minimum": 0, "maximum": 100 },
         "gemini_score": { "type": "number", "minimum": 0, "maximum": 100 },
         "score_difference": { "type": "number" },
-        "use_gemini_score": { "type": "boolean", "description": "True if Gemini score is 10+ points lower" },
+        "use_gemini_score": {
+          "type": "boolean",
+          "description": "True if Gemini score is 10+ points lower"
+        },
         "consensus_score": { "type": "number", "minimum": 0, "maximum": 100 },
         "areas_of_agreement": { "type": "array", "items": { "type": "string" } },
         "areas_of_disagreement": { "type": "array", "items": { "type": "string" } }

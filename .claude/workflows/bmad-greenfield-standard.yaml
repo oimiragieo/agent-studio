@@ -6,7 +6,7 @@ method: standard
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -319,4 +319,3 @@ completion_criteria:
   - All stories implemented and reviewed
   - Code review passed for all stories
   - Retrospectives completed for all epics
-

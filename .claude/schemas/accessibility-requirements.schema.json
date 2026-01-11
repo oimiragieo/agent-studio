@@ -4,13 +4,7 @@
   "title": "Accessibility Requirements",
   "description": "Accessibility requirements artifact for WCAG compliance and a11y testing",
   "type": "object",
-  "required": [
-    "requirements_id",
-    "timestamp",
-    "wcag_level",
-    "requirements",
-    "compliance_status"
-  ],
+  "required": ["requirements_id", "timestamp", "wcag_level", "requirements", "compliance_status"],
   "properties": {
     "requirements_id": {
       "type": "string",

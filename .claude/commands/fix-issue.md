@@ -6,6 +6,7 @@ Command: /fix-issue - Analyze and fix a GitHub issue automatically.
 <execution_steps>
 
 1. **Fetch Issue Details**
+
    ```bash
    gh issue view $ARGUMENTS
    ```
@@ -50,11 +51,11 @@ Command: /fix-issue - Analyze and fix a GitHub issue automatically.
 </execution_steps>
 
 <best_practices>
+
 - Always understand the problem before coding
 - Test locally before committing
 - Keep changes focused and minimal
 - Document non-obvious fixes
 - Consider edge cases and error scenarios
-</best_practices>
-</instructions>
-
+  </best_practices>
+  </instructions>

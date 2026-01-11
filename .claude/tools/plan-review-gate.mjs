@@ -58,7 +58,7 @@ function determineReviewers(plan, reviewMatrix, taskKeywords = []) {
       optional: ['pm'],
       minimum_score: 7,
       blocking_threshold: 5,
-      complexity_modifier: 0
+      complexity_modifier: 0,
     };
   }
 
@@ -108,7 +108,7 @@ function determineReviewers(plan, reviewMatrix, taskKeywords = []) {
     optional,
     minimum_score: minimumScore,
     blocking_threshold: blockingThreshold,
-    complexity_modifier: complexityModifier?.score_modifier || 0
+    complexity_modifier: complexityModifier?.score_modifier || 0,
   };
 }
 
@@ -124,7 +124,7 @@ function aggregateResults(reviews, scoringRules) {
       overall_score: 0,
       passed: false,
       blocking_issues: [],
-      summary: 'No reviews received'
+      summary: 'No reviews received',
     };
   }
 
@@ -145,7 +145,7 @@ function aggregateResults(reviews, scoringRules) {
     optionalScore = optionalReviews.reduce((sum, r) => sum + r.score, 0) / optionalReviews.length;
   }
 
-  const overallScore = (requiredScore * requiredWeight) + (optionalScore * optionalWeight);
+  const overallScore = requiredScore * requiredWeight + optionalScore * optionalWeight;
 
   // Check for blocking issues
   const blockingIssues = reviews.filter(r => r.blocking || r.critical_issues > 0);
@@ -173,11 +173,11 @@ function aggregateResults(reviews, scoringRules) {
     blocking_issues: blockingIssues.map(r => ({
       reviewer: r.reviewer,
       issues: r.issues || [],
-      score: r.score
+      score: r.score,
     })),
     summary: passed
       ? `Plan passed review with score ${overallScore.toFixed(2)}/10`
-      : `Plan failed review (score: ${overallScore.toFixed(2)}/10, blocking issues: ${blockingIssues.length})`
+      : `Plan failed review (score: ${overallScore.toFixed(2)}/10, blocking issues: ${blockingIssues.length})`,
   };
 }
 
@@ -220,9 +220,9 @@ export async function runPlanReviewGate(planPath, workflowId, taskKeywords = [])
         next_steps: [
           'Spawn reviewer agents using Task tool',
           'Each reviewer provides score (0-10) and issues list',
-          'Call aggregateResults() to determine pass/fail'
-        ]
-      }
+          'Call aggregateResults() to determine pass/fail',
+        ],
+      },
     };
 
     return result;
@@ -231,7 +231,7 @@ export async function runPlanReviewGate(planPath, workflowId, taskKeywords = [])
       workflow_id: workflowId,
       status: 'error',
       error: error.message,
-      plan_path: planPath
+      plan_path: planPath,
     };
   }
 }
@@ -246,7 +246,7 @@ function parseArgs(args) {
     plan: null,
     workflowId: null,
     keywords: [],
-    help: false
+    help: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -339,5 +339,5 @@ export default {
   runPlanReviewGate,
   determineReviewers,
   aggregateResults,
-  loadConfig
+  loadConfig,
 };

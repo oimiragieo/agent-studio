@@ -34,6 +34,7 @@ Test Generator Skill - Generates test code from specifications, components, and 
 ### Step 1: Identify Test Type
 
 Determine what type of test is needed:
+
 - **Unit Test**: Component/function testing
 - **Integration Test**: Service/API integration
 - **E2E Test**: Full user flow testing
@@ -42,6 +43,7 @@ Determine what type of test is needed:
 ### Step 2: Analyze Target Code
 
 Examine code to test:
+
 - Read component/function code
 - Identify test cases
 - Understand dependencies
@@ -50,6 +52,7 @@ Examine code to test:
 ### Step 3: Analyze Test Patterns
 
 Review existing tests:
+
 - Read similar test files
 - Identify testing patterns
 - Note testing framework usage
@@ -58,6 +61,7 @@ Review existing tests:
 ### Step 4: Generate Test Code
 
 Create test following patterns:
+
 - Use appropriate testing framework
 - Follow project conventions
 - Include comprehensive coverage
@@ -92,8 +96,8 @@ After generating tests, analyze coverage:
    - [ ] Tests are syntactically valid
    - [ ] Tests can be executed successfully
    - [ ] Coverage meets project thresholds (if defined)
-</execution_process>
-</instructions>
+         </execution_process>
+         </instructions>
 
 <examples>
 <code_example>
@@ -107,65 +111,67 @@ import { UserProfile } from './user-profile'
 describe('UserProfile', () => {
   it('renders user information', async () => {
     const mockUser = { id: '1', name: 'John', email: 'john@example.com' }
-    
+
     render(<UserProfile user={mockUser} />)
-    
+
     await waitFor(() => {
       expect(screen.getByText('John')).toBeInTheDocument()
       expect(screen.getByText('john@example.com')).toBeInTheDocument()
     })
   })
-  
+
   it('handles loading state', () => {
     render(<UserProfile user={null} loading />)
     expect(screen.getByTestId('loading')).toBeInTheDocument()
   })
-  
+
   it('handles error state', () => {
     render(<UserProfile user={null} error="Failed to load" />)
     expect(screen.getByText('Failed to load')).toBeInTheDocument()
   })
 })
 ```
+
 </code_example>
 
 <code_example>
 **Integration Test (API)**
 
 ```typescript
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { createTestClient } from './test-client'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createTestClient } from './test-client';
 
 describe('Users API', () => {
-  let client: TestClient
-  
+  let client: TestClient;
+
   beforeAll(() => {
-    client = createTestClient()
-  })
-  
+    client = createTestClient();
+  });
+
   afterAll(async () => {
-    await client.cleanup()
-  })
-  
+    await client.cleanup();
+  });
+
   it('creates a user', async () => {
     const response = await client.post('/api/users', {
       email: 'test@example.com',
-      name: 'Test User'
-    })
-    
-    expect(response.status).toBe(201)
-    expect(response.data).toHaveProperty('id')
-    expect(response.data.email).toBe('test@example.com')
-  })
-  
+      name: 'Test User',
+    });
+
+    expect(response.status).toBe(201);
+    expect(response.data).toHaveProperty('id');
+    expect(response.data.email).toBe('test@example.com');
+  });
+
   it('validates required fields', async () => {
-    const response = await client.post('/api/users', {})
-    
-    expect(response.status).toBe(400)
-    expect(response.data).toHaveProperty('errors')
-  })
-})
+    const response = await client.post('/api/users', {});
+
+    expect(response.status).toBe(400);
+    expect(response.data).toHaveProperty('errors');
+  });
+});
 ```
+
 </code_example>
 
 <code_example>
@@ -174,29 +180,30 @@ describe('Users API', () => {
 ```typescript
 describe('User Authentication Flow', () => {
   beforeEach(() => {
-    cy.visit('/login')
-  })
-  
+    cy.visit('/login');
+  });
+
   it('allows user to login', () => {
-    cy.get('[data-testid="email-input"]').type('user@example.com')
-    cy.get('[data-testid="password-input"]').type('password123')
-    cy.get('[data-testid="login-button"]').click()
-    
-    cy.url().should('include', '/dashboard')
-    cy.get('[data-testid="user-menu"]').should('be.visible')
-  })
-  
+    cy.get('[data-testid="email-input"]').type('user@example.com');
+    cy.get('[data-testid="password-input"]').type('password123');
+    cy.get('[data-testid="login-button"]').click();
+
+    cy.url().should('include', '/dashboard');
+    cy.get('[data-testid="user-menu"]').should('be.visible');
+  });
+
   it('shows error for invalid credentials', () => {
-    cy.get('[data-testid="email-input"]').type('invalid@example.com')
-    cy.get('[data-testid="password-input"]').type('wrong')
-    cy.get('[data-testid="login-button"]').click()
-    
+    cy.get('[data-testid="email-input"]').type('invalid@example.com');
+    cy.get('[data-testid="password-input"]').type('wrong');
+    cy.get('[data-testid="login-button"]').click();
+
     cy.get('[data-testid="error-message"]')
       .should('be.visible')
-      .and('contain', 'Invalid credentials')
-  })
-})
+      .and('contain', 'Invalid credentials');
+  });
+});
 ```
+
 </code_example>
 </examples>
 
@@ -208,19 +215,21 @@ describe('User Authentication Flow', () => {
 - Validates implementation
 
 **Integration with QA Agent**:
+
 - Creates comprehensive test suites
 - Generates test plans
 - Validates test quality
-</integration>
+  </integration>
 
 <best_practices>
+
 1. **Follow Patterns**: Match existing test structure
 2. **Comprehensive Coverage**: Test happy paths and edge cases
 3. **Clear Test Names**: Descriptive test descriptions
 4. **Isolate Tests**: Each test should be independent
 5. **Mock Dependencies**: Use appropriate mocking strategies
-</best_practices>
-</instructions>
+   </best_practices>
+   </instructions>
 
 <examples>
 <usage_example>
@@ -239,6 +248,6 @@ Generate E2E tests for user authentication flow
 # Generate integration tests
 Generate integration tests for user service
 ```
+
 </usage_example>
 </examples>
-

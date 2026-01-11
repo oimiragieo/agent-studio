@@ -17,14 +17,14 @@ import {
   readTextFile,
   writeTextFile,
   readTextFilePreserve,
-  convertLineEndings
+  convertLineEndings,
 } from './line-endings.mjs';
 import {
   makeExecutable,
   setFilePermissions,
   getFilePermissions,
   isExecutable,
-  getPermissionString
+  getPermissionString,
 } from './file-permissions.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -36,7 +36,7 @@ const results = {
   passed: 0,
   failed: 0,
   skipped: 0,
-  tests: []
+  tests: [],
 };
 
 function testResult(name, passed, error = null) {

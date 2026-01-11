@@ -1,0 +1,535 @@
+{
+  "total_cujs": 60,
+  "total_criteria": 504,
+  "measurable": 228,
+  "partially_measurable": 3,
+  "non_measurable": 273,
+  "cujs": [
+    {
+      "id": "CUJ-001",
+      "criteria_count": 4,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-002",
+      "criteria_count": 6,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 6,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-003",
+      "criteria_count": 4,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-017",
+      "criteria_count": 4,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-027",
+      "criteria_count": 6,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 6,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-028",
+      "criteria_count": 6,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 6,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-029",
+      "criteria_count": 6,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 6,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-030",
+      "criteria_count": 6,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 6,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-058",
+      "criteria_count": 7,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 7,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-059",
+      "criteria_count": 8,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-060",
+      "criteria_count": 8,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-062",
+      "criteria_count": 10,
+      "measurable": 0,
+      "partially_measurable": 0,
+      "non_measurable": 10,
+      "measurability_score": 0
+    },
+    {
+      "id": "CUJ-061",
+      "criteria_count": 9,
+      "measurable": 1,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 11
+    },
+    {
+      "id": "CUJ-034",
+      "criteria_count": 16,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 14,
+      "measurability_score": 13
+    },
+    {
+      "id": "CUJ-051",
+      "criteria_count": 12,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 10,
+      "measurability_score": 17
+    },
+    {
+      "id": "CUJ-044",
+      "criteria_count": 11,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 9,
+      "measurability_score": 18
+    },
+    {
+      "id": "CUJ-047",
+      "criteria_count": 11,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 9,
+      "measurability_score": 18
+    },
+    {
+      "id": "CUJ-036",
+      "criteria_count": 10,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 20
+    },
+    {
+      "id": "CUJ-043",
+      "criteria_count": 10,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 20
+    },
+    {
+      "id": "CUJ-045",
+      "criteria_count": 10,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 20
+    },
+    {
+      "id": "CUJ-046",
+      "criteria_count": 10,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 20
+    },
+    {
+      "id": "CUJ-056",
+      "criteria_count": 10,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 20
+    },
+    {
+      "id": "CUJ-055",
+      "criteria_count": 9,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 7,
+      "measurability_score": 22
+    },
+    {
+      "id": "CUJ-026",
+      "criteria_count": 8,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 6,
+      "measurability_score": 25
+    },
+    {
+      "id": "CUJ-037",
+      "criteria_count": 11,
+      "measurable": 3,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 27
+    },
+    {
+      "id": "CUJ-039",
+      "criteria_count": 11,
+      "measurable": 3,
+      "partially_measurable": 0,
+      "non_measurable": 8,
+      "measurability_score": 27
+    },
+    {
+      "id": "CUJ-035",
+      "criteria_count": 10,
+      "measurable": 3,
+      "partially_measurable": 0,
+      "non_measurable": 7,
+      "measurability_score": 30
+    },
+    {
+      "id": "CUJ-040",
+      "criteria_count": 10,
+      "measurable": 3,
+      "partially_measurable": 0,
+      "non_measurable": 7,
+      "measurability_score": 30
+    },
+    {
+      "id": "CUJ-020",
+      "criteria_count": 6,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 33
+    },
+    {
+      "id": "CUJ-021",
+      "criteria_count": 6,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 33
+    },
+    {
+      "id": "CUJ-022",
+      "criteria_count": 6,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 33
+    },
+    {
+      "id": "CUJ-024",
+      "criteria_count": 6,
+      "measurable": 2,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 33
+    },
+    {
+      "id": "CUJ-038",
+      "criteria_count": 9,
+      "measurable": 3,
+      "partially_measurable": 0,
+      "non_measurable": 6,
+      "measurability_score": 33
+    },
+    {
+      "id": "CUJ-041",
+      "criteria_count": 11,
+      "measurable": 4,
+      "partially_measurable": 0,
+      "non_measurable": 7,
+      "measurability_score": 36
+    },
+    {
+      "id": "CUJ-025",
+      "criteria_count": 8,
+      "measurable": 3,
+      "partially_measurable": 0,
+      "non_measurable": 5,
+      "measurability_score": 38
+    },
+    {
+      "id": "CUJ-057",
+      "criteria_count": 7,
+      "measurable": 3,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 43
+    },
+    {
+      "id": "CUJ-053",
+      "criteria_count": 9,
+      "measurable": 4,
+      "partially_measurable": 0,
+      "non_measurable": 5,
+      "measurability_score": 44
+    },
+    {
+      "id": "CUJ-018",
+      "criteria_count": 6,
+      "measurable": 3,
+      "partially_measurable": 0,
+      "non_measurable": 3,
+      "measurability_score": 50
+    },
+    {
+      "id": "CUJ-052",
+      "criteria_count": 9,
+      "measurable": 5,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 56
+    },
+    {
+      "id": "CUJ-054",
+      "criteria_count": 9,
+      "measurable": 5,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 56
+    },
+    {
+      "id": "CUJ-042",
+      "criteria_count": 10,
+      "measurable": 6,
+      "partially_measurable": 0,
+      "non_measurable": 4,
+      "measurability_score": 60
+    },
+    {
+      "id": "CUJ-063",
+      "criteria_count": 8,
+      "measurable": 5,
+      "partially_measurable": 0,
+      "non_measurable": 3,
+      "measurability_score": 63
+    },
+    {
+      "id": "CUJ-050",
+      "criteria_count": 10,
+      "measurable": 8,
+      "partially_measurable": 1,
+      "non_measurable": 1,
+      "measurability_score": 80
+    },
+    {
+      "id": "CUJ-049",
+      "criteria_count": 11,
+      "measurable": 9,
+      "partially_measurable": 1,
+      "non_measurable": 1,
+      "measurability_score": 82
+    },
+    {
+      "id": "CUJ-019",
+      "criteria_count": 6,
+      "measurable": 5,
+      "partially_measurable": 1,
+      "non_measurable": 0,
+      "measurability_score": 83
+    },
+    {
+      "id": "CUJ-048",
+      "criteria_count": 10,
+      "measurable": 9,
+      "partially_measurable": 0,
+      "non_measurable": 1,
+      "measurability_score": 90
+    },
+    {
+      "id": "CUJ-016",
+      "criteria_count": 11,
+      "measurable": 10,
+      "partially_measurable": 0,
+      "non_measurable": 1,
+      "measurability_score": 91
+    },
+    {
+      "id": "CUJ-004",
+      "criteria_count": 7,
+      "measurable": 7,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-005",
+      "criteria_count": 12,
+      "measurable": 12,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-006",
+      "criteria_count": 7,
+      "measurable": 7,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-007",
+      "criteria_count": 8,
+      "measurable": 8,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-008",
+      "criteria_count": 6,
+      "measurable": 6,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-009",
+      "criteria_count": 6,
+      "measurable": 6,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-010",
+      "criteria_count": 7,
+      "measurable": 7,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-011",
+      "criteria_count": 6,
+      "measurable": 6,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-012",
+      "criteria_count": 11,
+      "measurable": 11,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-013",
+      "criteria_count": 11,
+      "measurable": 11,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-014",
+      "criteria_count": 10,
+      "measurable": 10,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-015",
+      "criteria_count": 6,
+      "measurable": 6,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    },
+    {
+      "id": "CUJ-023",
+      "criteria_count": 6,
+      "measurable": 6,
+      "partially_measurable": 0,
+      "non_measurable": 0,
+      "measurability_score": 100
+    }
+  ],
+  "measurable_pct": 45,
+  "partially_pct": 1,
+  "non_measurable_pct": 54,
+  "summary": {
+    "cujs_needing_improvement": 47,
+    "cujs_fully_measurable": 13,
+    "worst_cujs": [
+      "CUJ-001",
+      "CUJ-002",
+      "CUJ-003",
+      "CUJ-017",
+      "CUJ-027",
+      "CUJ-028",
+      "CUJ-029",
+      "CUJ-030",
+      "CUJ-058",
+      "CUJ-059",
+      "CUJ-060",
+      "CUJ-062",
+      "CUJ-061",
+      "CUJ-034",
+      "CUJ-051",
+      "CUJ-044",
+      "CUJ-047",
+      "CUJ-036",
+      "CUJ-043",
+      "CUJ-045",
+      "CUJ-046",
+      "CUJ-056",
+      "CUJ-055",
+      "CUJ-026",
+      "CUJ-037",
+      "CUJ-039",
+      "CUJ-035",
+      "CUJ-040",
+      "CUJ-020",
+      "CUJ-021",
+      "CUJ-022",
+      "CUJ-024",
+      "CUJ-038",
+      "CUJ-041",
+      "CUJ-025",
+      "CUJ-057",
+      "CUJ-053"
+    ]
+  }
+}

@@ -25,7 +25,7 @@ logSkillInvocation({
   cacheHit: false,
   agent: 'test-agent',
   runId: 'test-run-001',
-  cujId: 'TEST-001'
+  cujId: 'TEST-001',
 });
 
 const logger = getLogger();
@@ -45,19 +45,33 @@ recordCujExecution('TEST-001', false, 2000, 'Test error');
 const successRate = getCujSuccessRate('TEST-001');
 console.log(`✅ Recorded CUJ executions`);
 console.log(`   Success rate: ${(successRate.rate * 100).toFixed(1)}%`);
-console.log(`   Total: ${successRate.total}, Successful: ${successRate.successful}, Failed: ${successRate.failed}`);
+console.log(
+  `   Total: ${successRate.total}, Successful: ${successRate.successful}, Failed: ${successRate.failed}`
+);
 
 // Test 3: Progress Emitter
 console.log('\n3. Testing Progress Emitter');
 console.log('─'.repeat(60));
 
 let progressCount = 0;
-const unsubscribe = subscribeToProgress((event) => {
+const unsubscribe = subscribeToProgress(event => {
   progressCount++;
 });
 
-emitProgress({ runId: 'test-run-001', step: 1, status: 'running', percentage: 25, message: 'Test step 1' });
-emitProgress({ runId: 'test-run-001', step: 2, status: 'completed', percentage: 100, message: 'Test complete' });
+emitProgress({
+  runId: 'test-run-001',
+  step: 1,
+  status: 'running',
+  percentage: 25,
+  message: 'Test step 1',
+});
+emitProgress({
+  runId: 'test-run-001',
+  step: 2,
+  status: 'completed',
+  percentage: 100,
+  message: 'Test complete',
+});
 
 unsubscribe();
 

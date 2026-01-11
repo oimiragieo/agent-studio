@@ -41,6 +41,7 @@ Drop the contents of this folder into your project's root. Assets are organized 
 This project supports two directory structures for different platforms:
 
 ### .opencode/ (OpenCode Platform)
+
 - **Purpose**: Configuration for OpenCode IDE and MCP tooling
 - **Authoritative**: This directory is the primary source for OpenCode workflows
 - **Usage**: Used by OpenCode's hierarchical loader, hooks, and MCP servers
@@ -49,6 +50,7 @@ This project supports two directory structures for different platforms:
 - **Tools**: `.opencode/tool/` contains OpenCode-specific tools (e.g., `workflow_runner.js`)
 
 ### .claude/ (Claude Code Platform)
+
 - **Purpose**: Configuration for Claude Code IDE
 - **Authoritative**: This directory is the primary source for Claude Code workflows
 - **Usage**: Used by Claude Code's agent system and workflow execution
@@ -59,6 +61,7 @@ This project supports two directory structures for different platforms:
 ### Path Conventions
 
 **OpenCode Workflows**:
+
 - Workflow files: `.opencode/workflow/*.yaml`
 - Agent files: `.opencode/agent/{agent-name}.md`
 - Schema files: `.opencode/schema/*.schema.json`
@@ -67,6 +70,7 @@ This project supports two directory structures for different platforms:
 - Gate paths: `.opencode/context/history/gates/{workflow_id}/`
 
 **Claude Code Workflows**:
+
 - Workflow files: `.claude/workflows/*.yaml`
 - Agent files: `.claude/agents/{agent-name}.md`
 - Schema files: `.claude/schemas/*.schema.json`
@@ -90,6 +94,7 @@ This project supports two directory structures for different platforms:
 ### Migration Notes
 
 When copying files between platforms:
+
 1. Update all path references (`.opencode/` ↔ `.claude/`)
 2. Update workflow YAML paths to match target platform
 3. Verify agent file paths in workflow definitions
@@ -105,6 +110,7 @@ When copying files between platforms:
 ## Agent Routing
 
 The `config.yaml` file defines intelligent agent routing based on:
+
 - **Trigger words**: Keywords that activate specific agents
 - **Complexity**: Low/medium/high complexity determines model selection
 - **Extended thinking**: High-complexity agents use extended thinking mode
@@ -112,6 +118,7 @@ The `config.yaml` file defines intelligent agent routing based on:
 ## Workflow Selection
 
 Workflows are automatically selected based on project keywords:
+
 - `quick_flow`: Bug fixes, hotfixes, documentation
 - `fullstack`: New projects, greenfield development
 - `code_quality`: Code review, refactoring, tech debt
@@ -122,33 +129,34 @@ Workflows are automatically selected based on project keywords:
 
 ## Available Agents
 
-| Agent | Role | Complexity |
-|-------|------|------------|
-| analyst | Market research, requirements | Medium |
-| pm | Product requirements, backlog | Medium |
-| architect | System design, infrastructure | High |
-| database-architect | Data modeling, queries | High |
-| developer | Implementation, debugging | Medium |
-| qa | Testing, quality gates | High |
-| ux-expert | UI/UX design, accessibility | Medium |
-| orchestrator | Multi-agent coordination | High |
-| security-architect | Security, compliance | High |
-| devops | CI/CD, monitoring | Medium |
-| technical-writer | Documentation | Low |
-| llm-architect | AI systems, prompts | High |
-| code-reviewer | Code review, auditing | High |
-| performance-engineer | Optimization, profiling | High |
-| api-designer | API design, contracts | High |
-| legacy-modernizer | Migration, upgrades | High |
-| accessibility-expert | WCAG, a11y | Medium |
-| compliance-auditor | GDPR, HIPAA, SOC2 | High |
-| incident-responder | Outages, post-mortems | Medium |
-| refactoring-specialist | Clean code, patterns | High |
-| mobile-developer | iOS, Android, Flutter | Medium |
+| Agent                  | Role                          | Complexity |
+| ---------------------- | ----------------------------- | ---------- |
+| analyst                | Market research, requirements | Medium     |
+| pm                     | Product requirements, backlog | Medium     |
+| architect              | System design, infrastructure | High       |
+| database-architect     | Data modeling, queries        | High       |
+| developer              | Implementation, debugging     | Medium     |
+| qa                     | Testing, quality gates        | High       |
+| ux-expert              | UI/UX design, accessibility   | Medium     |
+| orchestrator           | Multi-agent coordination      | High       |
+| security-architect     | Security, compliance          | High       |
+| devops                 | CI/CD, monitoring             | Medium     |
+| technical-writer       | Documentation                 | Low        |
+| llm-architect          | AI systems, prompts           | High       |
+| code-reviewer          | Code review, auditing         | High       |
+| performance-engineer   | Optimization, profiling       | High       |
+| api-designer           | API design, contracts         | High       |
+| legacy-modernizer      | Migration, upgrades           | High       |
+| accessibility-expert   | WCAG, a11y                    | Medium     |
+| compliance-auditor     | GDPR, HIPAA, SOC2             | High       |
+| incident-responder     | Outages, post-mortems         | Medium     |
+| refactoring-specialist | Clean code, patterns          | High       |
+| mobile-developer       | iOS, Android, Flutter         | Medium     |
 
 ## Quality Gates
 
 Quality gates are enabled by default and validate:
+
 - Artifact completeness
 - Schema conformance
 - Cross-agent consistency

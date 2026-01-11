@@ -117,6 +117,7 @@ Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they ar
    - Include error details in gate file if available
 
 3. **Status Tracking**:
+
    ```javascript
    metadata: {
      publish_attempts: [
@@ -132,16 +133,17 @@ Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they ar
    - Log success: "✅ Artifact published successfully to project_feed"
    - Log failure: "❌ Artifact publishing failed after 3 retries: [error]"
    - Include in gate file validation results if available
-</error_handling>
+     </error_handling>
 
 <workflow_integration>
+
 - **Post-Tool Trigger**: This skill is often invoked automatically after a `PostToolUse` hook to snapshot the results of a tool execution.
 - **Factory Droid**: Published artifacts are the primary way Factory Droids consume instructions from Claude.
 - **Publishing Policy**: The `publish_policy` in the frontmatter dictates when artifacts are automatically published:
   - `manual`: Requires explicit `publish_artifact` call.
   - `auto-on-pass`: Automatically publishes if the artifact's validation status is 'pass'.
   - `auto-on-complete`: Automatically publishes upon workflow completion.
-- **Artifact Registry Integration**: 
+- **Artifact Registry Integration**:
   - Use `readArtifactRegistry(runId)` from `.claude/tools/run-manager.mjs` to check registry
   - Check artifact registry for `publishable: true` metadata to auto-publish
   - Use `updateArtifactPublishingStatus(runId, artifactName, status)` to update registry after publication
@@ -152,23 +154,28 @@ Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they ar
 **Publishing Policy Examples**:
 
 1. **Manual Publishing** (`publish_policy: manual`):
+
    ```yaml
    # In workflow YAML or skill frontmatter
    publish_policy: manual
    ```
+
    - Artifacts are only published when explicitly requested
    - Use: "Publish this artifact" or `publish_artifact` tool call
    - Example: User reviews artifact, then explicitly publishes it
 
 2. **Auto-on-Pass** (`publish_policy: auto-on-pass`):
+
    ```yaml
    # In workflow YAML or skill frontmatter
    publish_policy: auto-on-pass
    ```
+
    - Artifacts are automatically published when validation status is 'pass'
    - Use: When you want to publish all validated artifacts automatically
    - Example: After gate file validation passes, artifact is automatically published
    - Implementation:
+
    ```javascript
    // After gate validation passes
    if (artifact.validationStatus === 'pass' && publishPolicy === 'auto-on-pass') {
@@ -176,20 +183,23 @@ Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they ar
      await updateArtifactPublishingStatus(runId, artifact.name, {
        published: true,
        published_at: new Date().toISOString(),
-       publish_status: 'success'
+       publish_status: 'success',
      });
    }
    ```
 
 3. **Auto-on-Complete** (`publish_policy: auto-on-complete`):
+
    ```yaml
    # In workflow YAML or skill frontmatter
    publish_policy: auto-on-complete
    ```
+
    - Artifacts are automatically published when workflow completes
    - Use: When you want to publish all artifacts at workflow end
    - Example: At workflow completion, all artifacts with `publishable: true` are published
    - Implementation:
+
    ```javascript
    // At workflow completion
    if (workflowStatus === 'completed' && publishPolicy === 'auto-on-complete') {
@@ -200,7 +210,7 @@ Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they ar
          await updateArtifactPublishingStatus(runId, name, {
            published: true,
            published_at: new Date().toISOString(),
-           publish_status: 'success'
+           publish_status: 'success',
          });
        }
      }
@@ -208,6 +218,7 @@ Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they ar
    ```
 
 **Configuring Publish Targets Per Artifact**:
+
 ```javascript
 // When registering artifact
 await registerArtifact(runId, {
@@ -221,32 +232,38 @@ await registerArtifact(runId, {
 ```
 
 **Handling Publishing Failures in Workflows**:
+
 - If publishing fails, workflow continues (non-blocking)
 - Publishing errors are logged in registry: `publish_error`
 - Failed artifacts can be retried manually or in next workflow run
 - Gate files include publishing status for visibility
-</workflow_integration>
-</instructions>
+  </workflow_integration>
+  </instructions>
 
 <platform_invocation>
 **Claude (this platform)**:
+
 - Use `create_artifact` and `share_artifact` tools directly
 - Invoke: "Use artifact-publisher skill to publish this artifact"
 
 **Cursor**:
+
 - Use `@artifact-publisher` mention
 - Invoke: "Use @artifact-publisher to publish this plan"
 
 **Factory**:
+
 - Use Task tool with skill
 - Invoke: "Run Task tool with skill artifact-publisher to publish this spec"
 
 **OpenCode**:
+
 - Use file system operations
 - Invoke: "Publish artifact to .opencode/context/artifacts/published/"
 
 **Cross-Platform Metadata**:
 All platforms should use consistent metadata structure:
+
 ```json
 {
   "id": "artifact-{timestamp}-{sequence}",
@@ -264,6 +281,7 @@ All platforms should use consistent metadata structure:
   "published_at": "ISO 8601 timestamp"
 }
 ```
+
 </platform_invocation>
 
 <examples>
@@ -274,19 +292,24 @@ All platforms should use consistent metadata structure:
 create_artifact --title "System Architecture" --type "markdown" --content "..."
 share_artifact --id <artifact_id> --target "project_feed"
 ```
+
 </usage_example>
 
 <usage_example>
 **Publishing a Plan (Cursor)**:
+
 ```
 Use @artifact-publisher to publish this plan
 ```
+
 </usage_example>
 
 <usage_example>
 **Publishing a Spec (Factory)**:
+
 ```
 Run Task tool with skill artifact-publisher to publish this spec
 ```
+
 </usage_example>
 </examples>

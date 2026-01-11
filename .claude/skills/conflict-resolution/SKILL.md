@@ -11,6 +11,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 ## When to Use
 
 **Trigger Conditions**:
+
 - Multiple agents provide conflicting recommendations on the same component
 - Requirements from different agents are incompatible (e.g., PM wants feature X, Security says block it)
 - Technical decisions conflict between agents (e.g., Architect chooses REST, Developer implements GraphQL)
@@ -19,11 +20,13 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 - Workflow execution blocked due to contradictory agent outputs
 
 **When NOT to Use**:
+
 - Agents provide different but compatible approaches (that's healthy diversity)
 - Minor style preferences (use code-style-validator instead)
 - Performance trade-offs without clear winner (use performance-engineer for analysis)
 
 **Real-World Triggers**:
+
 1. Planner detects contradictory requirements in workflow step outputs
 2. Developer receives conflicting specifications from Architect and UX Expert
 3. Two agents update the same artifact with incompatible changes
@@ -99,24 +102,26 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 
 ## Conflict Resolution Matrix
 
-| Conflict Type | Resolution Agent | Timeout | Escalation |
-|--------------|------------------|---------|------------|
-| Technical | Architect | 30s | AI Council |
-| Requirements | PM | 30s | AI Council |
-| Design | UX Expert | 30s | AI Council |
-| Data | Database Architect | 30s | AI Council |
-| Multi-Domain | AI Council | 60s | Human Review |
+| Conflict Type | Resolution Agent   | Timeout | Escalation   |
+| ------------- | ------------------ | ------- | ------------ |
+| Technical     | Architect          | 30s     | AI Council   |
+| Requirements  | PM                 | 30s     | AI Council   |
+| Design        | UX Expert          | 30s     | AI Council   |
+| Data          | Database Architect | 30s     | AI Council   |
+| Multi-Domain  | AI Council         | 60s     | Human Review |
 
 ## Usage Patterns
 
 ### Detect and Resolve Conflicts
 
 **When to Use**:
+
 - Workflow step outputs contradict each other
 - Multiple agents provide incompatible recommendations
 - Agent outputs fail validation due to conflicts
 
 **How to Invoke**:
+
 ```
 "Detect conflicts between architect and developer outputs"
 "Resolve conflict in authentication implementation"
@@ -124,6 +129,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 ```
 
 **What It Does**:
+
 - Loads agent outputs from workflow artifacts
 - Compares outputs for contradictions
 - Detects conflict type and severity
@@ -137,6 +143,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 **Scenario**: Architect specifies REST API, Developer implements GraphQL
 
 **Conflict Detection**:
+
 ```json
 {
   "conflict_type": "technical",
@@ -159,6 +166,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 ```
 
 **Resolution Process**:
+
 1. **Timeout Start**: 30 seconds for resolution
 2. **Escalation**: Escalate to Architect (has final authority on technical decisions)
 3. **Architect Decision**: "Use REST for v1, evaluate GraphQL for v2 after metrics"
@@ -176,11 +184,13 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
    ```
 
 **Before State**:
+
 - Architect: REST API specified
 - Developer: GraphQL implemented
 - Status: Conflicting implementations
 
 **After State**:
+
 - Architect: REST API confirmed (authority decision)
 - Developer: REST API implementation started
 - Status: Conflict resolved, workflow proceeding
@@ -190,6 +200,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 **Scenario**: PM wants public user profiles, Security Architect flags privacy risk
 
 **Conflict Detection**:
+
 ```json
 {
   "conflict_type": "requirements",
@@ -213,6 +224,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 ```
 
 **Resolution Process**:
+
 1. **Timeout Start**: 30 seconds for resolution
 2. **Escalation**: Escalate to PM (has final authority on requirements)
 3. **PM Decision**: "Implement privacy controls - make email optional, add visibility toggles"
@@ -232,11 +244,13 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
    ```
 
 **Before State**:
+
 - PM: Public profiles with all fields visible
 - Security: Block feature due to PII exposure
 - Status: Critical conflict blocking feature
 
 **After State**:
+
 - PM: Updated requirements with privacy controls
 - Security: Approved with privacy controls
 - Status: Conflict resolved, feature can proceed
@@ -246,6 +260,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 **Scenario**: UX wants modal for file upload, Architect wants dedicated page for scalability
 
 **Conflict Detection**:
+
 ```json
 {
   "conflict_type": "design",
@@ -268,6 +283,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 ```
 
 **Resolution Process**:
+
 1. **Timeout Start**: 30 seconds for resolution
 2. **Escalation**: Escalate to UX Expert (has final authority on design)
 3. **UX Decision**: "Use modal for single file, dedicated page for batch - best of both"
@@ -293,11 +309,13 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
    ```
 
 **Before State**:
+
 - UX: Modal for all uploads
 - Architect: Dedicated page for all uploads
 - Status: Design conflict blocking implementation
 
 **After State**:
+
 - UX: Hybrid approach approved
 - Architect: Scalability concerns addressed
 - Status: Conflict resolved, implementation can proceed
@@ -307,6 +325,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 **Scenario**: Complex conflict involving Architect, Security, and Performance Engineer
 
 **Conflict Detection**:
+
 ```json
 {
   "conflict_type": "multi-domain",
@@ -323,6 +342,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 ```
 
 **AI Council Resolution**:
+
 ```json
 {
   "resolution": "Start with modular monolith, extract services as needed",
@@ -346,6 +366,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 ## Invocation Commands
 
 **Natural Language**:
+
 ```
 "Detect conflicts in workflow artifacts"
 "Resolve conflict between architect and developer"
@@ -354,6 +375,7 @@ Multi-agent conflict resolution protocol for detecting and resolving conflicts w
 ```
 
 **Skill Tool**:
+
 ```
 Skill: conflict-resolution
 Parameters: {
@@ -364,6 +386,7 @@ Parameters: {
 ```
 
 **Via Orchestrator**:
+
 ```
 When orchestrator detects conflicting outputs:
 1. Pause workflow execution
@@ -384,4 +407,3 @@ When orchestrator detects conflicting outputs:
 - [Planner Agent](../../agents/planner.md) - Specialist Coordination with Timeout
 - [Orchestrator Agent](../../agents/orchestrator.md) - Conflict Detection and Resolution Protocol
 - [CUJ-047](../../docs/cujs/CUJ-047.md) - Multi-Agent Conflict Resolution
-

@@ -3,7 +3,13 @@
   "type": "object",
   "title": "Incident Resolution Report",
   "description": "Schema for incident resolution validation artifacts generated during incident response workflow",
-  "required": ["resolution_id", "resolution_date", "resolution_status", "root_cause", "fix_verification"],
+  "required": [
+    "resolution_id",
+    "resolution_date",
+    "resolution_status",
+    "root_cause",
+    "fix_verification"
+  ],
   "properties": {
     "resolution_id": {
       "type": "string",
@@ -53,7 +59,16 @@
         },
         "category": {
           "type": "string",
-          "enum": ["code_bug", "configuration", "infrastructure", "capacity", "dependency", "human_error", "security", "unknown"],
+          "enum": [
+            "code_bug",
+            "configuration",
+            "infrastructure",
+            "capacity",
+            "dependency",
+            "human_error",
+            "security",
+            "unknown"
+          ],
           "description": "Category of root cause"
         },
         "contributing_factors": {
@@ -124,7 +139,10 @@
             "type": "object",
             "properties": {
               "service": { "type": "string" },
-              "status": { "type": "string", "enum": ["fully_restored", "partially_restored", "degraded"] },
+              "status": {
+                "type": "string",
+                "enum": ["fully_restored", "partially_restored", "degraded"]
+              },
               "restoration_time": { "type": "string", "format": "date-time" }
             }
           }
@@ -142,7 +160,14 @@
         "properties": {
           "change_type": {
             "type": "string",
-            "enum": ["code_change", "config_change", "rollback", "infrastructure", "hotfix", "patch"]
+            "enum": [
+              "code_change",
+              "config_change",
+              "rollback",
+              "infrastructure",
+              "hotfix",
+              "patch"
+            ]
           },
           "description": {
             "type": "string"

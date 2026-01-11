@@ -23,7 +23,7 @@ validation:
 from pydantic import BaseModel, Field
 
 class {{Name}}(BaseModel):
-    """{{Description}}"""
+"""{{Description}}"""
 
     id: str = Field(..., description="Unique identifier")
     name: str = Field(..., min_length=1, max_length=100)
@@ -33,7 +33,8 @@ class {{Name}}(BaseModel):
         str_strip_whitespace=True,
         validate_assignment=True,
     )
-```
+
+````
 </template>
 
 <template name="class">
@@ -50,7 +51,8 @@ class {{Name}}:
 
     def __repr__(self) -> str:
         return f"{{Name}}({self.{{attr}}!r})"
-```
+````
+
 </template>
 
 <template name="function">
@@ -69,6 +71,7 @@ def {{name}}({{params}}) -> {{ReturnType}}:
     """
     # Implementation
     return result
+
 ```
 </template>
 
@@ -89,27 +92,29 @@ def {{name}}({{params}}) -> {{ReturnType}}:
 ### Directory Layout
 
 ```
+
 project/
 ├── src/
-│   └── your_package_name/
-│       ├── __init__.py
-│       ├── models/
-│       ├── services/
-│       ├── controllers/
-│       ├── utils/
-│       └── config/
+│ └── your_package_name/
+│ ├── **init**.py
+│ ├── models/
+│ ├── services/
+│ ├── controllers/
+│ ├── utils/
+│ └── config/
 ├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── fixtures/
+│ ├── unit/
+│ ├── integration/
+│ └── fixtures/
 ├── docs/
 ├── config/
 ├── .github/
-│   └── workflows/
-├── requirements.txt  # or pyproject.toml
+│ └── workflows/
+├── requirements.txt # or pyproject.toml
 ├── README.md
 └── .env.example
-```
+
+````
 
 ### Best Practices
 
@@ -164,7 +169,7 @@ def process_data(
 ) -> Dict[str, int]:
     """Process items and return results."""
     pass
-```
+````
 
 ## Error Handling and Logging
 
@@ -325,17 +330,17 @@ def test_process_data_empty_list():
 ```python
 def process_data(items: List[str], config: Optional[Dict] = None) -> Dict[str, int]:
     """Process a list of items and return statistics.
-    
+
     Args:
         items: List of item strings to process
         config: Optional configuration dictionary
-        
+
     Returns:
         Dictionary containing processing statistics
-        
+
     Raises:
         ValueError: If items list is invalid
-        
+
     Example:
         >>> process_data(["item1", "item2"])
         {'count': 2, 'processed': 2}
@@ -435,6 +440,7 @@ strict = true
 ## Migration Notes
 
 This master file consolidates rules from:
+
 - `python-developer-cursorrules-prompt-file`
 - `python-cursorrules-prompt-file-best-practices`
 - `python-projects-guide-cursorrules-prompt-file`
@@ -442,4 +448,3 @@ This master file consolidates rules from:
 - `python-containerization-cursorrules-prompt-file`
 
 **Framework-specific rules** (Django, FastAPI, Flask) are kept separate in their own master files.
-

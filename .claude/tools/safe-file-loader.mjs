@@ -23,11 +23,7 @@ const JSON_EXPANSION_FACTOR = 3; // JSON parsing expands ~3x in memory
  * @returns {Promise<Object>} Parsed JSON object
  */
 export async function loadJSONSafely(filePath, options = {}) {
-  const {
-    maxSizeMB = 50,
-    forceStreaming = false,
-    onProgress = null
-  } = options;
+  const { maxSizeMB = 50, forceStreaming = false, onProgress = null } = options;
 
   // Check file size
   const stats = await stat(filePath);
@@ -43,7 +39,9 @@ export async function loadJSONSafely(filePath, options = {}) {
   // Check if we have enough memory
   const memCheck = canSpawnSubagent(estimatedMemoryMB);
   if (!memCheck.canSpawn) {
-    console.warn(`[SafeLoader] Insufficient memory for ${filePath} (need ${estimatedMemoryMB.toFixed(2)}MB)`);
+    console.warn(
+      `[SafeLoader] Insufficient memory for ${filePath} (need ${estimatedMemoryMB.toFixed(2)}MB)`
+    );
 
     // Aggressive cleanup
     cleanupAllCaches();

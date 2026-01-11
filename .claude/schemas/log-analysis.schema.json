@@ -3,7 +3,14 @@
   "type": "object",
   "title": "Log Analysis",
   "description": "Schema for analysis of browser console, network, and performance logs",
-  "required": ["analysis_id", "analysis_date", "analyzer_agent", "console_logs", "network_logs", "summary"],
+  "required": [
+    "analysis_id",
+    "analysis_date",
+    "analyzer_agent",
+    "console_logs",
+    "network_logs",
+    "summary"
+  ],
   "properties": {
     "analysis_id": {
       "type": "string",
@@ -428,4 +435,3 @@
     }
   }
 }
-

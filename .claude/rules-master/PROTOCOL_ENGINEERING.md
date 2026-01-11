@@ -59,6 +59,7 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/
 **Format**: `<type>(<scope>): <subject>`
 
 **Types**:
+
 - `feat`: A new feature
 - `fix`: A bug fix
 - `docs`: Documentation only changes
@@ -72,6 +73,7 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/
 - `revert`: Reverts a previous commit
 
 **Examples**:
+
 ```
 feat(auth): add OAuth2 login support
 fix(api): resolve timeout issue in user endpoint
@@ -81,6 +83,7 @@ test(utils): add unit tests for date formatting
 ```
 
 **Rules**:
+
 - Use imperative, present tense ("add" not "added" or "adds")
 - Don't capitalize the first letter
 - No period (.) at the end
@@ -128,6 +131,7 @@ Every PR must include:
 ### PR Checklist
 
 Before requesting review:
+
 - [ ] Code follows project standards
 - [ ] Tests written and passing
 - [ ] No linting errors
@@ -141,6 +145,7 @@ Before requesting review:
 ### Writing Style
 
 **Voice and Tone**:
+
 - Write like humans speak. Avoid corporate jargon and marketing fluff.
 - Be confident and direct. Avoid softening phrases like "I think," "maybe," or "could."
 - Use active voice instead of passive voice.
@@ -149,15 +154,18 @@ Before requesting review:
 - Use contractions like "I'll," "won't," and "can't" for a warmer tone.
 
 **Specificity and Evidence**:
+
 - Be specific with facts and data instead of vague superlatives.
 - Back up claims with concrete examples or metrics.
 - Use realistic, product-based examples instead of `foo/bar/baz` in code.
 - Make content concrete, visual, and falsifiable.
 
 **Banned Words and Phrases**:
+
 - Avoid: `a bit`, `a little`, `actually`, `agile`, `arguably`, `assistance` (use "help"), `attempt` (use "try"), `best practices` (use "proven approaches"), `blazing fast` (be specific), `business logic`, `cognitive load`, `commence` (use "start"), `delve` (use "go into"), `disrupt`, `facilitate` (use "help"), `game-changing` (be specific), `great`, `implement` (use "do"), `innovative`, `just`, `leverage` (use "use"), `mission-critical` (use "important"), `modern`, `numerous` (use "many"), `out of the box`, `performant` (use "fast and reliable"), `pretty/quite/rather/really/very`, `robust` (use "strong"), `seamless` (use "automatic"), `sufficient` (use "enough"), `thing` (be specific), `utilize` (use "use").
 
 **Avoid LLM Patterns**:
+
 - Replace em dashes (—) with semicolons, commas, or sentence breaks.
 - Avoid starting with "Great question!", "You're right!", or "Let me help you."
 - Don't use phrases like "Let's dive into..."
@@ -171,6 +179,7 @@ Before requesting review:
 ### How-To Documentation
 
 **Structure**:
+
 1. **Title**: Clear, specific title that describes what the user will learn
 2. **Introduction**: Brief overview of what the document covers
 3. **Prerequisites**: What the user needs before starting
@@ -179,6 +188,7 @@ Before requesting review:
 6. **Related Resources**: Links to related documentation
 
 **Best Practices**:
+
 - Use user-friendly language (avoid technical jargon)
 - Include screenshots or visual references when helpful
 - Test all steps to ensure accuracy
@@ -208,6 +218,7 @@ When adding new code to an existing project:
 ### Style Profile Template
 
 Document these aspects:
+
 - **Naming Conventions**: Variables, functions, classes, files, directories
 - **Formatting**: Indentation, spacing, line length, brace style
 - **Structure**: File organization, import order, export patterns
@@ -287,6 +298,7 @@ Document these aspects:
 ## Migration Notes
 
 This master file consolidates rules from:
+
 - `code-guidelines-cursorrules-prompt-file`
 - `code-style-consistency-cursorrules-prompt-file`
 - `git-conventional-commit-messages`
@@ -296,4 +308,3 @@ This master file consolidates rules from:
 - `how-to-documentation-cursorrules-prompt-file`
 
 **Old rule files can be archived** - this master file is the single source of truth for engineering protocols.
-

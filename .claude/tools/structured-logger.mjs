@@ -98,7 +98,7 @@ export class StructuredLogger {
       run_id: event.runId || null,
       cuj_id: event.cujId || null,
       error: event.error || null,
-      metadata: event.metadata || {}
+      metadata: event.metadata || {},
     };
 
     try {
@@ -134,7 +134,10 @@ export class StructuredLogger {
     for (const logFile of logFiles) {
       if (!fs.existsSync(logFile)) continue;
 
-      const lines = fs.readFileSync(logFile, 'utf-8').split('\n').filter(l => l.trim());
+      const lines = fs
+        .readFileSync(logFile, 'utf-8')
+        .split('\n')
+        .filter(l => l.trim());
 
       for (const line of lines) {
         try {
@@ -170,7 +173,8 @@ export class StructuredLogger {
    * @private
    */
   _getLogFilesInRange(startDate, endDate) {
-    const files = fs.readdirSync(this.logDir)
+    const files = fs
+      .readdirSync(this.logDir)
       .filter(f => f.startsWith('skill-invocations-') && f.endsWith('.jsonl'));
 
     return files
@@ -204,7 +208,7 @@ export class StructuredLogger {
       avg_duration_ms: 0,
       by_skill: {},
       by_agent: {},
-      by_cuj: {}
+      by_cuj: {},
     };
 
     if (entries.length > 0) {

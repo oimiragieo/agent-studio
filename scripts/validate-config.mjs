@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
  * Config Validation Script
- * 
+ *
  * Validates that all referenced files in configuration exist and are valid.
- * 
+ *
  * Usage:
  *   node scripts/validate-config.mjs [--verbose]
- * 
+ *
  * Exit codes:
  *   0: All validations passed
  *   1: One or more validations failed
@@ -88,15 +88,15 @@ function validateYAML(path, description) {
     errors.push(`Missing ${description}: ${path}`);
     return false;
   }
-  
+
   if (!yaml) {
     // Just check file exists if yaml parser not available
-  if (verbose) {
-    console.log(`* Found ${description}: ${path} (YAML validation skipped)`);
+    if (verbose) {
+      console.log(`* Found ${description}: ${path} (YAML validation skipped)`);
     }
     return true;
   }
-  
+
   try {
     const content = readFileSync(fullPath, 'utf-8');
     yaml.load(content);
@@ -117,7 +117,7 @@ function validateJSON(path, description) {
     errors.push(`Missing ${description}: ${path}`);
     return false;
   }
-  
+
   try {
     const content = readFileSync(fullPath, 'utf-8');
     JSON.parse(content);
@@ -134,11 +134,11 @@ function validateJSON(path, description) {
 // Main validation function
 function validateConfig() {
   console.log('Validating Agent Studio configuration...\n');
-  
+
   // 1. Check gate script
   console.log('Checking gate script...');
   checkFile('.claude/tools/gates/gate.mjs', 'gate script');
-  
+
   // 2. Load and validate config.yaml
   console.log('\nValidating config.yaml...');
   const configPath = resolve(rootDir, '.claude/config.yaml');
@@ -146,7 +146,7 @@ function validateConfig() {
     errors.push('Missing config.yaml: .claude/config.yaml');
     return;
   }
-  
+
   let config;
   try {
     const configContent = readFileSync(configPath, 'utf-8');
@@ -154,7 +154,9 @@ function validateConfig() {
       config = yaml.load(configContent);
     } else {
       // Basic parsing without yaml library - just check file exists
-      warnings.push('YAML parsing skipped (js-yaml not installed). Install with: npm install js-yaml');
+      warnings.push(
+        'YAML parsing skipped (js-yaml not installed). Install with: npm install js-yaml'
+      );
       config = {}; // Empty config, will skip agent/template checks
     }
   } catch (error) {
@@ -166,7 +168,7 @@ function validateConfig() {
       config = {};
     }
   }
-  
+
   // 3. Check agent files referenced in config
   console.log('\nChecking agent files...');
   if (config.agent_routing) {
@@ -177,23 +179,32 @@ function validateConfig() {
       }
     }
   }
-  
+
   // 4. Check template files
   console.log('\nChecking template files...');
   if (config.templates && config.templates.base_dir) {
     checkDirectory(config.templates.base_dir, 'templates directory');
-    
+
     if (config.templates.project_brief) {
-      checkFile(`${config.templates.base_dir}/${config.templates.project_brief}`, 'project brief template');
+      checkFile(
+        `${config.templates.base_dir}/${config.templates.project_brief}`,
+        'project brief template'
+      );
     }
     if (config.templates.prd) {
       checkFile(`${config.templates.base_dir}/${config.templates.prd}`, 'PRD template');
     }
     if (config.templates.architecture) {
-      checkFile(`${config.templates.base_dir}/${config.templates.architecture}`, 'architecture template');
+      checkFile(
+        `${config.templates.base_dir}/${config.templates.architecture}`,
+        'architecture template'
+      );
     }
     if (config.templates.implementation_plan) {
-      checkFile(`${config.templates.base_dir}/${config.templates.implementation_plan}`, 'implementation plan template');
+      checkFile(
+        `${config.templates.base_dir}/${config.templates.implementation_plan}`,
+        'implementation plan template'
+      );
     }
     if (config.templates.test_plan) {
       checkFile(`${config.templates.base_dir}/${config.templates.test_plan}`, 'test plan template');
@@ -202,12 +213,12 @@ function validateConfig() {
       checkFile(`${config.templates.base_dir}/${config.templates.ui_spec}`, 'UI spec template');
     }
   }
-  
+
   // 5. Check schema directory and validate all schema files exist
   console.log('\nChecking schema files...');
   const schemasDir = '.claude/schemas';
   checkDirectory(schemasDir, 'schemas directory');
-  
+
   // Validate all schema files in schemas directory exist and are valid JSON
   const schemaFiles = [
     'architecture-validation.schema.json',
@@ -226,9 +237,9 @@ function validateConfig() {
     'test_plan.schema.json',
     'ui-audit-report.schema.json',
     'user_story.schema.json',
-    'ux_spec.schema.json'
+    'ux_spec.schema.json',
   ];
-  
+
   for (const schemaFile of schemaFiles) {
     const schemaPath = `${schemasDir}/${schemaFile}`;
     if (existsSync(resolve(rootDir, schemaPath))) {
@@ -243,7 +254,7 @@ function validateConfig() {
       warnings.push(`Schema file not found (optional): ${schemaPath}`);
     }
   }
-  
+
   // 6. Validate workflow files and check referenced schemas
   console.log('\nValidating workflow files...');
   const workflowFiles = [
@@ -257,25 +268,25 @@ function validateConfig() {
     '.claude/workflows/mobile-flow.yaml',
     '.claude/workflows/incident-flow.yaml',
     '.claude/workflows/ui-perfection-loop.yaml',
-    '.claude/workflows/bmad-greenfield-standard.yaml'
+    '.claude/workflows/bmad-greenfield-standard.yaml',
   ];
-  
+
   const referencedSchemas = new Set();
-  
+
   for (const workflowFile of workflowFiles) {
     if (!existsSync(resolve(rootDir, workflowFile))) {
       warnings.push(`Workflow file not found: ${workflowFile}`);
       continue;
     }
-    
+
     validateYAML(workflowFile, `workflow file ${workflowFile}`);
-    
+
     // Extract schema references from workflow
     if (yaml) {
       try {
         const workflowContent = readFileSync(resolve(rootDir, workflowFile), 'utf-8');
         const workflow = yaml.load(workflowContent);
-        
+
         if (workflow.steps && Array.isArray(workflow.steps)) {
           for (const step of workflow.steps) {
             if (step.validation && step.validation.schema) {
@@ -302,7 +313,7 @@ function validateConfig() {
       }
     }
   }
-  
+
   // 7. Check referenced schema files
   console.log('\nChecking referenced schema files...');
   for (const schemaPath of referencedSchemas) {
@@ -314,17 +325,17 @@ function validateConfig() {
   // 8. Check agents referenced in workflows
   console.log('\nChecking agents in workflows...');
   const referencedAgents = new Set();
-  
+
   for (const workflowFile of workflowFiles) {
     if (!existsSync(resolve(rootDir, workflowFile))) {
       continue;
     }
-    
+
     if (yaml) {
       try {
         const workflowContent = readFileSync(resolve(rootDir, workflowFile), 'utf-8');
         const workflow = yaml.load(workflowContent);
-        
+
         // Check step-based workflows
         if (workflow.steps && Array.isArray(workflow.steps)) {
           for (const step of workflow.steps) {
@@ -333,7 +344,7 @@ function validateConfig() {
             }
           }
         }
-        
+
         // Check phase-based workflows (BMad)
         if (workflow.phases && Array.isArray(workflow.phases)) {
           for (const phase of workflow.phases) {
@@ -362,7 +373,11 @@ function validateConfig() {
               }
             }
             // Check epic_loop and story_loop
-            if (phase.epic_loop && phase.epic_loop.story_loop && Array.isArray(phase.epic_loop.story_loop)) {
+            if (
+              phase.epic_loop &&
+              phase.epic_loop.story_loop &&
+              Array.isArray(phase.epic_loop.story_loop)
+            ) {
               for (const step of phase.epic_loop.story_loop) {
                 if (step.agent) {
                   referencedAgents.add({ agent: step.agent, workflow: workflowFile });
@@ -376,7 +391,7 @@ function validateConfig() {
       }
     }
   }
-  
+
   // Validate all referenced agents exist
   for (const { agent, workflow } of referencedAgents) {
     const agentFile = `.claude/agents/${agent}.md`;
@@ -384,12 +399,12 @@ function validateConfig() {
       errors.push(`Agent ${agent} referenced in ${workflow} but file missing`);
     }
   }
-  
+
   // 9. Validate skill structure
   console.log('\nValidating skill structure...');
   const skillsDir = '.claude/skills';
   checkDirectory(skillsDir, 'skills directory');
-  
+
   // Find all SKILL.md files
   const skillFiles = [];
   try {
@@ -405,12 +420,12 @@ function validateConfig() {
   } catch (error) {
     errors.push(`Error reading skills directory: ${error.message}`);
   }
-  
+
   // Validate each skill file
   for (const { path, name } of skillFiles) {
     try {
       const content = readFileSync(path, 'utf-8');
-      
+
       // Check for YAML frontmatter (handle both LF and CRLF)
       const normalizedContent = content.replace(/\r\n/g, '\n');
       if (!normalizedContent.startsWith('---\n')) {
@@ -424,14 +439,14 @@ function validateConfig() {
         errors.push(`Skill ${name}: Invalid YAML frontmatter (missing closing ---)`);
         continue;
       }
-      
+
       const frontmatter = normalizedContent.substring(4, frontmatterEnd);
-      
+
       // Parse YAML frontmatter
       if (yaml) {
         try {
           const parsed = yaml.load(frontmatter);
-          
+
           // Check required fields
           const requiredFields = ['name', 'description', 'allowed-tools', 'version'];
           for (const field of requiredFields) {
@@ -439,16 +454,20 @@ function validateConfig() {
               errors.push(`Skill ${name}: Missing required field: ${field}`);
             }
           }
-          
+
           // Validate skill name matches directory name
           if (parsed.name && parsed.name !== name) {
-            warnings.push(`Skill ${name}: Frontmatter name "${parsed.name}" doesn't match directory name`);
+            warnings.push(
+              `Skill ${name}: Frontmatter name "${parsed.name}" doesn't match directory name`
+            );
           }
 
           // Validate context:fork field (Phase 2.1.2)
           if (parsed['context:fork'] !== undefined) {
             if (typeof parsed['context:fork'] !== 'boolean') {
-              errors.push(`Skill ${name}: context:fork must be boolean, got ${typeof parsed['context:fork']}`);
+              errors.push(
+                `Skill ${name}: context:fork must be boolean, got ${typeof parsed['context:fork']}`
+              );
             }
           }
 
@@ -456,7 +475,9 @@ function validateConfig() {
           if (parsed.model !== undefined) {
             const validModels = ['haiku', 'sonnet', 'opus'];
             if (!validModels.includes(parsed.model)) {
-              errors.push(`Skill ${name}: model must be one of: ${validModels.join(', ')}, got '${parsed.model}'`);
+              errors.push(
+                `Skill ${name}: model must be one of: ${validModels.join(', ')}, got '${parsed.model}'`
+              );
             }
           }
 
@@ -499,13 +520,17 @@ function validateConfig() {
             const normalizedContent = content.replace(/\r\n/g, '\n');
 
             if (!normalizedContent.startsWith('---\n')) {
-              errors.push(`Codex Skill ${dirent.name}: Missing YAML frontmatter (must start with ---)`);
+              errors.push(
+                `Codex Skill ${dirent.name}: Missing YAML frontmatter (must start with ---)`
+              );
               continue;
             }
 
             const frontmatterEnd = normalizedContent.indexOf('\n---\n', 4);
             if (frontmatterEnd === -1) {
-              errors.push(`Codex Skill ${dirent.name}: Invalid YAML frontmatter (missing closing ---)`);
+              errors.push(
+                `Codex Skill ${dirent.name}: Invalid YAML frontmatter (missing closing ---)`
+              );
               continue;
             }
 
@@ -525,37 +550,49 @@ function validateConfig() {
 
                 // Validate skill name matches directory name
                 if (parsed.name && parsed.name !== dirent.name) {
-                  warnings.push(`Codex Skill ${dirent.name}: Frontmatter name "${parsed.name}" doesn't match directory name`);
+                  warnings.push(
+                    `Codex Skill ${dirent.name}: Frontmatter name "${parsed.name}" doesn't match directory name`
+                  );
                 }
 
                 // Validate model field (Phase 2.1.2)
                 if (parsed.model !== undefined) {
                   const validModels = ['haiku', 'sonnet', 'opus'];
                   if (!validModels.includes(parsed.model)) {
-                    errors.push(`Codex Skill ${dirent.name}: model must be one of: ${validModels.join(', ')}, got '${parsed.model}'`);
+                    errors.push(
+                      `Codex Skill ${dirent.name}: model must be one of: ${validModels.join(', ')}, got '${parsed.model}'`
+                    );
                   }
                 }
 
                 // Validate context:fork field (Phase 2.1.2)
                 if (parsed['context:fork'] !== undefined) {
                   if (typeof parsed['context:fork'] !== 'boolean') {
-                    errors.push(`Codex Skill ${dirent.name}: context:fork must be boolean, got ${typeof parsed['context:fork']}`);
+                    errors.push(
+                      `Codex Skill ${dirent.name}: context:fork must be boolean, got ${typeof parsed['context:fork']}`
+                    );
                   }
                 }
 
                 console.log(`  ✓ Codex Skill validated: ${dirent.name}`);
               } catch (yamlError) {
-                errors.push(`Codex Skill ${dirent.name}: Invalid YAML frontmatter - ${yamlError.message}`);
+                errors.push(
+                  `Codex Skill ${dirent.name}: Invalid YAML frontmatter - ${yamlError.message}`
+                );
               }
             } else {
               // Without yaml parser, do basic checks
               const requiredFields = ['name:', 'description:'];
               for (const field of requiredFields) {
                 if (!frontmatter.includes(field)) {
-                  errors.push(`Codex Skill ${dirent.name}: Missing required field: ${field.replace(':', '')}`);
+                  errors.push(
+                    `Codex Skill ${dirent.name}: Missing required field: ${field.replace(':', '')}`
+                  );
                 }
               }
-              console.log(`  ⚠️  Codex Skill ${dirent.name}: Basic validation (YAML parser not available)`);
+              console.log(
+                `  ⚠️  Codex Skill ${dirent.name}: Basic validation (YAML parser not available)`
+              );
             }
           }
         }
@@ -571,17 +608,17 @@ function validateConfig() {
   console.log('\nChecking hook files...');
   const hookDir = '.claude/hooks';
   checkDirectory(hookDir, 'hooks directory');
-  
+
   // Check common hook files (shell scripts, not YAML)
   const commonHooks = [
-    'security-pre-tool.sh',      // PreToolUse hook
-    'audit-post-tool.sh',         // PostToolUse hook
-    'user-prompt-submit.sh',      // UserPromptSubmit hook
-    'notification.sh',             // Notification hook
-    'stop.sh',                     // Stop hook
-    'orchestrator.mjs'             // Orchestrator hook (optional)
+    'security-pre-tool.sh', // PreToolUse hook
+    'audit-post-tool.sh', // PostToolUse hook
+    'user-prompt-submit.sh', // UserPromptSubmit hook
+    'notification.sh', // Notification hook
+    'stop.sh', // Stop hook
+    'orchestrator.mjs', // Orchestrator hook (optional)
   ];
-  
+
   // Python SDK hook limitations
   const pythonUnsupportedHooks = ['SessionStart', 'SessionEnd', 'Notification'];
   const hookEventMapping = {
@@ -590,34 +627,38 @@ function validateConfig() {
     'user-prompt-submit.sh': 'UserPromptSubmit',
     'notification.sh': 'Notification',
     'stop.sh': 'Stop',
-    'orchestrator.mjs': 'SubagentStart' // or other events
+    'orchestrator.mjs': 'SubagentStart', // or other events
   };
-  
+
   for (const hookFile of commonHooks) {
     const hookPath = `${hookDir}/${hookFile}`;
     if (existsSync(resolve(rootDir, hookPath))) {
       // Shell scripts and JS files don't need YAML validation
       console.log(`  ✓ Hook file found: ${hookFile}`);
-      
+
       // Check for Python SDK compatibility
       const eventName = hookEventMapping[hookFile];
       if (eventName && pythonUnsupportedHooks.includes(eventName)) {
-        warnings.push(`Hook ${hookFile} uses event "${eventName}" which is not supported by Python SDK. TypeScript SDK supports all hook events.`);
+        warnings.push(
+          `Hook ${hookFile} uses event "${eventName}" which is not supported by Python SDK. TypeScript SDK supports all hook events.`
+        );
       }
     } else {
       warnings.push(`Hook file not found (optional): ${hookPath}`);
     }
   }
-  
+
   // Note about hook output format
   console.log('  ℹ️  Hooks must return JSON matching SDK HookJSONOutput structure');
-  console.log('  ℹ️  Python SDK limitation: SessionStart, SessionEnd, Notification hooks not supported');
+  console.log(
+    '  ℹ️  Python SDK limitation: SessionStart, SessionEnd, Notification hooks not supported'
+  );
 
   // 11. Validate template references
   console.log('\nValidating template references...');
   const templatesDir = '.claude/templates';
   checkDirectory(templatesDir, 'templates directory');
-  
+
   // Find template references in agent files
   const templateReferences = new Set();
   try {
@@ -642,7 +683,7 @@ function validateConfig() {
   } catch (error) {
     warnings.push(`Error scanning agent files for template references: ${error.message}`);
   }
-  
+
   // Find template references in skill files
   for (const { path: skillPath, name } of skillFiles) {
     try {
@@ -657,7 +698,7 @@ function validateConfig() {
       // Skip if can't read
     }
   }
-  
+
   // Validate all referenced templates exist
   for (const templateRef of templateReferences) {
     const templatePath = resolve(rootDir, templateRef);
@@ -667,7 +708,7 @@ function validateConfig() {
       console.log(`  ✓ Template reference validated: ${templateRef}`);
     }
   }
-  
+
   if (templateReferences.size === 0 && verbose) {
     console.log('  ℹ️  No template references found in agent or skill files');
   }
@@ -679,7 +720,7 @@ function validateConfig() {
     try {
       const mcpContent = readFileSync(resolve(rootDir, mcpConfigPath), 'utf-8');
       const mcpConfig = JSON.parse(mcpContent);
-      
+
       // Validate MCP server config structure (SDK-compatible)
       if (typeof mcpConfig !== 'object') {
         errors.push('.mcp.json: Root must be an object');
@@ -690,22 +731,26 @@ function validateConfig() {
             errors.push(`.mcp.json: Server ${serverName} config must be an object`);
             continue;
           }
-          
+
           // Check server type (stdio, sse, http, or sdk)
           const validTypes = ['stdio', 'sse', 'http', 'sdk'];
           if (serverConfig.type && !validTypes.includes(serverConfig.type)) {
             warnings.push(`.mcp.json: Server ${serverName} has invalid type: ${serverConfig.type}`);
           }
-          
+
           // Validate required fields based on type
           if (serverConfig.type === 'stdio' || !serverConfig.type) {
             // stdio is default, needs command
             if (!serverConfig.command) {
-              warnings.push(`.mcp.json: Server ${serverName} (stdio) missing required field: command`);
+              warnings.push(
+                `.mcp.json: Server ${serverName} (stdio) missing required field: command`
+              );
             }
           } else if (serverConfig.type === 'sse' || serverConfig.type === 'http') {
             if (!serverConfig.url) {
-              errors.push(`.mcp.json: Server ${serverName} (${serverConfig.type}) missing required field: url`);
+              errors.push(
+                `.mcp.json: Server ${serverName} (${serverConfig.type}) missing required field: url`
+              );
             }
           } else if (serverConfig.type === 'sdk') {
             if (!serverConfig.name) {
@@ -714,7 +759,7 @@ function validateConfig() {
           }
         }
       }
-      
+
       console.log('  ✓ .mcp.json validated');
     } catch (error) {
       errors.push(`Invalid JSON in .mcp.json: ${error.message}`);
@@ -722,24 +767,35 @@ function validateConfig() {
   } else {
     console.log('  ℹ️  .mcp.json not found (optional)');
   }
-  
+
   // 12. Validate SDK settings files
   console.log('\nValidating SDK settings files...');
-  
+
   // Validate settings.json (project settings)
   const settingsPath = '.claude/settings.json';
   if (existsSync(resolve(rootDir, settingsPath))) {
     try {
       const settingsContent = readFileSync(resolve(rootDir, settingsPath), 'utf-8');
       const settings = JSON.parse(settingsContent);
-      
+
       // Validate SDK-compatible structure (camelCase keys)
       const validKeys = [
-        'agents', 'allowedTools', 'disallowedTools', 'mcpServers', 'hooks',
-        'permissionMode', 'tool_permissions', 'bash_commands', 'session',
-        'rules', 'agent_config', 'extended_thinking', '$schema', 'version'
+        'agents',
+        'allowedTools',
+        'disallowedTools',
+        'mcpServers',
+        'hooks',
+        'permissionMode',
+        'tool_permissions',
+        'bash_commands',
+        'session',
+        'rules',
+        'agent_config',
+        'extended_thinking',
+        '$schema',
+        'version',
       ];
-      
+
       // Check for common SDK settings (optional, but validate structure if present)
       if (settings.agents && typeof settings.agents !== 'object') {
         warnings.push('settings.json: agents should be an object');
@@ -753,18 +809,25 @@ function validateConfig() {
       if (settings.mcpServers && typeof settings.mcpServers !== 'object') {
         warnings.push('settings.json: mcpServers should be an object');
       }
-      if (settings.permissionMode && !['default', 'acceptEdits', 'bypassPermissions', 'plan'].includes(settings.permissionMode)) {
+      if (
+        settings.permissionMode &&
+        !['default', 'acceptEdits', 'bypassPermissions', 'plan'].includes(settings.permissionMode)
+      ) {
         warnings.push(`settings.json: invalid permissionMode: ${settings.permissionMode}`);
       }
-      
+
       // Check for conflicting settings
       if (settings.allowedTools && settings.disallowedTools) {
-        const overlap = settings.allowedTools.filter(tool => settings.disallowedTools.includes(tool));
+        const overlap = settings.allowedTools.filter(tool =>
+          settings.disallowedTools.includes(tool)
+        );
         if (overlap.length > 0) {
-          warnings.push(`settings.json: Tools in both allowedTools and disallowedTools: ${overlap.join(', ')}`);
+          warnings.push(
+            `settings.json: Tools in both allowedTools and disallowedTools: ${overlap.join(', ')}`
+          );
         }
       }
-      
+
       console.log('  ✓ settings.json validated');
     } catch (error) {
       errors.push(`Invalid JSON in settings.json: ${error.message}`);
@@ -772,14 +835,14 @@ function validateConfig() {
   } else {
     warnings.push('settings.json not found (optional, but recommended)');
   }
-  
+
   // Validate settings.local.json (local settings, gitignored)
   const localSettingsPath = '.claude/settings.local.json';
   if (existsSync(resolve(rootDir, localSettingsPath))) {
     try {
       const localSettingsContent = readFileSync(resolve(rootDir, localSettingsPath), 'utf-8');
       const localSettings = JSON.parse(localSettingsContent);
-      
+
       // Same validation as settings.json
       if (localSettings.allowedTools && !Array.isArray(localSettings.allowedTools)) {
         warnings.push('settings.local.json: allowedTools should be an array');
@@ -787,7 +850,7 @@ function validateConfig() {
       if (localSettings.disallowedTools && !Array.isArray(localSettings.disallowedTools)) {
         warnings.push('settings.local.json: disallowedTools should be an array');
       }
-      
+
       console.log('  ✓ settings.local.json validated (local settings)');
     } catch (error) {
       errors.push(`Invalid JSON in settings.local.json: ${error.message}`);
@@ -795,7 +858,7 @@ function validateConfig() {
   } else {
     console.log('  ℹ️  settings.local.json not found (optional, gitignored)');
   }
-  
+
   // 13. Validate rule-index.json paths
   console.log('\nValidating rule-index.json paths...');
   const ruleIndexPath = '.claude/context/rule-index.json';
@@ -803,22 +866,26 @@ function validateConfig() {
     try {
       const ruleIndexContent = readFileSync(resolve(rootDir, ruleIndexPath), 'utf-8');
       const ruleIndex = JSON.parse(ruleIndexContent);
-      
+
       // Check for old archive paths
       const indexString = JSON.stringify(ruleIndex);
       if (indexString.includes('.claude/archive/')) {
-        errors.push('rule-index.json contains old .claude/archive/ paths. Run pnpm index-rules to regenerate.');
+        errors.push(
+          'rule-index.json contains old .claude/archive/ paths. Run pnpm index-rules to regenerate.'
+        );
       }
-      
+
       // Validate that paths in index exist on disk
       if (ruleIndex.rules && Array.isArray(ruleIndex.rules)) {
         let missingPaths = 0;
-        for (const rule of ruleIndex.rules.slice(0, 100)) { // Check first 100 to avoid performance issues
+        for (const rule of ruleIndex.rules.slice(0, 100)) {
+          // Check first 100 to avoid performance issues
           if (rule.path) {
             const rulePath = resolve(rootDir, rule.path);
             if (!existsSync(rulePath)) {
               missingPaths++;
-              if (missingPaths <= 5) { // Only report first 5 missing paths
+              if (missingPaths <= 5) {
+                // Only report first 5 missing paths
                 errors.push(`rule-index.json references missing file: ${rule.path}`);
               }
             }
@@ -831,12 +898,14 @@ function validateConfig() {
           console.log('  ✓ All checked rule paths exist');
         }
       }
-      
+
       // Check field name consistency
       if (ruleIndex.archive_rules !== undefined) {
-        warnings.push('rule-index.json uses old "archive_rules" field. Should be "library_rules". Run pnpm index-rules to regenerate.');
+        warnings.push(
+          'rule-index.json uses old "archive_rules" field. Should be "library_rules". Run pnpm index-rules to regenerate.'
+        );
       }
-      
+
       console.log('  ✓ rule-index.json structure validated');
     } catch (error) {
       errors.push(`Invalid JSON in rule-index.json: ${error.message}`);
@@ -849,22 +918,22 @@ function validateConfig() {
   console.log('\n' + '='.repeat(60));
   console.log('Validation Summary');
   console.log('='.repeat(60));
-  
+
   if (errors.length === 0 && warnings.length === 0) {
     console.log('+ All validations passed!');
     return true;
   }
-  
+
   if (errors.length > 0) {
     console.log(`\n- Found ${errors.length} error(s):`);
     errors.forEach(error => console.log(`  - ${error}`));
   }
-  
+
   if (warnings.length > 0) {
     console.log(`\n+  Found ${warnings.length} warning(s):`);
     warnings.forEach(warning => console.log(`  - ${warning}`));
   }
-  
+
   return errors.length === 0;
 }
 
@@ -877,4 +946,3 @@ try {
   console.error(error.stack);
   process.exit(2);
 }
-

@@ -8,36 +8,36 @@ The LLM Rules Production Pack supports three AI development platforms. This guid
 
 ## Platform Capabilities Matrix
 
-| Feature | Claude Code | Cursor | Factory Droid |
-|---------|-------------|--------|---------------|
-| Native Workflows | Full | Translated | Manual |
-| Skills (43) | Full | Converted to prompts | Converted to prompts |
-| Subagents (34) | Full | Partial (single agent) | None |
-| Plan Mode | Full | Full | None |
-| Task Tool | Full | None | Full |
-| Validation Gates | Full | Manual | Manual |
-| Parallel Execution | Full | None | None |
-| CUJ Support | 62/62 | 45/62 | 30/62 |
-| Checkpoint Restoration | Full | Partial | None |
+| Feature                | Claude Code | Cursor                 | Factory Droid        |
+| ---------------------- | ----------- | ---------------------- | -------------------- |
+| Native Workflows       | Full        | Translated             | Manual               |
+| Skills (43)            | Full        | Converted to prompts   | Converted to prompts |
+| Subagents (34)         | Full        | Partial (single agent) | None                 |
+| Plan Mode              | Full        | Full                   | None                 |
+| Task Tool              | Full        | None                   | Full                 |
+| Validation Gates       | Full        | Manual                 | Manual               |
+| Parallel Execution     | Full        | None                   | None                 |
+| CUJ Support            | 62/62       | 45/62                  | 30/62                |
+| Checkpoint Restoration | Full        | Partial                | None                 |
 
 ## Quick Reference
 
 ### When to Use Each Platform
 
-| Platform | Best For |
-|----------|----------|
-| **Claude Code** | Complex multi-agent workflows, enterprise projects, automated pipelines |
-| **Cursor** | IDE-integrated development, single-agent tasks, quick iterations |
-| **Factory Droid** | Simple sequential tasks, prototyping, learning |
+| Platform          | Best For                                                                |
+| ----------------- | ----------------------------------------------------------------------- |
+| **Claude Code**   | Complex multi-agent workflows, enterprise projects, automated pipelines |
+| **Cursor**        | IDE-integrated development, single-agent tasks, quick iterations        |
+| **Factory Droid** | Simple sequential tasks, prototyping, learning                          |
 
 ### CUJ Availability by Platform
 
-| Category | Claude | Cursor | Factory |
-|----------|--------|--------|---------|
-| Core Development | 20/20 | 15/20 | 10/20 |
-| Code Quality | 12/12 | 10/12 | 6/12 |
-| Enterprise | 10/10 | 8/10 | 4/10 |
-| Specialized | 20/20 | 12/20 | 10/20 |
+| Category         | Claude | Cursor | Factory |
+| ---------------- | ------ | ------ | ------- |
+| Core Development | 20/20  | 15/20  | 10/20   |
+| Code Quality     | 12/12  | 10/12  | 6/12    |
+| Enterprise       | 10/10  | 8/10   | 4/10    |
+| Specialized      | 20/20  | 12/20  | 10/20   |
 
 ---
 
@@ -56,12 +56,12 @@ node .claude/tools/detect-platform.mjs \
 
 Skills are converted to natural language prompts:
 
-| Skill | Cursor Prompt |
-|-------|---------------|
-| `response-rater` | "Rate this plan on a scale of 1-10 based on completeness, feasibility, risk mitigation..." |
-| `repo-rag` | "Search the codebase for relevant patterns and implementations..." |
-| `scaffolder` | "Generate rule-compliant boilerplate code following project conventions..." |
-| `diagram-generator` | "Create architecture and flow diagrams using Mermaid syntax..." |
+| Skill               | Cursor Prompt                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| `response-rater`    | "Rate this plan on a scale of 1-10 based on completeness, feasibility, risk mitigation..." |
+| `repo-rag`          | "Search the codebase for relevant patterns and implementations..."                         |
+| `scaffolder`        | "Generate rule-compliant boilerplate code following project conventions..."                |
+| `diagram-generator` | "Create architecture and flow diagrams using Mermaid syntax..."                            |
 
 ### Step 3: Set up Plan Mode
 
@@ -136,17 +136,18 @@ For each workflow step:
 
 ### Step 4: Handle limitations
 
-| Limitation | Workaround |
-|------------|------------|
-| No subagents | Execute each agent's work in separate tasks |
-| No skills | Convert skill calls to detailed prompts |
-| No validation gates | Create manual checklist after each step |
-| No parallel execution | Execute in dependency order |
-| No auto-retry | Manually re-run failed steps |
+| Limitation            | Workaround                                  |
+| --------------------- | ------------------------------------------- |
+| No subagents          | Execute each agent's work in separate tasks |
+| No skills             | Convert skill calls to detailed prompts     |
+| No validation gates   | Create manual checklist after each step     |
+| No parallel execution | Execute in dependency order                 |
+| No auto-retry         | Manually re-run failed steps                |
 
 ### Example: Developer Step
 
 **Claude Code (Original)**:
+
 ```yaml
 - step: 5
   agent: developer
@@ -158,6 +159,7 @@ For each workflow step:
 ```
 
 **Factory Droid (Translated)**:
+
 ```
 Task: Implement Feature
 Agent Context: You are a software developer. Write clean, tested, production-ready code...
@@ -246,22 +248,22 @@ node .claude/tools/workflow_runner.js \
 
 ### Full skill to prompt conversion table
 
-| Skill | Prompt Conversion |
-|-------|-------------------|
-| `response-rater` | Rate this plan on a scale of 1-10 based on completeness, feasibility, risk mitigation, agent coverage, and integration. Provide specific feedback for improvement. |
-| `artifact-publisher` | Publish the generated artifacts to the project feed with proper versioning and metadata. |
-| `rule-auditor` | Audit the code for rule compliance against the loaded rule set. Check for violations and suggest fixes. |
-| `repo-rag` | Search the codebase for relevant patterns and implementations. Use semantic search to find similar code. |
-| `scaffolder` | Generate rule-compliant boilerplate code following project conventions and best practices. |
-| `diagram-generator` | Create architecture and flow diagrams using Mermaid syntax. Include component relationships. |
-| `test-generator` | Generate comprehensive test cases for the implementation. Cover edge cases and error paths. |
-| `doc-generator` | Generate technical documentation for the component. Include API references and examples. |
-| `dependency-analyzer` | Analyze project dependencies for compatibility and security vulnerabilities. Suggest updates. |
-| `sequential-thinking` | Break down this complex problem step-by-step with explicit reasoning. Show your work. |
-| `context-bridge` | Sync the current context state to the target platform. Include artifacts and progress. |
-| `memory-manager` | Store or retrieve information from the knowledge graph for future sessions. |
-| `code-style-validator` | Validate code style against project conventions. Report violations with line numbers. |
-| `commit-validator` | Validate commit message format and content. Ensure conventional commit compliance. |
+| Skill                  | Prompt Conversion                                                                                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `response-rater`       | Rate this plan on a scale of 1-10 based on completeness, feasibility, risk mitigation, agent coverage, and integration. Provide specific feedback for improvement. |
+| `artifact-publisher`   | Publish the generated artifacts to the project feed with proper versioning and metadata.                                                                           |
+| `rule-auditor`         | Audit the code for rule compliance against the loaded rule set. Check for violations and suggest fixes.                                                            |
+| `repo-rag`             | Search the codebase for relevant patterns and implementations. Use semantic search to find similar code.                                                           |
+| `scaffolder`           | Generate rule-compliant boilerplate code following project conventions and best practices.                                                                         |
+| `diagram-generator`    | Create architecture and flow diagrams using Mermaid syntax. Include component relationships.                                                                       |
+| `test-generator`       | Generate comprehensive test cases for the implementation. Cover edge cases and error paths.                                                                        |
+| `doc-generator`        | Generate technical documentation for the component. Include API references and examples.                                                                           |
+| `dependency-analyzer`  | Analyze project dependencies for compatibility and security vulnerabilities. Suggest updates.                                                                      |
+| `sequential-thinking`  | Break down this complex problem step-by-step with explicit reasoning. Show your work.                                                                              |
+| `context-bridge`       | Sync the current context state to the target platform. Include artifacts and progress.                                                                             |
+| `memory-manager`       | Store or retrieve information from the knowledge graph for future sessions.                                                                                        |
+| `code-style-validator` | Validate code style against project conventions. Report violations with line numbers.                                                                              |
+| `commit-validator`     | Validate commit message format and content. Ensure conventional commit compliance.                                                                                 |
 
 ---
 
@@ -359,6 +361,6 @@ node .claude/tools/workflow_runner.js \
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-06 | Initial migration guide |
+| Version | Date       | Changes                 |
+| ------- | ---------- | ----------------------- |
+| 1.0.0   | 2026-01-06 | Initial migration guide |

@@ -7,22 +7,26 @@ Factory's Droid CLI enables powerful AI-assisted development with specialized ag
 ### Writing Effective Prompts
 
 **Be explicit about what you want:**
+
 ```
 ❌ Bad: "can you improve the auth system?"
 ✅ Good: "add rate limiting to login attempts with exponential backoff following the pattern in middleware/rateLimit.ts"
 ```
 
 **Provide context upfront:**
+
 - Include error messages, file paths, screenshots
 - Paste links to Jira tickets, design docs, or specifications
 - Reference existing code patterns and conventions
 
 **Choose your approach:**
+
 - **Specification Mode**: For complex features requiring planning
 - **Direct execution**: For routine tasks with clear requirements
 - **Auto-Run**: When you trust droid to proceed with appropriate autonomy
 
 **Define success criteria:**
+
 - Specify tests to run
 - Define verification steps
 - Include acceptance criteria
@@ -62,6 +66,7 @@ The login form allows empty submissions. Add client-side validation and return p
 ### AGENTS.md Files
 
 Use hierarchical `AGENTS.md` files to document:
+
 - Build commands and testing procedures
 - Coding standards and conventions
 - Project structure and architecture
@@ -90,6 +95,7 @@ Run the Task tool with subagent analyst to perform a competitive analysis.
 ```
 
 Available agents match the BMAD-Spec system:
+
 - **analyst**: Market research, requirements gathering, project briefing
 - **pm**: Product requirements, epic definition, business validation
 - **architect**: System design, technology selection, security planning
@@ -102,6 +108,7 @@ Available agents match the BMAD-Spec system:
 ### Context Layering
 
 Droid can layer multiple context sources:
+
 - Repository code and documentation
 - Product docs and specifications
 - Runtime telemetry and logs
@@ -135,6 +142,7 @@ droid "Add authentication middleware"
 ### Mode Switching
 
 Press `Shift+Tab` (or `Ctrl+T` on Windows) to cycle through:
+
 - **Normal**: Manual confirmation for each action
 - **Spec**: Specification Mode for complex features
 - **Auto (Low)**: File edits and read-only commands
@@ -144,6 +152,7 @@ Press `Shift+Tab` (or `Ctrl+T` on Windows) to cycle through:
 ### Session Persistence
 
 Sessions are saved and can be resumed:
+
 - Web app sync: Enable `cloudSessionSync` in settings
 - Local storage: Sessions stored in `~/.factory/sessions/`
 
@@ -152,6 +161,7 @@ Sessions are saved and can be resumed:
 ### Droid Shield
 
 Enabled by default (`enableDroidShield: true`):
+
 - Secret scanning before commits
 - Git guardrails (no force push to main, etc.)
 - Dangerous command blocking

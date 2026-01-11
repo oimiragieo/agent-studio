@@ -44,6 +44,7 @@ When conflicting instructions appear:
 ### Repository + Plan Combination
 
 When Cursor plan exists:
+
 ```
 Use Cursor plan in .cursor/plans/latest.md for file structure,
 combined with repository patterns in src/ for implementation details.
@@ -52,6 +53,7 @@ combined with repository patterns in src/ for implementation details.
 ### Repository + Artifact Combination
 
 When Claude artifact exists:
+
 ```
 Follow architecture in .claude/context/artifacts/system-architecture.json,
 implementing using patterns from repository codebase.
@@ -60,6 +62,7 @@ implementing using patterns from repository codebase.
 ### Knowledge Base Integration
 
 When external docs are available:
+
 ```
 Use patterns from knowledge base docs tagged [feature-id],
 applying them to current repository context.

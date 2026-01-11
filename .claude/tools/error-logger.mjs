@@ -41,7 +41,7 @@ try {
   sanitize = sanitizeModule.sanitize || sanitizeModule.default?.sanitize;
 } catch (e) {
   // Fallback: basic sanitization for API keys
-  sanitize = (text) => {
+  sanitize = text => {
     if (text == null) return '';
     const str = String(text);
     return str
@@ -151,14 +151,14 @@ export function logError(error, context = {}) {
         // Include additional error properties if present
         errno: error.errno || null,
         syscall: error.syscall || null,
-        path: error.path ? sanitize(error.path) : null
+        path: error.path ? sanitize(error.path) : null,
       };
     } else {
       errorDetails = {
         message: sanitize(String(error)),
         name: 'Error',
         code: null,
-        stack: null
+        stack: null,
       };
     }
 
@@ -177,7 +177,7 @@ export function logError(error, context = {}) {
         skill: context.skill || null,
         phase: context.phase || null,
         operation: context.operation || null,
-        workflow_id: context.workflowId || null
+        workflow_id: context.workflowId || null,
       },
 
       // Error details
@@ -197,14 +197,14 @@ export function logError(error, context = {}) {
         node_version: process.version,
         memory: process.memoryUsage(),
         cwd: process.cwd(),
-        env: process.env.NODE_ENV || 'development'
+        env: process.env.NODE_ENV || 'development',
       },
 
       // Recovery hints
       recovery: {
         retryable: isRetryableError(error),
-        suggested_action: getSuggestedAction(error, context)
-      }
+        suggested_action: getSuggestedAction(error, context),
+      },
     };
 
     // Write error file
@@ -241,15 +241,15 @@ export function logStepError(error, step, runId, workflowId, options = {}) {
     operation: 'step_execution',
     inputs: {
       step_config: step,
-      ...options.inputs
+      ...options.inputs,
     },
     config: options.config || {},
     metadata: {
       attempt: options.attempt || 1,
       max_attempts: options.maxAttempts || 1,
       previous_errors: options.previousErrors || [],
-      ...options.metadata
-    }
+      ...options.metadata,
+    },
   });
 }
 
@@ -268,8 +268,8 @@ export function logProviderError(error, provider, context = {}) {
     metadata: {
       provider,
       provider_config: context.providerConfig || {},
-      ...context.metadata
-    }
+      ...context.metadata,
+    },
   });
 }
 
@@ -288,8 +288,8 @@ export function logValidationError(error, validationType, context = {}) {
     metadata: {
       validation_type: validationType,
       validation_errors: context.validationErrors || [],
-      ...context.metadata
-    }
+      ...context.metadata,
+    },
   });
 }
 
@@ -319,8 +319,8 @@ export function logCircuitBreakerEvent(provider, state, context = {}) {
     open_until: context.openUntil || null,
     context: {
       run_id: context.runId || null,
-      operation: context.operation || null
-    }
+      operation: context.operation || null,
+    },
   };
 
   try {
@@ -346,17 +346,30 @@ function isRetryableError(error) {
 
   // Retryable patterns
   const retryablePatterns = [
-    'timeout', 'etimedout', 'econnreset', 'econnrefused',
-    'rate limit', 'too many requests', '429',
-    'service unavailable', '503',
-    'gateway timeout', '504',
-    'temporary', 'transient'
+    'timeout',
+    'etimedout',
+    'econnreset',
+    'econnrefused',
+    'rate limit',
+    'too many requests',
+    '429',
+    'service unavailable',
+    '503',
+    'gateway timeout',
+    '504',
+    'temporary',
+    'transient',
   ];
 
   // Non-retryable patterns (auth failures, etc.)
   const nonRetryablePatterns = [
-    'api key', 'unauthorized', 'forbidden', 'invalid credentials',
-    'authentication', 'permission denied', 'access denied'
+    'api key',
+    'unauthorized',
+    'forbidden',
+    'invalid credentials',
+    'authentication',
+    'permission denied',
+    'access denied',
   ];
 
   // Check for non-retryable first
@@ -484,7 +497,7 @@ export function getErrorSummary(runId) {
     by_agent: byAgent,
     by_type: byType,
     most_recent: errors[0] || null,
-    retryable_count: errors.filter(e => e.recovery?.retryable).length
+    retryable_count: errors.filter(e => e.recovery?.retryable).length,
   };
 }
 
@@ -496,5 +509,5 @@ export default {
   logValidationError,
   logCircuitBreakerEvent,
   getRunErrors,
-  getErrorSummary
+  getErrorSummary,
 };

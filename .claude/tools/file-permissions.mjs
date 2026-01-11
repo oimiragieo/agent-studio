@@ -52,9 +52,7 @@ export function setFilePermissions(filePath, permissions) {
   }
 
   try {
-    const mode = typeof permissions === 'string'
-      ? parseInt(permissions, 8)
-      : permissions;
+    const mode = typeof permissions === 'string' ? parseInt(permissions, 8) : permissions;
     fs.chmodSync(filePath, mode);
   } catch (error) {
     console.warn(`Failed to chmod ${filePath}:`, error.message);
@@ -140,7 +138,7 @@ export function makeMultipleExecutable(filePaths) {
       return {
         path: filePath,
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   });
@@ -181,7 +179,7 @@ export function getPermissionString(filePath) {
 
   for (let i = 0; i < 9; i++) {
     const bit = 1 << (8 - i);
-    result += (perms & bit) ? chars[i] : '-';
+    result += perms & bit ? chars[i] : '-';
   }
 
   return result;
@@ -195,5 +193,5 @@ export default {
   makeMultipleExecutable,
   createFileWithPermissions,
   getPermissionString,
-  isWindows
+  isWindows,
 };

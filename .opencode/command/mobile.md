@@ -15,6 +15,7 @@ Launch a mobile application development workflow.
 This command coordinates multiple agents for mobile development:
 
 ### 1. Mobile Developer
+
 - Platform selection (native vs cross-platform)
 - Architecture patterns (MVVM, Clean, etc.)
 - State management strategy
@@ -23,6 +24,7 @@ This command coordinates multiple agents for mobile development:
 - Push notification design
 
 ### 2. UX Expert
+
 - Touch-first interface design
 - Gesture patterns
 - Platform guidelines (HIG, Material)
@@ -31,6 +33,7 @@ This command coordinates multiple agents for mobile development:
 - Animation and micro-interactions
 
 ### 3. Developer
+
 - Core app structure
 - UI components
 - Navigation implementation
@@ -38,6 +41,7 @@ This command coordinates multiple agents for mobile development:
 - Local storage
 
 ### 4. QA
+
 - Device compatibility testing
 - Performance profiling
 - Battery usage analysis

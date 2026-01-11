@@ -5,16 +5,19 @@
 Copy the entire `.cursor` folder from `production-dropin/.cursor/` to your project root:
 
 **Windows (PowerShell):**
+
 ```powershell
 Copy-Item -Path "C:\dev\projects\LLM-RULES\production-dropin\.cursor" -Destination "C:\path\to\your\project\.cursor" -Recurse
 ```
 
 **Mac/Linux:**
+
 ```bash
 cp -r /path/to/production-dropin/.cursor /path/to/your/project/.cursor
 ```
 
 **Manual:**
+
 1. Copy the `.cursor` folder
 2. Paste it into your project root directory
 3. Ensure it's named `.cursor` (with the dot)
@@ -22,6 +25,7 @@ cp -r /path/to/production-dropin/.cursor /path/to/your/project/.cursor
 ## ✅ Step 2: Verify Structure
 
 Your project should look like:
+
 ```
 your-project/
 ├── .cursor/                    # ← The folder you just copied
@@ -49,6 +53,7 @@ your-project/
 ## 🎯 How Cursor Auto-Discovers
 
 Cursor automatically finds:
+
 - ✅ **Agents** from `.cursor/subagents/*.mdc`
 - ✅ **Rules** from `.cursor/rules/` (based on file patterns)
 - ✅ **Hooks** from `.cursor/hooks/*.json` (triggers Plan Mode!)
@@ -59,9 +64,11 @@ Cursor automatically finds:
 ## 🚀 Using Plan Mode (The Smart Way)
 
 ### Auto-Trigger
+
 The `preflight-plan.json` hook automatically triggers Plan Mode when you're about to modify ≥2 files. No action needed!
 
 ### Manual Trigger
+
 Press `Shift+Tab` in the agent input field, or type `/plan`
 
 ### Why Plan Mode is Essential
@@ -108,22 +115,24 @@ Press `Shift+Tab` in the agent input field, or type `/plan`
 
 ### When to Use Which Agent
 
-| Agent | Use Plan Mode? | Best For |
-|-------|---------------|----------|
-| Architect 🏗️ | **ALWAYS** | System design, tech selection |
-| Developer 💻 | **ALWAYS** | Multi-file changes, features |
-| QA 🧪 | Recommended | Comprehensive test plans |
-| Analyst 📊 | For complex analysis | Full project briefs |
-| PM 📋 | Recommended | Complete PRDs, roadmaps |
+| Agent        | Use Plan Mode?       | Best For                      |
+| ------------ | -------------------- | ----------------------------- |
+| Architect 🏗️ | **ALWAYS**           | System design, tech selection |
+| Developer 💻 | **ALWAYS**           | Multi-file changes, features  |
+| QA 🧪        | Recommended          | Comprehensive test plans      |
+| Analyst 📊   | For complex analysis | Full project briefs           |
+| PM 📋        | Recommended          | Complete PRDs, roadmaps       |
 
 ## ⚠️ About the Nested .cursor Folder
 
 If you see an empty `.cursor/.cursor/` folder inside:
+
 - **It's harmless** - Cursor won't use it
 - **You can delete it** - it's not needed
 - **Not a problem** - main `.cursor/` folder is what matters
 
 The structure Cursor uses:
+
 ```
 .cursor/              ← Main folder (what Cursor reads)
 ├── subagents/
@@ -132,6 +141,7 @@ The structure Cursor uses:
 ```
 
 NOT:
+
 ```
 .cursor/
 └── .cursor/          ← This nested one doesn't matter
@@ -140,16 +150,19 @@ NOT:
 ## 🔍 Troubleshooting
 
 ### Agents Not Showing
+
 - ✅ Files must be in `.cursor/subagents/*.mdc` (not `.cursor/agents/`)
 - ✅ Restart Cursor completely (not just reload)
 - ✅ Check Cursor version (needs 2.0+)
 
 ### Plan Mode Not Working
+
 - ✅ Hook file exists: `.cursor/hooks/preflight-plan.json`
 - ✅ Try manual: Press `Shift+Tab`
 - ✅ Check Cursor version (Plan Mode is Cursor 2.0 feature)
 
 ### Rules Not Loading
+
 - ✅ Check `.cursor/rules/manifest.yaml` exists
 - ✅ Rules load based on file patterns (globs)
 - ✅ Check Cursor Settings → Rules
@@ -163,4 +176,3 @@ NOT:
 5. ✅ Read `instructions/plan-mode.md` for advanced usage
 
 **Remember: Plan Mode is the smart way to build. Use it!** 🎯
-

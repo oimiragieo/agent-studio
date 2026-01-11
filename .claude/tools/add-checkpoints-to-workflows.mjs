@@ -30,10 +30,11 @@ function determineCheckpointPositions(steps) {
   const maxStep = Math.max(...stepNumbers);
 
   // After planning (around step 0.5-1.5)
-  const planningSteps = steps.filter(s =>
-    s.agent === 'planner' ||
-    s.name?.toLowerCase().includes('planning') ||
-    s.name?.toLowerCase().includes('discovery')
+  const planningSteps = steps.filter(
+    s =>
+      s.agent === 'planner' ||
+      s.name?.toLowerCase().includes('planning') ||
+      s.name?.toLowerCase().includes('discovery')
   );
   if (planningSteps.length > 0) {
     const lastPlanningStep = Math.max(...planningSteps.map(s => s.step));
@@ -41,17 +42,18 @@ function determineCheckpointPositions(steps) {
       step: lastPlanningStep + 0.5,
       phase: 'planning',
       name: 'Planning Phase Complete',
-      after_step: lastPlanningStep
+      after_step: lastPlanningStep,
     });
   }
 
   // After design (around step 3.5-4.5)
-  const designSteps = steps.filter(s =>
-    s.agent === 'architect' ||
-    s.agent === 'database-architect' ||
-    s.agent === 'ux-expert' ||
-    s.name?.toLowerCase().includes('architecture') ||
-    s.name?.toLowerCase().includes('design')
+  const designSteps = steps.filter(
+    s =>
+      s.agent === 'architect' ||
+      s.agent === 'database-architect' ||
+      s.agent === 'ux-expert' ||
+      s.name?.toLowerCase().includes('architecture') ||
+      s.name?.toLowerCase().includes('design')
   );
   if (designSteps.length > 0) {
     const lastDesignStep = Math.max(...designSteps.map(s => s.step));
@@ -59,16 +61,17 @@ function determineCheckpointPositions(steps) {
       step: lastDesignStep + 0.5,
       phase: 'design',
       name: 'Design Phase Complete',
-      after_step: lastDesignStep
+      after_step: lastDesignStep,
     });
   }
 
   // After implementation (around step 7.5-8.5)
-  const implementationSteps = steps.filter(s =>
-    s.agent === 'developer' ||
-    s.agent === 'cloud-integrator' ||
-    s.name?.toLowerCase().includes('implementation') ||
-    s.name?.toLowerCase().includes('development')
+  const implementationSteps = steps.filter(
+    s =>
+      s.agent === 'developer' ||
+      s.agent === 'cloud-integrator' ||
+      s.name?.toLowerCase().includes('implementation') ||
+      s.name?.toLowerCase().includes('development')
   );
   if (implementationSteps.length > 0) {
     const lastImplStep = Math.max(...implementationSteps.map(s => s.step));
@@ -76,15 +79,16 @@ function determineCheckpointPositions(steps) {
       step: lastImplStep + 0.5,
       phase: 'implementation',
       name: 'Implementation Phase Complete',
-      after_step: lastImplStep
+      after_step: lastImplStep,
     });
   }
 
   // Before final validation (Step N-1.5)
-  const validationSteps = steps.filter(s =>
-    s.name?.toLowerCase().includes('signoff') ||
-    s.name?.toLowerCase().includes('final') ||
-    s.step >= maxStep - 2
+  const validationSteps = steps.filter(
+    s =>
+      s.name?.toLowerCase().includes('signoff') ||
+      s.name?.toLowerCase().includes('final') ||
+      s.step >= maxStep - 2
   );
   if (validationSteps.length > 0) {
     const lastStep = Math.max(...validationSteps.map(s => s.step));
@@ -93,7 +97,7 @@ function determineCheckpointPositions(steps) {
         step: lastStep - 0.5,
         phase: 'pre-validation',
         name: 'Pre-Validation Checkpoint',
-        after_step: lastStep - 1
+        after_step: lastStep - 1,
       });
     }
   }
@@ -122,7 +126,10 @@ ${inputs.map(i => `      - ${i.replace(/.+\//, '')}`).join('\n') || '      - Non
       - .claude/context/runs/{{run_id}}/checkpoints/checkpoint-${position.phase}.json
     checkpoint_data:
       phase: "${position.phase}"
-      completed_steps: [${prevSteps.filter(s => s.step <= position.after_step).map(s => s.step).join(', ')}]
+      completed_steps: [${prevSteps
+        .filter(s => s.step <= position.after_step)
+        .map(s => s.step)
+        .join(', ')}]
       validation_status: "pass"
 `;
 }
@@ -159,7 +166,7 @@ function addCheckpointsToWorkflow(workflowPath, dryRun = false) {
         lineIdx: i,
         name: '',
         agent: '',
-        outputs: []
+        outputs: [],
       };
     } else if (currentStep) {
       if (line.includes('name:')) {
@@ -192,7 +199,10 @@ function addCheckpointsToWorkflow(workflowPath, dryRun = false) {
 
   // Determine checkpoint positions
   const positions = determineCheckpointPositions(steps);
-  console.log(`  Found ${positions.length} checkpoint positions:`, positions.map(p => `${p.step} (${p.phase})`).join(', '));
+  console.log(
+    `  Found ${positions.length} checkpoint positions:`,
+    positions.map(p => `${p.step} (${p.phase})`).join(', ')
+  );
 
   if (positions.length === 0) {
     console.log('  No suitable checkpoint positions found');
@@ -203,18 +213,22 @@ function addCheckpointsToWorkflow(workflowPath, dryRun = false) {
   const checkpointSteps = positions.map(pos => createCheckpointStep(pos, steps));
 
   // Insert checkpoints (would need more sophisticated YAML manipulation)
-  console.log(`  ${dryRun ? '[DRY RUN]' : ''} Would add ${checkpointSteps.length} checkpoint steps`);
+  console.log(
+    `  ${dryRun ? '[DRY RUN]' : ''} Would add ${checkpointSteps.length} checkpoint steps`
+  );
 
   if (!dryRun) {
     // For now, just append checkpoints to a summary file
     const summary = {
       workflow: path.basename(workflowPath),
       checkpoints_to_add: positions,
-      checkpoint_yaml: checkpointSteps.join('\n')
+      checkpoint_yaml: checkpointSteps.join('\n'),
     };
 
     const summaryFile = path.resolve(__dirname, '../context/tmp/tmp-checkpoint-additions.json');
-    const summaries = fs.existsSync(summaryFile) ? JSON.parse(fs.readFileSync(summaryFile, 'utf8')) : [];
+    const summaries = fs.existsSync(summaryFile)
+      ? JSON.parse(fs.readFileSync(summaryFile, 'utf8'))
+      : [];
     summaries.push(summary);
     fs.writeFileSync(summaryFile, JSON.stringify(summaries, null, 2));
 
@@ -226,7 +240,8 @@ function addCheckpointsToWorkflow(workflowPath, dryRun = false) {
  * Process all workflows
  */
 function processAllWorkflows(dryRun = false) {
-  const files = fs.readdirSync(WORKFLOWS_DIR)
+  const files = fs
+    .readdirSync(WORKFLOWS_DIR)
     .filter(f => f.endsWith('.yaml') && f !== 'WORKFLOW-GUIDE.md');
 
   console.log(`Found ${files.length} workflow files`);

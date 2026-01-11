@@ -108,7 +108,7 @@ const CATEGORIES = {
   'CUJ-060': 'Testing & Validation',
   'CUJ-061': 'Testing & Validation',
   'CUJ-062': 'Testing & Validation',
-  'CUJ-063': 'Testing & Validation'
+  'CUJ-063': 'Testing & Validation',
 };
 
 /**
@@ -138,11 +138,11 @@ async function parseCUJFile(filePath) {
     platform_compatibility: {
       claude: true,
       cursor: true,
-      factory: false
+      factory: false,
     },
     expected_outputs: [],
     estimated_duration: null,
-    file_path: path.relative(path.join(__dirname, '..', '..'), filePath).replace(/\\/g, '/')
+    file_path: path.relative(path.join(__dirname, '..', '..'), filePath).replace(/\\/g, '/'),
   };
 
   // Extract name (first # heading)
@@ -258,7 +258,9 @@ async function parseCUJFile(filePath) {
   // Match: [workflow-name Workflow](../../workflows/workflow-name.yaml) or similar
   if (!metadata.workflow && metadata.execution_mode === 'workflow') {
     // Look for links in Related Documentation section
-    const relatedDocsMatch = content.match(/##\s+Related Documentation[\s\S]*?\[.*?Workflow\]\(\.\.\/\.\.\/workflows\/([^)]+\.yaml)\)/i);
+    const relatedDocsMatch = content.match(
+      /##\s+Related Documentation[\s\S]*?\[.*?Workflow\]\(\.\.\/\.\.\/workflows\/([^)]+\.yaml)\)/i
+    );
     if (relatedDocsMatch) {
       const yamlFile = relatedDocsMatch[1];
       // Verify the workflow file exists
@@ -301,7 +303,10 @@ async function parseCUJFile(filePath) {
       if (tableSection) {
         // Match: | CUJ-030 | workflow | `.claude/workflows/file.yaml` | skill |
         // The workflow path is in the third column
-        const tableRegex = new RegExp(`\\|\\s*${cujId}\\s*\\|\\s*workflow\\s*\\|\\s*\`([^\`]+\\.yaml)\`\\s*\\|`, 'i');
+        const tableRegex = new RegExp(
+          `\\|\\s*${cujId}\\s*\\|\\s*workflow\\s*\\|\\s*\`([^\`]+\\.yaml)\`\\s*\\|`,
+          'i'
+        );
         const tableMatch = tableSection[0].match(tableRegex);
         if (tableMatch) {
           const workflowPath = tableMatch[1].trim();
@@ -360,7 +365,10 @@ async function parseCUJFile(filePath) {
       const indexContent = await fs.readFile(indexPath, 'utf-8');
       // Find the "Run CUJ Mapping" table
       // Match: | CUJ-030 | skill-only | null | skill-name |
-      const tableRegex = new RegExp(`\\|\\s*${cujId}\\s*\\|\\s*skill-only\\s*\\|[^|]*\\|\\s*([a-z-]+)\\s*\\|`, 'i');
+      const tableRegex = new RegExp(
+        `\\|\\s*${cujId}\\s*\\|\\s*skill-only\\s*\\|[^|]*\\|\\s*([a-z-]+)\\s*\\|`,
+        'i'
+      );
       const tableMatch = indexContent.match(tableRegex);
       if (tableMatch) {
         const skillName = tableMatch[1].trim();
@@ -411,7 +419,12 @@ async function parseCUJFile(filePath) {
   }
 
   // Platform compatibility (Claude-only skills)
-  const claudeOnlySkills = ['recovery', 'optional-artifact-handler', 'conflict-resolution', 'api-contract-generator'];
+  const claudeOnlySkills = [
+    'recovery',
+    'optional-artifact-handler',
+    'conflict-resolution',
+    'api-contract-generator',
+  ];
   const hasClaudeOnlySkill = metadata.skills.some(skill => claudeOnlySkills.includes(skill));
 
   if (hasClaudeOnlySkill) {
@@ -475,7 +488,7 @@ async function generateRegistry() {
     version: '1.0.0',
     generated: new Date().toISOString(),
     total_cujs: cujs.length,
-    cujs
+    cujs,
   };
 
   return { registry, errors };
@@ -492,9 +505,9 @@ async function validateRegistry(registry) {
 
   // Add custom format for date-time if needed
   ajv.addFormat('date-time', {
-    validate: (dateTimeString) => {
+    validate: dateTimeString => {
       return !isNaN(Date.parse(dateTimeString));
-    }
+    },
   });
 
   const validate = ajv.compile(schema);
@@ -523,10 +536,10 @@ function generateStatistics(registry) {
     by_platform: {
       claude: 0,
       cursor: 0,
-      factory: 0
+      factory: 0,
     },
     agents_used: new Set(),
-    skills_used: new Set()
+    skills_used: new Set(),
   };
 
   for (const cuj of registry.cujs) {
@@ -535,8 +548,7 @@ function generateStatistics(registry) {
       (stats.by_execution_mode[cuj.execution_mode] || 0) + 1;
 
     // Category
-    stats.by_category[cuj.category] =
-      (stats.by_category[cuj.category] || 0) + 1;
+    stats.by_category[cuj.category] = (stats.by_category[cuj.category] || 0) + 1;
 
     // Platform compatibility
     if (cuj.platform_compatibility.claude) stats.by_platform.claude++;

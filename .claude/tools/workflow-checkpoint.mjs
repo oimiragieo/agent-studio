@@ -31,7 +31,7 @@ export async function saveCheckpoint(workflowId, step, state) {
     step,
     state,
     timestamp: new Date().toISOString(),
-    memoryUsage: process.memoryUsage()
+    memoryUsage: process.memoryUsage(),
   };
 
   await writeFile(checkpointPath, JSON.stringify(checkpoint, null, 2));
@@ -45,7 +45,7 @@ export async function saveCheckpoint(workflowId, step, state) {
  */
 export async function loadCheckpoint(workflowId) {
   const checkpointPath = path.join(CHECKPOINT_DIR, `${workflowId}.json`);
-  
+
   if (!existsSync(checkpointPath)) {
     return null;
   }
@@ -61,7 +61,7 @@ export async function loadCheckpoint(workflowId) {
  */
 export async function deleteCheckpoint(workflowId) {
   const checkpointPath = path.join(CHECKPOINT_DIR, `${workflowId}.json`);
-  
+
   if (existsSync(checkpointPath)) {
     await unlink(checkpointPath);
   }

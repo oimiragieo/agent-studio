@@ -33,10 +33,10 @@ const SKILL_MATRIX_PATH = join(CONTEXT_DIR, 'skill-integration-matrix.json');
 
 // Optimization levels
 const OPTIMIZATION_LEVELS = {
-  MINIMAL: 'MINIMAL',    // 20-50 tokens - just name and description
+  MINIMAL: 'MINIMAL', // 20-50 tokens - just name and description
   ESSENTIAL: 'ESSENTIAL', // 100-200 tokens - core instructions only
-  STANDARD: 'STANDARD',   // 300-500 tokens - instructions + examples
-  FULL: 'FULL'           // 800-1500 tokens - complete SKILL.md
+  STANDARD: 'STANDARD', // 300-500 tokens - instructions + examples
+  FULL: 'FULL', // 800-1500 tokens - complete SKILL.md
 };
 
 // Token budget defaults
@@ -44,7 +44,7 @@ const TOKEN_BUDGETS = {
   MINIMAL: 50,
   ESSENTIAL: 200,
   STANDARD: 500,
-  FULL: 1500
+  FULL: 1500,
 };
 
 /**
@@ -96,7 +96,7 @@ function extractSections(content) {
     examples: '',
     integration: '',
     best_practices: '',
-    full: content
+    full: content,
   };
 
   // Extract frontmatter (YAML between ---)
@@ -112,7 +112,7 @@ function extractSections(content) {
     instructions: /<instructions>([\s\S]*?)<\/instructions>/,
     examples: /<examples>([\s\S]*?)<\/examples>/,
     integration: /<integration>([\s\S]*?)<\/integration>/,
-    best_practices: /<best_practices>([\s\S]*?)<\/best_practices>/
+    best_practices: /<best_practices>([\s\S]*?)<\/best_practices>/,
   };
 
   for (const [key, pattern] of Object.entries(tagPatterns)) {
@@ -133,10 +133,10 @@ function extractKeyCommands(content) {
 
   // Look for command patterns
   const commandPatterns = [
-    /\/\w+[\w-]*/g,                    // /command-style
-    /`\/[^`]+`/g,                       // `/command` in backticks
-    /Skill:\s*[\w-]+/g,                 // Skill: skill-name
-    /node\s+\.claude\/skills\/[\w-]+/g // CLI invocations
+    /\/\w+[\w-]*/g, // /command-style
+    /`\/[^`]+`/g, // `/command` in backticks
+    /Skill:\s*[\w-]+/g, // Skill: skill-name
+    /node\s+\.claude\/skills\/[\w-]+/g, // CLI invocations
   ];
 
   for (const pattern of commandPatterns) {
@@ -179,7 +179,9 @@ function generateOptimizedContent(skillName, sections, level, frontmatter = {}) 
 
       // Extract execution process from instructions (first subsection)
       if (sections.instructions) {
-        const executionMatch = sections.instructions.match(/<execution_process>([\s\S]*?)<\/execution_process>/);
+        const executionMatch = sections.instructions.match(
+          /<execution_process>([\s\S]*?)<\/execution_process>/
+        );
         if (executionMatch) {
           // Get just the first 3 steps
           const steps = executionMatch[1].split(/###\s+Step\s+\d+/);
@@ -273,7 +275,7 @@ async function generateSkillSummary(skillName) {
     const optimized = generateOptimizedContent(skillName, sections, level, frontmatter);
     levels[level.toLowerCase()] = {
       content: optimized,
-      tokens: estimateTokens(optimized)
+      tokens: estimateTokens(optimized),
     };
   }
 
@@ -285,9 +287,9 @@ async function generateSkillSummary(skillName) {
       minimal: levels.minimal.tokens,
       essential: levels.essential.tokens,
       standard: levels.standard.tokens,
-      full: levels.full.tokens
+      full: levels.full.tokens,
     },
-    levels
+    levels,
   };
 }
 
@@ -334,7 +336,7 @@ async function generateAllSummaries() {
     version: '1.0.0',
     generated_at: new Date().toISOString(),
     total_skills: allSkills.size,
-    summaries
+    summaries,
   });
 
   console.log(`\nSummary generation complete:`);
@@ -357,7 +359,7 @@ export async function optimizeSkillContext(requiredSkills, triggeredSkills, opti
   const {
     level = OPTIMIZATION_LEVELS.ESSENTIAL,
     maxTokens = 1000,
-    prioritize = 'required' // 'required' | 'triggered' | 'all'
+    prioritize = 'required', // 'required' | 'triggered' | 'all'
   } = options;
 
   // Load skill summaries
@@ -415,7 +417,7 @@ export async function optimizeSkillContext(requiredSkills, triggeredSkills, opti
         skill: skillName,
         level: effectiveLevel,
         content: levelData.content,
-        tokens: levelData.tokens
+        tokens: levelData.tokens,
       });
       totalTokens += levelData.tokens;
     }
@@ -430,8 +432,8 @@ export async function optimizeSkillContext(requiredSkills, triggeredSkills, opti
     metadata: {
       prioritize,
       budgetPerSkill,
-      optimizedAt: new Date().toISOString()
-    }
+      optimizedAt: new Date().toISOString(),
+    },
   };
 }
 
@@ -458,7 +460,7 @@ async function runSelfTest() {
   const result = await optimizeSkillContext(testRequired, testTriggered, {
     level: OPTIMIZATION_LEVELS.ESSENTIAL,
     maxTokens: 1000,
-    prioritize: 'required'
+    prioritize: 'required',
   });
 
   console.log(`  ✓ Optimized ${result.skillCount} skills`);
@@ -471,9 +473,11 @@ async function runSelfTest() {
     const budgetResult = await optimizeSkillContext(testRequired, [], {
       level,
       maxTokens: 1500,
-      prioritize: 'required'
+      prioritize: 'required',
     });
-    console.log(`  ${level}: ${budgetResult.actualTokens} tokens for ${budgetResult.skillCount} skills`);
+    console.log(
+      `  ${level}: ${budgetResult.actualTokens} tokens for ${budgetResult.skillCount} skills`
+    );
   }
 
   console.log('\n✓ All tests passed');
@@ -553,14 +557,16 @@ Examples:
   if (agentIndex !== -1 && agentIndex + 1 < args.length) {
     const agentType = args[agentIndex + 1];
     const levelIndex = args.indexOf('--level');
-    const level = levelIndex !== -1 && levelIndex + 1 < args.length
-      ? args[levelIndex + 1]
-      : OPTIMIZATION_LEVELS.ESSENTIAL;
+    const level =
+      levelIndex !== -1 && levelIndex + 1 < args.length
+        ? args[levelIndex + 1]
+        : OPTIMIZATION_LEVELS.ESSENTIAL;
 
     const maxTokensIndex = args.indexOf('--max-tokens');
-    const maxTokens = maxTokensIndex !== -1 && maxTokensIndex + 1 < args.length
-      ? parseInt(args[maxTokensIndex + 1])
-      : 1000;
+    const maxTokens =
+      maxTokensIndex !== -1 && maxTokensIndex + 1 < args.length
+        ? parseInt(args[maxTokensIndex + 1])
+        : 1000;
 
     const jsonOutput = args.includes('--json');
 
@@ -580,7 +586,7 @@ Examples:
         {
           level,
           maxTokens,
-          prioritize: 'required'
+          prioritize: 'required',
         }
       );
 
@@ -610,8 +616,9 @@ Examples:
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main().catch(error => {
     console.error('Fatal error:', error);
@@ -626,5 +633,5 @@ export default {
   generateSkillSummary,
   estimateTokens,
   OPTIMIZATION_LEVELS,
-  TOKEN_BUDGETS
+  TOKEN_BUDGETS,
 };

@@ -14,50 +14,50 @@ const testCases = [
     task: 'Add OAuth authentication for users',
     expectedPriority: 'critical',
     expectedBlocking: true,
-    expectedCategories: ['authentication']
+    expectedCategories: ['authentication'],
   },
   {
     name: 'Critical: Authorization + Secrets',
     task: 'Implement RBAC with JWT tokens',
     expectedPriority: 'critical',
     expectedBlocking: true,
-    expectedCategories: ['authorization', 'secrets_management']
+    expectedCategories: ['authorization', 'secrets_management'],
   },
   {
     name: 'Critical: Data Protection + Compliance',
     task: 'Implement GDPR-compliant data encryption',
     expectedPriority: 'critical',
     expectedBlocking: true,
-    expectedCategories: ['data_protection', 'compliance']
+    expectedCategories: ['data_protection', 'compliance'],
   },
   {
     name: 'High: Network Security',
     task: 'Add CORS and WAF configuration',
     expectedPriority: 'high',
     expectedBlocking: true,
-    expectedCategories: ['network_security']
+    expectedCategories: ['network_security'],
   },
   {
     name: 'Medium: Logging',
     task: 'Add security event logging and monitoring',
     expectedPriority: 'medium',
     expectedBlocking: false,
-    expectedCategories: ['logging_monitoring']
+    expectedCategories: ['logging_monitoring'],
   },
   {
     name: 'Non-Security: UI Component',
     task: 'Add new button component',
     expectedPriority: 'low',
     expectedBlocking: false,
-    expectedCategories: []
-  }
+    expectedCategories: [],
+  },
 ];
 
 let passed = 0;
 let failed = 0;
 
 console.log('🔐 Security Integration Validation\n');
-console.log('=' .repeat(80));
+console.log('='.repeat(80));
 
 for (const testCase of testCases) {
   console.log(`\n📋 Test: ${testCase.name}`);
@@ -72,29 +72,46 @@ for (const testCase of testCases) {
 
     // Validate priority
     const priorityMatch = securityCheck.priority === testCase.expectedPriority;
-    console.log(`   Priority: ${securityCheck.priority} ${priorityMatch ? '✅' : '❌ Expected: ' + testCase.expectedPriority}`);
+    console.log(
+      `   Priority: ${securityCheck.priority} ${priorityMatch ? '✅' : '❌ Expected: ' + testCase.expectedPriority}`
+    );
 
     // Validate blocking
     const blockingMatch = securityCheck.blocking === testCase.expectedBlocking;
-    console.log(`   Blocking: ${securityCheck.blocking} ${blockingMatch ? '✅' : '❌ Expected: ' + testCase.expectedBlocking}`);
+    console.log(
+      `   Blocking: ${securityCheck.blocking} ${blockingMatch ? '✅' : '❌ Expected: ' + testCase.expectedBlocking}`
+    );
 
     // Validate categories
-    const categoriesMatch = testCase.expectedCategories.length === 0
-      ? securityCheck.categories.length === 0
-      : testCase.expectedCategories.every(cat => securityCheck.categories.includes(cat));
-    console.log(`   Categories: ${securityCheck.categories.join(', ') || 'none'} ${categoriesMatch ? '✅' : '❌ Expected: ' + testCase.expectedCategories.join(', ')}`);
+    const categoriesMatch =
+      testCase.expectedCategories.length === 0
+        ? securityCheck.categories.length === 0
+        : testCase.expectedCategories.every(cat => securityCheck.categories.includes(cat));
+    console.log(
+      `   Categories: ${securityCheck.categories.join(', ') || 'none'} ${categoriesMatch ? '✅' : '❌ Expected: ' + testCase.expectedCategories.join(', ')}`
+    );
 
     // Validate routing integration
     const routingBlocked = routing.blocked === testCase.expectedBlocking;
-    console.log(`   Routing Blocked: ${routing.blocked} ${routingBlocked ? '✅' : '❌ Expected: ' + testCase.expectedBlocking}`);
+    console.log(
+      `   Routing Blocked: ${routing.blocked} ${routingBlocked ? '✅' : '❌ Expected: ' + testCase.expectedBlocking}`
+    );
 
     // Validate security-architect in chain for security tasks
     const hasSecurityArchitect = routing.fullChain.includes('security-architect');
     const shouldHaveSecurityArchitect = securityCheck.categories.length > 0; // Any security category should trigger security-architect
     const securityArchitectMatch = hasSecurityArchitect === shouldHaveSecurityArchitect;
-    console.log(`   Security-Architect in Chain: ${hasSecurityArchitect} ${securityArchitectMatch ? '✅' : '❌'}`);
+    console.log(
+      `   Security-Architect in Chain: ${hasSecurityArchitect} ${securityArchitectMatch ? '✅' : '❌'}`
+    );
 
-    if (priorityMatch && blockingMatch && categoriesMatch && routingBlocked && securityArchitectMatch) {
+    if (
+      priorityMatch &&
+      blockingMatch &&
+      categoriesMatch &&
+      routingBlocked &&
+      securityArchitectMatch
+    ) {
       console.log(`   Result: ✅ PASSED`);
       passed++;
     } else {

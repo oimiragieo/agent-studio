@@ -40,6 +40,7 @@ Generates OpenAPI/Swagger schemas for API endpoints, creating comprehensive API 
 ### Step 2: Generate OpenAPI Schema
 
 1. **Create OpenAPI 3.0 structure**:
+
    ```yaml
    openapi: 3.0.0
    info:
@@ -50,7 +51,7 @@ Generates OpenAPI/Swagger schemas for API endpoints, creating comprehensive API 
        get:
          summary: Endpoint description
          parameters: [...]
-         responses: {...}
+         responses: { ... }
    ```
 
 2. **Map request/response types**:
@@ -139,4 +140,3 @@ components:
 
 - [CUJ-010](../../docs/cujs/CUJ-010.md) - API Endpoint Development
 - [OpenAPI Specification](https://swagger.io/specification/)
-

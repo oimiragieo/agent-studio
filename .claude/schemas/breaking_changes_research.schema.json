@@ -55,7 +55,14 @@
                 },
                 "category": {
                   "type": "string",
-                  "enum": ["api_change", "configuration_change", "dependency_change", "removed_feature", "behavior_change", "other"],
+                  "enum": [
+                    "api_change",
+                    "configuration_change",
+                    "dependency_change",
+                    "removed_feature",
+                    "behavior_change",
+                    "other"
+                  ],
                   "description": "Category of the breaking change"
                 },
                 "impact": {
@@ -180,7 +187,15 @@
                 },
                 "source_type": {
                   "type": "string",
-                  "enum": ["web_search", "official_docs", "github", "npm_registry", "blog", "forum", "other"],
+                  "enum": [
+                    "web_search",
+                    "official_docs",
+                    "github",
+                    "npm_registry",
+                    "blog",
+                    "forum",
+                    "other"
+                  ],
                   "description": "Type of source"
                 },
                 "search_query": {
@@ -343,7 +358,13 @@
         },
         "research_method": {
           "type": "string",
-          "enum": ["web_search", "documentation_review", "changelog_analysis", "community_research", "combined"],
+          "enum": [
+            "web_search",
+            "documentation_review",
+            "changelog_analysis",
+            "community_research",
+            "combined"
+          ],
           "description": "Primary research method used"
         },
         "notes": {
@@ -354,4 +375,3 @@
     }
   }
 }
-

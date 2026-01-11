@@ -6,7 +6,7 @@ project_type: ai
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -30,18 +30,18 @@ fallback_agents:
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "ai system"
-  - "llm"
-  - "rag"
-  - "embeddings"
-  - "chatbot"
-  - "ai feature"
-  - "machine learning"
-  - "vector database"
+  - 'ai system'
+  - 'llm'
+  - 'rag'
+  - 'embeddings'
+  - 'chatbot'
+  - 'ai feature'
+  - 'machine learning'
+  - 'vector database'
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - ai_requirements
@@ -61,7 +61,7 @@ steps:
       - Create structured development plan
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -87,7 +87,7 @@ steps:
       - Never execute an unrated plan - this is a hard requirement
 
   - step: 1
-    name: "Model Strategy"
+    name: 'Model Strategy'
     agent: model-orchestrator
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -109,7 +109,7 @@ steps:
       - Rate limiting considerations
 
   - step: 2
-    name: "LLM Architecture Design"
+    name: 'LLM Architecture Design'
     agent: llm-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -131,7 +131,7 @@ steps:
       - Guardrails and safety
 
   - step: 3
-    name: "API Design"
+    name: 'API Design'
     agent: api-designer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -152,7 +152,7 @@ steps:
       - Webhook integrations
 
   - step: 4
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -174,7 +174,7 @@ steps:
       - Prompt templates
 
   - step: 5
-    name: "Code Review"
+    name: 'Code Review'
     agent: code-reviewer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -187,7 +187,7 @@ steps:
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/05-code-reviewer.json
-    on_failure: "Return to implementation step with feedback"
+    on_failure: 'Return to implementation step with feedback'
     description: |
       Review AI/LLM implementation for quality, security, and codebase impact:
       - Verify prompt engineering best practices
@@ -197,7 +197,7 @@ steps:
       - Ensure proper token usage monitoring
 
   - step: 6
-    name: "AI Quality Validation"
+    name: 'AI Quality Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -222,7 +222,7 @@ steps:
       - Performance benchmarks
 
   - step: 6.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"

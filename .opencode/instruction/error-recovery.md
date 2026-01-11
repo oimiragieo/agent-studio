@@ -9,11 +9,13 @@ This document provides detailed procedures for recovering from various error con
 ### 1. Agent Failure Recovery
 
 #### Symptoms
+
 - Agent stops responding
 - Incomplete output generated
 - Unexpected error messages
 
 #### Recovery Steps
+
 1. **Capture Current State**
    - Save any partial outputs
    - Document error messages
@@ -25,17 +27,17 @@ This document provides detailed procedures for recovering from various error con
    - Determine if recoverable
 
 3. **Recovery Options**
-   
+
    **Option A: Retry**
    - Clear any corrupted state
    - Reload agent configuration
    - Re-execute from last checkpoint
-   
+
    **Option B: Skip and Continue**
    - Document skipped work
    - Mark as incomplete
    - Proceed to next step
-   
+
    **Option C: Fallback**
    - Use alternative agent
    - Apply manual intervention
@@ -49,16 +51,19 @@ This document provides detailed procedures for recovering from various error con
 ### 2. Data Corruption Recovery
 
 #### Symptoms
+
 - Malformed JSON/YAML
 - Missing required fields
 - Inconsistent references
 
 #### Recovery Steps
+
 1. **Identify Corrupted Data**
+
    ```bash
    # Validate JSON
    cat artifact.json | jq .
-   
+
    # Validate YAML
    yamllint artifact.yaml
    ```
@@ -81,18 +86,21 @@ This document provides detailed procedures for recovering from various error con
 ### 3. Workflow State Recovery
 
 #### Symptoms
+
 - Workflow stuck at step
 - Cannot proceed to next step
 - State inconsistency detected
 
 #### Recovery Steps
+
 1. **Assess Current State**
+
    ```yaml
    current_state:
      workflow: feature-development
      step: 3
      status: stuck
-     error: "Prerequisite not met"
+     error: 'Prerequisite not met'
    ```
 
 2. **Identify Blocker**
@@ -113,16 +121,19 @@ This document provides detailed procedures for recovering from various error con
 ### 4. Configuration Recovery
 
 #### Symptoms
+
 - Missing configuration files
 - Invalid configuration values
 - Configuration conflicts
 
 #### Recovery Steps
+
 1. **Identify Missing/Invalid Config**
+
    ```bash
    # Check config files exist
    ls -la .opencode/
-   
+
    # Validate config syntax
    cat opencode.json | jq .
    ```
@@ -140,11 +151,13 @@ This document provides detailed procedures for recovering from various error con
 ### 5. External Dependency Recovery
 
 #### Symptoms
+
 - API calls failing
 - Service unavailable
 - Timeout errors
 
 #### Recovery Steps
+
 1. **Diagnose Issue**
    - Check service status
    - Verify network connectivity
@@ -163,18 +176,21 @@ This document provides detailed procedures for recovering from various error con
 ## Recovery Checklist
 
 ### Before Recovery
+
 - [ ] Document current state
 - [ ] Identify error type
 - [ ] Locate relevant backups
 - [ ] Notify stakeholders if needed
 
 ### During Recovery
+
 - [ ] Follow appropriate procedure
 - [ ] Log all recovery actions
 - [ ] Validate intermediate steps
 - [ ] Preserve evidence for analysis
 
 ### After Recovery
+
 - [ ] Verify system functionality
 - [ ] Update documentation
 - [ ] Conduct root cause analysis
@@ -183,12 +199,14 @@ This document provides detailed procedures for recovering from various error con
 ## Emergency Contacts
 
 ### Escalation Path
+
 1. **Level 1**: Automatic retry/recovery
 2. **Level 2**: User intervention required
 3. **Level 3**: Technical support needed
 4. **Level 4**: System administrator required
 
 ### Communication Template
+
 ```
 Subject: [SEVERITY] Recovery Required - [Brief Description]
 
@@ -213,16 +231,19 @@ Assistance Needed:
 ## Post-Recovery Actions
 
 ### Documentation
+
 - Record incident details
 - Document recovery steps
 - Update runbooks if needed
 
 ### Analysis
+
 - Identify root cause
 - Assess prevention options
 - Estimate recurrence risk
 
 ### Prevention
+
 - Implement fixes
 - Add monitoring
 - Update procedures

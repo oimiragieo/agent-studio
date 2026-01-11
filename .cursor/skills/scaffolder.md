@@ -28,16 +28,16 @@ Use @scaffolder to scaffold a FastAPI endpoint for orders
 
 ## Templates Available
 
-| Template | Framework | Files Generated |
-|----------|-----------|-----------------|
-| `component` | Next.js/React | index.tsx, types.ts, skeleton.tsx |
-| `client-component` | Next.js | index.tsx with 'use client' |
-| `page` | Next.js App Router | page.tsx, loading.tsx, error.tsx |
-| `api` | Next.js App Router | route.ts with handlers |
-| `fastapi-route` | FastAPI | router file with endpoints |
-| `hook` | React | Custom hook with types |
-| `test` | Jest/Vitest | Test file for component |
-| `e2e-test` | Cypress/Playwright | E2E test spec |
+| Template           | Framework          | Files Generated                   |
+| ------------------ | ------------------ | --------------------------------- |
+| `component`        | Next.js/React      | index.tsx, types.ts, skeleton.tsx |
+| `client-component` | Next.js            | index.tsx with 'use client'       |
+| `page`             | Next.js App Router | page.tsx, loading.tsx, error.tsx  |
+| `api`              | Next.js App Router | route.ts with handlers            |
+| `fastapi-route`    | FastAPI            | router file with endpoints        |
+| `hook`             | React              | Custom hook with types            |
+| `test`             | Jest/Vitest        | Test file for component           |
+| `e2e-test`         | Cypress/Playwright | E2E test spec                     |
 
 ## Example Output
 
@@ -46,22 +46,25 @@ Use @scaffolder to scaffold a FastAPI endpoint for orders
 **Generated**: `components/search-bar/index.tsx`
 
 ```tsx
-'use client'  // Required per nextjs.mdc
+'use client'; // Required per nextjs.mdc
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react';
 
 interface SearchBarProps {
-  onSearch: (query: string) => void
-  placeholder?: string
+  onSearch: (query: string) => void;
+  placeholder?: string;
 }
 
 export function SearchBar({ onSearch, placeholder = 'Search...' }: SearchBarProps) {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState('');
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value)
-    onSearch(e.target.value)
-  }, [onSearch])
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setQuery(e.target.value);
+      onSearch(e.target.value);
+    },
+    [onSearch]
+  );
 
   return (
     <input
@@ -71,10 +74,10 @@ export function SearchBar({ onSearch, placeholder = 'Search...' }: SearchBarProp
       placeholder={placeholder}
       className="w-full px-4 py-2 border rounded-lg"
     />
-  )
+  );
 }
 
-export default SearchBar
+export default SearchBar;
 ```
 
 ## Integration with Cursor

@@ -23,6 +23,7 @@ All P2 (Polish) issues have been successfully fixed. This report documents the c
 **File Modified**: `.claude/tools/validate-cuj-e2e.mjs`
 
 **Changes**:
+
 1. Replaced `command` field with `guidance` field in recommendations
 2. Converted shell commands to cross-platform Node.js commands:
    - `mkdir -p .claude/skills/${skillName}` → `node -e "const fs = require('fs'); const path = require('path'); const dir = path.join('.claude', 'skills', '${skillName}'); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, 'SKILL.md'), '', { flag: 'a' });"`
@@ -32,11 +33,13 @@ All P2 (Polish) issues have been successfully fixed. This report documents the c
 3. Updated `printResults()` function to display both `command` (legacy) and `guidance` (new) fields
 
 **Benefit**:
+
 - Cross-platform compatibility (Windows, macOS, Linux)
 - Works in PowerShell, CMD, and Unix shells
 - Uses native Node.js fs module (no external dependencies)
 
 **Example Output**:
+
 ```
 💡 Recommendations:
   CUJ-034:
@@ -58,6 +61,7 @@ Confusion between `.claude/skills/*` (Agent Studio skills) and `codex-skills/*` 
 **New File**: `.claude/docs/SKILLS_TAXONOMY.md`
 
 **Content**:
+
 - **Section 1: Agent Studio Skills** (`.claude/skills/`)
   - Purpose: Skills for Claude Code/Agent Studio platform
   - Structure: SKILL.md + scripts/
@@ -79,9 +83,12 @@ Confusion between `.claude/skills/*` (Agent Studio skills) and `codex-skills/*` 
   - Codex version: Multi-model consensus (Claude + GPT-4 + Gemini)
 
 **References Added**:
+
 1. **`.claude/CLAUDE.md`** - Added taxonomy reference in Skills section:
+
    ```markdown
    **Skills Taxonomy**: This project contains two types of skills:
+
    - **Agent Studio Skills** (`.claude/skills/`): 108 skills for Claude Code/Agent Studio platform
    - **Codex Skills** (`codex-skills/`): 2 skills for OpenAI Codex CLI and multi-AI validation
 
@@ -94,6 +101,7 @@ Confusion between `.claude/skills/*` (Agent Studio skills) and `codex-skills/*` 
    ```
 
 **Benefit**:
+
 - Clear distinction between skill types
 - Reduces confusion for new contributors
 - Provides usage guidance for each skill type
@@ -114,6 +122,7 @@ CUJ execution could fail mid-run due to missing workflows, agents, schemas, or s
 **New Function**: `preflightCheck(cuj)`
 
 **Validations**:
+
 1. **Workflow file exists** - Verifies `.claude/workflows/<workflow>.yaml` exists
 2. **Referenced agents exist** - Parses workflow YAML, checks `.claude/agents/<agent>.md` for each agent
 3. **Referenced schemas exist** - Parses workflow YAML, checks `.claude/schemas/<schema>.schema.json` for each schema
@@ -122,12 +131,14 @@ CUJ execution could fail mid-run due to missing workflows, agents, schemas, or s
 6. **Primary skill exists** (skill-only CUJs) - Validates primary skill path
 
 **Integration**:
+
 - Pre-flight check runs before workflow execution
 - Errors block execution (exit code 1)
 - Warnings are displayed but don't block execution
 - Results logged to console
 
 **Example Output**:
+
 ```
 🔍 Pre-flight check for CUJ-005...
 
@@ -141,6 +152,7 @@ Workflow: greenfield-fullstack.yaml
 ```
 
 **Benefit**:
+
 - Early failure detection
 - Clearer error messages
 - Reduced wasted execution time
@@ -159,11 +171,13 @@ No visibility into CUJ execution performance, duration, or success rates.
 **File Modified**: `.claude/tools/run-cuj.mjs`
 
 **New Functions**:
+
 1. `loadPerformanceMetrics()` - Load existing metrics from JSON file
 2. `savePerformanceMetrics(metrics)` - Save metrics to JSON file
 3. `recordPerformance(cujId, status, duration, agents, warnings)` - Record execution data
 
 **Metrics Tracked**:
+
 - `cuj_id` - CUJ identifier (e.g., "CUJ-005")
 - `timestamp` - ISO 8601 timestamp
 - `duration_ms` - Execution duration in milliseconds
@@ -174,6 +188,7 @@ No visibility into CUJ execution performance, duration, or success rates.
 **Storage Location**: `.claude/context/analytics/cuj-performance.json`
 
 **Integration**:
+
 - Performance tracking starts when workflow execution begins
 - Ends when child process exits
 - Agents extracted from workflow YAML
@@ -181,12 +196,14 @@ No visibility into CUJ execution performance, duration, or success rates.
 - Metrics saved to JSON file
 
 **Example Output**:
+
 ```
 ⏱️  Execution completed in 45.32s
 📊 Performance data saved to C:\dev\projects\LLM-RULES\.claude\context\analytics\cuj-performance.json
 ```
 
 **Example Metrics File**:
+
 ```json
 {
   "runs": [
@@ -203,6 +220,7 @@ No visibility into CUJ execution performance, duration, or success rates.
 ```
 
 **Benefit**:
+
 - Track execution performance over time
 - Identify slow workflows
 - Measure success rates
@@ -224,37 +242,39 @@ Unclear when to use different plan rating thresholds (5/10 vs 7/10 vs 9/10).
 **Content**:
 
 ### Default Threshold
+
 - **7/10** - Standard quality gate for most workflows
 
 ### Workflow-Specific Thresholds
 
-| Workflow Type | Minimum Score | Rationale |
-|---------------|---------------|-----------|
-| **Standard** | 7/10 | Greenfield, feature addition, code quality, brownfield migration, API development, mobile app, AI system |
-| **Quick** | 6/10 | Quick flow, hotfix flow (time-sensitive, lower bar for speed) |
-| **Incident** | 5/10 | Incident response (time-critical, runbooks compensate) |
-| **Enterprise** | 8/10 | Enterprise integration, compliance, performance optimization (high-stakes, complex) |
-| **Security** | 9/10 | Auth, data protection, vulnerability remediation, penetration testing (security-critical) |
+| Workflow Type  | Minimum Score | Rationale                                                                                                |
+| -------------- | ------------- | -------------------------------------------------------------------------------------------------------- |
+| **Standard**   | 7/10          | Greenfield, feature addition, code quality, brownfield migration, API development, mobile app, AI system |
+| **Quick**      | 6/10          | Quick flow, hotfix flow (time-sensitive, lower bar for speed)                                            |
+| **Incident**   | 5/10          | Incident response (time-critical, runbooks compensate)                                                   |
+| **Enterprise** | 8/10          | Enterprise integration, compliance, performance optimization (high-stakes, complex)                      |
+| **Security**   | 9/10          | Auth, data protection, vulnerability remediation, penetration testing (security-critical)                |
 
 ### Complexity-Based Adjustments
 
 | Complexity | Threshold Adjustment |
-|------------|---------------------|
-| Simple | -1 point |
-| Standard | 0 points |
-| Complex | +1 point |
-| Critical | +2 points |
+| ---------- | -------------------- |
+| Simple     | -1 point             |
+| Standard   | 0 points             |
+| Complex    | +1 point             |
+| Critical   | +2 points            |
 
 ### Security Trigger Overrides
 
-| Security Priority | Threshold Override |
-|-------------------|-------------------|
-| Low | +0 points |
-| Medium | +1 point |
-| High | +2 points |
-| Critical | +3 points (min 9/10) |
+| Security Priority | Threshold Override   |
+| ----------------- | -------------------- |
+| Low               | +0 points            |
+| Medium            | +1 point             |
+| High              | +2 points            |
+| Critical          | +3 points (min 9/10) |
 
 ### Rating Rubric
+
 - **Completeness** (2 pts): All required steps and agents included
 - **Feasibility** (2 pts): Plan is realistic and achievable
 - **Risk Mitigation** (2 pts): Identified risks with mitigation strategies
@@ -264,6 +284,7 @@ Unclear when to use different plan rating thresholds (5/10 vs 7/10 vs 9/10).
 - **Documentation** (1 pt): Documentation requirements specified
 
 ### Override Process
+
 - Only orchestrator can override thresholds
 - Requires documented justification
 - Risk acknowledgment required
@@ -271,12 +292,14 @@ Unclear when to use different plan rating thresholds (5/10 vs 7/10 vs 9/10).
 - Sign-off from compliance-auditor for security overrides
 
 **References Added**:
+
 1. **`.claude/CLAUDE.md`** - Added reference in Plan Rating Enforcement section:
    ```markdown
    **Workflow-Specific Thresholds**: Different workflows have different minimum scores based on risk and complexity. See @.claude/docs/PLAN_RATING_THRESHOLDS.md for detailed threshold documentation.
    ```
 
 **Benefit**:
+
 - Clear guidance for rating plans
 - Documented rationale for each threshold
 - Flexibility for different workflow types
@@ -318,6 +341,7 @@ Unclear when to use different plan rating thresholds (5/10 vs 7/10 vs 9/10).
 ## Testing
 
 ### Task 6.1 Verification
+
 ```bash
 # Test cross-platform command generation
 node .claude/tools/validate-cuj-e2e.mjs --fix-suggestions --verbose
@@ -326,6 +350,7 @@ node .claude/tools/validate-cuj-e2e.mjs --fix-suggestions --verbose
 ```
 
 ### Task 6.2 Verification
+
 ```bash
 # Verify taxonomy file exists
 ls .claude/docs/SKILLS_TAXONOMY.md
@@ -336,6 +361,7 @@ grep -n "SKILLS_TAXONOMY" .claude/docs/AGENT_SKILL_MATRIX.md
 ```
 
 ### Task 6.3 Verification
+
 ```bash
 # Test pre-flight check with valid CUJ
 node .claude/tools/run-cuj.mjs CUJ-005
@@ -345,6 +371,7 @@ node .claude/tools/run-cuj.mjs CUJ-005
 ```
 
 ### Task 6.4 Verification
+
 ```bash
 # Run a CUJ and verify performance tracking
 node .claude/tools/run-cuj.mjs CUJ-005
@@ -356,6 +383,7 @@ cat .claude/context/analytics/cuj-performance.json
 ```
 
 ### Task 6.5 Verification
+
 ```bash
 # Verify thresholds file exists
 ls .claude/docs/PLAN_RATING_THRESHOLDS.md
@@ -369,26 +397,31 @@ grep -n "PLAN_RATING_THRESHOLDS" .claude/CLAUDE.md
 ## Impact Assessment
 
 ### Cross-Platform Compatibility
+
 - **Before**: Shell commands failed on Windows PowerShell
 - **After**: Node.js commands work on all platforms
 - **Impact**: High - Enables Windows users to use validation tools
 
 ### Documentation Clarity
+
 - **Before**: Confusion between skill types
 - **After**: Clear taxonomy with usage guidance
 - **Impact**: Medium - Reduces onboarding friction for contributors
 
 ### Pre-flight Validation
+
 - **Before**: Workflows failed mid-execution due to missing dependencies
 - **After**: Early validation catches issues before execution
 - **Impact**: High - Saves time and improves error messages
 
 ### Performance Tracking
+
 - **Before**: No visibility into CUJ performance
 - **After**: Comprehensive metrics tracking
 - **Impact**: Medium - Enables continuous improvement and analytics
 
 ### Plan Rating Clarity
+
 - **Before**: Unclear when to use different thresholds
 - **After**: Documented thresholds with rationale
 - **Impact**: Medium - Improves plan quality and consistency
@@ -408,9 +441,9 @@ grep -n "PLAN_RATING_THRESHOLDS" .claude/CLAUDE.md
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-08 | Initial P2 fixes completion |
+| Version | Date       | Changes                     |
+| ------- | ---------- | --------------------------- |
+| 1.0.0   | 2026-01-08 | Initial P2 fixes completion |
 
 ---
 

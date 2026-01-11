@@ -11,6 +11,7 @@ This directory contains orchestration tools for the agent integration fix (Phase
 **Location**: `.claude/tools/plan-review-gate.mjs`
 
 **Features**:
+
 - Determines required and optional plan reviewers
 - Applies complexity and workflow modifiers
 - Aggregates reviewer scores using weighted averages
@@ -22,11 +23,10 @@ This directory contains orchestration tools for the agent integration fix (Phase
 import { runPlanReviewGate, aggregateResults } from '../plan-review-gate.mjs';
 
 // Step 1: Determine reviewers
-const gateResult = await runPlanReviewGate(
-  '.claude/context/artifacts/plan.json',
-  'wf-123',
-  ['authentication', 'security']
-);
+const gateResult = await runPlanReviewGate('.claude/context/artifacts/plan.json', 'wf-123', [
+  'authentication',
+  'security',
+]);
 
 console.log('Required reviewers:', gateResult.reviewers.required);
 console.log('Optional reviewers:', gateResult.reviewers.optional);
@@ -35,7 +35,7 @@ console.log('Minimum score:', gateResult.reviewers.minimum_score);
 // Step 2: Spawn reviewer agents and collect reviews
 const reviews = [
   { reviewer: 'architect', score: 8, required: true, issues: [] },
-  { reviewer: 'qa', score: 7, required: true, issues: [] }
+  { reviewer: 'qa', score: 7, required: true, issues: [] },
 ];
 
 // Step 3: Aggregate results
@@ -45,7 +45,7 @@ const aggregated = aggregateResults(reviews, {
   weights: { required: 0.7, optional: 0.3 },
   blocking_behavior: 'any_reviewer_below_threshold_blocks',
   minimum_score: 7,
-  blocking_threshold: 5
+  blocking_threshold: 5,
 });
 
 console.log('Overall score:', aggregated.overall_score);
@@ -53,6 +53,7 @@ console.log('Passed:', aggregated.passed);
 ```
 
 **CLI Usage**:
+
 ```bash
 node .claude/tools/plan-review-gate.mjs \
   --plan .claude/context/artifacts/plan.json \
@@ -67,6 +68,7 @@ node .claude/tools/plan-review-gate.mjs \
 **Location**: `.claude/tools/signoff-validator.mjs`
 
 **Features**:
+
 - Validates signoff artifacts against JSON schemas using Ajv
 - Checks quality conditions (test coverage, scores, etc.)
 - Handles conditional signoffs triggered by task keywords
@@ -77,34 +79,33 @@ node .claude/tools/plan-review-gate.mjs \
 ```javascript
 import { validateWorkflowSignoffs } from '../signoff-validator.mjs';
 
-const result = await validateWorkflowSignoffs(
-  'wf-123',
-  'fullstack',
-  'Add authentication with JWT'
-);
+const result = await validateWorkflowSignoffs('wf-123', 'fullstack', 'Add authentication with JWT');
 
 if (result.valid) {
   console.log('✅ All signoffs passed!');
   console.log('Summary:', result.summary);
 } else {
   console.log('❌ Signoff validation failed');
-  result.signoffs.filter(s => !s.valid).forEach(signoff => {
-    console.log(`\n${signoff.type}:`);
-    console.log(`  Artifact: ${signoff.artifact}`);
-    console.log(`  Schema valid: ${signoff.schema_valid}`);
-    console.log(`  Conditions passed: ${signoff.conditions_passed}`);
+  result.signoffs
+    .filter(s => !s.valid)
+    .forEach(signoff => {
+      console.log(`\n${signoff.type}:`);
+      console.log(`  Artifact: ${signoff.artifact}`);
+      console.log(`  Schema valid: ${signoff.schema_valid}`);
+      console.log(`  Conditions passed: ${signoff.conditions_passed}`);
 
-    if (signoff.condition_failures) {
-      console.log('  Failures:');
-      signoff.condition_failures.forEach(f => {
-        console.log(`    - ${f.condition}: ${f.reason}`);
-      });
-    }
-  });
+      if (signoff.condition_failures) {
+        console.log('  Failures:');
+        signoff.condition_failures.forEach(f => {
+          console.log(`    - ${f.condition}: ${f.reason}`);
+        });
+      }
+    });
 }
 ```
 
 **CLI Usage**:
+
 ```bash
 node .claude/tools/signoff-validator.mjs \
   --workflow-id wf-123 \
@@ -121,6 +122,7 @@ node .claude/tools/signoff-validator.mjs \
 Defines which agents review plans based on task type and complexity.
 
 **Structure**:
+
 ```json
 {
   "taskTypes": {
@@ -154,6 +156,7 @@ Defines which agents review plans based on task type and complexity.
 Defines signoff requirements for each workflow.
 
 **Structure**:
+
 ```json
 {
   "workflows": {
@@ -196,6 +199,7 @@ Defines signoff requirements for each workflow.
 Enhanced security trigger categorization with priority escalation.
 
 **Structure**:
+
 ```json
 {
   "categories": {
@@ -234,6 +238,7 @@ The `agent-router.mjs` module has been updated to include:
    - Returns security trigger information
 
 **Updated `selectAgents()` result**:
+
 ```javascript
 {
   taskType: "SECURITY",
@@ -273,7 +278,7 @@ import { runPlanReviewGate, aggregateResults } from '.claude/tools/plan-review-g
 import { validateWorkflowSignoffs } from '.claude/tools/signoff-validator.mjs';
 
 // Step 1: Route task and get requirements
-const routing = await selectAgents("Add JWT authentication");
+const routing = await selectAgents('Add JWT authentication');
 
 console.log('Task Type:', routing.taskType);
 console.log('Workflow:', routing.workflow);
@@ -296,14 +301,14 @@ console.log('Plan reviewers:', planGate.reviewers.required);
 // Step 4: Aggregate plan review results
 const planReviews = [
   { reviewer: 'security-architect', score: 9, required: true, issues: [] },
-  { reviewer: 'compliance-auditor', score: 8, required: true, issues: [] }
+  { reviewer: 'compliance-auditor', score: 8, required: true, issues: [] },
 ];
 
 const planResult = aggregateResults(planReviews, {
   score_range: [0, 10],
   aggregation: 'weighted_average',
   weights: { required: 0.7, optional: 0.3 },
-  blocking_behavior: 'any_reviewer_below_threshold_blocks'
+  blocking_behavior: 'any_reviewer_below_threshold_blocks',
 });
 
 if (!planResult.passed) {
@@ -317,14 +322,16 @@ console.log('✅ Plan review passed with score:', planResult.overall_score);
 const signoffResult = await validateWorkflowSignoffs(
   'wf-123',
   routing.workflow,
-  "Add JWT authentication"
+  'Add JWT authentication'
 );
 
 if (!signoffResult.valid) {
   console.log('❌ Signoff validation failed');
-  signoffResult.signoffs.filter(s => !s.valid).forEach(s => {
-    console.log(`  - ${s.type}: ${s.error || 'Conditions not met'}`);
-  });
+  signoffResult.signoffs
+    .filter(s => !s.valid)
+    .forEach(s => {
+      console.log(`  - ${s.type}: ${s.error || 'Conditions not met'}`);
+    });
   process.exit(1);
 }
 

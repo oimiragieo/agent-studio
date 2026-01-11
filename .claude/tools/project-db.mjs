@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Project Database - Hot-Swappable Memory Core
- * 
+ *
  * External state manager for workflow execution state
  * Provides centralized Project Database that persists outside chat context
  * Enables seamless orchestrator recycling without state loss
- * 
+ *
  * Usage:
  *   node .claude/tools/project-db.mjs read --run-id <id>
  *   node .claude/tools/project-db.mjs update --run-id <id> --field <field> --value <value>
@@ -41,7 +41,7 @@ export async function syncProjectDbFromRun(runId) {
   try {
     const runRecord = await readRun(runId);
     const artifactRegistry = await readArtifactRegistry(runId);
-    
+
     // Derive project-db state from run.json and artifact-registry.json
     const projectDb = {
       run_id: runId,
@@ -53,11 +53,13 @@ export async function syncProjectDbFromRun(runId) {
       current_step: runRecord.current_step || 0,
       active_tasks: (runRecord.task_queue || []).filter(t => t.status === 'in_progress'),
       completed_tasks: (runRecord.task_queue || []).filter(t => t.status === 'completed'),
-      completed_artifacts: Object.values(artifactRegistry.artifacts || {}).filter(a => a.validationStatus === 'pass'),
+      completed_artifacts: Object.values(artifactRegistry.artifacts || {}).filter(
+        a => a.validationStatus === 'pass'
+      ),
       workflow_state: {
         status: runRecord.status,
         selected_workflow: runRecord.selected_workflow,
-        task_queue: runRecord.task_queue || []
+        task_queue: runRecord.task_queue || [],
       },
       document_approvals: runRecord.metadata?.approvals || {},
       blockers: runRecord.metadata?.blockers || [],
@@ -67,13 +69,13 @@ export async function syncProjectDbFromRun(runId) {
         selected_workflow: runRecord.selected_workflow,
         user_request: runRecord.metadata?.user_request || '',
         status: runRecord.status,
-        ...runRecord.metadata
-      }
+        ...runRecord.metadata,
+      },
     };
-    
+
     const dbPath = getProjectDbPath(runId);
     await writeFile(dbPath, JSON.stringify(projectDb, null, 2), 'utf-8');
-    
+
     return projectDb;
   } catch (error) {
     console.error(`Error syncing project-db from run.json for ${runId}: ${error.message}`);
@@ -89,16 +91,16 @@ export async function syncProjectDbFromRun(runId) {
  */
 export async function readProjectDatabase(runId, forceSync = false) {
   const dbPath = getProjectDbPath(runId);
-  
+
   // If force sync or cache doesn't exist, sync from run.json
   if (forceSync || !existsSync(dbPath)) {
     return await syncProjectDbFromRun(runId);
   }
-  
+
   // Read cached version
   const content = await readFile(dbPath, 'utf-8');
   const cachedDb = JSON.parse(content);
-  
+
   // Check if cache is stale (run.json updated since last sync)
   try {
     const runRecord = await readRun(runId);
@@ -110,7 +112,7 @@ export async function readProjectDatabase(runId, forceSync = false) {
     // If can't read run.json, return cached version
     console.warn(`Warning: Could not verify cache freshness for ${runId}: ${error.message}`);
   }
-  
+
   return cachedDb;
 }
 
@@ -123,12 +125,12 @@ export async function readProjectDatabase(runId, forceSync = false) {
 export async function initializeProjectDatabase(runId, initialData = {}) {
   const dbPath = getProjectDbPath(runId);
   const runDirs = getRunDirectoryStructure(runId);
-  
+
   // Ensure run directory exists
   if (!existsSync(runDirs.run_dir)) {
     await mkdir(runDirs.run_dir, { recursive: true });
   }
-  
+
   const now = new Date().toISOString();
   const projectDb = {
     run_id: runId,
@@ -147,10 +149,10 @@ export async function initializeProjectDatabase(runId, initialData = {}) {
       workflow_id: initialData.workflow_id || null,
       selected_workflow: initialData.selected_workflow || null,
       user_request: initialData.user_request || '',
-      status: initialData.status || 'pending'
-    }
+      status: initialData.status || 'pending',
+    },
   };
-  
+
   await writeFile(dbPath, JSON.stringify(projectDb, null, 2), 'utf-8');
   return projectDb;
 }
@@ -167,7 +169,9 @@ export async function updateProjectDatabase(runId, updates) {
   // Project-db is now read-only derived cache
   // All updates should go through run-manager.mjs which will update run.json
   // Then sync project-db from run.json
-  console.warn(`⚠️  Warning: updateProjectDatabase() is deprecated. Updates should go to run.json via run-manager.mjs. Syncing from run.json instead.`);
+  console.warn(
+    `⚠️  Warning: updateProjectDatabase() is deprecated. Updates should go to run.json via run-manager.mjs. Syncing from run.json instead.`
+  );
   return await syncProjectDbFromRun(runId);
 }
 
@@ -179,11 +183,11 @@ export async function updateProjectDatabase(runId, updates) {
  */
 export async function addActiveTask(runId, task) {
   const projectDb = await readProjectDatabase(runId);
-  
+
   if (!projectDb.active_tasks) {
     projectDb.active_tasks = [];
   }
-  
+
   projectDb.active_tasks.push({
     task_id: task.task_id || `task-${Date.now()}`,
     description: task.description,
@@ -191,9 +195,9 @@ export async function addActiveTask(runId, task) {
     step: task.step || projectDb.current_step,
     status: 'in_progress',
     started_at: new Date().toISOString(),
-    ...task
+    ...task,
   });
-  
+
   return await updateProjectDatabase(runId, { active_tasks: projectDb.active_tasks });
 }
 
@@ -206,31 +210,31 @@ export async function addActiveTask(runId, task) {
  */
 export async function completeTask(runId, taskId, result = {}) {
   const projectDb = await readProjectDatabase(runId);
-  
+
   // Find and remove from active tasks
   const taskIndex = projectDb.active_tasks.findIndex(t => t.task_id === taskId);
   if (taskIndex === -1) {
     throw new Error(`Task ${taskId} not found in active tasks`);
   }
-  
+
   const task = projectDb.active_tasks[taskIndex];
   projectDb.active_tasks.splice(taskIndex, 1);
-  
+
   // Add to completed tasks
   if (!projectDb.completed_tasks) {
     projectDb.completed_tasks = [];
   }
-  
+
   projectDb.completed_tasks.push({
     ...task,
     status: 'completed',
     completed_at: new Date().toISOString(),
-    result: result
+    result: result,
   });
-  
+
   return await updateProjectDatabase(runId, {
     active_tasks: projectDb.active_tasks,
-    completed_tasks: projectDb.completed_tasks
+    completed_tasks: projectDb.completed_tasks,
   });
 }
 
@@ -242,11 +246,11 @@ export async function completeTask(runId, taskId, result = {}) {
  */
 export async function registerCompletedArtifact(runId, artifact) {
   const projectDb = await readProjectDatabase(runId);
-  
+
   if (!projectDb.completed_artifacts) {
     projectDb.completed_artifacts = [];
   }
-  
+
   projectDb.completed_artifacts.push({
     name: artifact.name,
     path: artifact.path,
@@ -254,9 +258,9 @@ export async function registerCompletedArtifact(runId, artifact) {
     agent: artifact.agent,
     created_at: new Date().toISOString(),
     validation_status: artifact.validation_status || 'pending',
-    ...artifact
+    ...artifact,
   });
-  
+
   return await updateProjectDatabase(runId, { completed_artifacts: projectDb.completed_artifacts });
 }
 
@@ -269,17 +273,17 @@ export async function registerCompletedArtifact(runId, artifact) {
  */
 export async function approveDocument(runId, documentName, approvedBy) {
   const projectDb = await readProjectDatabase(runId);
-  
+
   if (!projectDb.document_approvals) {
     projectDb.document_approvals = {};
   }
-  
+
   projectDb.document_approvals[documentName] = {
     approved: true,
     approved_by: approvedBy,
-    approved_at: new Date().toISOString()
+    approved_at: new Date().toISOString(),
   };
-  
+
   return await updateProjectDatabase(runId, { document_approvals: projectDb.document_approvals });
 }
 
@@ -322,19 +326,19 @@ export async function getCurrentStep(runId) {
  */
 export async function addBlocker(runId, blocker) {
   const projectDb = await readProjectDatabase(runId);
-  
+
   if (!projectDb.blockers) {
     projectDb.blockers = [];
   }
-  
+
   projectDb.blockers.push({
     id: blocker.id || `blocker-${Date.now()}`,
     description: blocker.description,
     severity: blocker.severity || 'medium',
     created_at: new Date().toISOString(),
-    ...blocker
+    ...blocker,
   });
-  
+
   return await updateProjectDatabase(runId, { blockers: projectDb.blockers });
 }
 
@@ -346,13 +350,13 @@ export async function addBlocker(runId, blocker) {
  */
 export async function removeBlocker(runId, blockerId) {
   const projectDb = await readProjectDatabase(runId);
-  
+
   if (!projectDb.blockers) {
     return projectDb;
   }
-  
+
   projectDb.blockers = projectDb.blockers.filter(b => b.id !== blockerId);
-  
+
   return await updateProjectDatabase(runId, { blockers: projectDb.blockers });
 }
 
@@ -360,15 +364,15 @@ export async function removeBlocker(runId, blockerId) {
 async function main() {
   const args = process.argv.slice(2);
   const command = args[0];
-  
+
   if (command === 'read') {
     const runIdIndex = args.indexOf('--run-id');
-    
+
     if (runIdIndex === -1 || runIdIndex === args.length - 1) {
       console.error('Usage: node project-db.mjs read --run-id <id>');
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const projectDb = await readProjectDatabase(runId);
     console.log(JSON.stringify(projectDb, null, 2));
@@ -376,16 +380,18 @@ async function main() {
     const runIdIndex = args.indexOf('--run-id');
     const fieldIndex = args.indexOf('--field');
     const valueIndex = args.indexOf('--value');
-    
+
     if (runIdIndex === -1 || fieldIndex === -1 || valueIndex === -1) {
-      console.error('Usage: node project-db.mjs update --run-id <id> --field <field> --value <value>');
+      console.error(
+        'Usage: node project-db.mjs update --run-id <id> --field <field> --value <value>'
+      );
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const field = args[fieldIndex + 1];
     let value = args[valueIndex + 1];
-    
+
     // Try to parse as JSON if it looks like JSON
     if (value.startsWith('{') || value.startsWith('[')) {
       try {
@@ -394,29 +400,29 @@ async function main() {
         // Not JSON, use as string
       }
     }
-    
+
     const updates = { [field]: value };
     const projectDb = await updateProjectDatabase(runId, updates);
     console.log(JSON.stringify(projectDb, null, 2));
   } else if (command === 'get-current-phase') {
     const runIdIndex = args.indexOf('--run-id');
-    
+
     if (runIdIndex === -1 || runIdIndex === args.length - 1) {
       console.error('Usage: node project-db.mjs get-current-phase --run-id <id>');
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const phase = await getCurrentPhase(runId);
     console.log(phase || 'null');
   } else if (command === 'get-current-step') {
     const runIdIndex = args.indexOf('--run-id');
-    
+
     if (runIdIndex === -1 || runIdIndex === args.length - 1) {
       console.error('Usage: node project-db.mjs get-current-step --run-id <id>');
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const step = await getCurrentStep(runId);
     console.log(step);
@@ -443,6 +449,5 @@ export default {
   getCurrentPhase,
   getCurrentStep,
   addBlocker,
-  removeBlocker
+  removeBlocker,
 };
-

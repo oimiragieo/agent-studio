@@ -77,7 +77,7 @@ export function getCurrentCommit() {
   try {
     return execSync('git rev-parse HEAD', {
       encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     }).trim();
   } catch (error) {
     return null;
@@ -93,7 +93,7 @@ export function resolveRef(ref) {
   try {
     return execSync(`git rev-parse ${ref}`, {
       encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     }).trim();
   } catch (error) {
     return null;
@@ -230,22 +230,19 @@ export function setCachedDiff(baseRef, headRef, diff, options = {}) {
     headCommit: resolveRef(headRef),
     diff,
     timestamp: Date.now(),
-    options
+    options,
   };
 
   // Store in memory cache
   memoryCache.set(cacheKey, cacheEntry);
-  
+
   // Prune cache if needed
   pruneCache();
 
   // Store in file cache
   try {
     fs.mkdirSync(CACHE_DIR, { recursive: true });
-    fs.writeFileSync(
-      path.join(CACHE_DIR, `${cacheKey}.json`),
-      JSON.stringify(cacheEntry, null, 2)
-    );
+    fs.writeFileSync(path.join(CACHE_DIR, `${cacheKey}.json`), JSON.stringify(cacheEntry, null, 2));
     console.log(`[GitCache] Cached diff for ${baseRef}...${headRef}`);
   } catch (error) {
     console.warn(`[GitCache] Error writing cache: ${error.message}`);
@@ -265,7 +262,13 @@ export function setCachedDiff(baseRef, headRef, diff, options = {}) {
  * @returns {Object} Diff result
  */
 export function gitDiff(baseRef, headRef = 'HEAD', options = {}) {
-  const { stat = false, nameOnly = false, nameStatus = false, path: diffPath = '', noCache = false } = options;
+  const {
+    stat = false,
+    nameOnly = false,
+    nameStatus = false,
+    path: diffPath = '',
+    noCache = false,
+  } = options;
 
   // Try cache first
   if (!noCache) {
@@ -287,7 +290,7 @@ export function gitDiff(baseRef, headRef = 'HEAD', options = {}) {
     const output = execSync(cmd, {
       encoding: 'utf8',
       maxBuffer: 10 * 1024 * 1024, // 10MB buffer for large diffs
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
 
     const result = {
@@ -297,7 +300,7 @@ export function gitDiff(baseRef, headRef = 'HEAD', options = {}) {
       files: parseFilesFromDiff(output, { nameOnly, nameStatus }),
       stats: stat ? parseStats(output) : null,
       command: cmd,
-      executedAt: new Date().toISOString()
+      executedAt: new Date().toISOString(),
     };
 
     // Cache result
@@ -324,7 +327,8 @@ function parseFilesFromDiff(output, options = {}) {
   }
 
   if (nameStatus) {
-    return output.split('\n')
+    return output
+      .split('\n')
       .filter(line => line.trim())
       .map(line => {
         const [status, file] = line.split('\t');
@@ -348,13 +352,15 @@ function parseFilesFromDiff(output, options = {}) {
  * Parse stats from diff output
  */
 function parseStats(output) {
-  const statsMatch = output.match(/(\d+) files? changed(?:, (\d+) insertions?\(\+\))?(?:, (\d+) deletions?\(-\))?/);
+  const statsMatch = output.match(
+    /(\d+) files? changed(?:, (\d+) insertions?\(\+\))?(?:, (\d+) deletions?\(-\))?/
+  );
 
   if (statsMatch) {
     return {
       filesChanged: parseInt(statsMatch[1]) || 0,
       insertions: parseInt(statsMatch[2]) || 0,
-      deletions: parseInt(statsMatch[3]) || 0
+      deletions: parseInt(statsMatch[3]) || 0,
     };
   }
 
@@ -414,7 +420,7 @@ export function getCacheStats() {
     fileEntries: 0,
     totalSize: 0,
     oldestEntry: null,
-    newestEntry: null
+    newestEntry: null,
   };
 
   if (!fs.existsSync(CACHE_DIR)) {
@@ -529,5 +535,5 @@ export default {
   getCacheStats,
   pruneExpiredCache,
   getCurrentCommit,
-  resolveRef
+  resolveRef,
 };

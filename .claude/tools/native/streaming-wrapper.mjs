@@ -22,21 +22,21 @@ export function createStreamingTool(baseTool) {
     description: `${baseTool.description} (with streaming support)`,
     inputSchema: baseTool.inputSchema,
     outputSchema: baseTool.outputSchema,
-    
+
     /**
      * Execute tool with streaming progress updates (official event types)
      */
     async *execute(input, context = {}) {
       const toolCallId = context.tool_call_id || generateToolCallId();
       const startTime = Date.now();
-      
+
       // Yield start event (official pattern)
       yield {
         type: 'tool_call_start',
         tool_name: baseTool.name,
         tool_call_id: toolCallId,
         input: { ...input },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       try {
@@ -45,7 +45,7 @@ export function createStreamingTool(baseTool) {
           type: 'tool_call_progress',
           tool_call_id: toolCallId,
           progress: { stage: 'initializing', message: `Executing ${baseTool.name}...` },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         // Execute base tool (could be async generator or promise)
@@ -66,7 +66,7 @@ export function createStreamingTool(baseTool) {
           tool_call_id: toolCallId,
           output: result,
           executionTime: Date.now() - startTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         return result;
@@ -78,10 +78,10 @@ export function createStreamingTool(baseTool) {
           error: {
             message: error.message,
             code: error.code || 'EXECUTION_ERROR',
-            stack: error.stack
+            stack: error.stack,
           },
           executionTime: Date.now() - startTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         throw error;
@@ -99,7 +99,7 @@ export function createStreamingTool(baseTool) {
     cancel() {
       // Implementation depends on tool
       return { cancelled: true, timestamp: new Date().toISOString() };
-    }
+    },
   };
 }
 
@@ -143,14 +143,13 @@ export async function collectStream(stream) {
       startEvents: events.filter(e => e.type === 'tool_call_start').length,
       progressEvents: events.filter(e => e.type === 'tool_call_progress').length,
       completeEvents: events.filter(e => e.type === 'tool_call_complete').length,
-      errorEvents: events.filter(e => e.type === 'tool_call_error').length
-    }
+      errorEvents: events.filter(e => e.type === 'tool_call_error').length,
+    },
   };
 }
 
 export default {
   createStreamingTool,
   createStreamingHandler,
-  collectStream
+  collectStream,
 };
-

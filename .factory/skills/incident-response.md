@@ -5,12 +5,14 @@ Automated incident response workflow with runbooks, telemetry collection, and cr
 ## Automatic Runbook Loading
 
 Droid automatically loads runbooks from `docs/incidents/`:
+
 - Matches incident type to appropriate runbook
 - Loads step-by-step remediation procedures
 - References related documentation and playbooks
 - Applies context from current system state
 
 **Runbook Structure:**
+
 ```
 docs/incidents/
   - database-connection.md
@@ -24,6 +26,7 @@ docs/incidents/
 ### Slack Integration
 
 Automatically pages relevant Slack channel via webhook:
+
 - Posts incident summary and severity
 - Links to runbook and telemetry
 - Updates channel with remediation progress
@@ -44,12 +47,14 @@ Set up webhook in Factory dashboard → Integrations → Slack
 ### Pre-Fix Snapshots
 
 Collects telemetry snapshots before executing fixes:
+
 - **Grafana dashboards**: Application metrics, error rates, latency
 - **Datadog traces**: Request flows, database queries, service calls
 - **Log aggregations**: Error logs, access logs, application logs
 - **System metrics**: CPU, memory, disk, network utilization
 
 **Purpose:**
+
 - Capture system state before changes
 - Provide baseline for validation
 - Enable rollback if needed
@@ -58,6 +63,7 @@ Collects telemetry snapshots before executing fixes:
 ### Post-Fix Validation
 
 After remediation:
+
 - Compare current metrics to pre-fix baseline
 - Verify error rates decreased
 - Confirm system health restored
@@ -68,12 +74,14 @@ After remediation:
 ### Claude Projects Integration
 
 Syncs final summary to Claude Projects:
+
 - Incident timeline and resolution steps
 - Root cause analysis
 - Remediation procedures applied
 - Lessons learned and improvements
 
 **Workflow:**
+
 1. Droid resolves incident using runbook
 2. Summary artifact created in `.factory/docs/incidents/`
 3. Artifact published to Claude Project
@@ -82,12 +90,14 @@ Syncs final summary to Claude Projects:
 ### Linear Integration
 
 Automatically opens retrospective task in Linear:
+
 - Task includes incident summary and root cause
 - Links to Claude Project artifact
 - Assigns to incident owner or team lead
 - Sets appropriate priority and labels
 
 **Task Details:**
+
 - Incident ID and timestamp
 - Root cause analysis
 - Remediation steps taken
@@ -101,6 +111,7 @@ Automatically opens retrospective task in Linear:
 User reports: "API returning 500 errors"
 
 Droid automatically:
+
 1. Loads `docs/incidents/api-error.md` runbook
 2. Collects Grafana metrics snapshot
 3. Pages `#platform-alerts` Slack channel
@@ -109,6 +120,7 @@ Droid automatically:
 ### Remediation
 
 Droid follows runbook:
+
 1. Identifies root cause (database connection pool exhaustion)
 2. Applies fix (increase pool size, add connection retry logic)
 3. Validates fix with test requests
@@ -117,6 +129,7 @@ Droid follows runbook:
 ### Post-Incident
 
 Droid automatically:
+
 1. Generates summary artifact
 2. Publishes to Claude Project
 3. Opens Linear retrospective task

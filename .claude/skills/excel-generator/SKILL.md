@@ -31,6 +31,7 @@ Excel Generator - Creates professional Excel workbooks with formulas, charts, an
 ### Basic Excel Generation
 
 **When to Use**:
+
 - Financial reports and analysis
 - Data dashboards
 - Budget planning
@@ -38,6 +39,7 @@ Excel Generator - Creates professional Excel workbooks with formulas, charts, an
 - Structured data presentation
 
 **How to Invoke**:
+
 ```
 "Generate an Excel workbook with Q4 financial data"
 "Create a budget spreadsheet with formulas"
@@ -45,6 +47,7 @@ Excel Generator - Creates professional Excel workbooks with formulas, charts, an
 ```
 
 **What It Does**:
+
 - Uses Claude's built-in `xlsx` skill (skill_id: `xlsx`)
 - Creates Excel workbooks with multiple sheets
 - Includes formulas, charts, and formatting
@@ -53,17 +56,20 @@ Excel Generator - Creates professional Excel workbooks with formulas, charts, an
 ### Advanced Features
 
 **Multi-Sheet Workbooks**:
+
 - Create 2-3 sheets per workbook (optimal performance)
 - Each sheet focused on specific purpose
 - Link data between sheets
 
 **Formulas and Calculations**:
+
 - Complex financial formulas
 - Statistical calculations
 - Data aggregations
 - Conditional logic
 
 **Charts and Visualizations**:
+
 - Line charts for trends
 - Bar charts for comparisons
 - Pie charts for distributions
@@ -74,11 +80,13 @@ Excel Generator - Creates professional Excel workbooks with formulas, charts, an
 ### Workbook Structure
 
 **Recommended Approach**:
+
 - **2-3 sheets per workbook** - Works reliably and generates quickly
 - **Focus each sheet** on a specific purpose (e.g., P&L, metrics, charts)
 - **Add complexity incrementally** - Start simple, then enhance
 
 **For Complex Dashboards**:
+
 1. **Create multiple focused files** instead of one complex file
    - Example: `financial_pnl.xlsx`, `balance_sheet.xlsx`, `kpi_dashboard.xlsx`
 2. **Use the pipeline pattern** to create and enhance files sequentially
@@ -96,6 +104,7 @@ Excel Generator - Creates professional Excel workbooks with formulas, charts, an
 ### With Artifact Publisher
 
 Excel files can be published as artifacts:
+
 - Save to `.claude/context/artifacts/`
 - Include in artifact manifests
 - Reference in workflow outputs
@@ -103,6 +112,7 @@ Excel files can be published as artifacts:
 ### With Workflows
 
 Excel generation integrates with workflows:
+
 - Financial reporting workflows
 - Data analysis workflows
 - Dashboard generation workflows
@@ -156,6 +166,7 @@ Excel Generator:
 ### API Usage
 
 Uses Claude's beta Skills API:
+
 ```python
 response = client.beta.messages.create(
     model="claude-sonnet-4-5",
@@ -167,6 +178,7 @@ response = client.beta.messages.create(
 ### File Download
 
 Files are returned as `file_id`:
+
 ```python
 file_id = response.content[0].file_id
 file_content = client.beta.files.content(file_id)
@@ -182,4 +194,3 @@ file_content = client.beta.files.content(file_id)
 
 - [Document Generation Guide](../docs/DOCUMENT_GENERATION.md) - Comprehensive guide
 - [Skills Cookbook](https://github.com/anthropics/anthropic-cookbook/tree/main/skills) - Reference implementation
-

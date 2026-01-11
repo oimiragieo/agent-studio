@@ -19,11 +19,13 @@ This guide walks you through setting up Factory Droid with custom droids, hooks,
 Copy the entire `.factory/` folder to your project root:
 
 **Windows (PowerShell):**
+
 ```powershell
 Copy-Item -Path "production-dropin\.factory" -Destination "." -Recurse
 ```
 
 **Mac/Linux:**
+
 ```bash
 cp -r production-dropin/.factory .
 ```
@@ -41,11 +43,13 @@ If you already have a `.factory/` directory:
 ## Step 2: Enable Custom Droids
 
 1. Start Factory Droid:
+
    ```bash
    droid
    ```
 
 2. Open settings:
+
    ```
    /settings
    ```
@@ -72,6 +76,7 @@ If you already have a `.factory/` directory:
 ### Verify Custom Droids List
 
 You should see 22 specialized agents matching `.claude/agents/`:
+
 - analyst, pm, architect, developer, qa, ux-expert
 - devops, security-architect, technical-writer, orchestrator, model-orchestrator
 - database-architect, llm-architect, code-reviewer, performance-engineer
@@ -119,6 +124,7 @@ The root `AGENTS.md` file documents project conventions:
 - Code conventions
 
 **Important**: Update `AGENTS.md` with your project-specific:
+
 - Build commands (if different from `pnpm`)
 - Test frameworks and patterns
 - Security requirements
@@ -159,11 +165,13 @@ After setup, your `.factory/` directory should contain:
 ### 1. Custom Droids
 
 Access specialized agents via Task tool:
+
 ```
 Run the Task tool with subagent architect to design the auth system.
 ```
 
 Each droid has:
+
 - Specialized domain expertise
 - Appropriate model selection (Opus for complex, Haiku for simple)
 - Tool restrictions for safety
@@ -172,6 +180,7 @@ Each droid has:
 ### 2. Specification Mode
 
 For complex features:
+
 1. Press `Shift+Tab` to activate
 2. Describe feature in 4-6 sentences
 3. Review generated specification
@@ -182,6 +191,7 @@ For complex features:
 ### 3. Auto-Run Mode
 
 Choose autonomy level:
+
 - **Auto (Low)**: File edits and read-only commands
 - **Auto (Medium)**: Reversible workspace changes
 - **Auto (High)**: All commands except safety blocks
@@ -191,6 +201,7 @@ Cycle through modes: `Shift+Tab` (or `Ctrl+T` on Windows)
 ### 4. Context Layers
 
 Droid automatically combines:
+
 - Repository code and documentation
 - Cursor plans (`.cursor/plans/latest.md`)
 - Claude artifacts (`.claude/context/artifacts/*`)
@@ -199,12 +210,14 @@ Droid automatically combines:
 ### 5. Hooks
 
 **Pre-run hook**:
+
 - Validates code quality (lint, test)
 - Attaches context artifacts
 - Checks for merge conflicts
 - Blocks dangerous commands
 
 **Post-run hook**:
+
 - Generates coverage reports
 - Publishes artifacts to Claude Projects
 - Syncs context to Cursor and Claude
@@ -254,6 +267,7 @@ Review my uncommitted changes with git diff and suggest improvements before I co
 **Problem**: Droids don't show up after enabling
 
 **Solution**:
+
 1. Verify Custom Droids enabled: `/settings` → `enableCustomDroids: true`
 2. Restart droid completely (exit and restart)
 3. Check droid files exist in `.factory/droids/`
@@ -264,6 +278,7 @@ Review my uncommitted changes with git diff and suggest improvements before I co
 **Problem**: Pre/post run hooks don't run
 
 **Solution**:
+
 1. Verify hook files are valid YAML syntax
 2. Check trigger names match: `before_run`, `after_run`
 3. Review Factory logs for hook errors
@@ -274,6 +289,7 @@ Review my uncommitted changes with git diff and suggest improvements before I co
 **Problem**: Artifacts don't sync to Cursor/Claude
 
 **Solution**:
+
 1. Verify directories exist: `.cursor/context/`, `.claude/context/artifacts/`
 2. Check hook configuration in `hooks/post-run.yaml`
 3. Review file permissions
@@ -284,6 +300,7 @@ Review my uncommitted changes with git diff and suggest improvements before I co
 **Problem**: Still getting prompts even in Auto (High)
 
 **Solution**:
+
 1. Check autonomy level in status banner
 2. Verify commands aren't in denylist: `/settings` → `commandDenylist`
 3. Add safe commands to allowlist: `/settings` → `commandAllowlist`
@@ -307,8 +324,8 @@ Review my uncommitted changes with git diff and suggest improvements before I co
 ## Support
 
 For issues or questions:
+
 - Review instruction guides in `instructions/`
 - Check Factory documentation: https://docs.factory.ai/
 - Review hook and skill configurations
 - Verify AGENTS.md is up-to-date with project conventions
-

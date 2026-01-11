@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * Settings Reader - Reads settings from settings.json
- * 
+ *
  * Provides readSettings() function for tools that need to access settings
- * 
+ *
  * Usage:
  *   import { readSettings } from './settings.mjs';
  */
@@ -29,13 +29,12 @@ export function readSettings() {
     console.warn(`Warning: Could not read settings.json: ${error.message}. Using defaults.`);
     return {
       session: {
-        max_context_tokens: 100000
-      }
+        max_context_tokens: 100000,
+      },
     };
   }
 }
 
 export default {
-  readSettings
+  readSettings,
 };
-

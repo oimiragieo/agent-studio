@@ -14,7 +14,7 @@ project_type: fullstack
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - user_requirements
@@ -34,7 +34,7 @@ steps:
       - Create structured improvement plan
 
   - step: 1
-    name: "Codebase Discovery & Impact Analysis"
+    name: 'Codebase Discovery & Impact Analysis'
     agent: analyst
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -53,7 +53,7 @@ steps:
       and documenting current architecture before proposing changes.
 
   - step: 2
-    name: "Enhancement Requirements"
+    name: 'Enhancement Requirements'
     agent: pm
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -71,7 +71,7 @@ steps:
       feature flags, and phased rollout considerations.
 
   - step: 3
-    name: "Architecture Evolution"
+    name: 'Architecture Evolution'
     agent: architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -90,7 +90,7 @@ steps:
       and compatibility shims where needed.
 
   - step: 4
-    name: "Database Migration Planning"
+    name: 'Database Migration Planning'
     agent: database-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -110,7 +110,7 @@ steps:
       and data backfill procedures for existing records.
 
   - step: 5
-    name: "Test Strategy & Regression Planning"
+    name: 'Test Strategy & Regression Planning'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -129,7 +129,7 @@ steps:
       Include integration tests for migration procedures.
 
   - step: 6
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -150,7 +150,7 @@ steps:
       that can be tested in staging before production.
 
   - step: 7
-    name: "Quality Validation"
+    name: 'Quality Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)

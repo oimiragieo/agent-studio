@@ -44,7 +44,7 @@ export async function recordContextUsage(agentName, usage, runId = null) {
   const maxTokens = getContextLimit();
   const history = loadHistory();
   const timestamp = new Date().toISOString();
-  
+
   const record = {
     timestamp,
     agent: agentName,
@@ -58,44 +58,49 @@ export async function recordContextUsage(agentName, usage, runId = null) {
     messages: usage.messages || 0,
     autocompactBuffer: usage.autocompactBuffer || 0,
     percentage: (usage.total / maxTokens) * 100,
-    maxTokens
+    maxTokens,
   };
-  
+
   history.push(record);
-  
+
   // Keep only last 1000 records
   if (history.length > 1000) {
     history.shift();
   }
-  
+
   saveHistory(history);
-  
+
   // Store snapshot in run directory if runId provided
   if (runId) {
     await saveRunContextSnapshot(runId, record);
   }
-  
+
   // Check for alerts at 70% threshold
   if (record.percentage >= ALERT_THRESHOLD * 100) {
     console.warn(`⚠️  Context usage alert for ${agentName}: ${record.percentage.toFixed(1)}%`);
-    console.warn(`   Total: ${record.totalTokens.toLocaleString()} / ${maxTokens.toLocaleString()} tokens`);
-    
+    console.warn(
+      `   Total: ${record.totalTokens.toLocaleString()} / ${maxTokens.toLocaleString()} tokens`
+    );
+
     // Check if Phoenix reset should be triggered (90% threshold)
     if (runId && record.percentage >= 90) {
       try {
-        const { shouldTriggerPhoenixReset, triggerPhoenixReset } = await import('./phoenix-manager.mjs');
+        const { shouldTriggerPhoenixReset, triggerPhoenixReset } =
+          await import('./phoenix-manager.mjs');
         if (shouldTriggerPhoenixReset(record.percentage, 90)) {
-          console.warn(`🔄 Context usage at ${record.percentage.toFixed(1)}% - Phoenix reset recommended`);
+          console.warn(
+            `🔄 Context usage at ${record.percentage.toFixed(1)}% - Phoenix reset recommended`
+          );
           console.warn(`   Use triggerPhoenixReset() to initiate seamless context recycling`);
         }
       } catch (error) {
         // Phoenix manager not available - continue with warning
       }
     }
-    
+
     return { ...record, alert: true, thresholdReached: true };
   }
-  
+
   return record;
 }
 
@@ -109,11 +114,11 @@ async function saveRunContextSnapshot(runId, snapshot) {
     const { getRunDirectoryStructure } = await import('./run-manager.mjs');
     const runDirs = getRunDirectoryStructure(runId);
     const snapshotDir = path.join(runDirs.run_dir, 'context-snapshots');
-    
+
     if (!fs.existsSync(snapshotDir)) {
       fs.mkdirSync(snapshotDir, { recursive: true });
     }
-    
+
     const snapshotFile = path.join(snapshotDir, `snapshot-${Date.now()}.json`);
     fs.writeFileSync(snapshotFile, JSON.stringify(snapshot, null, 2), 'utf8');
   } catch (error) {
@@ -132,7 +137,7 @@ export function checkContextThreshold(agentName, usage, runId = null) {
   const maxTokens = getContextLimit();
   const percentage = ((usage.total || 0) / maxTokens) * 100;
   const thresholdReached = percentage >= ALERT_THRESHOLD * 100;
-  
+
   if (thresholdReached) {
     return {
       thresholdReached: true,
@@ -140,16 +145,16 @@ export function checkContextThreshold(agentName, usage, runId = null) {
       totalTokens: usage.total || 0,
       maxTokens: maxTokens,
       recommendation: 'Consider handoff to new orchestrator instance',
-      runId
+      runId,
     };
   }
-  
+
   return {
     thresholdReached: false,
     percentage: percentage.toFixed(1),
     totalTokens: usage.total || 0,
     maxTokens: maxTokens,
-    runId
+    runId,
   };
 }
 
@@ -163,20 +168,21 @@ export async function getRunContextUsage(runId) {
     const { getRunDirectoryStructure } = await import('./run-manager.mjs');
     const runDirs = getRunDirectoryStructure(runId);
     const snapshotDir = path.join(runDirs.run_dir, 'context-snapshots');
-    
+
     if (!fs.existsSync(snapshotDir)) {
       return null;
     }
-    
-    const files = fs.readdirSync(snapshotDir)
+
+    const files = fs
+      .readdirSync(snapshotDir)
       .filter(f => f.startsWith('snapshot-') && f.endsWith('.json'))
       .sort()
       .reverse();
-    
+
     if (files.length === 0) {
       return null;
     }
-    
+
     const latestFile = path.join(snapshotDir, files[0]);
     const snapshot = JSON.parse(fs.readFileSync(latestFile, 'utf8'));
     return snapshot;
@@ -192,16 +198,16 @@ export function getContextStats(agentName = null, days = 7) {
   const history = loadHistory();
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
-  
+
   let filtered = history.filter(record => {
     const recordDate = new Date(record.timestamp);
     return recordDate >= cutoff && (!agentName || record.agent === agentName);
   });
-  
+
   if (filtered.length === 0) {
     return null;
   }
-  
+
   const stats = {
     totalSessions: filtered.length,
     averageTokens: Math.round(
@@ -219,15 +225,13 @@ export function getContextStats(agentName = null, days = 7) {
       systemTools: Math.round(
         filtered.reduce((sum, r) => sum + r.systemTools, 0) / filtered.length
       ),
-      mcpTools: Math.round(
-        filtered.reduce((sum, r) => sum + r.mcpTools, 0) / filtered.length
-      ),
+      mcpTools: Math.round(filtered.reduce((sum, r) => sum + r.mcpTools, 0) / filtered.length),
       memoryFiles: Math.round(
         filtered.reduce((sum, r) => sum + r.memoryFiles, 0) / filtered.length
-      )
-    }
+      ),
+    },
   };
-  
+
   return stats;
 }
 
@@ -236,12 +240,12 @@ export function getContextStats(agentName = null, days = 7) {
  */
 export function generateReport(agentName = null) {
   const stats = getContextStats(agentName, 7);
-  
+
   if (!stats) {
     console.log('No usage data available');
     return;
   }
-  
+
   console.log('\n📊 Context Usage Report');
   console.log('='.repeat(50));
   if (agentName) {
@@ -271,7 +275,7 @@ function loadHistory() {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    
+
     if (fs.existsSync(CONTEXT_HISTORY_FILE)) {
       const data = fs.readFileSync(CONTEXT_HISTORY_FILE, 'utf8');
       return JSON.parse(data);
@@ -279,7 +283,7 @@ function loadHistory() {
   } catch (error) {
     console.error('Error loading history:', error);
   }
-  
+
   return [];
 }
 
@@ -292,12 +296,8 @@ function saveHistory(history) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    
-    fs.writeFileSync(
-      CONTEXT_HISTORY_FILE,
-      JSON.stringify(history, null, 2),
-      'utf8'
-    );
+
+    fs.writeFileSync(CONTEXT_HISTORY_FILE, JSON.stringify(history, null, 2), 'utf8');
   } catch (error) {
     console.error('Error saving history:', error);
   }
@@ -307,7 +307,7 @@ function saveHistory(history) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
   const agentName = process.argv[3];
-  
+
   if (command === 'report') {
     generateReport(agentName);
   } else if (command === 'stats') {
@@ -317,4 +317,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('Usage: context-monitor.mjs [report|stats] [agent-name]');
   }
 }
-

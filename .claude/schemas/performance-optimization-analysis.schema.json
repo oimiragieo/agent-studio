@@ -41,7 +41,16 @@
           },
           "category": {
             "type": "string",
-            "enum": ["code_splitting", "image_optimization", "lazy_loading", "caching", "api_optimization", "bundle_size", "render_optimization", "other"],
+            "enum": [
+              "code_splitting",
+              "image_optimization",
+              "lazy_loading",
+              "caching",
+              "api_optimization",
+              "bundle_size",
+              "render_optimization",
+              "other"
+            ],
             "description": "Category of the optimization"
           },
           "estimated_improvement": {
@@ -166,4 +175,3 @@
     }
   }
 }
-

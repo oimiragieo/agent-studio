@@ -7,6 +7,7 @@ The Everlasting Agent System enables orchestrator agents to run indefinitely wit
 ## The Problem
 
 Traditional orchestrator agents accumulate context over time:
+
 - Project files grow to 50k+ lines
 - Context window fills up (200k token limit)
 - Agent fails when context exceeds limits
@@ -72,6 +73,7 @@ node .claude/tools/token-monitor.mjs --session-id <id> [--threshold 0.90]
 **Threshold**: 90% (180k tokens of 200k) triggers handoff
 
 **Monitoring Process**:
+
 1. Check context usage before major operations
 2. Update session state with current usage
 3. If usage >= 90%, immediately trigger handoff
@@ -80,6 +82,7 @@ node .claude/tools/token-monitor.mjs --session-id <id> [--threshold 0.90]
 ### Context Usage Tracking
 
 The token monitor tracks:
+
 - Input tokens (system prompt, context files, messages)
 - Output tokens (responses, tool results)
 - Total tokens (input + output)
@@ -116,6 +119,7 @@ node .claude/tools/orchestrator-handoff.mjs --session-id <current-id> --project 
 ```
 
 **Handoff Package Contents**:
+
 - Previous session ID
 - New session ID
 - Project name
@@ -127,6 +131,7 @@ node .claude/tools/orchestrator-handoff.mjs --session-id <current-id> --project 
 - Project state (current step, completed tasks, pending tasks, context summary)
 
 **Handoff Package Structure**:
+
 ```json
 {
   "previousSessionId": "orchestrator-abc123",
@@ -175,34 +180,35 @@ The new orchestrator instance:
 
 1. **Loads Handoff Package**: Reads from `.claude/orchestrators/{new-session-id}/handoff-package.json`
 
-2. **Initialization Prompt**: 
+2. **Initialization Prompt**:
+
    ```
    Initialize the codebase and pick up the project where the previous orchestrator left off.
-   
+
    Previous Session: orchestrator-abc123
    Project: my-project
    Current Phase: phase-03-implementation
    Current Step: 15
-   
+
    Context Summary:
    Project in implementation phase. Database schema complete. Starting API development.
-   
+
    Available Resources:
    - Plan files: phase-01-planning, phase-02-architecture, phase-03-implementation
    - CLAUDE.md files: 3 files
    - Artifacts: 2 files
    - Memory files: 2 files
-   
+
    Completed Tasks:
    - Task 1: Project planning
    - Task 2: Architecture design
    - Task 3: Database schema
-   
+
    Pending Tasks:
    - Task 4: API implementation
    - Task 5: Frontend components
    - Task 6: Testing
-   
+
    Your task:
    1. Review the handoff package to understand the current project state
    2. Load relevant plan files and CLAUDE.md files for context
@@ -246,6 +252,7 @@ Developer agents are **ephemeral** - created fresh for each task and shut down a
 ### Orchestrator Management
 
 The orchestrator:
+
 - Creates new developer agent for each task
 - Provides only necessary context (current phase files)
 - Collects outputs and updates plan
@@ -256,6 +263,7 @@ The orchestrator:
 ### Phase Organization
 
 Projects are split into phases, each with:
+
 - **plan.md**: Phase plan (1-3k lines max)
 - **claude.md**: Phase-specific context (1-3k lines max)
 - **artifacts/**: Task outputs organized by phase
@@ -265,6 +273,7 @@ Projects are split into phases, each with:
 Phases follow the pattern: `phase-{number}-{name}/`
 
 Examples:
+
 - `phase-01-planning/`
 - `phase-02-architecture/`
 - `phase-03-implementation/`
@@ -274,6 +283,7 @@ Examples:
 ### File Limits
 
 **Critical**: Each file must stay under 3k lines:
+
 - `plan.md`: Maximum 3,000 lines
 - `claude.md`: Maximum 3,000 lines
 - If a phase exceeds limits, split into sub-phases
@@ -290,6 +300,7 @@ Examples:
 ### Unlimited Project Duration
 
 Projects can run indefinitely without context limits:
+
 - Each orchestrator instance has fresh context
 - Handoff process maintains perfect continuity
 - No information loss between handoffs
@@ -297,6 +308,7 @@ Projects can run indefinitely without context limits:
 ### Context Efficiency
 
 Phase-based structure keeps files manageable:
+
 - Each phase file: 1-3k lines (easily digestible by AI)
 - Orchestrator only loads current phase
 - Previous phases referenced on-demand
@@ -304,6 +316,7 @@ Phase-based structure keeps files manageable:
 ### Seamless Continuity
 
 Handoff process ensures perfect continuity:
+
 - All state preserved in handoff package
 - New orchestrator picks up exactly where previous left off
 - No gaps or missing context
@@ -311,6 +324,7 @@ Handoff process ensures perfect continuity:
 ### Resource Efficiency
 
 Ephemeral developer agents:
+
 - Fresh context per task
 - No state accumulation
 - Efficient resource usage
@@ -367,4 +381,3 @@ Ephemeral developer agents:
 - Predictive handoff (trigger before 90% if trend indicates)
 - Handoff verification and rollback
 - Cross-project pattern sharing via memory files
-

@@ -17,9 +17,9 @@ export async function getRealTimeCosts(organizationId, timeWindow = '1h') {
     breakdown: {
       agents: 0,
       tools: 0,
-      sessions: 0
+      sessions: 0,
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 }
 
@@ -33,7 +33,7 @@ export async function getBudget(organizationId) {
     monthly_budget: null,
     current_daily_spend: 0,
     current_monthly_spend: 0,
-    alerts: []
+    alerts: [],
   };
 }
 
@@ -44,7 +44,7 @@ export async function setBudget(organizationId, budgetConfig) {
   return {
     organization_id: organizationId,
     ...budgetConfig,
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
   };
 }
 
@@ -59,7 +59,7 @@ export async function getUsageReport(organizationId, startDate, endDate) {
     total_cost: 0,
     agent_usage: [],
     tool_usage: [],
-    session_count: 0
+    session_count: 0,
   };
 }
 
@@ -67,6 +67,5 @@ export default {
   getRealTimeCosts,
   getBudget,
   setBudget,
-  getUsageReport
+  getUsageReport,
 };
-

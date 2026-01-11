@@ -7,11 +7,13 @@ The CUJ E2E Validation System provides **comprehensive smoke testing** for the e
 ## Deliverables
 
 ### 1. Main Validation Script
+
 **File**: `.claude/tools/validate-cuj-e2e.mjs`
 
 **Purpose**: Single command to validate entire CUJ system health
 
 **Features**:
+
 - ✅ Runs 6 validation test suites
 - ✅ Platform compatibility checks (Claude, Cursor, Factory)
 - ✅ JSON output for CI/CD integration
@@ -20,6 +22,7 @@ The CUJ E2E Validation System provides **comprehensive smoke testing** for the e
 - ✅ Exit codes for automation
 
 **Usage**:
+
 ```bash
 # Basic validation
 node .claude/tools/validate-cuj-e2e.mjs
@@ -32,9 +35,11 @@ node .claude/tools/validate-cuj-e2e.mjs --json
 ```
 
 ### 2. Comprehensive Documentation
+
 **File**: `.claude/tools/README-CUJ-VALIDATION.md`
 
 **Content**:
+
 - Quick start guide
 - Test suite descriptions
 - Output format examples (text and JSON)
@@ -46,9 +51,11 @@ node .claude/tools/validate-cuj-e2e.mjs --json
 - Best practices
 
 ### 3. Quick Reference Card
+
 **File**: `.claude/docs/CUJ-VALIDATION-QUICKREF.md`
 
 **Content**:
+
 - One-liner commands
 - Validation checklist
 - Status codes
@@ -61,9 +68,11 @@ node .claude/tools/validate-cuj-e2e.mjs --json
 ## Validation Test Suites
 
 ### Suite 1: Config Validation
+
 **Command**: `node scripts/validate-config.mjs`
 
 **Checks**:
+
 - Agent files referenced in `config.yaml`
 - Template files referenced in agents/workflows
 - Schema files integrity
@@ -72,9 +81,11 @@ node .claude/tools/validate-cuj-e2e.mjs --json
 - SDK settings validation
 
 ### Suite 2: CUJ File Validation
+
 **Command**: `node scripts/validate-cujs.mjs`
 
 **Checks**:
+
 - Required sections present
 - Valid links and references
 - Agent, skill, workflow references exist
@@ -83,9 +94,11 @@ node .claude/tools/validate-cuj-e2e.mjs --json
 - Encoding issues detection
 
 ### Suite 3: Reference Integrity
+
 **Command**: `node scripts/validate-all-references.mjs`
 
 **Checks**:
+
 - Cross-file reference validation
 - Template references
 - Schema references
@@ -93,9 +106,11 @@ node .claude/tools/validate-cuj-e2e.mjs --json
 - Workflow references
 
 ### Suite 4: Workflow Dry-Run
+
 **Method**: Calls `workflow_runner.js --dry-run` for each workflow
 
 **Checks**:
+
 - Workflow YAML structure
 - Step definitions
 - Agent references
@@ -103,17 +118,21 @@ node .claude/tools/validate-cuj-e2e.mjs --json
 - **Note**: Does NOT execute workflows
 
 ### Suite 5: Skill Availability
+
 **Method**: Checks `.claude/skills/<name>/SKILL.md` existence
 
 **Checks**:
+
 - Skill exists
 - Skill frontmatter validity
 - Allowed-tools configuration
 
 ### Suite 6: Platform Compatibility
+
 **Method**: Analyzes execution mode and dependencies
 
 **Checks**:
+
 - Claude compatibility (all CUJs)
 - Cursor compatibility (excludes Claude-only skills)
 - Factory compatibility (similar to Cursor)
@@ -199,25 +218,27 @@ Total CUJs: 55
 
 ## CLI Options
 
-| Option | Description |
-|--------|-------------|
-| `--verbose` | Show detailed progress from each validation step |
-| `--json` | Output results as JSON (CI/CD friendly) |
-| `--fix-suggestions` | Generate actionable fix commands |
-| `--help` | Show help message |
+| Option              | Description                                      |
+| ------------------- | ------------------------------------------------ |
+| `--verbose`         | Show detailed progress from each validation step |
+| `--json`            | Output results as JSON (CI/CD friendly)          |
+| `--fix-suggestions` | Generate actionable fix commands                 |
+| `--help`            | Show help message                                |
 
 ## Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| `0` | All validations passed |
-| `1` | One or more validations failed |
-| `2` | Fatal error (missing dependencies) |
+| Code | Meaning                            |
+| ---- | ---------------------------------- |
+| `0`  | All validations passed             |
+| `1`  | One or more validations failed     |
+| `2`  | Fatal error (missing dependencies) |
 
 ## Platform Compatibility
 
 ### Claude-Only Skills
+
 These skills are not available in Cursor or Factory:
+
 - `recovery` - Workflow recovery protocol
 - `optional-artifact-handler` - Optional artifact handling
 - `conflict-resolution` - Multi-agent conflict resolution
@@ -225,11 +246,11 @@ These skills are not available in Cursor or Factory:
 
 ### Platform Coverage Summary
 
-| Platform | Typical Coverage | Notes |
-|----------|------------------|-------|
-| Claude | 80-90% | Full skill and workflow support |
-| Cursor | 70-80% | Excludes Claude-only skills |
-| Factory | 70-80% | Similar to Cursor |
+| Platform | Typical Coverage | Notes                           |
+| -------- | ---------------- | ------------------------------- |
+| Claude   | 80-90%           | Full skill and workflow support |
+| Cursor   | 70-80%           | Excludes Claude-only skills     |
+| Factory  | 70-80%           | Similar to Cursor               |
 
 ## CI/CD Integration
 
@@ -284,6 +305,7 @@ jobs:
 ## Example Workflow
 
 ### Development Workflow
+
 ```bash
 # 1. Make changes to CUJ files or workflows
 vim .claude/docs/cujs/CUJ-010.md
@@ -303,6 +325,7 @@ git commit -m "Update CUJ-010 documentation"
 ```
 
 ### CI/CD Workflow
+
 ```yaml
 # .github/workflows/cuj-validation.yml
 name: CUJ Validation
@@ -336,6 +359,7 @@ Potential additions to the validation system:
 ## Support
 
 For issues or questions:
+
 1. Check [Common Issues](../tools/README-CUJ-VALIDATION.md#common-issues-and-fixes) section
 2. Review [Troubleshooting](../tools/README-CUJ-VALIDATION.md#troubleshooting) guide
 3. Run with `--verbose --fix-suggestions` for detailed diagnostics

@@ -7,6 +7,7 @@ Best practices for managing context usage and token efficiency in Claude Code.
 ### Context Components
 
 Context usage consists of:
+
 - **System Prompt**: Base instructions (typically 3-5k tokens)
 - **System Tools**: Tool definitions (MCP tools, custom tools)
 - **MCP Tools**: Model Context Protocol tool schemas
@@ -30,11 +31,13 @@ Context usage consists of:
 **Solution**: Load rules ONLY when specific agents activate.
 
 **Implementation**:
+
 - Configure `context_files` in `.claude/config.yaml`
 - Use `lazy_load` strategy
 - Rules load on agent activation, unload on deactivation
 
 **Benefits**:
+
 - Main context stays clean (0 cost for unused rules)
 - Specialist agents get deep knowledge when needed
 - Reduces context usage by 40-50%
@@ -46,6 +49,7 @@ Context usage consists of:
 **Solution**: Consolidate into master files.
 
 **Master Files Created**:
+
 - `TECH_STACK_NEXTJS.md` - Replaces 30+ Next.js/React variants
 - `PROTOCOL_ENGINEERING.md` - Replaces 10+ code quality files
 - `TOOL_CYPRESS_MASTER.md` - Replaces 5 Cypress files
@@ -53,6 +57,7 @@ Context usage consists of:
 - And more...
 
 **Benefits**:
+
 - Single source of truth
 - Eliminates duplicate content
 - Easier to maintain and update
@@ -66,12 +71,14 @@ Context usage consists of:
 **Archive Location**: `.claude/archive/`
 
 **Rules to Archive**:
+
 - Niche languages (DragonRuby, Elixir, Go, Unity, etc.)
 - Unused frameworks (Laravel, Drupal, WordPress, etc.)
 - Older versions (Next.js 14, etc.)
 - Mobile frameworks (unless mobile project)
 
 **Benefits**:
+
 - Immediate space savings
 - Rules still accessible when needed
 - Cleaner active rules directory
@@ -83,10 +90,12 @@ Context usage consists of:
 **Solution**: Create programmatic validators (skills).
 
 **Examples**:
+
 - `commit-validator` skill - Validates commit messages (replaces text file)
 - `code-style-validator` skill - Validates code style (complements rules)
 
 **Benefits**:
+
 - Instant feedback
 - No context cost (tool, not loaded file)
 - More actionable than reading text
@@ -94,6 +103,7 @@ Context usage consists of:
 ### 5. Optimize Agent Definitions
 
 **Best Practices**:
+
 - Keep agent prompts concise
 - Reference external files instead of inline content
 - Use clear, focused instructions
@@ -102,6 +112,7 @@ Context usage consists of:
 ### 6. Monitor and Track
 
 **Tools**:
+
 - Context monitor: `node .claude/tools/context-monitor.mjs report`
 - Check usage: `/context` command in Claude Code
 - Historical tracking: Review usage over time
@@ -113,43 +124,48 @@ Context usage consists of:
 **Solution**: Use Anthropic's context editing features to automatically clear old content.
 
 **Features**:
+
 - **Tool Use Clearing** (`clear_tool_uses_20250919`): Clears old tool results when context grows large
 - **Thinking Management** (`clear_thinking_20251015`): Manages extended thinking blocks
 - **Configurable Triggers**: Token-based triggers (30-40k tokens recommended)
 - **Retention Policies**: Keep recent content, clear old content
 
 **Configuration** (in `.claude/config.yaml`):
+
 ```yaml
 context_editing:
   enabled: true
   clear_tool_uses:
     enabled: true
-    tool_id: "clear_tool_uses_20250919"
+    tool_id: 'clear_tool_uses_20250919'
     trigger_tokens: 40000
-    retention_policy: "keep_recent"
-    keep_recent_count: 10  # Keep last 10 tool results
+    retention_policy: 'keep_recent'
+    keep_recent_count: 10 # Keep last 10 tool results
   clear_thinking:
     enabled: true
-    tool_id: "clear_thinking_20251015"
+    tool_id: 'clear_thinking_20251015'
     trigger_tokens: 50000
-    retention_policy: "keep_recent"
-    keep_recent_count: 5  # Keep last 5 thinking blocks
+    retention_policy: 'keep_recent'
+    keep_recent_count: 5 # Keep last 5 thinking blocks
   apply_to_all_agents: true
 ```
 
 **Benefits**:
+
 - Automatic context management for long-running sessions
 - Keeps recent context while clearing old content
 - Reduces context usage by 20-30% in long conversations
 - Prevents context overflow in extended sessions
 
 **When to Use**:
+
 - Long-running orchestrator sessions
 - Extended development tasks
 - Multi-step workflows
 - Any session expected to exceed 50k tokens
 
 **Best Practices**:
+
 - Set triggers at 30-40k tokens (before context gets too full)
 - Keep recent content (last 10 tool results, last 5 thinking blocks)
 - Monitor context usage to tune triggers
@@ -162,6 +178,7 @@ context_editing:
 **Solution**: Organize projects into phases, each capped at 1-3k lines.
 
 **Structure**:
+
 ```
 .claude/projects/{project-name}/
 ├── phase-01-planning/ (1-3k lines)
@@ -171,6 +188,7 @@ context_editing:
 ```
 
 **Benefits**:
+
 - Each phase file: 1-3k lines (easily digestible)
 - Orchestrator only loads current phase
 - Previous phases referenced on-demand
@@ -185,6 +203,7 @@ See `.claude/docs/PHASE_BASED_PROJECTS.md` for detailed guide.
 **Solution**: Monitor context usage and perform seamless handoff at 90% threshold.
 
 **Process**:
+
 1. Monitor context usage continuously
 2. At 90% (180k tokens), trigger handoff
 3. Update all state via subagents
@@ -193,6 +212,7 @@ See `.claude/docs/PHASE_BASED_PROJECTS.md` for detailed guide.
 6. New orchestrator continues seamlessly
 
 **Benefits**:
+
 - Unlimited project duration
 - Seamless continuity between orchestrator instances
 - No information loss
@@ -207,17 +227,20 @@ See `.claude/docs/EVERLASTING_AGENTS.md` for detailed guide.
 **Solution**: Use Anthropic's Tool Search Tool beta feature to defer tool loading.
 
 **Implementation**:
+
 - Enable beta feature: `advanced-tool-use-2025-11-20`
 - Configure `deferLoading: true` for MCP servers in `.claude/.mcp.json`
 - Specify `alwaysLoadTools` for critical tools that must be available immediately
 
 **Benefits**:
+
 - **85% reduction** in MCP tool token usage (80k → 12k tokens)
 - Tools load on-demand when searched/needed
 - Improved accuracy: Opus 4.5 accuracy increases from 79.5% → 88.1%
 - Total context usage drops from 87% → ~60-65%
 
 **Configuration Example**:
+
 ```json
 {
   "betaFeatures": ["advanced-tool-use-2025-11-20"],
@@ -236,16 +259,19 @@ See `.claude/docs/EVERLASTING_AGENTS.md` for detailed guide.
 ```
 
 **When to Use**:
+
 - MCP tool count exceeds 20 tools (auto-enable threshold)
 - MCP tools consume >30% of context
 - You want improved tool selection accuracy
 
 **Critical Tools to Always Load**:
+
 - Core file operations: `read_file`, `write_file`, `search_code`
 - Essential integrations: `create_pull_request`, `get_issue`
 - Frequently used: `take_screenshot`, `navigate_page`
 
 **Additional Features**:
+
 - **Programmatic Tool Calling**: For workflows processing large datasets (37% token reduction)
 - **Tool Use Examples**: For complex tools with nested structures (72% → 90% accuracy)
 
@@ -256,6 +282,7 @@ See `.claude/docs/ADVANCED_TOOL_USE.md` for comprehensive guide on all three bet
 ### Real-Time Monitoring
 
 In Claude Code, use `/context` command to see:
+
 - Total token usage
 - Breakdown by component
 - Percentage of max context
@@ -278,6 +305,7 @@ node .claude/tools/context-monitor.mjs stats developer 7
 ### Alert Thresholds
 
 Set up alerts when context usage exceeds:
+
 - **80%**: Warning - consider optimization
 - **90%**: Critical - immediate action needed
 
@@ -309,6 +337,7 @@ Set up alerts when context usage exceeds:
 ### Issue: Context usage still high after migration
 
 **Solutions**:
+
 1. Check if old rule files are still being loaded
 2. Verify archive is excluded from loading
 3. Review MCP tools - disable unused ones
@@ -317,6 +346,7 @@ Set up alerts when context usage exceeds:
 ### Issue: Agent not loading context files
 
 **Solutions**:
+
 1. Verify `context_files` in `config.yaml`
 2. Check file paths are correct
 3. Restart Claude Code
@@ -325,6 +355,7 @@ Set up alerts when context usage exceeds:
 ### Issue: Missing rules after consolidation
 
 **Solutions**:
+
 1. Check archive directory
 2. Restore from archive if needed
 3. Reference archive file directly when needed
@@ -346,6 +377,7 @@ Set up alerts when context usage exceeds:
 ## Expected Results
 
 After optimization:
+
 - **Context Usage**: 60-70% (down from 141%)
 - **Rule Files**: ~50 active (down from 1084)
 - **Agent Activation**: Faster, cleaner
@@ -369,4 +401,3 @@ After optimization:
 - **Everlasting Agents**: `.claude/docs/EVERLASTING_AGENTS.md` - Orchestrator handoff system
 - **Phase-Based Projects**: `.claude/docs/PHASE_BASED_PROJECTS.md` - Project structure guide
 - **Memory Patterns**: `.claude/docs/MEMORY_PATTERNS.md` - Dual persistence guide
-

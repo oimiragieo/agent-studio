@@ -22,6 +22,7 @@ node .claude/tools/validate-cuj-e2e.mjs --json > cuj-health-report.json
 The E2E validation runs **6 comprehensive test suites**:
 
 ### 1. Config Validation (`validate-config.mjs`)
+
 - Agent files referenced in `config.yaml`
 - Template files referenced in agents/workflows
 - Schema files integrity
@@ -30,6 +31,7 @@ The E2E validation runs **6 comprehensive test suites**:
 - SDK settings validation
 
 ### 2. CUJ File Validation (`validate-cujs.mjs`)
+
 - Required sections present
 - Valid links and references
 - Agent, skill, workflow references exist
@@ -38,6 +40,7 @@ The E2E validation runs **6 comprehensive test suites**:
 - Encoding issues detection
 
 ### 3. Reference Integrity (`validate-all-references.mjs`)
+
 - Cross-file reference validation
 - Template references
 - Schema references
@@ -45,6 +48,7 @@ The E2E validation runs **6 comprehensive test suites**:
 - Workflow references
 
 ### 4. Workflow Dry-Run
+
 - For each workflow-based CUJ:
   - Validates workflow YAML structure
   - Checks step definitions
@@ -53,12 +57,14 @@ The E2E validation runs **6 comprehensive test suites**:
   - **Does NOT execute workflows** (dry-run mode only)
 
 ### 5. Skill Availability
+
 - For each skill-only CUJ:
   - Verifies skill exists (`.claude/skills/<name>/SKILL.md`)
   - Checks skill frontmatter validity
   - Validates allowed-tools configuration
 
 ### 6. Platform Compatibility
+
 - Claude compatibility (all CUJs)
 - Cursor compatibility (excludes Claude-only skills)
 - Factory compatibility (similar to Cursor)
@@ -150,20 +156,20 @@ Total CUJs: 55
 
 ## CLI Options
 
-| Option | Description | Example |
-|--------|-------------|---------|
-| `--verbose` | Show detailed progress from each validation step | `--verbose` |
-| `--json` | Output results as JSON (CI/CD friendly) | `--json` |
-| `--fix-suggestions` | Generate actionable fix commands | `--fix-suggestions` |
-| `--help` | Show help message | `--help` |
+| Option              | Description                                      | Example             |
+| ------------------- | ------------------------------------------------ | ------------------- |
+| `--verbose`         | Show detailed progress from each validation step | `--verbose`         |
+| `--json`            | Output results as JSON (CI/CD friendly)          | `--json`            |
+| `--fix-suggestions` | Generate actionable fix commands                 | `--fix-suggestions` |
+| `--help`            | Show help message                                | `--help`            |
 
 ## Exit Codes
 
-| Code | Meaning | Action |
-|------|---------|--------|
-| `0` | All validations passed | Proceed with confidence |
-| `1` | One or more validations failed | Review errors and fix issues |
-| `2` | Fatal error (missing dependencies) | Install dependencies |
+| Code | Meaning                            | Action                       |
+| ---- | ---------------------------------- | ---------------------------- |
+| `0`  | All validations passed             | Proceed with confidence      |
+| `1`  | One or more validations failed     | Review errors and fix issues |
+| `2`  | Fatal error (missing dependencies) | Install dependencies         |
 
 ## CI/CD Integration
 
@@ -216,6 +222,7 @@ cuj-validation:
 **Problem**: CUJ references a workflow that doesn't exist.
 
 **Fix**:
+
 ```bash
 # Create the workflow file
 touch .claude/workflows/<workflow-name>.yaml
@@ -229,6 +236,7 @@ cp .claude/workflows/greenfield-fullstack.yaml .claude/workflows/<workflow-name>
 **Problem**: CUJ references a skill that doesn't exist.
 
 **Fix**:
+
 ```bash
 # Create the skill directory and SKILL.md
 mkdir -p .claude/skills/<skill-name>
@@ -243,6 +251,7 @@ node .claude/tools/skill-scaffolder.mjs --name <skill-name>
 **Problem**: Workflow step references a schema that doesn't exist.
 
 **Fix**:
+
 ```bash
 # Create the schema file
 touch .claude/schemas/<schema-name>.schema.json
@@ -256,15 +265,18 @@ cp .claude/schemas/artifact_manifest.schema.json .claude/schemas/<schema-name>.s
 **Problem**: CUJ file declares one execution mode, but CUJ-INDEX.md maps to another.
 
 **Fix**:
+
 1. Decide which is correct (CUJ file or CUJ-INDEX.md)
 2. Update the incorrect one to match
 
 **Example** (CUJ file):
+
 ```markdown
 **Execution Mode**: `greenfield-fullstack.yaml`
 ```
 
 **Example** (CUJ-INDEX.md):
+
 ```markdown
 | CUJ-004 | greenfield-fullstack.yaml | `.claude/workflows/greenfield-fullstack.yaml` | null |
 ```
@@ -284,11 +296,11 @@ These skills are not available in Cursor or Factory:
 
 ### Platform Coverage Summary
 
-| Platform | Typical Coverage | Notes |
-|----------|------------------|-------|
-| Claude | 80-90% | Full skill and workflow support |
-| Cursor | 70-80% | Excludes Claude-only skills |
-| Factory | 70-80% | Similar to Cursor |
+| Platform | Typical Coverage | Notes                           |
+| -------- | ---------------- | ------------------------------- |
+| Claude   | 80-90%           | Full skill and workflow support |
+| Cursor   | 70-80%           | Excludes Claude-only skills     |
+| Factory  | 70-80%           | Similar to Cursor               |
 
 ## Troubleshooting
 
@@ -297,6 +309,7 @@ These skills are not available in Cursor or Factory:
 **Problem**: E2E validation runs for >5 minutes.
 
 **Solution**:
+
 1. Use `--json` flag to skip verbose output
 2. Check if workflows have circular dependencies
 3. Ensure workflow dry-run doesn't attempt actual execution
@@ -306,6 +319,7 @@ These skills are not available in Cursor or Factory:
 **Problem**: `js-yaml` not installed.
 
 **Solution**:
+
 ```bash
 pnpm install js-yaml
 ```
@@ -315,6 +329,7 @@ pnpm install js-yaml
 **Problem**: Validation reports issues that don't actually exist.
 
 **Solution**:
+
 1. Check file paths are correct (case-sensitive)
 2. Regenerate rule index: `pnpm index-rules`
 3. Clear validation cache: `rm -rf .claude/context/cache`
@@ -337,6 +352,7 @@ pnpm install js-yaml
 ## Support
 
 For issues or questions:
+
 1. Check [Common Issues](#common-issues-and-fixes) section
 2. Review [Troubleshooting](#troubleshooting) guide
 3. Run with `--verbose --fix-suggestions` for detailed diagnostics

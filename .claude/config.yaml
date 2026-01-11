@@ -9,28 +9,28 @@
 # Global Tool Registry (Active MCPs)
 mcp_registry:
   active_tools:
-    - name: "shadcn"
-      description: "Component library management and lookup"
-    - name: "SequentialThinking"
-      description: "Deep reasoning and step-by-step logic chains"
-    - name: "Git"
-      description: "Version control, diffs, commits, and history"
-    - name: "GitHub Official"
-      description: "PRs, Issues, and Repository management"
-    - name: "Memory"
-      description: "Long-term context retention across sessions"
-    - name: "Filesystem"
-      description: "File manipulation"
-    - name: "Docker"
-      description: "Container management"
-    - name: "SQLite"
-      description: "Database interaction"
-    - name: "Markitdown"
-      description: "Documentation generation and formatting"
-    - name: "Paper Search"
-      description: "Academic and technical paper research"
-    - name: "Curl"
-      description: "Network requests and API testing"
+    - name: 'shadcn'
+      description: 'Component library management and lookup'
+    - name: 'SequentialThinking'
+      description: 'Deep reasoning and step-by-step logic chains'
+    - name: 'Git'
+      description: 'Version control, diffs, commits, and history'
+    - name: 'GitHub Official'
+      description: 'PRs, Issues, and Repository management'
+    - name: 'Memory'
+      description: 'Long-term context retention across sessions'
+    - name: 'Filesystem'
+      description: 'File manipulation'
+    - name: 'Docker'
+      description: 'Container management'
+    - name: 'SQLite'
+      description: 'Database interaction'
+    - name: 'Markitdown'
+      description: 'Documentation generation and formatting'
+    - name: 'Paper Search'
+      description: 'Academic and technical paper research'
+    - name: 'Curl'
+      description: 'Network requests and API testing'
 
 # Enhanced Agent Routing Configuration
 agent_routing_config:
@@ -45,142 +45,142 @@ agent_routing_config:
 # Agent Routing Configuration
 agent_routing:
   router:
-    trigger_words: []  # Always triggered first for workflow selection
+    trigger_words: [] # Always triggered first for workflow selection
     complexity: low
     model: claude-3-5-haiku-20241022
     temperature: 0.1
     priority: highest
     context_strategy: minimal
-    description: "Lightweight intent classification and workflow routing agent"
+    description: 'Lightweight intent classification and workflow routing agent'
 
   planner:
     trigger_words:
-      - "plan"
-      - "create a plan"
-      - "roadmap"
-      - "strategy"
-      - "workflow"
-      - "planning"
-      - "comprehensive plan"
+      - 'plan'
+      - 'create a plan'
+      - 'roadmap'
+      - 'strategy'
+      - 'workflow'
+      - 'planning'
+      - 'comprehensive plan'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.5
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   analyst:
     trigger_words:
-      - "market research"
-      - "competitive analysis"
-      - "project brief"
-      - "requirements gathering"
-      - "feasibility"
-      - "stakeholder analysis"
-      - "brainstorming"
-      - "discovery"
-      - "brownfield"
+      - 'market research'
+      - 'competitive analysis'
+      - 'project brief'
+      - 'requirements gathering'
+      - 'feasibility'
+      - 'stakeholder analysis'
+      - 'brainstorming'
+      - 'discovery'
+      - 'brownfield'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.7
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   pm:
     trigger_words:
-      - "prd"
-      - "product requirements"
-      - "user stories"
-      - "epic"
-      - "backlog"
-      - "roadmap"
-      - "prioritization"
-      - "feature specification"
-      - "sprint planning"
-      - "story refinement"
-      - "product owner"
-      - "scrum"
-      - "agile"
+      - 'prd'
+      - 'product requirements'
+      - 'user stories'
+      - 'epic'
+      - 'backlog'
+      - 'roadmap'
+      - 'prioritization'
+      - 'feature specification'
+      - 'sprint planning'
+      - 'story refinement'
+      - 'product owner'
+      - 'scrum'
+      - 'agile'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.7
     context_files:
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   architect:
     trigger_words:
-      - "architecture"
-      - "system design"
-      - "technology stack"
-      - "api design"
-      - "infrastructure"
-      - "scalability"
-      - "security architecture"
-      - "integration"
+      - 'architecture'
+      - 'system design'
+      - 'technology stack'
+      - 'api design'
+      - 'infrastructure'
+      - 'scalability'
+      - 'security architecture'
+      - 'integration'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.5
     extended_thinking: true
     context_files:
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   database-architect:
     trigger_words:
-      - "database"
-      - "schema"
-      - "data modeling"
-      - "query optimization"
-      - "migration"
-      - "SQL"
-      - "NoSQL"
-      - "PostgreSQL"
-      - "MongoDB"
-      - "Redis"
-      - "indexing"
-      - "sharding"
-      - "replication"
-      - "high availability"
-      - "backup"
-      - "data architecture"
+      - 'database'
+      - 'schema'
+      - 'data modeling'
+      - 'query optimization'
+      - 'migration'
+      - 'SQL'
+      - 'NoSQL'
+      - 'PostgreSQL'
+      - 'MongoDB'
+      - 'Redis'
+      - 'indexing'
+      - 'sharding'
+      - 'replication'
+      - 'high availability'
+      - 'backup'
+      - 'data architecture'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.5
     extended_thinking: true
     context_files:
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   developer:
     trigger_words:
-      - "implement"
-      - "code"
-      - "development"
-      - "debug"
-      - "refactor"
-      - "feature"
-      - "bug fix"
-      - "write tests"
-      - "shadcn"
-      - "component"
+      - 'implement'
+      - 'code'
+      - 'development'
+      - 'debug'
+      - 'refactor'
+      - 'feature'
+      - 'bug fix'
+      - 'write tests'
+      - 'shadcn'
+      - 'component'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.3
     context_files:
       - .claude/rules-master/TECH_STACK_NEXTJS.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   qa:
     trigger_words:
-      - "test"
-      - "quality"
-      - "testing"
-      - "test plan"
-      - "qa"
-      - "quality gate"
-      - "test coverage"
-      - "regression"
-      - "smoke test"
+      - 'test'
+      - 'quality'
+      - 'testing'
+      - 'test plan'
+      - 'qa'
+      - 'quality gate'
+      - 'test coverage'
+      - 'regression'
+      - 'smoke test'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.4
@@ -189,55 +189,55 @@ agent_routing:
       - .claude/rules-master/TOOL_CYPRESS_MASTER.md
       - .claude/rules-master/TOOL_PLAYWRIGHT_MASTER.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   ux-expert:
     trigger_words:
-      - "ux"
-      - "ui"
-      - "design"
-      - "wireframe"
-      - "prototype"
-      - "user experience"
-      - "interface"
-      - "accessibility"
-      - "shadcn"
-      - "tailwind"
-      - "css"
+      - 'ux'
+      - 'ui'
+      - 'design'
+      - 'wireframe'
+      - 'prototype'
+      - 'user experience'
+      - 'interface'
+      - 'accessibility'
+      - 'shadcn'
+      - 'tailwind'
+      - 'css'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.7
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   orchestrator:
     trigger_words:
-      - "orchestrate"
-      - "coordinate"
-      - "multi-agent"
-      - "complex workflow"
-      - "end-to-end"
-      - "workflow"
-      - "project planning"
+      - 'orchestrate'
+      - 'coordinate'
+      - 'multi-agent'
+      - 'complex workflow'
+      - 'end-to-end'
+      - 'workflow'
+      - 'project planning'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.6
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   model-orchestrator:
     trigger_words:
-      - "call gemini"
-      - "call opus"
-      - "call cursor"
-      - "use gemini"
-      - "use cursor"
-      - "multi-model"
-      - "model routing"
-      - "research with gemini"
-      - "plan with opus"
-      - "implement with cursor"
-      - "get second opinion"
-      - "synthesize models"
+      - 'call gemini'
+      - 'call opus'
+      - 'call cursor'
+      - 'use gemini'
+      - 'use cursor'
+      - 'multi-model'
+      - 'model routing'
+      - 'research with gemini'
+      - 'plan with opus'
+      - 'implement with cursor'
+      - 'get second opinion'
+      - 'synthesize models'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.4
@@ -247,21 +247,21 @@ agent_routing:
       - Grep
       - Glob
       - Sequential Thinking
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   security-architect:
     trigger_words:
-      - "security"
-      - "authentication"
-      - "authorization"
-      - "compliance"
-      - "threat"
-      - "vulnerability"
-      - "encryption"
-      - "zero-trust"
-      - "blockchain"
-      - "smart contract"
-      - "solidity"
+      - 'security'
+      - 'authentication'
+      - 'authorization'
+      - 'compliance'
+      - 'threat'
+      - 'vulnerability'
+      - 'encryption'
+      - 'zero-trust'
+      - 'blockchain'
+      - 'smart contract'
+      - 'solidity'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.4
@@ -269,312 +269,312 @@ agent_routing:
     context_files:
       - .claude/rules-master/LANG_SOLIDITY.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   devops:
     trigger_words:
-      - "infrastructure"
-      - "deployment"
-      - "ci/cd"
-      - "kubernetes"
-      - "docker"
-      - "terraform"
-      - "monitoring"
-      - "observability"
-      - "slo"
-      - "sli"
-      - "sla"
-      - "reliability"
-      - "incident"
-      - "release"
-      - "versioning"
-      - "rollout"
+      - 'infrastructure'
+      - 'deployment'
+      - 'ci/cd'
+      - 'kubernetes'
+      - 'docker'
+      - 'terraform'
+      - 'monitoring'
+      - 'observability'
+      - 'slo'
+      - 'sli'
+      - 'sla'
+      - 'reliability'
+      - 'incident'
+      - 'release'
+      - 'versioning'
+      - 'rollout'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.4
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   technical-writer:
     trigger_words:
-      - "documentation"
-      - "api docs"
-      - "user manual"
-      - "onboarding"
-      - "guide"
-      - "tutorial"
-      - "changelog"
-      - "release notes"
-      - "technical writing"
-      - "markdown"
+      - 'documentation'
+      - 'api docs'
+      - 'user manual'
+      - 'onboarding'
+      - 'guide'
+      - 'tutorial'
+      - 'changelog'
+      - 'release notes'
+      - 'technical writing'
+      - 'markdown'
     complexity: low
     model: claude-3-5-haiku-20241022
     temperature: 0.7
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   # New High-Impact Agents (v2.0)
 
   llm-architect:
     trigger_words:
-      - "ai system"
-      - "llm"
-      - "prompt engineering"
-      - "rag"
-      - "embeddings"
-      - "vector database"
-      - "model selection"
-      - "fine-tuning"
-      - "ai architecture"
-      - "chatbot"
-      - "conversational ai"
-      - "prompt template"
+      - 'ai system'
+      - 'llm'
+      - 'prompt engineering'
+      - 'rag'
+      - 'embeddings'
+      - 'vector database'
+      - 'model selection'
+      - 'fine-tuning'
+      - 'ai architecture'
+      - 'chatbot'
+      - 'conversational ai'
+      - 'prompt template'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.6
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   code-reviewer:
     trigger_words:
-      - "code review"
-      - "review this"
-      - "review the code"
-      - "pr review"
-      - "pull request review"
-      - "check this code"
-      - "audit code"
-      - "git diff"
+      - 'code review'
+      - 'review this'
+      - 'review the code'
+      - 'pr review'
+      - 'pull request review'
+      - 'check this code'
+      - 'audit code'
+      - 'git diff'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.3
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   code-simplifier:
     trigger_words:
-      - "simplify"
-      - "simplification"
-      - "too complex"
-      - "over-engineered"
-      - "make it simple"
-      - "readability"
-      - "cognitive load"
-      - "complexity score"
-      - "hard to understand"
-      - "junior developer"
+      - 'simplify'
+      - 'simplification'
+      - 'too complex'
+      - 'over-engineered'
+      - 'make it simple'
+      - 'readability'
+      - 'cognitive load'
+      - 'complexity score'
+      - 'hard to understand'
+      - 'junior developer'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.3
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   performance-engineer:
     trigger_words:
-      - "performance"
-      - "optimize"
-      - "profiling"
-      - "benchmark"
-      - "load testing"
-      - "latency"
-      - "throughput"
-      - "core web vitals"
-      - "slow"
-      - "memory leak"
-      - "bottleneck"
+      - 'performance'
+      - 'optimize'
+      - 'profiling'
+      - 'benchmark'
+      - 'load testing'
+      - 'latency'
+      - 'throughput'
+      - 'core web vitals'
+      - 'slow'
+      - 'memory leak'
+      - 'bottleneck'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.4
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   api-designer:
     trigger_words:
-      - "api design"
-      - "rest api"
-      - "graphql"
-      - "grpc"
-      - "openapi"
-      - "swagger"
-      - "api contract"
-      - "endpoint design"
-      - "api versioning"
+      - 'api design'
+      - 'rest api'
+      - 'graphql'
+      - 'grpc'
+      - 'openapi'
+      - 'swagger'
+      - 'api contract'
+      - 'endpoint design'
+      - 'api versioning'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.5
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   legacy-modernizer:
     trigger_words:
-      - "legacy"
-      - "modernize"
-      - "migration"
-      - "strangler fig"
-      - "technical debt"
-      - "old codebase"
-      - "upgrade"
-      - "rewrite"
-      - "obsolete"
+      - 'legacy'
+      - 'modernize'
+      - 'migration'
+      - 'strangler fig'
+      - 'technical debt'
+      - 'old codebase'
+      - 'upgrade'
+      - 'rewrite'
+      - 'obsolete'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.5
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   accessibility-expert:
     trigger_words:
-      - "accessibility"
-      - "wcag"
-      - "a11y"
-      - "screen reader"
-      - "aria"
-      - "inclusive design"
-      - "keyboard navigation"
-      - "color contrast"
+      - 'accessibility'
+      - 'wcag'
+      - 'a11y'
+      - 'screen reader'
+      - 'aria'
+      - 'inclusive design'
+      - 'keyboard navigation'
+      - 'color contrast'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.4
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   compliance-auditor:
     trigger_words:
-      - "gdpr"
-      - "hipaa"
-      - "soc2"
-      - "pci"
-      - "regulatory"
-      - "compliance audit"
-      - "data protection"
-      - "privacy"
-      - "ccpa"
-      - "audit"
+      - 'gdpr'
+      - 'hipaa'
+      - 'soc2'
+      - 'pci'
+      - 'regulatory'
+      - 'compliance audit'
+      - 'data protection'
+      - 'privacy'
+      - 'ccpa'
+      - 'audit'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.3
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   incident-responder:
     trigger_words:
-      - "incident"
-      - "outage"
-      - "down"
-      - "production issue"
-      - "emergency"
-      - "post-mortem"
-      - "postmortem"
-      - "root cause"
-      - "crisis"
-      - "runbook"
+      - 'incident'
+      - 'outage'
+      - 'down'
+      - 'production issue'
+      - 'emergency'
+      - 'post-mortem'
+      - 'postmortem'
+      - 'root cause'
+      - 'crisis'
+      - 'runbook'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.2
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   refactoring-specialist:
     trigger_words:
-      - "refactor"
-      - "code smell"
-      - "clean code"
-      - "extract method"
-      - "technical debt"
-      - "complexity"
-      - "maintainability"
-      - "solid principles"
-      - "design patterns"
+      - 'refactor'
+      - 'code smell'
+      - 'clean code'
+      - 'extract method'
+      - 'technical debt'
+      - 'complexity'
+      - 'maintainability'
+      - 'solid principles'
+      - 'design patterns'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.4
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   mobile-developer:
     trigger_words:
-      - "mobile"
-      - "ios"
-      - "android"
-      - "react native"
-      - "flutter"
-      - "swift"
-      - "kotlin"
-      - "app store"
-      - "mobile app"
+      - 'mobile'
+      - 'ios'
+      - 'android'
+      - 'react native'
+      - 'flutter'
+      - 'swift'
+      - 'kotlin'
+      - 'app store'
+      - 'mobile app'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.5
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   master-orchestrator:
-    trigger_words: []  # Master orchestrator is the entry point for all requests
+    trigger_words: [] # Master orchestrator is the entry point for all requests
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.6
     extended_thinking: true
     priority: highest
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   cloud-integrator:
     trigger_words:
-      - "cloud integration"
-      - "gcp"
-      - "aws"
-      - "azure"
-      - "cloud service"
-      - "service account"
-      - "adc"
-      - "application default credentials"
-      - "iam"
-      - "cloud storage"
-      - "pub/sub"
-      - "cloud sql"
-      - "cloud run"
+      - 'cloud integration'
+      - 'gcp'
+      - 'aws'
+      - 'azure'
+      - 'cloud service'
+      - 'service account'
+      - 'adc'
+      - 'application default credentials'
+      - 'iam'
+      - 'cloud storage'
+      - 'pub/sub'
+      - 'cloud sql'
+      - 'cloud run'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.3
     context_files:
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   impact-analyzer:
     trigger_words:
-      - "impact analysis"
-      - "breaking change"
-      - "dependency analysis"
-      - "blast radius"
-      - "risk assessment"
-      - "change impact"
-      - "migration risk"
+      - 'impact analysis'
+      - 'breaking change'
+      - 'dependency analysis'
+      - 'blast radius'
+      - 'risk assessment'
+      - 'change impact'
+      - 'migration risk'
     complexity: high
     model: claude-3-opus-20240229
     temperature: 0.3
     extended_thinking: true
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   react-component-developer:
     trigger_words:
-      - "react component"
-      - "component development"
-      - "ui component"
-      - "react hooks"
-      - "component library"
+      - 'react component'
+      - 'component development'
+      - 'ui component'
+      - 'react hooks'
+      - 'component library'
     complexity: medium
     model: claude-3-5-sonnet-20241022
     temperature: 0.3
     context_files:
       - .claude/rules-master/TECH_STACK_NEXTJS.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"  # Load context files only when agent activates, cache loaded contexts, clear after completion
+    context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
 # Workflow Selection Configuration
 workflow_selection:
   quick_flow:
     priority: 1
     keywords:
-      - "bug fix"
-      - "hotfix"
-      - "quick fix"
-      - "small feature"
-      - "documentation"
-      - "refactor"
-      - "minor change"
+      - 'bug fix'
+      - 'hotfix'
+      - 'quick fix'
+      - 'small feature'
+      - 'documentation'
+      - 'refactor'
+      - 'minor change'
     complexity: low
     workflow_file: .claude/workflows/quick-flow.yaml
     agents_sequence:
@@ -585,13 +585,13 @@ workflow_selection:
   fullstack:
     priority: 2
     keywords:
-      - "new project"
-      - "greenfield"
-      - "from scratch"
-      - "full stack"
-      - "fullstack"
-      - "enterprise"
-      - "production"
+      - 'new project'
+      - 'greenfield'
+      - 'from scratch'
+      - 'full stack'
+      - 'fullstack'
+      - 'enterprise'
+      - 'production'
     complexity: medium
     workflow_file: .claude/workflows/greenfield-fullstack.yaml
     agents_sequence:
@@ -607,16 +607,16 @@ workflow_selection:
   code_quality:
     priority: 3
     keywords:
-      - "code quality"
-      - "code review"
-      - "refactor"
-      - "tech debt"
-      - "code smell"
-      - "clean up"
-      - "simplify"
-      - "simplification"
-      - "too complex"
-      - "over-engineered"
+      - 'code quality'
+      - 'code review'
+      - 'refactor'
+      - 'tech debt'
+      - 'code smell'
+      - 'clean up'
+      - 'simplify'
+      - 'simplification'
+      - 'too complex'
+      - 'over-engineered'
     complexity: medium
     workflow_file: .claude/workflows/code-quality-flow.yaml
     agents_sequence:
@@ -628,14 +628,14 @@ workflow_selection:
   browser_testing:
     priority: 5
     keywords:
-      - "browser test"
-      - "chrome devtools"
-      - "test all UI features"
-      - "browser automation"
-      - "test page"
-      - "find bugs browser"
-      - "test UI and optimize"
-      - "browser performance"
+      - 'browser test'
+      - 'chrome devtools'
+      - 'test all UI features'
+      - 'browser automation'
+      - 'test page'
+      - 'find bugs browser'
+      - 'test UI and optimize'
+      - 'browser performance'
     complexity: high
     workflow_file: .claude/workflows/browser-testing-flow.yaml
     agents_sequence:
@@ -648,13 +648,13 @@ workflow_selection:
   performance:
     priority: 3
     keywords:
-      - "performance"
-      - "optimize"
-      - "profiling"
-      - "benchmark"
-      - "load test"
-      - "slow"
-      - "latency"
+      - 'performance'
+      - 'optimize'
+      - 'profiling'
+      - 'benchmark'
+      - 'load test'
+      - 'slow'
+      - 'latency'
     complexity: medium
     workflow_file: .claude/workflows/performance-flow.yaml
     agents_sequence:
@@ -667,14 +667,14 @@ workflow_selection:
   ai_system:
     priority: 3
     keywords:
-      - "ai system"
-      - "llm"
-      - "rag"
-      - "embeddings"
-      - "chatbot"
-      - "ai feature"
-      - "machine learning"
-      - "vector database"
+      - 'ai system'
+      - 'llm'
+      - 'rag'
+      - 'embeddings'
+      - 'chatbot'
+      - 'ai feature'
+      - 'machine learning'
+      - 'vector database'
     complexity: high
     workflow_file: .claude/workflows/ai-system-flow.yaml
     agents_sequence:
@@ -688,13 +688,13 @@ workflow_selection:
   mobile:
     priority: 3
     keywords:
-      - "mobile app"
-      - "ios"
-      - "android"
-      - "react native"
-      - "flutter"
-      - "native app"
-      - "app store"
+      - 'mobile app'
+      - 'ios'
+      - 'android'
+      - 'react native'
+      - 'flutter'
+      - 'native app'
+      - 'app store'
     complexity: medium
     workflow_file: .claude/workflows/mobile-flow.yaml
     agents_sequence:
@@ -707,14 +707,14 @@ workflow_selection:
   ui_perfection:
     priority: 2
     keywords:
-      - "ui perfection"
-      - "visual perfection"
-      - "ui polish"
-      - "ux optimization"
-      - "glassmorphism"
-      - "ui audit"
-      - "visual quality"
-      - "ui refinement"
+      - 'ui perfection'
+      - 'visual perfection'
+      - 'ui polish'
+      - 'ux optimization'
+      - 'glassmorphism'
+      - 'ui audit'
+      - 'visual quality'
+      - 'ui refinement'
     complexity: high
     workflow_file: .claude/workflows/ui-perfection-loop.yaml
     agents_sequence:
@@ -727,15 +727,15 @@ workflow_selection:
       - qa
 
   incident:
-    priority: 0  # Highest priority for critical incidents
+    priority: 0 # Highest priority for critical incidents
     keywords:
-      - "incident"
-      - "outage"
-      - "production issue"
-      - "post-mortem"
-      - "crisis"
-      - "downtime"
-      - "emergency"
+      - 'incident'
+      - 'outage'
+      - 'production issue'
+      - 'post-mortem'
+      - 'crisis'
+      - 'downtime'
+      - 'emergency'
     complexity: high
     workflow_file: .claude/workflows/incident-flow.yaml
     agents_sequence:
@@ -1166,8 +1166,8 @@ session:
 # Memory Tool Configuration (Dual Persistence with CLAUDE.md)
 memory_tool:
   enabled: true
-  tool_id: "memory_20250818"
-  storage_path: ".claude/orchestrators/{session-id}/memory"
+  tool_id: 'memory_20250818'
+  storage_path: '.claude/orchestrators/{session-id}/memory'
   sync_with_claude_md: true
   # All agents use memory tool for redundancy
   agents_with_memory:
@@ -1201,24 +1201,24 @@ memory_tool:
     - react-component-developer
   security:
     validate_paths: true
-    allowed_extensions: [".md", ".json", ".yaml"]
-    max_file_size: 100000  # 100KB max per memory file
+    allowed_extensions: ['.md', '.json', '.yaml']
+    max_file_size: 100000 # 100KB max per memory file
 
 # Context Editing Configuration (Automatic Context Compaction)
 context_editing:
   enabled: true
   clear_tool_uses:
     enabled: true
-    tool_id: "clear_tool_uses_20250919"
+    tool_id: 'clear_tool_uses_20250919'
     trigger_tokens: 40000
-    retention_policy: "keep_recent"
-    keep_recent_count: 10  # Keep last 10 tool results
+    retention_policy: 'keep_recent'
+    keep_recent_count: 10 # Keep last 10 tool results
   clear_thinking:
     enabled: true
-    tool_id: "clear_thinking_20251015"
+    tool_id: 'clear_thinking_20251015'
     trigger_tokens: 50000
-    retention_policy: "keep_recent"
-    keep_recent_count: 5  # Keep last 5 thinking blocks
+    retention_policy: 'keep_recent'
+    keep_recent_count: 5 # Keep last 5 thinking blocks
   # Applied to all agents for long-running sessions
   apply_to_all_agents: true
 
@@ -1232,7 +1232,7 @@ memory:
     artifact_cache_max_memory_mb: 50
   cleanup:
     enabled: true
-    interval_seconds: 600  # 10 minutes
+    interval_seconds: 600 # 10 minutes
     cleanup_after_step: true
   monitoring:
     enabled: true
@@ -1243,30 +1243,30 @@ memory:
     max_artifact_size_mb: 10
     max_json_file_size_mb: 100
   gc:
-    expose_gc: true  # Requires --expose-gc flag
+    expose_gc: true # Requires --expose-gc flag
     gc_on_warning: true
 
 # Token Monitoring (Orchestrator Handoff)
 token_monitoring:
   enabled: true
-  monitor_script: ".claude/tools/token-monitor.mjs"
-  threshold: 0.90  # 90% of 200k tokens = 180k tokens
-  context_limit: 200000  # 200k tokens for Claude 4.5 models
-  check_interval: 10000  # Check every 10k tokens
+  monitor_script: '.claude/tools/token-monitor.mjs'
+  threshold: 0.90 # 90% of 200k tokens = 180k tokens
+  context_limit: 200000 # 200k tokens for Claude 4.5 models
+  check_interval: 10000 # Check every 10k tokens
   # Only applies to orchestrator for handoff
   apply_to_agents:
     - orchestrator
 
 # Workflow Thresholds Configuration
 workflow_thresholds:
-  feature_distillation_file_size: 15000  # bytes - threshold for triggering feature distillation
-  phase_size_max_lines: 3000  # maximum lines per phase before splitting
-  phase_size_optimal_lines: 2000  # optimal lines per phase
-  checkpoint_interval_seconds: 300  # checkpoint creation interval (5 minutes)
-  conflict_resolution_timeout_seconds: 30  # timeout for conflict resolution
-  validation_consensus_threshold_analyst: 0.8  # analyst validation consensus threshold
-  validation_consensus_threshold_architect: 0.7  # architect validation consensus threshold
-  max_retries: 3  # maximum retry attempts for failed steps
+  feature_distillation_file_size: 15000 # bytes - threshold for triggering feature distillation
+  phase_size_max_lines: 3000 # maximum lines per phase before splitting
+  phase_size_optimal_lines: 2000 # optimal lines per phase
+  checkpoint_interval_seconds: 300 # checkpoint creation interval (5 minutes)
+  conflict_resolution_timeout_seconds: 30 # timeout for conflict resolution
+  validation_consensus_threshold_analyst: 0.8 # analyst validation consensus threshold
+  validation_consensus_threshold_architect: 0.7 # architect validation consensus threshold
+  max_retries: 3 # maximum retry attempts for failed steps
 
 # Quality Gates Configuration
 quality_gates:
@@ -1289,18 +1289,18 @@ mcp_servers:
   gcloud-mcp:
     command: npx
     args:
-      - "@google-cloud/gcloud-mcp"
+      - '@google-cloud/gcloud-mcp'
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${GCP_CREDENTIALS_PATH}
-  
+
   cloud-run-mcp:
     command: npx
     args:
-      - "@google-cloud/cloud-run-mcp"
+      - '@google-cloud/cloud-run-mcp'
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${GCP_CREDENTIALS_PATH}
       GCP_PROJECT_ID: ${GCP_PROJECT_ID}
-  
+
   headless-ai-cli:
     command: node
     args:
@@ -1315,69 +1315,69 @@ codex_skills:
   # Provider Priority Configuration (Cursor Recommendation #4)
   # Used by multi-ai-code-review and response-rater skills for fallback logic
   provider_priority:
-    primary: claude          # Primary provider (tried first)
+    primary: claude # Primary provider (tried first)
     secondary:
-      - gemini               # Fallback providers (tried if primary fails)
+      - gemini # Fallback providers (tried if primary fails)
       - codex
-    fallback_threshold: 1    # Minimum providers required for success
+    fallback_threshold: 1 # Minimum providers required for success
   # CLI Validation Configuration (Cursor Recommendation #1)
   cli_validation:
-    enabled: true            # Re-validate CLI availability before execution
-    timeout_ms: 5000         # Timeout for CLI version check
+    enabled: true # Re-validate CLI availability before execution
+    timeout_ms: 5000 # Timeout for CLI version check
     cache_duration_ms: 60000 # Cache CLI availability for 60 seconds
   # Parallel Execution Configuration (Cursor Recommendation #2)
   parallel_execution:
-    enabled: true            # Execute providers in parallel by default
-    max_concurrent: 5        # Maximum concurrent provider calls
+    enabled: true # Execute providers in parallel by default
+    max_concurrent: 5 # Maximum concurrent provider calls
   # Schema Validation Configuration (Cursor Recommendation #3)
   validation:
-    default_mode: warning    # Default validation mode (warning | blocking)
-    ci_mode: blocking        # Validation mode in CI (always blocking)
+    default_mode: warning # Default validation mode (warning | blocking)
+    ci_mode: blocking # Validation mode in CI (always blocking)
   retry_on_fallback: true
   # Partial Failure Configuration (Cursor Recommendation #11)
   # Allow multi-provider operations to succeed with partial results
   partial_failure:
-    enabled: true            # Enable partial failure recovery
-    min_success_count: 2     # Minimum providers that must succeed
-    min_success_rate: 0.67   # 67% of providers must succeed (2 of 3)
+    enabled: true # Enable partial failure recovery
+    min_success_count: 2 # Minimum providers that must succeed
+    min_success_rate: 0.67 # 67% of providers must succeed (2 of 3)
   # Circuit Breaker Configuration (Cursor Recommendation #14)
   # Prevents repeated calls to failing providers
   circuit_breaker:
-    enabled: true            # Enable circuit breaker pattern
-    failure_threshold: 3     # Number of failures before opening circuit
-    reset_timeout_ms: 60000  # Time before attempting to close circuit (1 minute)
+    enabled: true # Enable circuit breaker pattern
+    failure_threshold: 3 # Number of failures before opening circuit
+    reset_timeout_ms: 60000 # Time before attempting to close circuit (1 minute)
     half_open_max_attempts: 2 # Max attempts in half-open state
-    persistent: true         # Persist circuit breaker state to disk
+    persistent: true # Persist circuit breaker state to disk
 
 # Workflow Timeout Configuration (Cursor Recommendation #13)
 # Configurable timeouts for long-running workflow steps
 workflow:
   timeouts:
-    default: 300000          # 5 minutes default
+    default: 300000 # 5 minutes default
     by_agent:
-      analyst: 600000        # 10 minutes for analysis
-      architect: 900000      # 15 minutes for architecture
-      developer: 1200000     # 20 minutes for development
-      qa: 600000             # 10 minutes for testing
-      llm-architect: 900000  # 15 minutes for LLM architecture
-      security-architect: 600000  # 10 minutes for security review
-      code-reviewer: 480000  # 8 minutes for code review
-      planner: 600000        # 10 minutes for planning
+      analyst: 600000 # 10 minutes for analysis
+      architect: 900000 # 15 minutes for architecture
+      developer: 1200000 # 20 minutes for development
+      qa: 600000 # 10 minutes for testing
+      llm-architect: 900000 # 15 minutes for LLM architecture
+      security-architect: 600000 # 10 minutes for security review
+      code-reviewer: 480000 # 8 minutes for code review
+      planner: 600000 # 10 minutes for planning
   # Retry Configuration (Cursor Recommendation #12)
   # Validation error recovery with feedback
   validation_retry:
-    enabled: true            # Enable validation retry with feedback
-    max_retries: 2           # Maximum retry attempts
-    include_feedback: true   # Include validation errors in retry context
-    backoff_base_ms: 1000    # Base delay for exponential backoff
-    backoff_max_ms: 5000     # Maximum delay for backoff
+    enabled: true # Enable validation retry with feedback
+    max_retries: 2 # Maximum retry attempts
+    include_feedback: true # Include validation errors in retry context
+    backoff_base_ms: 1000 # Base delay for exponential backoff
+    backoff_max_ms: 5000 # Maximum delay for backoff
 
 # Multi-AI Rating Configuration (Plan Rating Fallback)
 multi_ai_rating:
   enabled: true
   fallback_to_single_model: true
   required_providers:
-    - claude  # primary
+    - claude # primary
   optional_providers:
     - gemini
     - copilot
@@ -1393,15 +1393,15 @@ multi_ai_rating:
   fallback_behavior:
     use_single_model: true
     log_warning: true
-    required_minimum_providers: 1  # Allow fallback to single model
-    preferred_providers: ["claude", "gemini"]
+    required_minimum_providers: 1 # Allow fallback to single model
+    preferred_providers: ['claude', 'gemini']
   # Integration with plan-review-matrix.json
   rating_mode_selection:
-    critical: "multi"      # task_types.critical requires multi-AI
-    enterprise: "multi"    # task_types.enterprise requires multi-AI
-    standard: "single"     # task_types.standard uses single model
+    critical: 'multi' # task_types.critical requires multi-AI
+    enterprise: 'multi' # task_types.enterprise requires multi-AI
+    standard: 'single' # task_types.standard uses single model
   # CI/CD integration
   ci_mode:
     strict_json_only: true
-    fail_on_provider_unavailable: false  # Allow fallback in CI
+    fail_on_provider_unavailable: false # Allow fallback in CI
     timeout_ms: 240000

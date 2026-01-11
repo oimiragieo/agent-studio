@@ -27,12 +27,12 @@ Run Task tool with skill repo-rag to understand the data model
 
 ## Search Modes
 
-| Mode | Use Case | Example |
-|------|----------|---------|
-| Symbol | Find definitions | "find UserService class" |
-| Semantic | Conceptual search | "how does auth work" |
-| Pattern | Code patterns | "find all async functions" |
-| Reference | Usage tracking | "where is validateUser called" |
+| Mode      | Use Case          | Example                        |
+| --------- | ----------------- | ------------------------------ |
+| Symbol    | Find definitions  | "find UserService class"       |
+| Semantic  | Conceptual search | "how does auth work"           |
+| Pattern   | Code patterns     | "find all async functions"     |
+| Reference | Usage tracking    | "where is validateUser called" |
 
 ## Output Format
 
@@ -40,14 +40,17 @@ Run Task tool with skill repo-rag to understand the data model
 ## Search Results: "authentication patterns"
 
 ### 1. src/auth/providers/oauth.ts (95% match)
+
 - Lines 45-78: OAuth2 provider implementation
 - Handles Google, GitHub, Discord auth
 
 ### 2. src/middleware/auth.ts (89% match)
+
 - Lines 12-34: JWT verification middleware
 - Used in all protected routes
 
 ### 3. src/api/auth/route.ts (85% match)
+
 - Lines 1-56: Auth API configuration
 - Session handling and callbacks
 ```

@@ -38,7 +38,7 @@ export function validateToolSchema(tool) {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -47,7 +47,7 @@ export function validateToolSchema(tool) {
  */
 export function registerCustomTool(tool) {
   const validation = validateToolSchema(tool);
-  
+
   if (!validation.valid) {
     throw new Error(`Invalid tool schema: ${validation.errors.join(', ')}`);
   }
@@ -59,8 +59,8 @@ export function registerCustomTool(tool) {
       name: tool.name,
       description: tool.description,
       version: tool.version || '1.0.0',
-      registered_at: new Date().toISOString()
-    }
+      registered_at: new Date().toISOString(),
+    },
   };
 }
 
@@ -69,10 +69,10 @@ export function registerCustomTool(tool) {
  */
 export async function loadCustomToolFromFile(toolPath) {
   const content = await readFile(toolPath, 'utf8');
-  
+
   // Parse as ES module
   const module = await import(`file://${toolPath}`);
-  
+
   if (!module.default && !module[toolPath]) {
     throw new Error('Tool file must export default tool or named export');
   }
@@ -84,6 +84,5 @@ export async function loadCustomToolFromFile(toolPath) {
 export default {
   validateToolSchema,
   registerCustomTool,
-  loadCustomToolFromFile
+  loadCustomToolFromFile,
 };
-

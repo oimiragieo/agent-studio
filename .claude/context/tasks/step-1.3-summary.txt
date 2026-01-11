@@ -1,0 +1,77 @@
+# Step 1.3 Migration: Unified Parser Integration - COMPLETE ✅
+
+## Migration Overview
+
+Successfully migrated 3 tools to use the unified CUJ parser (cuj-parser.mjs):
+1. .claude/tools/run-cuj.mjs
+2. .claude/tools/validate-cuj-e2e.mjs
+3. scripts/validate-cujs.mjs
+
+## Validation Results
+
+### Test 1: run-cuj.mjs --list
+✅ Status: PASSED
+- Lists all 60 CUJs correctly
+- Execution modes accurate
+- No errors or deprecation warnings (using unified parser)
+
+### Test 2: validate-cuj-e2e.mjs
+✅ Status: PASSED (1 expected blocked CUJ)
+- Total CUJs: 60
+- Runnable (Claude): 57
+- Runnable (Cursor): 56
+- Runnable (Factory): 2
+- Manual Only: 2
+- Blocked: 1 (fallback-routing-flow.yaml - uses template variables, EXPECTED)
+
+### Test 3: validate-cujs.mjs --quick
+✅ Status: PASSED
+- Valid: 60/60
+- Issues: 0
+- Warnings: 83 (expected - success criteria references)
+- Execution time: 0.10s
+
+## Code Quality Improvements
+
+- Removed 116 lines of duplicate code
+- 8 functions migrated to use unified parser
+- 4.5% code reduction while improving maintainability
+- Single source of truth for CUJ parsing
+
+## Backward Compatibility
+
+✅ All backward compatibility maintained:
+- CLI interfaces unchanged
+- Output formats identical
+- Error handling preserved
+- Deprecation warnings in place for gradual migration
+
+## Files Modified
+
+1. .claude/tools/run-cuj.mjs (3 functions migrated)
+2. .claude/tools/validate-cuj-e2e.mjs (3 functions migrated + bug fix)
+3. scripts/validate-cujs.mjs (2 functions migrated, removed duplicate logic)
+
+## Deliverables
+
+✅ migration-step-1.3-complete.md - Comprehensive migration report
+✅ dev-manifest-step-1.3.json - Development manifest with metrics
+✅ All validation tests passing
+
+## Next Steps
+
+1. Monitor for 1-2 weeks for edge cases
+2. Update .claude/tools/README.md
+3. Add migration guide for other tools
+4. Document execution_contract schema
+5. Remove deprecated wrappers in Phase 3
+
+## Success Criteria Met
+
+✅ Zero direct JSON.parse calls in run-cuj.mjs
+✅ Zero direct JSON.parse calls in validate-cuj-e2e.mjs
+✅ Validation: node scripts/validate-cujs.mjs passes
+✅ Integration tests show identical behavior
+✅ All existing tests pass
+
+Migration Step 1.3: COMPLETE ✅

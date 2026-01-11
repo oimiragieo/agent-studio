@@ -29,7 +29,7 @@ export const ROOT_ALLOWLIST = [
   'CHANGELOG.md',
   'CONTRIBUTING.md',
   'CODE_OF_CONDUCT.md',
-  'SECURITY.md'
+  'SECURITY.md',
 ];
 
 /**
@@ -76,7 +76,7 @@ export const PROHIBITED_DIRS = [
   'coverage/',
   'target/',
   'bin/',
-  'obj/'
+  'obj/',
 ];
 
 /**

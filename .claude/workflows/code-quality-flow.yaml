@@ -2,12 +2,12 @@ name: Code Quality Improvement Workflow
 description: Systematic code quality improvement, refactoring, and compliance validation
 type: code-quality
 project_type: enhancement
-publish_policy: auto-on-pass  # Automatically publish artifacts after validation passes
+publish_policy: auto-on-pass # Automatically publish artifacts after validation passes
 
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -30,12 +30,12 @@ fallback_agents:
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "code quality"
-  - "code review"
-  - "refactor"
-  - "tech debt"
-  - "code smell"
-  - "clean up"
+  - 'code quality'
+  - 'code review'
+  - 'refactor'
+  - 'tech debt'
+  - 'code smell'
+  - 'clean up'
 
 # Workflow-Level Context Inputs
 # These inputs must be provided when the workflow is initialized (by orchestrator or user).
@@ -86,12 +86,12 @@ workflow_inputs:
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to analyze (e.g., ["src/", "lib/", "app/components/"])
-      - coding_standards  # Coding standards to apply (e.g., "PEP 8", "Airbnb JavaScript Style Guide", "Google Java Style")
+      - target_files # List of files/directories to analyze (e.g., ["src/", "lib/", "app/components/"])
+      - coding_standards # Coding standards to apply (e.g., "PEP 8", "Airbnb JavaScript Style Guide", "Google Java Style")
     outputs:
       - plan-{{workflow_id}}.md
       - plan-{{workflow_id}}.json
@@ -105,18 +105,18 @@ steps:
         - diagram-generator
         - classifier
       triggered:
-        - pattern: "complex|large|multi-phase"
+        - pattern: 'complex|large|multi-phase'
           skills: [sequential-thinking, diagram-generator]
           priority: required
-        - pattern: "security|auth|compliance"
+        - pattern: 'security|auth|compliance'
           skills: [sequential-thinking]
           priority: required
           skill_params:
-            focus_areas: ["security", "compliance"]
+            focus_areas: ['security', 'compliance']
       outputs:
         plan-generator:
-          primary: "plan-{{workflow_id}}.json"
-          schema: ".claude/schemas/plan.schema.json"
+          primary: 'plan-{{workflow_id}}.json'
+          schema: '.claude/schemas/plan.schema.json'
           required_for_completion: true
       validation:
         mode: blocking
@@ -133,7 +133,7 @@ steps:
       - **Publishing**: After validation, use `artifact-publisher` skill to publish plan artifacts to project feed
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -159,14 +159,14 @@ steps:
       - Never execute an unrated plan - this is a hard requirement
 
   - step: 1
-    name: "Code Review Analysis"
+    name: 'Code Review Analysis'
     agent: code-reviewer
     inputs:
       # Artifact inputs (from previous steps)
       - plan-{{workflow_id}}.json (from step 0)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to analyze
-      - coding_standards  # Coding standards to apply
+      - target_files # List of files/directories to analyze
+      - coding_standards # Coding standards to apply
     outputs:
       - code-review-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-code-reviewer.json
@@ -180,28 +180,28 @@ steps:
         - fixing-rule-violations
         - dependency-analyzer
       triggered:
-        - pattern: "security|auth|password|credential"
+        - pattern: 'security|auth|password|credential'
           skills: [rule-auditor]
           priority: required
           skill_params:
-            rule_categories: ["security", "authentication"]
-        - pattern: "performance|optimize|slow"
+            rule_categories: ['security', 'authentication']
+        - pattern: 'performance|optimize|slow'
           skills: [dependency-analyzer]
           priority: recommended
       outputs:
         rule-auditor:
-          primary: "code-review-{{workflow_id}}.json"
-          secondary: ["violations-{{workflow_id}}.json"]
-          schema: ".claude/schemas/code-review.schema.json"
+          primary: 'code-review-{{workflow_id}}.json'
+          secondary: ['violations-{{workflow_id}}.json']
+          schema: '.claude/schemas/code-review.schema.json'
           required_for_completion: true
         code-style-validator:
-          primary: "style-report-{{workflow_id}}.json"
+          primary: 'style-report-{{workflow_id}}.json'
           required_for_completion: false
       validation:
         mode: blocking
         min_compliance: 100
         on_failure: block
-        compliance_report_path: ".claude/context/runs/{{run_id}}/skill-compliance-01.json"
+        compliance_report_path: '.claude/context/runs/{{run_id}}/skill-compliance-01.json'
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-code-reviewer.json
@@ -214,14 +214,14 @@ steps:
       - Test coverage assessment
 
   - step: 1.5
-    name: "Dependency Research (Optional)"
+    name: 'Dependency Research (Optional)'
     agent: developer
     inputs:
       # Artifact inputs (from previous steps)
       - plan-{{workflow_id}}.json (from step 0)
       - dependency-analysis-{{workflow_id}}.json (optional, from previous analysis)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to analyze
+      - target_files # List of files/directories to analyze
     outputs:
       - breaking-changes-research-{{workflow_id}}.json
       - migration-guides-{{workflow_id}}.json
@@ -238,7 +238,7 @@ steps:
       - This step is optional and will be skipped if dependency-analysis-{{workflow_id}}.json is not available
 
   - step: 2
-    name: "Refactoring Planning"
+    name: 'Refactoring Planning'
     agent: refactoring-specialist
     inputs:
       # Artifact inputs (from previous steps)
@@ -246,8 +246,8 @@ steps:
       - code-review-{{workflow_id}}.json (from step 1)
       - breaking-changes-research-{{workflow_id}}.json (optional, from step 1.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to analyze
-      - coding_standards  # Coding standards to apply
+      - target_files # List of files/directories to analyze
+      - coding_standards # Coding standards to apply
     outputs:
       - refactoring-plan-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-refactoring-specialist.json
@@ -261,16 +261,16 @@ steps:
         - diagram-generator
         - code-style-validator
       triggered:
-        - pattern: "breaking change|migration|upgrade"
+        - pattern: 'breaking change|migration|upgrade'
           skills: [repo-rag, diagram-generator]
           priority: required
-        - pattern: "complex|large-scale|multi-file"
+        - pattern: 'complex|large-scale|multi-file'
           skills: [diagram-generator]
           priority: recommended
       outputs:
         fixing-rule-violations:
-          primary: "refactoring-plan-{{workflow_id}}.json"
-          schema: ".claude/schemas/refactoring-plan.schema.json"
+          primary: 'refactoring-plan-{{workflow_id}}.json'
+          schema: '.claude/schemas/refactoring-plan.schema.json'
           required_for_completion: true
       validation:
         mode: blocking
@@ -287,17 +287,17 @@ steps:
       - Risk mitigation strategies
 
   - step: 2.5
-    name: "Multi-AI Code Review (Optional)"
+    name: 'Multi-AI Code Review (Optional)'
     agent: code-reviewer
     skill: multi-ai-code-review
-    condition: "user_requested_multi_ai_review OR critical_security_changes"
+    condition: 'user_requested_multi_ai_review OR critical_security_changes'
     inputs:
       # Artifact inputs (from previous steps)
       - plan-{{workflow_id}}.json (from step 0)
       - code-review-{{workflow_id}}.json (from step 1)
       - refactoring-plan-{{workflow_id}}.json (from step 2)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to analyze
+      - target_files # List of files/directories to analyze
     outputs:
       - multi-ai-review-report-{{workflow_id}}.json
       - multi-ai-review-synthesis-{{workflow_id}}.md (optional)
@@ -310,9 +310,9 @@ steps:
       triggered: []
       outputs:
         multi-ai-code-review:
-          primary: "multi-ai-review-report-{{workflow_id}}.json"
-          secondary: ["multi-ai-review-synthesis-{{workflow_id}}.md"]
-          schema: ".claude/schemas/multi-ai-review-report.schema.json"
+          primary: 'multi-ai-review-report-{{workflow_id}}.json'
+          secondary: ['multi-ai-review-synthesis-{{workflow_id}}.md']
+          schema: '.claude/schemas/multi-ai-review-report.schema.json'
           required_for_completion: true
       validation:
         mode: blocking
@@ -335,7 +335,7 @@ steps:
       - Automatically triggered when security triggers indicate critical changes
 
   - step: 3
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       # Artifact inputs (from previous steps)
@@ -345,8 +345,8 @@ steps:
       - breaking-changes-research-{{workflow_id}}.json (optional, from step 1.5)
       - multi-ai-review-report-{{workflow_id}}.json (optional, from step 2.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to refactor
-      - coding_standards  # Coding standards to apply
+      - target_files # List of files/directories to refactor
+      - coding_standards # Coding standards to apply
     outputs:
       - dev-manifest.json
       - code-artifacts
@@ -362,25 +362,25 @@ steps:
         - claude-md-generator
         - code-style-validator
       triggered:
-        - pattern: "new component|create component|generate component"
+        - pattern: 'new component|create component|generate component'
           skills: [scaffolder, test-generator]
           priority: required
-        - pattern: "fix|bug|error"
+        - pattern: 'fix|bug|error'
           skills: [repo-rag, rule-auditor]
           priority: required
-        - pattern: "refactor|optimize"
+        - pattern: 'refactor|optimize'
           skills: [rule-auditor, code-style-validator]
           priority: required
-        - pattern: "test|spec|coverage"
+        - pattern: 'test|spec|coverage'
           skills: [test-generator]
           priority: required
       outputs:
         scaffolder:
-          primary: "dev-manifest.json"
-          schema: ".claude/schemas/artifact_manifest.schema.json"
+          primary: 'dev-manifest.json'
+          schema: '.claude/schemas/artifact_manifest.schema.json'
           required_for_completion: true
         test-generator:
-          primary: "test-manifest-{{workflow_id}}.json"
+          primary: 'test-manifest-{{workflow_id}}.json'
           required_for_completion: false
       validation:
         mode: blocking
@@ -398,7 +398,7 @@ steps:
       - Update tests as needed
 
   - step: 3.5
-    name: "Post-Refactoring Code Review"
+    name: 'Post-Refactoring Code Review'
     agent: code-reviewer
     inputs:
       # Artifact inputs (from previous steps)
@@ -408,8 +408,8 @@ steps:
       - code-review-{{workflow_id}}.json (from step 1)
       - multi-ai-review-report-{{workflow_id}}.json (optional, from step 2.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories analyzed
-      - coding_standards  # Coding standards to apply
+      - target_files # List of files/directories analyzed
+      - coding_standards # Coding standards to apply
     outputs:
       - code-review-post-refactoring-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03.5-code-reviewer.json
@@ -422,16 +422,16 @@ steps:
         - fixing-rule-violations
         - explaining-rules
       triggered:
-        - pattern: "regression|breaking|compatibility"
+        - pattern: 'regression|breaking|compatibility'
           skills: [rule-auditor, explaining-rules]
           priority: required
-        - pattern: "style|format|lint"
+        - pattern: 'style|format|lint'
           skills: [code-style-validator]
           priority: required
       outputs:
         rule-auditor:
-          primary: "code-review-post-refactoring-{{workflow_id}}.json"
-          schema: ".claude/schemas/code-review.schema.json"
+          primary: 'code-review-post-refactoring-{{workflow_id}}.json'
+          schema: '.claude/schemas/code-review.schema.json'
           required_for_completion: true
       validation:
         mode: blocking
@@ -440,7 +440,7 @@ steps:
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03.5-code-reviewer.json
-    on_failure: "Return to implementation step with feedback"
+    on_failure: 'Return to implementation step with feedback'
     description: |
       Review refactored code for quality, security, and codebase impact:
       - Verify refactoring plan was correctly applied
@@ -450,7 +450,7 @@ steps:
       - Review security implications
 
   - step: 3.7
-    name: "Code Simplification Review"
+    name: 'Code Simplification Review'
     agent: code-simplifier
     inputs:
       # Artifact inputs (from previous steps)
@@ -458,15 +458,15 @@ steps:
       - dev-manifest.json (from step 3)
       - code-review-post-refactoring-{{workflow_id}}.json (from step 3.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to analyze for simplification
-      - coding_standards  # Coding standards to apply
+      - target_files # List of files/directories to analyze for simplification
+      - coding_standards # Coding standards to apply
     outputs:
       - simplification-report-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03.7-code-simplifier.json
     validation:
       schema: .claude/schemas/simplification-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03.7-code-simplifier.json
-    on_failure: "Return to implementation step with simplification feedback"
+    on_failure: 'Return to implementation step with simplification feedback'
     description: |
       Simplification review to ensure code is understandable by all developers:
       - Measure cognitive complexity and nesting depth
@@ -476,7 +476,7 @@ steps:
       - Block merge if complexity score > 7/10
 
   - step: 3.8
-    name: "Security Code Review"
+    name: 'Security Code Review'
     agent: security-architect
     inputs:
       # Artifact inputs (from previous steps)
@@ -485,15 +485,15 @@ steps:
       - code-review-post-refactoring-{{workflow_id}}.json (from step 3.5)
       - refactoring-plan-{{workflow_id}}.json (from step 2)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to analyze for security issues
-      - coding_standards  # Coding standards to apply
+      - target_files # List of files/directories to analyze for security issues
+      - coding_standards # Coding standards to apply
     outputs:
       - security-code-review-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03.8-security-architect.json
     validation:
       schema: .claude/schemas/security-code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03.8-security-architect.json
-    on_failure: "Return to implementation step with security feedback"
+    on_failure: 'Return to implementation step with security feedback'
     description: |
       Security-focused code review of refactored code:
       - Check for security vulnerabilities introduced by refactoring
@@ -505,7 +505,7 @@ steps:
       - Block merge if critical security issues found
 
   - step: 4
-    name: "Compliance Validation"
+    name: 'Compliance Validation'
     agent: compliance-auditor
     inputs:
       # Artifact inputs (from previous steps)
@@ -518,8 +518,8 @@ steps:
       - security-code-review-{{workflow_id}}.json (from step 3.8)
       - breaking-changes-research-{{workflow_id}}.json (optional, from step 1.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to analyze
-      - coding_standards  # Coding standards to apply
+      - target_files # List of files/directories to analyze
+      - coding_standards # Coding standards to apply
     outputs:
       - compliance-report-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-compliance-auditor.json
@@ -533,24 +533,24 @@ steps:
         - doc-generator
         - pdf-generator
       triggered:
-        - pattern: "OWASP|security|vulnerability"
+        - pattern: 'OWASP|security|vulnerability'
           skills: [rule-auditor, dependency-analyzer]
           priority: required
           skill_params:
-            rule_categories: ["security", "owasp", "vulnerability"]
-        - pattern: "GDPR|HIPAA|SOC2|PCI|compliance"
+            rule_categories: ['security', 'owasp', 'vulnerability']
+        - pattern: 'GDPR|HIPAA|SOC2|PCI|compliance'
           skills: [explaining-rules]
           priority: required
-        - pattern: "report|audit|documentation"
+        - pattern: 'report|audit|documentation'
           skills: [doc-generator, pdf-generator]
           priority: recommended
       outputs:
         rule-auditor:
-          primary: "compliance-report-{{workflow_id}}.json"
-          schema: ".claude/schemas/compliance-report.schema.json"
+          primary: 'compliance-report-{{workflow_id}}.json'
+          schema: '.claude/schemas/compliance-report.schema.json'
           required_for_completion: true
         dependency-analyzer:
-          primary: "dependency-audit-{{workflow_id}}.json"
+          primary: 'dependency-audit-{{workflow_id}}.json'
           required_for_completion: false
       validation:
         mode: blocking
@@ -568,7 +568,7 @@ steps:
       - Documentation requirements
 
   - step: 5
-    name: "Quality Validation"
+    name: 'Quality Validation'
     agent: qa
     inputs:
       # Artifact inputs (from previous steps)
@@ -581,8 +581,8 @@ steps:
       - compliance-report-{{workflow_id}}.json (from step 4)
       - breaking-changes-research-{{workflow_id}}.json (optional, from step 1.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to analyze
-      - coding_standards  # Coding standards to apply
+      - target_files # List of files/directories to analyze
+      - coding_standards # Coding standards to apply
     outputs:
       - quality-report-{{workflow_id}}.json
       - test-results-{{workflow_id}}.json
@@ -598,33 +598,33 @@ steps:
         - chrome-devtools
         - summarizer
       triggered:
-        - pattern: "unit test|integration test|e2e"
+        - pattern: 'unit test|integration test|e2e'
           skills: [test-generator]
           priority: required
-        - pattern: "browser|ui|visual"
+        - pattern: 'browser|ui|visual'
           skills: [chrome-devtools]
           priority: required
-        - pattern: "coverage|metrics|quality gate"
+        - pattern: 'coverage|metrics|quality gate'
           skills: [evaluator]
           priority: required
-        - pattern: "report|summary|findings"
+        - pattern: 'report|summary|findings'
           skills: [summarizer]
           priority: recommended
       outputs:
         test-generator:
-          primary: "test-results-{{workflow_id}}.json"
-          schema: ".claude/schemas/test-results.schema.json"
+          primary: 'test-results-{{workflow_id}}.json'
+          schema: '.claude/schemas/test-results.schema.json'
           required_for_completion: true
         evaluator:
-          primary: "quality-report-{{workflow_id}}.json"
-          schema: ".claude/schemas/quality-report.schema.json"
+          primary: 'quality-report-{{workflow_id}}.json'
+          schema: '.claude/schemas/quality-report.schema.json'
           required_for_completion: true
       validation:
         mode: blocking
         min_compliance: 100
         on_failure: block
         require_output_validation: true
-        compliance_report_path: ".claude/context/runs/{{run_id}}/skill-compliance-05.json"
+        compliance_report_path: '.claude/context/runs/{{run_id}}/skill-compliance-05.json'
     validation:
       schema: .claude/schemas/quality-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
@@ -650,7 +650,7 @@ steps:
       - **Publishing**: After validation, use `artifact-publisher` skill to publish quality-report and test-results to project feed
 
   - step: 5.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"

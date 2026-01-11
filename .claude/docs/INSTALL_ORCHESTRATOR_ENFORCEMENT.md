@@ -40,6 +40,7 @@ node .claude/hooks/test-orchestrator-enforcement-hook.mjs
 ```
 
 **Expected Output**:
+
 ```
 🧪 Testing Orchestrator Enforcement Hook
 
@@ -141,6 +142,7 @@ VERBOSE=1 claude-code
 ```
 
 **Expected Log Output**:
+
 ```
 [INFO] Loading hooks from .claude/settings.json
 [INFO] Registered PreToolUse hook: orchestrator-enforcement-hook.mjs
@@ -223,6 +225,7 @@ After installation, verify:
 **Symptoms**: No hook logs in Claude Code output
 
 **Causes & Fixes**:
+
 1. **File path incorrect**
    - Verify path in settings.json
    - Use absolute path if relative path fails
@@ -241,6 +244,7 @@ After installation, verify:
 **Symptoms**: Orchestrator can use Write/Edit tools
 
 **Causes & Fixes**:
+
 1. **Agent not identified as orchestrator**
    - Check agent name matches: `orchestrator`, `master-orchestrator`, `model-orchestrator`
    - Update `ORCHESTRATOR_AGENTS` array in hook if using custom orchestrator
@@ -258,6 +262,7 @@ After installation, verify:
 **Symptoms**: Test suite shows failures
 
 **Causes & Fixes**:
+
 1. **Node.js version incompatible**
    - Requires Node.js 16+
    - Check version: `node --version`
@@ -276,6 +281,7 @@ After installation, verify:
 **Symptoms**: Read counter stays at 2 after Task tool
 
 **Causes & Fixes**:
+
 1. **PostToolUse hook not registered**
    - Verify PostToolUse hook in settings.json
    - Restart Claude Code after adding
@@ -298,13 +304,13 @@ Edit `.claude/settings.json`:
     "PreToolUse": [
       {
         "path": ".claude/hooks/orchestrator-enforcement-hook.mjs",
-        "enabled": false  // Changed to false
+        "enabled": false // Changed to false
       }
     ],
     "PostToolUse": [
       {
         "path": ".claude/hooks/orchestrator-enforcement-hook.mjs",
-        "enabled": false  // Changed to false
+        "enabled": false // Changed to false
       }
     ]
   }
@@ -326,6 +332,7 @@ claude-code
 ### Step 3: Verify Uninstallation
 
 Check logs show no hook loading:
+
 ```
 [INFO] No PreToolUse hooks registered
 ```
@@ -344,7 +351,7 @@ const ORCHESTRATOR_AGENTS = [
   'orchestrator',
   'master-orchestrator',
   'model-orchestrator',
-  'my-custom-orchestrator'  // Add custom name
+  'my-custom-orchestrator', // Add custom name
 ];
 ```
 
@@ -359,7 +366,7 @@ const DANGEROUS_BASH_COMMANDS = [
   'rm -rf',
   'git add',
   'git commit',
-  'my-custom-command'  // Add custom command
+  'my-custom-command', // Add custom command
 ];
 ```
 
@@ -369,10 +376,11 @@ To change the 2-file limit:
 
 ```javascript
 // In orchestrator-enforcement-hook.mjs (PreToolUse function)
-if (newCount > 3) {  // Changed from 2 to 3
+if (newCount > 3) {
+  // Changed from 2 to 3
   return {
     decision: 'block',
-    message: `3-FILE RULE violation...`  // Update message
+    message: `3-FILE RULE violation...`, // Update message
   };
 }
 ```
@@ -380,21 +388,25 @@ if (newCount > 3) {  // Changed from 2 to 3
 ## Support
 
 **Documentation**:
+
 - Quick Reference: `.claude/docs/ORCHESTRATOR_QUICK_REFERENCE.md`
 - Full Summary: `.claude/docs/ORCHESTRATION_ENFORCEMENT_SUMMARY.md`
 - Hook Source: `.claude/hooks/orchestrator-enforcement-hook.mjs`
 
 **Testing**:
+
 ```bash
 node .claude/hooks/test-orchestrator-enforcement-hook.mjs
 ```
 
 **Changelog**:
+
 - `ORCHESTRATION_ENFORCEMENT_CHANGELOG.md`
 
 ## Summary
 
 Installation complete! The orchestrator enforcement hook is now active and will:
+
 - ✅ Block Write/Edit tools for orchestrators
 - ✅ Block Bash with rm/git commands
 - ✅ Block Read after 2 uses (2-FILE RULE)
@@ -403,6 +415,7 @@ Installation complete! The orchestrator enforcement hook is now active and will:
 - ✅ Provide clear violation messages with correct patterns
 
 **Next Steps**:
+
 1. Review quick reference: `.claude/docs/ORCHESTRATOR_QUICK_REFERENCE.md`
 2. Test hook with live orchestrator session
 3. Monitor violations and adjust if needed

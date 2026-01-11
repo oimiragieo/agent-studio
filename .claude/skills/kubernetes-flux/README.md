@@ -24,6 +24,7 @@ python executor.py --tool list_events --args '{"namespace": "production", "limit
 ## Installation
 
 1. **Install kubectl**:
+
    ```bash
    # macOS
    brew install kubectl
@@ -36,6 +37,7 @@ python executor.py --tool list_events --args '{"namespace": "production", "limit
    ```
 
 2. **Configure cluster access**:
+
    ```bash
    # Verify kubectl is working
    kubectl cluster-info
@@ -63,6 +65,7 @@ python executor.py --tool list_events --args '{"namespace": "production", "limit
 ## Tool Categories
 
 ### Resource Discovery (6 tools)
+
 - `list_pods` - List pods with status
 - `list_deployments` - List deployments with replicas
 - `list_services` - List services with IPs
@@ -71,6 +74,7 @@ python executor.py --tool list_events --args '{"namespace": "production", "limit
 - `list_namespaces` - List all namespaces
 
 ### Resource Inspection (5 tools)
+
 - `describe_pod` - Detailed pod information
 - `describe_deployment` - Detailed deployment information
 - `describe_service` - Detailed service information
@@ -78,17 +82,20 @@ python executor.py --tool list_events --args '{"namespace": "production", "limit
 - `describe_secret` - Secret metadata (values masked)
 
 ### Troubleshooting (4 tools)
+
 - `get_logs` - Container logs
 - `list_events` - Recent cluster events
 - `watch_events` - Stream real-time events
 - `exec_pod` - Execute commands in pod
 
 ### Management (3 tools)
+
 - `scale_deployment` - Scale deployment replicas
 - `rollout_status` - Check rollout status
 - `port_forward` - Local port forwarding
 
 ### Context Management (3 tools)
+
 - `get_current_context` - Show current context
 - `switch_context` - Switch kubectl context
 - `list_contexts` - List all contexts
@@ -96,16 +103,19 @@ python executor.py --tool list_events --args '{"namespace": "production", "limit
 ## Safety Features
 
 ### Blocked Operations
+
 - DELETE operations (kubectl delete)
 - Destructive exec commands (rm, dd, mkfs, sudo)
 - Secret value exposure
 
 ### Confirmation Required
+
 - Scaling in production namespaces
 - Switching to production contexts
 - Exec with write operations
 
 ### Masked Output
+
 - Secret values (always shown as `***MASKED***`)
 - Authentication tokens
 - Database passwords
@@ -114,10 +124,12 @@ python executor.py --tool list_events --args '{"namespace": "production", "limit
 ## Agent Integration
 
 ### Primary Agents
+
 - **devops** - Infrastructure management, deployments, scaling
 - **incident-responder** - Troubleshooting, debugging, post-mortems
 
 ### Secondary Agents
+
 - **cloud-integrator** - Cloud-native Kubernetes (GKE, EKS, AKS)
 - **developer** - Application deployment and debugging
 - **qa** - Integration testing in Kubernetes
@@ -126,6 +138,7 @@ python executor.py --tool list_events --args '{"namespace": "production", "limit
 ## Common Workflows
 
 ### Troubleshoot Failing Pod
+
 ```bash
 # 1. Find the pod
 python executor.py --tool list_pods --args '{"namespace": "production"}'
@@ -141,6 +154,7 @@ python executor.py --tool get_logs --args '{"name": "app-xyz", "tail": 200}'
 ```
 
 ### Monitor Deployment Rollout
+
 ```bash
 # 1. Check deployment status
 python executor.py --tool list_deployments --args '{"namespace": "production"}'
@@ -153,6 +167,7 @@ python executor.py --tool watch_events --args '{"namespace": "production", "dura
 ```
 
 ### Debug Service Connectivity
+
 ```bash
 # 1. List services
 python executor.py --tool list_services --args '{"namespace": "default"}'
@@ -170,12 +185,14 @@ python executor.py --tool port_forward --args '{"name": "api-pod", "local_port":
 ## Configuration
 
 ### Environment Variables
+
 - `KUBECONFIG` - Path to kubeconfig file (default: `~/.kube/config`)
 - `KUBECTL_CONTEXT` - Default kubectl context
 - `KUBECTL_NAMESPACE` - Default namespace
 - `KUBECTL_TIMEOUT` - Command timeout in seconds (default: 30)
 
 ### Example Configuration
+
 ```bash
 export KUBECONFIG=~/.kube/config
 export KUBECTL_CONTEXT=production-cluster
@@ -186,6 +203,7 @@ export KUBECTL_TIMEOUT=60
 ## Troubleshooting
 
 ### kubectl not found
+
 ```bash
 # Verify kubectl installation
 kubectl version --client
@@ -194,6 +212,7 @@ kubectl version --client
 ```
 
 ### Unable to connect to server
+
 ```bash
 # Check cluster connectivity
 kubectl cluster-info
@@ -205,6 +224,7 @@ kubectl config view
 ```
 
 ### Forbidden (403)
+
 ```bash
 # Check RBAC permissions
 kubectl auth can-i get pods
@@ -214,6 +234,7 @@ kubectl auth can-i describe deployments
 ```
 
 ### Context issues
+
 ```bash
 # List available contexts
 python executor.py --tool list_contexts

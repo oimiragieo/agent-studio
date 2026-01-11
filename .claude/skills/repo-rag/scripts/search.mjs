@@ -35,7 +35,7 @@ function parseArgs(args) {
     type: 'hybrid', // hybrid, keyword, symbol, semantic, path
     extensions: null,
     format: 'json',
-    threshold: 0.3 // minimum relevance score
+    threshold: 0.3, // minimum relevance score
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -49,7 +49,9 @@ function parseArgs(args) {
     } else if (arg === '--type' && args[i + 1]) {
       parsed.type = args[++i];
     } else if (arg === '--extensions' && args[i + 1]) {
-      parsed.extensions = args[++i].split(',').map(e => e.trim().startsWith('.') ? e.trim() : `.${e.trim()}`);
+      parsed.extensions = args[++i]
+        .split(',')
+        .map(e => (e.trim().startsWith('.') ? e.trim() : `.${e.trim()}`));
     } else if (arg === '--format' && args[i + 1]) {
       parsed.format = args[++i];
     } else if (arg === '--threshold' && args[i + 1]) {
@@ -92,7 +94,45 @@ Examples:
  */
 function extractKeywords(query) {
   // Remove common words
-  const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should', 'can', 'could', 'may', 'might', 'must']);
+  const stopWords = new Set([
+    'the',
+    'a',
+    'an',
+    'and',
+    'or',
+    'but',
+    'in',
+    'on',
+    'at',
+    'to',
+    'for',
+    'of',
+    'with',
+    'by',
+    'from',
+    'as',
+    'is',
+    'was',
+    'are',
+    'were',
+    'be',
+    'been',
+    'being',
+    'have',
+    'has',
+    'had',
+    'do',
+    'does',
+    'did',
+    'will',
+    'would',
+    'should',
+    'can',
+    'could',
+    'may',
+    'might',
+    'must',
+  ]);
 
   // Split on non-word characters and filter
   const words = query
@@ -108,18 +148,18 @@ function extractKeywords(query) {
  */
 function expandQuerySemantics(query) {
   const expansions = {
-    'auth': ['authentication', 'authorize', 'login', 'signin', 'session', 'token', 'jwt', 'oauth'],
-    'authentication': ['auth', 'login', 'signin', 'credential', 'password', 'token'],
-    'user': ['account', 'profile', 'member', 'customer'],
-    'error': ['exception', 'failure', 'fault', 'bug', 'issue'],
-    'handle': ['process', 'manage', 'deal', 'catch'],
-    'database': ['db', 'storage', 'repository', 'model', 'schema'],
-    'api': ['endpoint', 'route', 'handler', 'controller', 'service'],
-    'test': ['spec', 'unittest', 'integration', 'e2e'],
-    'component': ['widget', 'element', 'module', 'part'],
-    'function': ['method', 'procedure', 'routine', 'fn'],
-    'class': ['type', 'interface', 'struct', 'object'],
-    'config': ['configuration', 'settings', 'options', 'setup']
+    auth: ['authentication', 'authorize', 'login', 'signin', 'session', 'token', 'jwt', 'oauth'],
+    authentication: ['auth', 'login', 'signin', 'credential', 'password', 'token'],
+    user: ['account', 'profile', 'member', 'customer'],
+    error: ['exception', 'failure', 'fault', 'bug', 'issue'],
+    handle: ['process', 'manage', 'deal', 'catch'],
+    database: ['db', 'storage', 'repository', 'model', 'schema'],
+    api: ['endpoint', 'route', 'handler', 'controller', 'service'],
+    test: ['spec', 'unittest', 'integration', 'e2e'],
+    component: ['widget', 'element', 'module', 'part'],
+    function: ['method', 'procedure', 'routine', 'fn'],
+    class: ['type', 'interface', 'struct', 'object'],
+    config: ['configuration', 'settings', 'options', 'setup'],
   };
 
   const keywords = extractKeywords(query);
@@ -163,7 +203,7 @@ async function scanDirectory(dirPath, extensions) {
                 content,
                 lineCount: content.split('\n').length,
                 extension: ext,
-                size: stats.size
+                size: stats.size,
               });
             } catch (error) {
               // Skip files that can't be read
@@ -199,18 +239,20 @@ function extractSymbols(file) {
         name: funcMatch[1],
         type: 'function',
         line: idx + 1,
-        signature: trimmed
+        signature: trimmed,
       });
     }
 
     // Arrow functions
-    const arrowMatch = trimmed.match(/(?:export\s+)?(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s+)?\([^)]*\)\s*=>/);
+    const arrowMatch = trimmed.match(
+      /(?:export\s+)?(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s+)?\([^)]*\)\s*=>/
+    );
     if (arrowMatch) {
       symbols.push({
         name: arrowMatch[1],
         type: 'function',
         line: idx + 1,
-        signature: trimmed
+        signature: trimmed,
       });
     }
 
@@ -221,7 +263,7 @@ function extractSymbols(file) {
         name: classMatch[1],
         type: 'class',
         line: idx + 1,
-        signature: trimmed
+        signature: trimmed,
       });
     }
 
@@ -232,7 +274,7 @@ function extractSymbols(file) {
         name: interfaceMatch[1],
         type: 'interface',
         line: idx + 1,
-        signature: trimmed
+        signature: trimmed,
       });
     }
 
@@ -242,7 +284,7 @@ function extractSymbols(file) {
         name: typeMatch[1],
         type: 'type',
         line: idx + 1,
-        signature: trimmed
+        signature: trimmed,
       });
     }
 
@@ -254,7 +296,7 @@ function extractSymbols(file) {
           name: pyClassMatch[1],
           type: 'class',
           line: idx + 1,
-          signature: trimmed
+          signature: trimmed,
         });
       }
 
@@ -264,7 +306,7 @@ function extractSymbols(file) {
           name: pyFuncMatch[1],
           type: 'function',
           line: idx + 1,
-          signature: trimmed
+          signature: trimmed,
         });
       }
     }
@@ -309,7 +351,7 @@ function keywordSearch(files, keywords) {
         const context = lines.slice(contextStart, contextEnd).join('\n');
 
         // Calculate relevance based on keyword density
-        const relevance = Math.min(1.0, (lineMatchCount / keywords.length) + (matchCount / 100));
+        const relevance = Math.min(1.0, lineMatchCount / keywords.length + matchCount / 100);
 
         results.push({
           file: file.relativePath,
@@ -319,7 +361,7 @@ function keywordSearch(files, keywords) {
           relevance_score: relevance,
           context,
           snippet: line.trim(),
-          keywords_matched: keywords.filter(k => lowerLine.includes(k))
+          keywords_matched: keywords.filter(k => lowerLine.includes(k)),
         });
       }
     });
@@ -377,8 +419,8 @@ function symbolSearch(files, query) {
           symbol: {
             name: symbol.name,
             type: symbol.type,
-            signature: symbol.signature
-          }
+            signature: symbol.signature,
+          },
         });
       }
     });
@@ -427,7 +469,7 @@ function pathSearch(files, query) {
         match_type: 'path',
         relevance_score: matchScore,
         context: file.content.split('\n').slice(0, 10).join('\n'), // First 10 lines
-        snippet: `File path: ${file.relativePath}`
+        snippet: `File path: ${file.relativePath}`,
       });
     }
   });
@@ -539,7 +581,7 @@ function calculateSummary(results, files) {
     top_files: topFiles,
     symbol_types_found: Array.from(symbolTypes),
     match_type_distribution: Object.fromEntries(matchTypes),
-    recommendations: generateRecommendations(results)
+    recommendations: generateRecommendations(results),
   };
 }
 
@@ -562,7 +604,9 @@ function generateRecommendations(results) {
 
   const avgScore = results.reduce((sum, r) => sum + r.relevance_score, 0) / results.length;
   if (avgScore < 0.5) {
-    recommendations.push('Low average relevance. Try refining your query with more specific terms.');
+    recommendations.push(
+      'Low average relevance. Try refining your query with more specific terms.'
+    );
   }
 
   return recommendations;
@@ -612,18 +656,18 @@ function formatOutput(query, files, searchResults, args) {
       relevance_score: Math.round(r.relevance_score * 100) / 100,
       snippet: r.snippet,
       match_type: r.match_type,
-      context: r.context
+      context: r.context,
     })),
     search_metadata: {
       total_files_scanned: files.length,
       total_lines_analyzed: files.reduce((sum, f) => sum + f.lineCount, 0),
-      search_duration_ms: duration
+      search_duration_ms: duration,
     },
     filters_applied: {
       file_extensions: args.extensions || DEFAULT_EXTENSIONS,
-      directories: args.path ? [args.path] : []
+      directories: args.path ? [args.path] : [],
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 }
 
@@ -714,7 +758,6 @@ async function main() {
     } else {
       console.log(JSON.stringify(output, null, 2));
     }
-
   } catch (error) {
     console.error(`Error: ${error.message}`);
     console.error(error.stack);

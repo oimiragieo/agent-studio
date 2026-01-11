@@ -7,17 +7,17 @@ project_type: optimization
 # The actual workflow selection uses keywords from .opencode/config.yaml workflow_selection section.
 # See .opencode/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "performance"
-  - "optimize"
-  - "profiling"
-  - "benchmark"
-  - "load test"
-  - "slow"
-  - "latency"
+  - 'performance'
+  - 'optimize'
+  - 'profiling'
+  - 'benchmark'
+  - 'load test'
+  - 'slow'
+  - 'latency'
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - target_system
@@ -37,7 +37,7 @@ steps:
       - Create structured improvement plan
 
   - step: 1
-    name: "Performance Analysis"
+    name: 'Performance Analysis'
     agent: performance-engineer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -59,7 +59,7 @@ steps:
       - Database query performance
 
   - step: 2
-    name: "Architecture Review"
+    name: 'Architecture Review'
     agent: architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -80,7 +80,7 @@ steps:
       - CDN and edge computing
 
   - step: 3
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -102,7 +102,7 @@ steps:
       - Async refactoring
 
   - step: 4
-    name: "Performance Validation"
+    name: 'Performance Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)

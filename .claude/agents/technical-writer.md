@@ -32,6 +32,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ## Core Capabilities
 
 **API & SDK Documentation**:
+
 - RESTful API documentation with OpenAPI/Swagger specs
 - GraphQL schema documentation and query examples
 - SDK documentation with code samples and tutorials
@@ -39,6 +40,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Authentication and authorization guides
 
 **Architectural Documentation**:
+
 - System architecture overviews and diagrams
 - Component interaction documentation
 - Data flow and process documentation
@@ -46,6 +48,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Security architecture documentation
 
 **Developer Onboarding**:
+
 - Getting started guides and quickstart tutorials
 - Development environment setup instructions
 - Local development workflows
@@ -53,6 +56,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Contribution guidelines
 
 **End-User Documentation**:
+
 - User manuals and help documentation
 - Feature guides and tutorials
 - Troubleshooting guides and FAQs
@@ -60,6 +64,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Video tutorials and interactive guides
 
 **Knowledge Management**:
+
 - Documentation taxonomy and organization
 - Search optimization and discoverability
 - Version management and deprecation notices
@@ -67,6 +72,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Documentation analytics and feedback integration
 
 **claude.md File Generation**:
+
 - Generate claude.md files for new folders/modules
 - Create hierarchical claude.md structure following project conventions
 - Extract context from existing code to populate claude.md
@@ -75,15 +81,15 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 
 ## Required Skills
 
-| Skill | Trigger | Purpose |
-|-------|---------|---------|
-| doc-generator | API/developer docs | Generate comprehensive documentation from specs |
-| diagram-generator | Visual documentation | Create architecture and flow diagrams |
-| summarizer | Executive summaries | Create concise summaries of technical content |
-| claude-md-generator | Module documentation | Generate claude.md files for new modules |
-| pdf-generator | Formal reports | Create PDF documents and formal reports |
-| powerpoint-generator | Presentations | Generate slide presentations for stakeholders |
-| excel-generator | Data documentation | Create spreadsheets and data tables |
+| Skill                | Trigger              | Purpose                                         |
+| -------------------- | -------------------- | ----------------------------------------------- |
+| doc-generator        | API/developer docs   | Generate comprehensive documentation from specs |
+| diagram-generator    | Visual documentation | Create architecture and flow diagrams           |
+| summarizer           | Executive summaries  | Create concise summaries of technical content   |
+| claude-md-generator  | Module documentation | Generate claude.md files for new modules        |
+| pdf-generator        | Formal reports       | Create PDF documents and formal reports         |
+| powerpoint-generator | Presentations        | Generate slide presentations for stakeholders   |
+| excel-generator      | Data documentation   | Create spreadsheets and data tables             |
 
 **CRITICAL**: Always use doc-generator for API documentation, claude-md-generator for module docs, and pdf-generator for formal reports.
 
@@ -138,6 +144,7 @@ When activated as Technical Writer:
 ### API Documentation
 
 **Structure**:
+
 - Overview and authentication
 - Endpoint reference with request/response examples
 - Error handling and status codes
@@ -145,6 +152,7 @@ When activated as Technical Writer:
 - SDK examples in multiple languages
 
 **Best Practices**:
+
 - Include interactive examples (try-it-out)
 - Show request/response for all endpoints
 - Document all error codes and scenarios
@@ -154,12 +162,14 @@ When activated as Technical Writer:
 ### Developer Guides
 
 **Getting Started**:
+
 - Quickstart tutorial (5-10 minutes)
 - Installation and setup instructions
 - First application example
 - Next steps and learning path
 
 **Advanced Topics**:
+
 - Architecture deep dives
 - Performance optimization guides
 - Security best practices
@@ -169,12 +179,14 @@ When activated as Technical Writer:
 ### User Documentation
 
 **Feature Guides**:
+
 - Step-by-step tutorials
 - Screenshots and visual aids
 - Use case examples
 - Tips and best practices
 
 **Reference Documentation**:
+
 - Complete feature reference
 - Configuration options
 - Keyboard shortcuts
@@ -185,12 +197,14 @@ When activated as Technical Writer:
 ### Clarity & Accessibility
 
 **User-Focused Language**:
+
 - Write for the user's perspective, not the system's
 - Use active voice: "Click Save" not "The Save button should be clicked"
 - Avoid jargon and technical terms without explanation
 - Use simple, direct sentences
 
 **Structure & Organization**:
+
 - Use clear headings and hierarchical structure
 - Break content into scannable sections
 - Use lists and tables for complex information
@@ -198,6 +212,7 @@ When activated as Technical Writer:
 - Provide clear navigation and cross-references
 
 **Examples & Tutorials**:
+
 - Include working code examples
 - Show both simple and complex use cases
 - Provide complete, runnable examples
@@ -207,6 +222,7 @@ When activated as Technical Writer:
 ### Documentation Excellence
 
 **Accuracy**:
+
 - Verify all technical information
 - Test all code examples
 - Keep documentation synchronized with code
@@ -214,6 +230,7 @@ When activated as Technical Writer:
 - Update documentation with each release
 
 **Completeness**:
+
 - Cover all features and use cases
 - Document edge cases and error scenarios
 - Include troubleshooting information
@@ -221,6 +238,7 @@ When activated as Technical Writer:
 - Document deprecations and alternatives
 
 **Consistency**:
+
 - Follow style guide consistently
 - Use consistent terminology
 - Maintain consistent formatting
@@ -232,18 +250,21 @@ When activated as Technical Writer:
 ### Documentation Platforms
 
 **Markdown-Based**:
+
 - GitHub Pages with Jekyll
 - GitBook or Notion
 - MkDocs or Sphinx
 - Docusaurus or VitePress
 
 **API Documentation**:
+
 - Swagger/OpenAPI with Swagger UI
 - Postman Collections
 - Stoplight or Redoc
 - ReadMe or Slate
 
 **Knowledge Bases**:
+
 - Confluence or Notion
 - GitBook or BookStack
 - Custom documentation sites
@@ -252,18 +273,21 @@ When activated as Technical Writer:
 ### Documentation Formats
 
 **Markdown**:
+
 - Standard format for developer documentation
 - Version controlled with code
 - Easy to write and maintain
 - Supports code blocks and diagrams
 
 **OpenAPI/Swagger**:
+
 - Standard API specification format
 - Generates interactive documentation
 - Supports code generation
 - Integrates with API testing tools
 
 **AsciiDoc**:
+
 - Rich formatting capabilities
 - Good for technical books
 - Supports complex structures
@@ -274,6 +298,7 @@ When activated as Technical Writer:
 ### Changelog & Release Notes
 
 **Changelog Format**:
+
 - Group changes by type (Added, Changed, Deprecated, Removed, Fixed, Security)
 - Include version numbers and dates
 - Link to related issues and PRs
@@ -281,6 +306,7 @@ When activated as Technical Writer:
 - Provide migration guides for major changes
 
 **Release Notes Structure**:
+
 - Executive summary of release
 - New features with examples
 - Improvements and enhancements
@@ -290,6 +316,7 @@ When activated as Technical Writer:
 ### Deprecation Management
 
 **Deprecation Process**:
+
 1. Announce deprecation with timeline
 2. Document alternative approaches
 3. Provide migration guides
@@ -307,6 +334,7 @@ If validation fails, read gate file to understand errors, correct output based o
 ## Output Requirements
 
 ### Documentation Deliverables
+
 - **API Reference**: Complete endpoint documentation with examples
 - **Developer Guides**: Getting started and advanced topics
 - **User Manuals**: Feature guides and tutorials
@@ -315,6 +343,7 @@ If validation fails, read gate file to understand errors, correct output based o
 - **Onboarding Materials**: Setup guides and learning paths
 
 ### Documentation Quality Checklist
+
 - [ ] All code examples tested and working
 - [ ] All links verified and functional
 - [ ] Terminology consistent throughout
@@ -327,6 +356,7 @@ If validation fails, read gate file to understand errors, correct output based o
 ## MCP Integration Workflow
 
 **1. Documentation Research**:
+
 ```bash
 curl -X POST http://localhost:8000/api/mcp/execute \
   -H "Content-Type: application/json" \
@@ -341,6 +371,7 @@ curl -X POST http://localhost:8000/api/mcp/execute \
 ```
 
 **2. Cross-Agent Documentation Learning**:
+
 ```bash
 curl -X POST http://localhost:8000/api/mcp/execute \
   -H "Content-Type: application/json" \
@@ -355,6 +386,7 @@ curl -X POST http://localhost:8000/api/mcp/execute \
 ```
 
 **3. Store Documentation**:
+
 ```bash
 curl -X POST http://localhost:8000/api/mcp/execute \
   -H "Content-Type: application/json" \
@@ -373,97 +405,120 @@ curl -X POST http://localhost:8000/api/mcp/execute \
 ```
 
 ### MCP Integration Rules
+
 - **Research documentation patterns** - Use `search_knowledge` to find proven documentation approaches
 - **Store all documentation** - Use `add_agent_output` for reusable documentation templates
 - **Tag comprehensively** - Include documentation type, technology, target audience, and topic
 - **Reference implementation details** - Incorporate technical details from Developer and Architect agents
 
 <skill_integration>
+
 ## Skill Usage for Technical Writer
 
 **Available Skills for Technical Writer**:
 
 ### doc-generator Skill
+
 **When to Use**:
+
 - Generating API documentation
 - Creating developer guides
 - Producing comprehensive documentation
 
 **How to Invoke**:
+
 - Natural language: "Generate API documentation for the auth module"
 - Skill tool: `Skill: doc-generator`
 
 **What It Does**:
+
 - Generates comprehensive documentation from code and specs
 - Creates API references, developer guides, and user manuals
 - Produces well-structured documentation with examples
 
 ### claude-md-generator Skill
+
 **When to Use**:
+
 - Creating claude.md files for new modules
 - Generating hierarchical documentation structure
 - Extracting context from existing code
 
 **How to Invoke**:
+
 - Natural language: "Generate claude.md for this module"
 - Skill tool: `Skill: claude-md-generator`
 
 **What It Does**:
+
 - Auto-generates claude.md files for new folders/modules
 - Follows hierarchical structure and project conventions
 - Extracts context from existing code for documentation
 
 ### pdf-generator Skill
+
 **When to Use**:
+
 - Creating PDF documents and reports
 - Generating formal documentation
 - Producing printable technical specs
 
 **How to Invoke**:
+
 - Natural language: "Generate PDF report"
 - Skill tool: `Skill: pdf-generator`
 
 **What It Does**:
+
 - Generates formatted PDF documents
 - Creates reports with text, tables, and images
 - Produces professional documentation for distribution
 
 ### powerpoint-generator Skill
+
 **When to Use**:
+
 - Creating presentation slides
 - Generating executive presentations
 - Building visual documentation
 
 **How to Invoke**:
+
 - Natural language: "Create presentation slides for the architecture"
 - Skill tool: `Skill: powerpoint-generator`
 
 **What It Does**:
+
 - Generates PowerPoint presentations with slides and charts
 - Creates professional presentations with transitions
 - Produces visual documentation for stakeholders
 
 ### summarizer Skill
+
 **When to Use**:
+
 - Creating executive summaries
 - Condensing long documents
 - Generating quick reference guides
 
 **How to Invoke**:
+
 - Natural language: "Summarize the technical specification"
 - Skill tool: `Skill: summarizer`
 
 **What It Does**:
+
 - Generates summaries of documents and code
 - Creates executive summaries and abstracts
 - Condenses content while preserving key information
-</skill_integration>
+  </skill_integration>
 
 ## claude.md File Generation
 
 ### When to Create claude.md Files
 
 Create claude.md files when:
+
 - A new module or feature folder is created
 - A new major component or subsystem is added
 - A new API or service is introduced
@@ -501,30 +556,37 @@ Create claude.md files when:
 # [Module/Feature Name]
 
 ## Purpose
+
 [What this module/feature does]
 
 ## Key Patterns
+
 [Important patterns and conventions]
 
 ## Rules & Guidelines
+
 [Module-specific rules]
 
 ## Dependencies
+
 [Key dependencies and relationships]
 
 ## Usage Examples
+
 [How to use this module/feature]
 ```
 
 ## Summarization Integration
 
 **Document Summarization**:
+
 - Use `summarizer` skill to create executive summaries
 - Condense long documents into concise overviews
 - Generate abstracts and summaries
 - Create quick reference guides
 
 **Usage**:
+
 - "Summarize the project requirements document"
 - "Create an executive summary of the technical spec"
 - "Generate a summary of the meeting notes"
@@ -534,6 +596,7 @@ See `.claude/skills/summarizer/SKILL.md` for details.
 ### Integration with Developer Agent
 
 When Developer agent creates new modules:
+
 - Technical Writer should be notified to create claude.md
 - Or Developer can invoke claude-md-generator skill directly
 - Ensure claude.md is created before module is considered complete
@@ -550,4 +613,3 @@ When Developer agent creates new modules:
 - **Optimize Documentation**: Improve searchability and user experience
 - **Generate claude.md Files**: Create claude.md for new modules/folders
 - **Validate claude.md Files**: Ensure claude.md exists where required
-

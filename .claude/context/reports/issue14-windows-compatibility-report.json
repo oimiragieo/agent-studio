@@ -49,12 +49,7 @@
     "windows_specific": {
       "tests": 4,
       "passed": 4,
-      "items": [
-        "npm in PATH",
-        "No reserved names",
-        "Long path support",
-        "Line endings"
-      ]
+      "items": ["npm in PATH", "No reserved names", "Long path support", "Line endings"]
     }
   },
   "findings": [

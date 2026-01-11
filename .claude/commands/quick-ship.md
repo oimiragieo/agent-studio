@@ -39,6 +39,7 @@ Or provide details inline:
 - Code cleanup
 
 **Not Suitable For**:
+
 - New features requiring architecture
 - Security-critical changes
 - Database migrations

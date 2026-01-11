@@ -19,7 +19,7 @@ const __dirname = dirname(__filename);
 export const PermissionLevels = {
   READ_ONLY: ['Read', 'Search', 'Grep', 'Glob'],
   READ_WRITE: ['Read', 'Write', 'Edit', 'Search', 'Grep', 'Glob'],
-  FULL_ACCESS: ['Read', 'Write', 'Edit', 'Bash', 'Docker', 'Git', 'Search', 'Grep', 'Glob']
+  FULL_ACCESS: ['Read', 'Write', 'Edit', 'Bash', 'Docker', 'Git', 'Search', 'Grep', 'Glob'],
 };
 
 /**
@@ -36,7 +36,7 @@ async function loadAgentPermissions(agentName) {
   if (toolRestrictions) {
     return {
       allowed: toolRestrictions.allowed_tools || [],
-      restricted: toolRestrictions.restricted_tools || []
+      restricted: toolRestrictions.restricted_tools || [],
     };
   }
 
@@ -45,17 +45,17 @@ async function loadAgentPermissions(agentName) {
     if (agentConfig.complexity === 'high') {
       return {
         allowed: PermissionLevels.FULL_ACCESS,
-        restricted: []
+        restricted: [],
       };
     } else if (agentConfig.complexity === 'medium') {
       return {
         allowed: PermissionLevels.READ_WRITE,
-        restricted: ['Bash', 'Docker']
+        restricted: ['Bash', 'Docker'],
       };
     } else {
       return {
         allowed: PermissionLevels.READ_ONLY,
-        restricted: ['Write', 'Edit', 'Bash', 'Docker']
+        restricted: ['Write', 'Edit', 'Bash', 'Docker'],
       };
     }
   }
@@ -63,7 +63,7 @@ async function loadAgentPermissions(agentName) {
   // Default: read-only
   return {
     allowed: PermissionLevels.READ_ONLY,
-    restricted: []
+    restricted: [],
   };
 }
 
@@ -77,7 +77,7 @@ export async function checkPermission(agentName, toolName) {
   if (permissions.restricted.includes(toolName)) {
     return {
       allowed: false,
-      reason: `Tool ${toolName} is restricted for agent ${agentName}`
+      reason: `Tool ${toolName} is restricted for agent ${agentName}`,
     };
   }
 
@@ -85,12 +85,12 @@ export async function checkPermission(agentName, toolName) {
   if (permissions.allowed.length > 0 && !permissions.allowed.includes(toolName)) {
     return {
       allowed: false,
-      reason: `Tool ${toolName} is not in allowed list for agent ${agentName}`
+      reason: `Tool ${toolName} is not in allowed list for agent ${agentName}`,
     };
   }
 
   return {
-    allowed: true
+    allowed: true,
   };
 }
 
@@ -106,7 +106,7 @@ export async function getAgentPermissions(agentName) {
  */
 export async function checkMultiplePermissions(agentName, toolNames) {
   const results = {};
-  
+
   for (const toolName of toolNames) {
     results[toolName] = await checkPermission(agentName, toolName);
   }
@@ -120,7 +120,7 @@ export async function checkMultiplePermissions(agentName, toolNames) {
  */
 export async function createAgentWithPermissions(agentName) {
   const permissions = await loadAgentPermissions(agentName);
-  
+
   // In production, this would use SDK Permissions class:
   // const sdkPermissions = new Permissions({
   //   tools: {
@@ -141,16 +141,16 @@ export async function createAgentWithPermissions(agentName) {
     permissions: {
       tools: {
         allow: permissions.allowed || [],
-        deny: permissions.restricted || []
+        deny: permissions.restricted || [],
       },
       files: {
         read: permissions.fileRead || [],
-        write: permissions.fileWrite || []
+        write: permissions.fileWrite || [],
       },
       network: {
-        allow: permissions.networkAllowed || false
-      }
-    }
+        allow: permissions.networkAllowed || false,
+      },
+    },
   };
 }
 
@@ -166,7 +166,7 @@ export async function checkToolPermission(agentName, toolName) {
  */
 export async function checkFilePermission(agentName, filePath, operation) {
   const permissions = await loadAgentPermissions(agentName);
-  
+
   // Check if file operation is allowed
   if (operation === 'read') {
     return { allowed: true }; // Read is generally allowed
@@ -177,7 +177,7 @@ export async function checkFilePermission(agentName, filePath, operation) {
     }
     return { allowed: true };
   }
-  
+
   return { allowed: false, reason: `Unknown operation: ${operation}` };
 }
 
@@ -188,6 +188,5 @@ export default {
   checkMultiplePermissions,
   createAgentWithPermissions,
   checkToolPermission,
-  checkFilePermission
+  checkFilePermission,
 };
-

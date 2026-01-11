@@ -4,14 +4,7 @@
   "title": "API Documentation",
   "description": "Comprehensive API documentation artifact",
   "type": "object",
-  "required": [
-    "api_name",
-    "version",
-    "overview",
-    "endpoints",
-    "authentication",
-    "examples"
-  ],
+  "required": ["api_name", "version", "overview", "endpoints", "authentication", "examples"],
   "properties": {
     "api_name": {
       "type": "string",

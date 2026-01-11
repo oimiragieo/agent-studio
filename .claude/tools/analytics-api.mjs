@@ -23,9 +23,9 @@ export function trackEvent(eventType, data = {}) {
     timestamp: new Date().toISOString(),
     data,
     sessionId: data.sessionId || 'unknown',
-    agent: data.agent || 'unknown'
+    agent: data.agent || 'unknown',
   };
-  
+
   saveEvent(event);
   return event;
 }
@@ -35,24 +35,24 @@ export function trackEvent(eventType, data = {}) {
  */
 export function getUsageStats(period = '7d', agent = null) {
   const events = loadEvents(period, agent);
-  
+
   if (events.length === 0) {
     return {
       period,
       totalEvents: 0,
-      message: 'No events found for this period'
+      message: 'No events found for this period',
     };
   }
-  
+
   const stats = {
     period,
     totalEvents: events.length,
     byType: groupBy(events, 'type', 'count'),
     byAgent: groupBy(events, 'agent', 'count'),
     timeline: buildTimeline(events),
-    topEvents: getTopEvents(events, 10)
+    topEvents: getTopEvents(events, 10),
   };
-  
+
   return stats;
 }
 
@@ -61,18 +61,19 @@ export function getUsageStats(period = '7d', agent = null) {
  */
 export function getAgentMetrics(agentName, period = '7d') {
   const events = loadEvents(period, agentName);
-  
+
   const metrics = {
     agent: agentName,
     period,
     totalSessions: new Set(events.map(e => e.data.sessionId)).size,
     totalEvents: events.length,
-    averageEventsPerSession: events.length / Math.max(1, new Set(events.map(e => e.data.sessionId)).size),
+    averageEventsPerSession:
+      events.length / Math.max(1, new Set(events.map(e => e.data.sessionId)).size),
     eventTypes: groupBy(events, 'type', 'count'),
     successRate: calculateSuccessRate(events),
-    averageLatency: calculateAverageLatency(events)
+    averageLatency: calculateAverageLatency(events),
   };
-  
+
   return metrics;
 }
 
@@ -82,20 +83,20 @@ export function getAgentMetrics(agentName, period = '7d') {
 export function generateAnalyticsReport(period = '7d') {
   const stats = getUsageStats(period);
   const agents = getUniqueAgents(period);
-  
+
   const report = {
     period,
     generatedAt: new Date().toISOString(),
     summary: {
       totalEvents: stats.totalEvents,
       uniqueAgents: agents.length,
-      uniqueSessions: getUniqueSessions(period).length
+      uniqueSessions: getUniqueSessions(period).length,
     },
     agentMetrics: agents.map(agent => getAgentMetrics(agent, period)),
     topEvents: stats.topEvents,
-    recommendations: generateAnalyticsRecommendations(stats)
+    recommendations: generateAnalyticsRecommendations(stats),
   };
-  
+
   return report;
 }
 
@@ -106,11 +107,11 @@ function saveEvent(event) {
   if (!fs.existsSync(ANALYTICS_DIR)) {
     fs.mkdirSync(ANALYTICS_DIR, { recursive: true });
   }
-  
+
   const date = new Date(event.timestamp);
   const filename = `events_${date.toISOString().split('T')[0]}.jsonl`;
   const filePath = path.join(ANALYTICS_DIR, filename);
-  
+
   // Append to JSONL file
   fs.appendFileSync(filePath, JSON.stringify(event) + '\n', 'utf8');
 }
@@ -122,21 +123,21 @@ function loadEvents(period, agent = null) {
   if (!fs.existsSync(ANALYTICS_DIR)) {
     return [];
   }
-  
+
   const days = parsePeriod(period);
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
-  
+
   const events = [];
   const files = fs.readdirSync(ANALYTICS_DIR);
-  
+
   files.forEach(file => {
     if (file.startsWith('events_') && file.endsWith('.jsonl')) {
       const fileDate = new Date(file.replace('events_', '').replace('.jsonl', ''));
       if (fileDate >= cutoff) {
         const filePath = path.join(ANALYTICS_DIR, file);
         const lines = fs.readFileSync(filePath, 'utf8').split('\n');
-        
+
         lines.forEach(line => {
           if (line.trim()) {
             try {
@@ -153,7 +154,7 @@ function loadEvents(period, agent = null) {
       }
     }
   });
-  
+
   return events.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 }
 
@@ -163,16 +164,21 @@ function loadEvents(period, agent = null) {
 function parsePeriod(period) {
   const match = period.match(/(\d+)([dwmy])/);
   if (!match) return 7;
-  
+
   const value = parseInt(match[1]);
   const unit = match[2];
-  
+
   switch (unit) {
-    case 'd': return value;
-    case 'w': return value * 7;
-    case 'm': return value * 30;
-    case 'y': return value * 365;
-    default: return 7;
+    case 'd':
+      return value;
+    case 'w':
+      return value * 7;
+    case 'm':
+      return value * 30;
+    case 'y':
+      return value * 365;
+    default:
+      return 7;
   }
 }
 
@@ -225,8 +231,8 @@ function getTopEvents(events, limit = 10) {
  * Calculate success rate
  */
 function calculateSuccessRate(events) {
-  const successEvents = events.filter(e => 
-    e.data?.status === 'success' || e.data?.success === true
+  const successEvents = events.filter(
+    e => e.data?.status === 'success' || e.data?.success === true
   );
   return events.length > 0 ? (successEvents.length / events.length) * 100 : 0;
 }
@@ -235,12 +241,10 @@ function calculateSuccessRate(events) {
  * Calculate average latency
  */
 function calculateAverageLatency(events) {
-  const latencies = events
-    .map(e => e.data?.latency || e.data?.duration)
-    .filter(l => l != null);
-  
+  const latencies = events.map(e => e.data?.latency || e.data?.duration).filter(l => l != null);
+
   if (latencies.length === 0) return 0;
-  
+
   return latencies.reduce((sum, l) => sum + l, 0) / latencies.length;
 }
 
@@ -265,24 +269,25 @@ function getUniqueSessions(period) {
  */
 function generateAnalyticsRecommendations(stats) {
   const recommendations = [];
-  
+
   if (stats.totalEvents === 0) {
     recommendations.push({
       type: 'no_data',
       message: 'No analytics data available. Ensure events are being tracked.',
-      priority: 'medium'
+      priority: 'medium',
     });
   }
-  
+
   const agentDistribution = Object.keys(stats.byAgent || {});
   if (agentDistribution.length === 1) {
     recommendations.push({
       type: 'agent_diversity',
-      message: 'Only one agent is being used. Consider utilizing specialized agents for different tasks.',
-      priority: 'low'
+      message:
+        'Only one agent is being used. Consider utilizing specialized agents for different tasks.',
+      priority: 'low',
     });
   }
-  
+
   return recommendations;
 }
 
@@ -291,7 +296,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
   const arg1 = process.argv[3];
   const arg2 = process.argv[4];
-  
+
   if (command === 'track' && arg1) {
     const data = JSON.parse(process.argv[4] || '{}');
     const event = trackEvent(arg1, data);
@@ -313,4 +318,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('Usage: analytics-api.mjs [track|stats|metrics|report] [args...]');
   }
 }
-

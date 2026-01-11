@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Test suite for sanitize-secrets.js
- * 
+ *
  * Security tests to verify API key sanitization works correctly
  * Run with: node .claude/tools/test-sanitization.mjs
  */
@@ -9,12 +9,12 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const { 
-  sanitize, 
-  sanitizeObject, 
-  sanitizeError, 
+const {
+  sanitize,
+  sanitizeObject,
+  sanitizeError,
   containsApiKey,
-  SENSITIVE_ENV_KEYS 
+  SENSITIVE_ENV_KEYS,
 } = require('../../codex-skills/shared/sanitize-secrets.js');
 
 // Test utilities
@@ -80,7 +80,8 @@ console.log('\nTest 4: Environment Variables');
 // Test 5: JWT token sanitization
 console.log('\nTest 5: JWT Tokens');
 {
-  const msg = 'Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+  const msg =
+    'Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
   const result = sanitize(msg);
   assertIncludes(result, '[REDACTED_JWT]', 'JWT should be redacted');
   assertNotIncludes(result, 'eyJhbGci', 'Original JWT should not be present');
@@ -155,7 +156,8 @@ console.log('\nTest 11: Null/Undefined Handling');
 // Test 12: Multiple patterns in one string
 console.log('\nTest 12: Multiple Patterns');
 {
-  const msg = 'Keys: sk-ant-secret1234567890abcdef, AIzaSyGoogleKey123456789, OPENAI_API_KEY=sk-openai123';
+  const msg =
+    'Keys: sk-ant-secret1234567890abcdef, AIzaSyGoogleKey123456789, OPENAI_API_KEY=sk-openai123';
   const result = sanitize(msg);
   assert(!result.includes('sk-ant-secret'), 'Anthropic key should be removed');
   assert(!result.includes('AIzaSy'), 'Google key should be removed');
@@ -175,7 +177,8 @@ console.log('\nTest 13: Long Token Sanitization');
 // Test 14: AWS credentials sanitization
 console.log('\nTest 14: AWS Credentials');
 {
-  const msg = 'AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY AWS_SESSION_TOKEN=FwoGZXIvYXdzEA';
+  const msg =
+    'AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY AWS_SESSION_TOKEN=FwoGZXIvYXdzEA';
   const result = sanitize(msg);
   assertIncludes(result, 'AWS_SECRET_ACCESS_KEY=[REDACTED]', 'AWS secret should be redacted');
   assertIncludes(result, 'AWS_SESSION_TOKEN=[REDACTED]', 'AWS session token should be redacted');

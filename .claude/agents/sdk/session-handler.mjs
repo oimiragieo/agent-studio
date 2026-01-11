@@ -35,7 +35,7 @@ function getSessionFilePath(sessionId) {
  */
 export async function createSDKSession(agentName, metadata = {}) {
   const sessionId = generateSessionId();
-  
+
   // In production, this would use SDK Session class:
   // const session = new Session({
   //   agent: agentName,
@@ -57,7 +57,7 @@ export async function createSDKSession(agentName, metadata = {}) {
       project: metadata.project || null,
       feature: metadata.feature || null,
       workflow: metadata.workflow || null,
-      ...metadata
+      ...metadata,
     },
     messages: [],
     tool_calls: [],
@@ -65,9 +65,9 @@ export async function createSDKSession(agentName, metadata = {}) {
       total: 0,
       input_tokens: 0,
       output_tokens: 0,
-      tool_calls: 0
+      tool_calls: 0,
     },
-    history: []
+    history: [],
   };
 
   // Save session state
@@ -82,7 +82,7 @@ export async function createSDKSession(agentName, metadata = {}) {
  */
 export async function updateSDKSession(sessionId, updates) {
   const session = await loadSDKSession(sessionId);
-  
+
   if (!session) {
     throw new Error(`Session ${sessionId} not found`);
   }
@@ -102,7 +102,7 @@ export async function updateSDKSession(sessionId, updates) {
  */
 export async function loadSDKSession(sessionId) {
   const sessionPath = getSessionFilePath(sessionId);
-  
+
   if (!existsSync(sessionPath)) {
     return null;
   }
@@ -116,7 +116,7 @@ export async function loadSDKSession(sessionId) {
  */
 export async function getSessionHistory(sessionId) {
   const session = await loadSDKSession(sessionId);
-  
+
   if (!session) {
     return null;
   }
@@ -130,7 +130,7 @@ export async function getSessionHistory(sessionId) {
     message_count: session.messages?.length || 0,
     tool_call_count: session.tool_calls?.length || 0,
     cost: session.cost,
-    history: session.history || []
+    history: session.history || [],
   };
 }
 
@@ -139,7 +139,7 @@ export async function getSessionHistory(sessionId) {
  */
 export async function addSessionMessage(sessionId, message) {
   const session = await loadSDKSession(sessionId);
-  
+
   if (!session) {
     throw new Error(`Session ${sessionId} not found`);
   }
@@ -150,7 +150,7 @@ export async function addSessionMessage(sessionId, message) {
 
   session.messages.push({
     ...message,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   return await updateSDKSession(sessionId, { messages: session.messages });
@@ -161,7 +161,7 @@ export async function addSessionMessage(sessionId, message) {
  */
 export async function addSessionToolCall(sessionId, toolCall) {
   const session = await loadSDKSession(sessionId);
-  
+
   if (!session) {
     throw new Error(`Session ${sessionId} not found`);
   }
@@ -172,7 +172,7 @@ export async function addSessionToolCall(sessionId, toolCall) {
 
   session.tool_calls.push({
     ...toolCall,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   return await updateSDKSession(sessionId, { tool_calls: session.tool_calls });
@@ -183,7 +183,7 @@ export async function addSessionToolCall(sessionId, toolCall) {
  */
 export async function updateSessionCost(sessionId, costUpdate) {
   const session = await loadSDKSession(sessionId);
-  
+
   if (!session) {
     throw new Error(`Session ${sessionId} not found`);
   }
@@ -192,7 +192,7 @@ export async function updateSessionCost(sessionId, costUpdate) {
     total: (session.cost?.total || 0) + (costUpdate.total || 0),
     input_tokens: (session.cost?.input_tokens || 0) + (costUpdate.input_tokens || 0),
     output_tokens: (session.cost?.output_tokens || 0) + (costUpdate.output_tokens || 0),
-    tool_calls: (session.cost?.tool_calls || 0) + (costUpdate.tool_calls || 1)
+    tool_calls: (session.cost?.tool_calls || 0) + (costUpdate.tool_calls || 1),
   };
 
   return await updateSDKSession(sessionId, { cost: session.cost });
@@ -205,7 +205,7 @@ export async function closeSDKSession(sessionId, reason = 'completed') {
   return await updateSDKSession(sessionId, {
     status: 'closed',
     closed_at: new Date().toISOString(),
-    close_reason: reason
+    close_reason: reason,
   });
 }
 
@@ -217,5 +217,5 @@ export default {
   addSessionMessage,
   addSessionToolCall,
   updateSessionCost,
-  closeSDKSession
+  closeSDKSession,
 };

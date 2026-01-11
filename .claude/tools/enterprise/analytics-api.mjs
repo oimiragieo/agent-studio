@@ -17,8 +17,8 @@ export async function getAgentMetrics(organizationId, agentName, timeWindow = '7
       total_sessions: 0,
       average_response_time: 0,
       success_rate: 1.0,
-      tool_usage_count: 0
-    }
+      tool_usage_count: 0,
+    },
   };
 }
 
@@ -30,7 +30,7 @@ export async function getToolUsageStats(organizationId, timeWindow = '7d') {
     organization_id: organizationId,
     time_window: timeWindow,
     tools: [],
-    total_invocations: 0
+    total_invocations: 0,
   };
 }
 
@@ -43,7 +43,7 @@ export async function getSessionAnalytics(organizationId, timeWindow = '7d') {
     time_window: timeWindow,
     total_sessions: 0,
     average_duration: 0,
-    completion_rate: 1.0
+    completion_rate: 1.0,
   };
 }
 
@@ -56,7 +56,7 @@ export async function getQualityMetrics(organizationId, timeWindow = '7d') {
     time_window: timeWindow,
     code_quality_score: 1.0,
     test_coverage: 1.0,
-    documentation_completeness: 1.0
+    documentation_completeness: 1.0,
   };
 }
 
@@ -64,6 +64,5 @@ export default {
   getAgentMetrics,
   getToolUsageStats,
   getSessionAnalytics,
-  getQualityMetrics
+  getQualityMetrics,
 };
-

@@ -4,503 +4,270 @@
   "taskTypes": {
     "UI_UX": {
       "primary": "ux-expert",
-      "supporting": [
-        "developer",
-        "accessibility-expert"
-      ],
-      "review": [
-        "code-reviewer",
-        "code-simplifier"
-      ],
-      "approval": [
-        "pm"
-      ],
+      "supporting": ["developer", "accessibility-expert"],
+      "review": ["code-reviewer", "code-simplifier"],
+      "approval": ["pm"],
       "workflow": "ui_perfection"
     },
     "MOBILE": {
       "primary": "mobile-developer",
-      "supporting": [
-        "ux-expert",
-        "developer"
-      ],
-      "review": [
-        "code-reviewer",
-        "performance-engineer"
-      ],
-      "approval": [
-        "pm",
-        "qa"
-      ],
+      "supporting": ["ux-expert", "developer"],
+      "review": ["code-reviewer", "performance-engineer"],
+      "approval": ["pm", "qa"],
       "workflow": "mobile"
     },
     "DATABASE": {
       "primary": "database-architect",
-      "supporting": [
-        "architect",
-        "developer"
-      ],
-      "review": [
-        "code-reviewer",
-        "performance-engineer"
-      ],
-      "approval": [
-        "architect"
-      ],
+      "supporting": ["architect", "developer"],
+      "review": ["code-reviewer", "performance-engineer"],
+      "approval": ["architect"],
       "workflow": "fullstack"
     },
     "IMPLEMENTATION": {
       "primary": "developer",
-      "supporting": [
-        "architect"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "qa"
-      ],
+      "supporting": ["architect"],
+      "review": ["code-reviewer"],
+      "approval": ["qa"],
       "workflow": "fullstack"
     },
     "BUG_FIX_SIMPLE": {
       "primary": "developer",
       "supporting": [],
-      "review": [
-        "code-reviewer"
-      ],
+      "review": ["code-reviewer"],
       "approval": [],
       "workflow": "quick_flow"
     },
     "BUG_FIX_COMPLEX": {
       "primary": "developer",
-      "supporting": [
-        "architect",
-        "qa"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "qa"
-      ],
+      "supporting": ["architect", "qa"],
+      "review": ["code-reviewer"],
+      "approval": ["qa"],
       "workflow": "fullstack"
     },
     "ARCHITECTURE": {
       "primary": "architect",
-      "supporting": [
-        "database-architect",
-        "security-architect"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "pm"
-      ],
+      "supporting": ["database-architect", "security-architect"],
+      "review": ["code-reviewer"],
+      "approval": ["pm"],
       "workflow": "fullstack"
     },
     "API_DESIGN": {
       "primary": "api-designer",
-      "supporting": [
-        "architect",
-        "developer"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "architect"
-      ],
+      "supporting": ["architect", "developer"],
+      "review": ["code-reviewer"],
+      "approval": ["architect"],
       "workflow": "fullstack"
     },
     "SECURITY": {
       "primary": "security-architect",
-      "supporting": [
-        "code-reviewer"
-      ],
-      "review": [
-        "compliance-auditor"
-      ],
-      "approval": [
-        "architect"
-      ],
+      "supporting": ["code-reviewer"],
+      "review": ["compliance-auditor"],
+      "approval": ["architect"],
       "workflow": "fullstack"
     },
     "PERFORMANCE": {
       "primary": "performance-engineer",
-      "supporting": [
-        "developer",
-        "architect"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "qa"
-      ],
+      "supporting": ["developer", "architect"],
+      "review": ["code-reviewer"],
+      "approval": ["qa"],
       "workflow": "performance"
     },
     "CODE_REVIEW": {
       "primary": "code-reviewer",
-      "supporting": [
-        "security-architect"
-      ],
+      "supporting": ["security-architect"],
       "review": [],
       "approval": [],
       "workflow": "code_quality"
     },
     "REFACTORING": {
       "primary": "refactoring-specialist",
-      "supporting": [
-        "architect",
-        "code-reviewer"
-      ],
-      "review": [
-        "code-simplifier"
-      ],
-      "approval": [
-        "qa"
-      ],
+      "supporting": ["architect", "code-reviewer"],
+      "review": ["code-simplifier"],
+      "approval": ["qa"],
       "workflow": "code_quality"
     },
     "LEGACY_MODERNIZATION": {
       "primary": "legacy-modernizer",
-      "supporting": [
-        "architect",
-        "developer"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "qa"
-      ],
+      "supporting": ["architect", "developer"],
+      "review": ["code-reviewer"],
+      "approval": ["qa"],
       "workflow": "fullstack"
     },
     "AI_LLM_SYSTEM": {
       "primary": "llm-architect",
-      "supporting": [
-        "architect",
-        "developer"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "pm"
-      ],
+      "supporting": ["architect", "developer"],
+      "review": ["code-reviewer"],
+      "approval": ["pm"],
       "workflow": "ai_system"
     },
     "TESTING": {
       "primary": "qa",
-      "supporting": [
-        "developer"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
+      "supporting": ["developer"],
+      "review": ["code-reviewer"],
       "approval": [],
       "workflow": "fullstack"
     },
     "INCIDENT_RESPONSE": {
       "primary": "incident-responder",
-      "supporting": [
-        "devops",
-        "developer"
-      ],
-      "review": [
-        "security-architect"
-      ],
-      "approval": [
-        "qa"
-      ],
+      "supporting": ["devops", "developer"],
+      "review": ["security-architect"],
+      "approval": ["qa"],
       "workflow": "incident"
     },
     "INFRASTRUCTURE": {
       "primary": "devops",
-      "supporting": [
-        "security-architect"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "architect"
-      ],
+      "supporting": ["security-architect"],
+      "review": ["code-reviewer"],
+      "approval": ["architect"],
       "workflow": "fullstack"
     },
     "COMPLIANCE_AUDIT": {
       "primary": "compliance-auditor",
-      "supporting": [
-        "security-architect"
-      ],
+      "supporting": ["security-architect"],
       "review": [],
-      "approval": [
-        "architect"
-      ],
+      "approval": ["architect"],
       "workflow": "fullstack"
     },
     "ACCESSIBILITY": {
       "primary": "accessibility-expert",
-      "supporting": [
-        "ux-expert",
-        "qa"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
+      "supporting": ["ux-expert", "qa"],
+      "review": ["code-reviewer"],
       "approval": [],
       "workflow": "fullstack"
     },
     "DOCUMENTATION": {
       "primary": "technical-writer",
-      "supporting": [
-        "developer"
-      ],
+      "supporting": ["developer"],
       "review": [],
       "approval": [],
       "workflow": "quick_flow"
     },
     "RESEARCH": {
       "primary": "analyst",
-      "supporting": [
-        "pm"
-      ],
+      "supporting": ["pm"],
       "review": [],
       "approval": [],
       "workflow": "fullstack"
     },
     "REQUIREMENTS": {
       "primary": "pm",
-      "supporting": [
-        "analyst",
-        "ux-expert"
-      ],
+      "supporting": ["analyst", "ux-expert"],
       "review": [],
-      "approval": [
-        "architect"
-      ],
+      "approval": ["architect"],
       "workflow": "fullstack"
     },
     "BROWSER_TESTING": {
       "primary": "qa",
-      "supporting": [
-        "developer",
-        "performance-engineer"
-      ],
-      "review": [
-        "ux-expert"
-      ],
+      "supporting": ["developer", "performance-engineer"],
+      "review": ["ux-expert"],
       "approval": [],
       "workflow": "browser_testing"
     },
     "CLOUD_INTEGRATION": {
       "primary": "cloud-integrator",
-      "supporting": [
-        "devops",
-        "developer"
-      ],
-      "review": [
-        "code-reviewer",
-        "security-architect"
-      ],
-      "approval": [
-        "architect"
-      ],
+      "supporting": ["devops", "developer"],
+      "review": ["code-reviewer", "security-architect"],
+      "approval": ["architect"],
       "workflow": "fullstack"
     },
     "IMPACT_ANALYSIS": {
       "primary": "impact-analyzer",
-      "supporting": [
-        "architect",
-        "qa"
-      ],
+      "supporting": ["architect", "qa"],
       "review": [],
       "approval": [],
       "workflow": "fullstack"
     },
     "SIMPLIFICATION": {
       "primary": "code-simplifier",
-      "supporting": [
-        "refactoring-specialist"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "qa"
-      ],
+      "supporting": ["refactoring-specialist"],
+      "review": ["code-reviewer"],
+      "approval": ["qa"],
       "workflow": "code_quality"
     },
     "MODEL_ORCHESTRATION": {
       "primary": "model-orchestrator",
-      "supporting": [
-        "planner"
-      ],
+      "supporting": ["planner"],
       "review": [],
       "approval": [],
       "workflow": "ai_system"
     },
     "API": {
       "primary": "api-designer",
-      "supporting": [
-        "architect",
-        "developer"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "architect"
-      ],
+      "supporting": ["architect", "developer"],
+      "review": ["code-reviewer"],
+      "approval": ["architect"],
       "workflow": "fullstack"
     },
     "LEGACY": {
       "primary": "legacy-modernizer",
-      "supporting": [
-        "architect",
-        "developer"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "qa"
-      ],
+      "supporting": ["architect", "developer"],
+      "review": ["code-reviewer"],
+      "approval": ["qa"],
       "workflow": "fullstack"
     },
     "AI_LLM": {
       "primary": "llm-architect",
-      "supporting": [
-        "architect",
-        "developer"
-      ],
-      "review": [
-        "code-reviewer"
-      ],
-      "approval": [
-        "pm"
-      ],
+      "supporting": ["architect", "developer"],
+      "review": ["code-reviewer"],
+      "approval": ["pm"],
       "workflow": "ai_system"
     },
     "INCIDENT": {
       "primary": "incident-responder",
-      "supporting": [
-        "devops",
-        "developer"
-      ],
-      "review": [
-        "security-architect"
-      ],
-      "approval": [
-        "qa"
-      ],
+      "supporting": ["devops", "developer"],
+      "review": ["security-architect"],
+      "approval": ["qa"],
       "workflow": "incident"
     },
     "COMPLIANCE": {
       "primary": "compliance-auditor",
-      "supporting": [
-        "security-architect"
-      ],
+      "supporting": ["security-architect"],
       "review": [],
-      "approval": [
-        "architect"
-      ],
+      "approval": ["architect"],
       "workflow": "fullstack"
     },
     "PRODUCT": {
       "primary": "pm",
-      "supporting": [
-        "analyst",
-        "ux-expert"
-      ],
+      "supporting": ["analyst", "ux-expert"],
       "review": [],
-      "approval": [
-        "architect"
-      ],
+      "approval": ["architect"],
       "workflow": "fullstack"
     }
   },
   "chainRules": {
     "maxChainLength": 5,
-    "defaultChain": [
-      "primary",
-      "supporting",
-      "review",
-      "approval"
-    ],
+    "defaultChain": ["primary", "supporting", "review", "approval"],
     "chainSkipConditions": {
-      "BUG_FIX_SIMPLE": [
-        "supporting",
-        "approval"
-      ],
-      "CODE_REVIEW": [
-        "review",
-        "approval"
-      ],
-      "DOCUMENTATION": [
-        "review",
-        "approval"
-      ],
-      "RESEARCH": [
-        "review",
-        "approval"
-      ],
-      "REQUIREMENTS": [
-        "review"
-      ]
+      "BUG_FIX_SIMPLE": ["supporting", "approval"],
+      "CODE_REVIEW": ["review", "approval"],
+      "DOCUMENTATION": ["review", "approval"],
+      "RESEARCH": ["review", "approval"],
+      "REQUIREMENTS": ["review"]
     }
   },
   "escalationRules": {
     "security": {
-      "trigger": [
-        "auth",
-        "encryption",
-        "token",
-        "secret",
-        "credential"
-      ],
+      "trigger": ["auth", "encryption", "token", "secret", "credential"],
       "escalateTo": "security-architect",
       "priority": "high"
     },
     "compliance": {
-      "trigger": [
-        "gdpr",
-        "hipaa",
-        "pii",
-        "privacy",
-        "regulation"
-      ],
+      "trigger": ["gdpr", "hipaa", "pii", "privacy", "regulation"],
       "escalateTo": "compliance-auditor",
       "priority": "high"
     },
     "performance": {
-      "trigger": [
-        "slow",
-        "timeout",
-        "memory",
-        "cpu",
-        "bottleneck"
-      ],
+      "trigger": ["slow", "timeout", "memory", "cpu", "bottleneck"],
       "escalateTo": "performance-engineer",
       "priority": "medium"
     },
     "accessibility": {
-      "trigger": [
-        "wcag",
-        "aria",
-        "screen reader",
-        "keyboard"
-      ],
+      "trigger": ["wcag", "aria", "screen reader", "keyboard"],
       "escalateTo": "accessibility-expert",
       "priority": "medium"
     },
     "breaking_change": {
-      "trigger": [
-        "breaking",
-        "api change",
-        "migration",
-        "deprecate"
-      ],
+      "trigger": ["breaking", "api change", "migration", "deprecate"],
       "escalateTo": "impact-analyzer",
       "priority": "high"
     }

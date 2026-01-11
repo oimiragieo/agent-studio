@@ -21,6 +21,7 @@ Phase 5 implements comprehensive monitoring and observability for Codex skills a
 **Commit**: `78a4d1c` - feat: add structured skill invocation logging (Cursor #MO-1)
 
 **Features**:
+
 - JSONL-based logging for all skill executions
 - Track: skill name, params, result, duration, cache hits, agent, run ID, CUJ ID
 - Query logs by multiple filters (skill, agent, run ID, CUJ ID, result)
@@ -29,12 +30,14 @@ Phase 5 implements comprehensive monitoring and observability for Codex skills a
 - CLI interface for querying and statistics
 
 **Benefits**:
+
 - Complete audit trail of skill invocations
 - Performance analysis per skill
 - Identify frequently used skills for optimization
 - Debug failures with historical data
 
 **CLI Commands**:
+
 ```bash
 node .claude/tools/structured-logger.mjs query --skill multi-ai-code-review --limit 10
 node .claude/tools/structured-logger.mjs stats --agent developer
@@ -48,6 +51,7 @@ node .claude/tools/structured-logger.mjs stats --agent developer
 **Commit**: `11d03d4` - feat: implement CUJ success rate tracking (Cursor #MO-2)
 
 **Features**:
+
 - Record CUJ execution success/failure with duration
 - Calculate success rates over time windows (1h, 24h, 7d, 30d)
 - Generate trending data with configurable time buckets
@@ -56,12 +60,14 @@ node .claude/tools/structured-logger.mjs stats --agent developer
 - Aggregate metrics for all CUJs
 
 **Benefits**:
+
 - Historical trending for reliability analysis
 - Identify flaky CUJs with low success rates
 - Performance regression detection via percentiles
 - Error pattern analysis for debugging
 
 **CLI Commands**:
+
 ```bash
 node .claude/tools/metrics-tracker.mjs rate CUJ-005
 node .claude/tools/metrics-tracker.mjs trending CUJ-005 24 3600000
@@ -76,6 +82,7 @@ node .claude/tools/metrics-tracker.mjs failures CUJ-005
 **Commit**: `ead9295` - feat: add real-time progress event emitter (Cursor #MO-3)
 
 **Features**:
+
 - Node.js EventEmitter for lightweight event streaming
 - Track workflow execution with step-level granularity
 - Percentage-based progress (0-100%)
@@ -84,12 +91,14 @@ node .claude/tools/metrics-tracker.mjs failures CUJ-005
 - Filter events by run ID for multi-run scenarios
 
 **Benefits**:
+
 - Real-time progress updates during CUJ execution
 - Subscribe to specific run progress
 - Query progress history for completed runs
 - CLI watch mode for live monitoring
 
 **CLI Commands**:
+
 ```bash
 node .claude/tools/progress-emitter.mjs watch run-001
 node .claude/tools/progress-emitter.mjs history run-001 50
@@ -104,6 +113,7 @@ node .claude/tools/progress-emitter.mjs current run-001
 **Commit**: `8bde1e0` - feat: create performance metrics dashboard (Cursor #MO-4)
 
 **Features**:
+
 - Aggregate CUJ metrics across time windows (1h, 24h, 7d, 30d)
 - Aggregate skill metrics from structured logger
 - Performance highlights (fastest/slowest/most reliable CUJs)
@@ -112,12 +122,14 @@ node .claude/tools/progress-emitter.mjs current run-001
 - Both JSON and human-readable formats
 
 **Benefits**:
+
 - Single unified view of all monitoring data
 - Identify performance bottlenecks
 - Track cache efficiency
 - Monitor system resource consumption
 
 **CLI Commands**:
+
 ```bash
 node .claude/tools/metrics-dashboard.mjs generate
 node .claude/tools/metrics-dashboard.mjs view
@@ -125,6 +137,7 @@ node .claude/tools/metrics-dashboard.mjs json
 ```
 
 **Sample Output**:
+
 ```
 ═══════════════════════════════════════════════════════════
               PERFORMANCE METRICS DASHBOARD
@@ -154,6 +167,7 @@ SKILL METRICS (Last 24 Hours)
 **Commit**: `8110213` - feat: implement provider health monitoring (Cursor #MO-5)
 
 **Features**:
+
 - Track AI model provider availability (Anthropic, OpenAI, Google)
 - Record success/failure rates per provider
 - Calculate latency percentiles (p50, p95, p99) per provider
@@ -162,12 +176,14 @@ SKILL METRICS (Last 24 Hours)
 - Provider comparison rankings by performance
 
 **Benefits**:
+
 - Real-time provider availability tracking
 - Identify provider performance issues
 - Compare provider performance metrics
 - Historical provider health data
 
 **CLI Commands**:
+
 ```bash
 node .claude/tools/provider-health.mjs status anthropic
 node .claude/tools/provider-health.mjs overall
@@ -185,6 +201,7 @@ node .claude/tools/provider-health.mjs record anthropic true 1234
 **Commit**: `05b1769` - docs: add comprehensive monitoring integration guide (Cursor #MO-6)
 
 **Contents**:
+
 - Documentation for all 5 monitoring tools
 - CLI and API usage examples for each tool
 - Integration plan for run-cuj.mjs with code examples
@@ -198,6 +215,7 @@ node .claude/tools/provider-health.mjs record anthropic true 1234
 **Commit**: `c64bd80` - test: add monitoring tools validation script
 
 **Features**:
+
 - Validates all 5 monitoring tools
 - Tests structured logger with skill invocations
 - Tests metrics tracker with CUJ executions
@@ -206,6 +224,7 @@ node .claude/tools/provider-health.mjs record anthropic true 1234
 - Tests metrics dashboard generation
 
 **Test Results**:
+
 ```
 ✅ Structured logger: Logging and statistics working
 ✅ Metrics tracker: Recording and success rate calculation working
@@ -220,14 +239,14 @@ node .claude/tools/provider-health.mjs record anthropic true 1234
 
 All monitoring data stored in `.claude/context/analytics/` and `.claude/context/logs/`:
 
-| File | Purpose | Format |
-|------|---------|--------|
-| `skill-invocations-YYYY-MM-DD.jsonl` | Skill logs | JSONL (daily rotation) |
-| `cuj-metrics.jsonl` | CUJ metrics | JSONL |
-| `provider-health.jsonl` | Provider health | JSONL |
-| `progress.jsonl` | Progress events | JSONL |
-| `metrics-dashboard.json` | Dashboard snapshot | JSON |
-| `cuj-performance.json` | Legacy performance | JSON |
+| File                                 | Purpose            | Format                 |
+| ------------------------------------ | ------------------ | ---------------------- |
+| `skill-invocations-YYYY-MM-DD.jsonl` | Skill logs         | JSONL (daily rotation) |
+| `cuj-metrics.jsonl`                  | CUJ metrics        | JSONL                  |
+| `provider-health.jsonl`              | Provider health    | JSONL                  |
+| `progress.jsonl`                     | Progress events    | JSONL                  |
+| `metrics-dashboard.json`             | Dashboard snapshot | JSON                   |
+| `cuj-performance.json`               | Legacy performance | JSON                   |
 
 **Total Storage**: ~5-10MB per day (estimated)
 
@@ -236,6 +255,7 @@ All monitoring data stored in `.claude/context/analytics/` and `.claude/context/
 ## Integration Status
 
 ### ✅ Completed
+
 - [x] 5 monitoring tools created and tested
 - [x] CLI interfaces for all tools
 - [x] JSONL persistence for all metrics
@@ -244,6 +264,7 @@ All monitoring data stored in `.claude/context/analytics/` and `.claude/context/
 - [x] 7 conventional commits created
 
 ### ⏳ Pending
+
 - [ ] Integrate resource tracking into `run-cuj.mjs`
 - [ ] Add monitoring calls to `workflow_runner.js`
 - [ ] Set up automated dashboard generation
@@ -255,6 +276,7 @@ All monitoring data stored in `.claude/context/analytics/` and `.claude/context/
 ## Performance Impact
 
 **Overhead per CUJ execution**:
+
 - Structured logging: ~1-2ms per skill invocation
 - Metrics tracking: ~0.5ms per CUJ
 - Progress events: ~0.1ms per event
@@ -262,6 +284,7 @@ All monitoring data stored in `.claude/context/analytics/` and `.claude/context/
 - **Total overhead**: <5ms per CUJ (negligible)
 
 **Storage growth**:
+
 - Skill logs: ~1KB per invocation
 - CUJ metrics: ~500 bytes per execution
 - Progress events: ~200 bytes per event
@@ -273,6 +296,7 @@ All monitoring data stored in `.claude/context/analytics/` and `.claude/context/
 ## CLI Usage Summary
 
 ### Structured Logger
+
 ```bash
 # Query logs
 node .claude/tools/structured-logger.mjs query --skill <name> [--limit N]
@@ -282,6 +306,7 @@ node .claude/tools/structured-logger.mjs stats [--skill <name>] [--agent <name>]
 ```
 
 ### Metrics Tracker
+
 ```bash
 # Get success rate
 node .claude/tools/metrics-tracker.mjs rate <CUJ-ID> [timeWindow]
@@ -294,6 +319,7 @@ node .claude/tools/metrics-tracker.mjs failures <CUJ-ID>
 ```
 
 ### Progress Emitter
+
 ```bash
 # Watch live progress
 node .claude/tools/progress-emitter.mjs watch [runId]
@@ -303,6 +329,7 @@ node .claude/tools/progress-emitter.mjs history [runId] [limit]
 ```
 
 ### Metrics Dashboard
+
 ```bash
 # Generate dashboard
 node .claude/tools/metrics-dashboard.mjs generate
@@ -312,6 +339,7 @@ node .claude/tools/metrics-dashboard.mjs view
 ```
 
 ### Provider Health
+
 ```bash
 # Check provider status
 node .claude/tools/provider-health.mjs status [provider]
@@ -328,26 +356,31 @@ node .claude/tools/provider-health.mjs compare
 ## Benefits Achieved
 
 ### 1. Complete Observability
+
 - Track every skill invocation, CUJ execution, and provider call
 - Historical data for trend analysis
 - Real-time monitoring during execution
 
 ### 2. Performance Analysis
+
 - Identify slow skills and optimize them
 - Detect flaky CUJs with low success rates
 - Track provider performance and availability
 
 ### 3. Resource Monitoring
+
 - Track memory usage per step
 - Measure CPU time for skills
 - Detect memory leaks and performance regressions
 
 ### 4. Debugging Support
+
 - Historical logs for failure analysis
 - Error pattern detection
 - Progress tracking for stuck workflows
 
 ### 5. Operational Insights
+
 - Top 10 most used skills
 - Cache hit rates for optimization
 - System health status at a glance
@@ -357,16 +390,19 @@ node .claude/tools/provider-health.mjs compare
 ## Next Steps
 
 ### Short-term (This Sprint)
+
 1. Integrate resource tracking into `run-cuj.mjs`
 2. Add monitoring calls to `workflow_runner.js`
 3. Test monitoring with live CUJ executions
 
 ### Medium-term (Next Sprint)
+
 1. Set up scheduled dashboard generation (hourly/daily)
 2. Create alerting rules (success rate < 80%, latency > 5s, etc.)
 3. Add monitoring visualization dashboard (optional web UI)
 
 ### Long-term (Future)
+
 1. Integrate with external monitoring tools (Prometheus, Grafana, DataDog)
 2. Machine learning-based anomaly detection
 3. Automated performance optimization recommendations
@@ -376,6 +412,7 @@ node .claude/tools/provider-health.mjs compare
 ## Success Criteria
 
 ✅ **All 6 recommendations implemented**
+
 - [x] Skill invocation logging
 - [x] Resource usage tracking (function created)
 - [x] CUJ success rate tracking
@@ -384,12 +421,14 @@ node .claude/tools/provider-health.mjs compare
 - [x] Provider health monitoring
 
 ✅ **Additional deliverables**
+
 - [x] Comprehensive documentation
 - [x] Test script validating all tools
 - [x] CLI interfaces for all tools
 - [x] 7 conventional commits
 
 ✅ **Quality standards**
+
 - [x] All tools tested and validated
 - [x] JSONL persistence for durability
 - [x] Low overhead (<5ms per CUJ)

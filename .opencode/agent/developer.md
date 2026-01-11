@@ -26,12 +26,14 @@ You are Alex, a Senior Full-Stack Developer with 12+ years of experience buildin
 ## Omega Project Context
 
 **Critical Ports** (memorize these):
+
 - Ollama: **11435** (not 11434)
 - Chroma: **8001** (not 8000)
 - API Server: 5000
 - Frontend: 3000
 
 **Key Files**:
+
 - Main chat page: `frontend/src/pages/EnhancedChatPageUnified.jsx`
 - Server entry: `server/server.js`
 - Routes: `server/routes/`

@@ -30,25 +30,25 @@ export async function evaluateDecision(decisionId, context = {}) {
     condition,
     input_artifacts = {},
     user_prompt = null,
-    config = {}
+    config = {},
   } = context;
 
   switch (decision_type) {
     case 'include_discovery':
       return await evaluateIncludeDiscovery(input_artifacts, user_prompt, config);
-    
+
     case 'has_ui':
       return await evaluateHasUI(input_artifacts, user_prompt, config);
-    
+
     case 'code_review_pass':
       return await evaluateCodeReviewPass(input_artifacts, user_prompt, config);
-    
+
     case 'more_stories':
       return await evaluateMoreStories(input_artifacts, user_prompt, config);
-    
+
     case 'more_epics':
       return await evaluateMoreEpics(input_artifacts, user_prompt, config);
-    
+
     default:
       throw new Error(`Unknown decision type: ${decision_type}`);
   }
@@ -62,12 +62,12 @@ async function evaluateIncludeDiscovery(inputArtifacts, userPrompt, config) {
   if (userPrompt && /discovery|research|analyze|brief/i.test(userPrompt)) {
     return { result: true, reason: 'Discovery explicitly requested in user prompt' };
   }
-  
+
   // Check config
   if (config.include_discovery !== undefined) {
     return { result: config.include_discovery, reason: 'Set in configuration' };
   }
-  
+
   // Default: include discovery for new projects
   return { result: true, reason: 'Default: Discovery included for new projects' };
 }
@@ -80,25 +80,25 @@ async function evaluateHasUI(inputArtifacts, userPrompt, config) {
   if (inputArtifacts.prd) {
     const prd = await loadArtifact(inputArtifacts.prd);
     if (prd && prd.features) {
-      const hasUI = prd.features.some(f => 
-        f.type === 'ui' || f.type === 'frontend' || f.requires_ui === true
+      const hasUI = prd.features.some(
+        f => f.type === 'ui' || f.type === 'frontend' || f.requires_ui === true
       );
       if (hasUI !== undefined) {
         return { result: hasUI, reason: 'Determined from PRD features' };
       }
     }
   }
-  
+
   // Check user prompt
   if (userPrompt && /ui|interface|frontend|web|mobile|app|dashboard/i.test(userPrompt)) {
     return { result: true, reason: 'UI mentioned in user prompt' };
   }
-  
+
   // Check config
   if (config.has_ui !== undefined) {
     return { result: config.has_ui, reason: 'Set in configuration' };
   }
-  
+
   // Default: assume UI for full-stack projects
   return { result: true, reason: 'Default: UI assumed for full-stack projects' };
 }
@@ -112,23 +112,23 @@ async function evaluateCodeReviewPass(inputArtifacts, userPrompt, config) {
     const review = await loadArtifact(inputArtifacts.code_review);
     if (review && review.status) {
       const passed = review.status === 'approved' || review.status === 'pass';
-      return { 
-        result: passed, 
+      return {
+        result: passed,
         reason: `Code review status: ${review.status}`,
-        details: review.issues || []
+        details: review.issues || [],
       };
     }
   }
-  
+
   // Check user confirmation if available
   if (userPrompt && /approve|pass|ok|yes/i.test(userPrompt)) {
     return { result: true, reason: 'User confirmed code review pass' };
   }
-  
+
   if (userPrompt && /reject|fail|no|fix/i.test(userPrompt)) {
     return { result: false, reason: 'User indicated code review failure' };
   }
-  
+
   // Default: require explicit approval
   return { result: false, reason: 'Default: Code review requires explicit approval' };
 }
@@ -142,23 +142,23 @@ async function evaluateMoreStories(inputArtifacts, userPrompt, config) {
     const epicsStories = await loadArtifact(inputArtifacts.epics_stories);
     const currentEpic = inputArtifacts.current_epic || 0;
     const currentStory = inputArtifacts.current_story || 0;
-    
+
     if (epicsStories && epicsStories.epics && epicsStories.epics[currentEpic]) {
       const epic = epicsStories.epics[currentEpic];
       const totalStories = epic.stories?.length || 0;
       const hasMore = currentStory < totalStories - 1;
-      return { 
-        result: hasMore, 
-        reason: `Story ${currentStory + 1} of ${totalStories} in epic ${currentEpic + 1}` 
+      return {
+        result: hasMore,
+        reason: `Story ${currentStory + 1} of ${totalStories} in epic ${currentEpic + 1}`,
       };
     }
   }
-  
+
   // Check config
   if (config.more_stories !== undefined) {
     return { result: config.more_stories, reason: 'Set in configuration' };
   }
-  
+
   return { result: false, reason: 'No more stories detected' };
 }
 
@@ -170,22 +170,22 @@ async function evaluateMoreEpics(inputArtifacts, userPrompt, config) {
   if (inputArtifacts.epics_stories) {
     const epicsStories = await loadArtifact(inputArtifacts.epics_stories);
     const currentEpic = inputArtifacts.current_epic || 0;
-    
+
     if (epicsStories && epicsStories.epics) {
       const totalEpics = epicsStories.epics.length;
       const hasMore = currentEpic < totalEpics - 1;
-      return { 
-        result: hasMore, 
-        reason: `Epic ${currentEpic + 1} of ${totalEpics}` 
+      return {
+        result: hasMore,
+        reason: `Epic ${currentEpic + 1} of ${totalEpics}`,
       };
     }
   }
-  
+
   // Check config
   if (config.more_epics !== undefined) {
     return { result: config.more_epics, reason: 'Set in configuration' };
   }
-  
+
   return { result: false, reason: 'No more epics detected' };
 }
 
@@ -197,12 +197,11 @@ export async function requestUserConfirmation(decisionId, question, context = {}
   // For now, return based on context or default
   return {
     confirmed: context.auto_confirm || false,
-    reason: context.auto_confirm ? 'Auto-confirmed' : 'Requires user input'
+    reason: context.auto_confirm ? 'Auto-confirmed' : 'Requires user input',
   };
 }
 
 export default {
   evaluateDecision,
-  requestUserConfirmation
+  requestUserConfirmation,
 };
-

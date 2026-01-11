@@ -27,37 +27,37 @@ export function loadAgentContext(agentName) {
   if (cached) {
     return cached;
   }
-  
+
   // Load config
   const config = loadConfig();
   const agentConfig = config.agent_routing?.[agentName];
-  
+
   if (!agentConfig || !agentConfig.context_files) {
     return {
       agent: agentName,
       files: [],
       loaded: false,
-      message: 'No context files configured for this agent'
+      message: 'No context files configured for this agent',
     };
   }
-  
+
   // Load context files
   const contextFiles = [];
   const projectRoot = path.join(__dirname, '../..');
-  
+
   agentConfig.context_files.forEach(filePath => {
     const fullPath = path.join(projectRoot, filePath);
-    
+
     if (fs.existsSync(fullPath)) {
       try {
         const content = fs.readFileSync(fullPath, 'utf8');
         const stats = fs.statSync(fullPath);
-        
+
         contextFiles.push({
           path: filePath,
           size: stats.size,
           modified: stats.mtime.toISOString(),
-          content: content.substring(0, 1000) + '...' // Preview only
+          content: content.substring(0, 1000) + '...', // Preview only
         });
       } catch (error) {
         console.warn(`⚠️  Error reading context file ${filePath}: ${error.message}`);
@@ -69,18 +69,18 @@ export function loadAgentContext(agentName) {
       console.warn(`   Suggestion: Check if the file path is correct in config.yaml`);
     }
   });
-  
+
   const result = {
     agent: agentName,
     files: contextFiles,
     loaded: true,
     timestamp: new Date().toISOString(),
-    totalSize: contextFiles.reduce((sum, f) => sum + f.size, 0)
+    totalSize: contextFiles.reduce((sum, f) => sum + f.size, 0),
   };
-  
+
   // Cache result
   cacheContext(agentName, result);
-  
+
   return result;
 }
 
@@ -90,11 +90,11 @@ export function loadAgentContext(agentName) {
 export function unloadAgentContext(agentName) {
   contextCache.delete(agentName);
   clearCachedContext(agentName);
-  
+
   return {
     agent: agentName,
     unloaded: true,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 }
 
@@ -104,17 +104,17 @@ export function unloadAgentContext(agentName) {
 export function listAgentsWithContext() {
   const config = loadConfig();
   const agents = [];
-  
+
   Object.entries(config.agent_routing || {}).forEach(([name, config]) => {
     if (config.context_files && config.context_files.length > 0) {
       agents.push({
         name,
         contextFiles: config.context_files,
-        strategy: config.context_strategy || 'lazy_load'
+        strategy: config.context_strategy || 'lazy_load',
       });
     }
   });
-  
+
   return agents;
 }
 
@@ -139,7 +139,7 @@ function getCachedContext(agentName) {
   if (contextCache.has(agentName)) {
     return contextCache.get(agentName);
   }
-  
+
   // Check file cache
   try {
     if (fs.existsSync(CACHE_FILE)) {
@@ -152,9 +152,9 @@ function getCachedContext(agentName) {
         console.warn(`   Cache file will be regenerated on next save.`);
         return null;
       }
-      
+
       const cached = cache[agentName];
-      
+
       if (cached) {
         const age = Date.now() - new Date(cached.timestamp).getTime();
         if (age < MAX_CACHE_AGE) {
@@ -167,7 +167,7 @@ function getCachedContext(agentName) {
     // Cache file doesn't exist or is invalid
     console.warn(`⚠️  Error reading cache file: ${error.message}`);
   }
-  
+
   return null;
 }
 
@@ -177,14 +177,14 @@ function getCachedContext(agentName) {
 function cacheContext(agentName, context) {
   // In-memory cache
   contextCache.set(agentName, context);
-  
+
   // File cache
   try {
     const dir = path.dirname(CACHE_FILE);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    
+
     let cache = {};
     if (fs.existsSync(CACHE_FILE)) {
       try {
@@ -196,9 +196,9 @@ function cacheContext(agentName, context) {
         cache = {};
       }
     }
-    
+
     cache[agentName] = context;
-    
+
     fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf8');
   } catch (error) {
     console.error(`❌ Error caching context for ${agentName}: ${error.message}`);
@@ -221,7 +221,7 @@ function clearCachedContext(agentName) {
         console.warn(`   Skipping cache clear.`);
         return;
       }
-      
+
       delete cache[agentName];
       fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf8');
     }
@@ -234,7 +234,7 @@ function clearCachedContext(agentName) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
   const agentName = process.argv[3];
-  
+
   if (command === 'load' && agentName) {
     const result = loadAgentContext(agentName);
     console.log(JSON.stringify(result, null, 2));
@@ -248,4 +248,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('Usage: subagent-context-loader.mjs [load|unload|list] [agent-name]');
   }
 }
-

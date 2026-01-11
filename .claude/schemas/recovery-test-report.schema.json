@@ -25,7 +25,12 @@
     },
     "test_results": {
       "type": "object",
-      "required": ["checkpoint_creation", "checkpoint_restoration", "fallback_routing", "artifact_preservation"],
+      "required": [
+        "checkpoint_creation",
+        "checkpoint_restoration",
+        "fallback_routing",
+        "artifact_preservation"
+      ],
       "properties": {
         "checkpoint_creation": {
           "type": "object",
@@ -204,7 +209,13 @@
         "properties": {
           "event_type": {
             "type": "string",
-            "enum": ["checkpoint_created", "checkpoint_restored", "fallback_routing", "recovery_successful", "recovery_failed"],
+            "enum": [
+              "checkpoint_created",
+              "checkpoint_restored",
+              "fallback_routing",
+              "recovery_successful",
+              "recovery_failed"
+            ],
             "description": "Type of recovery event"
           },
           "timestamp": {

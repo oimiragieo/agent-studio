@@ -60,12 +60,7 @@
           },
           "execution_mode": {
             "type": "string",
-            "enum": [
-              "workflow",
-              "skill-only",
-              "delegated-skill",
-              "manual-setup"
-            ],
+            "enum": ["workflow", "skill-only", "delegated-skill", "manual-setup"],
             "description": "How the CUJ is executed (workflow, skill, or manual)"
           },
           "workflow": {

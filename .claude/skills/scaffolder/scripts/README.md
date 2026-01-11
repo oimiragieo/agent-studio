@@ -32,20 +32,21 @@ node scaffold.mjs --help
 
 ### Available Templates
 
-| Template | Description | Technologies |
-|----------|-------------|--------------|
-| `component` | Next.js Server Component | nextjs, react, typescript |
-| `client-component` | Next.js Client Component | nextjs, react, typescript |
-| `api` | Next.js API Route (App Router) | nextjs, typescript |
-| `test` | Test file for existing component | jest, vitest, react, typescript |
-| `feature` | Complete feature module | nextjs, react, typescript |
-| `hook` | Custom React hook | react, typescript |
-| `context` | React Context provider | react, typescript |
-| `fastapi-route` | FastAPI router | fastapi, python, pydantic |
+| Template           | Description                      | Technologies                    |
+| ------------------ | -------------------------------- | ------------------------------- |
+| `component`        | Next.js Server Component         | nextjs, react, typescript       |
+| `client-component` | Next.js Client Component         | nextjs, react, typescript       |
+| `api`              | Next.js API Route (App Router)   | nextjs, typescript              |
+| `test`             | Test file for existing component | jest, vitest, react, typescript |
+| `feature`          | Complete feature module          | nextjs, react, typescript       |
+| `hook`             | Custom React hook                | react, typescript               |
+| `context`          | React Context provider           | react, typescript               |
+| `fastapi-route`    | FastAPI router                   | fastapi, python, pydantic       |
 
 ### Examples
 
 **Server Component**:
+
 ```bash
 node scaffold.mjs component UserProfile
 # Generates:
@@ -56,6 +57,7 @@ node scaffold.mjs component UserProfile
 ```
 
 **Client Component**:
+
 ```bash
 node scaffold.mjs client-component SearchBar
 # Generates:
@@ -64,6 +66,7 @@ node scaffold.mjs client-component SearchBar
 ```
 
 **API Route**:
+
 ```bash
 node scaffold.mjs api users
 # Generates:
@@ -71,6 +74,7 @@ node scaffold.mjs api users
 ```
 
 **Feature Module**:
+
 ```bash
 node scaffold.mjs feature user-management
 # Generates:
@@ -81,6 +85,7 @@ node scaffold.mjs feature user-management
 ```
 
 **Test File**:
+
 ```bash
 node scaffold.mjs test src/components/Button.tsx
 # Generates:
@@ -88,6 +93,7 @@ node scaffold.mjs test src/components/Button.tsx
 ```
 
 **Custom Hook**:
+
 ```bash
 node scaffold.mjs hook useCounter
 # Generates:
@@ -95,6 +101,7 @@ node scaffold.mjs hook useCounter
 ```
 
 **Context Provider**:
+
 ```bash
 node scaffold.mjs context Theme
 # Generates:
@@ -102,6 +109,7 @@ node scaffold.mjs context Theme
 ```
 
 **FastAPI Route**:
+
 ```bash
 node scaffold.mjs fastapi-route products
 # Generates:
@@ -124,14 +132,8 @@ All commands output JSON conforming to `.claude/schemas/skill-scaffolder-output.
       "lines_of_code": 25
     }
   ],
-  "patterns_applied": [
-    "Server Component pattern",
-    "Suspense boundary pattern"
-  ],
-  "rules_loaded": [
-    "TECH_STACK_NEXTJS",
-    "LANG_TYPESCRIPT"
-  ],
+  "patterns_applied": ["Server Component pattern", "Suspense boundary pattern"],
+  "rules_loaded": ["TECH_STACK_NEXTJS", "LANG_TYPESCRIPT"],
   "rule_index_consulted": true,
   "technology_stack": ["nextjs", "react", "typescript"],
   "template_used": "component",
@@ -166,6 +168,7 @@ The scaffolder automatically discovers and applies rules from the rule index:
 - Validates generated code can pass `rule-auditor`
 
 Example patterns extracted:
+
 - "Server Component pattern" - Use async Server Components by default
 - "Client Component pattern" - Add 'use client' for interactive components
 - "Suspense boundary pattern" - Wrap async components in Suspense
@@ -179,6 +182,7 @@ node test-scaffold.mjs
 ```
 
 Tests verify:
+
 - All templates generate correct files
 - Output conforms to schema
 - Rule index is consulted
@@ -203,10 +207,10 @@ async function scaffoldComponent(name, options = {}) {
     args.push('--path', options.path);
   }
 
-  const { stdout } = await execFileAsync(
-    'node',
-    ['.claude/skills/scaffolder/scripts/scaffold.mjs', ...args]
-  );
+  const { stdout } = await execFileAsync('node', [
+    '.claude/skills/scaffolder/scripts/scaffold.mjs',
+    ...args,
+  ]);
 
   // Parse JSON output
   const jsonMatch = stdout.match(/\{[\s\S]*\}/);
@@ -241,17 +245,19 @@ The script provides clear error messages:
 To add a new template, edit `scaffold.mjs`:
 
 1. Add template to `TEMPLATES` registry:
+
 ```javascript
 const TEMPLATES = {
   'my-template': {
     description: 'My custom template',
     technologies: ['nextjs', 'react'],
-    handler: scaffoldMyTemplate
-  }
+    handler: scaffoldMyTemplate,
+  },
 };
 ```
 
 2. Implement handler function:
+
 ```javascript
 async function scaffoldMyTemplate(name, patterns, options) {
   const pascalName = toPascalCase(name);
@@ -261,8 +267,8 @@ async function scaffoldMyTemplate(name, patterns, options) {
     {
       path: `${basePath}/index.tsx`,
       type: 'component',
-      content: `// Template content here`
-    }
+      content: `// Template content here`,
+    },
   ];
 
   return { files, basePath, componentName: pascalName };
@@ -313,20 +319,24 @@ jobs:
 ## Troubleshooting
 
 **"Failed to load rule index"**:
+
 - Run `pnpm index-rules` to generate the index
 - Ensure `.claude/context/rule-index.json` exists
 
 **"No patterns applied"**:
+
 - Check that rules exist for your technology stack
 - Verify rules contain `<template>` blocks or code examples
 - Run `pnpm index-rules` to refresh the index
 
 **"File write failed"**:
+
 - Check directory permissions
 - Ensure parent directories exist (script creates them automatically)
 - Verify disk space
 
 **"Schema validation failed"**:
+
 - This is usually a warning, not an error
 - Ensure output includes all required fields
 - Check that `files_generated` is not empty

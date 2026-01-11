@@ -85,13 +85,13 @@ coverage/
 **Trigger**: File write matching known patterns
 **Check**: File is in correct location for its type
 
-| Pattern | Required Location |
-|---------|-------------------|
-| `*-report.md`, `*-report.json` | `.claude/context/reports/` |
-| `*-task.md`, `*-task.json` | `.claude/context/tasks/` |
-| `plan-*.md`, `plan-*.json` | `.claude/context/artifacts/` |
-| `tmp-*` | `.claude/context/tmp/` |
-| `*.schema.json` | `.claude/schemas/` |
+| Pattern                        | Required Location            |
+| ------------------------------ | ---------------------------- |
+| `*-report.md`, `*-report.json` | `.claude/context/reports/`   |
+| `*-task.md`, `*-task.json`     | `.claude/context/tasks/`     |
+| `plan-*.md`, `plan-*.json`     | `.claude/context/artifacts/` |
+| `tmp-*`                        | `.claude/context/tmp/`       |
+| `*.schema.json`                | `.claude/schemas/`           |
 
 **Error Message**: `BLOCKED: File "{filename}" must be in "{required_location}", not "{current_location}".`
 
@@ -120,6 +120,7 @@ Note: These names are reserved with any extension (e.g., `CON.txt`, `COM5.json`,
 **Trigger**: File write to `.claude/context/` but not standard subdirectory
 **Check**: Path uses standard subdirectory
 **Warn if**: File is in `.claude/context/` but not in:
+
 - `artifacts/`
 - `reports/`
 - `tasks/`
@@ -175,24 +176,24 @@ validate_file_location() {
         return 1
         ;;
     esac
-    
+
     # Check for root directory writes
     local basename=$(basename "$file_path")
     local dirname=$(dirname "$file_path")
-    
+
     if [[ "$dirname" == "." ]] || [[ "$dirname" == "/" ]] || [[ "$dirname" =~ ^[A-Z]:$ ]]; then
         local allowed_root="package.json|package-lock.json|pnpm-lock.yaml|yarn.lock"
         allowed_root+="|README.md|GETTING_STARTED.md|LICENSE|\.gitignore"
         allowed_root+="|\.npmrc|\.nvmrc|\.editorconfig|tsconfig.json"
         allowed_root+="|eslint.config.js|\.eslintrc.json|prettier.config.js|\.prettierrc"
         allowed_root+="|CHANGELOG.md|CONTRIBUTING.md|CODE_OF_CONDUCT.md|SECURITY.md"
-        
+
         if [[ ! "$basename" =~ ^($allowed_root)$ ]]; then
             echo "BLOCKED: File '$basename' not allowed in project root"
             return 1
         fi
     fi
-    
+
     return 0
 }
 
@@ -214,6 +215,7 @@ fi
 All validation constants are sourced from `.claude/schemas/file-location.schema.json` to ensure a single source of truth.
 
 The `validateFileLocation()` function:
+
 - Loads constants dynamically from the schema
 - Implements correct Windows path detection (fixed `isInProjectRoot` logic)
 - Returns `{ allowed: boolean, blockers: string[], warnings: string[], suggestedPath: string }`
@@ -222,6 +224,7 @@ The `validateFileLocation()` function:
 **Key Fix**: The `isInProjectRoot` check now correctly compares the file's directory to the project root, not path segment count. This fixes the Windows edge case where paths like `C:\dev\projects\LLM-RULES\file.md` were incorrectly identified.
 
 **Usage**:
+
 ```javascript
 import { validateFileLocation } from './.claude/tools/enforcement-gate.mjs';
 
@@ -262,7 +265,7 @@ find . -maxdepth 1 -name "*-report.md" -o -name "*-task.md" -o -name "plan-*.md"
 # 2. Move to correct locations
 mkdir -p .claude/context/reports .claude/context/tasks
 mv *-report.md .claude/context/reports/ 2>/dev/null
-mv *-task.md .claude/context/tasks/ 2>/dev/null  
+mv *-task.md .claude/context/tasks/ 2>/dev/null
 mv plan-*.md .claude/context/artifacts/ 2>/dev/null
 
 # 3. Find and remove mangled path files
@@ -276,8 +279,8 @@ ls -la . | grep -E "\.(md|json)$"
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.2.0 | 2025-01-08 | Extracted shared constants to schema; Implemented in enforcement-gate.mjs; Fixed Windows root path detection |
-| 1.1.0 | 2025-01-08 | Improved malformed path detection with negative lookahead; Added Windows reserved names COM5-COM9 and LPT5-LPT9 |
-| 1.0.0 | 2025-01-05 | Initial release |
+| Version | Date       | Changes                                                                                                         |
+| ------- | ---------- | --------------------------------------------------------------------------------------------------------------- |
+| 1.2.0   | 2025-01-08 | Extracted shared constants to schema; Implemented in enforcement-gate.mjs; Fixed Windows root path detection    |
+| 1.1.0   | 2025-01-08 | Improved malformed path detection with negative lookahead; Added Windows reserved names COM5-COM9 and LPT5-LPT9 |
+| 1.0.0   | 2025-01-05 | Initial release                                                                                                 |

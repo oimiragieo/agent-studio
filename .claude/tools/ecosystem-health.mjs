@@ -39,14 +39,14 @@ export async function getHealthMetrics() {
   const [patterns, matrix, triggers] = await Promise.all([
     getAllPatterns(),
     loadRoutingMatrix(),
-    loadCrossCuttingTriggers()
+    loadCrossCuttingTriggers(),
   ]);
 
   const metrics = {
     timestamp: new Date().toISOString(),
     overall: {
       status: 'unknown',
-      score: 0
+      score: 0,
     },
     routing: await getRoutingAccuracy(patterns, matrix),
     agents: await getAgentUtilization(patterns, matrix),
@@ -54,14 +54,14 @@ export async function getHealthMetrics() {
       totalTaskTypes: Object.keys(patterns.patterns).length,
       totalExecutions: patterns.metadata.totalExecutions,
       avgExecutionsPerType: 0,
-      coverage: 0
+      coverage: 0,
     },
     performance: {
       avgDuration: 0,
       successRate: 0,
-      totalFailures: 0
+      totalFailures: 0,
     },
-    recommendations: []
+    recommendations: [],
   };
 
   // Calculate pattern metrics
@@ -70,7 +70,9 @@ export async function getHealthMetrics() {
     metrics.patterns.avgExecutionsPerType = patterns.metadata.totalExecutions / taskTypes.length;
 
     // Coverage: percentage of task types with sufficient data (>=3 executions)
-    const sufficinetData = taskTypes.filter(t => patterns.patterns[t].executions.length >= 3).length;
+    const sufficinetData = taskTypes.filter(
+      t => patterns.patterns[t].executions.length >= 3
+    ).length;
     metrics.patterns.coverage = (sufficinetData / taskTypes.length) * 100;
   }
 
@@ -149,7 +151,7 @@ export async function getRoutingAccuracy(patterns = null, matrix = null) {
     overall: 0,
     byTaskType: {},
     totalRouted: 0,
-    successfulRoutes: 0
+    successfulRoutes: 0,
   };
 
   for (const [taskType, pattern] of Object.entries(patterns.patterns)) {
@@ -178,14 +180,18 @@ export async function getRoutingAccuracy(patterns = null, matrix = null) {
         accuracy: (correctRoutes / totalRoutes) * 100,
         totalRoutes,
         correctRoutes,
-        successRate: (pattern.executions.filter(e => e.outcome === 'success').length / totalRoutes) * 100
+        successRate:
+          (pattern.executions.filter(e => e.outcome === 'success').length / totalRoutes) * 100,
       };
     }
   }
 
   // Calculate overall accuracy
   if (accuracy.totalRouted > 0) {
-    const totalCorrect = Object.values(accuracy.byTaskType).reduce((sum, t) => sum + t.correctRoutes, 0);
+    const totalCorrect = Object.values(accuracy.byTaskType).reduce(
+      (sum, t) => sum + t.correctRoutes,
+      0
+    );
     accuracy.overall = (totalCorrect / accuracy.totalRouted) * 100;
   }
 
@@ -212,7 +218,7 @@ export async function getAgentUtilization(patterns = null, matrix = null) {
     maxUtilization: 0,
     minUtilization: 100,
     underutilized: [],
-    overutilized: []
+    overutilized: [],
   };
 
   // Initialize all agents from matrix
@@ -232,7 +238,7 @@ export async function getAgentUtilization(patterns = null, matrix = null) {
       asReview: 0,
       asApproval: 0,
       successRate: 0,
-      avgDuration: 0
+      avgDuration: 0,
     };
   }
 
@@ -271,12 +277,13 @@ export async function getAgentUtilization(patterns = null, matrix = null) {
             const prevTotal = stats.totalExecutions - 1;
 
             if (exec.outcome === 'success') {
-              stats.successRate = ((stats.successRate * prevTotal) + 100) / stats.totalExecutions;
+              stats.successRate = (stats.successRate * prevTotal + 100) / stats.totalExecutions;
             } else {
               stats.successRate = (stats.successRate * prevTotal) / stats.totalExecutions;
             }
 
-            stats.avgDuration = ((stats.avgDuration * prevTotal) + (exec.duration || 0)) / stats.totalExecutions;
+            stats.avgDuration =
+              (stats.avgDuration * prevTotal + (exec.duration || 0)) / stats.totalExecutions;
           }
         }
       }
@@ -288,7 +295,8 @@ export async function getAgentUtilization(patterns = null, matrix = null) {
   let agentCount = 0;
 
   for (const [agent, stats] of Object.entries(utilization.byAgent)) {
-    const utilizationPct = totalExecutions > 0 ? (stats.totalExecutions / totalExecutions) * 100 : 0;
+    const utilizationPct =
+      totalExecutions > 0 ? (stats.totalExecutions / totalExecutions) * 100 : 0;
     stats.utilizationPct = utilizationPct;
 
     totalUtilization += utilizationPct;
@@ -325,7 +333,7 @@ function generateRecommendations(metrics) {
     recommendations.push({
       priority: 'high',
       category: 'routing',
-      message: `Low routing accuracy (${metrics.routing.accuracy.toFixed(1)}%). Review routing matrix and task classifier rules.`
+      message: `Low routing accuracy (${metrics.routing.accuracy.toFixed(1)}%). Review routing matrix and task classifier rules.`,
     });
   }
 
@@ -334,7 +342,7 @@ function generateRecommendations(metrics) {
     recommendations.push({
       priority: 'high',
       category: 'performance',
-      message: `Success rate is ${metrics.performance.successRate.toFixed(1)}%. Analyze failure patterns to improve agent chains.`
+      message: `Success rate is ${metrics.performance.successRate.toFixed(1)}%. Analyze failure patterns to improve agent chains.`,
     });
   }
 
@@ -343,7 +351,7 @@ function generateRecommendations(metrics) {
     recommendations.push({
       priority: 'medium',
       category: 'patterns',
-      message: `Only ${metrics.patterns.coverage.toFixed(1)}% of task types have sufficient execution data. Encourage more diverse workflow usage.`
+      message: `Only ${metrics.patterns.coverage.toFixed(1)}% of task types have sufficient execution data. Encourage more diverse workflow usage.`,
     });
   }
 
@@ -352,7 +360,7 @@ function generateRecommendations(metrics) {
     recommendations.push({
       priority: 'low',
       category: 'agents',
-      message: `Underutilized agents: ${metrics.agents.underutilized.join(', ')}. Consider removing or reassigning roles.`
+      message: `Underutilized agents: ${metrics.agents.underutilized.join(', ')}. Consider removing or reassigning roles.`,
     });
   }
 
@@ -360,7 +368,7 @@ function generateRecommendations(metrics) {
     recommendations.push({
       priority: 'medium',
       category: 'agents',
-      message: `Overutilized agents: ${metrics.agents.overutilized.join(', ')}. Consider load balancing or adding supporting agents.`
+      message: `Overutilized agents: ${metrics.agents.overutilized.join(', ')}. Consider load balancing or adding supporting agents.`,
     });
   }
 
@@ -369,7 +377,7 @@ function generateRecommendations(metrics) {
     recommendations.push({
       priority: 'medium',
       category: 'performance',
-      message: `Average duration is ${metrics.performance.avgDuration.toFixed(1)} minutes. Look for opportunities to parallelize agent work.`
+      message: `Average duration is ${metrics.performance.avgDuration.toFixed(1)} minutes. Look for opportunities to parallelize agent work.`,
     });
   }
 
@@ -390,8 +398,8 @@ export async function generateHealthReport() {
   lines.push('');
 
   // Overall status
-  const statusEmoji = metrics.overall.status === 'healthy' ? '✓' :
-                      metrics.overall.status === 'warning' ? '⚠' : '✗';
+  const statusEmoji =
+    metrics.overall.status === 'healthy' ? '✓' : metrics.overall.status === 'warning' ? '⚠' : '✗';
   lines.push(`## Overall Status: ${statusEmoji} ${metrics.overall.status.toUpperCase()}`);
   lines.push('');
   lines.push(`**Health Score**: ${metrics.overall.score}/100`);
@@ -410,7 +418,9 @@ export async function generateHealthReport() {
     lines.push('| Task Type | Accuracy | Routes | Success Rate |');
     lines.push('|-----------|----------|--------|--------------|');
     for (const [taskType, data] of Object.entries(metrics.routing.byTaskType)) {
-      lines.push(`| ${taskType} | ${data.accuracy.toFixed(1)}% | ${data.totalRoutes} | ${data.successRate.toFixed(1)}% |`);
+      lines.push(
+        `| ${taskType} | ${data.accuracy.toFixed(1)}% | ${data.totalRoutes} | ${data.successRate.toFixed(1)}% |`
+      );
     }
     lines.push('');
   }
@@ -419,7 +429,9 @@ export async function generateHealthReport() {
   lines.push(`## Agent Utilization`);
   lines.push('');
   lines.push(`- **Average**: ${metrics.agents.avgUtilization.toFixed(1)}%`);
-  lines.push(`- **Range**: ${metrics.agents.minUtilization.toFixed(1)}% - ${metrics.agents.maxUtilization.toFixed(1)}%`);
+  lines.push(
+    `- **Range**: ${metrics.agents.minUtilization.toFixed(1)}% - ${metrics.agents.maxUtilization.toFixed(1)}%`
+  );
   lines.push('');
 
   const topAgents = Object.entries(metrics.agents.byAgent)
@@ -433,7 +445,9 @@ export async function generateHealthReport() {
     lines.push('| Agent | Utilization | Executions | Success Rate | Avg Duration |');
     lines.push('|-------|-------------|------------|--------------|--------------|');
     for (const [agent, stats] of topAgents) {
-      lines.push(`| ${agent} | ${stats.utilizationPct.toFixed(1)}% | ${stats.totalExecutions} | ${stats.successRate.toFixed(1)}% | ${stats.avgDuration.toFixed(1)}m |`);
+      lines.push(
+        `| ${agent} | ${stats.utilizationPct.toFixed(1)}% | ${stats.totalExecutions} | ${stats.successRate.toFixed(1)}% | ${stats.avgDuration.toFixed(1)}m |`
+      );
     }
     lines.push('');
   }
@@ -527,7 +541,7 @@ function parseArgs(args) {
   const parsed = {
     action: 'metrics',
     json: false,
-    help: false
+    help: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -609,7 +623,9 @@ async function main() {
         } else {
           console.log(`\nAgent Routing System Health`);
           console.log(`═══════════════════════════════════════`);
-          console.log(`Status: ${metrics.overall.status.toUpperCase()} (${metrics.overall.score || 0}/100)`);
+          console.log(
+            `Status: ${metrics.overall.status.toUpperCase()} (${metrics.overall.score || 0}/100)`
+          );
           console.log(`\nRouting Accuracy: ${(metrics.routing.accuracy || 0).toFixed(1)}%`);
           console.log(`Success Rate: ${(metrics.performance.successRate || 0).toFixed(1)}%`);
           console.log(`Avg Duration: ${(metrics.performance.avgDuration || 0).toFixed(1)} minutes`);
@@ -636,14 +652,18 @@ async function main() {
           console.log(`\nAgent Utilization`);
           console.log(`═══════════════════════════════════════`);
           console.log(`Avg: ${utilization.avgUtilization.toFixed(1)}%`);
-          console.log(`Range: ${utilization.minUtilization.toFixed(1)}% - ${utilization.maxUtilization.toFixed(1)}%`);
+          console.log(
+            `Range: ${utilization.minUtilization.toFixed(1)}% - ${utilization.maxUtilization.toFixed(1)}%`
+          );
           console.log(`\nTop Agents:`);
           const top = Object.entries(utilization.byAgent)
             .filter(([_, s]) => s.totalExecutions > 0)
             .sort((a, b) => b[1].utilizationPct - a[1].utilizationPct)
             .slice(0, 5);
           top.forEach(([agent, stats]) => {
-            console.log(`  ${agent}: ${stats.utilizationPct.toFixed(1)}% (${stats.totalExecutions} executions)`);
+            console.log(
+              `  ${agent}: ${stats.utilizationPct.toFixed(1)}% (${stats.totalExecutions} executions)`
+            );
           });
         }
         break;
@@ -683,5 +703,5 @@ export default {
   getHealthMetrics,
   getRoutingAccuracy,
   getAgentUtilization,
-  generateHealthReport
+  generateHealthReport,
 };

@@ -34,22 +34,22 @@ async function loadCostConfig() {
     const content = await readFile(COST_CONFIG_FILE, 'utf8');
     return JSON.parse(content);
   }
-  
+
   // Default cost configuration (per 1M tokens)
   return {
     models: {
-      'claude-opus-4': { input: 15.00, output: 75.00 },
-      'claude-sonnet-4': { input: 3.00, output: 15.00 },
-      'claude-haiku-4': { input: 0.25, output: 1.25 }
+      'claude-opus-4': { input: 15.0, output: 75.0 },
+      'claude-sonnet-4': { input: 3.0, output: 15.0 },
+      'claude-haiku-4': { input: 0.25, output: 1.25 },
     },
     tools: {
-      default: { input: 0.01, output: 0.01 }
+      default: { input: 0.01, output: 0.01 },
     },
     budgets: {
       daily: null,
       monthly: null,
-      per_session: null
-    }
+      per_session: null,
+    },
   };
 }
 
@@ -59,16 +59,16 @@ async function loadCostConfig() {
 export async function trackToolUsage(sessionId, toolName, input, output) {
   const inputTokens = estimateTokens(JSON.stringify(input));
   const outputTokens = estimateTokens(JSON.stringify(output));
-  
+
   const config = await loadCostConfig();
   const toolCost = config.tools[toolName] || config.tools.default;
-  
+
   const cost = {
     tool_name: toolName,
     input_tokens: inputTokens,
     output_tokens: outputTokens,
     cost: (inputTokens / 1000000) * toolCost.input + (outputTokens / 1000000) * toolCost.output,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   // Update session cost
@@ -77,7 +77,7 @@ export async function trackToolUsage(sessionId, toolName, input, output) {
     total: cost.cost,
     input_tokens: inputTokens,
     output_tokens: outputTokens,
-    tool_calls: 1
+    tool_calls: 1,
   });
 
   // Log cost entry
@@ -89,10 +89,17 @@ export async function trackToolUsage(sessionId, toolName, input, output) {
 /**
  * Track agent usage
  */
-export async function trackAgentUsage(sessionId, agentName, model, inputTokens, outputTokens, duration) {
+export async function trackAgentUsage(
+  sessionId,
+  agentName,
+  model,
+  inputTokens,
+  outputTokens,
+  duration
+) {
   const config = await loadCostConfig();
   const modelCost = config.models[model] || config.models['claude-sonnet-4'];
-  
+
   const cost = {
     agent_name: agentName,
     model: model,
@@ -100,7 +107,7 @@ export async function trackAgentUsage(sessionId, agentName, model, inputTokens, 
     output_tokens: outputTokens,
     duration_ms: duration,
     cost: (inputTokens / 1000000) * modelCost.input + (outputTokens / 1000000) * modelCost.output,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   // Update session cost
@@ -109,7 +116,7 @@ export async function trackAgentUsage(sessionId, agentName, model, inputTokens, 
     total: cost.cost,
     input_tokens: inputTokens,
     output_tokens: outputTokens,
-    tool_calls: 0
+    tool_calls: 0,
   });
 
   // Log cost entry
@@ -123,14 +130,14 @@ export async function trackAgentUsage(sessionId, agentName, model, inputTokens, 
  */
 export async function getRealTimeCost(sessionId, timeWindow = 60) {
   const session = await loadSDKSession(sessionId);
-  
+
   if (!session) {
     return { total: 0, input_tokens: 0, output_tokens: 0, tool_calls: 0 };
   }
 
   // Filter by time window (minutes)
   const cutoffTime = new Date(Date.now() - timeWindow * 60 * 1000).toISOString();
-  
+
   // Load cost logs for this session
   const costLogs = await loadCostLogs(sessionId);
   const recentCosts = costLogs.filter(log => log.timestamp >= cutoffTime);
@@ -145,7 +152,7 @@ export async function getRealTimeCost(sessionId, timeWindow = 60) {
     input_tokens: inputTokens,
     output_tokens: outputTokens,
     tool_calls: toolCalls,
-    time_window_minutes: timeWindow
+    time_window_minutes: timeWindow,
   };
 }
 
@@ -155,22 +162,22 @@ export async function getRealTimeCost(sessionId, timeWindow = 60) {
 export async function checkBudgetAlerts(organizationId = 'default') {
   const config = await loadCostConfig();
   const budgets = config.budgets || {};
-  
+
   // Load today's costs
   const today = new Date().toISOString().split('T')[0];
   const todayCosts = await getCostsForDate(today);
-  
+
   const alerts = [];
-  
+
   if (budgets.daily && todayCosts.total > budgets.daily) {
     alerts.push({
       type: 'daily_budget_exceeded',
       budget: budgets.daily,
       actual: todayCosts.total,
-      organization_id: organizationId
+      organization_id: organizationId,
     });
   }
-  
+
   if (budgets.monthly) {
     const monthCosts = await getCostsForMonth(new Date().getMonth(), new Date().getFullYear());
     if (monthCosts.total > budgets.monthly) {
@@ -178,7 +185,7 @@ export async function checkBudgetAlerts(organizationId = 'default') {
         type: 'monthly_budget_exceeded',
         budget: budgets.monthly,
         actual: monthCosts.total,
-        organization_id: organizationId
+        organization_id: organizationId,
       });
     }
   }
@@ -191,20 +198,20 @@ export async function checkBudgetAlerts(organizationId = 'default') {
  */
 async function logCostEntry(sessionId, type, cost) {
   await mkdir(COST_LOG_DIR, { recursive: true });
-  
+
   const logFile = join(COST_LOG_DIR, `${sessionId}.json`);
   let logs = [];
-  
+
   if (existsSync(logFile)) {
     const content = await readFile(logFile, 'utf8');
     logs = JSON.parse(content);
   }
-  
+
   logs.push({
     type,
-    ...cost
+    ...cost,
   });
-  
+
   await writeFile(logFile, JSON.stringify(logs, null, 2), 'utf8');
 }
 
@@ -213,11 +220,11 @@ async function logCostEntry(sessionId, type, cost) {
  */
 async function loadCostLogs(sessionId) {
   const logFile = join(COST_LOG_DIR, `${sessionId}.json`);
-  
+
   if (!existsSync(logFile)) {
     return [];
   }
-  
+
   const content = await readFile(logFile, 'utf8');
   return JSON.parse(content);
 }
@@ -252,6 +259,5 @@ export default {
   trackToolUsage,
   trackAgentUsage,
   getRealTimeCost,
-  checkBudgetAlerts
+  checkBudgetAlerts,
 };
-

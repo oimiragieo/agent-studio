@@ -2,13 +2,13 @@ name: Fallback Routing Test Workflow
 description: Test workflow for validating fallback agent routing, context preservation, and error recovery
 type: testing
 project_type: validation
-publish_policy: auto-on-pass  # Automatically publish artifacts after validation passes
+publish_policy: auto-on-pass # Automatically publish artifacts after validation passes
 
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
-  test_mode: true  # Enable test mode for simulated failures
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
+  test_mode: true # Enable test mode for simulated failures
 
 retry_config:
   max_attempts: 3
@@ -32,31 +32,31 @@ fallback_agents:
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "test fallback"
-  - "fallback routing"
-  - "agent fallback"
-  - "test recovery"
-  - "fallback chain"
+  - 'test fallback'
+  - 'fallback routing'
+  - 'agent fallback'
+  - 'test recovery'
+  - 'fallback chain'
 
 # Workflow-Level Context Inputs
 workflow_inputs:
   required:
-    - test_scenario  # "explicit_fallback" | "capability_matrix" | "context_preservation" | "fallback_chain" | "invalid_output"
-    - primary_agent  # Agent to test (e.g., "architect")
-    - failure_type  # "non_recoverable" | "timeout" | "invalid_output"
+    - test_scenario # "explicit_fallback" | "capability_matrix" | "context_preservation" | "fallback_chain" | "invalid_output"
+    - primary_agent # Agent to test (e.g., "architect")
+    - failure_type # "non_recoverable" | "timeout" | "invalid_output"
   optional:
-    - max_fallback_attempts  # Maximum fallback attempts (default: 2)
+    - max_fallback_attempts # Maximum fallback attempts (default: 2)
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - test_scenario  # Test scenario to execute
-      - primary_agent  # Primary agent to test
-      - failure_type  # Type of failure to simulate
-      - max_fallback_attempts  # (optional) Maximum fallback attempts
+      - test_scenario # Test scenario to execute
+      - primary_agent # Primary agent to test
+      - failure_type # Type of failure to simulate
+      - max_fallback_attempts # (optional) Maximum fallback attempts
     outputs:
       - plan-{{workflow_id}}.md
       - plan-{{workflow_id}}.json
@@ -69,13 +69,13 @@ steps:
       recommended:
         - diagram-generator
       triggered:
-        - pattern: "fallback|recovery|routing"
+        - pattern: 'fallback|recovery|routing'
           skills: [sequential-thinking, diagram-generator]
           priority: required
       outputs:
         plan-generator:
-          primary: "plan-{{workflow_id}}.json"
-          schema: ".claude/schemas/plan.schema.json"
+          primary: 'plan-{{workflow_id}}.json'
+          schema: '.claude/schemas/plan.schema.json'
           required_for_completion: true
       validation:
         mode: blocking
@@ -93,7 +93,7 @@ steps:
       - Create structured test plan
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -119,23 +119,23 @@ steps:
       - Never execute an unrated plan - this is a hard requirement
 
   - step: 1
-    name: "Primary Agent Execution (Simulated Failure)"
-    agent: "{{primary_agent}}"  # Dynamic agent based on test scenario
+    name: 'Primary Agent Execution (Simulated Failure)'
+    agent: '{{primary_agent}}' # Dynamic agent based on test scenario
     test_mode: true
     simulate_failure: true
     inputs:
       # Artifact inputs (from previous steps)
       - plan-{{workflow_id}}.json (from step 0)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - test_scenario  # Test scenario
-      - failure_type  # Failure type to simulate
+      - test_scenario # Test scenario
+      - failure_type # Failure type to simulate
     outputs:
       - primary-agent-artifacts-{{workflow_id}}.json (partial)
       - error-details-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-{{primary_agent}}.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/01-{{primary_agent}}.json
-    on_failure: "Trigger fallback routing to step 2"
+    on_failure: 'Trigger fallback routing to step 2'
     description: |
       Primary agent execution with simulated failure:
       - Primary agent receives task
@@ -145,15 +145,15 @@ steps:
       - Failure types: non_recoverable, timeout, invalid_output
 
   - step: 2
-    name: "Failure Detection and Fallback Selection"
+    name: 'Failure Detection and Fallback Selection'
     agent: orchestrator
     inputs:
       # Artifact inputs (from previous steps)
       - plan-{{workflow_id}}.json (from step 0)
       - error-details-{{workflow_id}}.json (from step 1)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - primary_agent  # Primary agent that failed
-      - test_scenario  # Test scenario
+      - primary_agent # Primary agent that failed
+      - test_scenario # Test scenario
     outputs:
       - fallback-routing-decision-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-orchestrator.json
@@ -170,7 +170,7 @@ steps:
       - Document fallback routing decision
 
   - step: 3
-    name: "Context Preservation Validation"
+    name: 'Context Preservation Validation'
     agent: orchestrator
     inputs:
       # Artifact inputs (from previous steps)
@@ -194,8 +194,8 @@ steps:
       - Verify fallback agent capabilities
 
   - step: 4
-    name: "Fallback Agent Execution"
-    agent: "{{fallback_agent}}"  # Dynamic agent from fallback routing decision
+    name: 'Fallback Agent Execution'
+    agent: '{{fallback_agent}}' # Dynamic agent from fallback routing decision
     inputs:
       # Artifact inputs (from previous steps)
       - plan-{{workflow_id}}.json (from step 0)
@@ -217,7 +217,7 @@ steps:
       - Completes task successfully
 
   - step: 5
-    name: "Fallback Validation"
+    name: 'Fallback Validation'
     agent: qa
     inputs:
       # Artifact inputs (from previous steps)
@@ -242,7 +242,7 @@ steps:
       - Validate fallback agent capabilities
 
   - step: 6
-    name: "Plan Update and Documentation"
+    name: 'Plan Update and Documentation'
     agent: planner
     inputs:
       # Artifact inputs (from previous steps)
@@ -266,7 +266,7 @@ steps:
       - Record lessons learned from fallback routing
 
   - step: 6.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"
@@ -290,32 +290,32 @@ completion_criteria:
 
 test_scenarios:
   explicit_fallback:
-    description: "Test explicit fallback agent from agent definition"
+    description: 'Test explicit fallback agent from agent definition'
     primary_agent: architect
     expected_fallback: developer
     failure_type: non_recoverable
 
   capability_matrix:
-    description: "Test capability matrix fallback when no explicit fallback"
+    description: 'Test capability matrix fallback when no explicit fallback'
     primary_agent: pm
     expected_fallback: analyst
     failure_type: timeout
 
   context_preservation:
-    description: "Test context preservation during fallback"
+    description: 'Test context preservation during fallback'
     primary_agent: architect
     expected_fallback: developer
     failure_type: non_recoverable
     validate_artifacts: true
 
   fallback_chain:
-    description: "Test multi-level fallback chain"
+    description: 'Test multi-level fallback chain'
     primary_agent: developer
     expected_fallback_chain: [refactoring-specialist, code-reviewer]
     failure_type: invalid_output
 
   invalid_output:
-    description: "Test fallback after max retries on invalid output"
+    description: 'Test fallback after max retries on invalid output'
     primary_agent: developer
     expected_fallback: refactoring-specialist
     failure_type: invalid_output

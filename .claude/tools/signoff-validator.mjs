@@ -44,9 +44,8 @@ async function loadSignoffMatrix() {
  */
 function artifactExists(path) {
   // Handle both absolute and relative paths
-  const absolutePath = path.startsWith('/') || path.includes(':\\')
-    ? path
-    : join(process.cwd(), path);
+  const absolutePath =
+    path.startsWith('/') || path.includes(':\\') ? path : join(process.cwd(), path);
 
   return existsSync(absolutePath);
 }
@@ -64,7 +63,7 @@ async function validateSignoff(artifactPath, schemaPath) {
       return {
         valid: false,
         error: `Artifact not found: ${artifactPath}`,
-        errors: []
+        errors: [],
       };
     }
 
@@ -73,15 +72,16 @@ async function validateSignoff(artifactPath, schemaPath) {
     const artifact = JSON.parse(artifactContent);
 
     // Check if schema exists
-    const absoluteSchemaPath = schemaPath.startsWith('/') || schemaPath.includes(':\\')
-      ? schemaPath
-      : join(process.cwd(), schemaPath);
+    const absoluteSchemaPath =
+      schemaPath.startsWith('/') || schemaPath.includes(':\\')
+        ? schemaPath
+        : join(process.cwd(), schemaPath);
 
     if (!existsSync(absoluteSchemaPath)) {
       return {
         valid: false,
         error: `Schema not found: ${schemaPath}`,
-        errors: []
+        errors: [],
       };
     }
 
@@ -98,13 +98,13 @@ async function validateSignoff(artifactPath, schemaPath) {
       valid,
       artifact,
       errors: validate.errors || [],
-      error: valid ? null : 'Schema validation failed'
+      error: valid ? null : 'Schema validation failed',
     };
   } catch (error) {
     return {
       valid: false,
       error: error.message,
-      errors: []
+      errors: [],
     };
   }
 }
@@ -126,7 +126,7 @@ function signoffPasses(artifact, conditions) {
         condition: key,
         expected: condition,
         actual: 'undefined',
-        reason: 'Field missing from artifact'
+        reason: 'Field missing from artifact',
       });
       continue;
     }
@@ -146,7 +146,7 @@ function signoffPasses(artifact, conditions) {
           condition: key,
           expected: condition,
           actual: value,
-          reason: `Value ${actualValue} is less than threshold ${threshold}`
+          reason: `Value ${actualValue} is less than threshold ${threshold}`,
         });
       }
     } else if (typeof condition === 'number') {
@@ -156,7 +156,7 @@ function signoffPasses(artifact, conditions) {
           condition: key,
           expected: condition,
           actual: value,
-          reason: `Value ${actualValue} is less than expected ${condition}`
+          reason: `Value ${actualValue} is less than expected ${condition}`,
         });
       }
     } else if (typeof condition === 'boolean') {
@@ -165,7 +165,7 @@ function signoffPasses(artifact, conditions) {
           condition: key,
           expected: condition,
           actual: value,
-          reason: `Expected ${condition} but got ${value}`
+          reason: `Expected ${condition} but got ${value}`,
         });
       }
     } else if (typeof condition === 'string') {
@@ -174,7 +174,7 @@ function signoffPasses(artifact, conditions) {
           condition: key,
           expected: condition,
           actual: value,
-          reason: `Expected "${condition}" but got "${value}"`
+          reason: `Expected "${condition}" but got "${value}"`,
         });
       }
     }
@@ -182,7 +182,7 @@ function signoffPasses(artifact, conditions) {
 
   return {
     passed: failures.length === 0,
-    failures
+    failures,
   };
 }
 
@@ -206,7 +206,7 @@ export async function validateWorkflowSignoffs(workflowId, workflow, task = '') 
         workflow,
         valid: false,
         error: `Unknown workflow: ${workflow}`,
-        signoffs: []
+        signoffs: [],
       };
     }
 
@@ -236,7 +236,7 @@ export async function validateWorkflowSignoffs(workflowId, workflow, task = '') 
         valid: signoffValid,
         errors: validationResult.errors,
         condition_failures: conditionResult.failures,
-        error: validationResult.error
+        error: validationResult.error,
       });
 
       if (!signoffValid) {
@@ -260,7 +260,7 @@ export async function validateWorkflowSignoffs(workflowId, workflow, task = '') 
           schema: signoff.schema,
           agents: signoff.agents,
           valid: true,
-          message: 'Not triggered by task keywords'
+          message: 'Not triggered by task keywords',
         });
         continue;
       }
@@ -287,7 +287,7 @@ export async function validateWorkflowSignoffs(workflowId, workflow, task = '') 
         valid: signoffValid,
         errors: validationResult.errors,
         condition_failures: conditionResult.failures,
-        error: validationResult.error
+        error: validationResult.error,
       });
 
       // Conditional signoffs are blocking if configured
@@ -306,11 +306,11 @@ export async function validateWorkflowSignoffs(workflowId, workflow, task = '') 
         required: results.filter(r => r.required).length,
         conditional: results.filter(r => !r.required).length,
         passed: results.filter(r => r.valid).length,
-        failed: results.filter(r => !r.valid).length
+        failed: results.filter(r => !r.valid).length,
       },
       message: allValid
         ? 'All signoffs passed'
-        : `Signoff validation failed: ${results.filter(r => !r.valid).length} signoff(s) did not pass`
+        : `Signoff validation failed: ${results.filter(r => !r.valid).length} signoff(s) did not pass`,
     };
   } catch (error) {
     return {
@@ -318,7 +318,7 @@ export async function validateWorkflowSignoffs(workflowId, workflow, task = '') 
       workflow,
       valid: false,
       error: error.message,
-      signoffs: []
+      signoffs: [],
     };
   }
 }
@@ -333,7 +333,7 @@ function parseArgs(args) {
     workflowId: null,
     workflow: null,
     task: '',
-    help: false
+    help: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -426,5 +426,5 @@ export default {
   validateSignoff,
   signoffPasses,
   artifactExists,
-  loadSignoffMatrix
+  loadSignoffMatrix,
 };

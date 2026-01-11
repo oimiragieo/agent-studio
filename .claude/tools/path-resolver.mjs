@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * Path Resolver - Single place that maps artifact/plan paths to run directory locations
- * 
+ *
  * Allows incremental migration: workflows/tools use resolver, old paths still work temporarily
- * 
+ *
  * Usage:
  *   import { resolveArtifactPath, resolvePlanPath, resolveGatePath } from './path-resolver.mjs';
  */
@@ -91,13 +91,13 @@ export function resolveLegacyPath(oldPath, runId) {
     const artifactName = oldPath.split('.claude/context/artifacts/')[1];
     return resolveArtifactPath(runId, artifactName);
   }
-  
+
   // Map .claude/context/plans/* to runs/<run_id>/plans/*
   if (oldPath.includes('.claude/context/plans/')) {
     const planName = oldPath.split('.claude/context/plans/')[1];
     return resolvePlanPath(runId, planName);
   }
-  
+
   // Return original if not mappable
   return oldPath;
 }
@@ -108,6 +108,5 @@ export default {
   resolveGatePath,
   resolveReasoningPath,
   resolveHandoffPath,
-  resolveLegacyPath
+  resolveLegacyPath,
 };
-

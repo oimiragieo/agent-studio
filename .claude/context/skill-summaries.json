@@ -6,13 +6,7 @@
     "scaffolder": {
       "name": "scaffolder",
       "one_liner": "No description",
-      "key_commands": [
-        "/skills",
-        "/scaffolder",
-        "/scripts",
-        "/scaffold",
-        "/test-scaffold"
-      ],
+      "key_commands": ["/skills", "/scaffolder", "/scripts", "/scaffold", "/test-scaffold"],
       "token_count": {
         "minimal": 10,
         "essential": 326,
@@ -76,13 +70,7 @@
     "api-contract-generator": {
       "name": "api-contract-generator",
       "one_liner": "No description",
-      "key_commands": [
-        "/Swagger",
-        "/response",
-        "/api",
-        "/users",
-        "/endpoint"
-      ],
+      "key_commands": ["/Swagger", "/response", "/api", "/users", "/endpoint"],
       "token_count": {
         "minimal": 13,
         "essential": 9,
@@ -111,13 +99,7 @@
     "rule-auditor": {
       "name": "rule-auditor",
       "one_liner": "No description",
-      "key_commands": [
-        "/audit",
-        "/skills",
-        "/rule-auditor",
-        "/scripts",
-        "/components"
-      ],
+      "key_commands": ["/audit", "/skills", "/rule-auditor", "/scripts", "/components"],
       "token_count": {
         "minimal": 11,
         "essential": 380,
@@ -146,13 +128,7 @@
     "code-style-validator": {
       "name": "code-style-validator",
       "one_liner": "No description",
-      "key_commands": [
-        "/identity",
-        "/CD",
-        "/capabilities",
-        "/class",
-        "/JavaScript"
-      ],
+      "key_commands": ["/identity", "/CD", "/capabilities", "/class", "/JavaScript"],
       "token_count": {
         "minimal": 13,
         "essential": 143,
@@ -181,13 +157,7 @@
     "fixing-rule-violations": {
       "name": "fixing-rule-violations",
       "one_liner": "No description",
-      "key_commands": [
-        "/identity",
-        "/capabilities",
-        "/path",
-        "/context",
-        "/rule-index"
-      ],
+      "key_commands": ["/identity", "/capabilities", "/path", "/context", "/rule-index"],
       "token_count": {
         "minimal": 13,
         "essential": 203,
@@ -286,13 +256,7 @@
     "summarizer": {
       "name": "summarizer",
       "one_liner": "No description",
-      "key_commands": [
-        "/context",
-        "/runs",
-        "/artifacts",
-        "/docs",
-        "/SUMMARIZATION_PATTERNS"
-      ],
+      "key_commands": ["/context", "/runs", "/artifacts", "/docs", "/SUMMARIZATION_PATTERNS"],
       "token_count": {
         "minimal": 10,
         "essential": 6,
@@ -321,13 +285,7 @@
     "pdf-generator": {
       "name": "pdf-generator",
       "one_liner": "No description",
-      "key_commands": [
-        "/context",
-        "/runs",
-        "/artifacts",
-        "/docs",
-        "/DOCUMENT_GENERATION"
-      ],
+      "key_commands": ["/context", "/runs", "/artifacts", "/docs", "/DOCUMENT_GENERATION"],
       "token_count": {
         "minimal": 11,
         "essential": 6,
@@ -356,13 +314,7 @@
     "powerpoint-generator": {
       "name": "powerpoint-generator",
       "one_liner": "No description",
-      "key_commands": [
-        "/context",
-        "/artifacts",
-        "/docs",
-        "/DOCUMENT_GENERATION",
-        "/github"
-      ],
+      "key_commands": ["/context", "/artifacts", "/docs", "/DOCUMENT_GENERATION", "/github"],
       "token_count": {
         "minimal": 13,
         "essential": 8,
@@ -391,13 +343,7 @@
     "excel-generator": {
       "name": "excel-generator",
       "one_liner": "No description",
-      "key_commands": [
-        "/CSV",
-        "/context",
-        "/artifacts",
-        "/docs",
-        "/DOCUMENT_GENERATION"
-      ],
+      "key_commands": ["/CSV", "/context", "/artifacts", "/docs", "/DOCUMENT_GENERATION"],
       "token_count": {
         "minimal": 12,
         "essential": 7,
@@ -461,13 +407,7 @@
     "dependency-analyzer": {
       "name": "dependency-analyzer",
       "one_liner": "No description",
-      "key_commands": [
-        "/requirements",
-        "/go",
-        "/identity",
-        "/capabilities",
-        "/Maven"
-      ],
+      "key_commands": ["/requirements", "/go", "/identity", "/capabilities", "/Maven"],
       "token_count": {
         "minimal": 13,
         "essential": 458,
@@ -496,13 +436,7 @@
     "evaluator": {
       "name": "evaluator",
       "one_liner": "No description",
-      "key_commands": [
-        "/fail",
-        "/components",
-        "/evaluation",
-        "/datasets",
-        "/agent-tasks"
-      ],
+      "key_commands": ["/fail", "/components", "/evaluation", "/datasets", "/agent-tasks"],
       "token_count": {
         "minimal": 10,
         "essential": 5,
@@ -531,11 +465,7 @@
     "classifier": {
       "name": "classifier",
       "one_liner": "No description",
-      "key_commands": [
-        "/components",
-        "/docs",
-        "/CLASSIFICATION_PATTERNS"
-      ],
+      "key_commands": ["/components", "/docs", "/CLASSIFICATION_PATTERNS"],
       "token_count": {
         "minimal": 10,
         "essential": 6,
@@ -599,13 +529,7 @@
     "test-generator": {
       "name": "test-generator",
       "one_liner": "No description",
-      "key_commands": [
-        "/identity",
-        "/capabilities",
-        "/function",
-        "/API",
-        "/methods"
-      ],
+      "key_commands": ["/identity", "/capabilities", "/function", "/API", "/methods"],
       "token_count": {
         "minimal": 11,
         "essential": 191,
@@ -634,13 +558,7 @@
     "chrome-devtools": {
       "name": "chrome-devtools",
       "one_liner": "No description",
-      "key_commands": [
-        "/network",
-        "/example",
-        "/path",
-        "/to",
-        "/file"
-      ],
+      "key_commands": ["/network", "/example", "/path", "/to", "/file"],
       "token_count": {
         "minimal": 12,
         "essential": 7,
@@ -669,13 +587,7 @@
     "computer-use": {
       "name": "computer-use",
       "one_liner": "No description",
-      "key_commands": [
-        "/example",
-        "/google",
-        "/true",
-        "/yes",
-        "/skills"
-      ],
+      "key_commands": ["/example", "/google", "/true", "/yes", "/skills"],
       "token_count": {
         "minimal": 11,
         "essential": 6,
@@ -704,13 +616,7 @@
     "recovery": {
       "name": "recovery",
       "one_liner": "No description",
-      "key_commands": [
-        "/context",
-        "/history",
-        "/gates",
-        "/reasoning",
-        "/artifacts"
-      ],
+      "key_commands": ["/context", "/history", "/gates", "/reasoning", "/artifacts"],
       "token_count": {
         "minimal": 10,
         "essential": 5,
@@ -739,13 +645,7 @@
     "response-rater": {
       "name": "response-rater",
       "one_liner": "Run headless AI CLIs (Claude Code, Gemini, OpenAI Codex, Cursor Agent, GitHub Copilot) to rate an assistant response against a rubric and return actionable feedback plus a rewritten improved response; use for response quality audits, prompt/docs reviews, and \"have another AI critique this answer\" workflows.",
-      "key_commands": [
-        "/docs",
-        "/skills",
-        "/response-rater",
-        "/scripts",
-        "/rate"
-      ],
+      "key_commands": ["/docs", "/skills", "/response-rater", "/scripts", "/rate"],
       "token_count": {
         "minimal": 82,
         "essential": 84,
@@ -774,13 +674,7 @@
     "artifact-publisher": {
       "name": "artifact-publisher",
       "one_liner": "Publish and share Claude Artifacts with Projects, Cursor, and downstream agents. Use when a user wants to \"save\", \"share\", or \"finalize\" a generated artifact.",
-      "key_commands": [
-        "/identity",
-        "/capabilities",
-        "/tools",
-        "/run-manager",
-        "/false"
-      ],
+      "key_commands": ["/identity", "/capabilities", "/tools", "/run-manager", "/false"],
       "token_count": {
         "minimal": 46,
         "essential": 125,
@@ -809,13 +703,7 @@
     "context-bridge": {
       "name": "context-bridge",
       "one_liner": "Synchronize task state and metadata across Claude, Cursor, and Factory Droid sessions. Use when handing off tasks between platforms, sharing plans, or updating external trackers like Linear or Jira.",
-      "key_commands": [
-        "/identity",
-        "/capabilities",
-        "/context",
-        "/state",
-        "/runs"
-      ],
+      "key_commands": ["/identity", "/capabilities", "/context", "/state", "/runs"],
       "token_count": {
         "minimal": 55,
         "essential": 109,
@@ -844,13 +732,7 @@
     "conflict-resolution": {
       "name": "conflict-resolution",
       "one_liner": "No description",
-      "key_commands": [
-        "/sec",
-        "/agents",
-        "/planner",
-        "/orchestrator",
-        "/docs"
-      ],
+      "key_commands": ["/sec", "/agents", "/planner", "/orchestrator", "/docs"],
       "token_count": {
         "minimal": 13,
         "essential": 8,
@@ -914,13 +796,7 @@
     "plan-generator": {
       "name": "plan-generator",
       "one_liner": "No description",
-      "key_commands": [
-        "/identity",
-        "/capabilities",
-        "/templates",
-        "/plan-template",
-        "/context"
-      ],
+      "key_commands": ["/identity", "/capabilities", "/templates", "/plan-template", "/context"],
       "token_count": {
         "minimal": 11,
         "essential": 239,
@@ -984,13 +860,7 @@
     "rule-selector": {
       "name": "rule-selector",
       "one_liner": "No description",
-      "key_commands": [
-        "/JavaScript",
-        "/context",
-        "/rule-index",
-        "/generate-rule-index",
-        "/n"
-      ],
+      "key_commands": ["/JavaScript", "/context", "/rule-index", "/generate-rule-index", "/n"],
       "token_count": {
         "minimal": 11,
         "essential": 6,
@@ -1019,13 +889,7 @@
     "explaining-rules": {
       "name": "explaining-rules",
       "one_liner": "No description",
-      "key_commands": [
-        "/identity",
-        "/capabilities",
-        "/context",
-        "/rule-index",
-        "/rules-master"
-      ],
+      "key_commands": ["/identity", "/capabilities", "/context", "/rule-index", "/rules-master"],
       "token_count": {
         "minimal": 12,
         "essential": 314,
@@ -1124,13 +988,7 @@
     "git": {
       "name": "git",
       "one_liner": "Git repository operations - status, diff, commit, branch, log. Converted from MCP server for 90%+ context savings.",
-      "key_commands": [
-        "/new-feature",
-        "/index",
-        "/new-file",
-        "/updating",
-        "/description"
-      ],
+      "key_commands": ["/new-feature", "/index", "/new-file", "/updating", "/description"],
       "token_count": {
         "minimal": 31,
         "essential": 33,
@@ -1159,13 +1017,7 @@
     "github": {
       "name": "github",
       "one_liner": "No description",
-      "key_commands": [
-        "/update",
-        "/submit",
-        "/github",
-        "/github-mcp-server",
-        "/docs"
-      ],
+      "key_commands": ["/update", "/submit", "/github", "/github-mcp-server", "/docs"],
       "token_count": {
         "minimal": 9,
         "essential": 5,
@@ -1194,12 +1046,7 @@
     "cloud-run": {
       "name": "cloud-run",
       "one_liner": "No description",
-      "key_commands": [
-        "/region",
-        "/skills",
-        "/cloud-run",
-        "/executor"
-      ],
+      "key_commands": ["/region", "/skills", "/cloud-run", "/executor"],
       "token_count": {
         "minimal": 10,
         "essential": 5,
@@ -1228,13 +1075,7 @@
     "puppeteer": {
       "name": "puppeteer",
       "one_liner": "Browser automation with Puppeteer. Navigate pages, interact with elements, fill forms, take screenshots, and execute JavaScript. Converted from MCP server for 90%+ context savings.",
-      "key_commands": [
-        "/Chromium",
-        "/select",
-        "/element",
-        "/example",
-        "/login"
-      ],
+      "key_commands": ["/Chromium", "/select", "/element", "/example", "/login"],
       "token_count": {
         "minimal": 49,
         "essential": 51,
@@ -1263,13 +1104,7 @@
     "memory": {
       "name": "memory",
       "one_liner": "No description",
-      "key_commands": [
-        "/server-memory",
-        "/path",
-        "/to",
-        "/memory",
-        "/skills"
-      ],
+      "key_commands": ["/server-memory", "/path", "/to", "/memory", "/skills"],
       "token_count": {
         "minimal": 9,
         "essential": 5,
@@ -1298,13 +1133,7 @@
     "memory-manager": {
       "name": "memory-manager",
       "one_liner": "No description",
-      "key_commands": [
-        "/memories",
-        "/context",
-        "/runs",
-        "/skills",
-        "/memory-manager"
-      ],
+      "key_commands": ["/memories", "/context", "/runs", "/skills", "/memory-manager"],
       "token_count": {
         "minimal": 11,
         "essential": 7,
@@ -1368,12 +1197,7 @@
     "mcp-converter": {
       "name": "mcp-converter",
       "one_liner": "No description",
-      "key_commands": [
-        "/skills",
-        "/github",
-        "/mcp-converter",
-        "/conversion_rules"
-      ],
+      "key_commands": ["/skills", "/github", "/mcp-converter", "/conversion_rules"],
       "token_count": {
         "minimal": 11,
         "essential": 6,
@@ -1402,13 +1226,7 @@
     "skill-manager": {
       "name": "skill-manager",
       "one_liner": "No description",
-      "key_commands": [
-        "/skills",
-        "/skill-manager",
-        "/scripts",
-        "/list",
-        "/validate"
-      ],
+      "key_commands": ["/skills", "/skill-manager", "/scripts", "/list", "/validate"],
       "token_count": {
         "minimal": 11,
         "essential": 6,
@@ -1437,13 +1255,7 @@
     "filesystem": {
       "name": "filesystem",
       "one_liner": "File system operations - read, write, list directories. Converted from MCP server for 90%+ context savings.",
-      "key_commands": [
-        "/renaming",
-        "/path",
-        "/to",
-        "/file",
-        "/dir"
-      ],
+      "key_commands": ["/renaming", "/path", "/to", "/file", "/dir"],
       "token_count": {
         "minimal": 31,
         "essential": 33,
@@ -1472,13 +1284,7 @@
     "sdk": {
       "name": "sdk",
       "one_liner": "No description",
-      "key_commands": [
-        "/context",
-        "/cache",
-        "/skill-cache",
-        "/skills",
-        "/sdk"
-      ],
+      "key_commands": ["/context", "/cache", "/skill-cache", "/skills", "/sdk"],
       "token_count": {
         "minimal": 9,
         "essential": 4,
@@ -1507,13 +1313,7 @@
     "commit-validator": {
       "name": "commit-validator",
       "one_liner": "No description",
-      "key_commands": [
-        "/www",
-        "/identity",
-        "/CD",
-        "/capabilities",
-        "/execution_process"
-      ],
+      "key_commands": ["/www", "/identity", "/CD", "/capabilities", "/execution_process"],
       "token_count": {
         "minimal": 12,
         "essential": 260,

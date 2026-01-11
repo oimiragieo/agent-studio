@@ -41,9 +41,11 @@ async function spawnSubagentWithLimit(args, options = {}) {
   const child = spawn('node', args, { stdio: 'inherit' });
 
   // Decrement counter when child exits
-  child.on('exit', (code) => {
+  child.on('exit', code => {
     activeSubagents--;
-    console.log(`[Spawn] Subagent exited (code: ${code}), active: ${activeSubagents}/${MAX_CONCURRENT_SUBAGENTS}`);
+    console.log(
+      `[Spawn] Subagent exited (code: ${code}), active: ${activeSubagents}/${MAX_CONCURRENT_SUBAGENTS}`
+    );
   });
 
   return child;
@@ -59,12 +61,15 @@ async function testConcurrencyLimit() {
     // Create a simple test script that sleeps for 1 second
     const testScript = join(__dirname, '../context/tmp/test-sleep.mjs');
     const fs = await import('fs/promises');
-    await fs.writeFile(testScript, `
+    await fs.writeFile(
+      testScript,
+      `
       setTimeout(() => {
         console.log('Test script completed');
         process.exit(0);
       }, 1000);
-    `);
+    `
+    );
 
     // Spawn 5 subagents (more than max of 3)
     const promises = [];
@@ -76,7 +81,9 @@ async function testConcurrencyLimit() {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     if (activeSubagents > MAX_CONCURRENT_SUBAGENTS) {
-      throw new Error(`Too many concurrent subagents: ${activeSubagents} > ${MAX_CONCURRENT_SUBAGENTS}`);
+      throw new Error(
+        `Too many concurrent subagents: ${activeSubagents} > ${MAX_CONCURRENT_SUBAGENTS}`
+      );
     }
 
     console.log(`✓ Active subagents within limit: ${activeSubagents}/${MAX_CONCURRENT_SUBAGENTS}`);
@@ -102,11 +109,14 @@ async function testTimeout() {
     // Fill all slots with long-running processes
     const testScript = join(__dirname, '../context/tmp/test-sleep-long.mjs');
     const fs = await import('fs/promises');
-    await fs.writeFile(testScript, `
+    await fs.writeFile(
+      testScript,
+      `
       setTimeout(() => {
         process.exit(0);
       }, 10000); // 10 seconds
-    `);
+    `
+    );
 
     // Fill all slots
     for (let i = 0; i < MAX_CONCURRENT_SUBAGENTS; i++) {
@@ -141,12 +151,15 @@ async function testSequentialExecution() {
     const startTime = Date.now();
     const testScript = join(__dirname, '../context/tmp/test-sleep-seq.mjs');
     const fs = await import('fs/promises');
-    await fs.writeFile(testScript, `
+    await fs.writeFile(
+      testScript,
+      `
       setTimeout(() => {
         console.log('Test completed at', Date.now());
         process.exit(0);
       }, 500);
-    `);
+    `
+    );
 
     // Spawn 6 subagents (2 batches of 3)
     const promises = [];

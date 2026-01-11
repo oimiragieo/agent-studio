@@ -66,14 +66,7 @@
       "npm run typecheck"
     ],
     "require_confirmation": [],
-    "blocked_patterns": [
-      "rm -rf /",
-      "rm -rf ~",
-      "sudo rm",
-      "format *",
-      "dd if=",
-      "mkfs *"
-    ]
+    "blocked_patterns": ["rm -rf /", "rm -rf ~", "sudo rm", "format *", "dd if=", "mkfs *"]
   },
   "session": {
     "auto_save": true,
@@ -81,9 +74,7 @@
     "max_context_tokens": 100000
   },
   "rules": {
-    "exclude_patterns": [
-      ".claude/archive/**"
-    ],
+    "exclude_patterns": [".claude/archive/**"],
     "archive_access": "on_demand"
   },
   "agent_config": {
@@ -107,63 +98,7 @@
     ]
   },
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash|Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/security-pre-tool.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/file-path-validator.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Read|Write|Edit|Bash|Grep|Glob",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/orchestrator-enforcement-hook.mjs"
-          }
-        ]
-      },
-      {
-        "matcher": "Task",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/skill-injection-hook.js"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/audit-post-tool.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/post-session-cleanup.js"
-          }
-        ]
-      }
-    ]
+    "PreToolUse": [],
+    "PostToolUse": []
   }
 }

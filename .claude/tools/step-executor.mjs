@@ -50,8 +50,8 @@ export function loadTimeoutConfig() {
       'llm-architect': 900000,
       'security-architect': 600000,
       'code-reviewer': 480000,
-      planner: 600000
-    }
+      planner: 600000,
+    },
   };
 
   if (!yaml) {
@@ -81,7 +81,7 @@ export function loadRetryConfig() {
     max_retries: 2,
     include_feedback: true,
     backoff_base_ms: 1000,
-    backoff_max_ms: 5000
+    backoff_max_ms: 5000,
   };
 
   if (!yaml) {
@@ -142,7 +142,9 @@ export async function executeStepWithTimeout(executeFn, context = {}, options = 
     timeout = getAgentTimeout(agent);
   }
 
-  console.log(`[timeout] Step ${step} (${agent}): timeout set to ${timeout}ms (${(timeout / 60000).toFixed(1)} min)`);
+  console.log(
+    `[timeout] Step ${step} (${agent}): timeout set to ${timeout}ms (${(timeout / 60000).toFixed(1)} min)`
+  );
 
   // Create timeout promise
   const timeoutPromise = new Promise((_, reject) => {
@@ -163,10 +165,7 @@ export async function executeStepWithTimeout(executeFn, context = {}, options = 
 
   // Race between step execution and timeout
   try {
-    const result = await Promise.race([
-      executeFn(),
-      timeoutPromise
-    ]);
+    const result = await Promise.race([executeFn(), timeoutPromise]);
 
     return result;
   } catch (error) {
@@ -181,7 +180,7 @@ export async function executeStepWithTimeout(executeFn, context = {}, options = 
           step,
           agent,
           operation: 'step_execution_timeout',
-          metadata: { timeout }
+          metadata: { timeout },
         });
       }
     }
@@ -237,9 +236,11 @@ export async function executeStepWithRetry(executeFn, validateFn, context = {}, 
         retryContext.validationFeedback = {
           errors: lastValidationErrors,
           attempt,
-          message: `Previous attempt failed validation. Issues: ${lastValidationErrors.join(', ')}`
+          message: `Previous attempt failed validation. Issues: ${lastValidationErrors.join(', ')}`,
         };
-        console.log(`[retry] Attempt ${attempt}/${maxRetries}: Including validation feedback in context`);
+        console.log(
+          `[retry] Attempt ${attempt}/${maxRetries}: Including validation feedback in context`
+        );
       }
 
       // Execute step
@@ -305,8 +306,8 @@ export async function executeStepWithRetry(executeFn, validateFn, context = {}, 
       operation: 'step_execution_retry_exhausted',
       metadata: {
         attempts: maxRetries,
-        lastValidationErrors
-      }
+        lastValidationErrors,
+      },
     });
   }
 
@@ -322,27 +323,28 @@ export async function executeStepWithRetry(executeFn, validateFn, context = {}, 
  * @param {Object} options - Options (combines timeout and retry options)
  * @returns {Promise<Object>} - Execution result
  */
-export async function executeStepWithTimeoutAndRetry(executeFn, validateFn, context = {}, options = {}) {
+export async function executeStepWithTimeoutAndRetry(
+  executeFn,
+  validateFn,
+  context = {},
+  options = {}
+) {
   // Wrap executeFn with timeout
-  const executeWithTimeout = () => executeStepWithTimeout(executeFn, context, {
-    timeout: options.timeout,
-    agent: options.agent || context.agent,
-    step: options.step || context.step
-  });
+  const executeWithTimeout = () =>
+    executeStepWithTimeout(executeFn, context, {
+      timeout: options.timeout,
+      agent: options.agent || context.agent,
+      step: options.step || context.step,
+    });
 
   // Execute with retry
-  return executeStepWithRetry(
-    executeWithTimeout,
-    validateFn,
-    context,
-    {
-      maxRetries: options.maxRetries,
-      includeFeedback: options.includeFeedback,
-      backoffBaseMs: options.backoffBaseMs,
-      backoffMaxMs: options.backoffMaxMs,
-      forceRetry: options.forceRetry
-    }
-  );
+  return executeStepWithRetry(executeWithTimeout, validateFn, context, {
+    maxRetries: options.maxRetries,
+    includeFeedback: options.includeFeedback,
+    backoffBaseMs: options.backoffBaseMs,
+    backoffMaxMs: options.backoffMaxMs,
+    forceRetry: options.forceRetry,
+  });
 }
 
 /**
@@ -360,11 +362,14 @@ export function createStepExecutor(defaultOptions = {}) {
       executeStepWithRetry(executeFn, validateFn, context, { ...defaultOptions, ...options }),
 
     executeWithTimeoutAndRetry: (executeFn, validateFn, context, options) =>
-      executeStepWithTimeoutAndRetry(executeFn, validateFn, context, { ...defaultOptions, ...options }),
+      executeStepWithTimeoutAndRetry(executeFn, validateFn, context, {
+        ...defaultOptions,
+        ...options,
+      }),
 
     getAgentTimeout,
     loadTimeoutConfig,
-    loadRetryConfig
+    loadRetryConfig,
   };
 }
 
@@ -376,5 +381,5 @@ export default {
   createStepExecutor,
   getAgentTimeout,
   loadTimeoutConfig,
-  loadRetryConfig
+  loadRetryConfig,
 };

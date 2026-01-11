@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 /**
  * Task Complexity Classifier
- * 
+ *
  * Classifies incoming tasks by complexity to determine which gates are required:
  * - trivial: Single file, <50 lines -> No plan, no review
- * - simple: Single file, <200 lines -> No plan, yes review  
+ * - simple: Single file, <200 lines -> No plan, yes review
  * - moderate: 2-5 files, single module -> Yes plan, yes review
  * - complex: 5+ files, cross-module -> Yes plan, yes review, yes impact analysis
  * - critical: Architecture/API changes -> Yes plan, yes review, yes impact analysis
- * 
+ *
  * Usage:
  *   node task-classifier.mjs --task "Add user authentication to the app"
  *   node task-classifier.mjs --task "Fix typo in README"
  *   node task-classifier.mjs --task "Refactor all API endpoints" --files "src/api/**"
- * 
+ *
  * Programmatic:
  *   import { classifyTask } from './task-classifier.mjs';
  *   const result = classifyTask(taskDescription, options);
@@ -39,8 +39,18 @@ const MAX_CACHE_ENTRIES = 100;
 
 // Security: Keywords that enforce complexity floor (MEDIUM-4)
 const SECURITY_KEYWORDS = [
-  'authentication', 'authorization', 'security', 'password', 'credential',
-  'token', 'oauth', 'jwt', 'encryption', 'secret', 'permission', 'access control'
+  'authentication',
+  'authorization',
+  'security',
+  'password',
+  'credential',
+  'token',
+  'oauth',
+  'jwt',
+  'encryption',
+  'secret',
+  'permission',
+  'access control',
 ];
 
 // Lazy-load glob to reduce startup time (Priority 2)
@@ -199,8 +209,8 @@ const COMPLEXITY_LEVELS = {
     gates: {
       planner: false,
       review: false,
-      impactAnalysis: false
-    }
+      impactAnalysis: false,
+    },
   },
   simple: {
     level: 'simple',
@@ -208,8 +218,8 @@ const COMPLEXITY_LEVELS = {
     gates: {
       planner: false,
       review: true,
-      impactAnalysis: false
-    }
+      impactAnalysis: false,
+    },
   },
   moderate: {
     level: 'moderate',
@@ -217,8 +227,8 @@ const COMPLEXITY_LEVELS = {
     gates: {
       planner: true,
       review: true,
-      impactAnalysis: false
-    }
+      impactAnalysis: false,
+    },
   },
   complex: {
     level: 'complex',
@@ -226,8 +236,8 @@ const COMPLEXITY_LEVELS = {
     gates: {
       planner: true,
       review: true,
-      impactAnalysis: true
-    }
+      impactAnalysis: true,
+    },
   },
   critical: {
     level: 'critical',
@@ -235,9 +245,9 @@ const COMPLEXITY_LEVELS = {
     gates: {
       planner: true,
       review: true,
-      impactAnalysis: true
-    }
-  }
+      impactAnalysis: true,
+    },
+  },
 };
 
 /**
@@ -245,107 +255,128 @@ const COMPLEXITY_LEVELS = {
  */
 const TASK_TYPE_INDICATORS = {
   UI_UX: {
-    keywords: ['ui', 'ux', 'design', 'wireframe', 'interface', 'tailwind', 'css', 'component', 'layout', 'styling', 'theme'],
+    keywords: [
+      'ui',
+      'ux',
+      'design',
+      'wireframe',
+      'interface',
+      'tailwind',
+      'css',
+      'component',
+      'layout',
+      'styling',
+      'theme',
+    ],
     patterns: [/ui\s+(design|fix|update)/i, /user\s+interface/i, /wireframe/i, /mockup/i],
     primaryAgent: 'ux-expert',
-    weight: 100
+    weight: 100,
   },
   MOBILE: {
-    keywords: ['mobile', 'ios', 'android', 'react native', 'flutter', 'swift', 'kotlin', 'app store'],
+    keywords: [
+      'mobile',
+      'ios',
+      'android',
+      'react native',
+      'flutter',
+      'swift',
+      'kotlin',
+      'app store',
+    ],
     patterns: [/mobile\s+(app|dev)/i, /(ios|android)/i, /react\s+native/i],
     primaryAgent: 'mobile-developer',
-    weight: 100
+    weight: 100,
   },
   DATABASE: {
     keywords: ['database', 'schema', 'migration', 'sql', 'postgresql', 'mongodb', 'query', 'index'],
     patterns: [/database|schema|migration/i, /sql\s+(query|table)/i],
     primaryAgent: 'database-architect',
-    weight: 100
+    weight: 100,
   },
   API: {
     keywords: ['api design', 'rest', 'graphql', 'grpc', 'openapi', 'endpoint'],
     patterns: [/api\s+(design|endpoint)/i, /(rest|graphql|grpc)\s+api/i],
     primaryAgent: 'api-designer',
-    weight: 100
+    weight: 100,
   },
   SECURITY: {
     keywords: ['security', 'auth', 'encryption', 'vulnerability', 'oauth', 'jwt'],
     patterns: [/security|auth|encrypt/i, /vulnerability\s+(scan|fix)/i],
     primaryAgent: 'security-architect',
-    weight: 100
+    weight: 100,
   },
   PERFORMANCE: {
     keywords: ['performance', 'optimize', 'profiling', 'benchmark', 'latency', 'slow'],
     patterns: [/performance|optimize|slow/i, /latency|throughput/i],
     primaryAgent: 'performance-engineer',
-    weight: 100
+    weight: 100,
   },
   AI_LLM: {
     keywords: ['ai', 'llm', 'prompt', 'rag', 'embeddings', 'chatbot', 'claude', 'gpt'],
     patterns: [/ai\s+system|llm|prompt/i, /rag|embeddings/i],
     primaryAgent: 'llm-architect',
-    weight: 100
+    weight: 100,
   },
   LEGACY: {
     keywords: ['legacy', 'modernize', 'migrate', 'upgrade', 'rewrite', 'obsolete'],
     patterns: [/legacy|modernize|migrate/i, /upgrade\s+(from|to)/i],
     primaryAgent: 'legacy-modernizer',
-    weight: 100
+    weight: 100,
   },
   INCIDENT: {
     keywords: ['incident', 'outage', 'emergency', 'production issue', 'crisis', 'down'],
     patterns: [/incident|outage|emergency/i, /production\s+(issue|down)/i],
     primaryAgent: 'incident-responder',
-    weight: 100
+    weight: 100,
   },
   COMPLIANCE: {
     keywords: ['gdpr', 'hipaa', 'soc2', 'pci', 'compliance', 'audit', 'regulation'],
     patterns: [/gdpr|hipaa|compliance/i, /(soc2|pci)\s+(audit|compliance)/i],
     primaryAgent: 'compliance-auditor',
-    weight: 100
+    weight: 100,
   },
   INFRASTRUCTURE: {
     keywords: ['infrastructure', 'deployment', 'ci/cd', 'kubernetes', 'docker', 'terraform'],
     patterns: [/infrastructure|deployment|devops/i, /(kubernetes|docker|terraform)/i],
     primaryAgent: 'devops',
-    weight: 100
+    weight: 100,
   },
   DOCUMENTATION: {
     keywords: ['documentation', 'docs', 'readme', 'guide', 'tutorial', 'api docs'],
     patterns: [/documentation|docs|readme/i, /(guide|tutorial)\s+for/i],
     primaryAgent: 'technical-writer',
-    weight: 100
+    weight: 100,
   },
   RESEARCH: {
     keywords: ['research', 'analysis', 'requirements', 'feasibility', 'investigate'],
     patterns: [/research|analysis|investigate/i, /feasibility\s+(study|analysis)/i],
     primaryAgent: 'analyst',
-    weight: 100
+    weight: 100,
   },
   PRODUCT: {
     keywords: ['prd', 'product', 'user story', 'epic', 'backlog', 'roadmap'],
     patterns: [/product|user\s+story|backlog/i, /(prd|epic|roadmap)/i],
     primaryAgent: 'pm',
-    weight: 100
+    weight: 100,
   },
   ARCHITECTURE: {
     keywords: ['architecture', 'system design', 'technology stack', 'scalability'],
     patterns: [/architecture|system\s+design/i, /(scalability|tech\s+stack)/i],
     primaryAgent: 'architect',
-    weight: 100
+    weight: 100,
   },
   REFACTORING: {
     keywords: ['refactor', 'code smell', 'clean code', 'technical debt', 'maintainability'],
     patterns: [/refactor|tech\s+debt/i, /code\s+(smell|quality)/i],
     primaryAgent: 'refactoring-specialist',
-    weight: 100
+    weight: 100,
   },
   IMPLEMENTATION: {
     keywords: ['implement', 'code', 'feature', 'bug fix', 'develop', 'build'],
     patterns: [/implement|feature|bug/i, /(develop|build)\s+(new|a)/i],
     primaryAgent: 'developer',
-    weight: 50 // Lower weight - default fallback
-  }
+    weight: 50, // Lower weight - default fallback
+  },
 };
 
 /**
@@ -355,11 +386,22 @@ const COMPLEXITY_INDICATORS = {
   // Critical complexity indicators (architecture/API/breaking changes)
   critical: {
     keywords: [
-      'architecture', 'redesign', 'breaking change', 'major version',
-      'schema migration', 'database migration', 'api redesign',
-      'infrastructure', 'security overhaul', 'authentication system',
-      'authorization system', 'core refactor', 'system redesign',
-      'microservices', 'monolith', 'platform migration'
+      'architecture',
+      'redesign',
+      'breaking change',
+      'major version',
+      'schema migration',
+      'database migration',
+      'api redesign',
+      'infrastructure',
+      'security overhaul',
+      'authentication system',
+      'authorization system',
+      'core refactor',
+      'system redesign',
+      'microservices',
+      'monolith',
+      'platform migration',
     ],
     patterns: [
       /breaking\s+change/i,
@@ -371,18 +413,29 @@ const COMPLEXITY_INDICATORS = {
       /security\s+(overhaul|redesign|audit)/i,
       /auth(entication|orization)\s+system/i,
       /platform\s+migrat/i,
-      /infrastructure\s+(change|update|migration)/i
+      /infrastructure\s+(change|update|migration)/i,
     ],
-    weight: 100
+    weight: 100,
   },
-  
+
   // Complex indicators (cross-module, multi-file)
   complex: {
     keywords: [
-      'refactor', 'migration', 'integration', 'across',
-      'all', 'every', 'entire', 'throughout', 'global',
-      'multiple modules', 'cross-module', 'end-to-end',
-      'full-stack', 'comprehensive', 'system-wide'
+      'refactor',
+      'migration',
+      'integration',
+      'across',
+      'all',
+      'every',
+      'entire',
+      'throughout',
+      'global',
+      'multiple modules',
+      'cross-module',
+      'end-to-end',
+      'full-stack',
+      'comprehensive',
+      'system-wide',
     ],
     patterns: [
       /refactor\s+(all|every|entire)/i,
@@ -392,17 +445,28 @@ const COMPLEXITY_INDICATORS = {
       /full[- ]stack/i,
       /cross[- ]module/i,
       /system[- ]wide/i,
-      /comprehensive\s+(refactor|update|change)/i
+      /comprehensive\s+(refactor|update|change)/i,
     ],
-    weight: 50
+    weight: 50,
   },
-  
+
   // Moderate indicators (feature work)
   moderate: {
     keywords: [
-      'feature', 'implement', 'add', 'create', 'build',
-      'update', 'modify', 'enhance', 'improve', 'extend',
-      'component', 'module', 'service', 'endpoint'
+      'feature',
+      'implement',
+      'add',
+      'create',
+      'build',
+      'update',
+      'modify',
+      'enhance',
+      'improve',
+      'extend',
+      'component',
+      'module',
+      'service',
+      'endpoint',
     ],
     patterns: [
       /add\s+(new\s+)?(feature|functionality)/i,
@@ -410,33 +474,49 @@ const COMPLEXITY_INDICATORS = {
       /create\s+(new\s+)?(component|module|service)/i,
       /build\s+(out|new)/i,
       /enhance\s+(the\s+)?/i,
-      /extend\s+(the\s+)?/i
+      /extend\s+(the\s+)?/i,
     ],
-    weight: 20
+    weight: 20,
   },
-  
+
   // Simple indicators (single file changes)
   simple: {
     keywords: [
-      'fix', 'update', 'change', 'modify', 'adjust',
-      'tweak', 'correct', 'patch', 'hotfix'
+      'fix',
+      'update',
+      'change',
+      'modify',
+      'adjust',
+      'tweak',
+      'correct',
+      'patch',
+      'hotfix',
     ],
     patterns: [
       /fix\s+(a\s+)?(bug|issue|problem)/i,
       /update\s+(the\s+)?/i,
       /change\s+(the\s+)?/i,
       /correct\s+(the\s+)?/i,
-      /hotfix/i
+      /hotfix/i,
     ],
-    weight: 10
+    weight: 10,
   },
-  
+
   // Trivial indicators (documentation, typos)
   trivial: {
     keywords: [
-      'typo', 'spelling', 'grammar', 'readme', 'comment',
-      'documentation', 'docs', 'changelog', 'license',
-      'formatting', 'whitespace', 'lint'
+      'typo',
+      'spelling',
+      'grammar',
+      'readme',
+      'comment',
+      'documentation',
+      'docs',
+      'changelog',
+      'license',
+      'formatting',
+      'whitespace',
+      'lint',
     ],
     patterns: [
       /fix\s+(a\s+)?typo/i,
@@ -445,39 +525,34 @@ const COMPLEXITY_INDICATORS = {
       /add\s+comment/i,
       /formatting\s+(fix|change)/i,
       /lint(ing)?\s+(fix|error)/i,
-      /whitespace/i
+      /whitespace/i,
     ],
-    weight: 5
-  }
+    weight: 5,
+  },
 };
 
 /**
  * Cross-module indicators (directories that suggest cross-cutting changes)
  */
 const CROSS_MODULE_PATTERNS = [
-  /src\/.*\/.*\//,           // Nested directories
-  /\*\*\//,                  // Glob patterns with recursive search
-  /\{.*,.*\}/,               // Multiple file patterns
-  /(components|pages|api|services|utils|lib|hooks)/  // Multiple concern areas
+  /src\/.*\/.*\//, // Nested directories
+  /\*\*\//, // Glob patterns with recursive search
+  /\{.*,.*\}/, // Multiple file patterns
+  /(components|pages|api|services|utils|lib|hooks)/, // Multiple concern areas
 ];
 
 /**
  * File scope indicators
  */
 const FILE_SCOPE_PATTERNS = {
-  single: [
-    /single\s+file/i,
-    /one\s+file/i,
-    /this\s+file/i,
-    /just\s+(the\s+)?file/i
-  ],
+  single: [/single\s+file/i, /one\s+file/i, /this\s+file/i, /just\s+(the\s+)?file/i],
   multiple: [
     /multiple\s+files?/i,
     /several\s+files?/i,
     /many\s+files?/i,
     /all\s+files?/i,
-    /\d+\s+files?/i
-  ]
+    /\d+\s+files?/i,
+  ],
 };
 
 /**
@@ -523,7 +598,7 @@ function analyzeTaskType(task) {
     taskType,
     primaryAgent: TASK_TYPE_INDICATORS[taskType].primaryAgent,
     confidence: maxScore,
-    allScores: scores
+    allScores: scores,
   };
 }
 
@@ -539,14 +614,14 @@ function analyzeTaskDescription(task) {
       complex: 0,
       moderate: 0,
       simple: 0,
-      trivial: 0
+      trivial: 0,
     },
     matchedIndicators: [],
-    fileScopeHint: null
+    fileScopeHint: null,
   };
-  
+
   const taskLower = task.toLowerCase();
-  
+
   // Check each complexity level
   for (const [level, indicators] of Object.entries(COMPLEXITY_INDICATORS)) {
     // Check keywords
@@ -556,11 +631,11 @@ function analyzeTaskDescription(task) {
         analysis.matchedIndicators.push({
           level,
           type: 'keyword',
-          match: keyword
+          match: keyword,
         });
       }
     }
-    
+
     // Check patterns
     for (const pattern of indicators.patterns) {
       if (pattern.test(task)) {
@@ -568,12 +643,12 @@ function analyzeTaskDescription(task) {
         analysis.matchedIndicators.push({
           level,
           type: 'pattern',
-          match: pattern.toString()
+          match: pattern.toString(),
         });
       }
     }
   }
-  
+
   // Check file scope hints
   for (const pattern of FILE_SCOPE_PATTERNS.single) {
     if (pattern.test(task)) {
@@ -581,7 +656,7 @@ function analyzeTaskDescription(task) {
       break;
     }
   }
-  
+
   if (!analysis.fileScopeHint) {
     for (const pattern of FILE_SCOPE_PATTERNS.multiple) {
       if (pattern.test(task)) {
@@ -590,7 +665,7 @@ function analyzeTaskDescription(task) {
       }
     }
   }
-  
+
   return analysis;
 }
 
@@ -605,7 +680,7 @@ async function analyzeFilePatterns(files) {
       count: 0,
       patterns: [],
       isCrossModule: false,
-      directories: new Set()
+      directories: new Set(),
     };
   }
 
@@ -613,7 +688,9 @@ async function analyzeFilePatterns(files) {
 
   // Validate pattern count (MEDIUM-3)
   if (patterns.length > MAX_FILE_PATTERNS) {
-    throw new Error(`Number of file patterns (${patterns.length}) exceeds maximum allowed (${MAX_FILE_PATTERNS})`);
+    throw new Error(
+      `Number of file patterns (${patterns.length}) exceeds maximum allowed (${MAX_FILE_PATTERNS})`
+    );
   }
 
   // Sanitize all patterns before processing (HIGH-1, HIGH-2)
@@ -629,9 +706,9 @@ async function analyzeFilePatterns(files) {
     patterns: sanitizedPatterns,
     isCrossModule: false,
     directories: new Set(),
-    resolvedFiles: []
+    resolvedFiles: [],
   };
-  
+
   // Check for cross-module patterns
   for (const pattern of sanitizedPatterns) {
     for (const crossModulePattern of CROSS_MODULE_PATTERNS) {
@@ -645,7 +722,7 @@ async function analyzeFilePatterns(files) {
     try {
       const matches = await cachedGlobResolve(pattern, {
         nodir: true,
-        ignore: ['node_modules/**', '.git/**']
+        ignore: ['node_modules/**', '.git/**'],
       });
 
       if (matches && matches.length > 0) {
@@ -680,17 +757,17 @@ async function analyzeFilePatterns(files) {
       }
     }
   }
-  
+
   // Update count from resolved files
   if (analysis.resolvedFiles.length > 0) {
     analysis.count = analysis.resolvedFiles.length;
   }
-  
+
   // Multiple directories suggests cross-module
   if (analysis.directories.size > 2) {
     analysis.isCrossModule = true;
   }
-  
+
   return analysis;
 }
 
@@ -726,7 +803,7 @@ function determineComplexity(taskAnalysis, fileAnalysis, taskDescription = '') {
   if (hasSecurityKeyword && currentIndex < complexIndex) {
     complexity = 'complex';
   }
-  
+
   // Adjust based on file analysis
   if (fileCount > 0) {
     if (fileCount === 1 && !isCrossModule) {
@@ -746,17 +823,17 @@ function determineComplexity(taskAnalysis, fileAnalysis, taskDescription = '') {
       }
     }
   }
-  
+
   // Apply file scope hints from task description
   if (fileScopeHint === 'single' && complexity === 'moderate') {
     complexity = 'simple';
   } else if (fileScopeHint === 'multiple' && complexity === 'simple') {
     complexity = 'moderate';
   }
-  
+
   // Build reasoning
   const reasons = [];
-  
+
   if (maxScore > 0) {
     const topIndicators = taskAnalysis.matchedIndicators
       .filter(i => i.level === complexity)
@@ -766,19 +843,19 @@ function determineComplexity(taskAnalysis, fileAnalysis, taskDescription = '') {
       reasons.push(`Keywords detected: ${topIndicators.join(', ')}`);
     }
   }
-  
+
   if (fileCount > 0) {
     reasons.push(`Affects ${fileCount} file${fileCount !== 1 ? 's' : ''}`);
   }
-  
+
   if (isCrossModule) {
     reasons.push('Cross-module changes detected');
   }
-  
+
   if (directories.size > 1) {
     reasons.push(`Spans ${directories.size} directories`);
   }
-  
+
   if (fileScopeHint) {
     reasons.push(`Task mentions ${fileScopeHint} file scope`);
   }
@@ -794,7 +871,7 @@ function determineComplexity(taskAnalysis, fileAnalysis, taskDescription = '') {
     scores,
     fileCount,
     isCrossModule,
-    directoryCount: directories.size
+    directoryCount: directories.size,
   };
 }
 
@@ -813,7 +890,9 @@ export async function classifyTask(taskDescription, options = {}) {
 
   // Validate task description length (MEDIUM-3)
   if (taskDescription.length > MAX_TASK_DESCRIPTION_LENGTH) {
-    throw new Error(`Task description exceeds maximum length of ${MAX_TASK_DESCRIPTION_LENGTH} characters`);
+    throw new Error(
+      `Task description exceeds maximum length of ${MAX_TASK_DESCRIPTION_LENGTH} characters`
+    );
   }
 
   // Analyze task type
@@ -837,29 +916,29 @@ export async function classifyTask(taskDescription, options = {}) {
     taskType: typeAnalysis.taskType,
     primaryAgent: typeAnalysis.primaryAgent,
     gates: { ...complexityConfig.gates },
-    reasoning: determination.reasons.join('. ') || 'Default classification based on task scope'
+    reasoning: determination.reasons.join('. ') || 'Default classification based on task scope',
   };
-  
+
   // Add verbose details if requested
   if (options.verbose) {
     result.details = {
       description: complexityConfig.description,
       taskTypeAnalysis: {
         confidence: typeAnalysis.confidence,
-        allScores: typeAnalysis.allScores
+        allScores: typeAnalysis.allScores,
       },
       analysis: {
         taskIndicators: taskAnalysis.matchedIndicators,
         scores: determination.scores,
         fileCount: determination.fileCount,
         isCrossModule: determination.isCrossModule,
-        directoryCount: determination.directoryCount
+        directoryCount: determination.directoryCount,
       },
       filePatterns: fileAnalysis.patterns,
-      resolvedFiles: (fileAnalysis.resolvedFiles || []).slice(0, 20) // Limit for readability
+      resolvedFiles: (fileAnalysis.resolvedFiles || []).slice(0, 20), // Limit for readability
     };
   }
-  
+
   return result;
 }
 
@@ -878,10 +957,10 @@ export async function classifyTasks(tasks, options = {}) {
   for (let i = 0; i < tasks.length; i += CONCURRENCY_LIMIT) {
     const batch = tasks.slice(i, i + CONCURRENCY_LIMIT);
     const batchResults = await Promise.all(
-      batch.map(async (taskInfo) => {
+      batch.map(async taskInfo => {
         const result = await classifyTask(taskInfo.task, {
           files: taskInfo.files,
-          ...options
+          ...options,
         });
         return { task: taskInfo.task, ...result };
       })
@@ -920,12 +999,12 @@ function parseArgs(args) {
     files: null,
     verbose: false,
     help: false,
-    json: false
+    json: false,
   };
-  
+
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    
+
     if (arg === '--task' || arg === '-t') {
       parsed.task = args[++i];
     } else if (arg === '--files' || arg === '-f') {
@@ -938,7 +1017,7 @@ function parseArgs(args) {
       parsed.help = true;
     }
   }
-  
+
   return parsed;
 }
 
@@ -988,16 +1067,16 @@ PROGRAMMATIC USE:
  */
 function formatResult(result, verbose = false) {
   const lines = [];
-  
+
   // Complexity badge
   const badges = {
     trivial: '[TRIVIAL]',
     simple: '[SIMPLE]',
     moderate: '[MODERATE]',
     complex: '[COMPLEX]',
-    critical: '[CRITICAL]'
+    critical: '[CRITICAL]',
   };
-  
+
   lines.push(`\nComplexity: ${badges[result.complexity]} ${result.complexity.toUpperCase()}`);
   lines.push(`Task Type:  ${result.taskType}`);
   lines.push(`Primary Agent: ${result.primaryAgent}`);
@@ -1008,7 +1087,7 @@ function formatResult(result, verbose = false) {
   lines.push(`  Planner:        ${result.gates.planner ? 'Yes' : 'No'}`);
   lines.push(`  Review:         ${result.gates.review ? 'Yes' : 'No'}`);
   lines.push(`  Impact Analysis: ${result.gates.impactAnalysis ? 'Yes' : 'No'}`);
-  
+
   // Verbose details
   if (verbose && result.details) {
     lines.push('\nDetailed Analysis:');
@@ -1016,14 +1095,14 @@ function formatResult(result, verbose = false) {
     lines.push(`  File Count: ${result.details.analysis.fileCount}`);
     lines.push(`  Cross-Module: ${result.details.analysis.isCrossModule ? 'Yes' : 'No'}`);
     lines.push(`  Directories: ${result.details.analysis.directoryCount}`);
-    
+
     if (result.details.analysis.taskIndicators.length > 0) {
       lines.push('\n  Matched Indicators:');
       for (const indicator of result.details.analysis.taskIndicators.slice(0, 5)) {
         lines.push(`    - [${indicator.level}] ${indicator.type}: ${indicator.match}`);
       }
     }
-    
+
     if (result.details.resolvedFiles && result.details.resolvedFiles.length > 0) {
       lines.push('\n  Resolved Files:');
       for (const file of result.details.resolvedFiles.slice(0, 10)) {
@@ -1034,31 +1113,31 @@ function formatResult(result, verbose = false) {
       }
     }
   }
-  
+
   return lines.join('\n');
 }
 
 // CLI interface
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  
+
   if (args.help) {
     printHelp();
     process.exit(0);
   }
-  
+
   if (!args.task) {
     console.error('Error: Task description is required. Use --task <description>');
     console.error('Use --help for usage information.');
     process.exit(1);
   }
-  
+
   try {
     const result = await classifyTask(args.task, {
       files: args.files,
-      verbose: args.verbose
+      verbose: args.verbose,
     });
-    
+
     if (args.json) {
       console.log(JSON.stringify(result, null, 2));
     } else {
@@ -1075,10 +1154,7 @@ if (import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))) {
   main().catch(console.error);
 }
 
-export {
-  analyzeTaskType,
-  TASK_TYPE_INDICATORS
-};
+export { analyzeTaskType, TASK_TYPE_INDICATORS };
 
 export default {
   classifyTask,
@@ -1087,5 +1163,5 @@ export default {
   getAllComplexityLevels,
   analyzeTaskType,
   COMPLEXITY_LEVELS,
-  TASK_TYPE_INDICATORS
+  TASK_TYPE_INDICATORS,
 };

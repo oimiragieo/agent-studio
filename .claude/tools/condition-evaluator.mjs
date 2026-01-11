@@ -403,9 +403,9 @@ export function evaluateCondition(condition, context = {}) {
       MULTI_AI_ENABLED: process.env?.MULTI_AI_ENABLED === 'true',
       CI: process.env?.CI === 'true',
       NODE_ENV: process.env?.NODE_ENV || 'development',
-      ...context.env
+      ...context.env,
     },
-    artifacts: context.artifacts || {}
+    artifacts: context.artifacts || {},
   };
 
   try {
@@ -420,7 +420,6 @@ export function evaluateCondition(condition, context = {}) {
 
     // Parse and evaluate the expression
     return parseExpression(tokens, safeContext);
-
   } catch (error) {
     // On any error, fail open (execute step)
     console.warn(`Warning: Condition evaluation failed: ${error.message}`);
@@ -439,5 +438,5 @@ export default {
   parseExpression,
   parseOr,
   parseAnd,
-  parsePrimary
+  parsePrimary,
 };

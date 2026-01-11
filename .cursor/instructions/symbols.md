@@ -5,6 +5,7 @@ Cursor integrates with language servers to provide symbol navigation and code in
 ## Symbol Indexing
 
 Cursor automatically indexes:
+
 - Classes, functions, and methods
 - Interfaces and types (TypeScript)
 - Constants and variables
@@ -13,6 +14,7 @@ Cursor automatically indexes:
 ## Usage in Agents
 
 Agents can leverage symbol information to:
+
 - Find all usages of a function or class
 - Navigate to symbol definitions
 - Understand code relationships
@@ -21,6 +23,7 @@ Agents can leverage symbol information to:
 ## Configuration
 
 Symbol indexing is automatically enabled for supported languages:
+
 - TypeScript/JavaScript
 - Python
 - Go
@@ -33,4 +36,3 @@ Symbol indexing is automatically enabled for supported languages:
 - Ensure project has proper type definitions
 - Use explicit exports for better symbol tracking
 - Reference symbols in agent prompts for precise navigation
-

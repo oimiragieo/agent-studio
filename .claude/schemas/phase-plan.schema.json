@@ -5,11 +5,11 @@
     "metadata": {
       "type": "object",
       "properties": {
-        "phaseId": {"type": "string"},
-        "phaseName": {"type": "string"},
-        "masterPlanId": {"type": "string"},
-        "createdAt": {"type": "string", "format": "date-time"},
-        "lastUpdated": {"type": "string", "format": "date-time"}
+        "phaseId": { "type": "string" },
+        "phaseName": { "type": "string" },
+        "masterPlanId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
       },
       "required": ["phaseId", "phaseName", "masterPlanId"]
     },
@@ -18,11 +18,11 @@
       "items": {
         "type": "object",
         "properties": {
-          "taskId": {"type": "string"},
-          "description": {"type": "string"},
-          "priority": {"enum": ["P0", "P1", "P2", "P3"]},
-          "category": {"type": "string"},
-          "status": {"enum": ["pending", "in_progress", "completed", "failed", "blocked"]},
+          "taskId": { "type": "string" },
+          "description": { "type": "string" },
+          "priority": { "enum": ["P0", "P1", "P2", "P3"] },
+          "category": { "type": "string" },
+          "status": { "enum": ["pending", "in_progress", "completed", "failed", "blocked"] },
           "assignedAgent": {
             "enum": [
               "planner",
@@ -52,28 +52,28 @@
               "ai-council"
             ]
           },
-          "files": {"type": "array", "items": {"type": "string"}},
-          "lineNumbers": {"type": "array", "items": {"type": "number"}},
-          "dependencies": {"type": "array", "items": {"type": "string"}},
+          "files": { "type": "array", "items": { "type": "string" } },
+          "lineNumbers": { "type": "array", "items": { "type": "number" } },
+          "dependencies": { "type": "array", "items": { "type": "string" } },
           "testRequirements": {
             "type": "object",
             "properties": {
-              "testPattern": {"type": "string"},
-              "testCommand": {"type": "string"},
-              "expectedResults": {"type": "string"}
+              "testPattern": { "type": "string" },
+              "testCommand": { "type": "string" },
+              "expectedResults": { "type": "string" }
             }
           },
-          "startedAt": {"type": "string", "format": "date-time"},
-          "completedAt": {"type": "string", "format": "date-time"},
-          "result": {"type": "object"},
+          "startedAt": { "type": "string", "format": "date-time" },
+          "completedAt": { "type": "string", "format": "date-time" },
+          "result": { "type": "object" },
           "artifacts": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "path": {"type": "string"},
-                "description": {"type": "string"},
-                "type": {"enum": ["file", "directory", "test_result", "log", "documentation"]}
+                "path": { "type": "string" },
+                "description": { "type": "string" },
+                "type": { "enum": ["file", "directory", "test_result", "log", "documentation"] }
               },
               "required": ["path", "description"]
             }
@@ -86,7 +86,7 @@
       "type": "object",
       "additionalProperties": {
         "type": "array",
-        "items": {"type": "string"}
+        "items": { "type": "string" }
       }
     },
     "testResults": {
@@ -94,44 +94,44 @@
       "items": {
         "type": "object",
         "properties": {
-          "taskId": {"type": "string"},
-          "testCommand": {"type": "string"},
-          "result": {"enum": ["pass", "fail", "pending"]},
-          "details": {"type": "object"},
-          "timestamp": {"type": "string", "format": "date-time"}
+          "taskId": { "type": "string" },
+          "testCommand": { "type": "string" },
+          "result": { "enum": ["pass", "fail", "pending"] },
+          "details": { "type": "object" },
+          "timestamp": { "type": "string", "format": "date-time" }
         }
       }
     },
     "statusTracking": {
       "type": "object",
       "properties": {
-        "overallStatus": {"enum": ["planning", "in_progress", "completed", "failed", "paused"]},
-        "completedTasks": {"type": "number"},
-        "inProgressTasks": {"type": "number"},
-        "pendingTasks": {"type": "number"},
-        "failedTasks": {"type": "number"},
-        "lastTaskCompleted": {"type": "string"},
-        "nextTask": {"type": "string"}
+        "overallStatus": { "enum": ["planning", "in_progress", "completed", "failed", "paused"] },
+        "completedTasks": { "type": "number" },
+        "inProgressTasks": { "type": "number" },
+        "pendingTasks": { "type": "number" },
+        "failedTasks": { "type": "number" },
+        "lastTaskCompleted": { "type": "string" },
+        "nextTask": { "type": "string" }
       }
     },
     "recoveryMetadata": {
       "type": "object",
       "properties": {
-        "canResume": {"type": "boolean"},
-        "resumePoint": {"type": "string"},
-        "contextSummary": {"type": "string"},
-        "completedWork": {"type": "string"},
-        "pendingWork": {"type": "string"},
+        "canResume": { "type": "boolean" },
+        "resumePoint": { "type": "string" },
+        "contextSummary": { "type": "string" },
+        "completedWork": { "type": "string" },
+        "pendingWork": { "type": "string" },
         "scratchpad": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "taskId": {"type": "string"},
-              "attempts": {"type": "number"},
-              "failureReason": {"type": "string"},
-              "timestamp": {"type": "string", "format": "date-time"},
-              "avoidApproach": {"type": "string"}
+              "taskId": { "type": "string" },
+              "attempts": { "type": "number" },
+              "failureReason": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "avoidApproach": { "type": "string" }
             }
           },
           "description": "Records of failed approaches to avoid retrying"
@@ -143,13 +143,13 @@
       "items": {
         "type": "object",
         "properties": {
-          "decisionId": {"type": "string"},
-          "issue": {"type": "string"},
-          "participants": {"type": "array", "items": {"type": "string"}},
-          "consensus": {"type": "string"},
-          "recommendation": {"type": "string"},
-          "arguments": {"type": "array"},
-          "timestamp": {"type": "string", "format": "date-time"}
+          "decisionId": { "type": "string" },
+          "issue": { "type": "string" },
+          "participants": { "type": "array", "items": { "type": "string" } },
+          "consensus": { "type": "string" },
+          "recommendation": { "type": "string" },
+          "arguments": { "type": "array" },
+          "timestamp": { "type": "string", "format": "date-time" }
         }
       }
     }

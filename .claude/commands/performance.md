@@ -59,9 +59,10 @@ Invokes the **performance-flow** workflow with this agent sequence:
 
 <output_format>
 **Outputs**:
+
 - `performance-analysis.json` - Profiling results
 - `bottleneck-report.json` - Identified issues
 - `optimization-architecture.json` - Improvement plan
 - `benchmark-results.json` - Before/after metrics
-</output_format>
-</instructions>
+  </output_format>
+  </instructions>

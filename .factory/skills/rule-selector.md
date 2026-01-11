@@ -17,6 +17,7 @@ Run Task tool with skill rule-selector to detect tech stack
 ```
 
 Or in Specification Mode:
+
 ```
 [Shift+Tab] Configure the optimal rules for this Next.js project
 ```
@@ -30,12 +31,12 @@ Or in Specification Mode:
 
 ## Detection Matrix
 
-| Signal | Rule Packs |
-|--------|------------|
-| `next` in package.json | nextjs.mdc, nextjs-app-router-* |
-| `react` + `typescript` | react.mdc, typescript.mdc |
-| `fastapi` in requirements | fastapi.mdc, python-fastapi-* |
-| `go.mod` present | go-*, backend-scalability-* |
+| Signal                    | Rule Packs                       |
+| ------------------------- | -------------------------------- |
+| `next` in package.json    | nextjs.mdc, nextjs-app-router-\* |
+| `react` + `typescript`    | react.mdc, typescript.mdc        |
+| `fastapi` in requirements | fastapi.mdc, python-fastapi-\*   |
+| `go.mod` present          | go-_, backend-scalability-_      |
 
 ## Output
 
@@ -45,11 +46,11 @@ Updates `.factory/rules/manifest.yaml`:
 stack_profiles:
   my-project:
     include:
-      - "nextjs.mdc"
-      - "typescript.mdc"
+      - 'nextjs.mdc'
+      - 'typescript.mdc'
     exclude:
-      - "angular-*"
-      - "python-*"
+      - 'angular-*'
+      - 'python-*'
     priority:
       - nextjs-app-router
       - typescript

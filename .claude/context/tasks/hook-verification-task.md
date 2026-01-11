@@ -5,6 +5,7 @@
 **Problem**: Hooks in `.claude/hooks/` need to correctly invoke agents and skills.
 
 **Fix Required**:
+
 1. Read all hooks in `.claude/hooks/`:
    - security-pre-tool.sh
    - audit-post-tool.sh
@@ -25,6 +26,7 @@
 **Problem**: Agent prompts in `.claude/agents/` should reference relevant rules from `.claude/rules-library/`.
 
 **Fix Required**:
+
 1. For each of the 34 agents in `.claude/agents/`:
    - Identify relevant technology rules from `.claude/rules-library/`
    - Add "@.claude/rules-library/<rule>.md" references to agent prompts
@@ -46,6 +48,7 @@
 **Problem**: Workflows need to correctly map to agents and skills.
 
 **Fix Required**:
+
 1. For each workflow in `.claude/workflows/`:
    - Verify each step references a valid agent from `.claude/agents/`
    - Verify skill references are valid in `.claude/skills/`
@@ -59,6 +62,7 @@
 ## Task 4.4: Create Hooks-Agent-Skill Integrity Report
 
 **Fix Required**:
+
 1. Generate a report showing:
    - All hooks and their agent/skill invocations
    - All workflows and their agent/skill references

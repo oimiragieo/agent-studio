@@ -41,7 +41,14 @@
           },
           "category": {
             "type": "string",
-            "enum": ["accessibility", "visual_design", "interaction", "layout", "responsive", "other"],
+            "enum": [
+              "accessibility",
+              "visual_design",
+              "interaction",
+              "layout",
+              "responsive",
+              "other"
+            ],
             "description": "Category of the improvement"
           },
           "estimated_effort": {
@@ -148,4 +155,3 @@
     }
   }
 }
-

@@ -1,6 +1,7 @@
 # Senior Review Prompt Template
 
 ## Purpose
+
 Comprehensive code review from a senior engineer perspective.
 
 ## Template
@@ -49,13 +50,14 @@ Please provide specific, actionable feedback with code examples and suggestions.
 ```
 
 ## Usage
+
 - Pre-merge code review
 - Architecture review
 - Security audit
 - Performance review
 
 ## Agent
+
 - code-reviewer
 - security-architect
 - performance-engineer
-

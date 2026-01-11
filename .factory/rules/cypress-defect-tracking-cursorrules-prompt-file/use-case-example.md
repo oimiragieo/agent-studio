@@ -31,10 +31,7 @@ describe('[CartTeam][regression] Shopping Cart Tests', () => {
 
   context('cart management', () => {
     it('should add item to cart correctly [smoke][C5001]', () => {
-      cy.get('[data-testid="product-list"]')
-        .find('.product-item')
-        .first()
-        .click();
+      cy.get('[data-testid="product-list"]').find('.product-item').first().click();
       cy.get('[data-testid="add-to-cart"]').click();
       cy.get('[data-testid="cart-count"]').should('contain', '1');
       cy.get('[data-testid="cart-items"]').should('contain', 'Product Name');
@@ -42,39 +39,25 @@ describe('[CartTeam][regression] Shopping Cart Tests', () => {
 
     it('should remove item from cart correctly [smoke][C5002]', () => {
       // Setup: First add an item
-      cy.get('[data-testid="product-list"]')
-        .find('.product-item')
-        .first()
-        .click();
+      cy.get('[data-testid="product-list"]').find('.product-item').first().click();
       cy.get('[data-testid="add-to-cart"]').click();
 
       // Test removal
-      cy.get('[data-testid="cart-items"]')
-        .find('[data-testid="remove-item"]')
-        .click();
+      cy.get('[data-testid="cart-items"]').find('[data-testid="remove-item"]').click();
       cy.get('[data-testid="cart-count"]').should('contain', '0');
-      cy.get('[data-testid="cart-items"]').should(
-        'not.contain',
-        'Product Name'
-      );
+      cy.get('[data-testid="cart-items"]').should('not.contain', 'Product Name');
     });
 
     // Example of a test with a different category than its parent
     it('should apply discount code correctly [C5003][performance]', () => {
       // Setup: First add an item
-      cy.get('[data-testid="product-list"]')
-        .find('.product-item')
-        .first()
-        .click();
+      cy.get('[data-testid="product-list"]').find('.product-item').first().click();
       cy.get('[data-testid="add-to-cart"]').click();
 
       // Apply discount
       cy.get('[data-testid="discount-code"]').type('SAVE20');
       cy.get('[data-testid="apply-discount"]').click();
-      cy.get('[data-testid="cart-total"]').should(
-        'contain',
-        'Discount applied'
-      );
+      cy.get('[data-testid="cart-total"]').should('contain', 'Discount applied');
       cy.get('[data-testid="final-price"]').should('contain', '$80.00'); // 20% off $100
     });
   });
@@ -85,8 +68,7 @@ module.exports = {
   teamNames: ['CartTeam', 'CheckoutTeam', 'ProductTeam'],
   testTypes: ['api', 'ui', 'accessibility', 'mobile'],
   testCategories: ['smoke', 'regression', 'usability', 'performance'],
-  googleSpreadsheetUrl:
-    'https://docs.google.com/spreadsheets/d/your-sheet-id/edit',
+  googleSpreadsheetUrl: 'https://docs.google.com/spreadsheets/d/your-sheet-id/edit',
   googleKeyFilePath: './googleCredentials.json',
   testData: './cypress/results/output.json',
   csvDownloadsPath: './downloads',

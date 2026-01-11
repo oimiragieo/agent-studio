@@ -25,7 +25,13 @@
     },
     "validation_results": {
       "type": "object",
-      "required": ["strategic_to_plan_mode_handoff", "plan_mode_to_implementation", "artifact_linking", "multi_file_coordination", "artifact_persistence"],
+      "required": [
+        "strategic_to_plan_mode_handoff",
+        "plan_mode_to_implementation",
+        "artifact_linking",
+        "multi_file_coordination",
+        "artifact_persistence"
+      ],
       "properties": {
         "strategic_to_plan_mode_handoff": {
           "type": "object",

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
  * Enforcement Gate - Hard validation gates for orchestration system
- * 
+ *
  * Provides HARD enforcement of:
  * 1. Plan rating requirements (minimum score 7/10 from response-rater)
  * 2. Signoff validation (required artifacts and approvals)
  * 3. Security trigger enforcement (agent assignment for security-sensitive tasks)
- * 
+ *
  * Usage:
  *   node .claude/tools/enforcement-gate.mjs validate-plan --run-id <id> --plan-id <id>
  *   node .claude/tools/enforcement-gate.mjs validate-signoffs --run-id <id> --workflow <name> --step <n>
@@ -72,7 +72,7 @@ function getPlanRatingPath(runId, planId) {
 
 /**
  * Validate that a plan has been rated and meets minimum score
- * 
+ *
  * @param {string} runId - Run identifier
  * @param {string} planId - Plan identifier (optional, defaults to 'plan')
  * @param {Object} options - Validation options
@@ -88,16 +88,16 @@ export async function validatePlanRating(runId, planId = 'plan', options = {}) {
     score: null,
     minimumRequired: options.minimumScore || DEFAULT_MINIMUM_SCORE,
     feedback: [],
-    details: {}
+    details: {},
   };
 
   try {
     // Load plan review matrix for score requirements
     const planReviewMatrix = await loadJson(PLAN_REVIEW_MATRIX_PATH);
-    
+
     // Determine minimum score based on task type and complexity
     let minimumScore = options.minimumScore || DEFAULT_MINIMUM_SCORE;
-    
+
     if (planReviewMatrix && options.taskType) {
       const taskConfig = planReviewMatrix.taskTypes[options.taskType];
       if (taskConfig) {
@@ -106,7 +106,7 @@ export async function validatePlanRating(runId, planId = 'plan', options = {}) {
         result.details.taskConfig = taskConfig;
       }
     }
-    
+
     // Apply complexity modifiers
     if (planReviewMatrix && options.complexity) {
       const complexityMod = planReviewMatrix.complexityModifiers[options.complexity];
@@ -115,13 +115,13 @@ export async function validatePlanRating(runId, planId = 'plan', options = {}) {
         result.details.complexityModifier = complexityMod.score_modifier;
       }
     }
-    
+
     result.minimumRequired = minimumScore;
 
     // Check for plan rating file
     const ratingPath = getPlanRatingPath(runId, planId);
     const ratingData = await loadJson(ratingPath);
-    
+
     if (!ratingData) {
       result.feedback.push(`Plan rating not found at ${ratingPath}`);
       result.feedback.push('Plan must be rated using response-rater skill before execution');
@@ -144,9 +144,11 @@ export async function validatePlanRating(runId, planId = 'plan', options = {}) {
 
     // Check minimum score
     if (result.score < minimumScore) {
-      result.feedback.push(`Plan score ${result.score}/10 is below minimum required ${minimumScore}/10`);
+      result.feedback.push(
+        `Plan score ${result.score}/10 is below minimum required ${minimumScore}/10`
+      );
       result.feedback.push('Return plan to Planner with specific improvement feedback');
-      
+
       // Add specific feedback from rating if available
       if (ratingData.feedback && Array.isArray(ratingData.feedback)) {
         result.feedback.push('Rating feedback:');
@@ -156,7 +158,7 @@ export async function validatePlanRating(runId, planId = 'plan', options = {}) {
         result.feedback.push('Weak areas needing improvement:');
         ratingData.weakAreas.forEach(w => result.feedback.push(`  - ${w}`));
       }
-      
+
       return result;
     }
 
@@ -165,9 +167,10 @@ export async function validatePlanRating(runId, planId = 'plan', options = {}) {
       const taskConfig = planReviewMatrix.taskTypes[options.taskType];
       if (taskConfig && ratingData.component_scores) {
         const blockingThreshold = taskConfig.blocking_threshold || 5;
-        const blockedComponents = Object.entries(ratingData.component_scores)
-          .filter(([_, score]) => score < blockingThreshold);
-        
+        const blockedComponents = Object.entries(ratingData.component_scores).filter(
+          ([_, score]) => score < blockingThreshold
+        );
+
         if (blockedComponents.length > 0) {
           result.feedback.push(`Components below blocking threshold (${blockingThreshold}):`);
           blockedComponents.forEach(([component, score]) => {
@@ -179,10 +182,11 @@ export async function validatePlanRating(runId, planId = 'plan', options = {}) {
     }
 
     result.valid = true;
-    result.feedback.push(`Plan rating ${result.score}/10 meets minimum requirement ${minimumScore}/10`);
-    
-    return result;
+    result.feedback.push(
+      `Plan rating ${result.score}/10 meets minimum requirement ${minimumScore}/10`
+    );
 
+    return result;
   } catch (error) {
     result.feedback.push(`Error validating plan rating: ${error.message}`);
     return result;
@@ -191,7 +195,7 @@ export async function validatePlanRating(runId, planId = 'plan', options = {}) {
 
 /**
  * Validate that required signoffs are present in gate files
- * 
+ *
  * @param {string} runId - Run identifier
  * @param {string} workflowName - Workflow name
  * @param {number} stepNumber - Current step number
@@ -206,16 +210,16 @@ export async function validateSignoffs(runId, workflowName, stepNumber, options 
     present: [],
     conditional: {
       triggered: [],
-      notTriggered: []
+      notTriggered: [],
     },
     feedback: [],
-    details: {}
+    details: {},
   };
 
   try {
     // Load signoff matrix
     const signoffMatrix = await loadJson(SIGNOFF_MATRIX_PATH);
-    
+
     if (!signoffMatrix) {
       result.feedback.push('Signoff matrix not found - defaulting to no required signoffs');
       result.valid = true;
@@ -224,7 +228,7 @@ export async function validateSignoffs(runId, workflowName, stepNumber, options 
 
     // Get workflow configuration
     const workflowConfig = signoffMatrix.workflows[workflowName];
-    
+
     if (!workflowConfig) {
       result.feedback.push(`No signoff requirements defined for workflow: ${workflowName}`);
       result.valid = true;
@@ -236,16 +240,16 @@ export async function validateSignoffs(runId, workflowName, stepNumber, options 
 
     // Check required signoffs
     const requiredSignoffs = workflowConfig.required_signoffs || [];
-    
+
     for (const signoff of requiredSignoffs) {
       const signoffPresent = await checkSignoffPresent(runId, signoff);
-      
+
       if (signoffPresent.valid) {
         result.present.push({
           type: signoff.type,
           artifact: signoff.artifact,
           agent: signoff.agents.join(', '),
-          validatedAt: signoffPresent.validatedAt
+          validatedAt: signoffPresent.validatedAt,
         });
       } else {
         result.missing.push({
@@ -253,7 +257,7 @@ export async function validateSignoffs(runId, workflowName, stepNumber, options 
           artifact: signoff.artifact,
           agents: signoff.agents,
           conditions: signoff.conditions,
-          reason: signoffPresent.reason
+          reason: signoffPresent.reason,
         });
       }
     }
@@ -261,38 +265,38 @@ export async function validateSignoffs(runId, workflowName, stepNumber, options 
     // Check conditional signoffs if task description provided
     const conditionalSignoffs = workflowConfig.conditional_signoffs || [];
     const taskDescription = options.taskDescription?.toLowerCase() || '';
-    
+
     for (const signoff of conditionalSignoffs) {
       const triggerKeywords = signoff.trigger_keywords || [];
-      const isTriggered = triggerKeywords.some(keyword => 
+      const isTriggered = triggerKeywords.some(keyword =>
         taskDescription.includes(keyword.toLowerCase())
       );
 
       if (isTriggered) {
         const signoffPresent = await checkSignoffPresent(runId, signoff);
-        
+
         if (signoffPresent.valid) {
           result.conditional.triggered.push({
             type: signoff.type,
             artifact: signoff.artifact,
             triggered_by: triggerKeywords.filter(k => taskDescription.includes(k.toLowerCase())),
-            status: 'present'
+            status: 'present',
           });
           result.present.push({
             type: signoff.type,
             artifact: signoff.artifact,
             agent: signoff.agents.join(', '),
             conditional: true,
-            validatedAt: signoffPresent.validatedAt
+            validatedAt: signoffPresent.validatedAt,
           });
         } else {
           result.conditional.triggered.push({
             type: signoff.type,
             artifact: signoff.artifact,
             triggered_by: triggerKeywords.filter(k => taskDescription.includes(k.toLowerCase())),
-            status: 'missing'
+            status: 'missing',
           });
-          
+
           // Only add to missing if conditional signoffs are blocking
           if (signoffMatrix.signoffRules?.conditional_signoffs_blocking !== false) {
             result.missing.push({
@@ -301,14 +305,14 @@ export async function validateSignoffs(runId, workflowName, stepNumber, options 
               agents: signoff.agents,
               conditions: signoff.conditions,
               reason: signoffPresent.reason,
-              conditional: true
+              conditional: true,
             });
           }
         }
       } else {
         result.conditional.notTriggered.push({
           type: signoff.type,
-          trigger_keywords: triggerKeywords
+          trigger_keywords: triggerKeywords,
         });
       }
     }
@@ -324,9 +328,14 @@ export async function validateSignoffs(runId, workflowName, stepNumber, options 
         result.feedback.push(`  - ${m.type}: ${m.artifact} (agents: ${m.agents.join(', ')})`);
         result.feedback.push(`    Reason: ${m.reason}`);
       });
-    } else if (conditionalMissing.length > 0 && signoffMatrix.signoffRules?.conditional_signoffs_blocking) {
+    } else if (
+      conditionalMissing.length > 0 &&
+      signoffMatrix.signoffRules?.conditional_signoffs_blocking
+    ) {
       result.valid = false;
-      result.feedback.push(`Missing ${conditionalMissing.length} triggered conditional signoff(s):`);
+      result.feedback.push(
+        `Missing ${conditionalMissing.length} triggered conditional signoff(s):`
+      );
       conditionalMissing.forEach(m => {
         result.feedback.push(`  - ${m.type}: ${m.artifact} (agents: ${m.agents.join(', ')})`);
       });
@@ -340,7 +349,6 @@ export async function validateSignoffs(runId, workflowName, stepNumber, options 
     }
 
     return result;
-
   } catch (error) {
     result.feedback.push(`Error validating signoffs: ${error.message}`);
     return result;
@@ -358,11 +366,11 @@ async function checkSignoffPresent(runId, signoff) {
     // Look for artifact in run's artifacts directory
     const artifactPath = join(RUNS_DIR, runId, 'artifacts', signoff.artifact);
     const artifactData = await loadJson(artifactPath);
-    
+
     if (!artifactData) {
       return {
         valid: false,
-        reason: `Artifact not found: ${signoff.artifact}`
+        reason: `Artifact not found: ${signoff.artifact}`,
       };
     }
 
@@ -372,20 +380,19 @@ async function checkSignoffPresent(runId, signoff) {
       if (!conditionResults.allPassed) {
         return {
           valid: false,
-          reason: `Conditions not met: ${conditionResults.failedConditions.join(', ')}`
+          reason: `Conditions not met: ${conditionResults.failedConditions.join(', ')}`,
         };
       }
     }
 
     return {
       valid: true,
-      validatedAt: artifactData.created_at || artifactData.timestamp || new Date().toISOString()
+      validatedAt: artifactData.created_at || artifactData.timestamp || new Date().toISOString(),
     };
-
   } catch (error) {
     return {
       valid: false,
-      reason: `Error checking signoff: ${error.message}`
+      reason: `Error checking signoff: ${error.message}`,
     };
   }
 }
@@ -398,10 +405,10 @@ async function checkSignoffPresent(runId, signoff) {
  */
 function evaluateConditions(artifactData, conditions) {
   const failedConditions = [];
-  
+
   for (const [key, expected] of Object.entries(conditions)) {
     const actual = getNestedValue(artifactData, key);
-    
+
     if (actual === undefined) {
       failedConditions.push(`${key}: missing (expected ${expected})`);
       continue;
@@ -443,7 +450,7 @@ function evaluateConditions(artifactData, conditions) {
 
   return {
     allPassed: failedConditions.length === 0,
-    failedConditions
+    failedConditions,
   };
 }
 
@@ -470,8 +477,12 @@ function parseValue(value) {
  * @returns {any} Value at path or undefined
  */
 function getNestedValue(obj, path) {
-  return path.split('.').reduce((current, key) => 
-    current && current[key] !== undefined ? current[key] : undefined, obj);
+  return path
+    .split('.')
+    .reduce(
+      (current, key) => (current && current[key] !== undefined ? current[key] : undefined),
+      obj
+    );
 }
 
 /**
@@ -488,15 +499,15 @@ export async function validateSkillUsage(agentType, taskDescription = '', execut
     complianceScore: 0,
     violations: {
       missingRequired: [],
-      missingTriggered: []
+      missingTriggered: [],
     },
     warnings: {
-      missingRecommended: []
+      missingRecommended: [],
     },
     expected: [],
     used: [],
     feedback: [],
-    details: {}
+    details: {},
   };
 
   try {
@@ -517,7 +528,9 @@ export async function validateSkillUsage(agentType, taskDescription = '', execut
 
     // Generate feedback
     if (!result.valid) {
-      result.feedback.push(`Skill compliance failed: ${result.complianceScore}% (required skills missing)`);
+      result.feedback.push(
+        `Skill compliance failed: ${result.complianceScore}% (required skills missing)`
+      );
       result.violations.missingRequired.forEach(skill => {
         result.feedback.push(`  - Missing required skill: ${skill}`);
       });
@@ -535,7 +548,6 @@ export async function validateSkillUsage(agentType, taskDescription = '', execut
     }
 
     return result;
-
   } catch (error) {
     result.feedback.push(`Error validating skill usage: ${error.message}`);
     return result;
@@ -559,13 +571,13 @@ export async function enforceSecurityTriggers(taskDescription, assignedAgents = 
     highestPriority: null,
     escalation: null,
     feedback: [],
-    details: {}
+    details: {},
   };
 
   try {
     // Load security triggers
     const securityTriggers = await loadJson(SECURITY_TRIGGERS_PATH);
-    
+
     if (!securityTriggers) {
       result.feedback.push('Security triggers configuration not found');
       return result;
@@ -576,7 +588,7 @@ export async function enforceSecurityTriggers(taskDescription, assignedAgents = 
 
     // Check each category for keyword matches
     for (const [categoryName, category] of Object.entries(securityTriggers.categories)) {
-      const matchedKeywords = category.keywords.filter(keyword => 
+      const matchedKeywords = category.keywords.filter(keyword =>
         taskLower.includes(keyword.toLowerCase())
       );
 
@@ -587,7 +599,7 @@ export async function enforceSecurityTriggers(taskDescription, assignedAgents = 
           matchedKeywords,
           description: category.description,
           requiredAgents: category.required_agents,
-          recommendedAgents: category.recommended_agents
+          recommendedAgents: category.recommended_agents,
         });
 
         // Collect required agents
@@ -611,8 +623,10 @@ export async function enforceSecurityTriggers(taskDescription, assignedAgents = 
 
         // Track highest priority
         const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
-        if (!result.highestPriority || 
-            priorityOrder[category.priority] < priorityOrder[result.highestPriority]) {
+        if (
+          !result.highestPriority ||
+          priorityOrder[category.priority] < priorityOrder[result.highestPriority]
+        ) {
           result.highestPriority = category.priority;
         }
       }
@@ -621,12 +635,10 @@ export async function enforceSecurityTriggers(taskDescription, assignedAgents = 
     // Check combination rules for priority escalation
     if (securityTriggers.combinationRules?.critical_combinations) {
       const triggeredCategoryNames = result.triggeredCategories.map(t => t.category);
-      
+
       for (const combo of securityTriggers.combinationRules.critical_combinations) {
-        const allPresent = combo.categories.every(cat => 
-          triggeredCategoryNames.includes(cat)
-        );
-        
+        const allPresent = combo.categories.every(cat => triggeredCategoryNames.includes(cat));
+
         if (allPresent) {
           result.highestPriority = combo.priority_override;
           result.details.combinationTriggered = combo;
@@ -643,25 +655,32 @@ export async function enforceSecurityTriggers(taskDescription, assignedAgents = 
     // Determine if execution should be blocked
     if (result.missingAgents.length > 0) {
       const shouldBlock = result.escalation?.blocking === true;
-      
+
       if (shouldBlock) {
         result.blocked = true;
-        result.feedback.push(`BLOCKED: Security-sensitive task requires missing agent(s): ${result.missingAgents.join(', ')}`);
+        result.feedback.push(
+          `BLOCKED: Security-sensitive task requires missing agent(s): ${result.missingAgents.join(', ')}`
+        );
         result.feedback.push(`Priority: ${result.highestPriority?.toUpperCase()}`);
-        result.feedback.push(`Triggered categories: ${result.triggeredCategories.map(t => t.category).join(', ')}`);
+        result.feedback.push(
+          `Triggered categories: ${result.triggeredCategories.map(t => t.category).join(', ')}`
+        );
       } else {
-        result.feedback.push(`WARNING: Recommended agents missing: ${result.missingAgents.join(', ')}`);
+        result.feedback.push(
+          `WARNING: Recommended agents missing: ${result.missingAgents.join(', ')}`
+        );
       }
     }
 
     if (result.triggeredCategories.length === 0) {
       result.feedback.push('No security triggers matched');
     } else if (!result.blocked) {
-      result.feedback.push(`Security check passed - ${result.triggeredCategories.length} category(ies) triggered, all required agents assigned`);
+      result.feedback.push(
+        `Security check passed - ${result.triggeredCategories.length} category(ies) triggered, all required agents assigned`
+      );
     }
 
     return result;
-
   } catch (error) {
     result.feedback.push(`Error enforcing security triggers: ${error.message}`);
     return result;
@@ -670,7 +689,7 @@ export async function enforceSecurityTriggers(taskDescription, assignedAgents = 
 
 /**
  * Master gate function - combines all validations
- * 
+ *
  * @param {Object} params - Validation parameters
  * @param {string} params.runId - Run identifier
  * @param {string} params.workflowName - Workflow name
@@ -689,7 +708,7 @@ export async function validateExecutionGate(params) {
     planId = 'plan',
     taskDescription = '',
     assignedAgents = [],
-    options = {}
+    options = {},
   } = params;
 
   const gateResult = {
@@ -702,11 +721,11 @@ export async function validateExecutionGate(params) {
       planRating: null,
       signoffs: null,
       security: null,
-      skills: null
+      skills: null,
     },
     blockers: [],
     warnings: [],
-    summary: ''
+    summary: '',
   };
 
   try {
@@ -714,15 +733,15 @@ export async function validateExecutionGate(params) {
     if (runId) {
       gateResult.validations.planRating = await validatePlanRating(runId, planId, {
         taskType: options.taskType,
-        complexity: options.complexity
+        complexity: options.complexity,
       });
-      
+
       if (!gateResult.validations.planRating.valid) {
         gateResult.blockers.push({
           type: 'plan_rating',
           message: gateResult.validations.planRating.feedback.join('; '),
           score: gateResult.validations.planRating.score,
-          minimumRequired: gateResult.validations.planRating.minimumRequired
+          minimumRequired: gateResult.validations.planRating.minimumRequired,
         });
       }
     }
@@ -730,33 +749,36 @@ export async function validateExecutionGate(params) {
     // 2. Validate signoffs (if workflow and step provided)
     if (runId && workflowName && stepNumber !== undefined) {
       gateResult.validations.signoffs = await validateSignoffs(runId, workflowName, stepNumber, {
-        taskDescription
+        taskDescription,
       });
-      
+
       if (!gateResult.validations.signoffs.valid) {
         gateResult.blockers.push({
           type: 'signoffs',
           message: gateResult.validations.signoffs.feedback.join('; '),
-          missing: gateResult.validations.signoffs.missing
+          missing: gateResult.validations.signoffs.missing,
         });
       }
     }
 
     // 3. Validate security triggers (if task description provided)
     if (taskDescription) {
-      gateResult.validations.security = await enforceSecurityTriggers(taskDescription, assignedAgents);
+      gateResult.validations.security = await enforceSecurityTriggers(
+        taskDescription,
+        assignedAgents
+      );
 
       if (gateResult.validations.security.blocked) {
         gateResult.blockers.push({
           type: 'security',
           message: gateResult.validations.security.feedback.join('; '),
           missingAgents: gateResult.validations.security.missingAgents,
-          priority: gateResult.validations.security.highestPriority
+          priority: gateResult.validations.security.highestPriority,
         });
       } else if (gateResult.validations.security.missingAgents.length > 0) {
         gateResult.warnings.push({
           type: 'security',
-          message: `Recommended security agents not assigned: ${gateResult.validations.security.missingAgents.join(', ')}`
+          message: `Recommended security agents not assigned: ${gateResult.validations.security.missingAgents.join(', ')}`,
         });
       }
     }
@@ -774,19 +796,19 @@ export async function validateExecutionGate(params) {
           type: 'skills',
           message: gateResult.validations.skills.feedback.join('; '),
           missingSkills: gateResult.validations.skills.violations.missingRequired,
-          complianceScore: gateResult.validations.skills.complianceScore
+          complianceScore: gateResult.validations.skills.complianceScore,
         });
       } else if (gateResult.validations.skills.violations.missingTriggered.length > 0) {
         gateResult.warnings.push({
           type: 'skills',
-          message: `Triggered skills not used: ${gateResult.validations.skills.violations.missingTriggered.join(', ')}`
+          message: `Triggered skills not used: ${gateResult.validations.skills.violations.missingTriggered.join(', ')}`,
         });
       }
     }
 
     // Determine overall gate status
     gateResult.allowed = gateResult.blockers.length === 0;
-    
+
     // Generate summary
     if (gateResult.allowed) {
       gateResult.summary = 'All execution gates passed - workflow may proceed';
@@ -801,20 +823,19 @@ export async function validateExecutionGate(params) {
     if (runId && stepNumber !== undefined) {
       const gateFilePath = getGateFilePath(runId, stepNumber);
       const gatesDir = dirname(gateFilePath);
-      
+
       if (!existsSync(gatesDir)) {
         await mkdir(gatesDir, { recursive: true });
       }
-      
+
       await writeFile(gateFilePath, JSON.stringify(gateResult, null, 2), 'utf-8');
     }
 
     return gateResult;
-
   } catch (error) {
     gateResult.blockers.push({
       type: 'system_error',
-      message: `Gate validation failed: ${error.message}`
+      message: `Gate validation failed: ${error.message}`,
     });
     gateResult.summary = `BLOCKED: System error during gate validation`;
     return gateResult;
@@ -842,7 +863,7 @@ export async function recordPlanRating(runId, planId, rating) {
     plan_id: planId,
     run_id: runId,
     rated_at: new Date().toISOString(),
-    rated_by: rating.rated_by || 'response-rater'
+    rated_by: rating.rated_by || 'response-rater',
   };
 
   await writeFile(ratingPath, JSON.stringify(ratingRecord, null, 2), 'utf-8');
@@ -861,7 +882,7 @@ export async function validateFileLocation(filePath, fileType = null, projectRoo
     allowed: false,
     blockers: [],
     warnings: [],
-    suggestedPath: null
+    suggestedPath: null,
   };
 
   try {
@@ -878,23 +899,47 @@ export async function validateFileLocation(filePath, fileType = null, projectRoo
 
     // Extract constants from schema (single source of truth)
     const allowedRootFiles = schema?.definitions?.root_allowlist?.default || [
-      'package.json', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock',
-      'README.md', 'GETTING_STARTED.md', 'LICENSE', '.gitignore',
-      '.npmrc', '.nvmrc', '.editorconfig', 'tsconfig.json',
-      'eslint.config.js', '.eslintrc.json', 'prettier.config.js', '.prettierrc',
-      'CHANGELOG.md', 'CONTRIBUTING.md', 'CODE_OF_CONDUCT.md', 'SECURITY.md'
+      'package.json',
+      'package-lock.json',
+      'pnpm-lock.yaml',
+      'yarn.lock',
+      'README.md',
+      'GETTING_STARTED.md',
+      'LICENSE',
+      '.gitignore',
+      '.npmrc',
+      '.nvmrc',
+      '.editorconfig',
+      'tsconfig.json',
+      'eslint.config.js',
+      '.eslintrc.json',
+      'prettier.config.js',
+      '.prettierrc',
+      'CHANGELOG.md',
+      'CONTRIBUTING.md',
+      'CODE_OF_CONDUCT.md',
+      'SECURITY.md',
     ];
 
     const prohibitedDirs = schema?.definitions?.prohibited_locations?.default || [
-      'node_modules/', '.git/', 'dist/', 'build/', 'out/',
-      '.next/', '.nuxt/', 'coverage/'
+      'node_modules/',
+      '.git/',
+      'dist/',
+      'build/',
+      'out/',
+      '.next/',
+      '.nuxt/',
+      'coverage/',
     ];
 
     const malformedPatterns = schema?.definitions?.malformed_path_patterns?.default || [
       { pattern: '^C:[a-zA-Z]', description: 'Windows path missing separator after drive letter' },
       { pattern: '^[A-Z]:[A-Z]:', description: 'Duplicate drive letters' },
-      { pattern: '[a-z]{4,}[A-Z][a-z].*[a-z]{4,}[A-Z]', description: 'Path segments concatenated without separators' },
-      { pattern: '^[^/\\\\]+[a-z]{3,}\\.claude', description: 'Path to .claude without separator' }
+      {
+        pattern: '[a-z]{4,}[A-Z][a-z].*[a-z]{4,}[A-Z]',
+        description: 'Path segments concatenated without separators',
+      },
+      { pattern: '^[^/\\\\]+[a-z]{3,}\\.claude', description: 'Path to .claude without separator' },
     ];
 
     // Normalize path for comparison
@@ -913,24 +958,29 @@ export async function validateFileLocation(filePath, fileType = null, projectRoo
     // Rule 2: Check for prohibited directories
     for (const dir of prohibitedDirs) {
       const dirNormalized = dir.replace(/\/$/, '');
-      if (normalizedPath.includes(`/${dirNormalized}/`) ||
-          normalizedPath.startsWith(`${dirNormalized}/`)) {
+      if (
+        normalizedPath.includes(`/${dirNormalized}/`) ||
+        normalizedPath.startsWith(`${dirNormalized}/`)
+      ) {
         result.blockers.push(`Cannot write to prohibited directory: ${dir}`);
       }
     }
 
     // Rule 3: Check root directory writes (FIXED LOGIC)
     // A file is in root if its directory equals the project root
-    const absolutePath = filePath.startsWith('/') || /^[A-Z]:/i.test(filePath)
-      ? normalizedPath
-      : join(normalizedRoot, normalizedPath).replace(/\\/g, '/');
+    const absolutePath =
+      filePath.startsWith('/') || /^[A-Z]:/i.test(filePath)
+        ? normalizedPath
+        : join(normalizedRoot, normalizedPath).replace(/\\/g, '/');
 
     const fileDir = absolutePath.substring(0, absolutePath.lastIndexOf('/'));
-    const isInProjectRoot = fileDir === normalizedRoot ||
-                            fileDir === normalizedRoot.replace(/\/$/, '');
+    const isInProjectRoot =
+      fileDir === normalizedRoot || fileDir === normalizedRoot.replace(/\/$/, '');
 
     if (isInProjectRoot && !allowedRootFiles.includes(basename)) {
-      result.blockers.push(`File "${basename}" not allowed in project root. Use .claude/ hierarchy.`);
+      result.blockers.push(
+        `File "${basename}" not allowed in project root. Use .claude/ hierarchy.`
+      );
 
       // Suggest correct path based on file type
       if (basename.match(/-report\.(md|json)$/)) {
@@ -980,9 +1030,13 @@ export async function validateFileLocation(filePath, fileType = null, projectRoo
     // Auto-detect file type from patterns if not specified
     if (!fileType) {
       if (basename.match(/-report\.(md|json)$/)) {
-        if (!normalizedPath.includes('.claude/context/reports/') &&
-            !normalizedPath.includes('.claude/context/artifacts/')) {
-          result.blockers.push('Report files must be in .claude/context/reports/ or .claude/context/artifacts/');
+        if (
+          !normalizedPath.includes('.claude/context/reports/') &&
+          !normalizedPath.includes('.claude/context/artifacts/')
+        ) {
+          result.blockers.push(
+            'Report files must be in .claude/context/reports/ or .claude/context/artifacts/'
+          );
           result.suggestedPath = `.claude/context/reports/${basename}`;
         }
       } else if (basename.match(/-task\.(md|json)$/)) {
@@ -1001,7 +1055,6 @@ export async function validateFileLocation(filePath, fileType = null, projectRoo
     result.allowed = result.blockers.length === 0;
 
     return result;
-
   } catch (error) {
     result.blockers.push(`Error validating file location: ${error.message}`);
     return result;
@@ -1026,14 +1079,15 @@ async function main() {
       const complexity = getArg('complexity');
 
       if (!runId) {
-        console.error('Usage: node enforcement-gate.mjs validate-plan --run-id <id> [--plan-id <id>] [--task-type <type>] [--complexity <level>]');
+        console.error(
+          'Usage: node enforcement-gate.mjs validate-plan --run-id <id> [--plan-id <id>] [--task-type <type>] [--complexity <level>]'
+        );
         process.exit(1);
       }
 
       const result = await validatePlanRating(runId, planId, { taskType, complexity });
       console.log(JSON.stringify(result, null, 2));
       process.exit(result.valid ? 0 : 1);
-
     } else if (command === 'validate-signoffs') {
       const runId = getArg('run-id');
       const workflow = getArg('workflow');
@@ -1041,34 +1095,41 @@ async function main() {
       const task = getArg('task');
 
       if (!runId || !workflow || isNaN(step)) {
-        console.error('Usage: node enforcement-gate.mjs validate-signoffs --run-id <id> --workflow <name> --step <n> [--task "<description>"]');
+        console.error(
+          'Usage: node enforcement-gate.mjs validate-signoffs --run-id <id> --workflow <name> --step <n> [--task "<description>"]'
+        );
         process.exit(1);
       }
 
       const result = await validateSignoffs(runId, workflow, step, { taskDescription: task });
       console.log(JSON.stringify(result, null, 2));
       process.exit(result.valid ? 0 : 1);
-
     } else if (command === 'validate-security') {
       const task = getArg('task');
-      const agents = getArg('agents')?.split(',').map(a => a.trim()) || [];
+      const agents =
+        getArg('agents')
+          ?.split(',')
+          .map(a => a.trim()) || [];
 
       if (!task) {
-        console.error('Usage: node enforcement-gate.mjs validate-security --task "<description>" [--agents <agent1,agent2>]');
+        console.error(
+          'Usage: node enforcement-gate.mjs validate-security --task "<description>" [--agents <agent1,agent2>]'
+        );
         process.exit(1);
       }
 
       const result = await enforceSecurityTriggers(task, agents);
       console.log(JSON.stringify(result, null, 2));
       process.exit(result.blocked ? 1 : 0);
-
     } else if (command === 'validate-skills') {
       const agentType = getArg('agent');
       const task = getArg('task') || '';
       const logFile = getArg('log');
 
       if (!agentType) {
-        console.error('Usage: node enforcement-gate.mjs validate-skills --agent <type> [--task "<description>"] [--log <file>]');
+        console.error(
+          'Usage: node enforcement-gate.mjs validate-skills --agent <type> [--task "<description>"] [--log <file>]'
+        );
         console.error('Note: Execution log can be provided via --log file or piped to stdin');
         process.exit(1);
       }
@@ -1088,14 +1149,16 @@ async function main() {
       const result = await validateSkillUsage(agentType, task, executionLog);
       console.log(JSON.stringify(result, null, 2));
       process.exit(result.valid ? 0 : 1);
-
     } else if (command === 'validate-all') {
       const runId = getArg('run-id');
       const workflow = getArg('workflow');
       const step = getArg('step') ? parseInt(getArg('step'), 10) : undefined;
       const planId = getArg('plan-id') || 'plan';
       const task = getArg('task') || '';
-      const agents = getArg('agents')?.split(',').map(a => a.trim()) || [];
+      const agents =
+        getArg('agents')
+          ?.split(',')
+          .map(a => a.trim()) || [];
       const taskType = getArg('task-type');
       const complexity = getArg('complexity');
       const agentType = getArg('agent');
@@ -1124,12 +1187,11 @@ async function main() {
           taskType,
           complexity,
           agentType,
-          executionLog
-        }
+          executionLog,
+        },
       });
       console.log(JSON.stringify(result, null, 2));
       process.exit(result.allowed ? 0 : 1);
-
     } else if (command === 'record-rating') {
       const runId = getArg('run-id');
       const planId = getArg('plan-id') || 'plan';
@@ -1137,30 +1199,32 @@ async function main() {
       const feedback = getArg('feedback');
 
       if (!runId || isNaN(score)) {
-        console.error('Usage: node enforcement-gate.mjs record-rating --run-id <id> --score <n> [--plan-id <id>] [--feedback "<text>"]');
+        console.error(
+          'Usage: node enforcement-gate.mjs record-rating --run-id <id> --score <n> [--plan-id <id>] [--feedback "<text>"]'
+        );
         process.exit(1);
       }
 
       await recordPlanRating(runId, planId, {
         score,
-        feedback: feedback ? [feedback] : []
+        feedback: feedback ? [feedback] : [],
       });
       console.log(JSON.stringify({ success: true, runId, planId, score }));
-
     } else if (command === 'validate-file-location') {
       const path = getArg('path');
       const type = getArg('type');
       const projectRoot = getArg('project-root');
 
       if (!path) {
-        console.error('Usage: node enforcement-gate.mjs validate-file-location --path "<path>" [--type <file_type>] [--project-root <root>]');
+        console.error(
+          'Usage: node enforcement-gate.mjs validate-file-location --path "<path>" [--type <file_type>] [--project-root <root>]'
+        );
         process.exit(1);
       }
 
       const result = await validateFileLocation(path, type, projectRoot);
       console.log(JSON.stringify(result, null, 2));
       process.exit(result.allowed ? 0 : 1);
-
     } else {
       console.error('Available commands:');
       console.error('  validate-plan          - Validate plan rating');
@@ -1173,17 +1237,27 @@ async function main() {
       console.error('');
       console.error('Examples:');
       console.error('  # Validate skill usage from log file');
-      console.error('  node enforcement-gate.mjs validate-skills --agent developer --task "Create component" --log ./execution.log');
+      console.error(
+        '  node enforcement-gate.mjs validate-skills --agent developer --task "Create component" --log ./execution.log'
+      );
       console.error('');
       console.error('  # Validate skill usage from stdin');
-      console.error('  echo "Used Skill: scaffolder" | node enforcement-gate.mjs validate-skills --agent developer --task "Create"');
+      console.error(
+        '  echo "Used Skill: scaffolder" | node enforcement-gate.mjs validate-skills --agent developer --task "Create"'
+      );
       console.error('');
       console.error('  # Validate all gates including skills');
-      console.error('  node enforcement-gate.mjs validate-all --run-id abc123 --workflow fullstack --step 6 --agent developer --log ./step-6.log');
+      console.error(
+        '  node enforcement-gate.mjs validate-all --run-id abc123 --workflow fullstack --step 6 --agent developer --log ./step-6.log'
+      );
       console.error('');
       console.error('  # Validate file location');
-      console.error('  node enforcement-gate.mjs validate-file-location --path ".claude/context/reports/audit.md"');
-      console.error('  node enforcement-gate.mjs validate-file-location --path "report.md" --type report');
+      console.error(
+        '  node enforcement-gate.mjs validate-file-location --path ".claude/context/reports/audit.md"'
+      );
+      console.error(
+        '  node enforcement-gate.mjs validate-file-location --path "report.md" --type report'
+      );
       process.exit(1);
     }
   } catch (error) {
@@ -1193,8 +1267,9 @@ async function main() {
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` || 
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main().catch(error => {
     console.error('Fatal error:', error);
@@ -1209,5 +1284,5 @@ export default {
   validateSkillUsage,
   validateExecutionGate,
   recordPlanRating,
-  validateFileLocation
+  validateFileLocation,
 };

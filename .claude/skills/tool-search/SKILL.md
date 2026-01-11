@@ -28,6 +28,7 @@ Tool Search - Provides semantic tool discovery using embeddings to scale from do
 ## The Problem
 
 Traditional tool loading:
+
 - All tools loaded upfront
 - 58 tools = ~55K tokens
 - Context fills quickly
@@ -36,6 +37,7 @@ Traditional tool loading:
 ## The Solution
 
 Tool Search with Embeddings:
+
 - Only Tool Search Tool loaded initially (~500 tokens)
 - Tools discovered on-demand via semantic search
 - 3-5 relevant tools loaded per search (~3K tokens)
@@ -77,6 +79,7 @@ Tool Search with Embeddings:
 ### Always Load Critical Tools
 
 Keep 3-5 most-used tools always loaded:
+
 - Core file operations: `read_file`, `write_file`, `search_code`
 - Essential integrations: `create_pull_request`, `get_issue`
 - Frequently used: `take_screenshot`, `navigate_page`
@@ -86,12 +89,14 @@ Keep 3-5 most-used tools always loaded:
 ### When to Use Tool Search
 
 **Most Beneficial When**:
+
 - Tool definitions consuming >10K tokens
 - Tool library has 10+ tools
 - Experiencing tool selection accuracy issues
 - Building MCP-powered systems with multiple servers
 
 **Less Beneficial When**:
+
 - Small tool library (<10 tools)
 - All tools used frequently in every session
 - Tool definitions are compact
@@ -99,6 +104,7 @@ Keep 3-5 most-used tools always loaded:
 ### Tool Discovery
 
 **Agent Workflow**:
+
 1. Agent needs capability (e.g., "create a pull request")
 2. Agent searches: "github pull request creation"
 3. Tool Search returns: `create_pull_request` tool
@@ -106,6 +112,7 @@ Keep 3-5 most-used tools always loaded:
 5. Agent uses tool
 
 **Example**:
+
 ```
 User: "Create a pull request for my changes"
 
@@ -119,6 +126,7 @@ Tool loaded and used
 ### 1. Clear Tool Names and Descriptions
 
 **Good**:
+
 ```json
 {
   "name": "search_customer_orders",
@@ -127,6 +135,7 @@ Tool loaded and used
 ```
 
 **Bad**:
+
 ```json
 {
   "name": "query_db_orders",
@@ -137,15 +146,17 @@ Tool loaded and used
 ### 2. System Prompt Guidance
 
 Add guidance in agent prompts:
+
 ```
-You have access to tools for Slack messaging, Google Drive file management, 
-Jira ticket tracking, and GitHub repository operations. Use the tool search 
+You have access to tools for Slack messaging, Google Drive file management,
+Jira ticket tracking, and GitHub repository operations. Use the tool search
 to find specific capabilities when needed.
 ```
 
 ### 3. Keep Critical Tools Always Loaded
 
 Don't defer loading for:
+
 - Core file operations
 - Essential integrations
 - Frequently used tools
@@ -153,6 +164,7 @@ Don't defer loading for:
 ### 4. Monitor Tool Usage
 
 Track which tools are discovered:
+
 - Most searched tools
 - Tool discovery patterns
 - Context savings achieved
@@ -171,6 +183,7 @@ The tool search uses embeddings to match tools to queries:
 ### Tool Search Tool
 
 The Tool Search Tool itself:
+
 - Searches tool library semantically
 - Returns relevant tools based on query
 - Expands tools into full definitions
@@ -241,6 +254,7 @@ Agent workflow:
 ### With MCP Servers
 
 Tool search works with MCP servers:
+
 - GitHub MCP: 35 tools → 3-5 loaded on-demand
 - Slack MCP: 11 tools → 2-3 loaded on-demand
 - Custom MCPs: Any number of tools → Loaded as needed
@@ -248,6 +262,7 @@ Tool search works with MCP servers:
 ### With Agent System
 
 All agents benefit from tool search:
+
 - Reduced context usage
 - Better tool selection
 - Scalable tool libraries
@@ -284,6 +299,7 @@ Tool Search works excellently with Programmatic Tool Calling:
 3. **Result**: Optimal tool usage with minimal token consumption
 
 **Example Workflow**:
+
 ```python
 # Tool Search finds tools
 tools = search_tools("github issue management")
@@ -309,4 +325,3 @@ See [PTC Patterns Guide](../docs/PTC_PATTERNS.md) for comprehensive PTC document
 - [Tool Search with Embeddings Cookbook](https://github.com/anthropics/anthropic-cookbook/tree/main/tool_use/tool_search_with_embeddings.ipynb)
 - [Programmatic Tool Calling Cookbook](https://github.com/anthropics/anthropic-cookbook/tree/main/tool_use/programmatic_tool_calling_ptc.ipynb)
 - [Advanced Tool Use Documentation](https://docs.claude.com/en/docs/agents-and-tools/advanced-tool-use)
-

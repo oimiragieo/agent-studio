@@ -148,5 +148,5 @@ export default {
   readTextFile,
   writeTextFile,
   readTextFilePreserve,
-  convertLineEndings
+  convertLineEndings,
 };

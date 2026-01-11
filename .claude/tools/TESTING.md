@@ -9,6 +9,7 @@ This directory contains unit tests for the Priority 2 High-Impact Performance Fi
 Tests the streaming JSON parser implementation.
 
 **Tests**:
+
 - Small file parsing (validates correct object reconstruction)
 - Large file parsing (5MB JSON file with 10,000 items)
 - Size limit enforcement (rejects files exceeding maxSize)
@@ -16,11 +17,13 @@ Tests the streaming JSON parser implementation.
 - Malformed JSON handling (proper error detection)
 
 **Run**:
+
 ```bash
 node .claude/tools/test-streaming-json-parser.mjs
 ```
 
 **Expected Output**:
+
 ```
 🧪 Running Streaming JSON Parser Tests
 
@@ -41,6 +44,7 @@ node .claude/tools/test-streaming-json-parser.mjs
 Tests the concurrent subagent spawn limiting.
 
 **Tests**:
+
 - Concurrency limit enforcement (max 3 concurrent)
 - Timeout handling (30s timeout)
 - Sequential execution when at limit
@@ -48,12 +52,14 @@ Tests the concurrent subagent spawn limiting.
 **Note**: This test requires spawning actual child processes and is designed for manual testing.
 
 **Run**:
+
 ```bash
 node .claude/tools/test-spawn-limiting.mjs
 ```
 
 **Manual Testing**:
 For thorough validation, test manually:
+
 1. Spawn 5 subagents - verify only 3 run concurrently
 2. Fill all slots with long-running processes - verify timeout works
 3. Spawn 6 subagents with 500ms each - verify ~1000ms total (2 batches)
@@ -65,17 +71,20 @@ For thorough validation, test manually:
 Tests the cache size estimation algorithm.
 
 **Tests**:
+
 - Accuracy comparison with JSON.stringify (within 30%)
 - Performance comparison (should be 2-5x faster)
 - Memory usage comparison (should use less or equal memory)
 - Edge cases (empty, nested, unicode strings)
 
 **Run**:
+
 ```bash
 node .claude/tools/test-cache-estimation.mjs
 ```
 
 **Expected Output**:
+
 ```
 🧪 Running Cache Size Estimation Tests
 
@@ -125,11 +134,11 @@ node .claude/tools/test-spawn-limiting.mjs
 
 ## Test Coverage
 
-| Fix | Test Coverage | Notes |
-|-----|---------------|-------|
-| Streaming JSON Parser | 5/5 tests | Full coverage |
-| Spawn Limiting | 3/3 tests | Manual testing recommended |
-| Cache Estimation | 4/4 tests | Full coverage |
+| Fix                   | Test Coverage | Notes                      |
+| --------------------- | ------------- | -------------------------- |
+| Streaming JSON Parser | 5/5 tests     | Full coverage              |
+| Spawn Limiting        | 3/3 tests     | Manual testing recommended |
+| Cache Estimation      | 4/4 tests     | Full coverage              |
 
 ---
 
@@ -152,14 +161,17 @@ Add these tests to your CI pipeline:
 ### Test Failures
 
 **Streaming JSON Parser Tests**:
+
 - Ensure `stream-json` is installed: `pnpm install`
 - Check Node.js version (requires 18+)
 
 **Spawn Limiting Tests**:
+
 - These tests spawn actual processes - may fail on restricted environments
 - Run manually for validation
 
 **Cache Estimation Tests**:
+
 - Accuracy tests allow up to 30% error (rough estimation is expected)
 - Performance tests require stable CPU (close other applications)
 - Memory tests require `--expose-gc` flag for accurate results: `node --expose-gc .claude/tools/test-cache-estimation.mjs`
@@ -181,10 +193,11 @@ time node .claude/tools/run-cuj.mjs CUJ-005
 ```
 
 Expected improvements:
+
 - Memory usage: -30-50%
 - CPU usage: -20-40%
 - Total execution time: -10-20%
 
 ---
 
-*Last Updated: 2026-01-09*
+_Last Updated: 2026-01-09_

@@ -13,6 +13,7 @@ allowed-tools: read, write, bash
 This skill provides structured problem-solving through a flexible thinking process that can adapt and evolve. Each thought can build on, question, or revise previous insights.
 
 **Context Savings**: ~97% reduction
+
 - **MCP Mode**: ~15,000 tokens always loaded
 - **Skill Mode**: ~500 tokens metadata + on-demand loading
 
@@ -44,17 +45,17 @@ A detailed tool for dynamic and reflective problem-solving through thoughts.
 
 ### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `thought` | string | Your current thinking step |
-| `thoughtNumber` | integer | Current thought number (1, 2, 3...) |
-| `totalThoughts` | integer | Estimated total thoughts needed |
-| `nextThoughtNeeded` | boolean | Whether another thought step is needed |
-| `isRevision` | boolean | If this thought revises previous thinking |
-| `revisesThought` | integer | Which thought number is being reconsidered |
-| `branchFromThought` | integer | Branching point thought number |
-| `branchId` | string | Identifier for current branch |
-| `needsMoreThoughts` | boolean | If more thoughts needed at the "end" |
+| Parameter           | Type    | Description                                |
+| ------------------- | ------- | ------------------------------------------ |
+| `thought`           | string  | Your current thinking step                 |
+| `thoughtNumber`     | integer | Current thought number (1, 2, 3...)        |
+| `totalThoughts`     | integer | Estimated total thoughts needed            |
+| `nextThoughtNeeded` | boolean | Whether another thought step is needed     |
+| `isRevision`        | boolean | If this thought revises previous thinking  |
+| `revisesThought`    | integer | Which thought number is being reconsidered |
+| `branchFromThought` | integer | Branching point thought number             |
+| `branchId`          | string  | Identifier for current branch              |
+| `needsMoreThoughts` | boolean | If more thoughts needed at the "end"       |
 
 ### Key Features
 
@@ -89,6 +90,7 @@ python executor.py --tool sequentialthinking --args '{"thought": "...", "thought
 ## Configuration
 
 MCP server configuration stored in `config.json`:
+
 - **Command**: `npx -y @modelcontextprotocol/server-sequential-thinking`
 
 ## Related

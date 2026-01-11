@@ -40,7 +40,15 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["unit", "integration", "system", "acceptance", "e2e", "performance", "security"]
+            "enum": [
+              "unit",
+              "integration",
+              "system",
+              "acceptance",
+              "e2e",
+              "performance",
+              "security"
+            ]
           }
         },
         "coverage_targets": {

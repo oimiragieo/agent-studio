@@ -25,46 +25,46 @@ const PROJECT_ROOT = resolve(__dirname, '../../../..');
 
 // Template registry
 const TEMPLATES = {
-  'component': {
+  component: {
     description: 'Next.js Server Component',
     technologies: ['nextjs', 'react', 'typescript'],
-    handler: scaffoldComponent
+    handler: scaffoldComponent,
   },
   'client-component': {
     description: 'Next.js Client Component',
     technologies: ['nextjs', 'react', 'typescript'],
-    handler: scaffoldClientComponent
+    handler: scaffoldClientComponent,
   },
-  'api': {
+  api: {
     description: 'Next.js API Route (App Router)',
     technologies: ['nextjs', 'typescript'],
-    handler: scaffoldApiRoute
+    handler: scaffoldApiRoute,
   },
-  'test': {
+  test: {
     description: 'Test file for existing component',
     technologies: ['jest', 'vitest', 'react', 'typescript'],
-    handler: scaffoldTest
+    handler: scaffoldTest,
   },
-  'feature': {
+  feature: {
     description: 'Complete feature module',
     technologies: ['nextjs', 'react', 'typescript'],
-    handler: scaffoldFeature
+    handler: scaffoldFeature,
   },
-  'hook': {
+  hook: {
     description: 'Custom React hook',
     technologies: ['react', 'typescript'],
-    handler: scaffoldHook
+    handler: scaffoldHook,
   },
-  'context': {
+  context: {
     description: 'React Context provider',
     technologies: ['react', 'typescript'],
-    handler: scaffoldContext
+    handler: scaffoldContext,
   },
   'fastapi-route': {
     description: 'FastAPI router',
     technologies: ['fastapi', 'python', 'pydantic'],
-    handler: scaffoldFastAPIRoute
-  }
+    handler: scaffoldFastAPIRoute,
+  },
 };
 
 /**
@@ -130,7 +130,7 @@ async function extractPatterns(rules) {
           name: `Template from ${rule.name}`,
           type: 'template',
           content: match[1],
-          source: rule.name
+          source: rule.name,
         });
       }
 
@@ -141,7 +141,7 @@ async function extractPatterns(rules) {
           name: `Code pattern from ${rule.name}`,
           type: 'code_example',
           content: match[1],
-          source: rule.name
+          source: rule.name,
         });
       }
 
@@ -151,7 +151,7 @@ async function extractPatterns(rules) {
           name: 'Server Component pattern',
           type: 'convention',
           content: 'Use async Server Components by default',
-          source: rule.name
+          source: rule.name,
         });
       }
 
@@ -160,7 +160,7 @@ async function extractPatterns(rules) {
           name: 'Client Component pattern',
           type: 'convention',
           content: "Add 'use client' directive for interactive components",
-          source: rule.name
+          source: rule.name,
         });
       }
 
@@ -169,10 +169,9 @@ async function extractPatterns(rules) {
           name: 'Suspense boundary pattern',
           type: 'convention',
           content: 'Wrap async components in Suspense boundaries',
-          source: rule.name
+          source: rule.name,
         });
       }
-
     } catch (error) {
       console.warn(`Failed to read rule ${rule.path}:`, error.message);
     }
@@ -288,7 +287,7 @@ export async function ${pascalName}(props: ${pascalName}Props) {
 }
 
 export default ${pascalName}
-`
+`,
     },
     {
       path: `${basePath}/content.tsx`,
@@ -309,7 +308,7 @@ export async function ${pascalName}Content(props: ${pascalName}Props) {
     </div>
   )
 }
-`
+`,
     },
     {
       path: `${basePath}/skeleton.tsx`,
@@ -326,7 +325,7 @@ export function ${pascalName}Skeleton() {
     </div>
   )
 }
-`
+`,
     },
     {
       path: `${basePath}/types.ts`,
@@ -338,14 +337,14 @@ export interface ${pascalName}Props {
   title?: string
   // Add your prop types here
 }
-`
-    }
+`,
+    },
   ];
 
   return {
     files,
     basePath,
-    componentName: pascalName
+    componentName: pascalName,
   };
 }
 
@@ -392,7 +391,7 @@ export function ${pascalName}(props: ${pascalName}Props) {
 }
 
 export default ${pascalName}
-`
+`,
     },
     {
       path: `${basePath}/types.ts`,
@@ -403,14 +402,14 @@ export default ${pascalName}
 export interface ${pascalName}Props {
   // Add your prop types here
 }
-`
-    }
+`,
+    },
   ];
 
   return {
     files,
     basePath,
-    componentName: pascalName
+    componentName: pascalName,
   };
 }
 
@@ -485,14 +484,14 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-`
-    }
+`,
+    },
   ];
 
   return {
     files,
     basePath,
-    routeName: kebabName
+    routeName: kebabName,
   };
 }
 
@@ -537,14 +536,14 @@ describe('${componentName}', () => {
     // TODO: Test error handling
   })
 })
-`
-    }
+`,
+    },
   ];
 
   return {
     files,
     basePath,
-    componentName
+    componentName,
   };
 }
 
@@ -570,7 +569,7 @@ export default function ${pascalName}Page() {
     </div>
   )
 }
-`
+`,
     },
     {
       path: `${basePath}/components/${kebabName}-list.tsx`,
@@ -584,7 +583,7 @@ export function ${pascalName}List() {
     </div>
   )
 }
-`
+`,
     },
     {
       path: `lib/${kebabName}/types.ts`,
@@ -598,7 +597,7 @@ export interface ${pascalName} {
   updatedAt: string
   // Add your fields here
 }
-`
+`,
     },
     {
       path: `lib/${kebabName}/api.ts`,
@@ -628,14 +627,14 @@ export async function create${pascalName}(data: Partial<${pascalName}>): Promise
   const result = await response.json()
   return result.data
 }
-`
-    }
+`,
+    },
   ];
 
   return {
     files,
     basePath,
-    featureName: pascalName
+    featureName: pascalName,
   };
 }
 
@@ -665,14 +664,14 @@ export function ${hookName}() {
 
   return state
 }
-`
-    }
+`,
+    },
   ];
 
   return {
     files,
     basePath,
-    hookName
+    hookName,
   };
 }
 
@@ -721,14 +720,14 @@ export function use${pascalName}() {
   }
   return context
 }
-`
-    }
+`,
+    },
   ];
 
   return {
     files,
     basePath,
-    contextName: pascalName
+    contextName: pascalName,
   };
 }
 
@@ -808,14 +807,14 @@ async def create_${snakeName}(
         status_code=status.HTTP_501_NOT_IMPLEMENTED,
         detail="Database integration pending",
     )
-`
-    }
+`,
+    },
   ];
 
   return {
     files,
     basePath,
-    routeName: snakeName
+    routeName: snakeName,
   };
 }
 
@@ -860,9 +859,9 @@ Usage:
   node scaffold.mjs <template> <name> [options]
 
 Templates:
-${Object.entries(TEMPLATES).map(([key, { description }]) =>
-  `  ${key.padEnd(20)} ${description}`
-).join('\n')}
+${Object.entries(TEMPLATES)
+  .map(([key, { description }]) => `  ${key.padEnd(20)} ${description}`)
+  .join('\n')}
 
 Options:
   --path <path>       Target directory for generated files
@@ -962,17 +961,16 @@ async function main() {
       files_generated: result.files.map(f => ({
         path: resolve(PROJECT_ROOT, f.path),
         type: f.type,
-        lines_of_code: f.content.split('\n').length
+        lines_of_code: f.content.split('\n').length,
       })),
-      patterns_applied: patterns.length > 0
-        ? patterns.map(p => p.name)
-        : ['Default template pattern'],
+      patterns_applied:
+        patterns.length > 0 ? patterns.map(p => p.name) : ['Default template pattern'],
       rules_loaded: rules.map(r => r.name),
       rule_index_consulted: true,
       technology_stack: templateTechs,
       template_used: templateType,
       supporting_files: result.files.slice(1).map(f => resolve(PROJECT_ROOT, f.path)),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // 8. Validate output
@@ -984,7 +982,6 @@ async function main() {
     console.log('\n✅ Scaffolding complete!');
     console.log(`\nGenerated files:`);
     writtenPaths.forEach(path => console.log(`  - ${path}`));
-
   } catch (error) {
     console.error('\n❌ Scaffolding failed:', error.message);
     console.error(error.stack);
@@ -997,4 +994,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }
 
-export { scaffoldComponent, scaffoldClientComponent, scaffoldApiRoute, scaffoldTest, scaffoldFeature, scaffoldHook, scaffoldContext, scaffoldFastAPIRoute };
+export {
+  scaffoldComponent,
+  scaffoldClientComponent,
+  scaffoldApiRoute,
+  scaffoldTest,
+  scaffoldFeature,
+  scaffoldHook,
+  scaffoldContext,
+  scaffoldFastAPIRoute,
+};

@@ -9,11 +9,21 @@ import assert from 'node:assert';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { startMonitoring, stopMonitoring, getMemoryUsage, logMemoryUsage, canSpawnSubagent } from './memory-monitor.mjs';
+import {
+  startMonitoring,
+  stopMonitoring,
+  getMemoryUsage,
+  logMemoryUsage,
+  canSpawnSubagent,
+} from './memory-monitor.mjs';
 import { parseLargeJSON, shouldUseStreaming } from './streaming-json-parser.mjs';
 import { cleanupAllCaches, setupPeriodicCleanup } from './memory-cleanup.mjs';
 import { saveCheckpoint, loadCheckpoint, deleteCheckpoint } from './workflow-checkpoint.mjs';
-import { setupMemoryPressureHandling, getCurrentPressureLevel, isPressureAtLevel } from './memory-pressure-handler.mjs';
+import {
+  setupMemoryPressureHandling,
+  getCurrentPressureLevel,
+  isPressureAtLevel,
+} from './memory-pressure-handler.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,10 +59,10 @@ test('Streaming JSON parser handles small files', async () => {
   const testFile = path.join(TEST_DIR, 'test-small.json');
   const testData = { test: 'data', number: 42 };
   fs.writeFileSync(testFile, JSON.stringify(testData));
-  
+
   const parsed = await parseLargeJSON(testFile);
   assert.deepStrictEqual(parsed, testData);
-  
+
   fs.unlinkSync(testFile);
 });
 
@@ -61,14 +71,14 @@ test('Streaming JSON parser rejects oversized files', async () => {
   // Create a file that exceeds the limit
   const largeData = { data: 'x'.repeat(200 * 1024 * 1024) }; // 200MB string
   fs.writeFileSync(testFile, JSON.stringify(largeData));
-  
+
   try {
     await parseLargeJSON(testFile, { maxSize: 100 * 1024 * 1024 }); // 100MB limit
     assert.fail('Should have thrown error for oversized file');
   } catch (error) {
     assert.ok(error.message.includes('exceeds size limit'));
   }
-  
+
   fs.unlinkSync(testFile);
 });
 
@@ -77,10 +87,10 @@ test('shouldUseStreaming detects large files', () => {
   // Create a 2MB file
   const largeData = { data: 'x'.repeat(2 * 1024 * 1024) };
   fs.writeFileSync(testFile, JSON.stringify(largeData));
-  
+
   assert.strictEqual(shouldUseStreaming(testFile, 1), true);
   assert.strictEqual(shouldUseStreaming(testFile, 5), false);
-  
+
   fs.unlinkSync(testFile);
 });
 
@@ -106,15 +116,15 @@ test('Checkpoint save and load works', async () => {
   const workflowId = 'test-workflow-123';
   const step = 5;
   const state = { test: 'state', data: [1, 2, 3] };
-  
+
   const checkpointPath = await saveCheckpoint(workflowId, step, state);
   assert.ok(fs.existsSync(checkpointPath));
-  
+
   const loaded = await loadCheckpoint(workflowId);
   assert.strictEqual(loaded.workflowId, workflowId);
   assert.strictEqual(loaded.step, step);
   assert.deepStrictEqual(loaded.state, state);
-  
+
   await deleteCheckpoint(workflowId);
   assert.strictEqual(fs.existsSync(checkpointPath), false);
 });
@@ -145,14 +155,17 @@ test('Memory pressure callback triggers on low threshold', async () => {
   let callbackLevel = null;
 
   // Use very low thresholds to trigger callback immediately
-  const stopMonitoring = setupMemoryPressureHandling((level, usage, stats) => {
-    callbackCalled = true;
-    callbackLevel = level;
-  }, {
-    highThreshold: 0.01, // 1% - will trigger immediately
-    criticalThreshold: 0.99, // 99% - won't trigger
-    checkIntervalMs: 100 // Check quickly
-  });
+  const stopMonitoring = setupMemoryPressureHandling(
+    (level, usage, stats) => {
+      callbackCalled = true;
+      callbackLevel = level;
+    },
+    {
+      highThreshold: 0.01, // 1% - will trigger immediately
+      criticalThreshold: 0.99, // 99% - won't trigger
+      checkIntervalMs: 100, // Check quickly
+    }
+  );
 
   // Wait for one check cycle
   await new Promise(resolve => setTimeout(resolve, 150));
@@ -167,12 +180,15 @@ test('Memory pressure callback triggers on low threshold', async () => {
 test('Memory pressure monitoring can be stopped', () => {
   let callbackCount = 0;
 
-  const stopMonitoring = setupMemoryPressureHandling(() => {
-    callbackCount++;
-  }, {
-    highThreshold: 0.01,
-    checkIntervalMs: 50
-  });
+  const stopMonitoring = setupMemoryPressureHandling(
+    () => {
+      callbackCount++;
+    },
+    {
+      highThreshold: 0.01,
+      checkIntervalMs: 50,
+    }
+  );
 
   // Stop immediately
   stopMonitoring();

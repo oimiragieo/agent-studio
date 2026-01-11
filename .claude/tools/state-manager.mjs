@@ -20,18 +20,18 @@ const CONTEXT_DIR = path.join(__dirname, '..', 'context', 'runs');
 
 // Context budgets by agent type (in bytes)
 const CONTEXT_BUDGETS = {
-  opus: 16000,    // Opus agents get more context
-  sonnet: 12000,  // Sonnet agents medium
-  haiku: 6000,    // Haiku agents minimal
-  default: 10000
+  opus: 16000, // Opus agents get more context
+  sonnet: 12000, // Sonnet agents medium
+  haiku: 6000, // Haiku agents minimal
+  default: 10000,
 };
 
 // Compression thresholds
 const THRESHOLDS = {
-  maxStateSize: 10240,      // 10KB triggers compression
-  maxHandoffs: 5,           // Keep last 5 handoffs
-  maxAgentOutput: 2048,     // 2KB max per agent output
-  maxHistoryChars: 2000     // Compressed history limit
+  maxStateSize: 10240, // 10KB triggers compression
+  maxHandoffs: 5, // Keep last 5 handoffs
+  maxAgentOutput: 2048, // 2KB max per agent output
+  maxHistoryChars: 2000, // Compressed history limit
 };
 
 class StateManager {
@@ -65,8 +65,8 @@ class StateManager {
         total_handoffs: 0,
         compression_count: 0,
         bytes_saved: 0,
-        created_at: new Date().toISOString()
-      }
+        created_at: new Date().toISOString(),
+      },
     };
 
     this.saveState(state);
@@ -104,7 +104,7 @@ class StateManager {
       state.artifacts.push({
         name: updates.artifact.name,
         path: updates.artifact.path,
-        added_at: new Date().toISOString()
+        added_at: new Date().toISOString(),
       });
     }
 
@@ -119,10 +119,7 @@ class StateManager {
     }
 
     if (updates.history) {
-      state.compressed_history = this.appendHistory(
-        state.compressed_history,
-        updates.history
-      );
+      state.compressed_history = this.appendHistory(state.compressed_history, updates.history);
     }
 
     // Auto-compress if needed
@@ -145,7 +142,7 @@ class StateManager {
       from: fromAgent,
       to: toAgent,
       summary: this.truncate(summary, THRESHOLDS.maxAgentOutput),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Save handoff to file
@@ -189,8 +186,8 @@ class StateManager {
 
     // Truncate history
     if (state.compressed_history.length > THRESHOLDS.maxHistoryChars) {
-      state.compressed_history = '...' +
-        state.compressed_history.slice(-THRESHOLDS.maxHistoryChars + 3);
+      state.compressed_history =
+        '...' + state.compressed_history.slice(-THRESHOLDS.maxHistoryChars + 3);
     }
 
     // Clear inactive agents
@@ -198,7 +195,7 @@ class StateManager {
 
     const newSize = JSON.stringify(state).length;
     state.metrics.compression_count++;
-    state.metrics.bytes_saved += (originalSize - newSize);
+    state.metrics.bytes_saved += originalSize - newSize;
 
     this.saveState(state);
 
@@ -206,7 +203,7 @@ class StateManager {
       original_size: originalSize,
       new_size: newSize,
       bytes_saved: originalSize - newSize,
-      compression_ratio: (1 - newSize / originalSize).toFixed(2)
+      compression_ratio: (1 - newSize / originalSize).toFixed(2),
     };
   }
 
@@ -231,7 +228,7 @@ class StateManager {
       active_agents: state.active_agents,
       metrics: state.metrics,
       thresholds: THRESHOLDS,
-      budgets: CONTEXT_BUDGETS
+      budgets: CONTEXT_BUDGETS,
     };
   }
 
@@ -264,7 +261,8 @@ class StateManager {
 
   windowHandoffs() {
     try {
-      const files = fs.readdirSync(this.handoffsDir)
+      const files = fs
+        .readdirSync(this.handoffsDir)
         .sort()
         .map(f => path.join(this.handoffsDir, f));
 
@@ -284,8 +282,7 @@ class StateManager {
     while (size > budget) {
       // First: truncate history more aggressively
       if (compressed.compressed_history.length > 500) {
-        compressed.compressed_history = '...' +
-          compressed.compressed_history.slice(-500);
+        compressed.compressed_history = '...' + compressed.compressed_history.slice(-500);
         size = JSON.stringify(compressed).length;
         continue;
       }
@@ -301,7 +298,7 @@ class StateManager {
       if (compressed.artifacts.length > 0) {
         compressed.artifacts = compressed.artifacts.map(a => ({
           name: a.name,
-          path: a.path
+          path: a.path,
         }));
         size = JSON.stringify(compressed).length;
         continue;
@@ -321,11 +318,21 @@ class StateManager {
   getAgentModel(agentName) {
     // Map agent names to model types
     const opusAgents = [
-      'orchestrator', 'architect', 'database-architect', 'qa',
-      'security-architect', 'code-reviewer', 'refactoring-specialist',
-      'performance-engineer', 'llm-architect', 'api-designer',
-      'legacy-modernizer', 'compliance-auditor', 'planner',
-      'ai-council', 'master-orchestrator'
+      'orchestrator',
+      'architect',
+      'database-architect',
+      'qa',
+      'security-architect',
+      'code-reviewer',
+      'refactoring-specialist',
+      'performance-engineer',
+      'llm-architect',
+      'api-designer',
+      'legacy-modernizer',
+      'compliance-auditor',
+      'planner',
+      'ai-council',
+      'master-orchestrator',
     ];
 
     const haikuAgents = ['technical-writer'];
@@ -419,11 +426,7 @@ Examples:
         break;
 
       case 'handoff':
-        result = manager.handoff(
-          getArg('from'),
-          getArg('to'),
-          getArg('summary') || ''
-        );
+        result = manager.handoff(getArg('from'), getArg('to'), getArg('summary') || '');
         break;
 
       case 'prune':
@@ -444,7 +447,6 @@ Examples:
     } else {
       console.log(result);
     }
-
   } catch (e) {
     console.error(`Error: ${e.message}`);
     process.exit(1);

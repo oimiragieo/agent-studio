@@ -21,15 +21,16 @@ pnpm index-rules
 
 ## Exit Codes
 
-| Code | Meaning | Action |
-|------|---------|--------|
-| `0` | ✅ All passed | None |
-| `1` | ⚠️ Mismatch/broken | `pnpm index-rules` |
-| `2` | ❌ File missing | `pnpm index-rules` |
+| Code | Meaning            | Action             |
+| ---- | ------------------ | ------------------ |
+| `0`  | ✅ All passed      | None               |
+| `1`  | ⚠️ Mismatch/broken | `pnpm index-rules` |
+| `2`  | ❌ File missing    | `pnpm index-rules` |
 
 ## Output Examples
 
 ### ✅ Success
+
 ```
 📋 Rule Index Version Check:
    Current:  1.1.0
@@ -38,6 +39,7 @@ pnpm index-rules
 ```
 
 ### ⚠️ Version Mismatch
+
 ```
 📋 Rule Index Version Check:
    Current:  1.0.0
@@ -46,6 +48,7 @@ pnpm index-rules
 ```
 
 ### ⚠️ Missing Version
+
 ```
 📋 Rule Index Version Check:
    Current:  missing
@@ -54,6 +57,7 @@ pnpm index-rules
 ```
 
 ### ❌ File Not Found
+
 ```
 📋 Rule Index Version Check:
    Current:  file-not-found
@@ -64,12 +68,14 @@ pnpm index-rules
 ## CI Integration
 
 ### GitHub Actions
+
 ```yaml
 - name: Validate Rule Index Version
   run: pnpm validate:index-version
 ```
 
 ### Pre-commit Hook
+
 ```bash
 #!/bin/bash
 pnpm validate:index-version || {

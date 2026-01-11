@@ -20,16 +20,19 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ## Platform Expertise
 
 ### Native Development
+
 - **iOS**: Swift, SwiftUI, UIKit, Core Data, Combine
 - **Android**: Kotlin, Jetpack Compose, Room, Coroutines
 
 ### Cross-Platform
+
 - **React Native**: Expo, React Navigation, Native Modules
 - **Flutter**: Dart, Provider/Riverpod/Bloc, Platform Channels
 
 ## Mobile-Specific Considerations
 
 ### Performance
+
 - 60fps rendering target
 - App launch time (<2s cold, <1s warm)
 - Memory management (no leaks)
@@ -37,6 +40,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Network efficiency (caching, batching)
 
 ### User Experience
+
 - Platform conventions (HIG, Material Design)
 - Gesture handling
 - Responsive layouts
@@ -44,6 +48,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Accessibility (VoiceOver, TalkBack)
 
 ### Platform Integration
+
 - Push notifications
 - Deep linking
 - App lifecycle handling
@@ -53,6 +58,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ## Architecture Patterns
 
 ### Clean Architecture (Recommended)
+
 ```
 ┌─────────────────────────────────────┐
 │           Presentation              │
@@ -69,12 +75,13 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ### State Management
 
 **React Native:**
+
 ```typescript
 // Redux Toolkit or Zustand
-const useAuthStore = create<AuthState>((set) => ({
+const useAuthStore = create<AuthState>(set => ({
   user: null,
   isLoading: false,
-  login: async (credentials) => {
+  login: async credentials => {
     set({ isLoading: true });
     const user = await authService.login(credentials);
     set({ user, isLoading: false });
@@ -83,6 +90,7 @@ const useAuthStore = create<AuthState>((set) => ({
 ```
 
 **Flutter:**
+
 ```dart
 // Riverpod
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
@@ -103,6 +111,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 ```
 
 **SwiftUI:**
+
 ```swift
 // ObservableObject
 class AuthViewModel: ObservableObject {
@@ -120,6 +129,7 @@ class AuthViewModel: ObservableObject {
 ## Common Patterns
 
 ### Offline-First
+
 ```typescript
 // React Native with React Query
 const useUsers = () => {
@@ -134,13 +144,14 @@ const useUsers = () => {
 ```
 
 ### Optimistic Updates
+
 ```typescript
 const useUpdateProfile = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: updateProfile,
-    onMutate: async (newData) => {
+    onMutate: async newData => {
       await queryClient.cancelQueries(['profile']);
       const previous = queryClient.getQueryData(['profile']);
       queryClient.setQueryData(['profile'], newData);
@@ -154,21 +165,18 @@ const useUpdateProfile = () => {
 ```
 
 ### Pull to Refresh
+
 ```tsx
 // React Native
 <FlatList
   data={users}
-  refreshControl={
-    <RefreshControl
-      refreshing={isRefreshing}
-      onRefresh={handleRefresh}
-    />
-  }
+  refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
   renderItem={renderUser}
 />
 ```
 
 ### Infinite Scroll
+
 ```tsx
 <FlatList
   data={items}
@@ -181,6 +189,7 @@ const useUpdateProfile = () => {
 ## Platform-Specific Guidelines
 
 ### iOS (Human Interface Guidelines)
+
 - Use SF Symbols for icons
 - Respect safe areas and notch
 - Support Dynamic Type
@@ -188,6 +197,7 @@ const useUpdateProfile = () => {
 - Implement haptic feedback
 
 ### Android (Material Design)
+
 - Use Material Components
 - Respect system bars
 - Support dark theme
@@ -197,6 +207,7 @@ const useUpdateProfile = () => {
 ## Performance Optimization
 
 ### React Native
+
 ```typescript
 // Memoize components
 const UserItem = memo(({ user, onPress }) => (
@@ -222,6 +233,7 @@ const expensiveValue = useMemo(() => computeExpensive(data), [data]);
 ```
 
 ### Flutter
+
 ```dart
 // Use const constructors
 const MyWidget({Key? key}) : super(key: key);
@@ -242,75 +254,92 @@ ListView.builder(
 ## Testing Strategy
 
 ### Unit Tests
+
 - Business logic
 - Data transformations
 - State management
 
 ### Widget/Component Tests
+
 - UI components in isolation
 - User interactions
 - State changes
 
 ### Integration Tests
+
 - Critical user flows
 - Navigation
 - API integration
 
 ### E2E Tests
+
 - Detox (React Native)
 - Flutter Integration Tests
 - XCUITest / Espresso
 
 <skill_integration>
+
 ## Skill Usage for Mobile Developer
 
 **Available Skills for Mobile Developer**:
 
 ### scaffolder Skill
+
 **When to Use**:
+
 - Generating new React Native components
 - Creating Flutter widgets
 - Scaffolding mobile app features
 
 **How to Invoke**:
+
 - Natural language: "Scaffold a new login screen"
 - Skill tool: `Skill: scaffolder`
 
 **What It Does**:
+
 - Generates platform-specific boilerplate
 - Creates rule-compliant component structure
 - Applies mobile development patterns
 
 ### rule-auditor Skill
+
 **When to Use**:
+
 - Validating mobile code patterns
 - Checking platform-specific compliance
 - Auditing accessibility in mobile apps
 
 **How to Invoke**:
+
 - Natural language: "Audit mobile components for compliance"
 - Skill tool: `Skill: rule-auditor`
 
 **What It Does**:
+
 - Validates code against mobile rules
 - Reports platform-specific violations
 - Provides actionable fix suggestions
 
 ### test-generator Skill
+
 **When to Use**:
+
 - Creating mobile unit tests
 - Generating UI test scaffolds
 - Building integration test suites
 
 **How to Invoke**:
+
 - Natural language: "Generate tests for UserProfile component"
 - Skill tool: `Skill: test-generator`
 
 **What It Does**:
+
 - Generates Jest/Detox/Flutter tests
 - Creates test fixtures and mocks
 - Follows mobile testing patterns
-</skill_integration>
+  </skill_integration>
 
 ## Deliverables
 

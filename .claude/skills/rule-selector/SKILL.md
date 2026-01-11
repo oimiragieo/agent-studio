@@ -4,7 +4,7 @@ description: Analyzes project tech stack and recommends optimal rule configurati
 context:fork: true
 allowed-tools: read, glob, grep, search
 min_required_version: 1.0.0
-compatible_versions: "^1.0.0"
+compatible_versions: '^1.0.0'
 ---
 
 # Rule Selector
@@ -38,18 +38,21 @@ ls -la next.config.* nuxt.config.* angular.json svelte.config.* astro.config.*
 Extract framework and library information:
 
 **Node.js/JavaScript Projects:**
+
 ```bash
 # Parse package.json for key dependencies
 cat package.json | jq '.dependencies + .devDependencies | keys[]' | grep -E "react|next|vue|angular|svelte"
 ```
 
 **Python Projects:**
+
 ```bash
 # Parse requirements.txt or pyproject.toml
 cat requirements.txt | grep -E "fastapi|django|flask|pytorch|tensorflow"
 ```
 
 **Go Projects:**
+
 ```bash
 # Parse go.mod
 cat go.mod | grep -E "gin|echo|fiber|chi"
@@ -58,6 +61,7 @@ cat go.mod | grep -E "gin|echo|fiber|chi"
 ### Step 3: Load Rule Index
 
 Load the rule index to discover all available rules dynamically:
+
 - @.claude/context/rule-index.json
 
 The index contains metadata for all 1,081+ rules with technology mappings.
@@ -115,14 +119,14 @@ function isVersionCompatible(current, required) {
 
 Update the version in `scripts/generate-rule-index.mjs` when:
 
-| Change Type | Version Bump | Example |
-|------------|--------------|---------|
+| Change Type       | Version Bump            | Example                                                         |
+| ----------------- | ----------------------- | --------------------------------------------------------------- |
 | **Major (X.0.0)** | Breaking schema changes | Renamed `technology_map` to `tech_index`, removed `rules` array |
-| **Minor (1.X.0)** | New rules added | Added 50 new rules, new technology categories |
-| **Minor (1.X.0)** | Rule paths changed | Moved rules from `.claude/archive/` to `.claude/rules-library/` |
-| **Minor (1.X.0)** | New metadata fields | Added `templates` or `validation_blocks` to rule metadata |
-| **Patch (1.0.X)** | Bug fixes only | Fixed technology detection, corrected metadata parsing |
-| **Patch (1.0.X)** | Re-indexing | Re-ran index generation without content changes |
+| **Minor (1.X.0)** | New rules added         | Added 50 new rules, new technology categories                   |
+| **Minor (1.X.0)** | Rule paths changed      | Moved rules from `.claude/archive/` to `.claude/rules-library/` |
+| **Minor (1.X.0)** | New metadata fields     | Added `templates` or `validation_blocks` to rule metadata       |
+| **Patch (1.0.X)** | Bug fixes only          | Fixed technology detection, corrected metadata parsing          |
+| **Patch (1.0.X)** | Re-indexing             | Re-ran index generation without content changes                 |
 
 **Version History**:
 
@@ -156,9 +160,10 @@ If no configuration files are detected (package.json, requirements.txt, go.mod, 
    - If none found: Empty directory detected
 
 2. **Prompt user with Quick Pick list for common stacks**:
+
    ```
    "No configuration files detected. Please select your intended stack:
-   
+
    **Quick Pick (Common Stacks):**
    1. Next.js - Full-stack React framework with App Router
    2. Python API - FastAPI/Django REST API service
@@ -167,9 +172,9 @@ If no configuration files are detected (package.json, requirements.txt, go.mod, 
    5. TypeScript App - TypeScript application
    6. Vue.js App - Vue.js application
    7. Other - Describe your stack using keywords
-   
+
    Or describe your stack using one of these keywords:
-   
+
    **Supported Stack Keywords:**
    - `nextjs-app` - Next.js application
    - `react-spa` - React single-page application
@@ -183,7 +188,7 @@ If no configuration files are detected (package.json, requirements.txt, go.mod, 
    - `nodejs-api` - Node.js API service
    - `mobile-react-native` - React Native mobile app
    - `mobile-flutter` - Flutter mobile app
-   
+
    **Or describe your stack in natural language:**
    - Example: 'React with Python backend'
    - Example: 'Next.js TypeScript with PostgreSQL'
@@ -207,20 +212,20 @@ If no configuration files are detected (package.json, requirements.txt, go.mod, 
 
 When prompting users in empty directory scenarios, suggest these keywords for better rule mapping:
 
-| Keyword | Description | Maps To Rules |
-|---------|-------------|---------------|
-| `nextjs-app` | Next.js application | Next.js, React, TypeScript, Tailwind |
-| `react-spa` | React single-page application | React, TypeScript, JavaScript |
-| `fastapi-backend` | FastAPI backend service | FastAPI, Python, Pydantic |
-| `django-backend` | Django backend service | Django, Python |
-| `go-microservice` | Go microservice | Go, Golang |
-| `python-api` | Python API service | Python, FastAPI/Django |
-| `typescript-app` | TypeScript application | TypeScript, JavaScript |
-| `vue-app` | Vue.js application | Vue, TypeScript, JavaScript |
-| `angular-app` | Angular application | Angular, TypeScript |
-| `nodejs-api` | Node.js API service | Node.js, Express, TypeScript |
-| `mobile-react-native` | React Native mobile app | React Native, TypeScript |
-| `mobile-flutter` | Flutter mobile app | Flutter, Dart |
+| Keyword               | Description                   | Maps To Rules                        |
+| --------------------- | ----------------------------- | ------------------------------------ |
+| `nextjs-app`          | Next.js application           | Next.js, React, TypeScript, Tailwind |
+| `react-spa`           | React single-page application | React, TypeScript, JavaScript        |
+| `fastapi-backend`     | FastAPI backend service       | FastAPI, Python, Pydantic            |
+| `django-backend`      | Django backend service        | Django, Python                       |
+| `go-microservice`     | Go microservice               | Go, Golang                           |
+| `python-api`          | Python API service            | Python, FastAPI/Django               |
+| `typescript-app`      | TypeScript application        | TypeScript, JavaScript               |
+| `vue-app`             | Vue.js application            | Vue, TypeScript, JavaScript          |
+| `angular-app`         | Angular application           | Angular, TypeScript                  |
+| `nodejs-api`          | Node.js API service           | Node.js, Express, TypeScript         |
+| `mobile-react-native` | React Native mobile app       | React Native, TypeScript             |
+| `mobile-flutter`      | Flutter mobile app            | Flutter, Dart                        |
 
 **Usage**: When user provides a keyword, map directly to corresponding technology rules. For natural language descriptions, extract technologies and map to rules.
 
@@ -244,6 +249,7 @@ const libraryRules = recommendedRules.filter(r => r.type === 'library');
 ```
 
 **Technology Mapping**:
+
 - Detected technologies from Step 2 → Query `index.technology_map[tech]`
 - Get all rules for each technology
 - Prioritize master rules (from `.claude/rules-master/`)
@@ -261,45 +267,45 @@ stack_profiles:
     # Auto-detected: Next.js 14 + TypeScript + Tailwind + Prisma
     include:
       # Master rules (from index, type: "master")
-      - ".claude/rules-master/TECH_STACK_NEXTJS.md"
-      - ".claude/rules-master/PROTOCOL_ENGINEERING.md"
-      
+      - '.claude/rules-master/TECH_STACK_NEXTJS.md'
+      - '.claude/rules-master/PROTOCOL_ENGINEERING.md'
+
       # Library rules (from index, type: "library", formerly archive)
       # Selected based on technology_map queries
-      - ".claude/rules-library/nextjs.mdc"
-      - ".claude/rules-library/typescript.mdc"
-      - ".claude/rules-library/react.mdc"
-      - ".claude/rules-library/tailwind.mdc"
-      - ".claude/rules-library/vitest-unit-testing-cursorrules-prompt-file/**/*.mdc"
+      - '.claude/rules-library/nextjs.mdc'
+      - '.claude/rules-library/typescript.mdc'
+      - '.claude/rules-library/react.mdc'
+      - '.claude/rules-library/tailwind.mdc'
+      - '.claude/rules-library/vitest-unit-testing-cursorrules-prompt-file/**/*.mdc'
 
     exclude:
       # Exclude rules for technologies NOT detected
       # Query index.technology_map for all technologies
       # Exclude rules not matching detected stack
-      - ".claude/rules-library/angular-*/**"
-      - ".claude/rules-library/vue-*/**"
-      - ".claude/rules-library/python-*/**"
-      - ".claude/rules-library/go-*/**"
-      - ".claude/rules-library/swift-*/**"
-      - ".claude/rules-library/android-*/**"
+      - '.claude/rules-library/angular-*/**'
+      - '.claude/rules-library/vue-*/**'
+      - '.claude/rules-library/python-*/**'
+      - '.claude/rules-library/go-*/**'
+      - '.claude/rules-library/swift-*/**'
+      - '.claude/rules-library/android-*/**'
 
     # Priority order (master rules first)
     priority:
-      - TECH_STACK_NEXTJS      # Master rule (highest priority)
-      - PROTOCOL_ENGINEERING    # Master rule (universal)
-      - nextjs                  # Library rule (framework-specific)
-      - typescript              # Library rule (language)
+      - TECH_STACK_NEXTJS # Master rule (highest priority)
+      - PROTOCOL_ENGINEERING # Master rule (universal)
+      - nextjs # Library rule (framework-specific)
+      - typescript # Library rule (language)
 
     metadata:
-      generated: "2025-11-29"
-      generated_by: "rule-selector (index-based)"
+      generated: '2025-11-29'
+      generated_by: 'rule-selector (index-based)'
       detected_stack:
-        - "next@14.0.0"
-        - "react@18.2.0"
-        - "typescript@5.3.0"
-        - "tailwindcss@3.4.0"
-        - "@prisma/client@5.7.0"
-      rules_source: "rule-index.json"
+        - 'next@14.0.0'
+        - 'react@18.2.0'
+        - 'typescript@5.3.0'
+        - 'tailwindcss@3.4.0'
+        - '@prisma/client@5.7.0'
+      rules_source: 'rule-index.json'
       total_rules_available: 1081
       rules_selected: 7
 ```
@@ -392,14 +398,14 @@ go_detection:
 ```yaml
 testing_detection:
   e2e:
-    cypress: ["cypress-e2e-testing-*", "cypress-api-testing-*"]
-    playwright: ["playwright-e2e-testing-*", "playwright-api-testing-*"]
+    cypress: ['cypress-e2e-testing-*', 'cypress-api-testing-*']
+    playwright: ['playwright-e2e-testing-*', 'playwright-api-testing-*']
   unit:
-    jest: ["jest-unit-testing-*"]
-    vitest: ["vitest-unit-testing-*"]
-    pytest: ["python-*"]  # Python testing included in python rules
+    jest: ['jest-unit-testing-*']
+    vitest: ['vitest-unit-testing-*']
+    pytest: ['python-*'] # Python testing included in python rules
   bdd:
-    cucumber: ["gherkin-*"]
+    cucumber: ['gherkin-*']
 ```
 
 ## Output Formats
@@ -417,8 +423,8 @@ stack_profiles:
   # ... generated profile ...
 
 loading_policy:
-  max_rules_files: 5  # Increased for comprehensive stack
-  selection: "most_relevant"
+  max_rules_files: 5 # Increased for comprehensive stack
+  selection: 'most_relevant'
   auto_detect: true
 ```
 
@@ -432,31 +438,30 @@ loading_policy:
 
 ### Detected Stack
 
-| Category | Technology | Version | Confidence |
-|----------|------------|---------|------------|
-| Framework | Next.js | 14.0.0 | High |
-| Language | TypeScript | 5.3.0 | High |
-| Styling | Tailwind CSS | 3.4.0 | High |
-| Database | Prisma | 5.7.0 | High |
-| Testing | Vitest | 1.0.0 | High |
+| Category  | Technology   | Version | Confidence |
+| --------- | ------------ | ------- | ---------- |
+| Framework | Next.js      | 14.0.0  | High       |
+| Language  | TypeScript   | 5.3.0   | High       |
+| Styling   | Tailwind CSS | 3.4.0   | High       |
+| Database  | Prisma       | 5.7.0   | High       |
+| Testing   | Vitest       | 1.0.0   | High       |
 
 ### Recommended Rules
 
 **Primary Rules** (always load):
+
 1. `nextjs.mdc` - Next.js App Router best practices
 2. `typescript.mdc` - TypeScript coding standards
 3. `react.mdc` - React component patterns
 
-**Secondary Rules** (load when relevant):
-4. `tailwind.mdc` - Tailwind CSS conventions
-5. `clean-code.mdc` - Universal code quality
+**Secondary Rules** (load when relevant): 4. `tailwind.mdc` - Tailwind CSS conventions 5. `clean-code.mdc` - Universal code quality
 
-**Testing Rules** (load during test tasks):
-6. `vitest-unit-testing-*` - Unit testing patterns
+**Testing Rules** (load during test tasks): 6. `vitest-unit-testing-*` - Unit testing patterns
 
 ### Rules NOT Recommended
 
 These rules are excluded as irrelevant to your stack:
+
 - `angular-*` (No Angular detected)
 - `vue-*` (No Vue detected)
 - `python-*` (No Python detected)
@@ -481,10 +486,10 @@ These rules are excluded as irrelevant to your stack:
   "project_path": "/path/to/my-nextjs-app",
   "scan_timestamp": "2025-11-29T10:00:00Z",
   "detected_stack": {
-    "framework": {"name": "nextjs", "version": "14.0.0", "confidence": 0.95},
-    "language": {"name": "typescript", "version": "5.3.0", "confidence": 1.0},
-    "styling": {"name": "tailwindcss", "version": "3.4.0", "confidence": 0.9},
-    "testing": {"name": "vitest", "version": "1.0.0", "confidence": 0.85}
+    "framework": { "name": "nextjs", "version": "14.0.0", "confidence": 0.95 },
+    "language": { "name": "typescript", "version": "5.3.0", "confidence": 1.0 },
+    "styling": { "name": "tailwindcss", "version": "3.4.0", "confidence": 0.9 },
+    "testing": { "name": "vitest", "version": "1.0.0", "confidence": 0.85 }
   },
   "recommended_rules": {
     "primary": ["nextjs.mdc", "typescript.mdc", "react.mdc"],
@@ -541,16 +546,16 @@ For monorepos with multiple packages:
 ```yaml
 stack_profiles:
   monorepo_web:
-    root: "packages/web"
-    include: ["nextjs-*", "react-*"]
+    root: 'packages/web'
+    include: ['nextjs-*', 'react-*']
 
   monorepo_api:
-    root: "packages/api"
-    include: ["fastapi-*", "python-*"]
+    root: 'packages/api'
+    include: ['fastapi-*', 'python-*']
 
   monorepo_shared:
-    root: "packages/shared"
-    include: ["typescript.mdc", "clean-code.mdc"]
+    root: 'packages/shared'
+    include: ['typescript.mdc', 'clean-code.mdc']
 ```
 
 ## Version Checking
@@ -562,11 +567,13 @@ The rule-selector skill relies on the rule index (`.claude/context/rule-index.js
 ### Version Compatibility Rules
 
 **Semantic Versioning** (MAJOR.MINOR.PATCH):
+
 - **MAJOR**: Breaking changes to index structure (must match exactly)
 - **MINOR**: New features/rules added (backward compatible, skill requires minimum)
 - **PATCH**: Bug fixes and re-indexing (always compatible)
 
 **Compatibility Check**:
+
 ```javascript
 // Skill requires: 1.2.0
 // Index version: 1.3.0 ✅ Compatible (same major, higher minor)
@@ -603,16 +610,19 @@ When version mismatch is detected:
 ### Regeneration Commands
 
 **Standard Regeneration** (updates index with all current rules):
+
 ```bash
 pnpm index-rules
 ```
 
 **Manual Regeneration** (if pnpm not available):
+
 ```bash
 node scripts/generate-rule-index.mjs
 ```
 
 **Prebuilt Index** (lightweight, common stacks only):
+
 ```bash
 pnpm index-rules:prebuilt
 ```
@@ -621,43 +631,46 @@ pnpm index-rules:prebuilt
 
 Regenerate the rule index when:
 
-| Scenario | Reason | Command |
-|----------|--------|---------|
-| **Added new rules** | New rules won't be discoverable | `pnpm index-rules` |
-| **Moved rule files** | Paths in index are stale | `pnpm index-rules` |
-| **Updated rule metadata** | Descriptions/technologies changed | `pnpm index-rules` |
-| **Version mismatch warning** | Skill requires newer index | `pnpm index-rules` |
-| **After git pull** | Other developers may have added rules | `pnpm index-rules` |
-| **Index file deleted** | Need to recreate from scratch | `pnpm index-rules` |
+| Scenario                     | Reason                                | Command            |
+| ---------------------------- | ------------------------------------- | ------------------ |
+| **Added new rules**          | New rules won't be discoverable       | `pnpm index-rules` |
+| **Moved rule files**         | Paths in index are stale              | `pnpm index-rules` |
+| **Updated rule metadata**    | Descriptions/technologies changed     | `pnpm index-rules` |
+| **Version mismatch warning** | Skill requires newer index            | `pnpm index-rules` |
+| **After git pull**           | Other developers may have added rules | `pnpm index-rules` |
+| **Index file deleted**       | Need to recreate from scratch         | `pnpm index-rules` |
 
 ### Version Increment Guide for Maintainers
 
 When updating `scripts/generate-rule-index.mjs`, increment version as follows:
 
 **Major Version (X.0.0)** - Breaking Changes:
+
 ```javascript
 // Example: Renamed field
 const index = {
   version: '2.0.0', // Breaking: renamed 'technology_map' to 'tech_index'
   tech_index: techMap, // <- Renamed from 'technology_map'
-  rules: allRules
+  rules: allRules,
 };
 ```
 
 **Minor Version (1.X.0)** - New Features (Backward Compatible):
+
 ```javascript
 // Example: New metadata field
 const index = {
   version: '1.2.0', // Minor: added 'templates' metadata
   rules: allRules.map(rule => ({
     ...rule,
-    templates: extractTemplates(rule.path) // <- New field
+    templates: extractTemplates(rule.path), // <- New field
   })),
-  technology_map: techMap
+  technology_map: techMap,
 };
 ```
 
 **Patch Version (1.0.X)** - Bug Fixes:
+
 ```javascript
 // Example: Fixed technology detection bug
 function extractTechnologies(filePath, content) {
@@ -682,6 +695,7 @@ This ensures the skill remains functional even with stale or missing indexes.
 ### Testing Version Compatibility
 
 **Test Scenario 1: Current Index**
+
 ```bash
 # Check current index version
 cat .claude/context/rule-index.json | jq '.version'
@@ -695,6 +709,7 @@ cat .claude/skills/rule-selector/SKILL.md | grep min_required_version
 ```
 
 **Test Scenario 2: Outdated Index**
+
 ```bash
 # Simulate outdated index (edit version to 0.9.0)
 # Run skill - should show warning and offer regeneration

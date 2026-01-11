@@ -31,22 +31,22 @@ Invokes the **scaffolder** skill to:
 3. **Create Supporting Files**
    - Types definitions (types.ts)
    - Loading states (skeleton.tsx, loading.tsx)
-   - Test files (__tests__/*.test.tsx)
+   - Test files (**tests**/\*.test.tsx)
 
 ## Available Templates
 
-| Template | Framework | Files Generated |
-|----------|-----------|-----------------|
-| `component` | Next.js/React | index.tsx, types.ts, skeleton.tsx |
-| `client-component` | Next.js | index.tsx with 'use client' |
-| `page` | Next.js App Router | page.tsx, loading.tsx, error.tsx |
-| `api` | Next.js App Router | route.ts with handlers |
-| `fastapi-route` | FastAPI | router file with endpoints |
-| `hook` | React | Custom hook with types |
-| `context` | React | Context provider + hook |
-| `test` | Jest/Vitest | Test file for component |
-| `e2e-test` | Cypress/Playwright | E2E test spec |
-| `feature` | Full-stack | Complete feature module |
+| Template           | Framework          | Files Generated                   |
+| ------------------ | ------------------ | --------------------------------- |
+| `component`        | Next.js/React      | index.tsx, types.ts, skeleton.tsx |
+| `client-component` | Next.js            | index.tsx with 'use client'       |
+| `page`             | Next.js App Router | page.tsx, loading.tsx, error.tsx  |
+| `api`              | Next.js App Router | route.ts with handlers            |
+| `fastapi-route`    | FastAPI            | router file with endpoints        |
+| `hook`             | React              | Custom hook with types            |
+| `context`          | React              | Context provider + hook           |
+| `test`             | Jest/Vitest        | Test file for component           |
+| `e2e-test`         | Cypress/Playwright | E2E test spec                     |
+| `feature`          | Full-stack         | Complete feature module           |
 
 ## Examples
 
@@ -57,6 +57,7 @@ Invokes the **scaffolder** skill to:
 ```
 
 Generates:
+
 ```
 components/user-profile/
   index.tsx      # Server Component with Suspense
@@ -72,6 +73,7 @@ components/user-profile/
 ```
 
 Generates:
+
 ```
 app/api/users/route.ts
   - GET handler with pagination
@@ -87,6 +89,7 @@ app/api/users/route.ts
 ```
 
 Generates:
+
 ```
 components/user-profile/__tests__/index.test.tsx
   - Import statements

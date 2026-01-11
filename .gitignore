@@ -64,6 +64,9 @@ desktop.ini
 coverage/
 .nyc_output/
 
+# Test Artifacts
+test-results/
+
 # Temporary Files
 tmp/
 temp/

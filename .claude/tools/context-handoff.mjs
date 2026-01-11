@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Context Handoff Utility
- * 
+ *
  * Manages context handoff when context window is exhausted:
  * - Monitor context usage
  * - Trigger handoff when threshold reached
@@ -18,8 +18,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Context usage thresholds
-const CONTEXT_WARNING_THRESHOLD = 0.80; // 80% usage
-const CONTEXT_HANDOFF_THRESHOLD = 0.90; // 90% usage
+const CONTEXT_WARNING_THRESHOLD = 0.8; // 80% usage
+const CONTEXT_HANDOFF_THRESHOLD = 0.9; // 90% usage
 
 /**
  * Monitor context usage
@@ -29,17 +29,18 @@ const CONTEXT_HANDOFF_THRESHOLD = 0.90; // 90% usage
  */
 export function monitorContextUsage(agentName, usage) {
   const percentage = usage.total > 0 ? usage.used / usage.total : 0;
-  
+
   return {
     percentage,
     thresholdReached: percentage >= CONTEXT_WARNING_THRESHOLD,
     handoffNeeded: percentage >= CONTEXT_HANDOFF_THRESHOLD,
-    recommendation: percentage >= CONTEXT_HANDOFF_THRESHOLD
-      ? 'Immediate handoff required'
-      : percentage >= CONTEXT_WARNING_THRESHOLD
-      ? 'Prepare for handoff soon'
-      : 'Context usage is normal',
-    agentName
+    recommendation:
+      percentage >= CONTEXT_HANDOFF_THRESHOLD
+        ? 'Immediate handoff required'
+        : percentage >= CONTEXT_WARNING_THRESHOLD
+          ? 'Prepare for handoff soon'
+          : 'Context usage is normal',
+    agentName,
   };
 }
 
@@ -54,10 +55,10 @@ export function monitorContextUsage(agentName, usage) {
 export async function packageContextForHandoff(runId, workflowId, currentStep, context) {
   const { readdir } = await import('fs/promises');
   const { readArtifactRegistry, getRunDirectoryStructure } = await import('./run-manager.mjs');
-  
+
   // Use run directory structure
   const runDirs = getRunDirectoryStructure(runId);
-  
+
   // Read artifact registry (authoritative artifact index)
   let artifactRegistry = null;
   try {
@@ -65,7 +66,7 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
   } catch (error) {
     console.warn(`Warning: Could not read artifact registry: ${error.message}`);
   }
-  
+
   // Enumerate all artifacts from registry
   const artifacts = [];
   if (artifactRegistry && artifactRegistry.artifacts) {
@@ -76,11 +77,11 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
         step: artifactEntry.step,
         agent: artifactEntry.agent,
         validation_status: artifactEntry.metadata?.validation_status || 'unknown',
-        created_at: artifactEntry.created_at
+        created_at: artifactEntry.created_at,
       });
     }
   }
-  
+
   // Enumerate gate files
   const gates = [];
   if (existsSync(runDirs.gates_dir)) {
@@ -96,7 +97,7 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
               path: gatePath,
               step: extractStepFromFilename(gateFile),
               validation_status: gateData.validation_status || 'unknown',
-              errors: gateData.errors || []
+              errors: gateData.errors || [],
             });
           } catch (error) {
             console.warn(`Warning: Could not read gate file ${gateFile}: ${error.message}`);
@@ -107,7 +108,7 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
       console.warn(`Warning: Could not enumerate gate files: ${error.message}`);
     }
   }
-  
+
   // Enumerate reasoning files
   const reasoning = [];
   if (existsSync(runDirs.reasoning_dir)) {
@@ -120,7 +121,7 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
             file: reasoningFile,
             path: reasoningPath,
             step: extractStepFromFilename(reasoningFile),
-            agent: extractAgentFromFilename(reasoningFile)
+            agent: extractAgentFromFilename(reasoningFile),
           });
         }
       }
@@ -128,7 +129,7 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
       console.warn(`Warning: Could not enumerate reasoning files: ${error.message}`);
     }
   }
-  
+
   // Read plan document from run directory
   let planData = null;
   const planPath = resolve(runDirs.run_dir, 'plans', `plan-${workflowId}.json`);
@@ -139,7 +140,7 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
       console.warn(`Warning: Could not read plan document: ${error.message}`);
     }
   }
-  
+
   // Read run record (authoritative state)
   let runRecord = null;
   try {
@@ -148,7 +149,7 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
   } catch (error) {
     console.warn(`Warning: Could not read run record: ${error.message}`);
   }
-  
+
   const handoffPackage = {
     run_id: runId,
     workflow_id: workflowId,
@@ -160,7 +161,7 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
       artifacts: artifacts,
       gates: gates,
       reasoning: reasoning,
-      plan: planData
+      plan: planData,
     },
     next_steps: context.nextSteps || [],
     state: context.state || {},
@@ -168,11 +169,11 @@ export async function packageContextForHandoff(runId, workflowId, currentStep, c
     validation_summary: {
       total_artifacts: artifacts.length,
       validated_artifacts: artifacts.filter(a => a.validation_status === 'pass').length,
-      failed_validations: artifacts.filter(a => a.validation_status === 'fail').length
+      failed_validations: artifacts.filter(a => a.validation_status === 'fail').length,
     },
-    what_to_do_next: context.whatToDoNext || []
+    what_to_do_next: context.whatToDoNext || [],
   };
-  
+
   return handoffPackage;
 }
 
@@ -200,11 +201,11 @@ function extractAgentFromFilename(filename) {
 export async function saveHandoffPackage(handoffPackage, runId) {
   const { getRunDirectoryStructure } = await import('./run-manager.mjs');
   const runDirs = getRunDirectoryStructure(runId);
-  
+
   // Save to run directory
   const handoffPath = runDirs.handoff_json;
   writeFileSync(handoffPath, JSON.stringify(handoffPackage, null, 2), 'utf-8');
-  
+
   return handoffPath;
 }
 
@@ -216,14 +217,14 @@ export async function saveHandoffPackage(handoffPackage, runId) {
 export async function loadHandoffPackage(runId) {
   const { readFile } = await import('fs/promises');
   const { getRunDirectoryStructure } = await import('./run-manager.mjs');
-  
+
   const runDirs = getRunDirectoryStructure(runId);
   const handoffFile = runDirs.handoff_json;
-  
+
   if (!existsSync(handoffFile)) {
     return null;
   }
-  
+
   try {
     const handoffContent = await readFile(handoffFile, 'utf-8');
     const handoffPackage = JSON.parse(handoffContent);
@@ -242,15 +243,15 @@ export async function loadHandoffPackage(runId) {
 export function validateContextRecovery(handoffPackage) {
   const errors = [];
   const warnings = [];
-  
+
   if (!handoffPackage.workflow_id) {
     errors.push('Handoff package missing workflow_id');
   }
-  
+
   if (!handoffPackage.current_step) {
     errors.push('Handoff package missing current_step');
   }
-  
+
   if (!handoffPackage.context) {
     errors.push('Handoff package missing context');
   } else {
@@ -261,11 +262,11 @@ export function validateContextRecovery(handoffPackage) {
       warnings.push('Handoff package has no artifacts');
     }
   }
-  
+
   return {
     valid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -273,12 +274,12 @@ export function validateContextRecovery(handoffPackage) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2);
   const command = args[0];
-  
+
   if (command === 'monitor') {
     const agentName = args[1] || 'unknown';
     const used = parseInt(args[2]) || 0;
     const total = parseInt(args[3]) || 0;
-    
+
     const result = monitorContextUsage(agentName, { used, total, available: total - used });
     console.log(`Context Usage: ${(result.percentage * 100).toFixed(1)}%`);
     console.log(`Status: ${result.recommendation}`);
@@ -295,36 +296,38 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const runId = args[1];
     const workflowId = args[2];
     const currentStep = args[3];
-    
+
     if (!runId || !workflowId || !currentStep) {
-      console.error('Usage: node context-handoff.mjs package <run-id> <workflow-id> <current-step>');
+      console.error(
+        'Usage: node context-handoff.mjs package <run-id> <workflow-id> <current-step>'
+      );
       process.exit(1);
     }
-    
+
     const context = {
       nextSteps: [],
       state: {},
       openQuestions: [],
-      whatToDoNext: []
+      whatToDoNext: [],
     };
-    
+
     const package = await packageContextForHandoff(runId, workflowId, currentStep, context);
     const path = await saveHandoffPackage(package, runId);
     console.log(`✅ Handoff package saved to: ${path}`);
   } else if (command === 'validate') {
     const runId = args[1];
-    
+
     if (!runId) {
       console.error('Usage: node context-handoff.mjs validate <run-id>');
       process.exit(1);
     }
-    
+
     const package = await loadHandoffPackage(runId);
     if (!package) {
       console.error('❌ No handoff package found');
       process.exit(1);
     }
-    
+
     const result = validateContextRecovery(package);
     if (result.valid) {
       console.log('✅ Handoff package validation: PASSED');
@@ -347,4 +350,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(1);
   }
 }
-

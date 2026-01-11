@@ -29,6 +29,58 @@ const CONTEXT_DIR = join(__dirname, '..', 'context');
 const SKILLS_DIR = join(__dirname, '..', 'skills');
 const SKILL_MATRIX_PATH = join(CONTEXT_DIR, 'skill-integration-matrix.json');
 
+// ======================================================================
+// Skill content cache (memory-safe, O(1) size tracking)
+// ======================================================================
+
+const skillContentCache = new Map(); // Map<skillName, { content, sizeMB, lastAccess }>
+let incrementalCacheSizeMB = 0;
+
+const MAX_CACHE_SIZE_MB = 50;
+const MAX_CACHE_ENTRIES = 250;
+
+function estimateEntrySize(content) {
+  const bytes = Buffer.byteLength(content || '', 'utf-8');
+  return bytes / 1024 / 1024;
+}
+
+function estimateCacheSize() {
+  return incrementalCacheSizeMB;
+}
+
+function cleanCache() {
+  if (skillContentCache.size <= MAX_CACHE_ENTRIES && estimateCacheSize() <= MAX_CACHE_SIZE_MB) {
+    return;
+  }
+
+  const entries = Array.from(skillContentCache.entries()).sort(
+    (a, b) => (a[1]?.lastAccess || 0) - (b[1]?.lastAccess || 0)
+  );
+
+  for (const [skillName, entry] of entries) {
+    if (skillContentCache.size <= MAX_CACHE_ENTRIES && estimateCacheSize() <= MAX_CACHE_SIZE_MB) {
+      break;
+    }
+    skillContentCache.delete(skillName);
+    incrementalCacheSizeMB -= entry?.sizeMB || 0;
+  }
+
+  if (incrementalCacheSizeMB < 0) incrementalCacheSizeMB = 0;
+}
+
+export function clearSkillContentCache() {
+  skillContentCache.clear();
+  incrementalCacheSizeMB = 0;
+}
+
+export function getSkillContentCacheStats() {
+  return {
+    size: skillContentCache.size,
+    estimatedSizeMB: estimateCacheSize().toFixed(2),
+    maxSize: MAX_CACHE_ENTRIES,
+  };
+}
+
 /**
  * Load JSON file safely with error handling
  * @param {string} filePath - Path to JSON file
@@ -75,7 +127,9 @@ export async function getSkillsForAgent(agentType) {
   const agentConfig = matrix.agents[agentType];
 
   if (!agentConfig) {
-    throw new Error(`Agent type "${agentType}" not found in skill matrix. Available agents: ${Object.keys(matrix.agents).join(', ')}`);
+    throw new Error(
+      `Agent type "${agentType}" not found in skill matrix. Available agents: ${Object.keys(matrix.agents).join(', ')}`
+    );
   }
 
   return {
@@ -84,7 +138,7 @@ export async function getSkillsForAgent(agentType) {
     recommendedSkills: agentConfig.recommended_skills || [],
     skillTriggers: agentConfig.skill_triggers || {},
     description: agentConfig.description || '',
-    usageNotes: matrix.usage_notes?.[agentType] || matrix.usage_notes?.all_agents || ''
+    usageNotes: matrix.usage_notes?.[agentType] || matrix.usage_notes?.all_agents || '',
   };
 }
 
@@ -97,9 +151,21 @@ export async function loadSkillContent(skillName) {
   const skillPath = join(SKILLS_DIR, skillName, 'SKILL.md');
 
   try {
+    const cached = skillContentCache.get(skillName);
+    if (cached?.content) {
+      cached.lastAccess = Date.now();
+      return cached.content;
+    }
+
     // Check if file exists
     await access(skillPath);
     const content = await readFile(skillPath, 'utf-8');
+
+    const sizeMB = estimateEntrySize(content);
+    skillContentCache.set(skillName, { content, sizeMB, lastAccess: Date.now() });
+    incrementalCacheSizeMB += sizeMB;
+
+    cleanCache();
     return content;
   } catch (error) {
     if (error.code === 'ENOENT') {
@@ -150,7 +216,13 @@ function detectTriggeredSkills(skillTriggers, taskDescription) {
  * @param {Object} options - Generation options
  * @returns {string} Formatted skill injection prompt
  */
-function generateSkillPrompt(agentType, requiredSkills, triggeredSkills, skillContents, options = {}) {
+function generateSkillPrompt(
+  agentType,
+  requiredSkills,
+  triggeredSkills,
+  skillContents,
+  options = {}
+) {
   const { useOptimizer = false, optimizedSkills = null } = options;
 
   const sections = [];
@@ -163,7 +235,9 @@ function generateSkillPrompt(agentType, requiredSkills, triggeredSkills, skillCo
   if (useOptimizer && optimizedSkills) {
     // Use optimized content from skill-context-optimizer
     sections.push(`**Optimization Level**: ${optimizedSkills.level}`);
-    sections.push(`**Token Budget**: ${optimizedSkills.actualTokens} / ${optimizedSkills.maxTokens}`);
+    sections.push(
+      `**Token Budget**: ${optimizedSkills.actualTokens} / ${optimizedSkills.maxTokens}`
+    );
     sections.push('');
 
     sections.push('## Required Skills');
@@ -264,7 +338,7 @@ export async function injectSkillsForAgent(agentType, taskDescription = '', opti
     useOptimizer = false,
     contextLevel = 'ESSENTIAL',
     maxSkillTokens = 1000,
-    isSubagent = true
+    isSubagent = true,
   } = options;
 
   try {
@@ -275,16 +349,10 @@ export async function injectSkillsForAgent(agentType, taskDescription = '', opti
     const agentSkills = await getSkillsForAgent(agentType);
 
     // 3. Detect triggered skills from task description
-    const triggeredSkills = detectTriggeredSkills(
-      agentSkills.skillTriggers,
-      taskDescription
-    );
+    const triggeredSkills = detectTriggeredSkills(agentSkills.skillTriggers, taskDescription);
 
     // 4. Collect all skills to load
-    const skillsToLoad = new Set([
-      ...agentSkills.requiredSkills,
-      ...triggeredSkills
-    ]);
+    const skillsToLoad = new Set([...agentSkills.requiredSkills, ...triggeredSkills]);
 
     // Optionally include recommended skills
     if (includeRecommended) {
@@ -302,15 +370,11 @@ export async function injectSkillsForAgent(agentType, taskDescription = '', opti
       try {
         const { optimizeSkillContext } = await import('./skill-context-optimizer.mjs');
 
-        optimizedSkills = await optimizeSkillContext(
-          agentSkills.requiredSkills,
-          triggeredSkills,
-          {
-            level: contextLevel,
-            maxTokens: maxSkillTokens,
-            prioritize: 'required'
-          }
-        );
+        optimizedSkills = await optimizeSkillContext(agentSkills.requiredSkills, triggeredSkills, {
+          level: contextLevel,
+          maxTokens: maxSkillTokens,
+          prioritize: 'required',
+        });
 
         // Track loaded skills from optimizer
         loadedSkills.push(...optimizedSkills.skills.map(s => s.skill));
@@ -359,7 +423,7 @@ export async function injectSkillsForAgent(agentType, taskDescription = '', opti
       skillContents,
       {
         useOptimizer,
-        optimizedSkills
+        optimizedSkills,
       }
     );
 
@@ -380,14 +444,13 @@ export async function injectSkillsForAgent(agentType, taskDescription = '', opti
         totalSkills: skillsToLoad.size,
         loadedAt: new Date().toISOString(),
         loadTimeMs: endTime - startTime,
-        includeRecommended
+        includeRecommended,
       },
       agentConfig: {
         description: agentSkills.description,
-        usageNotes: agentSkills.usageNotes
-      }
+        usageNotes: agentSkills.usageNotes,
+      },
     };
-
   } catch (error) {
     return {
       success: false,
@@ -403,8 +466,8 @@ export async function injectSkillsForAgent(agentType, taskDescription = '', opti
       metadata: {
         totalSkills: 0,
         loadedAt: new Date().toISOString(),
-        loadTimeMs: Date.now() - startTime
-      }
+        loadTimeMs: Date.now() - startTime,
+      },
     };
   }
 }
@@ -513,14 +576,16 @@ Examples:
   const jsonOutput = args.includes('--json');
 
   const contextLevelIndex = args.indexOf('--context-level');
-  const contextLevel = contextLevelIndex !== -1 && contextLevelIndex + 1 < args.length
-    ? args[contextLevelIndex + 1]
-    : 'ESSENTIAL';
+  const contextLevel =
+    contextLevelIndex !== -1 && contextLevelIndex + 1 < args.length
+      ? args[contextLevelIndex + 1]
+      : 'ESSENTIAL';
 
   const maxTokensIndex = args.indexOf('--max-tokens');
-  const maxSkillTokens = maxTokensIndex !== -1 && maxTokensIndex + 1 < args.length
-    ? parseInt(args[maxTokensIndex + 1])
-    : 1000;
+  const maxSkillTokens =
+    maxTokensIndex !== -1 && maxTokensIndex + 1 < args.length
+      ? parseInt(args[maxTokensIndex + 1])
+      : 1000;
 
   if (agentIndex === -1 || agentIndex + 1 >= args.length) {
     console.error('Error: --agent <type> is required');
@@ -529,16 +594,15 @@ Examples:
   }
 
   const agentType = args[agentIndex + 1];
-  const taskDescription = taskIndex !== -1 && taskIndex + 1 < args.length
-    ? args[taskIndex + 1]
-    : '';
+  const taskDescription =
+    taskIndex !== -1 && taskIndex + 1 < args.length ? args[taskIndex + 1] : '';
 
   try {
     const result = await injectSkillsForAgent(agentType, taskDescription, {
       includeRecommended,
       useOptimizer,
       contextLevel,
-      maxSkillTokens
+      maxSkillTokens,
     });
 
     if (jsonOutput) {
@@ -559,7 +623,9 @@ Examples:
           result.recommendedSkills.forEach(skill => console.log(`  - ${skill}`));
         }
 
-        console.log(`\nLoaded: ${result.loadedSkills.length}/${result.metadata.totalSkills} skills`);
+        console.log(
+          `\nLoaded: ${result.loadedSkills.length}/${result.metadata.totalSkills} skills`
+        );
 
         if (result.failedSkills.length > 0) {
           console.log(`\nWarning: Failed to load ${result.failedSkills.length} skill(s):`);
@@ -580,22 +646,28 @@ Examples:
     }
 
     process.exit(result.success ? 0 : 1);
-
   } catch (error) {
     console.error('Fatal error:', error.message);
     if (jsonOutput) {
-      console.log(JSON.stringify({
-        success: false,
-        error: error.message
-      }, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            success: false,
+            error: error.message,
+          },
+          null,
+          2
+        )
+      );
     }
     process.exit(1);
   }
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main().catch(error => {
     console.error('Fatal error:', error);
@@ -610,5 +682,5 @@ export default {
   loadSkillContent,
   injectSkillsForAgent,
   listAvailableAgents,
-  getSkillCategories
+  getSkillCategories,
 };

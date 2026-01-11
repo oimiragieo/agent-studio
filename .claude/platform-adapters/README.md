@@ -30,13 +30,13 @@ The platform adapter layer enables workflows designed for Claude Code to be exec
 
 ## Files
 
-| File | Description |
-|------|-------------|
-| `base-adapter.mjs` | Abstract base class with common interface |
-| `claude-adapter.mjs` | Native Claude Code adapter (full support) |
-| `cursor-adapter.mjs` | Cursor IDE adapter (Plan Mode translation) |
-| `factory-adapter.mjs` | Factory Droid adapter (manual coordination) |
-| `adapter-registry.json` | Adapter configuration and capabilities |
+| File                    | Description                                 |
+| ----------------------- | ------------------------------------------- |
+| `base-adapter.mjs`      | Abstract base class with common interface   |
+| `claude-adapter.mjs`    | Native Claude Code adapter (full support)   |
+| `cursor-adapter.mjs`    | Cursor IDE adapter (Plan Mode translation)  |
+| `factory-adapter.mjs`   | Factory Droid adapter (manual coordination) |
+| `adapter-registry.json` | Adapter configuration and capabilities      |
 
 ## Usage
 
@@ -72,21 +72,21 @@ if (!compatibility.compatible) {
 ```javascript
 const invocation = adapter.getAgentInvocation('developer', {
   prompt: 'Implement the user authentication module',
-  description: 'Create secure login functionality'
+  description: 'Create secure login functionality',
 });
 ```
 
 ## Platform Capabilities
 
-| Feature | Claude Code | Cursor | Factory Droid |
-|---------|-------------|--------|---------------|
-| Native Workflows | Full | Translated | Manual |
-| Skills | Full | Converted | Converted |
-| Subagents | Full | Partial | None |
-| Plan Mode | Full | Full | None |
-| Validation Gates | Full | Manual | Manual |
-| Parallel Execution | Full | None | None |
-| CUJ Support | 62/62 | 45/62 | 30/62 |
+| Feature            | Claude Code | Cursor     | Factory Droid |
+| ------------------ | ----------- | ---------- | ------------- |
+| Native Workflows   | Full        | Translated | Manual        |
+| Skills             | Full        | Converted  | Converted     |
+| Subagents          | Full        | Partial    | None          |
+| Plan Mode          | Full        | Full       | None          |
+| Validation Gates   | Full        | Manual     | Manual        |
+| Parallel Execution | Full        | None       | None          |
+| CUJ Support        | 62/62       | 45/62      | 30/62         |
 
 ## Adapter Details
 
@@ -153,6 +153,6 @@ To add a new platform adapter:
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-06 | Initial release with Claude, Cursor, Factory adapters |
+| Version | Date       | Changes                                               |
+| ------- | ---------- | ----------------------------------------------------- |
+| 1.0.0   | 2026-01-06 | Initial release with Claude, Cursor, Factory adapters |

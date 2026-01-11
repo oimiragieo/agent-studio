@@ -79,14 +79,14 @@ export class MCPConnector {
 
     const server = new MCPServer(serverName, serverConfig);
     await server.connect();
-    
+
     this.servers.set(serverName, server);
     this.connectedServers.add(serverName);
 
     return {
       success: true,
       server: serverName,
-      tools: await server.listTools()
+      tools: await server.listTools(),
     };
   }
 
@@ -95,7 +95,7 @@ export class MCPConnector {
    */
   async disconnect(serverName) {
     const server = this.servers.get(serverName);
-    
+
     if (!server) {
       return { success: false, error: 'Server not connected' };
     }
@@ -122,10 +122,12 @@ export class MCPConnector {
     for (const serverName of this.connectedServers) {
       const server = this.servers.get(serverName);
       const tools = await server.listTools();
-      allTools.push(...tools.map(tool => ({
-        ...tool,
-        server: serverName
-      })));
+      allTools.push(
+        ...tools.map(tool => ({
+          ...tool,
+          server: serverName,
+        }))
+      );
     }
 
     return allTools;
@@ -139,7 +141,7 @@ export class MCPConnector {
     return config.active_tools.map(tool => ({
       name: tool.name,
       description: tool.description,
-      connected: this.connectedServers.has(tool.name)
+      connected: this.connectedServers.has(tool.name),
     }));
   }
 }
@@ -153,6 +155,5 @@ export function createMCPConnector() {
 
 export default {
   MCPConnector,
-  createMCPConnector
+  createMCPConnector,
 };
-

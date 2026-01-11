@@ -64,17 +64,20 @@ This mixed structure should use JSON, not TOON.
 ### Format Examples
 
 **Object:**
+
 ```
 id: 1
 name: Ada
 ```
 
 **Primitive array (inline):**
+
 ```
 tags[2]: reading,gaming
 ```
 
 **Tabular array (uniform objects):**
+
 ```
 items[2]{sku,qty,price}:
   A1,2,9.99
@@ -82,6 +85,7 @@ items[2]{sku,qty,price}:
 ```
 
 **List format (non-uniform):**
+
 ```
 items[3]:
   - 1
@@ -100,7 +104,8 @@ When creating or using Droid skills:
 3. **Include TOON examples** - Show format in skill documentation
 
 **Example skill usage:**
-```yaml
+
+````yaml
 # Skill definition
 name: process-user-data
 description: Processes user data in TOON format
@@ -109,7 +114,8 @@ example: |
   ```toon
   users[N]{id,name,role}:
     [rows here]
-  ```
+````
+
 ```
 
 ### For Context Layers
@@ -134,14 +140,17 @@ When creating Droid specifications:
 
 **Example specification:**
 ```
+
 Feature: User Management
 
 Test Data (TOON format):
+
 ```toon
 users[2]{id,name,role}:
   1,Alice,admin
   2,Bob,user
 ```
+
 ```
 
 ### Integration with Factory Artifacts
@@ -165,9 +174,11 @@ When integrating with external systems:
 For large uniform tables, consider tab delimiters:
 
 ```
+
 items[2|]{sku|name|qty}:
-  A1|Widget|2
-  B2|Gadget|1
+A1|Widget|2
+B2|Gadget|1
+
 ```
 
 Tabs (`\t`) can provide additional token savings but may have display issues in some editors.
@@ -177,8 +188,10 @@ Tabs (`\t`) can provide additional token savings but may have display issues in 
 Optional hash prefix for clarity:
 
 ```
+
 tags[#3]: reading,gaming,coding
 items[#2]{sku,qty}: A1,2 B2,1
+
 ```
 
 ## Decision Tree
@@ -206,3 +219,4 @@ items[#2]{sku,qty}: A1,2 B2,1
 - **Token counts vary** - Benchmarks use GPT-style tokenizers; actual savings may differ
 - **Not a drop-in replacement** - TOON is for LLM prompts, not general-purpose JSON replacement
 - **Droid Shield compatibility** - TOON format works with Factory's security and validation systems
+```

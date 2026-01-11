@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Workflow Pre-Execution Validator
- * 
+ *
  * Validates workflow configuration before execution:
  * - All required agents exist
  * - All artifact dependencies can be resolved
@@ -34,31 +34,31 @@ try {
 export function validateWorkflow(workflowPath) {
   const errors = [];
   const warnings = [];
-  
+
   try {
     // Read and parse workflow YAML
     const workflowContent = readFileSync(workflowPath, 'utf-8');
     const workflow = yaml.load(workflowContent);
-    
+
     if (!workflow || !workflow.steps) {
       errors.push('Workflow file is missing or has no steps');
       return { valid: false, errors, warnings };
     }
-    
+
     // Validate each step
     const stepNumbers = new Set();
     const artifactReferences = new Map(); // step -> [artifact references]
     const createdArtifacts = new Map(); // step -> [artifacts created]
-    
+
     for (const step of workflow.steps) {
       const stepNum = String(step.step);
-      
+
       // Check for duplicate step numbers
       if (stepNumbers.has(stepNum)) {
         errors.push(`Step ${stepNum}: Duplicate step number`);
       }
       stepNumbers.add(stepNum);
-      
+
       // Validate agent exists
       if (step.agent) {
         const agentPath = resolve(__dirname, '../../agents', `${step.agent}.md`);
@@ -66,7 +66,7 @@ export function validateWorkflow(workflowPath) {
           errors.push(`Step ${stepNum}: Agent '${step.agent}' not found at ${agentPath}`);
         }
       }
-      
+
       // Validate schema exists if specified
       if (step.validation?.schema) {
         const schemaPath = resolveSchemaPath(step.validation.schema);
@@ -81,7 +81,7 @@ export function validateWorkflow(workflowPath) {
           }
         }
       }
-      
+
       // Collect artifact references
       if (step.inputs && Array.isArray(step.inputs)) {
         const refs = [];
@@ -94,7 +94,7 @@ export function validateWorkflow(workflowPath) {
           artifactReferences.set(stepNum, refs);
         }
       }
-      
+
       // Collect created artifacts
       if (step.outputs && Array.isArray(step.outputs)) {
         const artifacts = [];
@@ -109,7 +109,7 @@ export function validateWorkflow(workflowPath) {
           createdArtifacts.set(stepNum, artifacts);
         }
       }
-      
+
       // Validate template variables in outputs
       if (step.outputs) {
         for (const output of step.outputs) {
@@ -126,7 +126,7 @@ export function validateWorkflow(workflowPath) {
           }
         }
       }
-      
+
       // Validate template variables in gate path
       if (step.validation?.gate) {
         const templateVars = step.validation.gate.match(/\{\{([^}]+)\}\}/g);
@@ -140,7 +140,7 @@ export function validateWorkflow(workflowPath) {
         }
       }
     }
-    
+
     // Validate artifact dependencies
     for (const [stepNum, refs] of artifactReferences.entries()) {
       for (const ref of refs) {
@@ -149,13 +149,15 @@ export function validateWorkflow(workflowPath) {
         if (match) {
           const artifactName = match[1].trim();
           const fromStep = match[2].trim();
-          
+
           // Check if referenced step exists
           if (!stepNumbers.has(fromStep)) {
-            errors.push(`Step ${stepNum}: References artifact from non-existent step ${fromStep}: ${artifactName}`);
+            errors.push(
+              `Step ${stepNum}: References artifact from non-existent step ${fromStep}: ${artifactName}`
+            );
             continue;
           }
-          
+
           // Check if artifact is created by referenced step
           const created = createdArtifacts.get(fromStep) || [];
           const artifactFound = created.some(art => {
@@ -163,39 +165,45 @@ export function validateWorkflow(workflowPath) {
             const artPattern = art.replace(/\{\{[^}]+\}\}/g, '.*');
             return new RegExp(`^${artPattern}$`).test(artifactName) || art === artifactName;
           });
-          
+
           if (!artifactFound) {
-            errors.push(`Step ${stepNum}: References artifact '${artifactName}' from step ${fromStep}, but step ${fromStep} does not create it`);
+            errors.push(
+              `Step ${stepNum}: References artifact '${artifactName}' from step ${fromStep}, but step ${fromStep} does not create it`
+            );
           }
         }
       }
     }
-    
+
     // Validate step ordering (steps should be in order)
-    const sortedSteps = Array.from(stepNumbers).map(s => {
-      const num = parseFloat(s);
-      return { step: s, num: isNaN(num) ? Infinity : num };
-    }).sort((a, b) => a.num - b.num);
-    
+    const sortedSteps = Array.from(stepNumbers)
+      .map(s => {
+        const num = parseFloat(s);
+        return { step: s, num: isNaN(num) ? Infinity : num };
+      })
+      .sort((a, b) => a.num - b.num);
+
     // Check for gaps or out-of-order steps
     for (let i = 0; i < sortedSteps.length - 1; i++) {
       const current = sortedSteps[i].num;
       const next = sortedSteps[i + 1].num;
       if (next - current > 1 && current !== 0 && next !== 0.5) {
-        warnings.push(`Step gap detected: Step ${sortedSteps[i].step} to ${sortedSteps[i + 1].step}`);
+        warnings.push(
+          `Step gap detected: Step ${sortedSteps[i].step} to ${sortedSteps[i + 1].step}`
+        );
       }
     }
-    
+
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   } catch (error) {
     return {
       valid: false,
       errors: [`Failed to validate workflow: ${error.message}`],
-      warnings: []
+      warnings: [],
     };
   }
 }
@@ -205,29 +213,32 @@ export function validateWorkflow(workflowPath) {
  */
 function resolveSchemaPath(relativePath) {
   // If path is already absolute, return as-is
-  if (relativePath.startsWith('/') || (process.platform === 'win32' && /^[A-Z]:/.test(relativePath))) {
+  if (
+    relativePath.startsWith('/') ||
+    (process.platform === 'win32' && /^[A-Z]:/.test(relativePath))
+  ) {
     return relativePath;
   }
-  
+
   // Strategy 1: Resolve from project root (parent of .claude directory)
   const projectRoot = resolve(__dirname, '../..');
   const projectRootPath = resolve(projectRoot, relativePath);
   if (existsSync(projectRootPath)) {
     return projectRootPath;
   }
-  
+
   // Strategy 2: Resolve from current working directory
   const cwdPath = resolve(process.cwd(), relativePath);
   if (existsSync(cwdPath)) {
     return cwdPath;
   }
-  
+
   // Strategy 3: Resolve from script location
   const scriptPath = resolve(__dirname, relativePath);
   if (existsSync(scriptPath)) {
     return scriptPath;
   }
-  
+
   // If none found, return project root path (will fail with clear error later)
   return projectRootPath;
 }
@@ -236,20 +247,20 @@ function resolveSchemaPath(relativePath) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2);
   const workflowPath = args[0];
-  
+
   if (!workflowPath) {
     console.error('Usage: node workflow-validator.mjs <workflow-yaml-path>');
     process.exit(1);
   }
-  
+
   const resolvedPath = resolve(process.cwd(), workflowPath);
   if (!existsSync(resolvedPath)) {
     console.error(`❌ Error: Workflow file not found: ${resolvedPath}`);
     process.exit(1);
   }
-  
+
   const result = validateWorkflow(resolvedPath);
-  
+
   if (result.valid) {
     console.log('✅ Workflow validation: PASSED');
     if (result.warnings.length > 0) {
@@ -268,4 +279,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(1);
   }
 }
-

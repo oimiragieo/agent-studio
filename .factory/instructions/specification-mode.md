@@ -12,6 +12,7 @@ Specification Mode transforms simple feature descriptions into production-ready 
 ## Activation
 
 **Manual activation only:**
+
 - Press `Shift+Tab` while in the CLI to enter Specification Mode
 - The status banner shows "Spec Mode" when active
 - Does not automatically activate
@@ -21,6 +22,7 @@ Specification Mode transforms simple feature descriptions into production-ready 
 ### Analysis Phase (Read-Only)
 
 Droid performs comprehensive analysis:
+
 - Examines existing codebase and patterns
 - Reviews related files and dependencies
 - Studies your `AGENTS.md` conventions
@@ -31,6 +33,7 @@ Droid performs comprehensive analysis:
 ### Planning Phase
 
 Droid generates:
+
 - Complete specification with acceptance criteria
 - Technical implementation plan
 - File-by-file breakdown of changes needed
@@ -63,6 +66,7 @@ Add a notification system similar to how we handle email confirmations. Use the 
 ### Be Specific About Verification
 
 Tell droid how to confirm implementation works:
+
 - Run specific tests
 - Check service startup
 - Verify UI matches mockups
@@ -71,6 +75,7 @@ Tell droid how to confirm implementation works:
 ### Consider Full User Journey
 
 Describe the complete experience:
+
 - Happy path through the feature
 - Error scenarios and edge cases
 - Loading and empty states
@@ -79,6 +84,7 @@ Describe the complete experience:
 ## Breaking Down Large Features
 
 Specification Mode works best for features that:
+
 - Touch multiple files
 - Require architectural decisions
 - Need coordination across components
@@ -98,6 +104,7 @@ When reviewing a specification:
 ## Saving Specifications
 
 Enable `specSaveEnabled: true` in settings to persist specs:
+
 - Saved to `.factory/docs/` by default
 - Customizable via `specSaveDir` setting
 - Markdown format for easy review and sharing
@@ -116,6 +123,7 @@ After approving a specification:
 ## AGENTS.md Integration
 
 Specification Mode automatically reads your `AGENTS.md` files:
+
 - Coding standards and conventions
 - Testing requirements and frameworks
 - Architecture patterns and principles
@@ -128,6 +136,7 @@ Ensure `AGENTS.md` files are up-to-date for best results.
 ### Security and Compliance
 
 Specification Mode considers:
+
 - Security requirements from `AGENTS.md`
 - Compliance standards (GDPR, HIPAA, etc.)
 - Access control and authorization patterns
@@ -136,6 +145,7 @@ Specification Mode considers:
 ### Team Standards
 
 Plans align with:
+
 - Project conventions from root `AGENTS.md`
 - Framework-specific rules from subdirectory `AGENTS.md` files
 - Quality gates and validation procedures
@@ -176,4 +186,3 @@ Plans align with:
 - Return to spec review and request clarification
 - Use direct mode for fine-tuning: "Update the error handling to match the spec"
 - Check that `AGENTS.md` files are accurately reflecting conventions
-

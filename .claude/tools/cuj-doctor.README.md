@@ -25,6 +25,7 @@ pnpm cuj:doctor
 ```
 
 This runs all checks and outputs a formatted report with:
+
 - ❌ Critical issues (blocking)
 - ⚠️ Warnings
 - ✅ Passing checks
@@ -136,6 +137,7 @@ Run `pnpm sync-cuj-registry` to synchronize the registry with CUJ documentation 
 ### "Orphaned CUJ docs"
 
 Either:
+
 1. Add the CUJ to the registry using `sync-cuj-registry`
 2. Remove the orphaned CUJ doc if it's no longer needed
 

@@ -10,6 +10,7 @@ This command is for rapid bug fixes and small features that don't require full p
 ## Suitability Check
 
 **Good for:**
+
 - Bug fixes
 - Hotfixes
 - Small UI tweaks
@@ -18,6 +19,7 @@ This command is for rapid bug fixes and small features that don't require full p
 - Code cleanup
 
 **Not suitable for:**
+
 - New features requiring architecture
 - Security-critical changes
 - Database migrations

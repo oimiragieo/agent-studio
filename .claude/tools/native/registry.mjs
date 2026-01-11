@@ -22,7 +22,7 @@ export const nativeTools = {
   web_fetch: webFetchTool,
   web_search: webSearchTool,
   memory: memoryTool,
-  computer_use: computerUseTool
+  computer_use: computerUseTool,
 };
 
 /**
@@ -53,7 +53,7 @@ export function registerTool(name, tool) {
   if (nativeTools[name]) {
     throw new Error(`Tool ${name} is already registered`);
   }
-  
+
   nativeTools[name] = tool;
   return tool;
 }
@@ -71,7 +71,7 @@ export function getToolMetadata(name) {
     name: tool.name,
     description: tool.description,
     inputSchema: tool.inputSchema,
-    version: tool.version || '1.0.0'
+    version: tool.version || '1.0.0',
   };
 }
 
@@ -82,7 +82,7 @@ export function generateToolDocumentation() {
   const docs = {
     version: '1.0.0',
     generated_at: new Date().toISOString(),
-    tools: {}
+    tools: {},
   };
 
   for (const [name, tool] of Object.entries(nativeTools)) {
@@ -90,7 +90,7 @@ export function generateToolDocumentation() {
       name: tool.name,
       description: tool.description,
       inputSchema: tool.inputSchema,
-      version: tool.version || '1.0.0'
+      version: tool.version || '1.0.0',
     };
   }
 
@@ -104,6 +104,5 @@ export default {
   getToolNames,
   registerTool,
   getToolMetadata,
-  generateToolDocumentation
+  generateToolDocumentation,
 };
-

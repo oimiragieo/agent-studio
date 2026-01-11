@@ -2,12 +2,12 @@ name: Quick Flow Development Workflow
 description: Fast-track workflow for bug fixes, small features, and minor enhancements
 type: quick
 project_type: enhancement
-publish_policy: auto-on-pass  # Automatically publish artifacts after validation passes
+publish_policy: auto-on-pass # Automatically publish artifacts after validation passes
 
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -32,7 +32,7 @@ fallback_agents:
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - user_requirements
@@ -52,7 +52,7 @@ steps:
       - **Publishing**: After validation, use `artifact-publisher` skill to publish plan artifacts to project feed
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -83,7 +83,7 @@ steps:
       - If score >= 7: Proceed with workflow execution
 
   - step: 1
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -103,9 +103,9 @@ steps:
       - **Publishing**: After validation, use `artifact-publisher` skill to publish final implementation artifacts
 
   - step: 1.5
-    name: "Security Review (Conditional)"
+    name: 'Security Review (Conditional)'
     agent: security-architect
-    condition: "plan matches security keywords (auth, encrypt, secret, token, password, vulnerability, exploit)"
+    condition: 'plan matches security keywords (auth, encrypt, secret, token, password, vulnerability, exploit)'
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - dev-manifest.json (from step 1)
@@ -127,7 +127,7 @@ steps:
       - Block merge if critical security issues found
 
   - step: 2
-    name: "Code Review"
+    name: 'Code Review'
     agent: code-reviewer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -139,7 +139,7 @@ steps:
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-code-reviewer.json
-    on_failure: "Return to implementation step with feedback"
+    on_failure: 'Return to implementation step with feedback'
     description: |
       Review quick fix implementation for quality, security, and codebase impact:
       - Verify fix addresses the issue correctly
@@ -149,7 +149,7 @@ steps:
       - Validate test coverage
 
   - step: 3
-    name: "Quality Validation"
+    name: 'Quality Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -163,7 +163,7 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/03-qa.json
 
   - step: 4
-    name: "QA Signoff"
+    name: 'QA Signoff'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -187,7 +187,7 @@ steps:
       - Block merge if quality gates not met
 
   - step: 4.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"

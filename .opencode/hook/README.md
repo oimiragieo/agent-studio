@@ -5,14 +5,18 @@ This directory contains native hooks - shell scripts that execute at lifecycle e
 ## Available Hooks
 
 ### security-pre-tool.sh (PreToolUse)
+
 Validates tool usage before execution:
+
 - Blocks dangerous bash commands (`rm -rf`, `sudo rm`, `mkfs`, `dd`, etc.)
 - Prevents force push to main/master branches
 - Protects `.env` files and credential files from editing
 - Blocks potentially malicious curl/wget piped to bash
 
 ### audit-post-tool.sh (PostToolUse)
+
 Logs tool executions for audit trail:
+
 - Records timestamp, tool name, and summary
 - Stores logs in `~/.opencode/audit/tool-usage.log`
 - Auto-rotates logs to prevent disk bloat
@@ -20,6 +24,7 @@ Logs tool executions for audit trail:
 ## Hook Input/Output Format
 
 ### Input (via stdin)
+
 ```json
 {
   "tool_name": "Bash",
@@ -31,6 +36,7 @@ Logs tool executions for audit trail:
 ```
 
 ### Output (PreToolUse only)
+
 ```json
 {"decision": "allow"}
 // or
@@ -51,7 +57,9 @@ echo '{"tool_name":"Bash","tool_input":{"command":"ls -la"}}' | bash .opencode/h
 ## Customization
 
 ### Adding Blocked Patterns
+
 Edit `security-pre-tool.sh` and add patterns to `DANGEROUS_PATTERNS` array.
 
 ### Protecting Additional Files
+
 Add patterns to the file protection section in `security-pre-tool.sh`.

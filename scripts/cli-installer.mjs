@@ -2,7 +2,7 @@
 /**
  * CLI Installer
  * Automatically installs and verifies Cursor, Gemini, and Codex CLI tools
- * 
+ *
  * Usage:
  *   node scripts/cli-installer.mjs [--cursor] [--gemini] [--codex] [--all]
  */
@@ -30,18 +30,18 @@ async function commandExists(command) {
  */
 async function installCursorCLI() {
   console.log('Checking Cursor CLI...');
-  
+
   if (await commandExists('cursor-agent')) {
     console.log('✓ Cursor CLI already installed');
     return { installed: true, version: await getCursorVersion() };
   }
-  
+
   console.log('Installing Cursor CLI...');
-  
+
   try {
     // Installation instructions vary by platform
     const platform = process.platform;
-    
+
     if (platform === 'win32') {
       // Windows installation
       console.log('Please install Cursor CLI manually on Windows:');
@@ -54,7 +54,7 @@ async function installCursorCLI() {
       // Linux installation
       await execAsync('npm install -g @cursor/cli', { timeout: 60000 });
     }
-    
+
     console.log('✓ Cursor CLI installed');
     return { installed: true, version: await getCursorVersion() };
   } catch (error) {
@@ -80,18 +80,18 @@ async function getCursorVersion() {
  */
 async function installGeminiCLI() {
   console.log('Checking Gemini CLI...');
-  
+
   if (await commandExists('gemini')) {
     console.log('✓ Gemini CLI already installed');
     return { installed: true, version: await getGeminiVersion() };
   }
-  
+
   console.log('Installing Gemini CLI...');
-  
+
   try {
     // Installation via npm
     await execAsync('npm install -g @google/generative-ai-cli', { timeout: 60000 });
-    
+
     console.log('✓ Gemini CLI installed');
     return { installed: true, version: await getGeminiVersion() };
   } catch (error) {
@@ -117,18 +117,18 @@ async function getGeminiVersion() {
  */
 async function installCodexCLI() {
   console.log('Checking Codex CLI...');
-  
+
   if (await commandExists('codex')) {
     console.log('✓ Codex CLI already installed');
     return { installed: true, version: await getCodexVersion() };
   }
-  
+
   console.log('Installing Codex CLI...');
-  
+
   try {
     // Installation via npm
     await execAsync('npm install -g @openai/codex-cli', { timeout: 60000 });
-    
+
     console.log('✓ Codex CLI installed');
     return { installed: true, version: await getCodexVersion() };
   } catch (error) {
@@ -156,14 +156,14 @@ async function verifyAllCLIs() {
   const results = {
     cursor: await installCursorCLI(),
     gemini: await installGeminiCLI(),
-    codex: await installCodexCLI()
+    codex: await installCodexCLI(),
   };
-  
+
   const allInstalled = Object.values(results).every(r => r.installed);
-  
+
   return {
     allInstalled,
-    results
+    results,
   };
 }
 
@@ -176,7 +176,7 @@ async function main() {
   const installCursor = args.includes('--cursor') || installAll;
   const installGemini = args.includes('--gemini') || installAll;
   const installCodex = args.includes('--codex') || installAll;
-  
+
   if (!installCursor && !installGemini && !installCodex) {
     console.log('Usage: node cli-installer.mjs [--cursor] [--gemini] [--codex] [--all]');
     console.log('Verifying all CLI tools...');
@@ -185,24 +185,24 @@ async function main() {
     console.log(JSON.stringify(verification, null, 2));
     process.exit(verification.allInstalled ? 0 : 1);
   }
-  
+
   const results = {};
-  
+
   if (installCursor) {
     results.cursor = await installCursorCLI();
   }
-  
+
   if (installGemini) {
     results.gemini = await installGeminiCLI();
   }
-  
+
   if (installCodex) {
     results.codex = await installCodexCLI();
   }
-  
+
   console.log('\nInstallation Results:');
   console.log(JSON.stringify(results, null, 2));
-  
+
   const allInstalled = Object.values(results).every(r => r.installed);
   process.exit(allInstalled ? 0 : 1);
 }
@@ -216,6 +216,5 @@ export default {
   installCursorCLI,
   installGeminiCLI,
   installCodexCLI,
-  verifyAllCLIs
+  verifyAllCLIs,
 };
-

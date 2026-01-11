@@ -6,7 +6,7 @@ project_type: mobile
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -31,17 +31,17 @@ fallback_agents:
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "mobile app"
-  - "ios"
-  - "android"
-  - "react native"
-  - "flutter"
-  - "native app"
-  - "app store"
+  - 'mobile app'
+  - 'ios'
+  - 'android'
+  - 'react native'
+  - 'flutter'
+  - 'native app'
+  - 'app store'
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - app_requirements
@@ -61,7 +61,7 @@ steps:
       - Create structured development plan
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -87,7 +87,7 @@ steps:
       - Never execute an unrated plan - this is a hard requirement
 
   - step: 1
-    name: "Mobile Development"
+    name: 'Mobile Development'
     agent: mobile-developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -111,7 +111,7 @@ steps:
       - Push notification design
 
   - step: 2
-    name: "Mobile UX Design"
+    name: 'Mobile UX Design'
     agent: ux-expert
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -133,7 +133,7 @@ steps:
       - Animation and micro-interactions
 
   - step: 2.5
-    name: "Security & Permissions Review"
+    name: 'Security & Permissions Review'
     agent: security-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -156,7 +156,7 @@ steps:
       - PII handling and privacy compliance
 
   - step: 2.6
-    name: "Mobile Accessibility Audit"
+    name: 'Mobile Accessibility Audit'
     agent: accessibility-expert
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -179,7 +179,7 @@ steps:
       - WCAG mobile guidelines compliance
 
   - step: 3
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -202,7 +202,7 @@ steps:
       - Platform-specific features
 
   - step: 4
-    name: "Code Review"
+    name: 'Code Review'
     agent: code-reviewer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -215,7 +215,7 @@ steps:
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/04-code-reviewer.json
-    on_failure: "Return to implementation step with feedback"
+    on_failure: 'Return to implementation step with feedback'
     description: |
       Review mobile implementation for quality, security, and codebase impact:
       - Verify platform-specific best practices (iOS/Android/React Native)
@@ -225,7 +225,7 @@ steps:
       - Ensure proper navigation patterns
 
   - step: 5
-    name: "Mobile Quality Assurance"
+    name: 'Mobile Quality Assurance'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -247,7 +247,7 @@ steps:
       - Accessibility audit
 
   - step: 5.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"

@@ -2,12 +2,12 @@ name: Greenfield Full-Stack Development Workflow
 description: Complete workflow for building a new full-stack application from scratch
 type: greenfield
 project_type: fullstack
-publish_policy: auto-on-pass  # Automatically publish artifacts after validation passes
+publish_policy: auto-on-pass # Automatically publish artifacts after validation passes
 
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -44,12 +44,12 @@ fallback_agents:
 # See .claude/tools/workflow/parallel-executor.mjs for implementation
 parallel_execution:
   enabled: true
-  fail_fast: false  # Continue with other parallel steps even if one fails
-  timeout_per_step: 300000  # 5 minutes per step
+  fail_fast: false # Continue with other parallel steps even if one fails
+  timeout_per_step: 300000 # 5 minutes per step
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - user_requirements (or features-distilled.json from step 0.5 if file > 15KB)
@@ -72,7 +72,7 @@ steps:
       - **Publishing**: After validation, use `artifact-publisher` skill to publish plan artifacts to project feed
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -98,10 +98,10 @@ steps:
       - Never execute an unrated plan - this is a hard requirement
 
   - step: 0.5
-    publish_targets: ["project_feed", "cursor"]
-    name: "Feature Distillation"
+    publish_targets: ['project_feed', 'cursor']
+    name: 'Feature Distillation'
     agent: analyst
-    condition: "file_size(user_requirements) > 15KB"
+    condition: 'file_size(user_requirements) > 15KB'
     inputs:
       - user_requirements (markdown file)
     outputs:
@@ -123,11 +123,11 @@ steps:
       - Output: features-distilled.json passed to Step 0 (Planner) instead of raw markdown
 
   - step: 1
-    publish_targets: ["project_feed", "cursor"]
-    name: "Project Discovery"
+    publish_targets: ['project_feed', 'cursor']
+    name: 'Project Discovery'
     agent: analyst
     parallel: true
-    parallel_group: 1  # Parallel group 1: Discovery + PRD + UX
+    parallel_group: 1 # Parallel group 1: Discovery + PRD + UX
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - user_requirements
@@ -140,14 +140,14 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
 
   - step: 2
-    publish_targets: ["project_feed", "cursor"]
-    name: "Product Requirements"
+    publish_targets: ['project_feed', 'cursor']
+    name: 'Product Requirements'
     agent: pm
     parallel: true
-    parallel_group: 1  # Parallel group 1: Discovery + PRD + UX
+    parallel_group: 1 # Parallel group 1: Discovery + PRD + UX
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
-      - project-brief.json (from step 1, optional)  # Optional since parallel
+      - project-brief.json (from step 1, optional) # Optional since parallel
     outputs:
       - prd.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-pm.json
@@ -156,14 +156,14 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/02-pm.json
 
   - step: 3
-    publish_targets: ["project_feed", "cursor"]
-    name: "UX Design"
+    publish_targets: ['project_feed', 'cursor']
+    name: 'UX Design'
     agent: ux-expert
     parallel: true
-    parallel_group: 1  # Parallel group 1: Discovery + PRD + UX
+    parallel_group: 1 # Parallel group 1: Discovery + PRD + UX
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
-      - prd.json (from step 2, optional)  # Optional since parallel
+      - prd.json (from step 2, optional) # Optional since parallel
     outputs:
       - ux-spec.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-ux-expert.json
@@ -172,9 +172,9 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/03-ux-expert.json
 
   - step: 3.1
-    name: "Accessibility Review"
+    name: 'Accessibility Review'
     agent: accessibility-expert
-    condition: "plan includes UI components"
+    condition: 'plan includes UI components'
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - ux-spec.json (from step 3)
@@ -196,8 +196,8 @@ steps:
       - Only executes if plan includes UI components
 
   - step: 4
-    publish_targets: ["project_feed", "cursor"]
-    name: "System Architecture"
+    publish_targets: ['project_feed', 'cursor']
+    name: 'System Architecture'
     agent: architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -217,7 +217,7 @@ steps:
       - **Publishing**: After validation, use `artifact-publisher` skill to publish system-architecture.json to project feed (critical for Factory Droids)
 
   - step: 4.1
-    name: "Security Architecture Review"
+    name: 'Security Architecture Review'
     agent: security-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -240,9 +240,9 @@ steps:
       - Generate security architecture requirements for implementation
 
   - step: 4.2
-    name: "Performance Requirements"
+    name: 'Performance Requirements'
     agent: performance-engineer
-    condition: "plan.complexity >= moderate"
+    condition: 'plan.complexity >= moderate'
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - system-architecture.json (from step 4)
@@ -264,7 +264,7 @@ steps:
       - Only executes if plan complexity is moderate or higher
 
   - step: 4.5
-    name: "Infrastructure Resource Definition"
+    name: 'Infrastructure Resource Definition'
     agent: devops
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -298,7 +298,7 @@ steps:
       - Validation: All resource names include unique suffixes, all secrets use references (never actual values)
 
   - step: 5
-    name: "Database Architecture"
+    name: 'Database Architecture'
     agent: database-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -313,7 +313,7 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/05-database-architect.json
 
   - step: 6
-    name: "Test Planning"
+    name: 'Test Planning'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -329,7 +329,7 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/06-qa.json
 
   - step: 7
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -353,7 +353,7 @@ steps:
       - Use infrastructure-config.json for resource names and connection strings
 
   - step: 7.5
-    name: "Cloud Integration"
+    name: 'Cloud Integration'
     agent: cloud-integrator
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -377,7 +377,7 @@ steps:
       - Support both emulators (local) and production (cloud)
 
   - step: 8
-    name: "Multi-AI Validation"
+    name: 'Multi-AI Validation'
     agent: model-orchestrator
     tool: multi-ai-validator
     inputs:
@@ -406,7 +406,7 @@ steps:
         * All 3 disagree: Flag for human review
 
   - step: 9
-    name: "Code Review"
+    name: 'Code Review'
     agent: code-reviewer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -420,7 +420,7 @@ steps:
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/09-code-reviewer.json
-    on_failure: "Return to implementation step with feedback"
+    on_failure: 'Return to implementation step with feedback'
     description: |
       Review greenfield implementation for quality, security, and codebase impact:
       - Verify architecture alignment with design
@@ -430,7 +430,7 @@ steps:
       - Ensure consistent code style and patterns
 
   - step: 9.1
-    name: "Code Simplification Review"
+    name: 'Code Simplification Review'
     agent: code-simplifier
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -443,7 +443,7 @@ steps:
     validation:
       schema: .claude/schemas/simplification-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/09.1-code-simplifier.json
-    on_failure: "Return to implementation step with simplification feedback"
+    on_failure: 'Return to implementation step with simplification feedback'
     description: |
       Simplification review to ensure code is understandable by all developers:
       - Measure cognitive complexity and nesting depth
@@ -453,7 +453,7 @@ steps:
       - Block merge if complexity score > 7/10
 
   - step: 10
-    name: "Documentation"
+    name: 'Documentation'
     agent: technical-writer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -469,7 +469,7 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/10-technical-writer.json
 
   - step: 11
-    name: "Quality Assurance"
+    name: 'Quality Assurance'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -486,7 +486,7 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/11-qa.json
 
   - step: 12
-    name: "Infrastructure Provisioning"
+    name: 'Infrastructure Provisioning'
     agent: gcp-cloud-agent
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -508,7 +508,7 @@ steps:
       - Note: This step is optional and can be skipped for local development
 
   - step: 13
-    name: "Quality Signoff"
+    name: 'Quality Signoff'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -532,7 +532,7 @@ steps:
       - Block deployment if quality gates not met
 
   - step: 14
-    name: "Security Signoff"
+    name: 'Security Signoff'
     agent: security-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -557,7 +557,7 @@ steps:
       - Block deployment if security issues remain
 
   - step: 15
-    name: "Architecture Signoff"
+    name: 'Architecture Signoff'
     agent: architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -582,7 +582,7 @@ steps:
       - Block deployment if architectural issues remain
 
   - step: 15.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"
@@ -598,4 +598,3 @@ completion_criteria:
   - Quality gates passed
   - Test coverage meets threshold
   - Code follows project constitution
-

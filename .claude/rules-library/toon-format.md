@@ -64,17 +64,20 @@ This mixed structure should use JSON, not TOON.
 ### Format Examples
 
 **Object:**
+
 ```
 id: 1
 name: Ada
 ```
 
 **Primitive array (inline):**
+
 ```
 tags[2]: reading,gaming
 ```
 
 **Tabular array (uniform objects):**
+
 ```
 items[2]{sku,qty,price}:
   A1,2,9.99
@@ -82,6 +85,7 @@ items[2]{sku,qty,price}:
 ```
 
 **List format (non-uniform):**
+
 ```
 items[3]:
   - 1
@@ -98,7 +102,8 @@ items[3]:
 3. **Explicit length markers** - Help Claude track structure, especially for large tables
 
 **Example:**
-```
+
+````
 Here's the user data:
 
 ```toon
@@ -106,9 +111,10 @@ users[3]{id,name,role}:
   1,Alice,admin
   2,Bob,user
   3,Charlie,user
-```
+````
 
 Please analyze the user roles.
+
 ```
 
 ### For Output (Claude Generating TOON)
@@ -121,6 +127,7 @@ When requesting Claude to generate TOON:
 
 **Example:**
 ```
+
 Return the filtered users in TOON format:
 
 ```toon
@@ -129,6 +136,7 @@ users[N]{id,name,role}:
 ```
 
 Rules: 2-space indent, [N] matches actual row count, no trailing spaces.
+
 ```
 
 ### Integration with Claude Projects and Artifacts
@@ -144,9 +152,11 @@ Rules: 2-space indent, [N] matches actual row count, no trailing spaces.
 For large uniform tables, consider tab delimiters:
 
 ```
+
 items[2|]{sku|name|qty}:
-  A1|Widget|2
-  B2|Gadget|1
+A1|Widget|2
+B2|Gadget|1
+
 ```
 
 Tabs (`\t`) can provide additional token savings but may have display issues in some editors.
@@ -156,8 +166,10 @@ Tabs (`\t`) can provide additional token savings but may have display issues in 
 Optional hash prefix for clarity:
 
 ```
+
 tags[#3]: reading,gaming,coding
 items[#2]{sku,qty}: A1,2 B2,1
+
 ```
 
 ## Decision Tree
@@ -184,3 +196,4 @@ items[#2]{sku,qty}: A1,2 B2,1
 - **Link to spec** - Reference TOON spec for edge cases and full syntax
 - **Token counts vary** - Benchmarks use GPT-style tokenizers; actual savings may differ
 - **Not a drop-in replacement** - TOON is for LLM prompts, not general-purpose JSON replacement
+```

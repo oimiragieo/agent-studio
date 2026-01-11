@@ -7,19 +7,19 @@ project_type: operations
 # The actual workflow selection uses keywords from .opencode/config.yaml workflow_selection section.
 # See .opencode/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "incident"
-  - "outage"
-  - "production issue"
-  - "post-mortem"
-  - "crisis"
-  - "downtime"
-  - "emergency"
+  - 'incident'
+  - 'outage'
+  - 'production issue'
+  - 'post-mortem'
+  - 'crisis'
+  - 'downtime'
+  - 'emergency'
 
 priority: critical
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - incident_report
@@ -39,7 +39,7 @@ steps:
       - Coordinate response team activation
 
   - step: 1
-    name: "Incident Triage"
+    name: 'Incident Triage'
     agent: incident-responder
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -62,7 +62,7 @@ steps:
       - Immediate mitigation steps
 
   - step: 2
-    name: "Infrastructure Analysis"
+    name: 'Infrastructure Analysis'
     agent: devops
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -85,7 +85,7 @@ steps:
       - Rollback assessment
 
   - step: 3
-    name: "Security Assessment"
+    name: 'Security Assessment'
     agent: security-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -106,7 +106,7 @@ steps:
       - Forensic preservation
 
   - step: 4
-    name: "Resolution Validation"
+    name: 'Resolution Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)

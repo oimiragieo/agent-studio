@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Run Manager - Single source of truth for workflow execution state
- * 
+ *
  * Manages canonical run records in .claude/context/runs/<run_id>/
  * Replaces competing sources of truth (workflow YAML, plan artifacts, hierarchical plans)
- * 
+ *
  * Usage:
  *   node .claude/tools/run-manager.mjs create --run-id <id> --workflow <path>
  *   node .claude/tools/run-manager.mjs read --run-id <id>
@@ -16,12 +16,47 @@ import { readFile, writeFile, mkdir, readdir, rename, unlink, stat } from 'fs/pr
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { randomUUID } from 'crypto';
 import { initializeProjectDatabase, updateProjectDatabase } from './project-db.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const RUNS_DIR = join(__dirname, '..', 'context', 'runs');
+
+/**
+ * Generate a collision-resistant run ID suitable for directory names.
+ * @param {string|null} prefix Optional prefix (e.g., "cuj-001")
+ * @returns {Promise<string>}
+ */
+export async function generateRunId(prefix = null) {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const base = randomUUID();
+    const id = prefix ? `${prefix}-${base}` : base;
+    const runDir = join(RUNS_DIR, id);
+    if (!existsSync(runDir)) return id;
+  }
+  // Extremely unlikely fallback
+  return `${Date.now()}-${randomUUID()}`;
+}
+
+/**
+ * Validate a run ID format (no filesystem access required).
+ * @param {string} runId
+ * @returns {Promise<{valid: boolean, error?: string}>}
+ */
+export async function validateRunId(runId) {
+  if (typeof runId !== 'string' || runId.trim() === '') {
+    return { valid: false, error: 'runId must be a non-empty string' };
+  }
+  if (!/^[a-zA-Z0-9-]+$/.test(runId)) {
+    return { valid: false, error: 'runId must contain only letters, digits, and hyphens' };
+  }
+  if (runId.length > 128) {
+    return { valid: false, error: 'runId too long' };
+  }
+  return { valid: true };
+}
 
 // Registry cache with TTL (5 seconds)
 const REGISTRY_CACHE_TTL = 5000; // 5 seconds
@@ -48,10 +83,10 @@ class IndexedArtifactRegistry {
     this.artifacts = registry.artifacts || {};
 
     // O(1) indexes
-    this.indexById = new Map();     // artifact.id -> artifact
-    this.indexByType = new Map();   // artifact.type -> Set<artifact>
-    this.indexByStep = new Map();   // artifact.step -> Set<artifact>
-    this.indexByName = new Map();   // artifact.name -> artifact
+    this.indexById = new Map(); // artifact.id -> artifact
+    this.indexByType = new Map(); // artifact.type -> Set<artifact>
+    this.indexByStep = new Map(); // artifact.step -> Set<artifact>
+    this.indexByName = new Map(); // artifact.name -> artifact
 
     // Build indexes from existing artifacts
     this._buildIndexes();
@@ -233,7 +268,7 @@ class IndexedArtifactRegistry {
       byTypeCount: this.indexByType.size,
       byStepCount: this.indexByStep.size,
       types: Array.from(this.indexByType.keys()),
-      steps: Array.from(this.indexByStep.keys())
+      steps: Array.from(this.indexByStep.keys()),
     };
   }
 
@@ -247,7 +282,7 @@ class IndexedArtifactRegistry {
       workflow_id: this.workflowId,
       artifacts: this.artifacts,
       created_at: this.createdAt,
-      updated_at: this.updatedAt
+      updated_at: this.updatedAt,
     };
   }
 }
@@ -289,7 +324,7 @@ function clearExpiredCache() {
 function getCachedRegistry(runId) {
   clearExpiredCache();
   const cached = registryCache.get(runId);
-  if (cached && (Date.now() - cached.timestamp) < REGISTRY_CACHE_TTL) {
+  if (cached && Date.now() - cached.timestamp < REGISTRY_CACHE_TTL) {
     return cached.registry;
   }
   return null;
@@ -301,7 +336,7 @@ function getCachedRegistry(runId) {
 function setCachedRegistry(runId, registry) {
   registryCache.set(runId, {
     registry: JSON.parse(JSON.stringify(registry)), // Deep clone
-    timestamp: Date.now()
+    timestamp: Date.now(),
   });
 }
 
@@ -360,7 +395,7 @@ async function acquireLock(runId, timeout = 5000) {
   const lockPath = getLockPath(runId);
   const startTime = Date.now();
   const STALE_LOCK_THRESHOLD = 30000; // 30 seconds
-  
+
   while (Date.now() - startTime < timeout) {
     try {
       // Check for stale lock
@@ -381,13 +416,17 @@ async function acquireLock(runId, timeout = 5000) {
           }
         }
       }
-      
+
       // Try to create lock file exclusively
-      await writeFile(lockPath, JSON.stringify({
-        pid: process.pid,
-        timestamp: new Date().toISOString()
-      }), { flag: 'wx' });
-      
+      await writeFile(
+        lockPath,
+        JSON.stringify({
+          pid: process.pid,
+          timestamp: new Date().toISOString(),
+        }),
+        { flag: 'wx' }
+      );
+
       // Lock acquired - return unlock function that deletes the file
       return async () => {
         try {
@@ -405,7 +444,7 @@ async function acquireLock(runId, timeout = 5000) {
       throw error;
     }
   }
-  
+
   throw new Error(`Failed to acquire lock for run ${runId} within ${timeout}ms`);
 }
 
@@ -416,11 +455,11 @@ async function acquireLock(runId, timeout = 5000) {
  */
 async function atomicWrite(filePath, content) {
   const tempPath = `${filePath}.tmp.${Date.now()}.${Math.random().toString(36).substring(7)}`;
-  
+
   try {
     // Write to temp file
     await writeFile(tempPath, content, 'utf-8');
-    
+
     // Atomic rename (rename is atomic on most filesystems)
     await rename(tempPath, filePath);
   } catch (error) {
@@ -443,7 +482,7 @@ async function atomicWrite(filePath, content) {
  */
 export async function createRun(runId, options = {}) {
   await ensureRunsDir();
-  
+
   const runDir = getRunDir(runId);
   if (!existsSync(runDir)) {
     await mkdir(runDir, { recursive: true });
@@ -452,7 +491,7 @@ export async function createRun(runId, options = {}) {
     await mkdir(join(runDir, 'reasoning'), { recursive: true });
     await mkdir(join(runDir, 'gates'), { recursive: true });
   }
-  
+
   const now = new Date().toISOString();
   const runRecord = {
     run_id: runId,
@@ -466,35 +505,35 @@ export async function createRun(runId, options = {}) {
     owners: {
       orchestrator_session_id: options.sessionId || null,
       current_agent: null,
-      assigned_agents: []
+      assigned_agents: [],
     },
     timestamps: {
       started_at: null,
       last_step_completed_at: null,
-      completed_at: null
+      completed_at: null,
     },
     metadata: {
       user_request: options.userRequest || '',
       confidence: options.confidence || null,
-      missing_inputs: options.missingInputs || []
-    }
+      missing_inputs: options.missingInputs || [],
+    },
   };
-  
+
   const runJsonPath = getRunJsonPath(runId);
   await writeFile(runJsonPath, JSON.stringify(runRecord, null, 2), 'utf-8');
-  
+
   // Initialize artifact registry
   const artifactRegistry = {
     run_id: runId,
     workflow_id: runRecord.workflow_id,
     artifacts: {},
     created_at: now,
-    updated_at: now
+    updated_at: now,
   };
-  
+
   const registryPath = getArtifactRegistryPath(runId);
   await atomicWrite(registryPath, JSON.stringify(artifactRegistry, null, 2));
-  
+
   // Initialize Project Database (hot-swappable memory core)
   await initializeProjectDatabase(runId, {
     workflow_id: runRecord.workflow_id,
@@ -502,9 +541,9 @@ export async function createRun(runId, options = {}) {
     user_request: runRecord.metadata.user_request || '',
     status: 'pending',
     current_step: 0,
-    current_phase: null
+    current_phase: null,
   });
-  
+
   return runRecord;
 }
 
@@ -516,19 +555,19 @@ export async function createRun(runId, options = {}) {
 export async function readRun(runId) {
   try {
     const runJsonPath = getRunJsonPath(runId);
-    
+
     if (!existsSync(runJsonPath)) {
       throw new Error(`Run record not found: ${runId} (path: ${runJsonPath})`);
     }
-    
+
     const content = await readFile(runJsonPath, 'utf-8');
     const runRecord = JSON.parse(content);
-    
+
     // Validate run record structure
     if (!runRecord.run_id || !runRecord.status) {
       throw new Error(`Invalid run record structure for ${runId}: missing required fields`);
     }
-    
+
     return runRecord;
   } catch (error) {
     if (error.code === 'ENOENT') {
@@ -550,14 +589,14 @@ export async function readRun(runId) {
 export async function updateRun(runId, updates) {
   // Acquire lock
   const unlock = await acquireLock(runId);
-  
+
   try {
     const runRecord = await readRun(runId);
-    
+
     // Merge updates
     Object.assign(runRecord, updates);
     runRecord.updated_at = new Date().toISOString();
-    
+
     // Update timestamps based on status changes
     if (updates.status === 'in_progress' && !runRecord.timestamps.started_at) {
       runRecord.timestamps.started_at = new Date().toISOString();
@@ -568,10 +607,10 @@ export async function updateRun(runId, updates) {
     if (updates.current_step !== undefined) {
       runRecord.timestamps.last_step_completed_at = new Date().toISOString();
     }
-    
+
     const runJsonPath = getRunJsonPath(runId);
     await atomicWrite(runJsonPath, JSON.stringify(runRecord, null, 2));
-  
+
     // Sync updates to Project Database (derived cache from run.json)
     // Project Database is now a derived cache, not a writable source
     try {
@@ -581,7 +620,7 @@ export async function updateRun(runId, updates) {
       // Non-critical - project-db sync failure shouldn't break run updates
       console.warn(`Warning: Failed to sync project-db for run ${runId}: ${error.message}`);
     }
-    
+
     return runRecord;
   } finally {
     // Always release lock (even on error)
@@ -611,9 +650,9 @@ export async function readArtifactRegistry(runId) {
     if (cached) {
       return cached;
     }
-    
+
     const registryPath = getArtifactRegistryPath(runId);
-    
+
     if (!existsSync(registryPath)) {
       // Initialize if doesn't exist
       try {
@@ -623,7 +662,7 @@ export async function readArtifactRegistry(runId) {
           workflow_id: runRecord.workflow_id,
           artifacts: {},
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         };
         await atomicWrite(registryPath, JSON.stringify(artifactRegistry, null, 2));
         setCachedRegistry(runId, artifactRegistry);
@@ -632,25 +671,27 @@ export async function readArtifactRegistry(runId) {
         throw new Error(`Failed to initialize artifact registry for ${runId}: ${error.message}`);
       }
     }
-    
+
     const content = await readFile(registryPath, 'utf-8');
     const registry = JSON.parse(content);
-    
+
     // Validate registry structure
     if (!registry.run_id || !registry.artifacts) {
       throw new Error(`Invalid artifact registry structure for ${runId}: missing required fields`);
     }
-    
+
     // Cache the registry
     setCachedRegistry(runId, registry);
-    
+
     return registry;
   } catch (error) {
     if (error.code === 'ENOENT') {
       throw new Error(`Artifact registry file not found: ${runId}. ${error.message}`);
     }
     if (error instanceof SyntaxError) {
-      throw new Error(`Artifact registry file corrupted (invalid JSON) for ${runId}: ${error.message}`);
+      throw new Error(
+        `Artifact registry file corrupted (invalid JSON) for ${runId}: ${error.message}`
+      );
     }
     throw error;
   }
@@ -670,12 +711,12 @@ export async function registerArtifact(runId, artifact, options = {}) {
     if (!artifact.name || artifact.step === undefined || !artifact.agent) {
       throw new Error(`Invalid artifact: missing required fields (name, step, agent)`);
     }
-    
+
     const registry = await readArtifactRegistry(runId);
     const idempotencyPolicy = options.idempotency_policy || 'overwrite';
-    
+
     const existingArtifact = registry.artifacts[artifact.name];
-    
+
     // Handle idempotency policy
     if (existingArtifact) {
       if (idempotencyPolicy === 'skip') {
@@ -691,7 +732,7 @@ export async function registerArtifact(runId, artifact, options = {}) {
       }
       // 'overwrite' policy: continue to register/update
     }
-    
+
     const artifactEntry = {
       name: artifact.name,
       step: artifact.step,
@@ -700,14 +741,21 @@ export async function registerArtifact(runId, artifact, options = {}) {
       updated_at: new Date().toISOString(),
       path: artifact.path || `.claude/context/artifacts/${artifact.name}`,
       dependencies: artifact.dependencies || [],
-      version: artifact.version || (existingArtifact?.version || 1),
-      validationStatus: artifact.validationStatus || existingArtifact?.validationStatus || 'pending',
+      version: artifact.version || existingArtifact?.version || 1,
+      validationStatus:
+        artifact.validationStatus || existingArtifact?.validationStatus || 'pending',
       schema: artifact.schema || existingArtifact?.schema || null,
       gate_path: artifact.gate_path || existingArtifact?.gate_path || null,
       reasoning_path: artifact.reasoning_path || existingArtifact?.reasoning_path || null,
       // Publishing metadata
-      publishable: artifact.publishable !== undefined ? artifact.publishable : (existingArtifact?.publishable || false),
-      published: artifact.published !== undefined ? artifact.published : (existingArtifact?.published || false),
+      publishable:
+        artifact.publishable !== undefined
+          ? artifact.publishable
+          : existingArtifact?.publishable || false,
+      published:
+        artifact.published !== undefined
+          ? artifact.published
+          : existingArtifact?.published || false,
       published_at: artifact.published_at || existingArtifact?.published_at || null,
       publish_targets: artifact.publish_targets || existingArtifact?.publish_targets || [],
       publish_attempts: artifact.publish_attempts || existingArtifact?.publish_attempts || [],
@@ -716,37 +764,47 @@ export async function registerArtifact(runId, artifact, options = {}) {
       metadata: {
         size: artifact.size || existingArtifact?.metadata?.size || 0,
         type: artifact.type || existingArtifact?.metadata?.type || 'unknown',
-        validation_status: artifact.validationStatus || existingArtifact?.validationStatus || 'pending',
+        validation_status:
+          artifact.validationStatus || existingArtifact?.validationStatus || 'pending',
         // Publishing metadata (duplicated in metadata for backwards compatibility)
-        publishable: artifact.publishable !== undefined ? artifact.publishable : (existingArtifact?.metadata?.publishable || false),
-        published: artifact.published !== undefined ? artifact.published : (existingArtifact?.metadata?.published || false),
+        publishable:
+          artifact.publishable !== undefined
+            ? artifact.publishable
+            : existingArtifact?.metadata?.publishable || false,
+        published:
+          artifact.published !== undefined
+            ? artifact.published
+            : existingArtifact?.metadata?.published || false,
         published_at: artifact.published_at || existingArtifact?.metadata?.published_at || null,
-        publish_targets: artifact.publish_targets || existingArtifact?.metadata?.publish_targets || [],
-        publish_attempts: artifact.publish_attempts || existingArtifact?.metadata?.publish_attempts || [],
-        publish_status: artifact.publish_status || existingArtifact?.metadata?.publish_status || 'pending',
+        publish_targets:
+          artifact.publish_targets || existingArtifact?.metadata?.publish_targets || [],
+        publish_attempts:
+          artifact.publish_attempts || existingArtifact?.metadata?.publish_attempts || [],
+        publish_status:
+          artifact.publish_status || existingArtifact?.metadata?.publish_status || 'pending',
         publish_error: artifact.publish_error || existingArtifact?.metadata?.publish_error || null,
         ...(existingArtifact?.metadata || {}),
-        ...(artifact.metadata || {})
-      }
+        ...(artifact.metadata || {}),
+      },
     };
-    
+
     registry.artifacts[artifact.name] = artifactEntry;
     registry.updated_at = new Date().toISOString();
-    
+
     // Update artifacts_list if it exists
     if (registry.artifacts_list && !registry.artifacts_list.includes(artifact.name)) {
       registry.artifacts_list.push(artifact.name);
     }
-    
+
     // Invalidate cache before writing
     invalidateCache(runId);
-    
+
     const registryPath = getArtifactRegistryPath(runId);
     await atomicWrite(registryPath, JSON.stringify(registry, null, 2));
-    
+
     // Update cache after write
     setCachedRegistry(runId, registry);
-    
+
     return registry;
   } catch (error) {
     throw new Error(`Failed to register artifact for run ${runId}: ${error.message}`);
@@ -803,7 +861,7 @@ export async function updateArtifactPublishingStatus(runId, artifactName, publis
       }
       artifact.publish_attempts.push({
         timestamp: new Date().toISOString(),
-        ...publishingUpdate.attempt
+        ...publishingUpdate.attempt,
       });
       artifact.metadata.publish_attempts = artifact.publish_attempts;
     }
@@ -822,7 +880,9 @@ export async function updateArtifactPublishingStatus(runId, artifactName, publis
 
     return artifact;
   } catch (error) {
-    throw new Error(`Failed to update artifact publishing status for ${artifactName}: ${error.message}`);
+    throw new Error(
+      `Failed to update artifact publishing status for ${artifactName}: ${error.message}`
+    );
   }
 }
 
@@ -835,10 +895,11 @@ export async function getPublishableArtifacts(runId) {
   const registry = await readArtifactRegistry(runId);
   const artifacts = Object.values(registry.artifacts);
 
-  return artifacts.filter(artifact =>
-    artifact.publishable === true &&
-    artifact.published !== true &&
-    artifact.validationStatus === 'pass'
+  return artifacts.filter(
+    artifact =>
+      artifact.publishable === true &&
+      artifact.published !== true &&
+      artifact.validationStatus === 'pass'
   );
 }
 
@@ -854,9 +915,7 @@ export async function getPublishableArtifacts(runId) {
  */
 export function getArtifactsArray(registry) {
   if (!registry || !registry.artifacts) return [];
-  return Array.isArray(registry.artifacts) 
-    ? registry.artifacts 
-    : Object.values(registry.artifacts);
+  return Array.isArray(registry.artifacts) ? registry.artifacts : Object.values(registry.artifacts);
 }
 
 export function getRunDirectoryStructure(runId) {
@@ -865,13 +924,16 @@ export function getRunDirectoryStructure(runId) {
     run_dir: runDir,
     run_json: getRunJsonPath(runId),
     artifact_registry: getArtifactRegistryPath(runId),
+    registry_path: getArtifactRegistryPath(runId),
     artifacts_dir: join(runDir, 'artifacts'),
     plans_dir: join(runDir, 'plans'),
+    reports_dir: join(runDir, 'reports'),
+    tasks_dir: join(runDir, 'tasks'),
     handoff_json: join(runDir, 'handoff.json'),
     handoff_md: join(runDir, 'handoff.md'),
     handoff_ack_json: join(runDir, 'handoff-ack.json'),
     reasoning_dir: join(runDir, 'reasoning'),
-    gates_dir: join(runDir, 'gates')
+    gates_dir: join(runDir, 'gates'),
   };
 }
 
@@ -879,29 +941,29 @@ export function getRunDirectoryStructure(runId) {
 async function main() {
   const args = process.argv.slice(2);
   const command = args[0];
-  
+
   if (command === 'create') {
     const runIdIndex = args.indexOf('--run-id');
     const workflowIndex = args.indexOf('--workflow');
-    
+
     if (runIdIndex === -1 || runIdIndex === args.length - 1) {
       console.error('Usage: node run-manager.mjs create --run-id <id> --workflow <path>');
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const selectedWorkflow = workflowIndex !== -1 ? args[workflowIndex + 1] : '';
-    
+
     const runRecord = await createRun(runId, { selectedWorkflow });
     console.log(JSON.stringify(runRecord, null, 2));
   } else if (command === 'read') {
     const runIdIndex = args.indexOf('--run-id');
-    
+
     if (runIdIndex === -1 || runIdIndex === args.length - 1) {
       console.error('Usage: node run-manager.mjs read --run-id <id>');
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const runRecord = await readRun(runId);
     console.log(JSON.stringify(runRecord, null, 2));
@@ -909,27 +971,29 @@ async function main() {
     const runIdIndex = args.indexOf('--run-id');
     const fieldIndex = args.indexOf('--field');
     const valueIndex = args.indexOf('--value');
-    
+
     if (runIdIndex === -1 || fieldIndex === -1 || valueIndex === -1) {
-      console.error('Usage: node run-manager.mjs update --run-id <id> --field <field> --value <value>');
+      console.error(
+        'Usage: node run-manager.mjs update --run-id <id> --field <field> --value <value>'
+      );
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const field = args[fieldIndex + 1];
     const value = args[valueIndex + 1];
-    
+
     const updates = { [field]: value };
     const runRecord = await updateRun(runId, updates);
     console.log(JSON.stringify(runRecord, null, 2));
   } else if (command === 'get-current-step') {
     const runIdIndex = args.indexOf('--run-id');
-    
+
     if (runIdIndex === -1 || runIdIndex === args.length - 1) {
       console.error('Usage: node run-manager.mjs get-current-step --run-id <id>');
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const step = await getCurrentStep(runId);
     console.log(step);
@@ -957,6 +1021,5 @@ export default {
   getPublishableArtifacts,
   getRunDirectoryStructure,
   getArtifactsArray,
-  IndexedArtifactRegistry
+  IndexedArtifactRegistry,
 };
-

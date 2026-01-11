@@ -76,7 +76,9 @@ async function testBasicAudit() {
   console.log('Testing basic audit...');
 
   // Create test file
-  const testFile = await createTestFile('test.tsx', `
+  const testFile = await createTestFile(
+    'test.tsx',
+    `
 import React from 'react';
 
 export function UserAuth() {
@@ -85,7 +87,8 @@ export function UserAuth() {
 
   return <div>Hello {user.name}</div>;
 }
-`);
+`
+  );
 
   // Run audit
   const result = await runAudit([TEST_DIR, '--format', 'json']);
@@ -109,10 +112,13 @@ export function UserAuth() {
 async function testDryRunFix() {
   console.log('Testing dry-run fix mode...');
 
-  const testFile = await createTestFile('test-fix.tsx', `
+  const testFile = await createTestFile(
+    'test-fix.tsx',
+    `
 const user: any = getUser();
 console.log('test');
-`);
+`
+  );
 
   // Run audit with --fix-dry-run
   const result = await runAudit([TEST_DIR, '--fix-dry-run', '--format', 'json']);
@@ -134,9 +140,12 @@ console.log('test');
 async function testFixMode() {
   console.log('Testing fix mode with backups...');
 
-  const testFile = await createTestFile('test-fix2.tsx', `
+  const testFile = await createTestFile(
+    'test-fix2.tsx',
+    `
 const user: any = getUser();
-`);
+`
+  );
 
   // Run audit with --fix
   const result = await runAudit([TEST_DIR, '--fix', '--format', 'json']);
@@ -166,15 +175,21 @@ async function testTechnologyDetection() {
   console.log('Testing technology detection...');
 
   // Create TypeScript file
-  await createTestFile('test.ts', `
+  await createTestFile(
+    'test.ts',
+    `
 const x: string = 'hello';
-`);
+`
+  );
 
   // Create React file
-  await createTestFile('component.tsx', `
+  await createTestFile(
+    'component.tsx',
+    `
 import React from 'react';
 export const App = () => <div>Hello</div>;
-`);
+`
+  );
 
   // Run audit
   const result = await runAudit([TEST_DIR, '--format', 'json']);
@@ -195,17 +210,23 @@ async function testComplianceScore() {
   console.log('Testing compliance score calculation...');
 
   // Create file with no violations
-  await createTestFile('clean.tsx', `
+  await createTestFile(
+    'clean.tsx',
+    `
 import React from 'react';
 export const Clean = () => <div>No violations</div>;
-`);
+`
+  );
 
   const result = await runAudit([TEST_DIR, '--format', 'json']);
   const output = JSON.parse(result.stdout);
 
   // Check compliance score
   assert(typeof output.compliance_score === 'number', 'compliance_score should be a number');
-  assert(output.compliance_score >= 0 && output.compliance_score <= 100, 'compliance_score should be 0-100');
+  assert(
+    output.compliance_score >= 0 && output.compliance_score <= 100,
+    'compliance_score should be 0-100'
+  );
 
   console.log('✅ Compliance score test passed');
 }
@@ -216,10 +237,13 @@ export const Clean = () => <div>No violations</div>;
 async function testAuditSummary() {
   console.log('Testing audit summary...');
 
-  await createTestFile('summary.tsx', `
+  await createTestFile(
+    'summary.tsx',
+    `
 import React from 'react';
 export const Test = () => <div>Test</div>;
-`);
+`
+  );
 
   const result = await runAudit([TEST_DIR, '--format', 'json']);
   const output = JSON.parse(result.stdout);
@@ -228,7 +252,10 @@ export const Test = () => <div>Test</div>;
   assert(output.audit_summary, 'audit_summary should be present');
   assert(typeof output.audit_summary.total_files === 'number', 'total_files should be a number');
   assert(typeof output.audit_summary.total_lines === 'number', 'total_lines should be a number');
-  assert(typeof output.audit_summary.total_violations === 'number', 'total_violations should be a number');
+  assert(
+    typeof output.audit_summary.total_violations === 'number',
+    'total_violations should be a number'
+  );
   assert(typeof output.audit_summary.errors === 'number', 'errors should be a number');
   assert(typeof output.audit_summary.warnings === 'number', 'warnings should be a number');
   assert(typeof output.audit_summary.info === 'number', 'info should be a number');
@@ -243,9 +270,12 @@ async function testExitCodes() {
   console.log('Testing exit codes...');
 
   // Create file with violations
-  await createTestFile('violations.tsx', `
+  await createTestFile(
+    'violations.tsx',
+    `
 const user: any = getUser();
-`);
+`
+  );
 
   // Run audit (should exit with code 1 if errors found)
   const result = await runAudit([TEST_DIR, '--format', 'json']);

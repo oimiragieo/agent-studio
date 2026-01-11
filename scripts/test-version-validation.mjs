@@ -24,25 +24,25 @@ function runValidation(args = []) {
   return new Promise((resolve, reject) => {
     const child = spawn('node', ['scripts/validate-rule-index-paths.mjs', ...args], {
       cwd: ROOT,
-      shell: true
+      shell: true,
     });
 
     let stdout = '';
     let stderr = '';
 
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       stdout += data.toString();
     });
 
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       resolve({ code, stdout, stderr });
     });
 
-    child.on('error', (error) => {
+    child.on('error', error => {
       reject(error);
     });
   });
@@ -143,7 +143,11 @@ async function testFullValidation() {
 
   console.log(result.stdout);
 
-  if (result.code === 0 && result.stdout.includes('UP-TO-DATE') && result.stdout.includes('Valid paths')) {
+  if (
+    result.code === 0 &&
+    result.stdout.includes('UP-TO-DATE') &&
+    result.stdout.includes('Valid paths')
+  ) {
     console.log('✅ Test passed\n');
     return true;
   } else {
@@ -180,7 +184,7 @@ async function runAllTests() {
   }
 }
 
-runAllTests().catch((error) => {
+runAllTests().catch(error => {
   console.error('Test execution error:', error);
   process.exit(1);
 });

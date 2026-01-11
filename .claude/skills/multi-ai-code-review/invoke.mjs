@@ -107,15 +107,15 @@ function runScript(command, args, options = {}) {
     let stdout = '';
     let stderr = '';
 
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       stdout += data.toString('utf8');
     });
 
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', data => {
       stderr += data.toString('utf8');
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       resolve({
         code,
         stdout,
@@ -124,7 +124,7 @@ function runScript(command, args, options = {}) {
       });
     });
 
-    child.on('error', (error) => {
+    child.on('error', error => {
       reject(error);
     });
   });
@@ -230,12 +230,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('Testing Agent Studio adapter with parameters:', testParams);
 
   invoke(testParams)
-    .then((result) => {
+    .then(result => {
       console.log('Adapter result:');
       console.log(JSON.stringify(result, null, 2));
       process.exit(result.success ? 0 : 1);
     })
-    .catch((error) => {
+    .catch(error => {
       console.error('Adapter error:', error);
       process.exit(1);
     });

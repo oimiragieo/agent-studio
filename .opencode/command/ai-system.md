@@ -14,12 +14,14 @@ Launch an AI/LLM system development workflow.
 This command coordinates multiple agents for AI system development:
 
 ### 1. Model Orchestrator
+
 - Model selection for different tasks
 - Cost/performance trade-offs
 - Fallback strategies
 - Rate limiting considerations
 
 ### 2. LLM Architect
+
 - RAG pipeline design
 - Embedding strategy
 - Vector database selection
@@ -28,12 +30,14 @@ This command coordinates multiple agents for AI system development:
 - Guardrails and safety
 
 ### 3. Developer
+
 - LLM integration code
 - RAG pipeline implementation
 - Vector store integration
 - Prompt templates
 
 ### 4. QA
+
 - Prompt testing
 - Response quality assessment
 - Hallucination detection

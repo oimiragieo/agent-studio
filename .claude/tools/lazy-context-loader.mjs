@@ -24,7 +24,7 @@ const contextCache = new Map();
  */
 export async function loadAgentContext(agentName, contextFiles = []) {
   const cacheKey = `${agentName}:${contextFiles.join(',')}`;
-  
+
   // Check cache first
   if (contextCache.has(cacheKey)) {
     const cached = contextCache.get(cacheKey);
@@ -36,35 +36,35 @@ export async function loadAgentContext(agentName, contextFiles = []) {
     // Cache invalid, remove it
     contextCache.delete(cacheKey);
   }
-  
+
   // Load context files
   const loadedContexts = {};
   const fileStats = {};
-  
+
   for (const filePath of contextFiles) {
     const fullPath = path.join(ROOT, filePath);
     try {
       const content = await fs.readFile(fullPath, 'utf-8');
       const stats = await fs.stat(fullPath);
-      
+
       loadedContexts[filePath] = content;
       fileStats[filePath] = {
         mtime: stats.mtime.getTime(),
-        size: stats.size
+        size: stats.size,
       };
     } catch (error) {
       console.warn(`Warning: Could not load context file ${filePath}: ${error.message}`);
       loadedContexts[filePath] = null;
     }
   }
-  
+
   // Cache the loaded contexts
   contextCache.set(cacheKey, {
     content: loadedContexts,
     fileStats,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   });
-  
+
   return loadedContexts;
 }
 
@@ -80,7 +80,7 @@ async function validateCache(cached, contextFiles) {
     try {
       const stats = await fs.stat(fullPath);
       const cachedStats = cached.fileStats[filePath];
-      
+
       if (!cachedStats || stats.mtime.getTime() !== cachedStats.mtime) {
         return false;
       }
@@ -120,7 +120,7 @@ export function getCacheStats() {
   return {
     size: contextCache.size,
     agents: Array.from(contextCache.keys()).map(key => key.split(':')[0]),
-    memoryUsage: estimateMemoryUsage()
+    memoryUsage: estimateMemoryUsage(),
   };
 }
 
@@ -150,25 +150,25 @@ function estimateMemoryUsage() {
  */
 export async function loadAgentContextFromConfig(agentName, agentConfig) {
   const contextStrategy = agentConfig.context_strategy || 'eager';
-  
+
   // Only lazy load if strategy is lazy_load
   if (contextStrategy !== 'lazy_load') {
     return {};
   }
-  
+
   const contextFiles = agentConfig.context_files || [];
-  
+
   if (contextFiles.length === 0) {
     return {};
   }
-  
+
   return await loadAgentContext(agentName, contextFiles);
 }
 
 // CLI usage
 if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
-  
+
   if (command === 'clear') {
     const agentName = process.argv[3];
     clearAgentContext(agentName);
@@ -185,4 +185,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('  node lazy-context-loader.mjs stats              - Show cache statistics');
   }
 }
-

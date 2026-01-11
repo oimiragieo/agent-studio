@@ -64,9 +64,10 @@ Invokes the **mobile-flow** workflow with this agent sequence:
 
 <output_format>
 **Outputs**:
+
 - `mobile-architecture.json` - App architecture
 - `platform-strategy.json` - Platform decisions
 - `mobile-ux-spec.json` - UX specifications
 - `mobile-test-results.json` - Testing results
-</output_format>
-</instructions>
+  </output_format>
+  </instructions>

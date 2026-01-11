@@ -21,6 +21,7 @@ streaming: supported
 This skill gives AI agents access to Chrome DevTools for controlling and inspecting live Chrome browsers. It provides 26 tools for browser automation, performance analysis, network inspection, and debugging.
 
 **Context Savings**: ~93% reduction
+
 - **MCP Mode**: ~25,000 tokens always loaded
 - **Skill Mode**: ~600 tokens metadata + on-demand loading
 
@@ -58,10 +59,10 @@ python executor.py --tool performance_start_trace --args '{}'
 
 Interact with page elements by clicking.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `selector` | string | CSS selector or element reference |
-| `options` | object | Click options (button, clickCount, etc.) |
+| Parameter  | Type   | Description                              |
+| ---------- | ------ | ---------------------------------------- |
+| `selector` | string | CSS selector or element reference        |
+| `options`  | object | Click options (button, clickCount, etc.) |
 
 ```bash
 python executor.py --tool click --args '{"selector": "#submit-button"}'
@@ -71,10 +72,10 @@ python executor.py --tool click --args '{"selector": "#submit-button"}'
 
 Perform drag operations on elements.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `source` | string | Source element selector |
-| `target` | string | Target element selector or coordinates |
+| Parameter | Type   | Description                            |
+| --------- | ------ | -------------------------------------- |
+| `source`  | string | Source element selector                |
+| `target`  | string | Target element selector or coordinates |
 
 ```bash
 python executor.py --tool drag --args '{"source": "#draggable", "target": "#dropzone"}'
@@ -84,10 +85,10 @@ python executor.py --tool drag --args '{"source": "#draggable", "target": "#drop
 
 Input text into form fields.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter  | Type   | Description          |
+| ---------- | ------ | -------------------- |
 | `selector` | string | Input field selector |
-| `value` | string | Text to enter |
+| `value`    | string | Text to enter        |
 
 ```bash
 python executor.py --tool fill --args '{"selector": "#email", "value": "user@example.com"}'
@@ -97,9 +98,9 @@ python executor.py --tool fill --args '{"selector": "#email", "value": "user@exa
 
 Complete multiple form fields at once.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `fields` | object | Map of selectors to values |
+| Parameter | Type   | Description                |
+| --------- | ------ | -------------------------- |
+| `fields`  | object | Map of selectors to values |
 
 ```bash
 python executor.py --tool fill_form --args '{"fields": {"#name": "John", "#email": "john@example.com"}}'
@@ -109,10 +110,10 @@ python executor.py --tool fill_form --args '{"fields": {"#name": "John", "#email
 
 Respond to browser dialogs (alerts, confirms, prompts).
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `accept` | boolean | Whether to accept or dismiss |
-| `promptText` | string | Text for prompt dialogs |
+| Parameter    | Type    | Description                  |
+| ------------ | ------- | ---------------------------- |
+| `accept`     | boolean | Whether to accept or dismiss |
+| `promptText` | string  | Text for prompt dialogs      |
 
 ```bash
 python executor.py --tool handle_dialog --args '{"accept": true}'
@@ -122,8 +123,8 @@ python executor.py --tool handle_dialog --args '{"accept": true}'
 
 Move cursor over elements to trigger hover states.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter  | Type   | Description               |
+| ---------- | ------ | ------------------------- |
 | `selector` | string | Element selector to hover |
 
 ```bash
@@ -134,10 +135,10 @@ python executor.py --tool hover --args '{"selector": ".dropdown-trigger"}'
 
 Simulate keyboard input.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `key` | string | Key to press (e.g., "Enter", "Tab", "Escape") |
-| `modifiers` | array | Modifier keys (e.g., ["Control", "Shift"]) |
+| Parameter   | Type   | Description                                   |
+| ----------- | ------ | --------------------------------------------- |
+| `key`       | string | Key to press (e.g., "Enter", "Tab", "Escape") |
+| `modifiers` | array  | Modifier keys (e.g., ["Control", "Shift"])    |
 
 ```bash
 python executor.py --tool press_key --args '{"key": "Enter"}'
@@ -147,10 +148,10 @@ python executor.py --tool press_key --args '{"key": "Enter"}'
 
 Submit files through file input controls.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `selector` | string | File input selector |
-| `filePaths` | array | Paths to files to upload |
+| Parameter   | Type   | Description              |
+| ----------- | ------ | ------------------------ |
+| `selector`  | string | File input selector      |
+| `filePaths` | array  | Paths to files to upload |
 
 ```bash
 python executor.py --tool upload_file --args '{"selector": "#file-input", "filePaths": ["/path/to/file.pdf"]}'
@@ -162,9 +163,9 @@ python executor.py --tool upload_file --args '{"selector": "#file-input", "fileP
 
 Direct the browser to specific URLs.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `url` | string | URL to navigate to |
+| Parameter   | Type   | Description                                          |
+| ----------- | ------ | ---------------------------------------------------- |
+| `url`       | string | URL to navigate to                                   |
 | `waitUntil` | string | Wait condition (load, domcontentloaded, networkidle) |
 
 ```bash
@@ -175,9 +176,9 @@ python executor.py --tool navigate_page --args '{"url": "https://example.com", "
 
 Create additional browser tabs.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `url` | string | Optional URL for new page |
+| Parameter | Type   | Description               |
+| --------- | ------ | ------------------------- |
+| `url`     | string | Optional URL for new page |
 
 ```bash
 python executor.py --tool new_page --args '{"url": "https://example.com"}'
@@ -187,9 +188,9 @@ python executor.py --tool new_page --args '{"url": "https://example.com"}'
 
 Shut down individual browser tabs/windows.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `pageId` | string | ID of page to close (optional, closes current) |
+| Parameter | Type   | Description                                    |
+| --------- | ------ | ---------------------------------------------- |
+| `pageId`  | string | ID of page to close (optional, closes current) |
 
 ```bash
 python executor.py --tool close_page --args '{}'
@@ -207,9 +208,9 @@ python executor.py --tool list_pages --args '{}'
 
 Switch between active pages.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `pageId` | string | ID of page to select |
+| Parameter | Type   | Description          |
+| --------- | ------ | -------------------- |
+| `pageId`  | string | ID of page to select |
 
 ```bash
 python executor.py --tool select_page --args '{"pageId": "page-123"}'
@@ -219,11 +220,11 @@ python executor.py --tool select_page --args '{"pageId": "page-123"}'
 
 Pause execution until conditions are met.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `selector` | string | Element to wait for |
-| `state` | string | State to wait for (visible, hidden, attached, detached) |
-| `timeout` | number | Maximum wait time in ms |
+| Parameter  | Type   | Description                                             |
+| ---------- | ------ | ------------------------------------------------------- |
+| `selector` | string | Element to wait for                                     |
+| `state`    | string | State to wait for (visible, hidden, attached, detached) |
+| `timeout`  | number | Maximum wait time in ms                                 |
 
 ```bash
 python executor.py --tool wait_for --args '{"selector": "#loading", "state": "hidden"}'
@@ -235,11 +236,11 @@ python executor.py --tool wait_for --args '{"selector": "#loading", "state": "hi
 
 Simulate different device types and configurations.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `device` | string | Device name (e.g., "iPhone 12", "Pixel 5") |
-| `userAgent` | string | Custom user agent |
-| `viewport` | object | Custom viewport dimensions |
+| Parameter   | Type   | Description                                |
+| ----------- | ------ | ------------------------------------------ |
+| `device`    | string | Device name (e.g., "iPhone 12", "Pixel 5") |
+| `userAgent` | string | Custom user agent                          |
+| `viewport`  | object | Custom viewport dimensions                 |
 
 ```bash
 python executor.py --tool emulate --args '{"device": "iPhone 12"}'
@@ -249,10 +250,10 @@ python executor.py --tool emulate --args '{"device": "iPhone 12"}'
 
 Adjust viewport dimensions.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `width` | number | Viewport width in pixels |
-| `height` | number | Viewport height in pixels |
+| Parameter | Type   | Description               |
+| --------- | ------ | ------------------------- |
+| `width`   | number | Viewport width in pixels  |
+| `height`  | number | Viewport height in pixels |
 
 ```bash
 python executor.py --tool resize_page --args '{"width": 1920, "height": 1080}'
@@ -264,8 +265,8 @@ python executor.py --tool resize_page --args '{"width": 1920, "height": 1080}'
 
 Begin recording performance data.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter    | Type  | Description                 |
+| ------------ | ----- | --------------------------- |
 | `categories` | array | Trace categories to capture |
 
 ```bash
@@ -284,8 +285,8 @@ python executor.py --tool performance_stop_trace --args '{}'
 
 Extract actionable performance metrics.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter   | Type   | Description                   |
+| ----------- | ------ | ----------------------------- |
 | `traceData` | object | Trace data from stopped trace |
 
 ```bash
@@ -298,9 +299,9 @@ python executor.py --tool performance_analyze_insight --args '{}'
 
 View all intercepted network activity.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `filter` | object | Filter by URL pattern, status, type |
+| Parameter | Type   | Description                         |
+| --------- | ------ | ----------------------------------- |
+| `filter`  | object | Filter by URL pattern, status, type |
 
 ```bash
 python executor.py --tool list_network_requests --args '{}'
@@ -310,8 +311,8 @@ python executor.py --tool list_network_requests --args '{}'
 
 Retrieve specific network request details.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter   | Type   | Description       |
+| ----------- | ------ | ----------------- |
 | `requestId` | string | ID of the request |
 
 ```bash
@@ -324,11 +325,11 @@ python executor.py --tool get_network_request --args '{"requestId": "req-123"}'
 
 Capture visual page state.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `fullPage` | boolean | Capture full scrollable page |
-| `selector` | string | Specific element to capture |
-| `format` | string | Image format (png, jpeg, webp) |
+| Parameter  | Type    | Description                    |
+| ---------- | ------- | ------------------------------ |
+| `fullPage` | boolean | Capture full scrollable page   |
+| `selector` | string  | Specific element to capture    |
+| `format`   | string  | Image format (png, jpeg, webp) |
 
 ```bash
 python executor.py --tool take_screenshot --args '{"fullPage": true}'
@@ -346,8 +347,8 @@ python executor.py --tool take_snapshot --args '{}'
 
 Execute JavaScript within page context.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter    | Type   | Description                |
+| ------------ | ------ | -------------------------- |
 | `expression` | string | JavaScript code to execute |
 
 ```bash
@@ -358,9 +359,9 @@ python executor.py --tool evaluate_script --args '{"expression": "document.title
 
 Access all logged console messages.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `level` | string | Filter by level (log, warn, error, info) |
+| Parameter | Type   | Description                              |
+| --------- | ------ | ---------------------------------------- |
+| `level`   | string | Filter by level (log, warn, error, info) |
 
 ```bash
 python executor.py --tool list_console_messages --args '{"level": "error"}'
@@ -370,8 +371,8 @@ python executor.py --tool list_console_messages --args '{"level": "error"}'
 
 Retrieve specific console output.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter   | Type   | Description               |
+| ----------- | ------ | ------------------------- |
 | `messageId` | string | ID of the console message |
 
 ```bash
@@ -442,6 +443,7 @@ python executor.py --tool take_screenshot --args '{"fullPage": true}'
 ## Configuration
 
 MCP server configuration stored in `config.json`:
+
 - **Command**: `npx chrome-devtools-mcp@latest`
 - **Flags**: `--headless`, `--channel`, `--browser-url`, `--isolated`
 
@@ -464,12 +466,14 @@ MCP server configuration stored in `config.json`:
 ## Error Handling
 
 **Common Issues:**
+
 - Chrome not installed: Install Chrome or use `--channel` flag
 - Element not found: Verify selector, use `wait_for` first
 - Dialog blocking: Handle dialogs before continuing
 - Timeout errors: Increase timeout or check page load
 
 **Recovery:**
+
 - Take screenshot to verify page state
 - Check console for JavaScript errors
 - List pages to ensure correct page is active

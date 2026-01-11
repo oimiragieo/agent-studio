@@ -5,6 +5,7 @@ This repository provides a custom **CursorRules** file tailored for Drupal 11 pr
 ## Purpose
 
 The goal of this project is to enable a consistent, secure, and efficient development experience by guiding AI tools (such as the Cursor AI editor or VS Code extensions) with Drupal-specific instructions. This helps ensure that all code suggestions are:
+
 - Fully compatible with Drupal 11.
 - Aligned with Drupal’s coding and performance standards.
 - Designed using best practices in module, theme, and API development.
@@ -19,7 +20,7 @@ The goal of this project is to enable a consistent, secure, and efficient develo
 1. **Copy the Rule File:**  
    Place the `.cursorrules` file in the root of your Drupal 11 project (i.e., in the same directory as your `composer.json`).
 
-2. **Enable in Your Editor:**  
+2. **Enable in Your Editor:**
    - If you’re using the Cursor AI editor, make sure that project rules are enabled (usually via a settings toggle).
    - For VS Code users, install the [Cursor VS Code extension](https://marketplace.visualstudio.com/) and use its command palette to ensure the `.cursorrules` file is recognized.
 

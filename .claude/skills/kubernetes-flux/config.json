@@ -52,12 +52,7 @@
       "switch to production context",
       "exec with write operations"
     ],
-    "masked_output": [
-      "secret values",
-      "authentication tokens",
-      "database passwords",
-      "API keys"
-    ]
+    "masked_output": ["secret values", "authentication tokens", "database passwords", "API keys"]
   },
   "tools_count": 18,
   "context_savings": "~92%"

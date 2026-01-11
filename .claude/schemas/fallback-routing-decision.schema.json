@@ -3,7 +3,15 @@
   "type": "object",
   "title": "Fallback Routing Decision",
   "description": "Schema for fallback routing decisions when primary agent fails",
-  "required": ["decision_id", "timestamp", "primary_agent", "failure_type", "fallback_agent", "routing_method", "confidence"],
+  "required": [
+    "decision_id",
+    "timestamp",
+    "primary_agent",
+    "failure_type",
+    "fallback_agent",
+    "routing_method",
+    "confidence"
+  ],
   "properties": {
     "decision_id": {
       "type": "string",
@@ -152,7 +160,13 @@
     },
     "test_scenario": {
       "type": "string",
-      "enum": ["explicit_fallback", "capability_matrix", "context_preservation", "fallback_chain", "invalid_output"],
+      "enum": [
+        "explicit_fallback",
+        "capability_matrix",
+        "context_preservation",
+        "fallback_chain",
+        "invalid_output"
+      ],
       "description": "Test scenario being executed (if in test mode)"
     },
     "expected_outcome": {

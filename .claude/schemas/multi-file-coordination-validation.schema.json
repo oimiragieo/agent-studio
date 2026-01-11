@@ -3,7 +3,13 @@
   "type": "object",
   "title": "Multi-File Coordination Validation",
   "description": "Schema for validating multi-file change coordination between strategic and implementation plans",
-  "required": ["validation_id", "validated_at", "workflow_id", "coordination_status", "file_changes"],
+  "required": [
+    "validation_id",
+    "validated_at",
+    "workflow_id",
+    "coordination_status",
+    "file_changes"
+  ],
   "properties": {
     "validation_id": {
       "type": "string",

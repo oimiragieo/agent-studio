@@ -8,25 +8,25 @@
 
 ### Key Metrics
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Total CUJs | 60 | - |
-| Passed Checks | 5 | PASS |
-| Critical Errors | 0 | PASS |
-| Warnings | 20 | INFO |
-| Registry in Sync | Yes | PASS |
-| Schema Validation | Pass | PASS |
+| Metric            | Value | Status |
+| ----------------- | ----- | ------ |
+| Total CUJs        | 60    | -      |
+| Passed Checks     | 5     | PASS   |
+| Critical Errors   | 0     | PASS   |
+| Warnings          | 20    | INFO   |
+| Registry in Sync  | Yes   | PASS   |
+| Schema Validation | Pass  | PASS   |
 
 ### Critical Fixes Verified
 
-| Fix | Before | After | Status |
-|-----|--------|-------|--------|
-| Workflow: null issues | 36 CUJs broken | 7 CUJs (correct for manual-setup/skill-only) | FIXED |
-| "[object Object]" in skills | Skills showing as objects | Skills array properly parsed | FIXED |
-| CUJ-030 primary_skill | null | "multi-ai-code-review" | FIXED |
-| plan-generator context:fork | Missing | `context:fork: true` | FIXED |
-| architect artifact-publisher | Missing from allowed-tools | Added to allowed-tools | FIXED |
-| greenfield publish_targets | Missing | Added to step 0.5 | FIXED |
+| Fix                          | Before                     | After                                        | Status |
+| ---------------------------- | -------------------------- | -------------------------------------------- | ------ |
+| Workflow: null issues        | 36 CUJs broken             | 7 CUJs (correct for manual-setup/skill-only) | FIXED  |
+| "[object Object]" in skills  | Skills showing as objects  | Skills array properly parsed                 | FIXED  |
+| CUJ-030 primary_skill        | null                       | "multi-ai-code-review"                       | FIXED  |
+| plan-generator context:fork  | Missing                    | `context:fork: true`                         | FIXED  |
+| architect artifact-publisher | Missing from allowed-tools | Added to allowed-tools                       | FIXED  |
+| greenfield publish_targets   | Missing                    | Added to step 0.5                            | FIXED  |
 
 ---
 
@@ -55,7 +55,7 @@ Warnings (20):
 ```
 Registry Statistics:
   Total CUJs: 60
-  
+
 By Execution Mode:
   - manual-setup: 2
   - skill-only: 5
@@ -69,17 +69,18 @@ Registry saved: .claude/context/cuj-registry.json
 
 **Expected CUJs with workflow: null (7 total)**:
 
-| CUJ | Name | Execution Mode | Correct? |
-|-----|------|----------------|----------|
-| CUJ-001 | First-Time Installation | manual-setup | YES |
-| CUJ-002 | Rule Configuration | skill-only | YES |
-| CUJ-003 | Cross-Platform Setup | skill-only | YES |
-| CUJ-017 | Module Documentation | skill-only | YES |
-| CUJ-027 | Workflow Recovery After Context Loss | skill-only | YES |
-| CUJ-030 | Multi-AI Validation Workflow | skill-only | YES |
-| CUJ-042 | Cursor Subagent Coordination | manual-setup | YES |
+| CUJ     | Name                                 | Execution Mode | Correct? |
+| ------- | ------------------------------------ | -------------- | -------- |
+| CUJ-001 | First-Time Installation              | manual-setup   | YES      |
+| CUJ-002 | Rule Configuration                   | skill-only     | YES      |
+| CUJ-003 | Cross-Platform Setup                 | skill-only     | YES      |
+| CUJ-017 | Module Documentation                 | skill-only     | YES      |
+| CUJ-027 | Workflow Recovery After Context Loss | skill-only     | YES      |
+| CUJ-030 | Multi-AI Validation Workflow         | skill-only     | YES      |
+| CUJ-042 | Cursor Subagent Coordination         | manual-setup   | YES      |
 
 **Analysis**: All 7 CUJs with `workflow: null` are correct. These are either:
+
 - `manual-setup` CUJs (no automated workflow)
 - `skill-only` CUJs (use skills directly, not full workflows)
 
@@ -92,6 +93,7 @@ The 36 previously broken workflow CUJs now correctly reference their workflow fi
 ### CUJ-001 (greenfield-fullstack)
 
 **Verified**:
+
 - Step 0.5 now includes `publish_targets: ["project_feed", "cursor"]`
 - Workflow file: `.claude/workflows/greenfield-fullstack.yaml`
 - Recovery configuration present
@@ -101,6 +103,7 @@ The 36 previously broken workflow CUJs now correctly reference their workflow fi
 ### CUJ-030 (multi-ai-review)
 
 **Verified**:
+
 - `execution_mode: "skill-only"` (correct)
 - `workflow: null` (correct for skill-only)
 - `primary_skill: "multi-ai-code-review"` (FIXED)
@@ -109,6 +112,7 @@ The 36 previously broken workflow CUJs now correctly reference their workflow fi
 ### CUJ-037 (plan-generator skill)
 
 **Verified**:
+
 - `context:fork: true` present in SKILL.md header (FIXED)
 - Model: opus
 - Templates: feature-plan, refactoring-plan, migration-plan, architecture-plan
@@ -116,6 +120,7 @@ The 36 previously broken workflow CUJs now correctly reference their workflow fi
 ### Architect Agent
 
 **Verified**:
+
 - `allowed-tools: artifact-publisher, publish_artifact` (FIXED)
 - artifact-publisher mentioned in skill integration table
 
@@ -125,34 +130,34 @@ The 36 previously broken workflow CUJs now correctly reference their workflow fi
 
 ### Before Fixes
 
-| Issue | Count | Severity |
-|-------|-------|----------|
-| CUJs with incorrect workflow: null | 36 | Critical |
-| Skills showing as "[object Object]" | Unknown | Critical |
-| CUJ-030 missing primary_skill | 1 | High |
-| plan-generator missing context:fork | 1 | Medium |
-| architect missing artifact-publisher | 1 | Medium |
-| greenfield missing publish_targets | 1 | Medium |
+| Issue                                | Count   | Severity |
+| ------------------------------------ | ------- | -------- |
+| CUJs with incorrect workflow: null   | 36      | Critical |
+| Skills showing as "[object Object]"  | Unknown | Critical |
+| CUJ-030 missing primary_skill        | 1       | High     |
+| plan-generator missing context:fork  | 1       | Medium   |
+| architect missing artifact-publisher | 1       | Medium   |
+| greenfield missing publish_targets   | 1       | Medium   |
 
 ### After Fixes
 
-| Issue | Count | Severity |
-|-------|-------|----------|
-| CUJs with workflow: null | 7 (all correct) | None |
-| Skills parsing errors | 0 | None |
-| CUJ-030 primary_skill | Set correctly | None |
-| plan-generator context:fork | Present | None |
-| architect artifact-publisher | Present | None |
-| greenfield publish_targets | Present | None |
+| Issue                        | Count           | Severity |
+| ---------------------------- | --------------- | -------- |
+| CUJs with workflow: null     | 7 (all correct) | None     |
+| Skills parsing errors        | 0               | None     |
+| CUJ-030 primary_skill        | Set correctly   | None     |
+| plan-generator context:fork  | Present         | None     |
+| architect artifact-publisher | Present         | None     |
+| greenfield publish_targets   | Present         | None     |
 
 ### Improvement Metrics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Broken workflow references | 36 | 0 | 100% |
-| Registry validation | Fail | Pass | Fixed |
-| CUJ Doctor status | Unknown | PASSED | Fixed |
-| Config validation warnings | Unknown | 4 | Baseline |
+| Metric                     | Before  | After  | Improvement |
+| -------------------------- | ------- | ------ | ----------- |
+| Broken workflow references | 36      | 0      | 100%        |
+| Registry validation        | Fail    | Pass   | Fixed       |
+| CUJ Doctor status          | Unknown | PASSED | Fixed       |
+| Config validation warnings | Unknown | 4      | Baseline    |
 
 ---
 
@@ -182,14 +187,17 @@ The 36 previously broken workflow CUJs now correctly reference their workflow fi
 ## Recommendations
 
 ### Immediate (Priority 1)
+
 None - All critical issues resolved.
 
 ### Short-Term (Priority 2)
+
 1. Add version field to 44 skills missing it
 2. Document Chrome DevTools MCP requirement for CUJ-034
 3. Clean up unused MCP server configs
 
 ### Long-Term (Priority 3)
+
 1. Add measurable success criteria to CUJs
 2. Create automated CUJ validation in CI/CD
 
@@ -200,6 +208,7 @@ None - All critical issues resolved.
 ### RECOMMENDATION: GO FOR MERGE
 
 **Rationale**:
+
 1. All 36 workflow: null issues resolved
 2. No "[object Object]" errors in skill references
 3. Registry validates against schema
@@ -208,6 +217,7 @@ None - All critical issues resolved.
 6. All spot checks pass
 
 **Remaining Warnings**:
+
 - 20 warnings are pre-existing or low-priority
 - None are blockers for merging
 
@@ -231,5 +241,5 @@ node -e "const r=require('./.claude/context/cuj-registry.json'); console.log(r.c
 
 ---
 
-*Report generated: 2026-01-10*
-*Validation performed by: QA Agent (Riley Thompson)*
+_Report generated: 2026-01-10_
+_Validation performed by: QA Agent (Riley Thompson)_

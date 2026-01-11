@@ -6,7 +6,7 @@ project_type: operations
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -29,19 +29,19 @@ fallback_agents:
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "incident"
-  - "outage"
-  - "production issue"
-  - "post-mortem"
-  - "crisis"
-  - "downtime"
-  - "emergency"
+  - 'incident'
+  - 'outage'
+  - 'production issue'
+  - 'post-mortem'
+  - 'crisis'
+  - 'downtime'
+  - 'emergency'
 
 priority: critical
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - incident_report
@@ -61,7 +61,7 @@ steps:
       - Coordinate response team activation
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -87,7 +87,7 @@ steps:
       - If score >= 5: Proceed with workflow execution
 
   - step: 1
-    name: "Incident Triage"
+    name: 'Incident Triage'
     agent: incident-responder
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -111,7 +111,7 @@ steps:
       - Immediate mitigation steps
 
   - step: 2
-    name: "Infrastructure Analysis"
+    name: 'Infrastructure Analysis'
     agent: devops
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -135,7 +135,7 @@ steps:
       - Rollback assessment
 
   - step: 3
-    name: "Security Assessment"
+    name: 'Security Assessment'
     agent: security-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -157,7 +157,7 @@ steps:
       - Forensic preservation
 
   - step: 3.5
-    name: "Compliance Impact Assessment"
+    name: 'Compliance Impact Assessment'
     agent: compliance-auditor
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -182,7 +182,7 @@ steps:
       - Third-party vendor notifications
 
   - step: 4
-    name: "Code Review"
+    name: 'Code Review'
     agent: code-reviewer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -194,7 +194,7 @@ steps:
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/04-code-reviewer.json
-    on_failure: "Return to remediation step with feedback"
+    on_failure: 'Return to remediation step with feedback'
     description: |
       Review remediation implementation for quality, security, and codebase impact:
       - Verify fix addresses root cause
@@ -204,7 +204,7 @@ steps:
       - Review rollback procedures
 
   - step: 5
-    name: "Resolution Validation"
+    name: 'Resolution Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -231,7 +231,7 @@ steps:
       - Process improvements
 
   - step: 5.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"

@@ -54,7 +54,10 @@
             "type": "object",
             "required": ["provider", "model_id"],
             "properties": {
-              "provider": { "type": "string", "enum": ["anthropic", "openai", "google", "cohere", "local", "other"] },
+              "provider": {
+                "type": "string",
+                "enum": ["anthropic", "openai", "google", "cohere", "local", "other"]
+              },
               "model_id": { "type": "string" },
               "version": { "type": "string" },
               "context_window": { "type": "integer" },
@@ -77,7 +80,16 @@
       "type": "object",
       "required": ["approach"],
       "properties": {
-        "approach": { "type": "string", "enum": ["task_based", "complexity_based", "cost_optimized", "latency_optimized", "hybrid"] },
+        "approach": {
+          "type": "string",
+          "enum": [
+            "task_based",
+            "complexity_based",
+            "cost_optimized",
+            "latency_optimized",
+            "hybrid"
+          ]
+        },
         "routing_rules": {
           "type": "array",
           "items": {
@@ -93,7 +105,10 @@
           "type": "object",
           "properties": {
             "enabled": { "type": "boolean" },
-            "algorithm": { "type": "string", "enum": ["round_robin", "weighted", "least_connections", "adaptive"] }
+            "algorithm": {
+              "type": "string",
+              "enum": ["round_robin", "weighted", "least_connections", "adaptive"]
+            }
           }
         }
       }
@@ -171,7 +186,10 @@
         "properties": {
           "recommendation": { "type": "string" },
           "priority": { "type": "string", "enum": ["high", "medium", "low"] },
-          "category": { "type": "string", "enum": ["cost", "performance", "reliability", "security"] }
+          "category": {
+            "type": "string",
+            "enum": ["cost", "performance", "reliability", "security"]
+          }
         }
       }
     }

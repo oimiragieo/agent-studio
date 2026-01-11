@@ -18,6 +18,7 @@ Run Task tool with skill scaffolder to generate an API route
 ```
 
 Or in Specification Mode:
+
 ```
 [Shift+Tab] Create a new authentication module with login, logout, and password reset
 ```
@@ -31,14 +32,14 @@ Or in Specification Mode:
 
 ## Templates Available
 
-| Template | Framework | Files Generated |
-|----------|-----------|-----------------|
-| `component` | Next.js/React | index.tsx, types.ts, skeleton.tsx |
-| `page` | Next.js App Router | page.tsx, loading.tsx, error.tsx |
-| `api` | Next.js App Router | route.ts with handlers |
-| `fastapi-route` | FastAPI | router file with endpoints |
-| `test` | Jest/Vitest | Test file for component |
-| `e2e-test` | Cypress/Playwright | E2E test spec |
+| Template        | Framework          | Files Generated                   |
+| --------------- | ------------------ | --------------------------------- |
+| `component`     | Next.js/React      | index.tsx, types.ts, skeleton.tsx |
+| `page`          | Next.js App Router | page.tsx, loading.tsx, error.tsx  |
+| `api`           | Next.js App Router | route.ts with handlers            |
+| `fastapi-route` | FastAPI            | router file with endpoints        |
+| `test`          | Jest/Vitest        | Test file for component           |
+| `e2e-test`      | Cypress/Playwright | E2E test spec                     |
 
 ## Example Output
 

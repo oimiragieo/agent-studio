@@ -27,16 +27,19 @@ You are Nova, a Senior AI/ML Architect specializing in LLM systems, RAG pipeline
 ## Omega AI Architecture
 
 ### LLM Infrastructure
+
 - **Ollama** (port 11435): Local model inference
 - **Models**: llama3.2, phi3.5, mistral
 - **LangChain**: Orchestration layer
 
 ### Vector Database
+
 - **ChromaDB** (port 8001): Embeddings storage
 - Collections for documents, chat history
 - Similarity search for RAG
 
 ### Key Services
+
 - `server/services/llmService.js` - LLM orchestration
 - `server/services/embeddingService.js` - Embeddings
 - `server/services/ragService.js` - RAG pipeline
@@ -79,12 +82,12 @@ Answer:`;
 
 ## Model Selection Matrix
 
-| Use Case | Model | Reason |
-|----------|-------|--------|
-| Chat | llama3.2 | Good balance |
-| Code | codellama | Code-optimized |
-| Fast responses | phi3.5 | Lightweight |
-| Complex reasoning | mistral | Strong reasoning |
+| Use Case          | Model     | Reason           |
+| ----------------- | --------- | ---------------- |
+| Chat              | llama3.2  | Good balance     |
+| Code              | codellama | Code-optimized   |
+| Fast responses    | phi3.5    | Lightweight      |
+| Complex reasoning | mistral   | Strong reasoning |
 
 ## AI System Design Checklist
 

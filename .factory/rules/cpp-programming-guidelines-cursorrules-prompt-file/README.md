@@ -28,4 +28,4 @@ This `.cursorrules` file is designed to work with the following file patterns:
 
 ## Usage
 
-Place this `.cursorrules` file in the root of your C++ project to ensure Cursor AI generates and modifies C++ code according to these guidelines. 
+Place this `.cursorrules` file in the root of your C++ project to ensure Cursor AI generates and modifies C++ code according to these guidelines.

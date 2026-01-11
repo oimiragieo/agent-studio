@@ -15,6 +15,7 @@ Plan rating is a **mandatory** quality gate for all workflow executions in the L
 ### Response-Rater Integration
 
 The `response-rater` skill provides independent, multi-AI validation of plan quality using:
+
 - **Claude Code**: Primary validator with deep context understanding
 - **Gemini CLI**: Secondary validator with different perspective
 - **OpenAI Codex**: Optional tertiary validator for critical tasks
@@ -42,6 +43,7 @@ Plan rating follows a **3-attempt retry flow with escalation**:
 3. **Response-rater returns rating** → Includes rubric scores, summary, improvements, rewrite
 
 **Decision Point**:
+
 - **If score >= 7**: Proceed to workflow execution ✅
 - **If score < 7**: Return to Planner with detailed feedback ⚠️
 
@@ -52,6 +54,7 @@ Plan rating follows a **3-attempt retry flow with escalation**:
 3. **Orchestrator re-rates revised plan** → Response-rater evaluates improvements
 
 **Decision Point**:
+
 - **If score >= 7**: Proceed to workflow execution ✅
 - **If score < 7**: Return to Planner for final revision ⚠️
 
@@ -62,6 +65,7 @@ Plan rating follows a **3-attempt retry flow with escalation**:
 3. **Orchestrator re-rates final plan** → Response-rater evaluates final version
 
 **Decision Point**:
+
 - **If score >= 7**: Proceed to workflow execution ✅
 - **If score < 7**: Escalate to user for manual review 🚨
 
@@ -129,13 +133,13 @@ Response-rater returns structured feedback in this format:
 
 Plans are evaluated on 5 key dimensions using the **Standard Plan Rating Rubric** (`.claude/context/artifacts/standard-plan-rubric.json`):
 
-| Dimension | Description | Weight |
-|-----------|-------------|--------|
-| **completeness** | All required information present, no gaps | 20% |
-| **feasibility** | Plan is realistic and achievable | 20% |
-| **risk_mitigation** | Risks identified and mitigation strategies defined | 20% |
-| **agent_coverage** | Appropriate agents assigned to each task | 20% |
-| **integration** | Plan integrates properly with existing systems | 20% |
+| Dimension           | Description                                        | Weight |
+| ------------------- | -------------------------------------------------- | ------ |
+| **completeness**    | All required information present, no gaps          | 20%    |
+| **feasibility**     | Plan is realistic and achievable                   | 20%    |
+| **risk_mitigation** | Risks identified and mitigation strategies defined | 20%    |
+| **agent_coverage**  | Appropriate agents assigned to each task           | 20%    |
+| **integration**     | Plan integrates properly with existing systems     | 20%    |
 
 **Overall Score Calculation**: Weighted average of all 5 dimensions (equal weight).
 
@@ -146,30 +150,35 @@ Plans are evaluated on 5 key dimensions using the **Standard Plan Rating Rubric*
 ### How Planner Interprets Scores
 
 **Completeness (8/10 or higher = good)**:
+
 - All phases defined with clear inputs/outputs
 - Dependencies mapped correctly
 - Success criteria specified
 - Timeline and milestones included
 
 **Feasibility (7/10 or higher = good)**:
+
 - Tasks are achievable with available resources
 - Time estimates are realistic
 - No impossible requirements
 - Dependencies are manageable
 
 **Risk Mitigation (6/10 or higher = acceptable, 8/10 = good)**:
+
 - Risks identified for each phase
 - Mitigation strategies defined
 - Fallback plans exist
 - Error handling considered
 
 **Agent Coverage (8/10 or higher = good)**:
+
 - Right agents assigned to right tasks
 - No missing agent expertise
 - Agent workload is balanced
 - Handoffs are clear
 
 **Integration (7/10 or higher = good)**:
+
 - Plan fits with existing workflows
 - No conflicts with other systems
 - APIs and data flows defined
@@ -178,6 +187,7 @@ Plans are evaluated on 5 key dimensions using the **Standard Plan Rating Rubric*
 ### Improvement Interpretation
 
 Planner focuses on the `improvements` array to:
+
 1. **Identify specific gaps**: What's missing or incomplete
 2. **Prioritize fixes**: Which improvements have highest impact
 3. **Revise plan**: Update plan to address each improvement
@@ -189,12 +199,12 @@ Planner focuses on the `improvements` array to:
 
 Different task types require different minimum scores:
 
-| Task Type | Minimum Score | Rationale |
-|-----------|---------------|-----------|
-| **Emergency** | 5/10 | Speed over perfection; quick fixes, hotfixes |
-| **Standard** | 7/10 | Balanced quality; features, enhancements, bug fixes |
-| **Enterprise** | 8/10 | High quality; enterprise features, integrations, migrations |
-| **Critical** | 9/10 | Mission critical; security, compliance, data protection |
+| Task Type      | Minimum Score | Rationale                                                   |
+| -------------- | ------------- | ----------------------------------------------------------- |
+| **Emergency**  | 5/10          | Speed over perfection; quick fixes, hotfixes                |
+| **Standard**   | 7/10          | Balanced quality; features, enhancements, bug fixes         |
+| **Enterprise** | 8/10          | High quality; enterprise features, integrations, migrations |
+| **Critical**   | 9/10          | Mission critical; security, compliance, data protection     |
 
 ### Emergency Threshold (5/10)
 
@@ -203,6 +213,7 @@ Different task types require different minimum scores:
 **Justification**: Speed is paramount; plan can be refined during execution
 
 **Requirements**:
+
 - Document why emergency threshold is needed
 - Post-mortem review after execution
 - Retrospective plan improvement
@@ -216,6 +227,7 @@ Different task types require different minimum scores:
 **Justification**: Balance between quality and velocity
 
 **Requirements**:
+
 - All rubric dimensions >= 6/10
 - No dimension below 5/10
 - Overall score >= 7/10
@@ -229,6 +241,7 @@ Different task types require different minimum scores:
 **Justification**: High-stakes work requiring strong planning
 
 **Requirements**:
+
 - All rubric dimensions >= 7/10
 - Risk mitigation >= 8/10
 - Agent coverage >= 8/10
@@ -242,6 +255,7 @@ Different task types require different minimum scores:
 **Justification**: No room for error; plan must be near-perfect
 
 **Requirements**:
+
 - All rubric dimensions >= 8/10
 - Risk mitigation = 10/10
 - Agent coverage includes security-architect and compliance-auditor
@@ -316,13 +330,13 @@ All workflows include a plan rating gate after planning:
 ```yaml
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     outputs:
       - plan-{{workflow_id}}.json
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -359,15 +373,16 @@ steps:
    - Document rating in reasoning file
 
 3. **Decision logic**:
+
    ```javascript
    if (overall_score >= minimum_score) {
      // Proceed to next step
-     log("Plan rating passed", overall_score);
+     log('Plan rating passed', overall_score);
      saveRating(ratingPath, rating);
      return { allowed: true };
    } else {
      // Return to Planner with feedback
-     log("Plan rating failed", overall_score, "< minimum", minimum_score);
+     log('Plan rating failed', overall_score, '< minimum', minimum_score);
      sendFeedbackToPlanner(rating.improvements);
      incrementRetryCounter();
      if (retryCounter >= 3) {
@@ -390,6 +405,7 @@ steps:
 **Example**: `.claude/context/runs/run-001/plans/plan-greenfield-2025-01-06-rating.json`
 
 **Format**:
+
 ```json
 {
   "plan_id": "plan-greenfield-2025-01-06",
@@ -461,6 +477,7 @@ node .claude/tools/enforcement-gate.mjs validate-plan \
 **Problem**: Plan fails rating 3 times in a row
 
 **Root Causes**:
+
 1. Incomplete requirements (missing inputs)
 2. Unrealistic scope (too ambitious)
 3. Missing risk mitigation (no error handling)
@@ -468,6 +485,7 @@ node .claude/tools/enforcement-gate.mjs validate-plan \
 5. Poor integration planning (conflicts with existing systems)
 
 **Solutions**:
+
 - Review `improvements` array from rating feedback
 - Break plan into smaller, more focused phases
 - Add explicit error handling and fallback strategies
@@ -479,12 +497,14 @@ node .claude/tools/enforcement-gate.mjs validate-plan \
 **Problem**: Response-rater times out waiting for provider
 
 **Root Causes**:
+
 1. Plan file too large (> 10,000 lines)
 2. Network connectivity issues
 3. Provider service unavailable
 4. Authentication expired
 
 **Solutions**:
+
 - Increase timeout: `--timeout 300000` (5 minutes)
 - Split large plans into smaller sections
 - Retry with different provider: `--providers gemini` (skip Claude)
@@ -495,11 +515,13 @@ node .claude/tools/enforcement-gate.mjs validate-plan \
 **Problem**: All providers fail authentication
 
 **Root Causes**:
+
 1. No active session (not logged in)
 2. No environment variables set
 3. API keys expired
 
 **Solutions**:
+
 - Login to Claude Code: `claude login`
 - Set environment variables: `export ANTHROPIC_API_KEY=...`
 - Verify auth: `claude --auth-status`
@@ -542,12 +564,14 @@ The Standard Plan Rating Rubric can be customized for specialized workflows or t
 **Location**: `.claude/context/artifacts/custom-rubrics/`
 
 **Steps**:
+
 1. Copy `standard-plan-rubric.json` as a template
 2. Modify dimensions, weights, or scoring criteria
 3. Validate against schema: `node .claude/tools/enforcement-gate.mjs validate-rubric --rubric-file <custom-rubric.json>`
 4. Reference in workflow or rating invocation
 
 **Example Custom Rubric** (`.claude/context/artifacts/custom-rubrics/security-plan-rubric.json`):
+
 ```json
 {
   "version": "1.0.0",
@@ -598,9 +622,10 @@ The Standard Plan Rating Rubric can be customized for specialized workflows or t
 ### Using Custom Rubrics
 
 **In Workflows**:
+
 ```yaml
 - step: 0.1
-  name: "Plan Rating Gate"
+  name: 'Plan Rating Gate'
   agent: orchestrator
   type: validation
   skill: response-rater
@@ -610,6 +635,7 @@ The Standard Plan Rating Rubric can be customized for specialized workflows or t
 ```
 
 **In CLI**:
+
 ```bash
 node .claude/skills/response-rater/scripts/rate.cjs \
   --response-file plan.json \

@@ -50,13 +50,13 @@ function normalizeExecutionMode(mode) {
   if (!mode) return null;
 
   const modeMap = {
-    'workflow': 'workflow',
+    workflow: 'workflow',
     'automated-workflow': 'workflow',
     'delegated-skill': 'skill-only',
     'skill-only': 'skill-only',
-    'skill': 'skill-only',
+    skill: 'skill-only',
     'manual-setup': 'manual-setup',
-    'manual': 'manual-setup'
+    manual: 'manual-setup',
   };
 
   // Handle raw .yaml references as 'workflow'
@@ -71,13 +71,17 @@ function normalizeExecutionMode(mode) {
  * Extract execution mode from CUJ content
  */
 function extractExecutionMode(content) {
-  const executionModeMatch = content.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)`?/i);
+  const executionModeMatch = content.match(
+    /\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)`?/i
+  );
   if (executionModeMatch) {
     return normalizeExecutionMode(executionModeMatch[1]);
   }
 
   // Fallback to legacy format
-  const legacyMatch = content.match(/(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)(?:`)?/i);
+  const legacyMatch = content.match(
+    /(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)(?:`)?/i
+  );
   if (legacyMatch) {
     return normalizeExecutionMode(legacyMatch[1]);
   }
@@ -123,7 +127,7 @@ async function validateCUJ(cujId) {
     valid: true,
     errors: [],
     warnings: [],
-    info: {}
+    info: {},
   };
 
   // Check if CUJ file exists
@@ -177,9 +181,10 @@ async function validateCUJ(cujId) {
 
       // Check error recovery (use normalized mode)
       if (executionMode === 'workflow') {
-        const hasRecovery = content.toLowerCase().includes('error recovery') ||
-                           content.toLowerCase().includes('failure handling') ||
-                           content.toLowerCase().includes('retry');
+        const hasRecovery =
+          content.toLowerCase().includes('error recovery') ||
+          content.toLowerCase().includes('failure handling') ||
+          content.toLowerCase().includes('retry');
         if (!hasRecovery) {
           result.warnings.push('Workflow CUJ missing error recovery steps');
         }
@@ -206,10 +211,11 @@ async function validateCUJ(cujId) {
       '## Agents Used',
       '## Expected Outputs',
       '## Success Criteria',
-      '## Example Prompts'
+      '## Example Prompts',
     ];
 
-    const hasSkillsOrCapabilities = sections['## Skills Used'] || sections['## Capabilities/Tools Used'];
+    const hasSkillsOrCapabilities =
+      sections['## Skills Used'] || sections['## Capabilities/Tools Used'];
 
     for (const section of requiredSections) {
       if (!sections[section]) {
@@ -220,9 +226,10 @@ async function validateCUJ(cujId) {
 
     if (!hasSkillsOrCapabilities) {
       result.valid = false;
-      result.errors.push('Missing required section: "## Skills Used" or "## Capabilities/Tools Used"');
+      result.errors.push(
+        'Missing required section: "## Skills Used" or "## Capabilities/Tools Used"'
+      );
     }
-
   } catch (error) {
     result.valid = false;
     result.errors.push(`Error reading CUJ file: ${error.message}`);

@@ -24,7 +24,7 @@ class ConnectionPool {
 
     if (this.connections.size >= this.maxConnections) {
       // Wait for available connection
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.connectionQueue.push({ serverName, resolve });
       });
     }
@@ -81,7 +81,7 @@ export class RemoteMCPServerManager {
     } catch (error) {
       // Try failover servers
       const failovers = this.failoverServers.get(serverName) || [];
-      
+
       for (const failover of failovers) {
         try {
           const connector = await this.pool.acquire(failover);
@@ -90,7 +90,7 @@ export class RemoteMCPServerManager {
             connector,
             server: failover,
             failover: true,
-            original: serverName
+            original: serverName,
           };
         } catch (failoverError) {
           // Continue to next failover
@@ -109,11 +109,11 @@ export class RemoteMCPServerManager {
     try {
       const connector = await this.pool.acquire(serverName);
       const tools = await connector.getAllTools();
-      
+
       this.healthChecks.set(serverName, {
         healthy: true,
         lastCheck: new Date().toISOString(),
-        toolCount: tools.length
+        toolCount: tools.length,
       });
 
       return { healthy: true, server: serverName };
@@ -121,7 +121,7 @@ export class RemoteMCPServerManager {
       this.healthChecks.set(serverName, {
         healthy: false,
         lastCheck: new Date().toISOString(),
-        error: error.message
+        error: error.message,
       });
 
       return { healthy: false, server: serverName, error: error.message };
@@ -132,15 +132,16 @@ export class RemoteMCPServerManager {
    * Get server health status
    */
   getHealthStatus(serverName) {
-    return this.healthChecks.get(serverName) || {
-      healthy: null,
-      lastCheck: null
-    };
+    return (
+      this.healthChecks.get(serverName) || {
+        healthy: null,
+        lastCheck: null,
+      }
+    );
   }
 }
 
 export default {
   RemoteMCPServerManager,
-  ConnectionPool
+  ConnectionPool,
 };
-

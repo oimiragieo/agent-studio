@@ -69,6 +69,7 @@ node .claude/tools/run-manager.mjs create \
 ```
 
 **Output**:
+
 ```
 ✅ Run created: run-20260103-145023
 📁 State directory: .claude/context/runs/run-20260103-145023/
@@ -89,6 +90,7 @@ node .claude/tools/workflow_runner.js \
 ```
 
 **Terminal Output**:
+
 ```
 🔍 Step 0: Analyst - Project Discovery
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -138,6 +140,7 @@ node .claude/tools/workflow_runner.js \
 ```
 
 **Terminal Output**:
+
 ```
 📋 Step 1: PM - Product Requirements Document
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -196,6 +199,7 @@ node .claude/tools/workflow_runner.js \
 ```
 
 **Terminal Output**:
+
 ```
 🏗️ Step 2: Architect - System Architecture Design
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -262,6 +266,7 @@ node .claude/tools/workflow_runner.js \
 ```
 
 **Terminal Output**:
+
 ```
 🗄️ Step 3: Database Architect - Schema Design
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -364,6 +369,7 @@ node .claude/tools/workflow_runner.js \
 ```
 
 **Terminal Output**:
+
 ```
 🔍 Step 10: Code Reviewer - Final Review
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -574,6 +580,7 @@ they get a 500 error. The error logs show "Invalid token format" from the email 
 ```
 
 **Terminal Output**:
+
 ```
 🚀 Quick-Ship Workflow Activated
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -700,6 +707,7 @@ node .claude/tools/response-rater.mjs \
 ```
 
 **Output**:
+
 ```
 🔍 Rating plan: plan-run-20260103-160000.json
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -794,6 +802,7 @@ node .claude/tools/response-rater.mjs \
 ```
 
 **Output**:
+
 ```
 🔍 Rating plan: plan-run-20260103-160000-v2.json
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -912,6 +921,7 @@ node .claude/tools/cuj-validator.mjs \
 ```
 
 **Output**:
+
 ```
 🧪 CUJ Simulation Mode: CUJ-005
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1070,6 +1080,7 @@ Estimated Duration: 8-12 minutes
 ### 1. CUJ Not Found Error
 
 **Error**:
+
 ```
 ❌ Error: CUJ not found
 CUJ ID: CUJ-999
@@ -1077,6 +1088,7 @@ Expected location: .claude/docs/cujs/CUJ-999.md
 ```
 
 **Solution**:
+
 ```bash
 # List all available CUJs
 ls .claude/docs/cujs/CUJ-*.md
@@ -1088,6 +1100,7 @@ node .claude/tools/cuj-validator.mjs --cuj CUJ-005
 ### 2. Workflow File Missing Error
 
 **Error**:
+
 ```
 ❌ Error: Workflow file not found
 Workflow: .claude/workflows/custom-workflow.yaml
@@ -1095,6 +1108,7 @@ Referenced in: CUJ-015
 ```
 
 **Solution**:
+
 ```bash
 # List available workflows
 ls .claude/workflows/*.yaml
@@ -1106,6 +1120,7 @@ ls .claude/workflows/*.yaml
 ### 3. Artifact Not Found Error
 
 **Error**:
+
 ```
 ❌ Error: Required artifact not found
 Step 2 requires: project-brief.json (from step 0)
@@ -1113,6 +1128,7 @@ Location checked: .claude/context/runs/run-123/artifacts/project-brief.json
 ```
 
 **Solution**:
+
 ```bash
 # Run previous steps first
 node .claude/tools/workflow_runner.js \
@@ -1130,6 +1146,7 @@ node .claude/tools/workflow_runner.js \
 ### 4. Validation Schema Mismatch Error
 
 **Error**:
+
 ```
 ❌ Validation failed: Schema mismatch
 Schema: .claude/schemas/prd.schema.json
@@ -1141,6 +1158,7 @@ Errors:
 ```
 
 **Solution**:
+
 ```bash
 # Read gate file for detailed feedback
 cat .claude/context/runs/run-123/gates/01-pm.json
@@ -1169,6 +1187,7 @@ node .claude/tools/workflow_runner.js \
 ### 5. Agent Not Found Error
 
 **Error**:
+
 ```
 ❌ Error: Agent file not found
 Agent: custom-agent
@@ -1176,6 +1195,7 @@ Expected location: .claude/agents/custom-agent.md
 ```
 
 **Solution**:
+
 ```bash
 # List available agents
 ls .claude/agents/*.md
@@ -1190,10 +1210,12 @@ ls .claude/agents/*.md
 ### Issue: Workflow Takes Too Long
 
 **Symptoms**:
+
 - Step execution exceeds expected duration
 - Agent appears stuck
 
 **Diagnosis**:
+
 ```bash
 # Check run state
 cat .claude/context/runs/run-123/artifact-registry.json
@@ -1203,6 +1225,7 @@ tail -f .claude/logs/workflow-run-123.log
 ```
 
 **Solutions**:
+
 1. **Break down complex steps**: Split large steps into smaller substeps
 2. **Use checkpoints**: Agent saves intermediate state every 5 minutes
 3. **Resume from checkpoint**: If interrupted, agent resumes from last checkpoint
@@ -1211,16 +1234,19 @@ tail -f .claude/logs/workflow-run-123.log
 ### Issue: Out of Context Window
 
 **Symptoms**:
+
 - "Context window full" error
 - Agent stops mid-execution
 
 **Diagnosis**:
+
 ```bash
 # Check current context usage (approximation)
 wc -l .claude/context/runs/run-123/artifacts/*.json
 ```
 
 **Solutions**:
+
 1. **Auto-compaction**: Context auto-compacts at limit (no action needed)
 2. **Use structured state**: Save state to JSON files, not conversation
 3. **Progressive disclosure**: Load artifacts only when needed
@@ -1229,10 +1255,12 @@ wc -l .claude/context/runs/run-123/artifacts/*.json
 ### Issue: Validation Keeps Failing
 
 **Symptoms**:
+
 - Same validation errors after 3 retries
 - Gate file shows persistent schema violations
 
 **Diagnosis**:
+
 ```bash
 # Read gate file for detailed errors
 cat .claude/context/runs/run-123/gates/01-pm.json
@@ -1242,6 +1270,7 @@ cat .claude/schemas/prd.schema.json
 ```
 
 **Solutions**:
+
 1. **Review schema**: Ensure agent output matches schema exactly
 2. **Check required fields**: All required fields must be present
 3. **Validate types**: Field types must match schema (string, array, object)
@@ -1251,10 +1280,12 @@ cat .claude/schemas/prd.schema.json
 ### Issue: Rule Not Found
 
 **Symptoms**:
+
 - `/audit` reports "no applicable rules"
 - Skill reports "rule not found in index"
 
 **Diagnosis**:
+
 ```bash
 # Check if rule index exists
 ls .claude/context/rule-index.json
@@ -1264,6 +1295,7 @@ stat .claude/context/rule-index.json
 ```
 
 **Solutions**:
+
 1. **Regenerate index**: `pnpm index-rules`
 2. **Verify rule exists**: Check `.claude/rules-master/` and `.claude/rules-library/`
 3. **Check technology mapping**: Ensure rule is tagged with correct technologies
@@ -1309,40 +1341,40 @@ ls .claude/skills/*/SKILL.md
 
 ## Quick Reference
 
-| Execution Method | User Prompt | Command | Duration | Output |
-|------------------|-------------|---------|----------|--------|
-| **Workflow-Based** | "Build a full-stack app" | Auto-detected, runs `greenfield-fullstack.yaml` | 8-12 min | 11 artifacts |
-| **Skill-Only** | `/select-rules` | Skill auto-invoked | 10-20 sec | `.claude/project-rules.json` |
-| **Quick-Flow** | `/quick-ship` + bug description | Auto-detected, runs `quick-ship.yaml` | 1-3 min | 3 artifacts |
-| **Manual Workflow** | N/A | `node .claude/tools/workflow_runner.js --workflow <path> --step <n> --id <run_id>` | Varies | Step-specific artifacts |
-| **CUJ Simulation** | N/A | `node .claude/tools/cuj-validator.mjs --cuj <id> --cuj-simulation` | 2-5 sec | Validation report |
+| Execution Method    | User Prompt                     | Command                                                                            | Duration  | Output                       |
+| ------------------- | ------------------------------- | ---------------------------------------------------------------------------------- | --------- | ---------------------------- |
+| **Workflow-Based**  | "Build a full-stack app"        | Auto-detected, runs `greenfield-fullstack.yaml`                                    | 8-12 min  | 11 artifacts                 |
+| **Skill-Only**      | `/select-rules`                 | Skill auto-invoked                                                                 | 10-20 sec | `.claude/project-rules.json` |
+| **Quick-Flow**      | `/quick-ship` + bug description | Auto-detected, runs `quick-ship.yaml`                                              | 1-3 min   | 3 artifacts                  |
+| **Manual Workflow** | N/A                             | `node .claude/tools/workflow_runner.js --workflow <path> --step <n> --id <run_id>` | Varies    | Step-specific artifacts      |
+| **CUJ Simulation**  | N/A                             | `node .claude/tools/cuj-validator.mjs --cuj <id> --cuj-simulation`                 | 2-5 sec   | Validation report            |
 
 ### Common User Prompts → Workflow Mapping
 
-| User Prompt | Detected Workflow | Steps | Duration |
-|-------------|-------------------|-------|----------|
-| "Build a [tech] application" | `fullstack` | 11 | 8-12 min |
-| "Fix this bug" | `quick-ship` | 3 | 1-3 min |
-| "Optimize performance" | `performance` | 5 | 4-8 min |
-| "Review this PR" | `code-quality` | 4 | 3-6 min |
-| "Production is down!" | `incident` | 6 | 5-10 min |
-| "Build a mobile app" | `mobile` | 9 | 7-11 min |
-| "Design an AI system" | `ai-system` | 8 | 6-10 min |
+| User Prompt                  | Detected Workflow | Steps | Duration |
+| ---------------------------- | ----------------- | ----- | -------- |
+| "Build a [tech] application" | `fullstack`       | 11    | 8-12 min |
+| "Fix this bug"               | `quick-ship`      | 3     | 1-3 min  |
+| "Optimize performance"       | `performance`     | 5     | 4-8 min  |
+| "Review this PR"             | `code-quality`    | 4     | 3-6 min  |
+| "Production is down!"        | `incident`        | 6     | 5-10 min |
+| "Build a mobile app"         | `mobile`          | 9     | 7-11 min |
+| "Design an AI system"        | `ai-system`       | 8     | 6-10 min |
 
 ### Skill Invocation Methods
 
-| Method | Example | Use Case |
-|--------|---------|----------|
-| **Natural Language** | "Audit this code for rule violations" | Most user-friendly |
-| **Slash Command** | `/select-rules` | Quick, predefined workflows |
-| **Skill Tool** | `Skill: rule-auditor` with parameters | Programmatic control |
+| Method               | Example                               | Use Case                    |
+| -------------------- | ------------------------------------- | --------------------------- |
+| **Natural Language** | "Audit this code for rule violations" | Most user-friendly          |
+| **Slash Command**    | `/select-rules`                       | Quick, predefined workflows |
+| **Skill Tool**       | `Skill: rule-auditor` with parameters | Programmatic control        |
 
 ### Artifact Locations
 
-| Run Mode | Artifacts | Gates | Registry |
-|----------|-----------|-------|----------|
-| **New (Recommended)** | `.claude/context/runs/<run_id>/artifacts/` | `.claude/context/runs/<run_id>/gates/` | `.claude/context/runs/<run_id>/artifact-registry.json` |
-| **Legacy** | `.claude/context/artifacts/` | `.claude/context/history/gates/<workflow_id>/` | `.claude/context/session.json` |
+| Run Mode              | Artifacts                                  | Gates                                          | Registry                                               |
+| --------------------- | ------------------------------------------ | ---------------------------------------------- | ------------------------------------------------------ |
+| **New (Recommended)** | `.claude/context/runs/<run_id>/artifacts/` | `.claude/context/runs/<run_id>/gates/`         | `.claude/context/runs/<run_id>/artifact-registry.json` |
+| **Legacy**            | `.claude/context/artifacts/`               | `.claude/context/history/gates/<workflow_id>/` | `.claude/context/session.json`                         |
 
 ---
 

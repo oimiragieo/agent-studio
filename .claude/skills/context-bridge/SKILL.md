@@ -38,6 +38,7 @@ Context Bridge - Synchronizes task state and metadata across Claude, Cursor, and
 </integrations>
 
 <best_practices>
+
 - **Always** update the central state file before sending notifications.
 - **Never** overwrite existing state without reading it first to preserve history.
 - **Publishing Metadata Sync**: When syncing artifacts across platforms:
@@ -46,5 +47,5 @@ Context Bridge - Synchronizes task state and metadata across Claude, Cursor, and
   - Preserve `publish_attempts` history for retry tracking
   - Update `last_synced` timestamp to track sync freshness
   - If metadata conflicts, log conflict resolution in reasoning file
-</best_practices>
-</instructions>
+    </best_practices>
+    </instructions>

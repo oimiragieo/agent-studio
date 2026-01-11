@@ -77,10 +77,11 @@ This workflow is marked as **critical** and will be prioritized over other tasks
 
 <output_format>
 **Outputs**:
+
 - `triage-assessment.json` - Initial assessment
 - `immediate-actions.json` - Quick fixes
 - `infrastructure-analysis.json` - Root cause
 - `security-assessment.json` - Security evaluation
 - `post-mortem.json` - Lessons learned
-</output_format>
-</instructions>
+  </output_format>
+  </instructions>

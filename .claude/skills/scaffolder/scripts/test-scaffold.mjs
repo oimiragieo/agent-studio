@@ -23,7 +23,7 @@ const colors = {
   green: '\x1b[32m',
   red: '\x1b[31m',
   yellow: '\x1b[33m',
-  blue: '\x1b[34m'
+  blue: '\x1b[34m',
 };
 
 let passedTests = 0;
@@ -72,10 +72,9 @@ function assert(condition, message) {
  * Run scaffolder and parse output
  */
 async function runScaffolder(args) {
-  const { stdout, stderr } = await execAsync(
-    `node ${join(__dirname, 'scaffold.mjs')} ${args}`,
-    { cwd: PROJECT_ROOT }
-  );
+  const { stdout, stderr } = await execAsync(`node ${join(__dirname, 'scaffold.mjs')} ${args}`, {
+    cwd: PROJECT_ROOT,
+  });
 
   // Extract JSON from output (last JSON object)
   const jsonMatch = stdout.match(/\{[\s\S]*\}/);
@@ -90,7 +89,9 @@ async function runScaffolder(args) {
  * Test: Component scaffolding
  */
 await test('Scaffold Server Component', async () => {
-  const output = await runScaffolder(`component TestComponent --path ${TEST_OUTPUT_DIR}/components/test-component`);
+  const output = await runScaffolder(
+    `component TestComponent --path ${TEST_OUTPUT_DIR}/components/test-component`
+  );
 
   assert(output.skill_name === 'scaffolder', 'skill_name should be "scaffolder"');
   assert(output.template_type === 'component', 'template_type should be "component"');
@@ -100,7 +101,10 @@ await test('Scaffold Server Component', async () => {
   assert(output.rule_index_consulted === true, 'Should have consulted rule index');
 
   // Verify files exist
-  const indexContent = await readFile(join(TEST_OUTPUT_DIR, 'components/test-component/index.tsx'), 'utf-8');
+  const indexContent = await readFile(
+    join(TEST_OUTPUT_DIR, 'components/test-component/index.tsx'),
+    'utf-8'
+  );
   assert(indexContent.includes('TestComponent'), 'index.tsx should contain component name');
   assert(indexContent.includes('Suspense'), 'index.tsx should include Suspense');
 });
@@ -109,12 +113,20 @@ await test('Scaffold Server Component', async () => {
  * Test: Client Component scaffolding
  */
 await test('Scaffold Client Component', async () => {
-  const output = await runScaffolder(`client-component InteractiveButton --path ${TEST_OUTPUT_DIR}/components/interactive-button`);
+  const output = await runScaffolder(
+    `client-component InteractiveButton --path ${TEST_OUTPUT_DIR}/components/interactive-button`
+  );
 
   assert(output.template_type === 'client-component', 'template_type should be "client-component"');
-  assert(output.component_type === 'InteractiveButton', 'component_type should be "InteractiveButton"');
+  assert(
+    output.component_type === 'InteractiveButton',
+    'component_type should be "InteractiveButton"'
+  );
 
-  const indexContent = await readFile(join(TEST_OUTPUT_DIR, 'components/interactive-button/index.tsx'), 'utf-8');
+  const indexContent = await readFile(
+    join(TEST_OUTPUT_DIR, 'components/interactive-button/index.tsx'),
+    'utf-8'
+  );
   assert(indexContent.includes("'use client'"), "index.tsx should include 'use client' directive");
   assert(indexContent.includes('useState'), 'index.tsx should use useState');
 });
@@ -138,13 +150,18 @@ await test('Scaffold API Route', async () => {
  * Test: Feature module scaffolding
  */
 await test('Scaffold Feature Module', async () => {
-  const output = await runScaffolder(`feature user-management --path ${TEST_OUTPUT_DIR}/app/(dashboard)/user-management`);
+  const output = await runScaffolder(
+    `feature user-management --path ${TEST_OUTPUT_DIR}/app/(dashboard)/user-management`
+  );
 
   assert(output.template_type === 'feature', 'template_type should be "feature"');
   assert(output.files_generated.length >= 4, 'Should generate at least 4 files');
 
   // Verify main page exists
-  const pageContent = await readFile(join(TEST_OUTPUT_DIR, 'app/(dashboard)/user-management/page.tsx'), 'utf-8');
+  const pageContent = await readFile(
+    join(TEST_OUTPUT_DIR, 'app/(dashboard)/user-management/page.tsx'),
+    'utf-8'
+  );
   assert(pageContent.includes('UserManagement'), 'page.tsx should contain feature name');
 });
 
@@ -179,7 +196,9 @@ await test('Scaffold Context Provider', async () => {
  * Test: FastAPI route scaffolding
  */
 await test('Scaffold FastAPI Route', async () => {
-  const output = await runScaffolder(`fastapi-route products --path ${TEST_OUTPUT_DIR}/app/routers`);
+  const output = await runScaffolder(
+    `fastapi-route products --path ${TEST_OUTPUT_DIR}/app/routers`
+  );
 
   assert(output.template_type === 'fastapi-route', 'template_type should be "fastapi-route"');
 
@@ -195,13 +214,18 @@ await test('Scaffold FastAPI Route', async () => {
  * Test: Output schema compliance
  */
 await test('Output conforms to schema', async () => {
-  const output = await runScaffolder(`component SchemaTest --path ${TEST_OUTPUT_DIR}/components/schema-test`);
+  const output = await runScaffolder(
+    `component SchemaTest --path ${TEST_OUTPUT_DIR}/components/schema-test`
+  );
 
   // Required fields
   assert(output.skill_name, 'Should have skill_name');
   assert(output.files_generated, 'Should have files_generated');
   assert(output.patterns_applied, 'Should have patterns_applied');
-  assert(typeof output.rule_index_consulted === 'boolean', 'Should have rule_index_consulted as boolean');
+  assert(
+    typeof output.rule_index_consulted === 'boolean',
+    'Should have rule_index_consulted as boolean'
+  );
   assert(output.timestamp, 'Should have timestamp');
 
   // files_generated structure
@@ -221,7 +245,9 @@ await test('Output conforms to schema', async () => {
  * Test: Rule index integration
  */
 await test('Consults rule index for patterns', async () => {
-  const output = await runScaffolder(`component RuleTest --path ${TEST_OUTPUT_DIR}/components/rule-test`);
+  const output = await runScaffolder(
+    `component RuleTest --path ${TEST_OUTPUT_DIR}/components/rule-test`
+  );
 
   assert(output.rule_index_consulted === true, 'Should consult rule index');
   assert(Array.isArray(output.rules_loaded), 'Should have rules_loaded array');
@@ -233,11 +259,16 @@ await test('Consults rule index for patterns', async () => {
  * Test: Name case conversions
  */
 await test('Converts names correctly', async () => {
-  const output = await runScaffolder(`component user-profile-card --path ${TEST_OUTPUT_DIR}/components/user-profile-card`);
+  const output = await runScaffolder(
+    `component user-profile-card --path ${TEST_OUTPUT_DIR}/components/user-profile-card`
+  );
 
   assert(output.component_type === 'UserProfileCard', 'Should convert to PascalCase');
 
-  const indexContent = await readFile(join(TEST_OUTPUT_DIR, 'components/user-profile-card/index.tsx'), 'utf-8');
+  const indexContent = await readFile(
+    join(TEST_OUTPUT_DIR, 'components/user-profile-card/index.tsx'),
+    'utf-8'
+  );
   assert(indexContent.includes('UserProfileCard'), 'Should use PascalCase in code');
 });
 
@@ -248,7 +279,10 @@ await test('Respects --path option', async () => {
   const customPath = join(TEST_OUTPUT_DIR, 'custom/location/my-component');
   const output = await runScaffolder(`component MyComponent --path ${customPath}`);
 
-  assert(output.files_generated[0].path.includes('custom/location/my-component'), 'Should use custom path');
+  assert(
+    output.files_generated[0].path.includes('custom/location/my-component'),
+    'Should use custom path'
+  );
 
   const indexContent = await readFile(join(customPath, 'index.tsx'), 'utf-8');
   assert(indexContent.includes('MyComponent'), 'Should generate in custom path');
@@ -259,10 +293,9 @@ await test('Respects --path option', async () => {
  */
 await test('Shows help with --help', async () => {
   try {
-    const { stdout } = await execAsync(
-      `node ${join(__dirname, 'scaffold.mjs')} --help`,
-      { cwd: PROJECT_ROOT }
-    );
+    const { stdout } = await execAsync(`node ${join(__dirname, 'scaffold.mjs')} --help`, {
+      cwd: PROJECT_ROOT,
+    });
     assert(stdout.includes('Usage:'), 'Help should include usage');
     assert(stdout.includes('Templates:'), 'Help should list templates');
   } catch (error) {
@@ -276,10 +309,9 @@ await test('Shows help with --help', async () => {
  */
 await test('Lists templates with --list', async () => {
   try {
-    const { stdout } = await execAsync(
-      `node ${join(__dirname, 'scaffold.mjs')} --list`,
-      { cwd: PROJECT_ROOT }
-    );
+    const { stdout } = await execAsync(`node ${join(__dirname, 'scaffold.mjs')} --list`, {
+      cwd: PROJECT_ROOT,
+    });
     assert(stdout.includes('component'), 'Should list component template');
     assert(stdout.includes('client-component'), 'Should list client-component template');
     assert(stdout.includes('api'), 'Should list api template');

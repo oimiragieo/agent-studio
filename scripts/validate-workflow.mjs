@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Workflow Validation Script
- * 
+ *
  * Comprehensive validation of workflow YAML files:
  * - YAML structure and syntax
  * - Referenced agents exist
@@ -11,10 +11,10 @@
  * - Step numbering (sequential or proper decimals)
  * - Optional artifact syntax consistency
  * - Template variable usage
- * 
+ *
  * Usage:
  *   node scripts/validate-workflow.mjs [--workflow <path>] [--verbose]
- * 
+ *
  * Exit codes:
  *   0: All validations passed
  *   1: One or more validations failed
@@ -40,9 +40,10 @@ const rootDir = resolve(__dirname, '..');
 
 const args = process.argv.slice(2);
 const verbose = args.includes('--verbose');
-const workflowArg = args.find(arg => arg.startsWith('--workflow'))?.split('=')[1] || 
-                    (args.includes('--workflow') && args[args.indexOf('--workflow') + 1]) || 
-                    null;
+const workflowArg =
+  args.find(arg => arg.startsWith('--workflow'))?.split('=')[1] ||
+  (args.includes('--workflow') && args[args.indexOf('--workflow') + 1]) ||
+  null;
 
 const errors = [];
 const warnings = [];
@@ -56,11 +57,11 @@ function findWorkflowFiles() {
     errors.push(`Workflows directory not found: .claude/workflows`);
     return [];
   }
-  
+
   const files = readdirSync(workflowsDir)
     .filter(file => file.endsWith('.yaml') || file.endsWith('.yml'))
     .map(file => resolve(workflowsDir, file));
-  
+
   return files;
 }
 
@@ -76,7 +77,7 @@ function findStepInWorkflow(workflow, stepNumber) {
       }
     }
   }
-  
+
   // Handle phase-based workflows (BMad format)
   if (workflow.phases && Array.isArray(workflow.phases)) {
     for (const phase of workflow.phases) {
@@ -105,7 +106,11 @@ function findStepInWorkflow(workflow, stepNumber) {
         }
       }
       // Check epic_loop and story_loop
-      if (phase.epic_loop && phase.epic_loop.story_loop && Array.isArray(phase.epic_loop.story_loop)) {
+      if (
+        phase.epic_loop &&
+        phase.epic_loop.story_loop &&
+        Array.isArray(phase.epic_loop.story_loop)
+      ) {
         for (const step of phase.epic_loop.story_loop) {
           if (String(step.step) === String(stepNumber)) {
             return step;
@@ -114,7 +119,7 @@ function findStepInWorkflow(workflow, stepNumber) {
       }
     }
   }
-  
+
   return null;
 }
 
@@ -123,7 +128,7 @@ function findStepInWorkflow(workflow, stepNumber) {
  */
 function getAllStepNumbers(workflow) {
   const steps = [];
-  
+
   if (workflow.steps && Array.isArray(workflow.steps)) {
     workflow.steps.forEach(step => {
       if (step.step !== undefined) {
@@ -131,7 +136,7 @@ function getAllStepNumbers(workflow) {
       }
     });
   }
-  
+
   if (workflow.phases && Array.isArray(workflow.phases)) {
     workflow.phases.forEach(phase => {
       if (phase.steps && Array.isArray(phase.steps)) {
@@ -157,7 +162,11 @@ function getAllStepNumbers(workflow) {
           });
         }
       }
-      if (phase.epic_loop && phase.epic_loop.story_loop && Array.isArray(phase.epic_loop.story_loop)) {
+      if (
+        phase.epic_loop &&
+        phase.epic_loop.story_loop &&
+        Array.isArray(phase.epic_loop.story_loop)
+      ) {
         phase.epic_loop.story_loop.forEach(step => {
           if (step.step !== undefined) {
             steps.push(String(step.step));
@@ -166,7 +175,7 @@ function getAllStepNumbers(workflow) {
       }
     });
   }
-  
+
   return steps;
 }
 
@@ -194,7 +203,7 @@ function validateTemplateVariableSyntax(str) {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -232,7 +241,7 @@ function parseArtifactReference(input) {
   if (typeof input !== 'string') {
     return null;
   }
-  
+
   // Pattern 1: artifact.json (from step X) or artifact.json (from step X, optional)
   let match = input.match(/^(.+\.json)\s*\(from step (\d+(?:\.\d+)?)(?:,\s*optional)?\)$/);
   if (match) {
@@ -240,10 +249,10 @@ function parseArtifactReference(input) {
       artifact: match[1].trim(),
       fromStep: match[2],
       optional: input.includes('optional'),
-      isSpecial: false
+      isSpecial: false,
     };
   }
-  
+
   // Pattern 2: artifact.json (optional, from step X)
   match = input.match(/^(.+\.json)\s*\(optional,\s*from step (\d+(?:\.\d+)?)\)$/);
   if (match) {
@@ -251,10 +260,10 @@ function parseArtifactReference(input) {
       artifact: match[1].trim(),
       fromStep: match[2],
       optional: true,
-      isSpecial: false
+      isSpecial: false,
     };
   }
-  
+
   // Pattern 3: code-artifacts (from step X) or code-artifacts (from step X, optional)
   match = input.match(/^code-artifacts\s*\(from step (\d+(?:\.\d+)?)(?:,\s*optional)?\)$/);
   if (match) {
@@ -262,10 +271,10 @@ function parseArtifactReference(input) {
       artifact: 'code-artifacts',
       fromStep: match[1],
       optional: input.includes('optional'),
-      isSpecial: true
+      isSpecial: true,
     };
   }
-  
+
   // Pattern 4: code-artifacts (optional, from step X)
   match = input.match(/^code-artifacts\s*\(optional,\s*from step (\d+(?:\.\d+)?)\)$/);
   if (match) {
@@ -273,10 +282,10 @@ function parseArtifactReference(input) {
       artifact: 'code-artifacts',
       fromStep: match[1],
       optional: true,
-      isSpecial: true
+      isSpecial: true,
     };
   }
-  
+
   return null;
 }
 
@@ -287,11 +296,11 @@ function validateWorkflow(workflowPath) {
   const workflowName = workflowPath.split(/[/\\]/).pop();
   const workflowErrors = [];
   const workflowWarnings = [];
-  
+
   if (verbose) {
     console.log(`\n📋 Validating workflow: ${workflowName}`);
   }
-  
+
   // 1. Load and parse YAML
   let workflow;
   try {
@@ -301,48 +310,52 @@ function validateWorkflow(workflowPath) {
     workflowErrors.push(`Invalid YAML syntax: ${error.message}`);
     return { errors: workflowErrors, warnings: workflowWarnings };
   }
-  
+
   // 2. Get all step numbers
   const stepNumbers = getAllStepNumbers(workflow);
-  
+
   // 3. Check for duplicate step numbers
   const stepNumberCounts = {};
   stepNumbers.forEach(step => {
     stepNumberCounts[step] = (stepNumberCounts[step] || 0) + 1;
   });
-  
+
   Object.entries(stepNumberCounts).forEach(([step, count]) => {
     if (count > 1) {
       workflowErrors.push(`Duplicate step number: ${step} (appears ${count} times)`);
     }
   });
-  
+
   // 4. Validate step numbering (sequential or proper decimals)
   const sortedSteps = [...new Set(stepNumbers)].sort((a, b) => {
     const aNum = parseFloat(a);
     const bNum = parseFloat(b);
     return aNum - bNum;
   });
-  
+
   // Warn about non-sequential step numbers (but allow decimals for sub-steps)
   if (sortedSteps.length > 1) {
     for (let i = 1; i < sortedSteps.length; i++) {
       const prevNum = parseFloat(sortedSteps[i - 1]);
       const currNum = parseFloat(sortedSteps[i]);
       const diff = currNum - prevNum;
-      
+
       // Warn if steps are not sequential (diff > 1) and not decimal sub-steps
       if (diff > 1 && !sortedSteps[i].includes('.')) {
-        workflowWarnings.push(`Step numbering gap: Step ${sortedSteps[i - 1]} to ${sortedSteps[i]} (missing steps in between)`);
+        workflowWarnings.push(
+          `Step numbering gap: Step ${sortedSteps[i - 1]} to ${sortedSteps[i]} (missing steps in between)`
+        );
       }
-      
+
       // Warn if step numbers decrease (shouldn't happen)
       if (diff < 0) {
-        workflowWarnings.push(`Step numbering out of order: Step ${sortedSteps[i]} comes after ${sortedSteps[i - 1]}`);
+        workflowWarnings.push(
+          `Step numbering out of order: Step ${sortedSteps[i]} comes after ${sortedSteps[i - 1]}`
+        );
       }
     }
   }
-  
+
   // 5. Validate each step
   sortedSteps.forEach(stepNumber => {
     const step = findStepInWorkflow(workflow, stepNumber);
@@ -350,19 +363,21 @@ function validateWorkflow(workflowPath) {
       workflowErrors.push(`Step ${stepNumber}: Step not found (internal error)`);
       return;
     }
-    
+
     // Check agent exists
     if (step.agent) {
       const agentFile = resolve(rootDir, `.claude/agents/${step.agent}.md`);
       if (!existsSync(agentFile)) {
-        workflowErrors.push(`Step ${stepNumber}: Agent file not found: .claude/agents/${step.agent}.md`);
+        workflowErrors.push(
+          `Step ${stepNumber}: Agent file not found: .claude/agents/${step.agent}.md`
+        );
       } else if (verbose) {
         console.log(`  ✓ Step ${stepNumber}: Agent ${step.agent} exists`);
       }
     } else {
       workflowWarnings.push(`Step ${stepNumber}: No agent specified`);
     }
-    
+
     // Check schema exists if specified
     if (step.validation?.schema) {
       const schemaPath = resolve(rootDir, step.validation.schema);
@@ -372,17 +387,23 @@ function validateWorkflow(workflowPath) {
         console.log(`  ✓ Step ${stepNumber}: Schema ${step.validation.schema} exists`);
       }
     }
-    
+
     // Check gate exists if specified
     if (step.validation?.gate) {
       // Gate path may contain template variables, so we can't check existence
       // But we can validate the path format
       const gatePath = step.validation.gate;
-      if (!gatePath.includes('{{workflow_id}}') && !gatePath.includes('{{story_id}}') && !gatePath.includes('{{epic_id}}')) {
-        workflowWarnings.push(`Step ${stepNumber}: Gate path doesn't contain template variables (may cause conflicts): ${gatePath}`);
+      if (
+        !gatePath.includes('{{workflow_id}}') &&
+        !gatePath.includes('{{story_id}}') &&
+        !gatePath.includes('{{epic_id}}')
+      ) {
+        workflowWarnings.push(
+          `Step ${stepNumber}: Gate path doesn't contain template variables (may cause conflicts): ${gatePath}`
+        );
       }
     }
-    
+
     // Validate input dependencies
     if (step.inputs && Array.isArray(step.inputs)) {
       step.inputs.forEach(input => {
@@ -391,24 +412,26 @@ function validateWorkflow(workflowPath) {
           // Check if referenced step exists
           const sourceStep = findStepInWorkflow(workflow, ref.fromStep);
           if (!sourceStep) {
-            workflowErrors.push(`Step ${stepNumber}: Input '${input}' references non-existent step ${ref.fromStep}`);
+            workflowErrors.push(
+              `Step ${stepNumber}: Input '${input}' references non-existent step ${ref.fromStep}`
+            );
             return;
           }
-          
+
           // Check if source step has matching output
           let outputFound = false;
           if (sourceStep.outputs && Array.isArray(sourceStep.outputs)) {
             for (const output of sourceStep.outputs) {
               let outputName = null;
               const outputSpecial = isSpecialOutput(output);
-              
+
               if (typeof output === 'string') {
                 outputName = output;
               } else if (typeof output === 'object' && output.reasoning) {
                 // Skip reasoning outputs for artifact matching
                 continue;
               }
-              
+
               if (outputName) {
                 // For special outputs like code-artifacts, check exact match
                 if (ref.isSpecial && outputSpecial.isSpecial) {
@@ -417,13 +440,16 @@ function validateWorkflow(workflowPath) {
                     break;
                   }
                 }
-                
+
                 // For JSON artifacts, check if artifact names match (ignoring template variables)
                 if (!ref.isSpecial && !outputSpecial.isSpecial) {
                   const outputBase = outputName.replace(/\{\{[^}]+\}\}/g, '{{*}}');
                   const artifactBase = ref.artifact.replace(/\{\{[^}]+\}\}/g, '{{*}}');
-                  
-                  if (outputBase === artifactBase || outputName.includes(ref.artifact.replace(/\{\{[^}]+\}\}/g, ''))) {
+
+                  if (
+                    outputBase === artifactBase ||
+                    outputName.includes(ref.artifact.replace(/\{\{[^}]+\}\}/g, ''))
+                  ) {
                     outputFound = true;
                     break;
                   }
@@ -431,33 +457,41 @@ function validateWorkflow(workflowPath) {
               }
             }
           }
-          
+
           if (!outputFound && !ref.optional) {
             // Only error if it's a required artifact
-            workflowErrors.push(`Step ${stepNumber}: Input '${input}' references artifact '${ref.artifact}' from step ${ref.fromStep}, but that step doesn't produce it`);
+            workflowErrors.push(
+              `Step ${stepNumber}: Input '${input}' references artifact '${ref.artifact}' from step ${ref.fromStep}, but that step doesn't produce it`
+            );
           } else if (outputFound && verbose) {
             console.log(`  ✓ Step ${stepNumber}: Input dependency '${input}' validated`);
           } else if (!outputFound && ref.optional && verbose) {
-            console.log(`  ⚠️  Step ${stepNumber}: Optional input '${input}' not found (this is OK for optional artifacts)`);
+            console.log(
+              `  ⚠️  Step ${stepNumber}: Optional input '${input}' not found (this is OK for optional artifacts)`
+            );
           }
-          
+
           // Check for circular dependencies (step references itself or future steps)
           const stepNum = parseFloat(stepNumber);
           const refStepNum = parseFloat(ref.fromStep);
           if (refStepNum >= stepNum) {
-            workflowErrors.push(`Step ${stepNumber}: Circular or forward dependency: references step ${ref.fromStep} (must reference previous steps only)`);
+            workflowErrors.push(
+              `Step ${stepNumber}: Circular or forward dependency: references step ${ref.fromStep} (must reference previous steps only)`
+            );
           }
-          
+
           // Check optional syntax consistency
           if (ref.optional) {
             if (!input.includes('optional') && !input.includes('(optional)')) {
-              workflowWarnings.push(`Step ${stepNumber}: Optional artifact '${input}' should use consistent syntax: 'artifact.json (from step X, optional)'`);
+              workflowWarnings.push(
+                `Step ${stepNumber}: Optional artifact '${input}' should use consistent syntax: 'artifact.json (from step X, optional)'`
+              );
             }
           }
         }
       });
     }
-    
+
     // Validate outputs
     if (step.outputs && Array.isArray(step.outputs)) {
       step.outputs.forEach(output => {
@@ -465,34 +499,42 @@ function validateWorkflow(workflowPath) {
           // Skip validation for special outputs like code-artifacts
           if (output === 'code-artifacts') {
             if (verbose) {
-              console.log(`  ✓ Step ${stepNumber}: Special output 'code-artifacts' (no schema validation needed)`);
+              console.log(
+                `  ✓ Step ${stepNumber}: Special output 'code-artifacts' (no schema validation needed)`
+              );
             }
             return; // Skip further validation for special outputs
           }
-          
+
           // Skip validation for reasoning files
           if (output.startsWith('reasoning:')) {
             if (verbose) {
-              console.log(`  ✓ Step ${stepNumber}: Reasoning file output (no schema validation needed)`);
+              console.log(
+                `  ✓ Step ${stepNumber}: Reasoning file output (no schema validation needed)`
+              );
             }
             return; // Skip further validation for reasoning files
           }
-          
+
           // Validate template variable syntax for JSON artifacts
           const syntaxCheck = validateTemplateVariableSyntax(output);
           if (!syntaxCheck.valid) {
             syntaxCheck.errors.forEach(err => {
-              workflowErrors.push(`Step ${stepNumber}: Malformed template variable in output '${output}': ${err}`);
+              workflowErrors.push(
+                `Step ${stepNumber}: Malformed template variable in output '${output}': ${err}`
+              );
             });
           }
-          
+
           // Check for template variables
           const templateVars = output.match(/\{\{([^}]+)\}\}/g);
           if (templateVars) {
             templateVars.forEach(varName => {
               const varKey = varName.replace(/\{\{|\}\}/g, '');
               if (!['workflow_id', 'story_id', 'epic_id'].includes(varKey)) {
-                workflowWarnings.push(`Step ${stepNumber}: Unknown template variable in output: ${varName}`);
+                workflowWarnings.push(
+                  `Step ${stepNumber}: Unknown template variable in output: ${varName}`
+                );
               }
             });
           }
@@ -502,26 +544,30 @@ function validateWorkflow(workflowPath) {
             const syntaxCheck = validateTemplateVariableSyntax(output.reasoning);
             if (!syntaxCheck.valid) {
               syntaxCheck.errors.forEach(err => {
-                workflowErrors.push(`Step ${stepNumber}: Malformed template variable in reasoning path '${output.reasoning}': ${err}`);
+                workflowErrors.push(
+                  `Step ${stepNumber}: Malformed template variable in reasoning path '${output.reasoning}': ${err}`
+                );
               });
             }
           }
         }
       });
     }
-    
+
     // Validate gate path template variables
     if (step.validation?.gate) {
       const gatePath = step.validation.gate;
       const gateSyntaxCheck = validateTemplateVariableSyntax(gatePath);
       if (!gateSyntaxCheck.valid) {
         gateSyntaxCheck.errors.forEach(err => {
-          workflowErrors.push(`Step ${stepNumber}: Malformed template variable in gate path '${gatePath}': ${err}`);
+          workflowErrors.push(
+            `Step ${stepNumber}: Malformed template variable in gate path '${gatePath}': ${err}`
+          );
         });
       }
     }
   });
-  
+
   // 6. Check for circular dependencies (graph-based check)
   const dependencyGraph = new Map();
   sortedSteps.forEach(stepNumber => {
@@ -539,11 +585,11 @@ function validateWorkflow(workflowPath) {
       dependencyGraph.set(stepNumber, []);
     }
   });
-  
+
   // Check for cycles using DFS
   const visited = new Set();
   const recStack = new Set();
-  
+
   function hasCycle(node) {
     if (recStack.has(node)) {
       return true; // Cycle detected
@@ -551,21 +597,21 @@ function validateWorkflow(workflowPath) {
     if (visited.has(node)) {
       return false;
     }
-    
+
     visited.add(node);
     recStack.add(node);
-    
+
     const deps = dependencyGraph.get(node) || [];
     for (const dep of deps) {
       if (hasCycle(dep)) {
         return true;
       }
     }
-    
+
     recStack.delete(node);
     return false;
   }
-  
+
   sortedSteps.forEach(stepNumber => {
     if (!visited.has(stepNumber)) {
       if (hasCycle(stepNumber)) {
@@ -573,7 +619,7 @@ function validateWorkflow(workflowPath) {
       }
     }
   });
-  
+
   return { errors: workflowErrors, warnings: workflowWarnings };
 }
 
@@ -582,9 +628,9 @@ function validateWorkflow(workflowPath) {
  */
 function main() {
   console.log('🔍 Workflow Validation\n');
-  
+
   let workflowFiles = [];
-  
+
   if (workflowArg) {
     const workflowPath = resolve(workflowArg);
     if (!existsSync(workflowPath)) {
@@ -595,15 +641,15 @@ function main() {
   } else {
     workflowFiles = findWorkflowFiles();
   }
-  
+
   if (workflowFiles.length === 0) {
     console.error('❌ No workflow files found');
     process.exit(1);
   }
-  
+
   let totalErrors = 0;
   let totalWarnings = 0;
-  
+
   workflowFiles.forEach(workflowPath => {
     const result = validateWorkflow(workflowPath);
     errors.push(...result.errors.map(e => `${workflowPath}: ${e}`));
@@ -611,7 +657,7 @@ function main() {
     totalErrors += result.errors.length;
     totalWarnings += result.warnings.length;
   });
-  
+
   // Print results
   if (errors.length > 0) {
     console.error('\n❌ Validation Errors:');
@@ -619,14 +665,14 @@ function main() {
       console.error(`  ${error}`);
     });
   }
-  
+
   if (warnings.length > 0) {
     console.warn('\n⚠️  Validation Warnings:');
     warnings.forEach(warning => {
       console.warn(`  ${warning}`);
     });
   }
-  
+
   if (errors.length === 0 && warnings.length === 0) {
     console.log('\n✅ All workflows validated successfully!');
     process.exit(0);
@@ -640,4 +686,3 @@ function main() {
 }
 
 main();
-

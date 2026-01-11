@@ -17,6 +17,7 @@ Run Task tool with skill rule-auditor to check src/components/
 ```
 
 Or in Specification Mode:
+
 ```
 [Shift+Tab] Audit the authentication module against our coding standards
 ```
@@ -38,6 +39,7 @@ Or in Specification Mode:
 **Droid**: qa
 
 ### Summary
+
 - Pass: 12 rules
 - Warn: 3 rules
 - Fail: 2 rules
@@ -45,6 +47,7 @@ Or in Specification Mode:
 ### Violations
 
 #### FAIL: Avoid using `any`
+
 - **File**: src/components/UserAuth.tsx:45
 - **Issue**: `const user: any = await getUser()`
 - **Rule**: typescript.mdc > Type System

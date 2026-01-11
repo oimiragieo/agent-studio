@@ -1,6 +1,7 @@
 # Deep Dive Prompt Template
 
 ## Purpose
+
 Detailed analysis of specific code areas or features.
 
 ## Template
@@ -39,14 +40,15 @@ Please provide a comprehensive analysis with code examples and recommendations.
 ```
 
 ## Usage
+
 - Feature analysis
 - Code review preparation
 - Refactoring planning
 - Performance optimization
 
 ## Agent
+
 - code-reviewer
 - architect
 - developer
 - performance-engineer
-

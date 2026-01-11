@@ -25,7 +25,11 @@
     },
     "checks": {
       "type": "object",
-      "required": ["strategic_to_implementation", "implementation_to_strategic", "workflow_id_match"],
+      "required": [
+        "strategic_to_implementation",
+        "implementation_to_strategic",
+        "workflow_id_match"
+      ],
       "properties": {
         "strategic_to_implementation": {
           "type": "object",

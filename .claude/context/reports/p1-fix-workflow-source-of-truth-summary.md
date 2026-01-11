@@ -5,6 +5,7 @@
 **Problem**: Workflow source of truth was split between `cuj-registry.json` and `CUJ-INDEX.md`, causing `run-cuj` to fail for CUJs with `workflow: null`.
 
 **Root Cause**:
+
 - CUJ registry was manually edited instead of being synced from markdown files
 - CUJ markdown files didn't specify workflow paths in a machine-readable format
 - Sync script couldn't extract workflow paths from various markdown patterns
@@ -24,33 +25,41 @@
 Updated `.claude/tools/sync-cuj-registry.mjs` to extract workflow paths from multiple patterns:
 
 **Pattern 1**: `**Execution Mode**: brownfield-fullstack.yaml`
+
 ```markdown
 ## Workflow
+
 **Execution Mode**: `brownfield-fullstack.yaml`
 ```
 
 **Pattern 2**: `workflow: .claude/workflows/workflow-name.yaml`
+
 ```markdown
 workflow: `.claude/workflows/brownfield-fullstack.yaml`
 ```
 
 **Pattern 3**: `Uses workflow: workflow-name.yaml`
+
 ```markdown
 Uses workflow: `brownfield-fullstack.yaml`
 ```
 
 **Pattern 4**: Related Documentation links
+
 ```markdown
 ## Related Documentation
+
 - [brownfield-fullstack Workflow](../../workflows/brownfield-fullstack.yaml)
 ```
 
 **Pattern 5**: Any markdown link to workflows directory
+
 ```markdown
 [workflow](../../workflows/brownfield-fullstack.yaml)
 ```
 
 **Pattern 6**: Generic YAML references (with file existence verification)
+
 ```markdown
 `greenfield-fullstack.yaml`
 ```
@@ -58,6 +67,7 @@ Uses workflow: `brownfield-fullstack.yaml`
 ### 3. Verification and File Existence Checks
 
 All workflow path extraction now includes file existence verification:
+
 - Script verifies workflow file exists before assignment
 - Invalid paths are skipped with warnings
 - Prevents broken references in registry
@@ -65,29 +75,34 @@ All workflow path extraction now includes file existence verification:
 ### 4. Documentation Updates
 
 **Updated Script Header**:
+
 - Documented source of truth hierarchy
 - Documented workflow extraction patterns
 - Added usage examples
 
 **Created Reports**:
+
 - `.claude/context/reports/workflow-null-cujs-report.md` - Identifies 36 CUJs needing workflow assignment
 - This summary document
 
 ## Results
 
 ### Before Fix
+
 - **Source of Truth**: Unclear (split between registry and markdown)
 - **Workflow Extraction**: Failed for most CUJs
 - **CUJs with workflows**: Unknown
 - **run-cuj failures**: Frequent (36+ CUJs failing)
 
 ### After Fix
+
 - **Source of Truth**: ✅ CUJ markdown files (documented and enforced)
 - **Workflow Extraction**: ✅ 8 patterns supported with file verification
 - **CUJs with workflows**: 18/60 (30%) - validated and working
 - **CUJs needing assignment**: 36/60 (60%) - identified with suggested workflows
 
 ### Breakdown by Execution Mode
+
 - **Manual-setup**: 2 CUJs (workflow: null expected ✅)
 - **Skill-only**: 4 CUJs (workflow: null expected ✅)
 - **Workflow with path**: 18 CUJs (workflow extracted ✅)
@@ -117,12 +132,14 @@ All workflow path extraction now includes file existence verification:
 ## Next Steps
 
 ### Immediate (P0)
+
 1. **Update 36 CUJ markdown files** with workflow references
    - See `.claude/context/reports/workflow-null-cujs-report.md` for suggestions
    - Use one of the 8 supported patterns
    - Verify workflow files exist
 
 2. **Re-run sync** to populate registry:
+
    ```bash
    node .claude/tools/sync-cuj-registry.mjs
    ```
@@ -134,6 +151,7 @@ All workflow path extraction now includes file existence verification:
    ```
 
 ### Short-term (P1)
+
 1. **Create missing workflow files** for CUJs that need them
    - `code-quality-flow.yaml`
    - `recovery-test-flow.yaml`
@@ -145,6 +163,7 @@ All workflow path extraction now includes file existence verification:
    - Add section on CUJ markdown → registry sync process
 
 ### Long-term (P2)
+
 1. **Add pre-commit hook** to enforce registry sync
 2. **Add CI validation** to check registry is in sync with markdown
 3. **Automate workflow assignment** based on CUJ category
@@ -154,17 +173,20 @@ All workflow path extraction now includes file existence verification:
 ### Validation Commands
 
 **1. Check sync script works**:
+
 ```bash
 node .claude/tools/sync-cuj-registry.mjs
 ```
 
 **2. Verify workflow extraction**:
+
 ```bash
 # Should show 18+ CUJs with workflow paths
 grep -c '"workflow": ".claude' .claude/context/cuj-registry.json
 ```
 
 **3. Test run-cuj with extracted workflows**:
+
 ```bash
 # Should work for CUJs with workflows
 node .claude/tools/run-cuj.mjs CUJ-010
@@ -173,6 +195,7 @@ node .claude/tools/run-cuj.mjs CUJ-019
 ```
 
 **4. Verify schema validation**:
+
 ```bash
 node .claude/tools/sync-cuj-registry.mjs --validate-only
 ```
@@ -196,6 +219,7 @@ node .claude/tools/sync-cuj-registry.mjs --validate-only
 ## Conclusion
 
 The P1 fix successfully:
+
 1. ✅ Established CUJ markdown files as the source of truth
 2. ✅ Enhanced sync script to extract workflows from 8 patterns
 3. ✅ Verified workflow file existence before assignment

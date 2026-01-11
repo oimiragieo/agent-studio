@@ -22,43 +22,43 @@ Implemented three critical performance optimizations as specified by the perform
 ### 1. Incremental JSON Parsing (streaming-json-parser.mjs)
 
 **Problem**: String concatenation in loop defeats streaming purpose
+
 ```javascript
 // OLD (creates new string objects on each chunk)
 let buffer = '';
-stream.on('data', (chunk) => {
-  buffer += chunk;  // Memory-intensive
+stream.on('data', chunk => {
+  buffer += chunk; // Memory-intensive
 });
 stream.on('end', () => {
-  const parsed = JSON.parse(buffer);  // 2x memory (buffer + parsed)
+  const parsed = JSON.parse(buffer); // 2x memory (buffer + parsed)
 });
 ```
 
 **Solution**: Use stream-json for true streaming
+
 ```javascript
 // NEW (builds object incrementally)
 import { chain } from 'stream-chain';
 import { parser } from 'stream-json';
 import { streamObject } from 'stream-json/streamers/StreamObject.js';
 
-const pipeline = chain([
-  fileStream,
-  parser(),
-  streamObject()
-]);
+const pipeline = chain([fileStream, parser(), streamObject()]);
 
 const obj = {};
-pipeline.on('data', (data) => {
-  obj[data.key] = data.value;  // Incremental assembly
+pipeline.on('data', data => {
+  obj[data.key] = data.value; // Incremental assembly
 });
 ```
 
 **Benefits**:
+
 - Eliminates 2x memory overhead (buffer + parsed object)
 - No string concatenation in hot path
 - Handles arbitrarily large JSON files
 - Same function signature (backward compatible)
 
 **Dependency Added**:
+
 - `stream-json@^1.8.0` (added to package.json devDependencies)
 
 ---
@@ -68,6 +68,7 @@ pipeline.on('data', (data) => {
 **Problem**: No limit on concurrent subagent spawning could cause memory exhaustion
 
 **Solution**: Semaphore-based spawn control
+
 ```javascript
 const MAX_CONCURRENT_SUBAGENTS = 3;
 let activeSubagents = 0;
@@ -89,7 +90,7 @@ async function spawnSubagentWithLimit(args, options = {}) {
   const child = spawn('node', args, { stdio: 'inherit' });
 
   // Decrement counter when child exits
-  child.on('exit', (code) => {
+  child.on('exit', code => {
     activeSubagents--;
   });
 
@@ -98,17 +99,20 @@ async function spawnSubagentWithLimit(args, options = {}) {
 ```
 
 **Configuration**:
+
 - `MAX_CONCURRENT_SUBAGENTS = 3` (configurable)
 - `timeout = 30000ms` (30 seconds default)
 - `wait_interval = 100ms` (polling interval)
 
 **Benefits**:
+
 - Prevents memory exhaustion from too many concurrent processes
 - Graceful queuing with timeout protection
 - Clear logging of active subagent count
 - Fully backward compatible (transparent to callers)
 
 **Files Modified**:
+
 - `.claude/tools/run-cuj.mjs` - Added spawnSubagentWithLimit() and replaced spawn() calls
 
 ---
@@ -118,6 +122,7 @@ async function spawnSubagentWithLimit(args, options = {}) {
 **Problem**: JSON.stringify() in hot path (cache pruning) is expensive
 
 **Solution**: Rough recursive estimation
+
 ```javascript
 function estimateSize(data) {
   if (data === null || data === undefined) return 0;
@@ -128,21 +133,25 @@ function estimateSize(data) {
     return data.reduce((sum, item) => sum + estimateSize(item), 0) + 32;
   }
   if (typeof data === 'object') {
-    return Object.entries(data).reduce(
-      (sum, [key, value]) => sum + key.length * 2 + estimateSize(value),
-      0
-    ) + 64;
+    return (
+      Object.entries(data).reduce(
+        (sum, [key, value]) => sum + key.length * 2 + estimateSize(value),
+        0
+      ) + 64
+    );
   }
   return 0;
 }
 ```
 
 **Accuracy vs Performance**:
+
 - Accuracy: Within 30% of JSON.stringify()
 - Performance: 2-5x faster (no serialization)
 - Memory: 50-80% less (no temporary string creation)
 
 **Files Modified**:
+
 - `.claude/tools/artifact-cache.mjs` - Added estimateSize(), updated getCacheStats()
 - `.claude/tools/git-cache.mjs` - Added estimateSize()
 - `.claude/tools/skill-cache.mjs` - Added estimateSize()
@@ -193,16 +202,19 @@ node .claude/tools/test-spawn-limiting.mjs
 ## Expected Performance Improvements
 
 ### Streaming JSON Parser
+
 - **Memory Reduction**: 50% (eliminates double buffering)
 - **Scalability**: Can now handle JSON files >100MB
 - **Impact**: High for large registry files, artifact registries
 
 ### Spawn Limiting
+
 - **Stability**: Prevents OOM from too many concurrent processes
 - **Resource Control**: Caps at 3 concurrent subagents
 - **Impact**: Critical for multi-step workflows with parallel execution
 
 ### Cache Size Estimation
+
 - **CPU Reduction**: 60-80% (avoids JSON serialization)
 - **Memory Reduction**: 50-80% (no temporary strings)
 - **Impact**: High for cache pruning operations (runs every 5-10 minutes)
@@ -222,12 +234,14 @@ All changes are fully backward compatible:
 ## Files Changed
 
 ### Created (4 files)
+
 1. `.claude/tools/test-streaming-json-parser.mjs`
 2. `.claude/tools/test-spawn-limiting.mjs`
 3. `.claude/tools/test-cache-estimation.mjs`
 4. `.claude/context/artifacts/dev-manifest-priority2-fixes.json`
 
 ### Modified (6 files)
+
 1. `package.json` - Added stream-json dependency
 2. `.claude/tools/streaming-json-parser.mjs` - Implemented true streaming with stream-json
 3. `.claude/tools/run-cuj.mjs` - Added spawn limiting with semaphore
@@ -240,11 +254,13 @@ All changes are fully backward compatible:
 ## Next Steps
 
 1. **Install Dependencies**:
+
    ```bash
    pnpm install
    ```
 
 2. **Run Unit Tests**:
+
    ```bash
    node .claude/tools/test-streaming-json-parser.mjs
    node .claude/tools/test-cache-estimation.mjs
@@ -277,5 +293,5 @@ All changes are fully backward compatible:
 
 ---
 
-*Developer: Claude Sonnet 4.5*
-*Date: 2026-01-09*
+_Developer: Claude Sonnet 4.5_
+_Date: 2026-01-09_

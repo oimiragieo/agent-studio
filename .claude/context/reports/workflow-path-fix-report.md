@@ -20,6 +20,7 @@ The validation report identified workflow path inconsistencies:
 ### Validation Tool Created
 
 Created `.claude/tools/validate-workflow-paths.mjs` to:
+
 - Scan `cuj-registry.json` for workflow paths
 - Check for double-prefix patterns
 - Verify workflow files exist
@@ -33,6 +34,7 @@ Created `.claude/tools/validate-workflow-paths.mjs` to:
 **Issues Found**: 1
 
 **Issue Details**:
+
 - **CUJ-002**: Referenced `.claude/workflows/manifest.yaml` (file doesn't exist)
 - **Execution mode**: Incorrectly set to `workflow` instead of `skill-only`
 - **Primary skill**: `rule-selector` (should be skill-only, not workflow-based)
@@ -46,6 +48,7 @@ Created `.claude/tools/validate-workflow-paths.mjs` to:
 **File**: `.claude/context/cuj-registry.json`
 
 **Before**:
+
 ```json
 {
   "id": "CUJ-002",
@@ -55,6 +58,7 @@ Created `.claude/tools/validate-workflow-paths.mjs` to:
 ```
 
 **After**:
+
 ```json
 {
   "id": "CUJ-002",
@@ -68,6 +72,7 @@ Created `.claude/tools/validate-workflow-paths.mjs` to:
 ### 2. Validation Results
 
 **After Fix**:
+
 ```
 ✅ All workflow paths are valid!
   • CUJs in registry: 59
@@ -101,16 +106,19 @@ All workflow files verified to exist:
 ## Validation Tool Usage
 
 ### Run Validation
+
 ```bash
 node .claude/tools/validate-workflow-paths.mjs
 ```
 
 ### Auto-Fix Issues
+
 ```bash
 node .claude/tools/validate-workflow-paths.mjs --fix
 ```
 
 ### Features
+
 - ✅ Detects double-prefix patterns (e.g., `.claude/workflows/.claude/workflows/`)
 - ✅ Checks if workflow files exist
 - ✅ Validates CUJ documentation links
@@ -143,11 +151,13 @@ node .claude/tools/validate-workflow-paths.mjs --fix
 ### Ongoing Maintenance
 
 1. **Run validation before commits**:
+
    ```bash
    node .claude/tools/validate-workflow-paths.mjs
    ```
 
 2. **Add to CI/CD pipeline**:
+
    ```yaml
    - name: Validate workflow paths
      run: node .claude/tools/validate-workflow-paths.mjs
@@ -162,6 +172,7 @@ node .claude/tools/validate-workflow-paths.mjs --fix
 ### Path Normalization Rules
 
 When referencing workflows, always use:
+
 - ✅ `.claude/workflows/filename.yaml` (canonical format)
 - ✅ `null` (for skill-only CUJs)
 - ❌ NEVER use double prefixes
@@ -173,12 +184,14 @@ When referencing workflows, always use:
 ## Test Results
 
 ### Before Fix
+
 ```
 ❌ Validation failed with 1 issues
   • CUJ-002 (line ~35): .claude/workflows/manifest.yaml
 ```
 
 ### After Fix
+
 ```
 ✅ All workflow paths are valid!
   • CUJs in registry: 59

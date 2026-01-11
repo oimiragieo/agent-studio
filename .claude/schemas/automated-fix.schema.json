@@ -9,7 +9,10 @@
     "fix_date": { "type": "string", "format": "date-time" },
     "executor": { "type": "string" },
     "status": { "type": "string", "enum": ["all_fixed", "partial", "failed", "no_fixes_needed"] },
-    "validation_reference": { "type": "string", "description": "Reference to validation report that triggered fixes" },
+    "validation_reference": {
+      "type": "string",
+      "description": "Reference to validation report that triggered fixes"
+    },
     "fixes_applied": {
       "type": "array",
       "items": {
@@ -19,7 +22,10 @@
           "issue_id": { "type": "string" },
           "issue_description": { "type": "string" },
           "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
-          "status": { "type": "string", "enum": ["fixed", "partial", "failed", "skipped", "deferred"] },
+          "status": {
+            "type": "string",
+            "enum": ["fixed", "partial", "failed", "skipped", "deferred"]
+          },
           "fix_type": { "type": "string", "enum": ["automatic", "manual", "hybrid"] },
           "agent": { "type": "string", "description": "Agent that applied the fix" },
           "file_path": { "type": "string" },

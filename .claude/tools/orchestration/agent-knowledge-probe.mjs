@@ -21,11 +21,11 @@ const KB_DIR = join(__dirname, '../../../context/knowledge-bases');
  */
 async function loadAgentKB(agentName) {
   const kbPath = join(KB_DIR, `${agentName}.json`);
-  
+
   if (!existsSync(kbPath)) {
     return null;
   }
-  
+
   try {
     const content = await readFile(kbPath, 'utf8');
     return JSON.parse(content);
@@ -43,48 +43,50 @@ function calculateKBRelevance(query, knowledgeBase) {
     return {
       relevance_score: 0,
       confidence: 0,
-      has_knowledge: false
+      has_knowledge: false,
     };
   }
-  
+
   // Extract keywords from query
   const queryKeywords = extractKeywords(query);
-  
+
   // Check relevance against KB entries (without exposing content)
   let totalRelevance = 0;
   let matchingEntries = 0;
-  
+
   for (const entry of knowledgeBase.entries) {
     const entryKeywords = entry.keywords || [];
     const entryTopics = entry.topics || [];
-    
+
     // Calculate keyword overlap
-    const keywordOverlap = queryKeywords.filter(k => 
+    const keywordOverlap = queryKeywords.filter(k =>
       entryKeywords.some(ek => ek.toLowerCase() === k.toLowerCase())
     ).length;
-    
+
     // Calculate topic relevance
-    const topicRelevance = entryTopics.some(topic => 
+    const topicRelevance = entryTopics.some(topic =>
       query.toLowerCase().includes(topic.toLowerCase())
-    ) ? 0.5 : 0;
-    
-    const entryRelevance = (keywordOverlap / Math.max(queryKeywords.length, 1)) + topicRelevance;
-    
+    )
+      ? 0.5
+      : 0;
+
+    const entryRelevance = keywordOverlap / Math.max(queryKeywords.length, 1) + topicRelevance;
+
     if (entryRelevance > 0.2) {
       totalRelevance += entryRelevance;
       matchingEntries++;
     }
   }
-  
+
   const avgRelevance = matchingEntries > 0 ? totalRelevance / matchingEntries : 0;
   const confidence = Math.min(avgRelevance, 1.0);
-  
+
   return {
     relevance_score: avgRelevance,
     confidence: confidence,
     has_knowledge: matchingEntries > 0,
     matching_entries_count: matchingEntries, // Lightweight metadata
-    total_entries: knowledgeBase.entries.length // Lightweight metadata
+    total_entries: knowledgeBase.entries.length, // Lightweight metadata
   };
 }
 
@@ -93,7 +95,22 @@ function calculateKBRelevance(query, knowledgeBase) {
  */
 function extractKeywords(query) {
   // Simple keyword extraction (production would use NLP)
-  const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by']);
+  const stopWords = new Set([
+    'the',
+    'a',
+    'an',
+    'and',
+    'or',
+    'but',
+    'in',
+    'on',
+    'at',
+    'to',
+    'for',
+    'of',
+    'with',
+    'by',
+  ]);
   const words = query.toLowerCase().split(/\s+/);
   return words.filter(w => w.length > 3 && !stopWords.has(w));
 }
@@ -104,7 +121,7 @@ function extractKeywords(query) {
  */
 export async function probeAgentKB(agentName, query) {
   const knowledgeBase = await loadAgentKB(agentName);
-  
+
   if (!knowledgeBase) {
     // No KB available - return neutral signal
     return {
@@ -113,12 +130,12 @@ export async function probeAgentKB(agentName, query) {
       confidence: 0,
       has_knowledge: false,
       signal_type: 'ack',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
-  
+
   const relevance = calculateKBRelevance(query, knowledgeBase);
-  
+
   return {
     agent: agentName,
     relevance_score: relevance.relevance_score,
@@ -127,9 +144,9 @@ export async function probeAgentKB(agentName, query) {
     signal_type: 'ack', // Privacy-preserving acknowledgment
     metadata: {
       matching_entries: relevance.matching_entries_count,
-      total_entries: relevance.total_entries
+      total_entries: relevance.total_entries,
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 }
 
@@ -138,17 +155,17 @@ export async function probeAgentKB(agentName, query) {
  */
 export async function initializeAgentKB(agentName, initialEntries = []) {
   const kbPath = join(KB_DIR, `${agentName}.json`);
-  
+
   const kb = {
     agent: agentName,
     entries: initialEntries,
     metadata: {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      version: '1.0.0'
-    }
+      version: '1.0.0',
+    },
   };
-  
+
   // In production, would save to file
   return kb;
 }
@@ -158,21 +175,20 @@ export async function initializeAgentKB(agentName, initialEntries = []) {
  * Triggers cache invalidation for this agent
  */
 export async function updateAgentKB(agentName, newEntries) {
-  const kb = await loadAgentKB(agentName) || await initializeAgentKB(agentName);
-  
+  const kb = (await loadAgentKB(agentName)) || (await initializeAgentKB(agentName));
+
   kb.entries = [...kb.entries, ...newEntries];
   kb.metadata.updated_at = new Date().toISOString();
-  
+
   // Trigger cache invalidation
   const { invalidateCache } = await import('./kba-orchestrator.mjs');
   await invalidateCache(agentName, 'knowledge_base_updated');
-  
+
   return kb;
 }
 
 export default {
   probeAgentKB,
   initializeAgentKB,
-  updateAgentKB
+  updateAgentKB,
 };
-

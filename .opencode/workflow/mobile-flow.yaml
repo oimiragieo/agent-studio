@@ -7,17 +7,17 @@ project_type: mobile
 # The actual workflow selection uses keywords from .opencode/config.yaml workflow_selection section.
 # See .opencode/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "mobile app"
-  - "ios"
-  - "android"
-  - "react native"
-  - "flutter"
-  - "native app"
-  - "app store"
+  - 'mobile app'
+  - 'ios'
+  - 'android'
+  - 'react native'
+  - 'flutter'
+  - 'native app'
+  - 'app store'
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - app_requirements
@@ -37,7 +37,7 @@ steps:
       - Create structured development plan
 
   - step: 1
-    name: "Mobile Development"
+    name: 'Mobile Development'
     agent: mobile-developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -61,7 +61,7 @@ steps:
       - Push notification design
 
   - step: 2
-    name: "Mobile UX Design"
+    name: 'Mobile UX Design'
     agent: ux-expert
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -83,7 +83,7 @@ steps:
       - Animation and micro-interactions
 
   - step: 3
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -106,7 +106,7 @@ steps:
       - Platform-specific features
 
   - step: 4
-    name: "Mobile Quality Assurance"
+    name: 'Mobile Quality Assurance'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)

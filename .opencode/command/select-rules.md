@@ -16,7 +16,7 @@ Invokes the **rule-selector** skill to:
 
 1. **Scan Configuration Files**
    - package.json, requirements.txt, go.mod, Cargo.toml
-   - next.config.*, nuxt.config.*, angular.json, svelte.config.*
+   - next.config._, nuxt.config._, angular.json, svelte.config.\*
    - tsconfig.json, pyproject.toml, composer.json
 
 2. **Detect Tech Stack**
@@ -44,12 +44,14 @@ Invokes the **rule-selector** skill to:
 **Detected Stack**: Next.js 14 + TypeScript + Tailwind
 
 ### Recommended Rules
+
 1. Next.js patterns (primary)
 2. TypeScript conventions (language)
 3. React patterns (framework)
 4. Tailwind conventions (styling)
 
 ### Excluded (not relevant)
+
 - Angular patterns (No Angular detected)
 - Vue patterns (No Vue detected)
 - Python patterns (No Python detected)

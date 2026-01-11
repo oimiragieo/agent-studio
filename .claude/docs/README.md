@@ -22,14 +22,14 @@ Claude Code 2.1.2 introduces three major enhancements:
 
 ## Core Concepts
 
-| Document | Purpose |
-|----------|---------|
-| [Context Optimization](CONTEXT_OPTIMIZATION.md) | Token efficiency and context management |
-| [Memory Patterns](MEMORY_PATTERNS.md) | Dual persistence (CLAUDE.md + memory skills) |
-| [Everlasting Agents](EVERLASTING_AGENTS.md) | Unlimited project duration via context recycling |
-| [Phase-Based Projects](PHASE_BASED_PROJECTS.md) | Organizing projects into manageable phases |
-| [Evaluation Guide](EVALUATION_GUIDE.md) | Agent performance and rule compliance grading |
-| [Rule Index Migration](RULE_INDEX_MIGRATION.md) | Dynamic rule discovery system |
+| Document                                        | Purpose                                          |
+| ----------------------------------------------- | ------------------------------------------------ |
+| [Context Optimization](CONTEXT_OPTIMIZATION.md) | Token efficiency and context management          |
+| [Memory Patterns](MEMORY_PATTERNS.md)           | Dual persistence (CLAUDE.md + memory skills)     |
+| [Everlasting Agents](EVERLASTING_AGENTS.md)     | Unlimited project duration via context recycling |
+| [Phase-Based Projects](PHASE_BASED_PROJECTS.md) | Organizing projects into manageable phases       |
+| [Evaluation Guide](EVALUATION_GUIDE.md)         | Agent performance and rule compliance grading    |
+| [Rule Index Migration](RULE_INDEX_MIGRATION.md) | Dynamic rule discovery system                    |
 
 ## Deployment
 
@@ -37,8 +37,8 @@ Claude Code 2.1.2 introduces three major enhancements:
 
 ## Upgrade Guides
 
-| Document | Purpose |
-|----------|---------|
+| Document                                      | Purpose                                         |
+| --------------------------------------------- | ----------------------------------------------- |
 | [Phase 2.1.2 Upgrade](PHASE_2.1.2_UPGRADE.md) | Breaking changes, new features, migration steps |
 
 ## Test Specifications

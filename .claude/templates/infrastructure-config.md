@@ -1,6 +1,7 @@
 # Infrastructure Configuration: {{project_name}}
 
 ## Metadata
+
 - **Project**: {{project_name}}
 - **Environment**: {{environment}} (development/staging/production)
 - **Cloud Provider**: {{cloud_provider}} (gcp/aws/azure)
@@ -14,23 +15,27 @@
 **Pattern**: `{project}-{resource-type}-{environment}-{unique_suffix}`
 
 **Unique Suffix Generation**:
+
 - Append a unique suffix to prevent global namespace collisions
 - Strategies: `unique_hash` (recommended), `project_id`, `uuid`, `deterministic`
 - Default: 6-8 character hash from `project_id + resource_type + timestamp`
 
 **Examples**:
+
 - Storage bucket: `{{project_name}}-assets-{{environment}}-a3f2b1c` (with unique suffix `a3f2b1c`)
 - Cloud Run service: `{{project_name}}-api-{{environment}}-x7k9m2n`
 - Cloud SQL instance: `{{project_name}}-db-{{environment}}-p4q8r5s`
 - Service account: `{{project_name}}-sa-{{environment}}-t1w3y6z`
 
 **GCP Naming Constraints**:
+
 - **Storage Buckets**: 3-63 characters, lowercase, alphanumeric and hyphens only, globally unique
 - **Cloud SQL**: 1-98 characters, alphanumeric and hyphens, globally unique per project
 - **Cloud Run**: 1-63 characters, lowercase, alphanumeric and hyphens
 - **Pub/Sub Topics**: 1-255 characters, alphanumeric and hyphens
 
 **Resource Definition Format**:
+
 ```json
 {
   "name": "myapp-assets-dev-a3f2b1c",
@@ -45,47 +50,52 @@
 ### Compute Resources
 
 {{#each compute_resources}}
+
 - **Name**: {{name}}
 - **Type**: {{type}}
 - **Region**: {{region}}
 - **Connection String**: {{connection_string}}
 - **Specifications**: {{specifications}}
-{{/each}}
+  {{/each}}
 
 ### Storage Resources
 
 {{#each storage_resources}}
+
 - **Name**: {{name}}
 - **Type**: {{type}}
 - **Region**: {{region}}
 - **Access Pattern**: {{access_pattern}}
-{{/each}}
+  {{/each}}
 
 ### Database Resources
 
 {{#each database_resources}}
+
 - **Name**: {{name}}
 - **Type**: {{type}}
 - **Engine**: {{engine}}
 - **Connection String**: {{connection_string}}
 - **Region**: {{region}}
-{{/each}}
+  {{/each}}
 
 ### Networking Resources
 
 {{#each networking_resources}}
+
 - **Name**: {{name}}
 - **Type**: {{type}}
 - **CIDR**: {{cidr}}
-{{/each}}
+  {{/each}}
 
 ### Messaging Resources
 
 {{#each messaging_resources}}
+
 - **Name**: {{name}}
 - **Type**: {{type}}
 - **Region**: {{region}}
-{{/each}}
+  {{/each}}
 
 ## Environment Variables
 
@@ -114,12 +124,14 @@ API_ENDPOINT={{api_endpoint}}
 ## Service Accounts
 
 {{#each service_accounts}}
+
 ### {{name}}
 
 **Roles**:
 {{#each roles}}
+
 - {{this}}
-{{/each}}
+  {{/each}}
 
 **Key Path** (for local development): `{{key_path}}`
 
@@ -128,14 +140,16 @@ API_ENDPOINT={{api_endpoint}}
 ## API Endpoints
 
 {{#each api_endpoints}}
+
 - **{{@key}}**: {{this}}
-{{/each}}
+  {{/each}}
 
 ## Terraform Configuration
 
 **Module Path**: `{{terraform_module_path}}`
 
 **Variables**:
+
 ```hcl
 {{terraform_variables}}
 ```
@@ -143,16 +157,19 @@ API_ENDPOINT={{api_endpoint}}
 ## Connection String Formats
 
 ### GCP Cloud SQL
+
 ```
 postgresql://user:pass@/dbname?host=/cloudsql/project:region:instance-name
 ```
 
 ### GCP Storage
+
 ```
 gs://bucket-name/path/to/file
 ```
 
 ### GCP Pub/Sub
+
 ```
 projects/{{project_id}}/topics/{{topic_name}}
 ```
@@ -177,6 +194,7 @@ unset GOOGLE_APPLICATION_CREDENTIALS
 ## Production Deployment
 
 **When deploying to production**:
+
 1. Use actual resource names from this configuration
 2. Set proper IAM roles and service account permissions
 3. Configure environment variables in deployment platform
@@ -192,6 +210,7 @@ All sensitive values (passwords, API keys, tokens) are stored in Secret Manager 
 
 {{#each secret_references}}
 **{{@key}}**:
+
 - Secret ID: `{{secret_id}}`
 - Environment Variable: `{{environment_variable}}`
 - Local Development: {{local_development_note}}
@@ -201,12 +220,14 @@ All sensitive values (passwords, API keys, tokens) are stored in Secret Manager 
 ### Connection String Templates
 
 Connection strings use placeholders for secrets:
+
 - Database: `postgresql://user:{DB_PASSWORD}@host/db` (password fetched from Secret Manager at runtime)
 - Never include actual passwords in connection strings
 
 ### Local Development
 
 For local development:
+
 1. Set secrets in `.env` file (e.g., `DB_PASSWORD=your-local-password`)
 2. **NEVER commit `.env` files to git**
 3. Application code should check for local `.env` first, then fall back to Secret Manager in production
@@ -219,4 +240,3 @@ For local development:
 - Connection strings use concrete resource names with placeholders for secrets (not actual passwords)
 - Secret references point to Secret Manager, never contain actual secrets
 - Local development uses emulators; production uses real cloud resources
-

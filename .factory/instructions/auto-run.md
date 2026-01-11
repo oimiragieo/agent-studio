@@ -4,11 +4,11 @@ Auto-Run Mode lets you choose how much autonomy droid has after approving a plan
 
 ## Autonomy Levels
 
-| Level | What Runs Automatically | Typical Examples |
-|-------|------------------------|------------------|
-| **Auto (Low)** | File edits, file creation, read-only commands from allowlist | Edit, Create, ls, git status, rg |
-| **Auto (Medium)** | Everything from Low plus reversible workspace changes | npm install, pip install, git commit, mv, cp, build tooling |
-| **Auto (High)** | All commands except explicitly blocked safety commands | docker compose up, git push (if allowed), migrations, custom scripts |
+| Level             | What Runs Automatically                                      | Typical Examples                                                     |
+| ----------------- | ------------------------------------------------------------ | -------------------------------------------------------------------- |
+| **Auto (Low)**    | File edits, file creation, read-only commands from allowlist | Edit, Create, ls, git status, rg                                     |
+| **Auto (Medium)** | Everything from Low plus reversible workspace changes        | npm install, pip install, git commit, mv, cp, build tooling          |
+| **Auto (High)**   | All commands except explicitly blocked safety commands       | docker compose up, git push (if allowed), migrations, custom scripts |
 
 ## Risk Classification
 
@@ -33,6 +33,7 @@ Commands run automatically only when their risk level is **less than or equal to
 ### Execute Commands
 
 Follow the risk threshold:
+
 - **Auto (Low)**: Auto-accepts only read-only allowlisted commands
 - **Auto (Medium)**: Adds reversible commands (installs, local git, etc.)
 - **Auto (High)**: Accepts any command with declared risk level (except safety blocks)
@@ -40,6 +41,7 @@ Follow the risk threshold:
 ### Safety Interlocks
 
 **Always trigger confirmation** (even in Auto High):
+
 - Dangerous patterns: `rm -rf /`, `dd of=/dev/*`, etc.
 - Command substitution: `$(...)`, backticks
 - Explicitly flagged by CLI security checks
@@ -48,6 +50,7 @@ Follow the risk threshold:
 ### Allowlist Expansion
 
 When you approve a command, add it to the session allowlist:
+
 - Future occurrences run without another prompt
 - Session-specific (not persistent across restarts)
 - Useful for repeated safe commands
@@ -57,6 +60,7 @@ When you approve a command, add it to the session allowlist:
 ### Keyboard Shortcut
 
 Press `Shift+Tab` (or `Ctrl+T` on Windows) to cycle through:
+
 - Normal → Spec → Auto (Low) → Auto (Medium) → Auto (High) → back to Normal
 
 Active mode is shown in the status banner and Help popup.
@@ -64,6 +68,7 @@ Active mode is shown in the status banner and Help popup.
 ### Settings Default
 
 Set persistent default in Settings:
+
 1. Open CLI settings: `/settings`
 2. Choose preferred autonomy level
 3. Settings persist for future sessions
@@ -71,12 +76,14 @@ Set persistent default in Settings:
 ### After Specification Approval
 
 When approving a Specification Mode plan:
+
 - **"Proceed"**: Manual confirmation (Normal mode)
 - **"Auto (Low/Medium/High)"**: Enable Auto-Run for implementation phase
 
 ### Return to Manual
 
 Cycle back to Normal mode at any time:
+
 - Droid resumes asking for each file change and command
 - Useful for sensitive or complex changes
 
@@ -122,6 +129,7 @@ Most operations proceed automatically. Only explicit safety blocks (force push, 
 ### Review Changes
 
 Even in Auto-Run:
+
 - **Review file diffs** before committing
 - **Verify test results** match expectations
 - **Check logs** for unexpected errors or warnings
@@ -129,6 +137,7 @@ Even in Auto-Run:
 ### Use Specification Mode First
 
 For complex features:
+
 1. Use **Specification Mode** to generate a complete plan
 2. Review and approve the specification
 3. Enable **Auto-Run** for implementation phase
@@ -138,6 +147,7 @@ This gives you control over planning while automating execution.
 ### Monitor Output
 
 Auto-Run always shows:
+
 - Streamed command output in real-time
 - File changes highlighted in diffs
 - Progress indicators for long-running tasks
@@ -147,6 +157,7 @@ Watch the output to catch issues early.
 ### Set Boundaries
 
 Even in Auto-Run, set explicit boundaries:
+
 ```
 Only modify files in the auth directory
 Don't change the public API
@@ -156,24 +167,28 @@ Follow existing patterns in middleware/
 ## When You Will Still Get Prompted
 
 **Always prompted** (regardless of Auto-Run level):
+
 - Commands in denylist
 - Dangerous patterns (rm -rf, sudo rm, format, etc.)
 - Command substitution in scripts
 - First occurrence of commands above risk threshold
 
 **Auto (Low)** also prompts for:
+
 - Package installs (npm, pip, etc.)
 - Git commits and pushes
 - File moves and copies
 - Build and test commands
 
 **Auto (Medium)** prompts for:
+
 - Destructive operations
 - Git force operations
 - Database migrations
 - Deployment commands
 
 **Auto (High)** prompts only for:
+
 - Explicitly blocked safety commands
 - Commands in denylist
 
@@ -196,4 +211,3 @@ Follow existing patterns in middleware/
 - Cycle to **Normal** mode for manual confirmation
 - Use **Specification Mode** for planning, then Normal for execution
 - Adjust allowlist/denylist in settings
-

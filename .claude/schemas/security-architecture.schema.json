@@ -30,7 +30,13 @@
       "properties": {
         "model_type": {
           "type": "string",
-          "enum": ["zero_trust", "defense_in_depth", "least_privilege", "separation_of_duties", "hybrid"]
+          "enum": [
+            "zero_trust",
+            "defense_in_depth",
+            "least_privilege",
+            "separation_of_duties",
+            "hybrid"
+          ]
         },
         "principles": {
           "type": "array",
@@ -51,7 +57,16 @@
       "properties": {
         "mechanism": {
           "type": "string",
-          "enum": ["oauth2", "oidc", "saml", "jwt", "session_based", "mutual_tls", "api_key", "multi_factor"]
+          "enum": [
+            "oauth2",
+            "oidc",
+            "saml",
+            "jwt",
+            "session_based",
+            "mutual_tls",
+            "api_key",
+            "multi_factor"
+          ]
         },
         "protocols": {
           "type": "array",
@@ -240,7 +255,14 @@
               },
               "category": {
                 "type": "string",
-                "enum": ["spoofing", "tampering", "repudiation", "information_disclosure", "denial_of_service", "elevation_of_privilege"]
+                "enum": [
+                  "spoofing",
+                  "tampering",
+                  "repudiation",
+                  "information_disclosure",
+                  "denial_of_service",
+                  "elevation_of_privilege"
+                ]
               },
               "severity": {
                 "type": "string",
@@ -326,7 +348,13 @@
       "properties": {
         "vault_type": {
           "type": "string",
-          "enum": ["hashicorp_vault", "aws_secrets_manager", "gcp_secret_manager", "azure_key_vault", "custom"]
+          "enum": [
+            "hashicorp_vault",
+            "aws_secrets_manager",
+            "gcp_secret_manager",
+            "azure_key_vault",
+            "custom"
+          ]
         },
         "rotation_policy": {
           "type": "string"

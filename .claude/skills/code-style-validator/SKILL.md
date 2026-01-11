@@ -23,6 +23,7 @@ Code Style Validator - Programmatically validates code style using AST (Abstract
 ### Step 1: Identify Code Style Patterns
 
 Analyze the codebase to identify style patterns:
+
 - Naming conventions (camelCase, PascalCase, snake_case)
 - Indentation style (spaces vs tabs, width)
 - Import organization
@@ -47,30 +48,26 @@ const fs = require('fs');
 
 function validateTypeScriptFile(filePath) {
   const sourceCode = fs.readFileSync(filePath, 'utf8');
-  const sourceFile = ts.createSourceFile(
-    filePath,
-    sourceCode,
-    ts.ScriptTarget.Latest,
-    true
-  );
-  
+  const sourceFile = ts.createSourceFile(filePath, sourceCode, ts.ScriptTarget.Latest, true);
+
   const issues = [];
-  
+
   // Validate naming conventions
-  ts.forEachChild(sourceFile, (node) => {
+  ts.forEachChild(sourceFile, node => {
     if (ts.isFunctionDeclaration(node) && node.name) {
       if (!/^[a-z][a-zA-Z0-9]*$/.test(node.name.text)) {
         issues.push({
           line: sourceFile.getLineAndCharacterOfPosition(node.name.getStart()).line + 1,
-          message: `Function name "${node.name.text}" should be camelCase`
+          message: `Function name "${node.name.text}" should be camelCase`,
         });
       }
     }
   });
-  
+
   return issues;
 }
 ```
+
 </code_example>
 
 <code_example>
@@ -83,10 +80,10 @@ import re
 def validate_python_file(file_path):
     with open(file_path, 'r') as f:
         source_code = f.read()
-    
+
     tree = ast.parse(source_code)
     issues = []
-    
+
     for node in ast.walk(tree):
         if isinstance(node, ast.FunctionDef):
             if not re.match(r'^[a-z][a-z0-9_]*$', node.name):
@@ -94,15 +91,17 @@ def validate_python_file(file_path):
                     'line': node.lineno,
                     'message': f'Function name "{node.name}" should be snake_case'
                 })
-    
+
     return issues
 ```
+
 </code_example>
 
 <code_example>
 **Style Checks**:
 
 **Naming Conventions**:
+
 - Variables: camelCase (JS/TS) or snake_case (Python)
 - Functions: camelCase (JS/TS) or snake_case (Python)
 - Classes: PascalCase
@@ -110,31 +109,36 @@ def validate_python_file(file_path):
 - Private: prefix with underscore
 
 **Formatting**:
+
 - Indentation: 2 spaces (JS/TS) or 4 spaces (Python)
 - Line length: 88-100 characters
 - Trailing commas: Yes (JS/TS)
 - Semicolons: Consistent usage
 
 **Structure**:
+
 - Import order: external, internal, relative
 - Function length: < 50 lines
 - File organization: exports, helpers, types
-</code_example>
+  </code_example>
 
 <code_example>
 **Usage Examples**:
 
 **Validate Single File**:
+
 ```bash
 node .claude/tools/validate-code-style.js src/components/Button.tsx
 ```
 
 **Validate Directory**:
+
 ```bash
 node .claude/tools/validate-code-style.js src/components/
 ```
 
 **Output Format**:
+
 ```json
 {
   "file": "src/components/Button.tsx",
@@ -162,6 +166,7 @@ node .claude/tools/validate-code-style.js src/components/
   }
 }
 ```
+
 </code_example>
 
 <code_example>
@@ -179,6 +184,7 @@ for file in $changed_files; do
   fi
 done
 ```
+
 </code_example>
 
 <code_example>
@@ -194,6 +200,7 @@ done
       exit 1
     fi
 ```
+
 </code_example>
 </examples>
 
@@ -206,4 +213,3 @@ done
 5. **Clear Messages**: Show clear error messages with line numbers and suggestions
 </best_practices>
 </instructions>
-

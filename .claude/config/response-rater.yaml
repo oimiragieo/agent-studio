@@ -1,7 +1,7 @@
 # Response-Rater Configuration
 # Controls provider selection, timeouts, and consensus strategy for plan rating
 
-version: "1.0.0"
+version: '1.0.0'
 
 providers:
   # Provider tiers by workflow criticality
@@ -55,7 +55,7 @@ retry:
 
 # Workflow type to provider tier mapping
 workflow_mapping:
-  incident-flow: standard  # Fast response needed
+  incident-flow: standard # Fast response needed
   quick-flow: standard
   enterprise-track: enterprise
   automated-enterprise-flow: enterprise

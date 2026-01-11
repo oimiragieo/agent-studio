@@ -5,6 +5,7 @@ Welcome to Agent Studio! This guide will help you get started in 5 minutes.
 ## What is Agent Studio?
 
 Agent Studio is a drop-in configuration bundle that gives you:
+
 - **22 specialized AI agents** for different tasks
 - **13 utility skills** for code generation, validation, and more
 - **1,081+ technology rules** that auto-apply to your code
@@ -24,6 +25,7 @@ cp CLAUDE.md /path/to/your/project/
 ```
 
 **Windows PowerShell:**
+
 ```powershell
 Copy-Item -Path ".claude" -Destination "C:\path\to\your\project\.claude" -Recurse
 Copy-Item -Path "CLAUDE.md" -Destination "C:\path\to\your\project\CLAUDE.md"
@@ -32,6 +34,7 @@ Copy-Item -Path "CLAUDE.md" -Destination "C:\path\to\your\project\CLAUDE.md"
 ### Step 2: Verify Structure
 
 Your project should now have:
+
 ```
 your-project/
 ├── CLAUDE.md           # Root instructions
@@ -46,6 +49,7 @@ your-project/
 ### Step 3: Install Dependencies (Optional)
 
 For validation scripts:
+
 ```bash
 cd /path/to/your/project
 pnpm install
@@ -55,11 +59,13 @@ pnpm validate
 ### Step 4: Configure Rules
 
 Run the rule selector to auto-detect your stack:
+
 ```
 "Select rules for this project"
 ```
 
 Or use the command:
+
 ```
 /select-rules
 ```
@@ -67,11 +73,13 @@ Or use the command:
 ### Step 5: Test It Works
 
 Try a simple command:
+
 ```
 /review
 ```
 
 Or ask a question:
+
 ```
 "Help me understand how to use this tool"
 ```
@@ -79,6 +87,7 @@ Or ask a question:
 ## What to Read Next
 
 ### Essential Reading (Start Here)
+
 1. **README.md** - Overview of all features
 2. **GETTING_STARTED.md** - Detailed setup instructions
 3. **CUJ Index** (`.claude/docs/cujs/CUJ-INDEX.md`) - All 47 user journeys
@@ -86,6 +95,7 @@ Or ask a question:
 ### Key Concepts
 
 **Agents**: Specialized AI assistants for different tasks
+
 - **Planner** - Creates comprehensive plans (NEW!)
 - **Analyst** - Business analysis and research
 - **Developer** - Code implementation
@@ -93,6 +103,7 @@ Or ask a question:
 - And 20 more...
 
 **Skills**: Utility tools that work with your rules
+
 - **scaffolder** - Generate rule-compliant code
 - **rule-auditor** - Validate code compliance
 - **claude-md-generator** - Auto-generate claude.md files (NEW!)
@@ -100,6 +111,7 @@ Or ask a question:
 - And 9 more...
 
 **Workflows**: Pre-defined agent sequences
+
 - **quick-flow** - Bug fixes and small changes
 - **greenfield-fullstack** - New projects from scratch
 - **code-quality-flow** - Code review and refactoring
@@ -108,33 +120,43 @@ Or ask a question:
 ## Common First Tasks
 
 ### 1. Configure Rules for Your Stack
+
 ```
 /select-rules
 ```
+
 Auto-detects your tech stack and configures appropriate rules.
 
 ### 2. Generate a Component
+
 ```
 "Scaffold a UserProfile component"
 ```
+
 Creates rule-compliant component boilerplate.
 
 ### 3. Plan a New Feature
+
 ```
 "I want to build a user dashboard"
 ```
+
 Planner creates comprehensive plan with all steps.
 
 ### 4. Review Your Code
+
 ```
 /review
 ```
+
 Comprehensive code review with recommendations.
 
 ### 5. Audit Code Compliance
+
 ```
 /audit src/components/
 ```
+
 Validates code against your project rules.
 
 ## Understanding CUJs (Customer User Journeys)
@@ -154,20 +176,26 @@ See `.claude/docs/cujs/CUJ-INDEX.md` for the complete list.
 ## New Features in This Version
 
 ### Planner Agent
+
 A new dedicated agent for comprehensive planning:
+
 - Creates structured plans before execution
 - Coordinates with specialists (Analyst, PM, Architect)
 - Validates plan completeness
 - Tracks execution progress
 
 ### claude.md File Generation
+
 Automatic generation of claude.md files:
+
 - Developer agent creates claude.md for new modules
 - Technical Writer can generate claude.md on demand
 - claude-md-generator skill automates the process
 
 ### New Skills
+
 Five new utility skills:
+
 - **plan-generator** - Creates structured plans
 - **diagram-generator** - Generates architecture/database diagrams
 - **test-generator** - Generates test code
@@ -177,16 +205,19 @@ Five new utility skills:
 ## Troubleshooting
 
 ### Agents Not Activating
+
 1. Check `CLAUDE.md` is in project root (not inside `.claude/`)
 2. Verify `.claude/config.yaml` exists
 3. Restart Claude Code after copying files
 
 ### Rules Not Loading
+
 1. Run `/select-rules` to configure rules
 2. Check `manifest.yaml` exists in `.claude/context/`
 3. Verify rule files exist in `.claude/rules/`
 
 ### Skills Not Working
+
 1. Check skill files exist in `.claude/skills/`
 2. Verify skill syntax is correct
 3. Check skill is referenced in documentation
@@ -216,6 +247,7 @@ Five new utility skills:
 ## Success Checklist
 
 After setup, you should be able to:
+
 - [ ] Run `/select-rules` and see rules configured
 - [ ] Run `/review` and get code review
 - [ ] Scaffold a component with `/scaffold component Test`
@@ -225,6 +257,7 @@ After setup, you should be able to:
 ## What Makes This Different?
 
 Unlike other tools, Agent Studio:
+
 - ✅ **No installation** - Just copy files
 - ✅ **No build step** - Works immediately
 - ✅ **No dependencies** - Core features work without Node.js
@@ -233,4 +266,3 @@ Unlike other tools, Agent Studio:
 - ✅ **Plan-first** - Comprehensive planning before execution (NEW!)
 
 Happy coding with your AI agent team!
-

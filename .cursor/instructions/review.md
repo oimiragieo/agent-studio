@@ -21,24 +21,28 @@ Cursor's Review Mode provides structured code review workflows for agents.
 ## Review Criteria
 
 ### Code Quality
+
 - Follows project coding standards
 - Proper error handling
 - Comprehensive testing
 - Clear documentation
 
 ### Security
+
 - No exposed secrets or credentials
 - Input validation present
 - Secure authentication patterns
 - No SQL injection or XSS vulnerabilities
 
 ### Performance
+
 - No unnecessary re-renders or queries
 - Efficient algorithms and data structures
 - Proper caching strategies
 - Bundle size considerations
 
 ### Architecture
+
 - Follows established patterns
 - Proper separation of concerns
 - Maintainable code structure
@@ -47,6 +51,7 @@ Cursor's Review Mode provides structured code review workflows for agents.
 ## Integration with QA Agent
 
 QA Agent can leverage Review Mode to:
+
 - Validate test coverage
 - Check requirements traceability
 - Perform security assessments
@@ -59,4 +64,3 @@ QA Agent can leverage Review Mode to:
 - Combine with automated testing
 - Document review findings
 - Track review metrics over time
-

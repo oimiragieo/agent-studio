@@ -1,6 +1,7 @@
 # Project Constitution: {{project_name}}
 
 ## Overview
+
 This document establishes governance standards, coding conventions, and quality requirements for {{project_name}}.
 
 ## Core Principles
@@ -14,12 +15,14 @@ This document establishes governance standards, coding conventions, and quality 
 ## Technology Stack
 
 ### Frontend
+
 - **Framework**: {{frontend_framework}}
 - **Language**: {{frontend_language}}
 - **Styling**: {{styling_solution}}
 - **State Management**: {{state_management}}
 
 ### Backend
+
 - **Runtime**: {{backend_runtime}}
 - **Framework**: {{backend_framework}}
 - **Database**: {{database}}
@@ -28,6 +31,7 @@ This document establishes governance standards, coding conventions, and quality 
 ## Coding Standards
 
 ### Naming Conventions
+
 - **Variables**: camelCase
 - **Functions**: camelCase
 - **Classes**: PascalCase
@@ -35,6 +39,7 @@ This document establishes governance standards, coding conventions, and quality 
 - **Files**: kebab-case or snake_case
 
 ### Code Style
+
 - Use `const` over `let`, never use `var`
 - Prefer arrow functions
 - Use async/await over .then()
@@ -43,6 +48,7 @@ This document establishes governance standards, coding conventions, and quality 
 - Maximum file length: 300 lines
 
 ### Comments
+
 - Use JSDoc for public APIs
 - Comment "why", not "what"
 - Keep comments up to date
@@ -50,6 +56,7 @@ This document establishes governance standards, coding conventions, and quality 
 ## Git Workflow
 
 ### Branches
+
 - `main`: Production-ready code
 - `develop`: Integration branch
 - `feature/*`: New features
@@ -57,6 +64,7 @@ This document establishes governance standards, coding conventions, and quality 
 - `hotfix/*`: Production hotfixes
 
 ### Commit Messages
+
 ```
 type(scope): subject
 
@@ -68,6 +76,7 @@ footer (optional)
 Types: feat, fix, docs, style, refactor, test, chore
 
 ### Pull Requests
+
 - [ ] Descriptive title
 - [ ] Link to issue/ticket
 - [ ] Description of changes
@@ -78,11 +87,13 @@ Types: feat, fix, docs, style, refactor, test, chore
 ## Testing Standards
 
 ### Coverage Requirements
+
 - Unit Tests: 80% minimum
 - Integration Tests: Critical paths covered
 - E2E Tests: Happy paths covered
 
 ### Testing Practices
+
 - Write tests before or with code
 - Use descriptive test names
 - Follow AAA pattern (Arrange, Act, Assert)
@@ -91,12 +102,15 @@ Types: feat, fix, docs, style, refactor, test, chore
 ## Security Standards
 
 ### Authentication
+
 {{auth_standards}}
 
 ### Authorization
+
 {{authz_standards}}
 
 ### Data Protection
+
 - Encrypt sensitive data at rest
 - Use HTTPS for all connections
 - Validate and sanitize all inputs
@@ -105,17 +119,20 @@ Types: feat, fix, docs, style, refactor, test, chore
 ## Quality Gates
 
 ### Pre-Commit
+
 - [ ] Linting passes
 - [ ] Formatting applied
 - [ ] No console.log statements
 
 ### Pre-Merge
+
 - [ ] All tests pass
 - [ ] Code review approved
 - [ ] No security vulnerabilities
 - [ ] Documentation updated
 
 ### Pre-Deploy
+
 - [ ] Staging tested
 - [ ] Performance benchmarks met
 - [ ] Rollback plan documented
@@ -123,12 +140,14 @@ Types: feat, fix, docs, style, refactor, test, chore
 ## API Standards
 
 ### REST Conventions
+
 - Use plural nouns for resources
 - Use HTTP methods correctly
 - Version APIs in URL path
 - Return appropriate status codes
 
 ### Response Format
+
 ```json
 {
   "data": {},
@@ -140,11 +159,13 @@ Types: feat, fix, docs, style, refactor, test, chore
 ## Documentation Requirements
 
 ### Code Documentation
+
 - README.md for all packages
 - JSDoc for public APIs
 - Inline comments for complex logic
 
 ### System Documentation
+
 - Architecture diagrams
 - API documentation
 - Runbooks for operations
@@ -152,22 +173,24 @@ Types: feat, fix, docs, style, refactor, test, chore
 ## Error Handling
 
 ### Frontend
+
 - User-friendly error messages
 - Graceful degradation
 - Error boundaries
 
 ### Backend
+
 - Structured error responses
 - Proper logging
 - No sensitive data in errors
 
 ## Performance Standards
 
-| Metric | Target |
-|--------|--------|
-| Page Load | < 2s |
+| Metric             | Target  |
+| ------------------ | ------- |
+| Page Load          | < 2s    |
 | API Response (p95) | < 200ms |
-| Lighthouse Score | > 90 |
+| Lighthouse Score   | > 90    |
 
 ## Accessibility Standards
 
@@ -177,4 +200,5 @@ Types: feat, fix, docs, style, refactor, test, chore
 - Color contrast ratios
 
 ---
-*This constitution governs development practices for {{project_name}}.*
+
+_This constitution governs development practices for {{project_name}}._

@@ -7,6 +7,7 @@ Fix execution mode inconsistencies across 8 CUJs where the CUJ file content cont
 ## Issues Identified
 
 ### 1. CUJ-013 (Code Review)
+
 - **Issue**: Marked as `skill-only` in CUJ-INDEX.md but CUJ file has Step 0 planning (workflow mode)
 - **CUJ-INDEX.md**: Line 641: `CUJ-013 | skill-only | null | rule-auditor`
 - **CUJ File**: Lines 14-31 include Step 0 planning and Step 0.1 rating gate
@@ -14,6 +15,7 @@ Fix execution mode inconsistencies across 8 CUJs where the CUJ file content cont
 - **Fix**: Update CUJ-INDEX.md line 641 to `workflow` mode
 
 ### 2. CUJ-002 (Rule Configuration)
+
 - **Issue**: Currently `skill-only` but task description implies orchestrator delegation
 - **CUJ-INDEX.md**: Line 630: `CUJ-002 | skill-only | null | rule-selector`
 - **CUJ File**: Lines 12-16 note "skill-only" but orchestrator spawns worker agent pattern
@@ -21,6 +23,7 @@ Fix execution mode inconsistencies across 8 CUJs where the CUJ file content cont
 - **Fix**: No change needed - CUJ file correctly describes skill-only execution
 
 ### 3. CUJ-027 (Workflow Recovery)
+
 - **Issue**: Marked `skill-only` but contains Step 0 planning
 - **CUJ-INDEX.md**: Line 654: `CUJ-027 | skill-only | null | recovery`
 - **CUJ File**: Lines 17-20 have "Step 0: Recovery Initiation"
@@ -28,6 +31,7 @@ Fix execution mode inconsistencies across 8 CUJs where the CUJ file content cont
 - **Fix**: No change needed - Recovery skill handles the workflow
 
 ### 4. CUJ-044 (Agent Fallback Chain)
+
 - **Issue**: Says "no planning" then includes Step 0/0.1
 - **CUJ-INDEX.md**: Line 668: `CUJ-044 | manual-setup | null | null`
 - **CUJ File**: Lines 17-18 say "skill-only" but Lines 20-36 have Step 0 and 0.1
@@ -35,6 +39,7 @@ Fix execution mode inconsistencies across 8 CUJs where the CUJ file content cont
 - **Fix**: Update CUJ-INDEX.md line 668 to `workflow` mode
 
 ### 5. CUJ-049 (Cursor Plan Mode)
+
 - **Issue**: Has Step 0 but inconsistent with workflow guide
 - **CUJ-INDEX.md**: Line 673: `CUJ-049 | manual-setup | null | null`
 - **CUJ File**: Lines 15-21 have "Step 0: Strategic Planning" (full planning)
@@ -42,6 +47,7 @@ Fix execution mode inconsistencies across 8 CUJs where the CUJ file content cont
 - **Fix**: Update CUJ-INDEX.md line 673 to `workflow` mode
 
 ### 6. CUJ-051 (Artifact Publishing Validation)
+
 - **Issue**: Currently `workflow` but task says should be skill-based
 - **CUJ-INDEX.md**: Line 675: `CUJ-051 | workflow | .claude/workflows/brownfield-fullstack.yaml | null`
 - **CUJ File**: Lines 14-31 have full planning phase with Step 0 and 0.1
@@ -49,6 +55,7 @@ Fix execution mode inconsistencies across 8 CUJs where the CUJ file content cont
 - **Fix**: No change needed - Already correctly marked as workflow
 
 ### 7. CUJ-052 (Artifact Registry Migration)
+
 - **Issue**: Currently `skill-only` but has planning phases
 - **CUJ-INDEX.md**: Line 677: `CUJ-052 | skill-only | null | artifact-publisher`
 - **CUJ File**: Lines 15-31 have full planning phase with Step 0 and 0.1
@@ -56,6 +63,7 @@ Fix execution mode inconsistencies across 8 CUJs where the CUJ file content cont
 - **Fix**: Update CUJ-INDEX.md line 677 to `workflow` mode
 
 ### 8. CUJ-063 (Error Recovery)
+
 - **Issue**: Exists but not mapped in CUJ-INDEX.md
 - **CUJ-INDEX.md**: Not present in mapping table
 - **CUJ File**: Complete CUJ with workflow execution mode
@@ -86,6 +94,7 @@ None needed - all CUJ files are internally consistent.
 ## Validation
 
 After changes:
+
 1. CUJ file execution mode matches CUJ-INDEX.md mapping
 2. All CUJs with Step 0 planning are marked `workflow`
 3. All CUJs without planning are marked `skill-only`
@@ -93,17 +102,18 @@ After changes:
 
 ## Summary of Fixes
 
-| CUJ | Current Mode | Correct Mode | Action |
-|-----|--------------|--------------|--------|
-| CUJ-013 | skill-only | workflow | Update CUJ-INDEX.md |
-| CUJ-002 | skill-only | skill-only | No change |
-| CUJ-027 | skill-only | skill-only | No change |
-| CUJ-044 | manual-setup | workflow | Update CUJ-INDEX.md |
-| CUJ-049 | manual-setup | workflow | Update CUJ-INDEX.md |
-| CUJ-051 | workflow | workflow | No change |
-| CUJ-052 | skill-only | workflow | Update CUJ-INDEX.md |
-| CUJ-063 | (missing) | workflow | Add to CUJ-INDEX.md |
+| CUJ     | Current Mode | Correct Mode | Action              |
+| ------- | ------------ | ------------ | ------------------- |
+| CUJ-013 | skill-only   | workflow     | Update CUJ-INDEX.md |
+| CUJ-002 | skill-only   | skill-only   | No change           |
+| CUJ-027 | skill-only   | skill-only   | No change           |
+| CUJ-044 | manual-setup | workflow     | Update CUJ-INDEX.md |
+| CUJ-049 | manual-setup | workflow     | Update CUJ-INDEX.md |
+| CUJ-051 | workflow     | workflow     | No change           |
+| CUJ-052 | skill-only   | workflow     | Update CUJ-INDEX.md |
+| CUJ-063 | (missing)    | workflow     | Add to CUJ-INDEX.md |
 
 ## Total Changes
+
 - **CUJ-INDEX.md**: 5 updates (4 mode changes + 1 new entry)
 - **CUJ Files**: 0 updates (all internally consistent)

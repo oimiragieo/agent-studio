@@ -3,6 +3,7 @@
 ## Problem Statement
 
 With 34 agents passing metadata between each other in multi-agent orchestration, we risk:
+
 - **Context poisoning** from accumulated metadata
 - **Token limit exhaustion** in long agent chains
 - **State drift** from redundant/stale information
@@ -11,6 +12,7 @@ With 34 agents passing metadata between each other in multi-agent orchestration,
 ## Solution Architecture
 
 The State Management system provides:
+
 1. **State Manager Tool**: Compressed state management with automatic pruning
 2. **Context Compressor Agent**: Intelligent compression when automatic rules insufficient
 3. **Context Budgets**: Per-agent-type budgets (opus: 16KB, sonnet: 12KB, haiku: 6KB)
@@ -37,6 +39,7 @@ graph TD
 ### 1. State Manager Tool (`.claude/tools/state-manager.mjs`)
 
 **Core Features**:
+
 - Initialize run state with workflow and goal
 - Update state with decisions, artifacts, agent assignments
 - Automatic compression when state exceeds 10KB
@@ -51,6 +54,7 @@ graph TD
 | haiku | 6KB | technical-writer |
 
 **Compression Thresholds**:
+
 - `maxStateSize`: 10KB triggers auto-compression
 - `maxHandoffs`: Keep last 5 handoffs only
 - `maxAgentOutput`: 2KB max per agent output
@@ -78,6 +82,7 @@ node state-manager.mjs stats --run-id run-001 --json
 ### 2. Context Compressor Agent (`.claude/agents/context-compressor.md`)
 
 **When Invoked**:
+
 - State exceeds 10KB and auto-compression insufficient
 - Handoff to haiku agent requires aggressive compression (70% target)
 - Manual compression requested with `--intelligent` flag
@@ -85,6 +90,7 @@ node state-manager.mjs stats --run-id run-001 --json
 **Compression Strategy**:
 
 **MUST Preserve**:
+
 - Current goal and active task
 - Blocking issues and errors
 - Key decisions with rationale
@@ -93,12 +99,14 @@ node state-manager.mjs stats --run-id run-001 --json
 - Active agent assignments
 
 **CAN Compress**:
+
 - Detailed reasoning → 1-2 sentence summary
 - Step-by-step logs → outcome summary
 - Verbose tool outputs → key results only
 - Historical context → rolling summary
 
 **MUST Remove**:
+
 - Duplicate information
 - Superseded decisions
 - Completed task details (keep outcome only)
@@ -108,11 +116,13 @@ node state-manager.mjs stats --run-id run-001 --json
 **Example Compression**:
 
 Before (847 tokens):
+
 ```
 The architect agent completed the system design phase. After analyzing the requirements document which contained 15 user stories across 3 epics, I identified the following architectural components that will be needed: 1) A React frontend using Next.js 14 with App Router for server-side rendering capabilities, 2) A Node.js backend API using Express.js with TypeScript for type safety, 3) A PostgreSQL database for persistent storage with Prisma ORM, 4) Redis for caching frequently accessed data. The decision to use Next.js was based on the requirement for SEO optimization mentioned in user story US-003. The decision to use PostgreSQL over MongoDB was based on the relational nature of the data model identified in the ERD. I created the following artifacts: architecture-diagram.md, database-schema.sql, api-contracts.yaml. There was one blocker identified: the authentication strategy needs clarification from the product owner - specifically whether to use OAuth2 with social providers or a custom JWT implementation. I recommend we proceed with the database schema design while waiting for authentication clarification.
 ```
 
 After (127 tokens):
+
 ```
 Architect completed system design. Stack: Next.js 14 + Express/TS + PostgreSQL/Prisma + Redis. Artifacts: architecture-diagram.md, database-schema.sql, api-contracts.yaml. BLOCKER: Auth strategy unclear (OAuth2 vs custom JWT) - needs PO input. Recommendation: Proceed with DB schema while awaiting auth decision.
 ```
@@ -122,17 +132,14 @@ Compression ratio: 85% (847 → 127 tokens)
 ### 3. Run State Schema (`.claude/schemas/run-state.schema.json`)
 
 **Schema Structure**:
+
 ```json
 {
   "run_id": "run-001",
   "workflow": "quick-flow",
   "current_step": 3,
   "goal": "Fix authentication bug in login flow",
-  "decisions": [
-    "Use Redis caching",
-    "Implement OAuth2",
-    "Deploy to staging first"
-  ],
+  "decisions": ["Use Redis caching", "Implement OAuth2", "Deploy to staging first"],
   "artifacts": [
     {
       "name": "plan-run-001.json",
@@ -171,8 +178,8 @@ manager.update({
   decision: 'Use OAuth2 authentication',
   artifact: {
     name: 'architecture.md',
-    path: '.claude/context/artifacts/architecture.md'
-  }
+    path: '.claude/context/artifacts/architecture.md',
+  },
 });
 
 // 3. Handoff between agents
@@ -185,7 +192,7 @@ const compressedState = manager.handoff(
 // 4. Pass compressed state to next agent
 await delegateToAgent('developer', {
   task: 'Implement OAuth2 authentication',
-  state: compressedState
+  state: compressedState,
 });
 
 // 5. Monitor state size
@@ -229,6 +236,7 @@ sequenceDiagram
 **Goal**: Extract decision + rationale only, remove verbose explanation
 
 **Example**:
+
 - **Before**: "After careful analysis of performance requirements and scalability needs, we decided to use Redis for caching because it provides sub-millisecond latency and supports 100k+ ops/sec which meets our SLA of 99.9% uptime."
 - **After**: "Decision: Redis caching (meets latency SLA)"
 
@@ -237,6 +245,7 @@ sequenceDiagram
 **Goal**: Keep artifact names and paths, remove sizes and metadata
 
 **Example**:
+
 - **Before**: "Created architecture-diagram.md (15KB), database-schema.sql (8KB), api-contracts.yaml (12KB)"
 - **After**: "Artifacts: architecture-diagram.md, database-schema.sql, api-contracts.yaml"
 
@@ -245,6 +254,7 @@ sequenceDiagram
 **Goal**: Keep blocker description, severity, and impact; remove verbose context
 
 **Example**:
+
 - **Before**: "There is a critical blocker preventing us from moving forward with the authentication implementation. The product owner needs to decide whether we should implement OAuth2 with social providers (Google, GitHub, Facebook) or build a custom JWT-based authentication system. This decision impacts the database schema, frontend components, and security architecture."
 - **After**: "BLOCKER (critical): Auth strategy unclear (OAuth2 vs custom JWT) - blocks DB schema, frontend, security"
 
@@ -253,6 +263,7 @@ sequenceDiagram
 **Goal**: Keep only last 3-5 steps, summarize earlier steps
 
 **Example**:
+
 - **Before**: "Step 1: Analyst created requirements. Step 2: Architect designed system. Step 3: Developer implemented backend. Step 4: QA tested features. Step 5: DevOps deployed."
 - **After**: "[5 steps completed] Current: DevOps deployment"
 
@@ -265,6 +276,7 @@ node state-manager.mjs stats --run-id run-001 --json
 ```
 
 **Output**:
+
 ```json
 {
   "run_id": "run-001",
@@ -298,6 +310,7 @@ node state-manager.mjs stats --run-id run-001 --json
 ### Compression Effectiveness
 
 Track compression metrics:
+
 - **Compression Count**: Number of times state was compressed
 - **Bytes Saved**: Total bytes removed through compression
 - **Compression Ratio**: Average compression ratio (1 - new_size / original_size)
@@ -305,6 +318,7 @@ Track compression metrics:
 ### Handoff Statistics
 
 Monitor handoff patterns:
+
 - **Total Handoffs**: Number of agent transitions
 - **Handoff Files**: Number of handoff records (windowed to last 5)
 - **Active Agents**: Currently active agents (last 3)
@@ -316,6 +330,7 @@ Monitor handoff patterns:
 **Symptoms**: Even after auto-compression and intelligent compression, state size still exceeds agent budget
 
 **Solutions**:
+
 1. Reduce `maxHistoryChars` threshold (default: 2000)
 2. Reduce `maxHandoffs` window (default: 5)
 3. Reduce `maxAgentOutput` limit (default: 2048)
@@ -326,6 +341,7 @@ Monitor handoff patterns:
 **Symptoms**: Downstream agents missing critical context after compression
 
 **Solutions**:
+
 1. Add keywords to `preserve` list in compression request
 2. Review Context Compressor's `MUST Preserve` rules
 3. Increase context budget for critical agent types
@@ -336,6 +352,7 @@ Monitor handoff patterns:
 **Symptoms**: Many handoff files in `.claude/context/runs/{run_id}/handoffs/`
 
 **Solutions**:
+
 1. Reduce `maxHandoffs` window (default: 5)
 2. Manually trigger `prune()` to clean up old handoffs
 3. Review handoff frequency (may indicate over-coordination)

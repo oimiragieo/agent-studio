@@ -20,17 +20,17 @@ async function generateReport() {
 
   const matrixPath = join(__dirname, 'agent-routing-matrix.json');
   const triggersPath = join(__dirname, 'cross-cutting-triggers.json');
-  
+
   const matrix = JSON.parse(await readFile(matrixPath, 'utf-8'));
   const triggers = JSON.parse(await readFile(triggersPath, 'utf-8'));
 
   // 1. TASK TYPE INVENTORY
   console.log('\n1. TASK TYPE INVENTORY');
   console.log('---------------------------------------------------------------------');
-  
+
   const classifierTypes = Object.keys(TASK_TYPE_INDICATORS);
   const matrixTypes = Object.keys(matrix.taskTypes);
-  
+
   console.log('\nClassifier Task Types (' + classifierTypes.length + '):');
   for (const type of classifierTypes) {
     const inMatrix = matrixTypes.includes(type);
@@ -49,9 +49,15 @@ async function generateReport() {
 
   const agentAppearances = {};
   for (const [type, config] of Object.entries(matrix.taskTypes)) {
-    const agents = [config.primary, ...config.supporting, ...config.review, ...config.approval].filter(Boolean);
+    const agents = [
+      config.primary,
+      ...config.supporting,
+      ...config.review,
+      ...config.approval,
+    ].filter(Boolean);
     for (const agent of agents) {
-      if (!agentAppearances[agent]) agentAppearances[agent] = { primary: 0, supporting: 0, review: 0, approval: 0, total: 0 };
+      if (!agentAppearances[agent])
+        agentAppearances[agent] = { primary: 0, supporting: 0, review: 0, approval: 0, total: 0 };
       if (agent === config.primary) agentAppearances[agent].primary++;
       if (config.supporting.includes(agent)) agentAppearances[agent].supporting++;
       if (config.review.includes(agent)) agentAppearances[agent].review++;
@@ -61,16 +67,49 @@ async function generateReport() {
   }
 
   console.log('\nAgent Coverage (' + Object.keys(agentAppearances).length + ' agents):');
-  for (const [agent, counts] of Object.entries(agentAppearances).sort((a, b) => b[1].total - a[1].total)) {
-    console.log('  ' + agent + ': ' + counts.total + ' appearances (P:' + counts.primary + ' S:' + counts.supporting + ' R:' + counts.review + ' A:' + counts.approval + ')');
+  for (const [agent, counts] of Object.entries(agentAppearances).sort(
+    (a, b) => b[1].total - a[1].total
+  )) {
+    console.log(
+      '  ' +
+        agent +
+        ': ' +
+        counts.total +
+        ' appearances (P:' +
+        counts.primary +
+        ' S:' +
+        counts.supporting +
+        ' R:' +
+        counts.review +
+        ' A:' +
+        counts.approval +
+        ')'
+    );
   }
 
   const expectedAgents = [
-    'orchestrator', 'model-orchestrator', 'analyst', 'pm', 'architect',
-    'database-architect', 'developer', 'qa', 'ux-expert', 'security-architect',
-    'devops', 'technical-writer', 'code-reviewer', 'refactoring-specialist',
-    'performance-engineer', 'llm-architect', 'api-designer', 'legacy-modernizer',
-    'mobile-developer', 'accessibility-expert', 'compliance-auditor', 'incident-responder'
+    'orchestrator',
+    'model-orchestrator',
+    'analyst',
+    'pm',
+    'architect',
+    'database-architect',
+    'developer',
+    'qa',
+    'ux-expert',
+    'security-architect',
+    'devops',
+    'technical-writer',
+    'code-reviewer',
+    'refactoring-specialist',
+    'performance-engineer',
+    'llm-architect',
+    'api-designer',
+    'legacy-modernizer',
+    'mobile-developer',
+    'accessibility-expert',
+    'compliance-auditor',
+    'incident-responder',
   ];
 
   let covered = 0;
@@ -90,7 +129,9 @@ async function generateReport() {
 
   console.log('\nTriggers (' + Object.keys(triggers.triggers).length + '):');
   for (const [agent, config] of Object.entries(triggers.triggers)) {
-    console.log('  ' + agent + ' (' + config.triggerLevel + '): ' + config.keywords.length + ' keywords');
+    console.log(
+      '  ' + agent + ' (' + config.triggerLevel + '): ' + config.keywords.length + ' keywords'
+    );
   }
 
   // 4. SAMPLE ROUTING
@@ -102,7 +143,7 @@ async function generateReport() {
     'Implement user authentication',
     'Optimize database query',
     'Set up CI/CD pipeline',
-    'Fix production outage'
+    'Fix production outage',
   ];
 
   for (const task of sampleTasks) {
@@ -120,7 +161,7 @@ async function generateReport() {
   console.log('\n\n=====================================================================');
   console.log('                           SUMMARY');
   console.log('=====================================================================');
-  
+
   console.log('\n  Task Types: ' + matrixTypes.length);
   console.log('  Unique Agents: ' + Object.keys(agentAppearances).length);
   console.log('  Cross-cutting Triggers: ' + Object.keys(triggers.triggers).length);

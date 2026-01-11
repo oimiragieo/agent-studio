@@ -6,7 +6,7 @@ project_type: enterprise
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -29,41 +29,41 @@ fallback_agents:
 # NOTE: trigger_keywords here are for documentation only.
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 trigger_keywords:
-  - "automated workflow"
-  - "enterprise automation"
-  - "plan implement debug fix"
-  - "automated development"
-  - "continuous development"
-  - "shift-work"
+  - 'automated workflow'
+  - 'enterprise automation'
+  - 'plan implement debug fix'
+  - 'automated development'
+  - 'continuous development'
+  - 'shift-work'
 
 # Workflow inputs
 inputs:
   project_name:
     type: string
-    description: "Project name for workflow execution"
+    description: 'Project name for workflow execution'
     required: true
   plan_file:
     type: string
-    description: "Path to plan file (optional, will create if not provided)"
+    description: 'Path to plan file (optional, will create if not provided)'
     required: false
   max_iterations:
     type: number
-    description: "Maximum iterations for plan → implement → debug → fix cycle (default: 10)"
+    description: 'Maximum iterations for plan → implement → debug → fix cycle (default: 10)'
     required: false
     default: 10
   validators:
     type: array
-    description: "List of validators to use (default: cursor,gemini,codex)"
+    description: 'List of validators to use (default: cursor,gemini,codex)'
     required: false
-    default: ["cursor", "gemini", "codex"]
+    default: ['cursor', 'gemini', 'codex']
   auto_fix:
     type: boolean
-    description: "Enable automatic fixing of issues (default: true)"
+    description: 'Enable automatic fixing of issues (default: true)'
     required: false
     default: true
   spawn_cursor:
     type: boolean
-    description: "Spawn new Cursor window on handoff (default: false)"
+    description: 'Spawn new Cursor window on handoff (default: false)'
     required: false
     default: false
 
@@ -73,7 +73,7 @@ context_dir: .claude/context/automated-enterprise/{{workflow_id}}
 steps:
   # Phase 0: Planning
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - project_name
@@ -94,7 +94,7 @@ steps:
       - Create phase-based structure
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -119,7 +119,7 @@ steps:
 
   # Phase 1: Implementation
   - step: 1
-    name: "Implementation Phase"
+    name: 'Implementation Phase'
     agent: orchestrator
     tool: workflow-automator
     inputs:
@@ -145,7 +145,7 @@ steps:
 
   # Phase 2: Validation
   - step: 2
-    name: "Multi-AI Validation"
+    name: 'Multi-AI Validation'
     agent: model-orchestrator
     tool: multi-ai-validator
     inputs:
@@ -170,9 +170,9 @@ steps:
 
   # Phase 3: Fix
   - step: 3
-    name: "Fix Phase"
+    name: 'Fix Phase'
     agent: orchestrator
-    condition: "validation-report.consensus_issues.length > 0"
+    condition: 'validation-report.consensus_issues.length > 0'
     inputs:
       - validation-report.json (from step 2)
       - consensus-issues.json (from step 2)
@@ -194,10 +194,10 @@ steps:
 
   # Phase 4: Re-validation
   - step: 4
-    name: "Re-validation"
+    name: 'Re-validation'
     agent: model-orchestrator
     tool: multi-ai-validator
-    condition: "fix-results.fixes_applied.length > 0"
+    condition: 'fix-results.fixes_applied.length > 0'
     inputs:
       - fix-results.json (from step 3)
       - project_name
@@ -216,7 +216,7 @@ steps:
       - Generate final status report
 
   - step: 4.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"
@@ -230,17 +230,17 @@ steps:
 # Iteration configuration
 iteration:
   enabled: true
-  max_iterations: "{{max_iterations}}"
-  loop_back_step: 1  # Loop back to Implementation Phase
+  max_iterations: '{{max_iterations}}'
+  loop_back_step: 1 # Loop back to Implementation Phase
   condition:
-    type: "and"
+    type: 'and'
     checks:
-      - field: "final_status.consensus_issues"
-        operator: ">"
+      - field: 'final_status.consensus_issues'
+        operator: '>'
         value: 0
-      - field: "iteration_count"
-        operator: "<"
-        value: "{{max_iterations}}"
+      - field: 'iteration_count'
+        operator: '<'
+        value: '{{max_iterations}}'
   context_preservation:
     - plan-{{workflow_id}}.json
     - implementation-results.json
@@ -251,10 +251,10 @@ iteration:
 
 # Context monitoring and handoff
 context_management:
-  monitor_threshold: 0.7  # 70% context usage triggers alert
-  handoff_threshold: 0.9  # 90% context usage triggers handoff
+  monitor_threshold: 0.7 # 70% context usage triggers alert
+  handoff_threshold: 0.9 # 90% context usage triggers handoff
   handoff_tool: orchestrator-handoff
-  spawn_cursor: "{{spawn_cursor}}"
+  spawn_cursor: '{{spawn_cursor}}'
   handoff_package:
     include_plans: true
     include_artifacts: true
@@ -287,12 +287,12 @@ integrations:
   workflow_automator:
     tool: workflow-automator
     enabled: true
-    auto_fix: "{{auto_fix}}"
-    max_iterations: "{{max_iterations}}"
+    auto_fix: '{{auto_fix}}'
+    max_iterations: '{{max_iterations}}'
   multi_ai_validator:
     tool: multi-ai-validator
     enabled: true
-    validators: "{{validators}}"
+    validators: '{{validators}}'
   context_monitor:
     tool: context-monitor
     enabled: true
@@ -300,4 +300,4 @@ integrations:
   orchestrator_handoff:
     tool: orchestrator-handoff
     enabled: true
-    spawn_cursor: "{{spawn_cursor}}"
+    spawn_cursor: '{{spawn_cursor}}'

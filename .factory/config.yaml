@@ -5,195 +5,195 @@
 # Global Tool Registry (matches .claude/config.yaml mcp_registry)
 tool_registry:
   active_tools:
-    - name: "Git"
-      description: "Version control, diffs, commits, and history"
-    - name: "GitHub"
-      description: "PRs, Issues, and Repository management"
-    - name: "Linear"
-      description: "Task and project management"
-    - name: "Slack"
-      description: "Team notifications"
-    - name: "Confluence"
-      description: "Documentation integration"
+    - name: 'Git'
+      description: 'Version control, diffs, commits, and history'
+    - name: 'GitHub'
+      description: 'PRs, Issues, and Repository management'
+    - name: 'Linear'
+      description: 'Task and project management'
+    - name: 'Slack'
+      description: 'Team notifications'
+    - name: 'Confluence'
+      description: 'Documentation integration'
 
 # Droid Routing Configuration (matches agent_routing)
 droid_routing:
   planner:
     trigger_words:
-      - "plan"
-      - "create a plan"
-      - "roadmap"
-      - "strategy"
+      - 'plan'
+      - 'create a plan'
+      - 'roadmap'
+      - 'strategy'
     complexity: high
     model: claude-sonnet-4
     temperature: 0.5
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   analyst:
     trigger_words:
-      - "market research"
-      - "competitive analysis"
-      - "project brief"
-      - "requirements gathering"
-      - "discovery"
+      - 'market research'
+      - 'competitive analysis'
+      - 'project brief'
+      - 'requirements gathering'
+      - 'discovery'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.7
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   pm:
     trigger_words:
-      - "prd"
-      - "product requirements"
-      - "user stories"
-      - "backlog"
-      - "sprint planning"
+      - 'prd'
+      - 'product requirements'
+      - 'user stories'
+      - 'backlog'
+      - 'sprint planning'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.7
     context_files:
       - .factory/rules/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   architect:
     trigger_words:
-      - "architecture"
-      - "system design"
-      - "technology stack"
-      - "api design"
-      - "infrastructure"
+      - 'architecture'
+      - 'system design'
+      - 'technology stack'
+      - 'api design'
+      - 'infrastructure'
     complexity: high
     model: claude-sonnet-4
     temperature: 0.5
     context_files:
       - .factory/rules/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   database-architect:
     trigger_words:
-      - "database"
-      - "schema"
-      - "data modeling"
-      - "query optimization"
-      - "migration"
+      - 'database'
+      - 'schema'
+      - 'data modeling'
+      - 'query optimization'
+      - 'migration'
     complexity: high
     model: claude-sonnet-4
     temperature: 0.5
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   developer:
     trigger_words:
-      - "implement"
-      - "code"
-      - "development"
-      - "debug"
-      - "refactor"
-      - "feature"
+      - 'implement'
+      - 'code'
+      - 'development'
+      - 'debug'
+      - 'refactor'
+      - 'feature'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.3
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   qa:
     trigger_words:
-      - "test"
-      - "quality"
-      - "testing"
-      - "test plan"
-      - "qa"
+      - 'test'
+      - 'quality'
+      - 'testing'
+      - 'test plan'
+      - 'qa'
     complexity: high
     model: claude-sonnet-4
     temperature: 0.4
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   ux-expert:
     trigger_words:
-      - "ux"
-      - "ui"
-      - "design"
-      - "wireframe"
-      - "user experience"
+      - 'ux'
+      - 'ui'
+      - 'design'
+      - 'wireframe'
+      - 'user experience'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.7
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   devops:
     trigger_words:
-      - "infrastructure"
-      - "deployment"
-      - "ci/cd"
-      - "kubernetes"
-      - "docker"
+      - 'infrastructure'
+      - 'deployment'
+      - 'ci/cd'
+      - 'kubernetes'
+      - 'docker'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.4
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   security-architect:
     trigger_words:
-      - "security"
-      - "authentication"
-      - "authorization"
-      - "compliance"
+      - 'security'
+      - 'authentication'
+      - 'authorization'
+      - 'compliance'
     complexity: high
     model: claude-sonnet-4
     temperature: 0.4
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   code-reviewer:
     trigger_words:
-      - "code review"
-      - "review this"
-      - "pr review"
+      - 'code review'
+      - 'review this'
+      - 'pr review'
     complexity: high
     model: claude-sonnet-4
     temperature: 0.3
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   performance-engineer:
     trigger_words:
-      - "performance"
-      - "optimize"
-      - "profiling"
-      - "benchmark"
+      - 'performance'
+      - 'optimize'
+      - 'profiling'
+      - 'benchmark'
     complexity: high
     model: claude-sonnet-4
     temperature: 0.4
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   llm-architect:
     trigger_words:
-      - "ai system"
-      - "llm"
-      - "prompt engineering"
-      - "rag"
-      - "embeddings"
+      - 'ai system'
+      - 'llm'
+      - 'prompt engineering'
+      - 'rag'
+      - 'embeddings'
     complexity: high
     model: claude-sonnet-4
     temperature: 0.6
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
   incident-responder:
     trigger_words:
-      - "incident"
-      - "outage"
-      - "production issue"
-      - "emergency"
-      - "post-mortem"
+      - 'incident'
+      - 'outage'
+      - 'production issue'
+      - 'emergency'
+      - 'post-mortem'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.2
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 
 # Workflow Selection Configuration
 workflow_selection:
   specification:
     priority: 1
     keywords:
-      - "specification"
-      - "spec mode"
-      - "requirements"
+      - 'specification'
+      - 'spec mode'
+      - 'requirements'
     workflow_file: .factory/workflows/specification.yaml
     droids_sequence:
       - planner
@@ -204,10 +204,10 @@ workflow_selection:
   auto_run:
     priority: 2
     keywords:
-      - "implement"
-      - "auto"
-      - "build"
-      - "develop"
+      - 'implement'
+      - 'auto'
+      - 'build'
+      - 'develop'
     workflow_file: .factory/workflows/auto-run.yaml
     droids_sequence:
       - planner
@@ -215,11 +215,11 @@ workflow_selection:
       - qa
 
   incident:
-    priority: 0  # Highest priority
+    priority: 0 # Highest priority
     keywords:
-      - "incident"
-      - "outage"
-      - "emergency"
+      - 'incident'
+      - 'outage'
+      - 'emergency'
     workflow_file: .factory/workflows/incident.yaml
     droids_sequence:
       - incident-responder
@@ -248,7 +248,7 @@ context_bridge:
   platforms:
     - claude
     - cursor
-  artifact_format: "json"
+  artifact_format: 'json'
 
 # Quality Gates Configuration
 quality_gates:

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * BMAD (Business Model Artifact Document) Renderer
- * 
+ *
  * Converts JSON artifacts to human-readable markdown format.
  * Supports: project-brief, prd, ux-spec, test-plan, architecture
- * 
+ *
  * Usage:
  *   node bmad-render.mjs <artifact-type> <json-file-path>
- * 
+ *
  * Example:
  *   node bmad-render.mjs project-brief .claude/context/artifacts/project-brief.json
  */
@@ -71,19 +71,19 @@ function formatObject(obj, indent = 0) {
 // Render functions for each artifact type
 function renderProjectBrief(data) {
   let md = `# ${data.project_name || 'Project Brief'}\n\n`;
-  
+
   if (data.executive_summary) {
     md += `## Executive Summary\n\n${data.executive_summary}\n\n`;
   }
-  
+
   if (data.problem_statement) {
     md += `## Problem Statement\n\n${data.problem_statement}\n\n`;
   }
-  
+
   if (data.solution_overview) {
     md += `## Solution Overview\n\n${data.solution_overview}\n\n`;
   }
-  
+
   if (data.market_context) {
     md += `## Market Context\n\n`;
     if (data.market_context.target_audience) {
@@ -96,11 +96,11 @@ function renderProjectBrief(data) {
       md += `### Market Opportunity\n\n${data.market_context.market_opportunity}\n\n`;
     }
   }
-  
+
   if (data.success_metrics && data.success_metrics.length > 0) {
     md += `## Success Metrics\n\n${formatList(data.success_metrics)}\n\n`;
   }
-  
+
   if (data.risks && data.risks.length > 0) {
     md += `## Risks\n\n`;
     data.risks.forEach(risk => {
@@ -111,41 +111,41 @@ function renderProjectBrief(data) {
       md += '\n';
     });
   }
-  
+
   if (data.technical_considerations) {
     md += `## Technical Considerations\n\n${data.technical_considerations}\n\n`;
   }
-  
+
   if (data.recommendations && data.recommendations.length > 0) {
     md += `## Recommendations\n\n${formatList(data.recommendations)}\n\n`;
   }
-  
+
   if (data.next_steps && data.next_steps.length > 0) {
     md += `## Next Steps\n\n${formatList(data.next_steps)}\n\n`;
   }
-  
+
   if (data.timeline) {
     md += `## Timeline\n\n${data.timeline}\n\n`;
   }
-  
+
   if (data.stakeholders && data.stakeholders.length > 0) {
     md += `## Stakeholders\n\n${formatList(data.stakeholders)}\n\n`;
   }
-  
+
   return md;
 }
 
 function renderPRD(data) {
   let md = `# ${data.product_name || 'Product Requirements Document'}\n\n`;
-  
+
   if (data.overview) {
     md += `## Overview\n\n${data.overview}\n\n`;
   }
-  
+
   if (data.goals_objectives && data.goals_objectives.length > 0) {
     md += `## Goals & Objectives\n\n${formatList(data.goals_objectives)}\n\n`;
   }
-  
+
   if (data.target_users && data.target_users.length > 0) {
     md += `## Target Users\n\n`;
     data.target_users.forEach(user => {
@@ -155,7 +155,7 @@ function renderPRD(data) {
       }
     });
   }
-  
+
   if (data.user_stories && data.user_stories.length > 0) {
     md += `## User Stories\n\n`;
     data.user_stories.forEach(story => {
@@ -168,7 +168,7 @@ function renderPRD(data) {
       }
     });
   }
-  
+
   if (data.features && data.features.length > 0) {
     md += `## Features\n\n`;
     data.features.forEach(feature => {
@@ -181,11 +181,11 @@ function renderPRD(data) {
       }
     });
   }
-  
+
   if (data.technical_requirements && data.technical_requirements.length > 0) {
     md += `## Technical Requirements\n\n${formatList(data.technical_requirements)}\n\n`;
   }
-  
+
   if (data.success_metrics && data.success_metrics.length > 0) {
     md += `## Success Metrics\n\n`;
     data.success_metrics.forEach(metric => {
@@ -197,25 +197,25 @@ function renderPRD(data) {
     });
     md += '\n';
   }
-  
+
   if (data.prioritization) {
     md += `## Prioritization\n\n${data.prioritization}\n\n`;
   }
-  
+
   return md;
 }
 
 function renderUXSpec(data) {
   let md = `# ${data.feature_name || 'UX Specification'}\n\n`;
-  
+
   if (data.overview) {
     md += `## Overview\n\n${data.overview}\n\n`;
   }
-  
+
   if (data.design_goals && data.design_goals.length > 0) {
     md += `## Design Goals\n\n${formatList(data.design_goals)}\n\n`;
   }
-  
+
   if (data.user_personas && data.user_personas.length > 0) {
     md += `## User Personas\n\n`;
     data.user_personas.forEach(persona => {
@@ -228,7 +228,7 @@ function renderUXSpec(data) {
       }
     });
   }
-  
+
   if (data.user_flows && data.user_flows.length > 0) {
     md += `## User Flows\n\n`;
     data.user_flows.forEach(flow => {
@@ -241,7 +241,7 @@ function renderUXSpec(data) {
       }
     });
   }
-  
+
   if (data.design_system) {
     md += `## Design System\n\n`;
     if (data.design_system.colors) {
@@ -254,11 +254,11 @@ function renderUXSpec(data) {
       md += `### Components\n\n${formatList(data.design_system.components)}\n\n`;
     }
   }
-  
+
   if (data.accessibility_requirements && data.accessibility_requirements.length > 0) {
     md += `## Accessibility Requirements\n\n${formatList(data.accessibility_requirements)}\n\n`;
   }
-  
+
   if (data.responsive_design) {
     md += `## Responsive Design\n\n`;
     if (data.responsive_design.breakpoints && data.responsive_design.breakpoints.length > 0) {
@@ -268,21 +268,21 @@ function renderUXSpec(data) {
       md += `**Mobile First**: ${data.responsive_design.mobile_first ? 'Yes' : 'No'}\n\n`;
     }
   }
-  
+
   return md;
 }
 
 function renderTestPlan(data) {
   let md = `# ${data.feature_name || 'Test Plan'}\n\n`;
-  
+
   if (data.overview) {
     md += `## Overview\n\n${data.overview}\n\n`;
   }
-  
+
   if (data.test_strategy) {
     md += `## Test Strategy\n\n${data.test_strategy}\n\n`;
   }
-  
+
   if (data.test_levels) {
     md += `## Test Levels\n\n`;
     if (data.test_levels.unit && data.test_levels.unit.length > 0) {
@@ -309,7 +309,7 @@ function renderTestPlan(data) {
       });
     }
   }
-  
+
   if (data.test_scenarios && data.test_scenarios.length > 0) {
     md += `## Test Scenarios\n\n`;
     data.test_scenarios.forEach(scenario => {
@@ -320,11 +320,11 @@ function renderTestPlan(data) {
       if (scenario.priority) md += `**Priority**: ${scenario.priority}\n\n`;
     });
   }
-  
+
   if (data.test_data_requirements && data.test_data_requirements.length > 0) {
     md += `## Test Data Requirements\n\n${formatList(data.test_data_requirements)}\n\n`;
   }
-  
+
   if (data.quality_gates) {
     md += `## Quality Gates\n\n`;
     if (data.quality_gates.coverage_threshold) {
@@ -335,21 +335,21 @@ function renderTestPlan(data) {
     }
     md += '\n';
   }
-  
+
   return md;
 }
 
 function renderArchitecture(data) {
   let md = `# ${data.system_name || 'System Architecture'}\n\n`;
-  
+
   if (data.overview) {
     md += `## Overview\n\n${data.overview}\n\n`;
   }
-  
+
   if (data.architecture_principles && data.architecture_principles.length > 0) {
     md += `## Architecture Principles\n\n${formatList(data.architecture_principles)}\n\n`;
   }
-  
+
   if (data.technology_stack) {
     md += `## Technology Stack\n\n`;
     if (data.technology_stack.frontend && data.technology_stack.frontend.length > 0) {
@@ -365,11 +365,11 @@ function renderArchitecture(data) {
       md += `### Infrastructure\n\n${formatList(data.technology_stack.infrastructure)}\n\n`;
     }
   }
-  
+
   if (data.component_architecture) {
     md += `## Component Architecture\n\n${formatObject(data.component_architecture)}\n\n`;
   }
-  
+
   if (data.database_design) {
     md += `## Database Design\n\n`;
     if (data.database_design.schema) {
@@ -382,7 +382,7 @@ function renderArchitecture(data) {
       });
     }
   }
-  
+
   if (data.api_design) {
     md += `## API Design\n\n`;
     if (data.api_design.endpoints && data.api_design.endpoints.length > 0) {
@@ -398,19 +398,19 @@ function renderArchitecture(data) {
       md += `### Authentication\n\n${data.api_design.authentication}\n\n`;
     }
   }
-  
+
   if (data.security_architecture) {
     md += `## Security Architecture\n\n${formatObject(data.security_architecture)}\n\n`;
   }
-  
+
   if (data.deployment_architecture) {
     md += `## Deployment Architecture\n\n${formatObject(data.deployment_architecture)}\n\n`;
   }
-  
+
   if (data.integration_patterns && data.integration_patterns.length > 0) {
     md += `## Integration Patterns\n\n${formatList(data.integration_patterns)}\n\n`;
   }
-  
+
   return md;
 }
 
@@ -440,4 +440,3 @@ switch (artifactType) {
 
 // Output markdown to stdout
 console.log(output);
-

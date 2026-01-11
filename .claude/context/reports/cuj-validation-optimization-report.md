@@ -12,11 +12,11 @@ Successfully optimized CUJ validation script, achieving **50-100x performance im
 
 ### Performance Results
 
-| Mode | Before | After | Improvement |
-|------|--------|-------|-------------|
-| **Full validation** | 5-10s | 0.10s | **50-100x faster** |
-| **Quick mode** | N/A | 0.10s | Skip link checks |
-| **Watch mode** | N/A | <0.1s/file | Incremental validation |
+| Mode                | Before | After      | Improvement            |
+| ------------------- | ------ | ---------- | ---------------------- |
+| **Full validation** | 5-10s  | 0.10s      | **50-100x faster**     |
+| **Quick mode**      | N/A    | 0.10s      | Skip link checks       |
+| **Watch mode**      | N/A    | <0.1s/file | Incremental validation |
 
 ---
 
@@ -25,6 +25,7 @@ Successfully optimized CUJ validation script, achieving **50-100x performance im
 ### 1. Parallel File Processing
 
 **Before** (Sequential):
+
 ```javascript
 for (const file of cujFiles) {
   const content = await fs.readFile(file);
@@ -33,10 +34,9 @@ for (const file of cujFiles) {
 ```
 
 **After** (Parallel):
+
 ```javascript
-const results = await Promise.all(
-  cujFiles.map(file => validateCUJ(file))
-);
+const results = await Promise.all(cujFiles.map(file => validateCUJ(file)));
 ```
 
 **Impact**: All 60 CUJ files validated concurrently instead of sequentially.
@@ -48,14 +48,15 @@ const results = await Promise.all(
 **Before**: File existence checked on every reference (expensive I/O)
 
 **After**: Upfront cache building
+
 ```javascript
 const existenceCache = {
-  agents: new Map(),      // 34 agents
-  skills: new Map(),      // 107 skills
-  workflows: new Map(),   // 14 workflows
-  schemas: new Map(),     // 93 schemas
+  agents: new Map(), // 34 agents
+  skills: new Map(), // 107 skills
+  workflows: new Map(), // 14 workflows
+  schemas: new Map(), // 93 schemas
   rubrics: new Map(),
-  files: new Map()
+  files: new Map(),
 };
 
 // Build caches once at startup
@@ -63,6 +64,7 @@ await buildExistenceCaches();
 ```
 
 **Impact**:
+
 - Agents cache: 34 entries
 - Skills cache: 107 entries
 - Workflows cache: 14 entries
@@ -76,6 +78,7 @@ await buildExistenceCaches();
 Skips link validation for faster structure-only checks.
 
 **Usage**:
+
 ```bash
 node scripts/validate-cujs.mjs --quick
 ```
@@ -89,17 +92,20 @@ node scripts/validate-cujs.mjs --quick
 Incremental validation on file changes for development workflow.
 
 **Usage**:
+
 ```bash
 node scripts/validate-cujs.mjs --watch
 ```
 
 **Features**:
+
 - Real-time validation on file save
 - <0.1s per file validation
 - Persistent cache across validations
 - Press Ctrl+C to exit
 
 **Note**: Requires `chokidar` dependency (optional):
+
 ```bash
 npm install chokidar
 ```
@@ -143,6 +149,7 @@ async function validateAgent(agentName) {
 ```
 
 Applied to:
+
 - `validateAgent()` - agent file existence
 - `validateSkill()` - skill file existence
 - `validateWorkflow()` - workflow file existence
@@ -164,11 +171,13 @@ Applied to:
 ## Benchmark Results
 
 ### Test Environment
+
 - **Files validated**: 60 CUJ files
 - **Platform**: Windows (win32)
 - **Script**: Node.js ESM module
 
 ### Validation Breakdown
+
 - Valid CUJs: 57/60
 - Issues: 3
 - Warnings: 193
@@ -176,12 +185,12 @@ Applied to:
 
 ### Performance Metrics
 
-| Metric | Value |
-|--------|-------|
-| **Total validation time** | 0.10s |
-| **Files validated** | 60 |
-| **Average per file** | 0.0017s (1.7ms) |
-| **Cache build time** | <0.05s |
+| Metric                    | Value            |
+| ------------------------- | ---------------- |
+| **Total validation time** | 0.10s            |
+| **Files validated**       | 60               |
+| **Average per file**      | 0.0017s (1.7ms)  |
+| **Cache build time**      | <0.05s           |
 | **Validation throughput** | 600 files/second |
 
 ---
@@ -189,24 +198,28 @@ Applied to:
 ## Use Cases
 
 ### 1. Pre-commit Validation
+
 ```bash
 # Fast check before commit
 node scripts/validate-cujs.mjs
 ```
 
 ### 2. Rapid Iteration
+
 ```bash
 # Quick structure check
 node scripts/validate-cujs.mjs --quick
 ```
 
 ### 3. Development Workflow
+
 ```bash
 # Real-time validation while editing
 node scripts/validate-cujs.mjs --watch
 ```
 
 ### 4. CI/CD Pipeline
+
 ```bash
 # Full validation with all checks
 node scripts/validate-cujs.mjs
@@ -217,12 +230,14 @@ node scripts/validate-cujs.mjs
 ## Future Optimizations
 
 ### Potential Improvements
+
 1. **Differential validation** - Only validate changed CUJs since last run
 2. **Multi-threaded validation** - Use worker threads for CPU-intensive checks
 3. **Result caching** - Cache validation results per file hash
 4. **Incremental cache updates** - Update caches instead of rebuilding
 
 ### Estimated Additional Gains
+
 - Differential validation: 80-90% faster for unchanged files
 - Multi-threading: 2-4x faster on multi-core systems
 - Result caching: Near-instant validation for unchanged files
@@ -238,6 +253,7 @@ node scripts/validate-cujs.mjs
 ## Testing
 
 ### Manual Testing
+
 ```bash
 # Test full validation
 node scripts/validate-cujs.mjs
@@ -253,6 +269,7 @@ node scripts/validate-cujs.mjs --help
 ```
 
 ### Expected Output
+
 - Validation completes in <0.2s
 - Cache build message shows agent/skill/workflow counts
 - Elapsed time displayed at end
@@ -263,6 +280,7 @@ node scripts/validate-cujs.mjs --help
 ## Conclusion
 
 Successfully achieved **50-100x performance improvement** through:
+
 1. ✅ Parallel file processing
 2. ✅ Existence caching
 3. ✅ Quick mode (skip link validation)

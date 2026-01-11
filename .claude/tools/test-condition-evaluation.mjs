@@ -15,7 +15,7 @@ import {
   evaluateCondition,
   tokenizeCondition,
   evaluateAtomic,
-  safeGet
+  safeGet,
 } from './condition-evaluator.mjs';
 
 // Test results tracking
@@ -143,63 +143,63 @@ describe('Tokenizer (Recommendation #5)', () => {
 describe('Simple Conditions', () => {
   runTest('providers.includes returns true when present', () => {
     const result = evaluateCondition('providers.includes("claude")', {
-      providers: ['claude', 'gemini']
+      providers: ['claude', 'gemini'],
     });
     assert.strictEqual(result, true);
   });
 
   runTest('providers.includes returns false when missing', () => {
     const result = evaluateCondition('providers.includes("codex")', {
-      providers: ['claude', 'gemini']
+      providers: ['claude', 'gemini'],
     });
     assert.strictEqual(result, false);
   });
 
   runTest('config boolean true', () => {
     const result = evaluateCondition('config.enabled === true', {
-      config: { enabled: true }
+      config: { enabled: true },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('config boolean false', () => {
     const result = evaluateCondition('config.enabled === true', {
-      config: { enabled: false }
+      config: { enabled: false },
     });
     assert.strictEqual(result, false);
   });
 
   runTest('config string equality', () => {
     const result = evaluateCondition('config.mode === "production"', {
-      config: { mode: 'production' }
+      config: { mode: 'production' },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('step.output.field string match', () => {
     const result = evaluateCondition('step.output.risk === "high"', {
-      step: { output: { risk: 'high' } }
+      step: { output: { risk: 'high' } },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('step.output.field boolean match', () => {
     const result = evaluateCondition('step.output.approved === true', {
-      step: { output: { approved: true } }
+      step: { output: { approved: true } },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('simple boolean flag from config', () => {
     const result = evaluateCondition('user_requested_multi_ai_review', {
-      config: { user_requested_multi_ai_review: true }
+      config: { user_requested_multi_ai_review: true },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('simple boolean flag missing returns false', () => {
     const result = evaluateCondition('nonexistent_flag', {
-      config: {}
+      config: {},
     });
     assert.strictEqual(result, false);
   });
@@ -212,7 +212,7 @@ describe('AND Conditions', () => {
   runTest('A AND B - both true', () => {
     const result = evaluateCondition('providers.includes("claude") AND config.enabled === true', {
       providers: ['claude'],
-      config: { enabled: true }
+      config: { enabled: true },
     });
     assert.strictEqual(result, true);
   });
@@ -220,7 +220,7 @@ describe('AND Conditions', () => {
   runTest('A AND B - first false', () => {
     const result = evaluateCondition('providers.includes("codex") AND config.enabled === true', {
       providers: ['claude'],
-      config: { enabled: true }
+      config: { enabled: true },
     });
     assert.strictEqual(result, false);
   });
@@ -228,21 +228,21 @@ describe('AND Conditions', () => {
   runTest('A AND B - second false', () => {
     const result = evaluateCondition('providers.includes("claude") AND config.enabled === true', {
       providers: ['claude'],
-      config: { enabled: false }
+      config: { enabled: false },
     });
     assert.strictEqual(result, false);
   });
 
   runTest('A AND B AND C - all true', () => {
     const result = evaluateCondition('flag_a AND flag_b AND flag_c', {
-      config: { flag_a: true, flag_b: true, flag_c: true }
+      config: { flag_a: true, flag_b: true, flag_c: true },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('A AND B AND C - one false', () => {
     const result = evaluateCondition('flag_a AND flag_b AND flag_c', {
-      config: { flag_a: true, flag_b: false, flag_c: true }
+      config: { flag_a: true, flag_b: false, flag_c: true },
     });
     assert.strictEqual(result, false);
   });
@@ -253,36 +253,45 @@ describe('AND Conditions', () => {
 // ============================================================================
 describe('OR Conditions', () => {
   runTest('A OR B - both true', () => {
-    const result = evaluateCondition('providers.includes("claude") OR providers.includes("gemini")', {
-      providers: ['claude', 'gemini']
-    });
+    const result = evaluateCondition(
+      'providers.includes("claude") OR providers.includes("gemini")',
+      {
+        providers: ['claude', 'gemini'],
+      }
+    );
     assert.strictEqual(result, true);
   });
 
   runTest('A OR B - first true', () => {
-    const result = evaluateCondition('providers.includes("claude") OR providers.includes("codex")', {
-      providers: ['claude']
-    });
+    const result = evaluateCondition(
+      'providers.includes("claude") OR providers.includes("codex")',
+      {
+        providers: ['claude'],
+      }
+    );
     assert.strictEqual(result, true);
   });
 
   runTest('A OR B - second true', () => {
-    const result = evaluateCondition('providers.includes("codex") OR providers.includes("claude")', {
-      providers: ['claude']
-    });
+    const result = evaluateCondition(
+      'providers.includes("codex") OR providers.includes("claude")',
+      {
+        providers: ['claude'],
+      }
+    );
     assert.strictEqual(result, true);
   });
 
   runTest('A OR B - both false', () => {
     const result = evaluateCondition('providers.includes("codex") OR providers.includes("gpt4")', {
-      providers: ['claude']
+      providers: ['claude'],
     });
     assert.strictEqual(result, false);
   });
 
   runTest('A OR B OR C - one true', () => {
     const result = evaluateCondition('flag_a OR flag_b OR flag_c', {
-      config: { flag_a: false, flag_b: true, flag_c: false }
+      config: { flag_a: false, flag_b: true, flag_c: false },
     });
     assert.strictEqual(result, true);
   });
@@ -296,7 +305,7 @@ describe('Operator Precedence (Recommendation #5)', () => {
     // Should be evaluated as: A OR (B AND C)
     // false OR (true AND true) = false OR true = true
     const result = evaluateCondition('flag_a OR flag_b AND flag_c', {
-      config: { flag_a: false, flag_b: true, flag_c: true }
+      config: { flag_a: false, flag_b: true, flag_c: true },
     });
     assert.strictEqual(result, true);
   });
@@ -305,7 +314,7 @@ describe('Operator Precedence (Recommendation #5)', () => {
     // Should be evaluated as: A OR (B AND C)
     // false OR (true AND false) = false OR false = false
     const result = evaluateCondition('flag_a OR flag_b AND flag_c', {
-      config: { flag_a: false, flag_b: true, flag_c: false }
+      config: { flag_a: false, flag_b: true, flag_c: false },
     });
     assert.strictEqual(result, false);
   });
@@ -314,7 +323,7 @@ describe('Operator Precedence (Recommendation #5)', () => {
     // Should be evaluated as: (A AND B) OR C
     // (true AND false) OR true = false OR true = true
     const result = evaluateCondition('flag_a AND flag_b OR flag_c', {
-      config: { flag_a: true, flag_b: false, flag_c: true }
+      config: { flag_a: true, flag_b: false, flag_c: true },
     });
     assert.strictEqual(result, true);
   });
@@ -323,7 +332,7 @@ describe('Operator Precedence (Recommendation #5)', () => {
     // Should be evaluated as: (A AND B) OR (C AND D)
     // (true AND false) OR (true AND true) = false OR true = true
     const result = evaluateCondition('flag_a AND flag_b OR flag_c AND flag_d', {
-      config: { flag_a: true, flag_b: false, flag_c: true, flag_d: true }
+      config: { flag_a: true, flag_b: false, flag_c: true, flag_d: true },
     });
     assert.strictEqual(result, true);
   });
@@ -337,7 +346,7 @@ describe('Parentheses Support (Recommendation #5)', () => {
     // Without parens: A OR (B AND C) = false OR (true AND true) = true
     // With parens: (A OR B) AND C = (false OR true) AND true = true
     const result = evaluateCondition('(flag_a OR flag_b) AND flag_c', {
-      config: { flag_a: false, flag_b: true, flag_c: true }
+      config: { flag_a: false, flag_b: true, flag_c: true },
     });
     assert.strictEqual(result, true);
   });
@@ -345,7 +354,7 @@ describe('Parentheses Support (Recommendation #5)', () => {
   runTest('(A OR B) AND C - C is false', () => {
     // (false OR true) AND false = true AND false = false
     const result = evaluateCondition('(flag_a OR flag_b) AND flag_c', {
-      config: { flag_a: false, flag_b: true, flag_c: false }
+      config: { flag_a: false, flag_b: true, flag_c: false },
     });
     assert.strictEqual(result, false);
   });
@@ -353,7 +362,7 @@ describe('Parentheses Support (Recommendation #5)', () => {
   runTest('A OR (B AND C) - explicit grouping', () => {
     // false OR (true AND true) = false OR true = true
     const result = evaluateCondition('flag_a OR (flag_b AND flag_c)', {
-      config: { flag_a: false, flag_b: true, flag_c: true }
+      config: { flag_a: false, flag_b: true, flag_c: true },
     });
     assert.strictEqual(result, true);
   });
@@ -361,7 +370,7 @@ describe('Parentheses Support (Recommendation #5)', () => {
   runTest('nested parentheses: ((A AND B) OR C)', () => {
     // ((true AND true) OR false) = (true OR false) = true
     const result = evaluateCondition('((flag_a AND flag_b) OR flag_c)', {
-      config: { flag_a: true, flag_b: true, flag_c: false }
+      config: { flag_a: true, flag_b: true, flag_c: false },
     });
     assert.strictEqual(result, true);
   });
@@ -369,7 +378,7 @@ describe('Parentheses Support (Recommendation #5)', () => {
   runTest('complex: (A OR B) AND (C OR D)', () => {
     // (true OR false) AND (false OR true) = true AND true = true
     const result = evaluateCondition('(flag_a OR flag_b) AND (flag_c OR flag_d)', {
-      config: { flag_a: true, flag_b: false, flag_c: false, flag_d: true }
+      config: { flag_a: true, flag_b: false, flag_c: false, flag_d: true },
     });
     assert.strictEqual(result, true);
   });
@@ -377,7 +386,7 @@ describe('Parentheses Support (Recommendation #5)', () => {
   runTest('complex: (A AND B) OR (C AND D)', () => {
     // (true AND false) OR (true AND true) = false OR true = true
     const result = evaluateCondition('(flag_a AND flag_b) OR (flag_c AND flag_d)', {
-      config: { flag_a: true, flag_b: false, flag_c: true, flag_d: true }
+      config: { flag_a: true, flag_b: false, flag_c: true, flag_d: true },
     });
     assert.strictEqual(result, true);
   });
@@ -389,14 +398,14 @@ describe('Parentheses Support (Recommendation #5)', () => {
 describe('NOT Operator', () => {
   runTest('NOT true = false', () => {
     const result = evaluateCondition('NOT flag_a', {
-      config: { flag_a: true }
+      config: { flag_a: true },
     });
     assert.strictEqual(result, false);
   });
 
   runTest('NOT false = true', () => {
     const result = evaluateCondition('NOT flag_a', {
-      config: { flag_a: false }
+      config: { flag_a: false },
     });
     assert.strictEqual(result, true);
   });
@@ -404,7 +413,7 @@ describe('NOT Operator', () => {
   runTest('NOT A AND B', () => {
     // NOT true AND true = false AND true = false
     const result = evaluateCondition('NOT flag_a AND flag_b', {
-      config: { flag_a: true, flag_b: true }
+      config: { flag_a: true, flag_b: true },
     });
     assert.strictEqual(result, false);
   });
@@ -412,7 +421,7 @@ describe('NOT Operator', () => {
   runTest('A AND NOT B', () => {
     // true AND NOT true = true AND false = false
     const result = evaluateCondition('flag_a AND NOT flag_b', {
-      config: { flag_a: true, flag_b: true }
+      config: { flag_a: true, flag_b: true },
     });
     assert.strictEqual(result, false);
   });
@@ -420,7 +429,7 @@ describe('NOT Operator', () => {
   runTest('NOT (A AND B) - DeMorgan', () => {
     // NOT (true AND true) = NOT true = false
     const result = evaluateCondition('NOT (flag_a AND flag_b)', {
-      config: { flag_a: true, flag_b: true }
+      config: { flag_a: true, flag_b: true },
     });
     assert.strictEqual(result, false);
   });
@@ -428,7 +437,7 @@ describe('NOT Operator', () => {
   runTest('NOT (A AND B) - DeMorgan with false', () => {
     // NOT (true AND false) = NOT false = true
     const result = evaluateCondition('NOT (flag_a AND flag_b)', {
-      config: { flag_a: true, flag_b: false }
+      config: { flag_a: true, flag_b: false },
     });
     assert.strictEqual(result, true);
   });
@@ -440,7 +449,7 @@ describe('NOT Operator', () => {
 describe('Safe Variable Resolution (Recommendation #6)', () => {
   runTest('step.output.risk with missing output', () => {
     const result = evaluateCondition('step.output.risk === "high"', {
-      step: {} // No output property
+      step: {}, // No output property
     });
     assert.strictEqual(result, false);
   });
@@ -454,7 +463,7 @@ describe('Safe Variable Resolution (Recommendation #6)', () => {
 
   runTest('config.flag with empty config', () => {
     const result = evaluateCondition('config.flag === true', {
-      config: {}
+      config: {},
     });
     assert.strictEqual(result, false);
   });
@@ -483,10 +492,13 @@ describe('Safe Variable Resolution (Recommendation #6)', () => {
   runTest('safe resolution in complex expression', () => {
     // (missing AND true) OR (missing AND true)
     // (false AND true) OR (false AND true) = false OR false = false
-    const result = evaluateCondition('(step.output.risk === "high" AND flag_a) OR (config.missing === true AND flag_b)', {
-      step: {},
-      config: { flag_a: true, flag_b: true }
-    });
+    const result = evaluateCondition(
+      '(step.output.risk === "high" AND flag_a) OR (config.missing === true AND flag_b)',
+      {
+        step: {},
+        config: { flag_a: true, flag_b: true },
+      }
+    );
     assert.strictEqual(result, false);
   });
 
@@ -495,7 +507,7 @@ describe('Safe Variable Resolution (Recommendation #6)', () => {
     // (true AND false) OR true = false OR true = true
     const result = evaluateCondition('(flag_a AND step.output.approved === true) OR flag_b', {
       config: { flag_a: true, flag_b: true },
-      step: {} // No output
+      step: {}, // No output
     });
     assert.strictEqual(result, true);
   });
@@ -527,35 +539,35 @@ describe('Edge Cases', () => {
 
   runTest('condition with extra whitespace', () => {
     const result = evaluateCondition('  flag_a   AND   flag_b  ', {
-      config: { flag_a: true, flag_b: true }
+      config: { flag_a: true, flag_b: true },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('condition with single quotes', () => {
     const result = evaluateCondition("config.name === 'test'", {
-      config: { name: 'test' }
+      config: { name: 'test' },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('condition with double quotes', () => {
     const result = evaluateCondition('config.name === "test"', {
-      config: { name: 'test' }
+      config: { name: 'test' },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('inequality operator !==', () => {
     const result = evaluateCondition('step.output.status !== "failed"', {
-      step: { output: { status: 'success' } }
+      step: { output: { status: 'success' } },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('loose equality operator ==', () => {
     const result = evaluateCondition('config.count == 5', {
-      config: { count: 5 }
+      config: { count: 5 },
     });
     // Note: Our parser uses === internally, so this should still match
     // The == is just part of the pattern match
@@ -587,7 +599,7 @@ describe('Real-World Workflow Conditions', () => {
     const result = evaluateCondition(
       'user_requested_multi_ai_review OR critical_security_changes',
       {
-        config: { user_requested_multi_ai_review: false, critical_security_changes: true }
+        config: { user_requested_multi_ai_review: false, critical_security_changes: true },
       }
     );
     assert.strictEqual(result, true);
@@ -598,7 +610,7 @@ describe('Real-World Workflow Conditions', () => {
       'config.environment === "production" AND step.output.approved === true AND NOT config.maintenance_mode',
       {
         config: { environment: 'production', maintenance_mode: false },
-        step: { output: { approved: true } }
+        step: { output: { approved: true } },
       }
     );
     assert.strictEqual(result, true);
@@ -609,7 +621,7 @@ describe('Real-World Workflow Conditions', () => {
       '(config.branch === "main" OR config.branch === "develop") AND step.output.tests_passed === true',
       {
         config: { branch: 'main' },
-        step: { output: { tests_passed: true } }
+        step: { output: { tests_passed: true } },
       }
     );
     assert.strictEqual(result, true);
@@ -622,28 +634,28 @@ describe('Real-World Workflow Conditions', () => {
 describe('Alternative Operators (&& and ||)', () => {
   runTest('&& operator works like AND', () => {
     const result = evaluateCondition('flag_a && flag_b', {
-      config: { flag_a: true, flag_b: true }
+      config: { flag_a: true, flag_b: true },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('|| operator works like OR', () => {
     const result = evaluateCondition('flag_a || flag_b', {
-      config: { flag_a: false, flag_b: true }
+      config: { flag_a: false, flag_b: true },
     });
     assert.strictEqual(result, true);
   });
 
   runTest('! operator works like NOT', () => {
     const result = evaluateCondition('! flag_a', {
-      config: { flag_a: true }
+      config: { flag_a: true },
     });
     assert.strictEqual(result, false);
   });
 
   runTest('mixed operators && and OR', () => {
     const result = evaluateCondition('flag_a && flag_b OR flag_c', {
-      config: { flag_a: true, flag_b: false, flag_c: true }
+      config: { flag_a: true, flag_b: false, flag_c: true },
     });
     assert.strictEqual(result, true);
   });

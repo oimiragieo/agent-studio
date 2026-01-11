@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Memory Sync Utility - Syncs patterns between memory tool and CLAUDE.md files
- * 
+ *
  * This utility syncs important patterns from memory tool to CLAUDE.md files
  * for redundancy and version control. It also validates memory file integrity.
- * 
+ *
  * Usage:
  *   node .claude/tools/memory-sync.mjs --session-id <id> [--sync-to-claude] [--validate]
  */
@@ -22,7 +22,7 @@ const __dirname = dirname(__filename);
 async function getMemoryFiles(sessionId) {
   const memoryDir = join(__dirname, '..', 'orchestrators', `orchestrator-${sessionId}`, 'memory');
   const memoryFiles = [];
-  
+
   try {
     const entries = await readdir(memoryDir, { recursive: true, withFileTypes: true });
     for (const entry of entries) {
@@ -34,7 +34,7 @@ async function getMemoryFiles(sessionId) {
     // Memory directory doesn't exist
     return [];
   }
-  
+
   return memoryFiles;
 }
 
@@ -48,7 +48,7 @@ async function readMemoryFile(filePath) {
       path: filePath,
       name: basename(filePath),
       content,
-      size: content.length
+      size: content.length,
     };
   } catch (error) {
     return null;
@@ -61,23 +61,23 @@ async function readMemoryFile(filePath) {
 function validateMemoryPath(filePath, sessionId) {
   const allowedDir = join(__dirname, '..', 'orchestrators', `orchestrator-${sessionId}`, 'memory');
   const resolvedPath = join(dirname(filePath), basename(filePath));
-  
+
   // Check for directory traversal
   if (filePath.includes('..')) {
     return { valid: false, reason: 'Directory traversal detected' };
   }
-  
+
   // Check if path is within allowed directory
   if (!resolvedPath.startsWith(allowedDir)) {
     return { valid: false, reason: 'Path outside allowed directory' };
   }
-  
+
   // Check file extension
   const ext = filePath.split('.').pop();
   if (!['md', 'json', 'yaml'].includes(ext)) {
     return { valid: false, reason: 'Invalid file extension' };
   }
-  
+
   return { valid: true };
 }
 
@@ -87,29 +87,30 @@ function validateMemoryPath(filePath, sessionId) {
 async function syncToClaudeMd(sessionId, projectName) {
   const memoryFiles = await getMemoryFiles(sessionId);
   const synced = [];
-  
+
   for (const memoryFile of memoryFiles) {
     const memory = await readMemoryFile(memoryFile);
     if (!memory) continue;
-    
+
     // Determine if pattern should be synced to CLAUDE.md
     // Patterns that should be synced:
     // - Project-wide rules
     // - Important decisions
     // - Standards that apply to all work
-    
-    const shouldSync = memory.name.includes('pattern') || 
-                      memory.name.includes('rule') ||
-                      memory.name.includes('standard') ||
-                      memory.name.includes('decision');
-    
+
+    const shouldSync =
+      memory.name.includes('pattern') ||
+      memory.name.includes('rule') ||
+      memory.name.includes('standard') ||
+      memory.name.includes('decision');
+
     if (shouldSync) {
       // Determine target CLAUDE.md file
       // For now, sync to project root CLAUDE.md or phase-specific
       const targetClaudeMd = projectName
         ? join(__dirname, '..', 'projects', projectName, 'CLAUDE.md')
         : join(__dirname, '..', 'CLAUDE.md');
-      
+
       try {
         let claudeContent = '';
         try {
@@ -118,7 +119,7 @@ async function syncToClaudeMd(sessionId, projectName) {
           // File doesn't exist, create it
           await mkdir(dirname(targetClaudeMd), { recursive: true });
         }
-        
+
         // Add memory content to CLAUDE.md if not already present
         if (!claudeContent.includes(memory.content.substring(0, 100))) {
           const syncSection = `\n\n## Synced from Memory: ${memory.name}\n\n${memory.content}\n`;
@@ -131,7 +132,7 @@ async function syncToClaudeMd(sessionId, projectName) {
       }
     }
   }
-  
+
   return synced;
 }
 
@@ -141,21 +142,21 @@ async function syncToClaudeMd(sessionId, projectName) {
 async function validateMemoryFiles(sessionId) {
   const memoryFiles = await getMemoryFiles(sessionId);
   const validationResults = [];
-  
+
   for (const memoryFile of memoryFiles) {
     const validation = validateMemoryPath(memoryFile, sessionId);
     const memory = await readMemoryFile(memoryFile);
-    
+
     validationResults.push({
       file: basename(memoryFile),
       path: memoryFile,
       valid: validation.valid,
       reason: validation.reason,
       size: memory?.size || 0,
-      readable: memory !== null
+      readable: memory !== null,
     });
   }
-  
+
   return validationResults;
 }
 
@@ -164,22 +165,22 @@ async function validateMemoryFiles(sessionId) {
  */
 export async function syncMemory(sessionId, options = {}) {
   const { syncToClaude = false, validate = false, projectName = null } = options;
-  
+
   const results = {
     sessionId,
     memoryFiles: await getMemoryFiles(sessionId),
     synced: [],
-    validated: []
+    validated: [],
   };
-  
+
   if (syncToClaude) {
     results.synced = await syncToClaudeMd(sessionId, projectName);
   }
-  
+
   if (validate) {
     results.validated = await validateMemoryFiles(sessionId);
   }
-  
+
   return results;
 }
 
@@ -190,19 +191,21 @@ async function main() {
   const args = process.argv.slice(2);
   const sessionIdIndex = args.indexOf('--session-id');
   const projectIndex = args.indexOf('--project');
-  
+
   if (sessionIdIndex === -1 || !args[sessionIdIndex + 1]) {
-    console.error('Usage: node memory-sync.mjs --session-id <id> [--sync-to-claude] [--validate] [--project <name>]');
+    console.error(
+      'Usage: node memory-sync.mjs --session-id <id> [--sync-to-claude] [--validate] [--project <name>]'
+    );
     process.exit(1);
   }
-  
+
   const sessionId = args[sessionIdIndex + 1];
   const projectName = projectIndex !== -1 && args[projectIndex + 1] ? args[projectIndex + 1] : null;
   const syncToClaude = args.includes('--sync-to-claude');
   const validate = args.includes('--validate');
-  
+
   const result = await syncMemory(sessionId, { syncToClaude, validate, projectName });
-  
+
   console.log(JSON.stringify(result, null, 2));
 }
 
@@ -212,4 +215,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export default { syncMemory, validateMemoryFiles, syncToClaudeMd };
-

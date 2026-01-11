@@ -16,28 +16,28 @@ Implemented a comprehensive platform adapter layer that enables workflow transla
 
 ### Platform Adapters (`.claude/platform-adapters/`)
 
-| File | Lines | Description |
-|------|-------|-------------|
-| `base-adapter.mjs` | 97 | Abstract base class with common interface |
-| `claude-adapter.mjs` | 99 | Native Claude Code adapter (full support) |
-| `cursor-adapter.mjs` | 197 | Cursor IDE adapter (Plan Mode translation) |
-| `factory-adapter.mjs` | 207 | Factory Droid adapter (manual coordination) |
-| `adapter-registry.json` | 131 | Adapter configuration and capabilities |
-| `README.md` | 159 | Adapter layer documentation |
+| File                    | Lines | Description                                 |
+| ----------------------- | ----- | ------------------------------------------- |
+| `base-adapter.mjs`      | 97    | Abstract base class with common interface   |
+| `claude-adapter.mjs`    | 99    | Native Claude Code adapter (full support)   |
+| `cursor-adapter.mjs`    | 197   | Cursor IDE adapter (Plan Mode translation)  |
+| `factory-adapter.mjs`   | 207   | Factory Droid adapter (manual coordination) |
+| `adapter-registry.json` | 131   | Adapter configuration and capabilities      |
+| `README.md`             | 159   | Adapter layer documentation                 |
 
 **Total**: 6 files, 890 lines
 
 ### Tools (`.claude/tools/`)
 
-| File | Lines | Description |
-|------|-------|-------------|
-| `detect-platform.mjs` | 343 | Platform detection and translation utility |
+| File                  | Lines | Description                                |
+| --------------------- | ----- | ------------------------------------------ |
+| `detect-platform.mjs` | 343   | Platform detection and translation utility |
 
 ### Documentation (`.claude/docs/`)
 
-| File | Lines | Description |
-|------|-------|-------------|
-| `PLATFORM_MIGRATION.md` | 365 | Comprehensive migration guide |
+| File                    | Lines | Description                   |
+| ----------------------- | ----- | ----------------------------- |
+| `PLATFORM_MIGRATION.md` | 365   | Comprehensive migration guide |
 
 ---
 
@@ -68,16 +68,16 @@ Implemented a comprehensive platform adapter layer that enables workflow transla
 
 ## Capabilities Matrix
 
-| Feature | Claude | Cursor | Factory |
-|---------|--------|--------|---------|
-| Native Workflows | Full | Translated | Manual |
-| Skills | Full | Converted | Converted |
-| Subagents | Full | Partial | None |
-| Plan Mode | Full | Full | None |
-| Task Tool | Full | None | Full |
-| Validation Gates | Full | Manual | Manual |
-| Parallel Execution | Full | None | None |
-| CUJ Support | 62/62 | 45/62 | 30/62 |
+| Feature            | Claude | Cursor     | Factory   |
+| ------------------ | ------ | ---------- | --------- |
+| Native Workflows   | Full   | Translated | Manual    |
+| Skills             | Full   | Converted  | Converted |
+| Subagents          | Full   | Partial    | None      |
+| Plan Mode          | Full   | Full       | None      |
+| Task Tool          | Full   | None       | Full      |
+| Validation Gates   | Full   | Manual     | Manual    |
+| Parallel Execution | Full   | None       | None      |
+| CUJ Support        | 62/62  | 45/62      | 30/62     |
 
 ---
 
@@ -86,6 +86,7 @@ Implemented a comprehensive platform adapter layer that enables workflow transla
 ### 1. Platform Detection
 
 Automatic detection based on:
+
 - Environment variables (`CLAUDE_CODE`, `CURSOR_SESSION`, `FACTORY_DROID`)
 - Configuration files (`.claude/`, `.cursor/`, `.factory/`)
 - Priority-based fallback (Claude > Cursor > Factory)
@@ -93,6 +94,7 @@ Automatic detection based on:
 ### 2. Workflow Translation
 
 Each adapter implements:
+
 - `translateStep(step)` - Convert individual step
 - `translateWorkflow(workflow)` - Convert entire workflow
 - `getAgentInvocation(agent, context)` - Platform-specific agent call
@@ -101,6 +103,7 @@ Each adapter implements:
 ### 3. Skill Conversion
 
 Skills converted to natural language prompts for non-Claude platforms:
+
 - 14 core skills with prompt mappings
 - Automatic conversion during workflow translation
 - `_skill_converted` markers for tracking
@@ -108,6 +111,7 @@ Skills converted to natural language prompts for non-Claude platforms:
 ### 4. Agent Prompt Mapping
 
 11 agent types with platform-specific system prompts:
+
 - architect, developer, qa, security-architect
 - code-reviewer, planner, analyst, pm
 - ux-expert, devops, technical-writer
@@ -117,22 +121,26 @@ Skills converted to natural language prompts for non-Claude platforms:
 ## CLI Usage
 
 ### Detect Platform
+
 ```bash
 node .claude/tools/detect-platform.mjs
 # Output: Detected platform: claude
 ```
 
 ### List Platforms
+
 ```bash
 node .claude/tools/detect-platform.mjs --list
 ```
 
 ### Compare Platforms
+
 ```bash
 node .claude/tools/detect-platform.mjs --compare claude cursor
 ```
 
 ### Translate Workflow
+
 ```bash
 node .claude/tools/detect-platform.mjs \
   --translate .claude/workflows/greenfield-fullstack.yaml \
@@ -140,6 +148,7 @@ node .claude/tools/detect-platform.mjs \
 ```
 
 ### Show Capabilities
+
 ```bash
 node .claude/tools/detect-platform.mjs --capabilities --json
 ```
@@ -149,10 +158,10 @@ node .claude/tools/detect-platform.mjs --capabilities --json
 ## Programmatic API
 
 ```javascript
-import { 
-  detectPlatform, 
-  loadAdapter, 
-  compareCapabilities 
+import {
+  detectPlatform,
+  loadAdapter,
+  compareCapabilities,
 } from '.claude/tools/detect-platform.mjs';
 
 // Detect current platform
@@ -175,6 +184,7 @@ const comparison = compareCapabilities('claude', 'cursor');
 ### Claude to Cursor
 
 **Input (Claude)**:
+
 ```yaml
 - step: 1
   agent: developer
@@ -184,6 +194,7 @@ const comparison = compareCapabilities('claude', 'cursor');
 ```
 
 **Output (Cursor)**:
+
 ```json
 {
   "_platform": "cursor",
@@ -199,6 +210,7 @@ const comparison = compareCapabilities('claude', 'cursor');
 ### Claude to Factory
 
 **Input (Claude)**:
+
 ```yaml
 - step: 1
   agent: developer
@@ -206,6 +218,7 @@ const comparison = compareCapabilities('claude', 'cursor');
 ```
 
 **Output (Factory)**:
+
 ```json
 {
   "_platform": "factory",
@@ -227,17 +240,20 @@ const comparison = compareCapabilities('claude', 'cursor');
 ## Testing Recommendations
 
 ### Unit Tests
+
 - [ ] Test each adapter's `translateStep()` method
 - [ ] Test `translateWorkflow()` with sample workflows
 - [ ] Test `checkCompatibility()` with edge cases
 - [ ] Test platform detection with various configurations
 
 ### Integration Tests
+
 - [ ] Translate real workflow and verify output structure
 - [ ] Execute translated workflow on target platform
 - [ ] Verify skill conversion accuracy
 
 ### Manual Verification
+
 - [ ] Run detect-platform CLI on each platform
 - [ ] Translate sample workflow to each platform
 - [ ] Execute translated workflow manually
@@ -280,6 +296,7 @@ const comparison = compareCapabilities('claude', 'cursor');
 The platform adapter layer provides a solid foundation for cross-platform workflow compatibility. Claude Code retains full native support, while Cursor and Factory Droid receive translated workflows with appropriate capability degradation documented.
 
 The implementation follows the issue specification exactly and includes additional features like:
+
 - Execution checklist generation for Factory Droid
 - Phase grouping for Cursor Plan Mode
 - Manual effort estimation

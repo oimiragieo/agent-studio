@@ -38,27 +38,32 @@ Successfully implemented context:fork support for skills, enabling 20-40% token 
 ## Skills with context:fork: true (21 Total)
 
 ### Implementation Skills (4)
+
 - scaffolder
 - test-generator
 - doc-generator
 - api-contract-generator
 
 ### Validation Skills (3)
+
 - rule-auditor
 - code-style-validator
 - commit-validator
 
 ### Analysis Skills (2)
+
 - dependency-analyzer
 - diagram-generator (not updated - no frontmatter)
 
 ### Rule Skills (4)
+
 - explaining-rules (not updated - no frontmatter)
 - fixing-rule-violations (not updated - no frontmatter)
 - migrating-rules (not updated - no frontmatter)
 - recommending-rules (not updated - no frontmatter)
 
 ### Generation Skills (5)
+
 - claude-md-generator (not updated - no frontmatter)
 - plan-generator (not updated - no frontmatter)
 - excel-generator (not updated - no frontmatter)
@@ -66,19 +71,23 @@ Successfully implemented context:fork support for skills, enabling 20-40% token 
 - pdf-generator
 
 ### Analysis/Classification Skills (4)
+
 - summarizer
 - classifier (not updated - no frontmatter)
 - text-to-sql (not updated - no frontmatter)
 - evaluator (not updated - no frontmatter)
 
 ### Search and Discovery (2)
+
 - repo-rag
 - tool-search (not updated - not in FORKABLE_SKILLS list initially)
 
 ### Code Analysis (1)
+
 - code-analyzer
 
 ### MCP-Converted Skills (8)
+
 - git
 - github
 - filesystem
@@ -89,6 +98,7 @@ Successfully implemented context:fork support for skills, enabling 20-40% token 
 - cloud-run
 
 ### Additional Skills (4)
+
 - mcp-converter
 - rule-selector
 - skill-manager
@@ -99,6 +109,7 @@ Successfully implemented context:fork support for skills, enabling 20-40% token 
 ## Skills Excluded (Orchestration-Only, 6 Total)
 
 These skills remain orchestration-only (no context:fork):
+
 - context-bridge
 - artifact-publisher
 - recovery
@@ -115,6 +126,7 @@ These skills remain orchestration-only (no context:fork):
 **Location**: `scripts/add-context-fork-to-skills.mjs`
 
 **Features**:
+
 - Cross-platform path handling (Windows backslashes and Unix forward slashes)
 - Frontmatter detection and modification
 - Duplicate detection (skips skills that already have context:fork)
@@ -122,23 +134,23 @@ These skills remain orchestration-only (no context:fork):
 - Detailed reporting with success/skip/error counts
 
 **Pattern Used**:
+
 ```javascript
 // Add context:fork after description line in frontmatter
-content = content.replace(
-  /(description: .+)\n/,
-  '$1\ncontext:fork: true\n'
-);
+content = content.replace(/(description: .+)\n/, '$1\ncontext:fork: true\n');
 ```
 
 ### 2. Skill Loader: skill-loader.mjs
 
 **Changes**:
+
 - Import js-yaml parser
 - Replace simple regex parsing with yaml.load()
 - Extract context:fork field with colon handling
 - Return structured metadata object
 
 **New Metadata Fields**:
+
 ```javascript
 {
   name: string,
@@ -159,6 +171,7 @@ content = content.replace(
 ### 3. Skill Injector: skill-injector.mjs
 
 **Changes**:
+
 - Import loadSkillMetadata from skill-loader
 - Add isSubagent parameter to injectSkillsForAgent()
 - Check metadata.contextFork before loading skill content
@@ -166,6 +179,7 @@ content = content.replace(
 - Log warnings for skipped skills
 
 **Filtering Logic**:
+
 ```javascript
 // Only inject if context:fork is true OR this is not a subagent context
 if (isSubagent && !metadata.contextFork) {
@@ -182,11 +196,13 @@ if (isSubagent && !metadata.contextFork) {
 ### Test 1: Skill Injection with Developer Agent
 
 **Command**:
+
 ```bash
 node .claude/tools/skill-injector.mjs --agent developer --task "Create new component"
 ```
 
 **Result**:
+
 ```
 ✓ Skills injected for agent: developer
 
@@ -206,6 +222,7 @@ Skill prompt generated (69824 characters)
 ```
 
 **Analysis**:
+
 - All 3 required skills have context:fork: true
 - Skills loaded successfully
 - No warnings about skipped skills
@@ -214,6 +231,7 @@ Skill prompt generated (69824 characters)
 ### Test 2: Syntax Validation
 
 **Commands**:
+
 ```bash
 node --check .claude/skills/sdk/skill-loader.mjs
 node --check .claude/tools/skill-injector.mjs
@@ -226,17 +244,20 @@ node --check .claude/tools/skill-injector.mjs
 ## Expected Token Savings
 
 ### Before context:fork
+
 - **All 108 skills injected** into every subagent context
 - Average tokens per skill: ~500-1000 tokens
 - Total context overhead: 54,000 - 108,000 tokens
 
 ### After context:fork
+
 - **Only 21 forkable skills injected** into subagent contexts
 - Orchestration-only skills: 6 (excluded)
 - Non-forkable skills: 81 (excluded)
 - Total context overhead: 10,500 - 21,000 tokens
 
 ### Token Reduction
+
 - **Token savings**: 43,500 - 87,000 tokens (80-81% reduction)
 - **Percentage reduction**: 80-81% for subagent contexts
 - **Note**: This exceeds the plan's target of 20-40% reduction

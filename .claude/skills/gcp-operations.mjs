@@ -58,6 +58,5 @@ export const gcpOperationsSkill = {
   executeGcloudCommand,
   listCloudRunServices,
   deployCloudRunService,
-  getGCSBucket
+  getGCSBucket,
 };
-

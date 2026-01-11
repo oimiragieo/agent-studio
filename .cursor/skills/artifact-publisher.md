@@ -26,12 +26,12 @@ Use @artifact-publisher to create a handoff artifact
 
 ## Artifact Types
 
-| Type | Format | Destination |
-|------|--------|-------------|
-| Plan | Markdown | `.cursor/plans/` |
-| Test Results | JSON | `.cursor/context/artifacts/` |
-| Code Review | Markdown | Claude Projects feed |
-| Handoff | Markdown | Cross-platform sync |
+| Type         | Format   | Destination                  |
+| ------------ | -------- | ---------------------------- |
+| Plan         | Markdown | `.cursor/plans/`             |
+| Test Results | JSON     | `.cursor/context/artifacts/` |
+| Code Review  | Markdown | Claude Projects feed         |
+| Handoff      | Markdown | Cross-platform sync          |
 
 ## Output Structure
 

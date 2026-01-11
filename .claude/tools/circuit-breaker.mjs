@@ -45,7 +45,7 @@ const __dirname = path.dirname(__filename);
 export const CircuitState = {
   CLOSED: 'closed',
   OPEN: 'open',
-  HALF_OPEN: 'half-open'
+  HALF_OPEN: 'half-open',
 };
 
 /**
@@ -71,9 +71,8 @@ export class CircuitBreaker {
     this.resetTimeout = options.resetTimeout || 60000; // 1 minute
     this.halfOpenMaxAttempts = options.halfOpenMaxAttempts || 2;
     this.persistent = options.persistent || false;
-    this.persistPath = options.persistPath || path.join(
-      __dirname, '../context/circuit-breaker-state.json'
-    );
+    this.persistPath =
+      options.persistPath || path.join(__dirname, '../context/circuit-breaker-state.json');
 
     // State map: provider -> { failures, state, openUntil, halfOpenAttempts, lastFailure }
     this.states = new Map();
@@ -82,7 +81,7 @@ export class CircuitBreaker {
     this.listeners = {
       stateChange: [],
       failure: [],
-      success: []
+      success: [],
     };
 
     // Load persisted state if enabled
@@ -171,7 +170,7 @@ export class CircuitBreaker {
         this.transitionTo(provider, CircuitState.OPEN);
         console.warn(
           `[circuit-breaker] ${provider}: Circuit REOPENED ` +
-          `(${state.halfOpenAttempts} failures in half-open state)`
+            `(${state.halfOpenAttempts} failures in half-open state)`
         );
       }
     } else if (state.failures >= this.failureThreshold) {
@@ -179,7 +178,7 @@ export class CircuitBreaker {
       this.transitionTo(provider, CircuitState.OPEN);
       console.warn(
         `[circuit-breaker] ${provider}: Circuit OPEN ` +
-        `(${state.failures} failures, reset in ${this.resetTimeout}ms)`
+          `(${state.failures} failures, reset in ${this.resetTimeout}ms)`
       );
     }
 
@@ -209,7 +208,7 @@ export class CircuitBreaker {
         halfOpenAttempts: 0,
         lastFailure: null,
         lastSuccess: null,
-        lastError: null
+        lastError: null,
       });
     }
     return this.states.get(provider);
@@ -279,8 +278,8 @@ export class CircuitBreaker {
         total: 0,
         closed: 0,
         open: 0,
-        halfOpen: 0
-      }
+        halfOpen: 0,
+      },
     };
 
     for (const [provider, state] of this.states.entries()) {
@@ -289,7 +288,7 @@ export class CircuitBreaker {
         failures: state.failures,
         openUntil: state.openUntil,
         lastFailure: state.lastFailure,
-        lastSuccess: state.lastSuccess
+        lastSuccess: state.lastSuccess,
       };
 
       stats.summary.total++;
@@ -367,9 +366,9 @@ export class CircuitBreaker {
         config: {
           failureThreshold: this.failureThreshold,
           resetTimeout: this.resetTimeout,
-          halfOpenMaxAttempts: this.halfOpenMaxAttempts
+          halfOpenMaxAttempts: this.halfOpenMaxAttempts,
         },
-        states: Object.fromEntries(this.states)
+        states: Object.fromEntries(this.states),
       };
 
       fs.writeFileSync(this.persistPath, JSON.stringify(data, null, 2), 'utf-8');
@@ -423,7 +422,7 @@ export function getProviderCircuitBreaker(options = {}) {
       failureThreshold: options.failureThreshold || 3,
       resetTimeout: options.resetTimeout || 60000,
       persistent: options.persistent !== false,
-      ...options
+      ...options,
     });
   }
   return globalProviderBreaker;
@@ -451,7 +450,7 @@ export async function executeWithCircuitBreaker(provider, fn, options = {}) {
       reason: 'circuit_breaker_open',
       circuit_state: state.state,
       open_until: state.openUntil,
-      failures: state.failures
+      failures: state.failures,
     };
   }
 
@@ -462,7 +461,7 @@ export async function executeWithCircuitBreaker(provider, fn, options = {}) {
       provider,
       ...result,
       ok: result.ok !== false,
-      circuit_state: breaker.getState(provider).state
+      circuit_state: breaker.getState(provider).state,
     };
   } catch (error) {
     breaker.recordFailure(provider, error);
@@ -470,7 +469,7 @@ export async function executeWithCircuitBreaker(provider, fn, options = {}) {
       provider,
       ok: false,
       error: error.message || String(error),
-      circuit_state: breaker.getState(provider).state
+      circuit_state: breaker.getState(provider).state,
     };
   }
 }
@@ -480,5 +479,5 @@ export default {
   CircuitBreaker,
   CircuitState,
   getProviderCircuitBreaker,
-  executeWithCircuitBreaker
+  executeWithCircuitBreaker,
 };

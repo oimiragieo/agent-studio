@@ -38,9 +38,7 @@
       "execution_mode": "skill-only",
       "workflow": null,
       "agents": [],
-      "skills": [
-        "rule-selector"
-      ],
+      "skills": ["rule-selector"],
       "primary_skill": "rule-selector",
       "schemas": [],
       "triggers": [
@@ -69,16 +67,10 @@
       "execution_mode": "skill-only",
       "workflow": null,
       "agents": [],
-      "skills": [
-        "context-bridge"
-      ],
+      "skills": ["context-bridge"],
       "primary_skill": "context-bridge",
       "schemas": [],
-      "triggers": [
-        "Sync to Cursor",
-        "Bridge context to Factory",
-        "Set up cross-platform"
-      ],
+      "triggers": ["Sync to Cursor", "Bridge context to Factory", "Set up cross-platform"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
@@ -100,14 +92,9 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "plan-generator",
-        "response-rater"
-      ],
+      "skills": ["plan-generator", "response-rater"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/plan.schema.json"
-      ],
+      "schemas": [".claude/schemas/plan.schema.json"],
       "triggers": [
         "I want to build a user dashboard",
         "Plan feature X",
@@ -134,24 +121,14 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "plan-generator",
-        "scaffolder",
-        "rule-auditor",
-        "doc-generator",
-        "response-rater"
-      ],
+      "skills": ["plan-generator", "scaffolder", "rule-auditor", "doc-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [
         ".claude/schemas/project_brief.schema.json",
         ".claude/schemas/system_architecture.schema.json",
         ".claude/schemas/test_plan.schema.json"
       ],
-      "triggers": [
-        "Build a new e-commerce platform",
-        "Create new project",
-        "Greenfield project"
-      ],
+      "triggers": ["Build a new e-commerce platform", "Create new project", "Greenfield project"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
@@ -178,18 +155,10 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
-      "skills": [
-        "diagram-generator"
-      ],
+      "skills": ["diagram-generator"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/architecture-review.schema.json"
-      ],
-      "triggers": [
-        "Review my system architecture",
-        "Analyze architecture",
-        "Architecture review"
-      ],
+      "schemas": [".claude/schemas/architecture-review.schema.json"],
+      "triggers": ["Review my system architecture", "Analyze architecture", "Architecture review"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
@@ -211,13 +180,9 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
-      "skills": [
-        "plan-generator"
-      ],
+      "skills": ["plan-generator"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/refactoring-plan.schema.json"
-      ],
+      "schemas": [".claude/schemas/refactoring-plan.schema.json"],
       "triggers": [
         "Plan refactoring of legacy code",
         "Technical debt planning",
@@ -228,11 +193,7 @@
         "cursor": true,
         "factory": false
       },
-      "expected_outputs": [
-        "Refactoring plan",
-        "Technical debt inventory",
-        "Migration roadmap"
-      ],
+      "expected_outputs": ["Refactoring plan", "Technical debt inventory", "Migration roadmap"],
       "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-007.md"
     },
@@ -244,13 +205,9 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "diagram-generator"
-      ],
+      "skills": ["diagram-generator"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/database-schema.schema.json"
-      ],
+      "schemas": [".claude/schemas/database-schema.schema.json"],
       "triggers": [
         "Design database for user management",
         "Create database schema",
@@ -278,11 +235,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "scaffolder",
-        "rule-auditor",
-        "response-rater"
-      ],
+      "skills": ["scaffolder", "rule-auditor", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -295,12 +248,7 @@
         "cursor": true,
         "factory": false
       },
-      "expected_outputs": [
-        "Component files",
-        "Type definitions",
-        "Test files",
-        "Supporting files"
-      ],
+      "expected_outputs": ["Component files", "Type definitions", "Test files", "Supporting files"],
       "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-009.md"
     },
@@ -312,22 +260,10 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "scaffolder",
-        "api-contract-generator",
-        "doc-generator",
-        "response-rater"
-      ],
+      "skills": ["scaffolder", "api-contract-generator", "doc-generator", "response-rater"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/api-docs.schema.json",
-        ".claude/schemas/openapi.schema.json"
-      ],
-      "triggers": [
-        "Create /api/users endpoint",
-        "Add API endpoint",
-        "Generate API route"
-      ],
+      "schemas": [".claude/schemas/api-docs.schema.json", ".claude/schemas/openapi.schema.json"],
+      "triggers": ["Create /api/users endpoint", "Add API endpoint", "Generate API route"],
       "platform_compatibility": {
         "claude": true,
         "cursor": false,
@@ -350,27 +286,16 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/quick-flow.yaml",
       "agents": [],
-      "skills": [
-        "rule-auditor",
-        "response-rater"
-      ],
+      "skills": ["rule-auditor", "response-rater"],
       "primary_skill": null,
       "schemas": [],
-      "triggers": [
-        "`/quick-ship Fix login button`",
-        "Quick fix for [issue]",
-        "Bug fix"
-      ],
+      "triggers": ["`/quick-ship Fix login button`", "Quick fix for [issue]", "Bug fix"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
         "factory": false
       },
-      "expected_outputs": [
-        "Fixed code",
-        "Test results",
-        "Validation report"
-      ],
+      "expected_outputs": ["Fixed code", "Test results", "Validation report"],
       "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-011.md"
     },
@@ -391,11 +316,7 @@
       ],
       "primary_skill": null,
       "schemas": [],
-      "triggers": [
-        "Implement user authentication",
-        "Build [feature]",
-        "Add [feature]"
-      ],
+      "triggers": ["Implement user authentication", "Build [feature]", "Add [feature]"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
@@ -418,20 +339,10 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-review-flow.yaml",
       "agents": [],
-      "skills": [
-        "rule-auditor",
-        "response-rater",
-        "multi-ai-code-review"
-      ],
+      "skills": ["rule-auditor", "response-rater", "multi-ai-code-review"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/code-review.schema.json"
-      ],
-      "triggers": [
-        "`/review`",
-        "`/review src/components/`",
-        "Review this code"
-      ],
+      "schemas": [".claude/schemas/code-review.schema.json"],
+      "triggers": ["`/review`", "`/review src/components/`", "Review this code"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
@@ -454,30 +365,16 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
-      "skills": [
-        "rule-auditor",
-        "response-rater"
-      ],
+      "skills": ["rule-auditor", "response-rater"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/skill-rule-auditor-output.schema.json"
-      ],
-      "triggers": [
-        "`/audit src/components/`",
-        "`/audit --format json`",
-        "Audit this code"
-      ],
+      "schemas": [".claude/schemas/skill-rule-auditor-output.schema.json"],
+      "triggers": ["`/audit src/components/`", "`/audit --format json`", "Audit this code"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
         "factory": false
       },
-      "expected_outputs": [
-        "Audit report",
-        "Violation list",
-        "Fix suggestions",
-        "Compliance score"
-      ],
+      "expected_outputs": ["Audit report", "Violation list", "Fix suggestions", "Compliance score"],
       "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-014.md"
     },
@@ -489,10 +386,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
-      "skills": [
-        "test-generator",
-        "response-rater"
-      ],
+      "skills": ["test-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -522,14 +416,9 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "doc-generator",
-        "response-rater"
-      ],
+      "skills": ["doc-generator", "response-rater"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/api-docs.schema.json"
-      ],
+      "schemas": [".claude/schemas/api-docs.schema.json"],
       "triggers": [
         "Document the /api/users endpoint",
         "Generate API docs",
@@ -557,9 +446,7 @@
       "execution_mode": "skill-only",
       "workflow": null,
       "agents": [],
-      "skills": [
-        "claude-md-generator"
-      ],
+      "skills": ["claude-md-generator"],
       "primary_skill": "claude-md-generator",
       "schemas": [],
       "triggers": [
@@ -572,11 +459,7 @@
         "cursor": true,
         "factory": false
       },
-      "expected_outputs": [
-        "claude.md file",
-        "Module documentation",
-        "Usage examples"
-      ],
+      "expected_outputs": ["claude.md file", "Module documentation", "Usage examples"],
       "estimated_duration": "2-60 seconds",
       "file_path": ".claude/docs/cujs/CUJ-017.md"
     },
@@ -588,11 +471,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
-      "skills": [
-        "diagram-generator",
-        "doc-generator",
-        "response-rater"
-      ],
+      "skills": ["diagram-generator", "doc-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -622,9 +501,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/performance-flow.yaml",
       "agents": [],
-      "skills": [
-        "response-rater"
-      ],
+      "skills": ["response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -654,17 +531,10 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
-      "skills": [
-        "rule-auditor",
-        "response-rater"
-      ],
+      "skills": ["rule-auditor", "response-rater"],
       "primary_skill": null,
       "schemas": [],
-      "triggers": [
-        "Audit authentication security",
-        "Security review",
-        "Security audit"
-      ],
+      "triggers": ["Audit authentication security", "Security review", "Security audit"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
@@ -690,11 +560,7 @@
       "skills": [],
       "primary_skill": null,
       "schemas": [],
-      "triggers": [
-        "`/mobile`",
-        "Mobile development",
-        "iOS/Android feature"
-      ],
+      "triggers": ["`/mobile`", "Mobile development", "iOS/Android feature"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
@@ -720,11 +586,7 @@
       "skills": [],
       "primary_skill": null,
       "schemas": [],
-      "triggers": [
-        "`/ai-system`",
-        "AI feature development",
-        "LLM integration"
-      ],
+      "triggers": ["`/ai-system`", "AI feature development", "LLM integration"],
       "platform_compatibility": {
         "claude": true,
         "cursor": true,
@@ -747,10 +609,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
-      "skills": [
-        "dependency-analyzer",
-        "response-rater"
-      ],
+      "skills": ["dependency-analyzer", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -780,17 +639,10 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/incident-flow.yaml",
       "agents": [],
-      "skills": [
-        "recovery",
-        "response-rater"
-      ],
+      "skills": ["recovery", "response-rater"],
       "primary_skill": null,
       "schemas": [],
-      "triggers": [
-        "`/incident`",
-        "Production incident",
-        "System outage"
-      ],
+      "triggers": ["`/incident`", "Production incident", "System outage"],
       "platform_compatibility": {
         "claude": true,
         "cursor": false,
@@ -813,10 +665,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "summarizer",
-        "response-rater"
-      ],
+      "skills": ["summarizer", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -845,11 +694,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "plan-generator",
-        "dependency-analyzer",
-        "response-rater"
-      ],
+      "skills": ["plan-generator", "dependency-analyzer", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -879,9 +724,7 @@
       "execution_mode": "skill-only",
       "workflow": null,
       "agents": [],
-      "skills": [
-        "recovery"
-      ],
+      "skills": ["recovery"],
       "primary_skill": "recovery",
       "schemas": [],
       "triggers": [
@@ -970,9 +813,7 @@
       "execution_mode": "skill-only",
       "workflow": null,
       "agents": [],
-      "skills": [
-        "multi-ai-code-review"
-      ],
+      "skills": ["multi-ai-code-review"],
       "primary_skill": "multi-ai-code-review",
       "schemas": [],
       "triggers": [
@@ -985,11 +826,7 @@
         "cursor": true,
         "factory": false
       },
-      "expected_outputs": [
-        "validation-report.json",
-        "consensus-issues.json",
-        "disagreements.json"
-      ],
+      "expected_outputs": ["validation-report.json", "consensus-issues.json", "disagreements.json"],
       "estimated_duration": "2-60 seconds",
       "file_path": ".claude/docs/cujs/CUJ-030.md"
     },
@@ -1041,10 +878,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "plan-generator",
-        "response-rater"
-      ],
+      "skills": ["plan-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1107,11 +941,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "plan-generator",
-        "dependency-analyzer",
-        "response-rater"
-      ],
+      "skills": ["plan-generator", "dependency-analyzer", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1143,10 +973,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "optional-artifact-handler",
-        "response-rater"
-      ],
+      "skills": ["optional-artifact-handler", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1176,14 +1003,9 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
-      "skills": [
-        "conflict-resolution",
-        "response-rater"
-      ],
+      "skills": ["conflict-resolution", "response-rater"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/prd.schema.json"
-      ],
+      "schemas": [".claude/schemas/prd.schema.json"],
       "triggers": [
         "Test cross-agent validation",
         "Validate conflict resolution",
@@ -1213,10 +1035,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
-      "skills": [
-        "recovery",
-        "response-rater"
-      ],
+      "skills": ["recovery", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1314,10 +1133,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
-      "skills": [
-        "recovery",
-        "response-rater"
-      ],
+      "skills": ["recovery", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1385,11 +1201,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
-      "skills": [
-        "recovery",
-        "optional-artifact-handler",
-        "response-rater"
-      ],
+      "skills": ["recovery", "optional-artifact-handler", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1454,10 +1266,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
-      "skills": [
-        "conflict-resolution",
-        "response-rater"
-      ],
+      "skills": ["conflict-resolution", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1553,10 +1362,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/enterprise-track.yaml",
       "agents": [],
-      "skills": [
-        "recovery",
-        "response-rater"
-      ],
+      "skills": ["recovery", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1588,11 +1394,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "artifact-publisher",
-        "plan-generator",
-        "response-rater"
-      ],
+      "skills": ["artifact-publisher", "plan-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1623,10 +1425,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/legacy-modernization-flow.yaml",
       "agents": [],
-      "skills": [
-        "plan-generator",
-        "response-rater"
-      ],
+      "skills": ["plan-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1657,11 +1456,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
-      "skills": [
-        "artifact-publisher",
-        "plan-generator",
-        "response-rater"
-      ],
+      "skills": ["artifact-publisher", "plan-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1691,16 +1486,9 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
-      "skills": [
-        "artifact-publisher",
-        "context-bridge",
-        "plan-generator",
-        "response-rater"
-      ],
+      "skills": ["artifact-publisher", "context-bridge", "plan-generator", "response-rater"],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/artifact-metadata.schema.json"
-      ],
+      "schemas": [".claude/schemas/artifact-metadata.schema.json"],
       "triggers": [
         "Test cross-platform publishing sync",
         "Validate publishing metadata sync",
@@ -1729,11 +1517,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
-      "skills": [
-        "artifact-publisher",
-        "plan-generator",
-        "response-rater"
-      ],
+      "skills": ["artifact-publisher", "plan-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1764,11 +1548,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
-      "skills": [
-        "recovery",
-        "plan-generator",
-        "response-rater"
-      ],
+      "skills": ["recovery", "plan-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1800,10 +1580,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "response-rater",
-        "plan-generator"
-      ],
+      "skills": ["response-rater", "plan-generator"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1896,12 +1673,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
-      "skills": [
-        "context-bridge",
-        "plan-generator",
-        "response-rater",
-        "artifact-publisher"
-      ],
+      "skills": ["context-bridge", "plan-generator", "response-rater", "artifact-publisher"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1935,12 +1707,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
-      "skills": [
-        "artifact-publisher",
-        "context-bridge",
-        "plan-generator",
-        "response-rater"
-      ],
+      "skills": ["artifact-publisher", "context-bridge", "plan-generator", "response-rater"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -1973,12 +1740,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
-      "skills": [
-        "skill-manager",
-        "plan-generator",
-        "response-rater",
-        "dependency-analyzer"
-      ],
+      "skills": ["skill-manager", "plan-generator", "response-rater", "dependency-analyzer"],
       "primary_skill": null,
       "schemas": [],
       "triggers": [
@@ -2011,10 +1773,7 @@
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
-      "skills": [
-        "response-rater",
-        "recovery"
-      ],
+      "skills": ["response-rater", "recovery"],
       "primary_skill": null,
       "schemas": [
         ".claude/schemas/checkpoint.schema.json",

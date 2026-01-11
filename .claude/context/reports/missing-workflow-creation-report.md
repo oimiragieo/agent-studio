@@ -21,6 +21,7 @@ Successfully created 4 workflow files that were referenced by CUJs but missing f
 **Purpose**: Comprehensive code review with systematic analysis and multi-AI validation support
 
 **Key Features**:
+
 - Step 0: Planning Phase (planner)
 - Step 0.1: Plan Rating Gate (orchestrator with response-rater)
 - Step 1: Code Analysis (code-reviewer with rule-auditor, code-style-validator)
@@ -32,6 +33,7 @@ Successfully created 4 workflow files that were referenced by CUJs but missing f
 - Step 4.5: Publish Artifacts
 
 **Workflow Inputs**:
+
 - Required: `target_files` (list of files/directories to review)
 - Optional: `coding_standards`, `review_depth`, `security_focus`
 
@@ -48,6 +50,7 @@ Successfully created 4 workflow files that were referenced by CUJs but missing f
 **Purpose**: Test workflow for validating fallback agent routing, context preservation, and error recovery
 
 **Key Features**:
+
 - Step 0: Planning Phase (planner)
 - Step 0.1: Plan Rating Gate (orchestrator with response-rater)
 - Step 1: Primary Agent Execution with Simulated Failure (dynamic agent)
@@ -59,10 +62,12 @@ Successfully created 4 workflow files that were referenced by CUJs but missing f
 - Step 6.5: Publish Artifacts
 
 **Workflow Inputs**:
+
 - Required: `test_scenario`, `primary_agent`, `failure_type`
 - Optional: `max_fallback_attempts`
 
 **Test Scenarios**:
+
 - `explicit_fallback`: Test explicit fallback from agent definition
 - `capability_matrix`: Test capability matrix fallback
 - `context_preservation`: Test context preservation during fallback
@@ -80,6 +85,7 @@ Successfully created 4 workflow files that were referenced by CUJs but missing f
 **Purpose**: Test deep integration between Planner Agent and Cursor Plan Mode for seamless strategic to implementation planning
 
 **Key Features**:
+
 - Step 0: Strategic Planning (planner with plan_mode_ready flag)
 - Step 0.1: Plan Rating Gate (orchestrator with response-rater)
 - Step 1: Plan Mode Handoff Preparation (planner)
@@ -92,10 +98,12 @@ Successfully created 4 workflow files that were referenced by CUJs but missing f
 - Step 7.5: Publish Artifacts
 
 **Workflow Inputs**:
+
 - Required: `project_requirements`, `implementation_scope`
 - Optional: `cursor_workspace_path`
 
 **Integration Test Scenarios**:
+
 - Strategic to Plan Mode handoff
 - Plan Mode to implementation execution
 - Bidirectional artifact linking
@@ -113,6 +121,7 @@ Successfully created 4 workflow files that were referenced by CUJs but missing f
 **Purpose**: Comprehensive testing of error recovery mechanisms, checkpoint creation, and workflow resilience
 
 **Key Features**:
+
 - Step 0: Planning Phase (planner)
 - Step 0.1: Plan Rating Gate (orchestrator with response-rater)
 - Step 1: Checkpoint Creation Test - Phase 1 (qa with recovery skill)
@@ -125,16 +134,19 @@ Successfully created 4 workflow files that were referenced by CUJs but missing f
 - Step 7.5: Publish Artifacts
 
 **Workflow Inputs**:
+
 - Required: `test_scenario`
 - Optional: `failure_step`, `checkpoint_phase`
 
 **Test Scenarios**:
+
 - `checkpoint_creation`: Validate checkpoint creation at phase boundaries
 - `checkpoint_restoration`: Test restoration from checkpoint
 - `fallback_routing`: Test fallback agent routing
 - `full_recovery`: End-to-end recovery flow
 
 **Recovery Metrics**:
+
 - Checkpoint creation time: < 500ms
 - Checkpoint file size: < 100KB
 - Restoration time: < 2s
@@ -153,6 +165,7 @@ Successfully created 4 workflow files that were referenced by CUJs but missing f
 ### 1. **Step 0.1 Plan Rating Gate**
 
 All workflows include the mandatory Step 0.1 Plan Rating Gate:
+
 - Agent: `orchestrator`
 - Type: `validation`
 - Skill: `response-rater`
@@ -163,10 +176,11 @@ All workflows include the mandatory Step 0.1 Plan Rating Gate:
 ### 2. **Error Recovery Configuration**
 
 All workflows include comprehensive error recovery:
+
 ```yaml
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -178,6 +192,7 @@ retry_config:
 ### 3. **Fallback Agents**
 
 All workflows define fallback agent chains:
+
 ```yaml
 fallback_agents:
   planner: [architect, pm]
@@ -189,12 +204,14 @@ fallback_agents:
 ### 4. **Workflow-Level Context Inputs**
 
 All workflows distinguish between:
+
 - **Artifact inputs**: From previous steps (e.g., `plan-{{workflow_id}}.json (from step 0)`)
 - **Workflow-level context inputs**: Provided at workflow start (e.g., `target_files`, `test_scenario`)
 
 ### 5. **Skill Requirements (Phase 2A)**
 
 All workflow steps include skill requirements with:
+
 - `required`: Skills that MUST be used
 - `recommended`: Skills that SHOULD be used
 - `triggered`: Skills triggered by specific patterns
@@ -204,6 +221,7 @@ All workflow steps include skill requirements with:
 ### 6. **Validation Gates**
 
 All workflows include:
+
 - Schema validation at each step
 - Gate files: `.claude/context/history/gates/{{workflow_id}}/{{step}}-{{agent}}.json`
 - Reasoning files: `.claude/context/history/reasoning/{{workflow_id}}/{{step}}-{{agent}}.json`
@@ -211,6 +229,7 @@ All workflows include:
 ### 7. **Artifact Publishing**
 
 All workflows include final artifact publishing step (Step X.5):
+
 - Agent: `orchestrator`
 - Skill: `artifact-publisher`
 - Condition: `validation_status == 'pass'`

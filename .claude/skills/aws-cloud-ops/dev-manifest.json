@@ -13,7 +13,13 @@
   "context_savings": "90%+ vs raw MCP server (~20,000 tokens → ~400 tokens metadata)",
   "agent_mapping": {
     "primary": ["devops", "cloud-integrator"],
-    "secondary": ["gcp-cloud-agent", "incident-responder", "security-architect", "developer", "performance-engineer"]
+    "secondary": [
+      "gcp-cloud-agent",
+      "incident-responder",
+      "security-architect",
+      "developer",
+      "performance-engineer"
+    ]
   },
   "service_categories": {
     "cloudwatch": {

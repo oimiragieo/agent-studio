@@ -18,7 +18,12 @@
     },
     "developer": {
       "required_skills": ["scaffolder", "rule-auditor", "repo-rag"],
-      "recommended_skills": ["test-generator", "claude-md-generator", "dependency-analyzer", "code-style-validator"],
+      "recommended_skills": [
+        "test-generator",
+        "claude-md-generator",
+        "dependency-analyzer",
+        "code-style-validator"
+      ],
       "skill_triggers": {
         "new_component": "scaffolder",
         "code_changes": "rule-auditor",
@@ -32,7 +37,12 @@
     },
     "code-reviewer": {
       "required_skills": ["rule-auditor", "code-style-validator", "explaining-rules"],
-      "recommended_skills": ["fixing-rule-violations", "dependency-analyzer", "commit-validator", "multi-ai-code-review"],
+      "recommended_skills": [
+        "fixing-rule-violations",
+        "dependency-analyzer",
+        "commit-validator",
+        "multi-ai-code-review"
+      ],
       "skill_triggers": {
         "review_code": "rule-auditor",
         "style_review": "code-style-validator",
@@ -86,7 +96,12 @@
     },
     "technical-writer": {
       "required_skills": ["doc-generator", "diagram-generator", "summarizer"],
-      "recommended_skills": ["claude-md-generator", "pdf-generator", "powerpoint-generator", "excel-generator"],
+      "recommended_skills": [
+        "claude-md-generator",
+        "pdf-generator",
+        "powerpoint-generator",
+        "excel-generator"
+      ],
       "skill_triggers": {
         "documentation": "doc-generator",
         "diagrams": "diagram-generator",
@@ -628,12 +643,33 @@
   "skill_categories": {
     "code_generation": ["scaffolder", "claude-md-generator", "api-contract-generator"],
     "code_quality": ["rule-auditor", "code-style-validator", "fixing-rule-violations"],
-    "documentation": ["doc-generator", "diagram-generator", "summarizer", "pdf-generator", "powerpoint-generator", "excel-generator"],
+    "documentation": [
+      "doc-generator",
+      "diagram-generator",
+      "summarizer",
+      "pdf-generator",
+      "powerpoint-generator",
+      "excel-generator"
+    ],
     "analysis": ["repo-rag", "dependency-analyzer", "evaluator", "classifier", "text-to-sql"],
     "testing": ["test-generator", "chrome-devtools", "computer-use"],
-    "orchestration": ["recovery", "response-rater", "artifact-publisher", "context-bridge", "conflict-resolution", "optional-artifact-handler"],
+    "orchestration": [
+      "recovery",
+      "response-rater",
+      "artifact-publisher",
+      "context-bridge",
+      "conflict-resolution",
+      "optional-artifact-handler"
+    ],
     "planning": ["plan-generator", "sequential-thinking"],
-    "rules": ["rule-auditor", "rule-selector", "explaining-rules", "fixing-rule-violations", "migrating-rules", "recommending-rules"],
+    "rules": [
+      "rule-auditor",
+      "rule-selector",
+      "explaining-rules",
+      "fixing-rule-violations",
+      "migrating-rules",
+      "recommending-rules"
+    ],
     "platform": ["git", "github", "cloud-run", "puppeteer"],
     "memory": ["memory", "memory-manager"],
     "tools": ["tool-search", "mcp-converter", "skill-manager", "filesystem", "sdk"],

@@ -17,18 +17,21 @@ Successfully registered three previously unregistered hooks in `.claude/settings
 ### 1. Hook Registrations in `.claude/settings.json`
 
 #### orchestrator-enforcement-hook.mjs
+
 - **Location**: PreToolUse
 - **Matcher**: `Read|Write|Edit|Bash|Grep|Glob`
 - **Purpose**: Block orchestrators from using implementation tools directly
 - **Status**: ✅ Registered
 
 #### skill-injection-hook.js
+
 - **Location**: PreToolUse
 - **Matcher**: `Task`
 - **Purpose**: Automatically inject skill requirements when Task tool is used
 - **Status**: ✅ Registered
 
 #### post-session-cleanup.js
+
 - **Location**: PostToolUse
 - **Matcher**: `Write|Edit`
 - **Purpose**: Auto-remove files matching SLOP patterns after session
@@ -37,12 +40,14 @@ Successfully registered three previously unregistered hooks in `.claude/settings
 ### 2. TodoWrite/Task Exclusions
 
 #### security-pre-tool.sh
+
 - **Change**: Added early return for TodoWrite/Task tools
 - **Location**: Lines 12-16
 - **Reason**: Security validation not needed for coordination tools
 - **Status**: ✅ Updated
 
 #### file-path-validator.js
+
 - **Change**: Added early return for TodoWrite/Task tools
 - **Location**: Lines 208-212
 - **Reason**: Path validation not needed for coordination tools
@@ -53,6 +58,7 @@ Successfully registered three previously unregistered hooks in `.claude/settings
 ## Verification
 
 ### Hook Files Exist
+
 ```bash
 $ ls -la .claude/hooks/
 -rwxr-xr-x orchestrator-enforcement-hook.mjs
@@ -61,6 +67,7 @@ $ ls -la .claude/hooks/
 ```
 
 ### Settings.json Structure
+
 ```json
 "hooks": {
   "PreToolUse": [
@@ -81,24 +88,28 @@ $ ls -la .claude/hooks/
 ## Impact Analysis
 
 ### Orchestrator Enforcement Hook
+
 - **Blocks**: Write, Edit, Bash (rm/git), Read (>2 files), Grep, Glob
 - **Affected Agents**: orchestrator, master-orchestrator, model-orchestrator
 - **Benefit**: Forces delegation to subagents, prevents orchestrators from implementing
 - **Risk**: None - orchestrators should NEVER implement
 
 ### Skill Injection Hook
+
 - **Triggers**: Task tool calls
 - **Action**: Injects required + triggered skills into subagent prompt
 - **Benefit**: Automatic skill enforcement without manual invocation
 - **Risk**: None - graceful fallback on errors
 
 ### Post-Session Cleanup Hook
+
 - **Triggers**: Write, Edit tool calls
 - **Action**: Auto-removes files matching SLOP patterns
 - **Benefit**: Prevents SLOP accumulation (files in wrong locations)
 - **Risk**: None - only removes known-bad patterns
 
 ### TodoWrite/Task Exclusions
+
 - **Affected Hooks**: security-pre-tool.sh, file-path-validator.js
 - **Reason**: TodoWrite/Task are coordination tools, not file operations
 - **Benefit**: Prevents false positive validation errors
@@ -109,24 +120,28 @@ $ ls -la .claude/hooks/
 ## Testing Recommendations
 
 ### 1. Test Orchestrator Enforcement
+
 ```bash
 # As orchestrator agent, attempt to use Write tool
 # Expected: Hook blocks with violation message
 ```
 
 ### 2. Test Skill Injection
+
 ```bash
 # As orchestrator, spawn developer subagent via Task tool
 # Expected: Hook injects required skills into prompt
 ```
 
 ### 3. Test Post-Session Cleanup
+
 ```bash
 # Create file in root directory (not allowlisted)
 # Expected: Hook removes file after Write operation
 ```
 
 ### 4. Test TodoWrite/Task Exclusions
+
 ```bash
 # Use TodoWrite to track progress
 # Expected: No validation errors, hook allows operation

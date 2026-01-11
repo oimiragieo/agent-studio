@@ -27,6 +27,7 @@ Validate a commit message string against Conventional Commits format:
 **Format**: `<type>(<scope>): <subject>`
 
 **Types**:
+
 - `feat`: A new feature
 - `fix`: A bug fix
 - `docs`: Documentation only changes
@@ -40,6 +41,7 @@ Validate a commit message string against Conventional Commits format:
 - `revert`: Reverting a previous commit
 
 **Validation Rules**:
+
 1. Must start with type (required)
 2. Scope is optional (in parentheses)
 3. Subject is required (after colon and space)
@@ -47,8 +49,8 @@ Validate a commit message string against Conventional Commits format:
 5. Don't capitalize first letter
 6. No period at end
 7. Can include body and footer (separated by blank line)
-</execution_process>
-</instructions>
+   </execution_process>
+   </instructions>
 
 <examples>
 <code_example>
@@ -57,31 +59,33 @@ Validate a commit message string against Conventional Commits format:
 Use this regex pattern for validation:
 
 ```javascript
-const CONVENTIONAL_COMMIT_REGEX = /^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .{1,72}/;
+const CONVENTIONAL_COMMIT_REGEX =
+  /^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .{1,72}/;
 
 function validateCommitMessage(message) {
   const lines = message.trim().split('\n');
   const header = lines[0];
-  
+
   // Check format
   if (!CONVENTIONAL_COMMIT_REGEX.test(header)) {
     return {
       valid: false,
-      error: 'Commit message does not follow Conventional Commits format'
+      error: 'Commit message does not follow Conventional Commits format',
     };
   }
-  
+
   // Check length
   if (header.length > 72) {
     return {
       valid: false,
-      error: 'Commit header exceeds 72 characters'
+      error: 'Commit header exceeds 72 characters',
     };
   }
-  
+
   return { valid: true };
 }
 ```
+
 </code_example>
 
 <code_example>
@@ -94,6 +98,7 @@ docs(readme): update installation instructions
 refactor(components): extract common button logic
 test(utils): add unit tests for date formatting
 ```
+
 </code_example>
 
 <code_example>
@@ -105,6 +110,7 @@ feat:new feature   # Missing space after colon
 FEAT: Add feature  # Type should be lowercase
 feat: Added feature  # Should use imperative tense
 ```
+
 </code_example>
 
 <code_example>
@@ -118,6 +124,7 @@ if ! node .claude/tools/validate-commit.js "$commit_msg"; then
   exit 1
 fi
 ```
+
 </code_example>
 
 <code_example>
@@ -131,6 +138,7 @@ fi
       node .claude/tools/validate-commit.js "$msg" || exit 1
     done
 ```
+
 </code_example>
 </examples>
 
@@ -175,6 +183,7 @@ Or for invalid messages:
   ]
 }
 ```
+
 </formatting_example>
 </examples>
 
@@ -187,4 +196,3 @@ Or for invalid messages:
 5. **Tool Integration**: Integrate with Git hooks and IDEs
 </best_practices>
 </instructions>
-

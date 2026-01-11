@@ -4,13 +4,7 @@
   "title": "Performance Requirements",
   "description": "Performance requirements artifact for performance optimization and SLA definition",
   "type": "object",
-  "required": [
-    "requirements_id",
-    "timestamp",
-    "performance_goals",
-    "sla_targets",
-    "metrics"
-  ],
+  "required": ["requirements_id", "timestamp", "performance_goals", "sla_targets", "metrics"],
   "properties": {
     "requirements_id": {
       "type": "string",

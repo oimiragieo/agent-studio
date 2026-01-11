@@ -17,12 +17,12 @@ const skillTypeMap = {
   'multi-ai-code-review': {
     type: 'codex',
     location: 'codex-skills/multi-ai-code-review',
-    requires_cli: ['claude', 'gemini']
+    requires_cli: ['claude', 'gemini'],
   },
   'response-rater': {
     type: 'codex',
     location: 'codex-skills/response-rater',
-    requires_cli: ['claude']
+    requires_cli: ['claude'],
   },
   // All other skills are Agent Studio skills (default)
   // These don't need explicit mapping - handled by default case
@@ -41,7 +41,7 @@ function convertSkill(skillName) {
   if (codexSkill) {
     return {
       name: skillName,
-      ...codexSkill
+      ...codexSkill,
     };
   }
 
@@ -49,7 +49,7 @@ function convertSkill(skillName) {
   return {
     name: skillName,
     type: 'agent-studio',
-    location: `.claude/skills/${skillName}`
+    location: `.claude/skills/${skillName}`,
   };
 }
 
@@ -94,7 +94,7 @@ function migrateCUJ(cuj) {
   return {
     ...cuj,
     skills: convertedSkills,
-    skill_type: skillType
+    skill_type: skillType,
   };
 }
 
@@ -124,7 +124,7 @@ function migrateRegistry() {
   // Update registry
   const updatedRegistry = {
     ...registry,
-    cujs: migratedCUJs
+    cujs: migratedCUJs,
   };
 
   // Write back to file

@@ -33,6 +33,7 @@ Database Model → Prisma/SQL patterns
 ### Step 2: Extract Patterns from Codebase
 
 Analyze existing code to understand:
+
 - File naming conventions
 - Directory structure
 - Import patterns
@@ -51,6 +52,7 @@ Apply extracted patterns to generate code that matches project conventions.
 **Command**: `scaffold component UserProfile`
 
 **Generated Structure**:
+
 ```
 components/user-profile/
 ├── index.tsx          # Main component
@@ -64,6 +66,7 @@ components/user-profile/
 **Command**: `scaffold api users`
 
 **Generated Structure**:
+
 ```
 routes/users/
 ├── index.ts           # Route handlers
@@ -77,6 +80,7 @@ routes/users/
 **Command**: `scaffold feature user-management`
 
 **Generated Structure**:
+
 ```
 features/user-management/
 ├── components/
@@ -88,15 +92,15 @@ features/user-management/
 
 ## Available Templates
 
-| Template | Files Generated |
-|----------|-----------------|
-| `component` | index.tsx, types.ts, tests |
-| `page` | page.tsx, loading.tsx, error.tsx |
-| `api` | route.ts, schema.ts, service.ts |
-| `hook` | useHookName.ts, tests |
-| `context` | Context provider + hook |
-| `test` | Test file for component |
-| `model` | Database model |
+| Template    | Files Generated                  |
+| ----------- | -------------------------------- |
+| `component` | index.tsx, types.ts, tests       |
+| `page`      | page.tsx, loading.tsx, error.tsx |
+| `api`       | route.ts, schema.ts, service.ts  |
+| `hook`      | useHookName.ts, tests            |
+| `context`   | Context provider + hook          |
+| `test`      | Test file for component          |
+| `model`     | Database model                   |
 
 ## Best Practices
 

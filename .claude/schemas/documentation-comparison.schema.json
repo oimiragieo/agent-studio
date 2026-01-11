@@ -46,7 +46,13 @@
       "description": "Array of discrepancies found between documentation and actual behavior",
       "items": {
         "type": "object",
-        "required": ["feature_name", "discrepancy_type", "severity", "documented_behavior", "actual_behavior"],
+        "required": [
+          "feature_name",
+          "discrepancy_type",
+          "severity",
+          "documented_behavior",
+          "actual_behavior"
+        ],
         "properties": {
           "feature_name": {
             "type": "string",
@@ -54,7 +60,12 @@
           },
           "discrepancy_type": {
             "type": "string",
-            "enum": ["missing_feature", "undocumented_feature", "behavior_mismatch", "incorrect_documentation"],
+            "enum": [
+              "missing_feature",
+              "undocumented_feature",
+              "behavior_mismatch",
+              "incorrect_documentation"
+            ],
             "description": "Type of discrepancy"
           },
           "severity": {
@@ -238,4 +249,3 @@
     }
   }
 }
-

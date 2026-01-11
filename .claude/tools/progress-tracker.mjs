@@ -27,10 +27,10 @@ export function generateProgressBar(current, total = null, width = 40) {
   } else {
     percentage = Math.min(100, Math.max(0, current));
   }
-  
+
   const filled = Math.round((percentage / 100) * width);
   const empty = width - filled;
-  
+
   const bar = '█'.repeat(filled) + '░'.repeat(empty);
   return `[${bar}] ${percentage.toFixed(1)}%`;
 }
@@ -46,9 +46,9 @@ export function generateProgressBar(current, total = null, width = 40) {
 export async function trackProgress(workflowId, currentStep, totalSteps, stepName, metadata = {}) {
   const progressDir = path.join(ROOT, '.claude/context/progress');
   await fs.mkdir(progressDir, { recursive: true });
-  
+
   const progressFile = path.join(progressDir, `${workflowId}.json`);
-  
+
   const progress = {
     workflowId,
     currentStep,
@@ -58,11 +58,11 @@ export async function trackProgress(workflowId, currentStep, totalSteps, stepNam
     startedAt: metadata.startedAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     completedSteps: metadata.completedSteps || [],
-    ...metadata
+    ...metadata,
   };
-  
+
   await fs.writeFile(progressFile, JSON.stringify(progress, null, 2), 'utf-8');
-  
+
   return progress;
 }
 
@@ -73,7 +73,7 @@ export async function trackProgress(workflowId, currentStep, totalSteps, stepNam
  */
 export async function getProgress(workflowId) {
   const progressFile = path.join(ROOT, '.claude/context/progress', `${workflowId}.json`);
-  
+
   try {
     const content = await fs.readFile(progressFile, 'utf-8');
     return JSON.parse(content);
@@ -90,16 +90,16 @@ export async function getProgress(workflowId) {
 export function displayProgress(progress, showDetails = false) {
   const bar = generateProgressBar(progress.percentage);
   const stepInfo = `Step ${progress.currentStep}/${progress.totalSteps}: ${progress.stepName}`;
-  
+
   console.log(`\n${bar} ${stepInfo}`);
-  
+
   if (showDetails && progress.completedSteps) {
     console.log('Completed steps:');
     progress.completedSteps.forEach((step, index) => {
       console.log(`  ${index + 1}. ${step.name || step}`);
     });
   }
-  
+
   if (progress.estimatedTimeRemaining) {
     console.log(`Estimated time remaining: ${progress.estimatedTimeRemaining}`);
   }
@@ -114,14 +114,14 @@ export function calculateTimeRemaining(progress) {
   if (!progress.startedAt || progress.currentStep === 0) {
     return 'Calculating...';
   }
-  
+
   const startTime = new Date(progress.startedAt);
   const now = new Date();
   const elapsed = now - startTime;
   const avgTimePerStep = elapsed / progress.currentStep;
   const remainingSteps = progress.totalSteps - progress.currentStep;
   const estimatedRemaining = avgTimePerStep * remainingSteps;
-  
+
   if (estimatedRemaining < 60000) {
     return `${Math.round(estimatedRemaining / 1000)}s`;
   } else if (estimatedRemaining < 3600000) {
@@ -142,26 +142,20 @@ export async function markStepCompleted(workflowId, stepNumber, stepName) {
   if (!progress) {
     return;
   }
-  
+
   const completedSteps = progress.completedSteps || [];
   if (!completedSteps.find(s => s.number === stepNumber)) {
     completedSteps.push({
       number: stepNumber,
       name: stepName,
-      completedAt: new Date().toISOString()
+      completedAt: new Date().toISOString(),
     });
   }
-  
-  await trackProgress(
-    workflowId,
-    progress.currentStep,
-    progress.totalSteps,
-    progress.stepName,
-    {
-      ...progress,
-      completedSteps
-    }
-  );
+
+  await trackProgress(workflowId, progress.currentStep, progress.totalSteps, progress.stepName, {
+    ...progress,
+    completedSteps,
+  });
 }
 
 /**
@@ -174,7 +168,7 @@ export async function initializeProgress(workflowId, totalSteps, workflowName) {
   return await trackProgress(workflowId, 0, totalSteps, 'Initializing', {
     workflowName,
     startedAt: new Date().toISOString(),
-    completedSteps: []
+    completedSteps: [],
   });
 }
 
@@ -187,36 +181,30 @@ export async function completeProgress(workflowId) {
   if (!progress) {
     return;
   }
-  
-  await trackProgress(
-    workflowId,
-    progress.totalSteps,
-    progress.totalSteps,
-    'Completed',
-    {
-      ...progress,
-      completedAt: new Date().toISOString()
-    }
-  );
+
+  await trackProgress(workflowId, progress.totalSteps, progress.totalSteps, 'Completed', {
+    ...progress,
+    completedAt: new Date().toISOString(),
+  });
 }
 
 // CLI usage
 if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
-  
+
   if (command === 'show') {
     const workflowId = process.argv[3];
     if (!workflowId) {
       console.error('Usage: node progress-tracker.mjs show <workflowId>');
       process.exit(1);
     }
-    
+
     const progress = await getProgress(workflowId);
     if (!progress) {
       console.log(`No progress found for workflow ${workflowId}`);
       process.exit(1);
     }
-    
+
     displayProgress(progress, true);
   } else if (command === 'bar') {
     const current = parseFloat(process.argv[3]) || 0;
@@ -228,4 +216,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('  node progress-tracker.mjs bar <current> [total]  - Generate progress bar');
   }
 }
-

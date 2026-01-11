@@ -20,33 +20,37 @@ Provides 90%+ context savings vs raw Sentry API calls. Progressive disclosure by
 ## Tools (Progressive Disclosure)
 
 ### Error Tracking
-| Tool | Description | Confirmation |
-|------|-------------|--------------|
-| list-issues | List recent issues/errors | No |
-| issue-details | Get detailed issue info | No |
-| resolve-issue | Mark issue as resolved | Yes |
-| ignore-issue | Ignore/snooze issue | Yes |
+
+| Tool          | Description               | Confirmation |
+| ------------- | ------------------------- | ------------ |
+| list-issues   | List recent issues/errors | No           |
+| issue-details | Get detailed issue info   | No           |
+| resolve-issue | Mark issue as resolved    | Yes          |
+| ignore-issue  | Ignore/snooze issue       | Yes          |
 
 ### Performance Monitoring
-| Tool | Description | Confirmation |
-|------|-------------|--------------|
-| list-transactions | List performance transactions | No |
-| transaction-summary | Get transaction performance stats | No |
-| slow-queries | Identify slow database queries | No |
+
+| Tool                | Description                       | Confirmation |
+| ------------------- | --------------------------------- | ------------ |
+| list-transactions   | List performance transactions     | No           |
+| transaction-summary | Get transaction performance stats | No           |
+| slow-queries        | Identify slow database queries    | No           |
 
 ### Release Management
-| Tool | Description | Confirmation |
-|------|-------------|--------------|
-| list-releases | List releases | No |
-| create-release | Create new release | Yes |
-| set-commits | Associate commits with release | Yes |
+
+| Tool           | Description                    | Confirmation |
+| -------------- | ------------------------------ | ------------ |
+| list-releases  | List releases                  | No           |
+| create-release | Create new release             | Yes          |
+| set-commits    | Associate commits with release | Yes          |
 
 ### Project Configuration
-| Tool | Description | Confirmation |
-|------|-------------|--------------|
-| list-projects | List Sentry projects | No |
-| project-settings | View project settings | No |
-| list-alerts | List alert rules | No |
+
+| Tool             | Description           | Confirmation |
+| ---------------- | --------------------- | ------------ |
+| list-projects    | List Sentry projects  | No           |
+| project-settings | View project settings | No           |
+| list-alerts      | List alert rules      | No           |
 
 ## Quick Reference
 
@@ -82,12 +86,12 @@ curl -H "Authorization: Bearer $SENTRY_AUTH_TOKEN" \
 
 ### Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `SENTRY_AUTH_TOKEN` | Optional | Sentry authentication token for API calls |
-| `SENTRY_ORG` | Optional | Organization slug (defaults to first org) |
-| `SENTRY_PROJECT` | Optional | Project slug (defaults to first project) |
-| `SENTRY_DSN` | No | For SDK integration (not used by this skill) |
+| Variable            | Required | Description                                  |
+| ------------------- | -------- | -------------------------------------------- |
+| `SENTRY_AUTH_TOKEN` | Optional | Sentry authentication token for API calls    |
+| `SENTRY_ORG`        | Optional | Organization slug (defaults to first org)    |
+| `SENTRY_PROJECT`    | Optional | Project slug (defaults to first project)     |
+| `SENTRY_DSN`        | No       | For SDK integration (not used by this skill) |
 
 ### Getting Auth Token
 
@@ -111,6 +115,7 @@ curl -H "Authorization: Bearer $SENTRY_AUTH_TOKEN" \
 ## Error Handling
 
 If tool execution fails:
+
 1. Verify `SENTRY_AUTH_TOKEN` is set: `echo $SENTRY_AUTH_TOKEN`
 2. Check token permissions include required scopes
 3. Verify organization and project slugs are correct
@@ -119,28 +124,31 @@ If tool execution fails:
 ## Common Workflows
 
 ### Incident Response
+
 1. `list-issues` - Get recent unresolved errors
 2. `issue-details` - Investigate specific issue
 3. `resolve-issue` - Mark as resolved after fix deployed
 
 ### Performance Optimization
+
 1. `list-transactions` - Identify slow endpoints
 2. `transaction-summary` - Analyze performance patterns
 3. `slow-queries` - Find database bottlenecks
 
 ### Release Management
+
 1. `create-release` - Create new release version
 2. `set-commits` - Associate commits with release
 3. `list-releases` - Track release health
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| 401 Unauthorized | Check `SENTRY_AUTH_TOKEN` is valid and not expired |
-| 403 Forbidden | Verify token has required scopes (project:read, project:write, event:read) |
-| 404 Not Found | Verify `SENTRY_ORG` and `SENTRY_PROJECT` are correct slugs |
-| Rate limit exceeded | Wait 1 minute, reduce request frequency |
+| Issue               | Solution                                                                   |
+| ------------------- | -------------------------------------------------------------------------- |
+| 401 Unauthorized    | Check `SENTRY_AUTH_TOKEN` is valid and not expired                         |
+| 403 Forbidden       | Verify token has required scopes (project:read, project:write, event:read) |
+| 404 Not Found       | Verify `SENTRY_ORG` and `SENTRY_PROJECT` are correct slugs                 |
+| Rate limit exceeded | Wait 1 minute, reduce request frequency                                    |
 
 ## Related
 

@@ -15,9 +15,27 @@ const MIN_LINES = 50;
 
 // File extensions to validate (code files)
 const CODE_EXTENSIONS = [
-  '.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.cpp', '.c', '.cs',
-  '.go', '.rs', '.rb', '.php', '.swift', '.kt', '.scala', '.clj',
-  '.vue', '.svelte', '.mjs', '.cjs'
+  '.js',
+  '.jsx',
+  '.ts',
+  '.tsx',
+  '.py',
+  '.java',
+  '.cpp',
+  '.c',
+  '.cs',
+  '.go',
+  '.rs',
+  '.rb',
+  '.php',
+  '.swift',
+  '.kt',
+  '.scala',
+  '.clj',
+  '.vue',
+  '.svelte',
+  '.mjs',
+  '.cjs',
 ];
 
 // Files/directories to ignore
@@ -32,7 +50,7 @@ const IGNORE_PATTERNS = [
   'vendor',
   'target',
   '*.min.js',
-  '*.bundle.js'
+  '*.bundle.js',
 ];
 
 /**
@@ -78,7 +96,7 @@ export async function validateFile(filePath) {
         message: `File exceeds hard limit of ${MAX_LINES} lines (${lines} lines).`,
         filePath,
         lines,
-        maxLines: MAX_LINES
+        maxLines: MAX_LINES,
       };
     } else if (lines > WARN_LINES) {
       return {
@@ -86,7 +104,7 @@ export async function validateFile(filePath) {
         message: `File exceeds recommended limit of ${WARN_LINES} lines (${lines} lines). Consider refactoring.`,
         filePath,
         lines,
-        warnLines: WARN_LINES
+        warnLines: WARN_LINES,
       };
     } else if (lines < MIN_LINES && lines > 0) {
       return {
@@ -94,21 +112,21 @@ export async function validateFile(filePath) {
         message: `File is very small (${lines} lines). Consider consolidating if it lacks a clear single responsibility.`,
         filePath,
         lines,
-        minLines: MIN_LINES
+        minLines: MIN_LINES,
       };
     } else {
       return {
         status: 'APPROVE',
         message: `File size is within recommended limits (${lines} lines).`,
         filePath,
-        lines
+        lines,
       };
     }
   } catch (error) {
     return {
       status: 'ERROR',
       message: `Error reading file: ${error.message}`,
-      filePath
+      filePath,
     };
   }
 }
@@ -136,7 +154,7 @@ export async function validateDirectory(dirPath, recursive = true) {
     rejections: 0,
     errors: 0,
     skipped: 0,
-    files: []
+    files: [],
   };
 
   async function processDirectory(currentPath) {
@@ -212,4 +230,3 @@ export async function getLineCount(filePath) {
     throw new Error(`Error reading file: ${error.message}`);
   }
 }
-

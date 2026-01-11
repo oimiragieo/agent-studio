@@ -10,6 +10,7 @@
 **File**: `.claude/docs/RESPONSE_RATER_INTEGRATION.md`
 
 **Contents**:
+
 - Integration architecture diagram
 - 6 integration points with code examples
 - Provider failure handling
@@ -27,6 +28,7 @@
 **File**: `.claude/context/reports/response-rater-integration-gaps-report.md`
 
 **Contents**:
+
 - Current state analysis (what's working vs. what's missing)
 - Required code changes for 5 files:
   1. `orchestrator-entry.mjs` (update)
@@ -82,6 +84,7 @@
 ### Phase 1: Critical Path (Week 1)
 
 **3 New Files**:
+
 ```
 .claude/tools/skill-executor.mjs      (NEW) - Skill invocation adapter
 .claude/tools/plan-rating-helpers.mjs (NEW) - Score calculation, feedback extraction
@@ -89,6 +92,7 @@
 ```
 
 **2 Updated Files**:
+
 ```
 .claude/tools/orchestrator-entry.mjs  (UPDATE) - Add Step 0.1 execution
 .claude/tools/workflow_runner.js      (UPDATE) - Add skill-based step support
@@ -138,6 +142,7 @@ if (planRatingResult.status !== 'passed') {
 ## Testing Strategy
 
 ### Manual Testing
+
 ```bash
 # 1. Test skill directly
 node .claude/skills/response-rater/scripts/rate.cjs \
@@ -154,6 +159,7 @@ cat .claude/context/runs/test-001/artifacts/plan-rating-test-001.json
 ```
 
 ### Automated Testing
+
 - Unit tests for skill-executor.mjs
 - Integration tests for orchestrator flow
 - End-to-end tests for retry logic
@@ -169,6 +175,7 @@ cat .claude/context/runs/test-001/artifacts/plan-rating-test-001.json
 ## Priority
 
 **CRITICAL** - This is a hard requirement from CLAUDE.md:
+
 > "CRITICAL: All plans MUST be rated before execution"
 > "Never execute an unrated plan - this is a hard requirement"
 

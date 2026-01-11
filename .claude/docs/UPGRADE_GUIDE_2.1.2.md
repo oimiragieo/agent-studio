@@ -5,12 +5,14 @@
 This guide covers the upgrade from Claude Code 2.1.x to 2.1.2 for the LLM Rules Production Pack, including breaking changes, new features, and migration steps.
 
 **Key Benefits:**
+
 - **80% token savings** via context:fork feature
 - **Automatic skill injection** for subagents
 - **Enhanced hook system** with 3 new hooks
 - **Zod 4.0 compatibility** for schema validation
 
 **Who Needs to Upgrade:**
+
 - All users of LLM Rules Production Pack
 - Windows administrators (managed settings path changed)
 - Projects using schema validation (Zod 4.0 required)
@@ -28,6 +30,7 @@ This guide covers the upgrade from Claude Code 2.1.x to 2.1.2 for the LLM Rules 
 **Impact**: Schema validation requires Zod 4.0+
 
 **Action Required**:
+
 ```bash
 # Update package.json
 "dependencies": {
@@ -65,6 +68,7 @@ npm list zod  # Should show 4.0.0+
 Skills can now specify `context:fork: true` to enable automatic forking into subagent contexts.
 
 **Example**:
+
 ```yaml
 ---
 name: scaffolder
@@ -75,12 +79,14 @@ model: sonnet
 ```
 
 **Benefits**:
+
 - Reduces subagent context from ~54K-108K tokens to ~10.5K-21K tokens
 - **80.4% token reduction** (exceeds 20-40% target)
 - Only forkable skills injected into subagents
 - Orchestrator contexts still get all skills
 
 **21 Skills Updated**:
+
 - Implementation: scaffolder, test-generator, doc-generator, api-contract-generator
 - Validation: rule-auditor, code-style-validator, commit-validator
 - MCP-converted: git, github, filesystem, puppeteer, chrome-devtools, sequential-thinking, computer-use, cloud-run
@@ -94,6 +100,7 @@ model: sonnet
 The new `skill-injection-hook.js` automatically injects required skills when spawning subagents via Task tool.
 
 **How It Works**:
+
 1. Task tool called with `subagent_type: "developer"`
 2. Hook intercepts and loads `skill-integration-matrix.json`
 3. Required + triggered skills identified
@@ -109,17 +116,20 @@ The new `skill-injection-hook.js` automatically injects required skills when spa
 Three new hooks activated:
 
 **orchestrator-enforcement-hook.mjs** (PreToolUse)
+
 - Blocks orchestrators from using Write/Edit tools
 - Enforces 2-FILE RULE (blocks Read after 2 files)
 - Forces delegation to subagents via Task tool
 - Matcher: `Read|Write|Edit|Bash|Grep|Glob`
 
 **skill-injection-hook.js** (PreToolUse)
+
 - Auto-injects skills when Task tool used
 - Performance: <250ms
 - Matcher: `Task`
 
 **post-session-cleanup.js** (PostToolUse)
+
 - Auto-removes files in wrong locations (SLOP prevention)
 - Detects malformed Windows paths
 - Matcher: `Write|Edit`
@@ -156,12 +166,14 @@ pnpm validate:full
 The following hooks have been registered in `.claude/settings.json`:
 
 **PreToolUse Hooks**:
+
 - `security-pre-tool.sh` (existing, enhanced with TodoWrite/Task exclusions)
 - `file-path-validator.js` (existing, enhanced with TodoWrite/Task exclusions)
 - `orchestrator-enforcement-hook.mjs` (NEW)
 - `skill-injection-hook.js` (NEW)
 
 **PostToolUse Hooks**:
+
 - `audit-post-tool.sh` (existing)
 - `post-session-cleanup.js` (NEW)
 
@@ -259,13 +271,13 @@ After completing the upgrade, verify:
 
 ## Performance Improvements
 
-| Metric | Before 2.1.2 | After 2.1.2 | Change |
-|--------|--------------|-------------|--------|
-| Subagent Context Tokens | 54,000-108,000 | 10,500-21,000 | **-80%** |
-| Skills Injected (Subagent) | 108 | 21 | **-81%** |
-| Hook Execution Overhead | N/A | <250ms | New |
-| Orchestrator 2-FILE RULE | ❌ Not enforced | ✅ Enforced | New |
-| SLOP Prevention Layers | 1 (PreToolUse) | 2 (Pre+Post) | +100% |
+| Metric                     | Before 2.1.2    | After 2.1.2   | Change   |
+| -------------------------- | --------------- | ------------- | -------- |
+| Subagent Context Tokens    | 54,000-108,000  | 10,500-21,000 | **-80%** |
+| Skills Injected (Subagent) | 108             | 21            | **-81%** |
+| Hook Execution Overhead    | N/A             | <250ms        | New      |
+| Orchestrator 2-FILE RULE   | ❌ Not enforced | ✅ Enforced   | New      |
+| SLOP Prevention Layers     | 1 (PreToolUse)  | 2 (Pre+Post)  | +100%    |
 
 ---
 
@@ -373,20 +385,24 @@ pnpm validate:full
 ## Files Modified
 
 ### Configuration (3 files)
+
 - `package.json` - Zod 4.0 dependency
 - `.claude/settings.json` - 3 new hooks registered
 - `pnpm-lock.yaml` - Auto-updated by pnpm
 
 ### Skills (21 files)
+
 - Added `context:fork: true` to: scaffolder, rule-auditor, test-generator, doc-generator, code-style-validator, commit-validator, dependency-analyzer, code-analyzer, pdf-generator, repo-rag, git, github, filesystem, puppeteer, chrome-devtools, sequential-thinking, computer-use, cloud-run, mcp-converter, rule-selector, skill-manager, memory, summarizer
 
 ### Infrastructure (3 files)
+
 - `.claude/skills/sdk/skill-loader.mjs` - Parse context:fork with js-yaml
 - `.claude/tools/skill-injector.mjs` - Respect context:fork filtering
 - `.claude/hooks/security-pre-tool.sh` - TodoWrite/Task exclusion
 - `.claude/hooks/file-path-validator.js` - TodoWrite/Task exclusion
 
 ### Documentation (7 files)
+
 - `GETTING_STARTED.md` - Windows migration, 2.1.2 features
 - `.claude/docs/SKILLS_TAXONOMY.md` - context:fork documentation
 - `.claude/docs/AGENT_SKILL_MATRIX.md` - Phase 2.1.2 updates
@@ -396,9 +412,11 @@ pnpm validate:full
 - `.claude/docs/UPGRADE_GUIDE_2.1.2.md` - This file (NEW)
 
 ### Scripts (1 file)
+
 - `scripts/add-context-fork-to-skills.mjs` - Auto-update script (NEW)
 
 ### Reports (4 files)
+
 - `.claude/context/reports/zod-4-upgrade-report.md`
 - `.claude/context/reports/phase-2-hook-registration-report.md`
 - `.claude/context/reports/phase3-context-fork-implementation-report.md`
@@ -413,11 +431,13 @@ pnpm validate:full
 **Completed**: Hook matchers optimized for efficiency
 
 **What Changed**:
-- security-pre-tool.sh matcher changed from "*" to "Bash|Write|Edit"
+
+- security-pre-tool.sh matcher changed from "\*" to "Bash|Write|Edit"
 - Reduces unnecessary hook executions on Read, Search, Grep, Glob, Task, TodoWrite
 - Performance improvement: Hooks now only run when relevant
 
 **Impact**:
+
 - ~50-60% reduction in hook executions
 - Faster tool call responses
 - Lower overhead
@@ -429,15 +449,18 @@ pnpm validate:full
 **Completed**: 12 skills updated with model affinity
 
 **What Changed**:
+
 - Skills can now specify preferred model (haiku/sonnet/opus)
 - Performance and cost optimization per skill
 
 **Model Distribution**:
+
 - **haiku** (3 skills): rule-auditor, code-style-validator, commit-validator
 - **sonnet** (7 skills): scaffolder, test-generator, doc-generator, api-contract-generator, dependency-analyzer, diagram-generator, pdf-generator
 - **opus** (2 skills): plan-generator, response-rater
 
 **Benefits**:
+
 - Faster execution for simple validation (haiku)
 - Better quality for complex generation (opus)
 - Optimized cost per skill
@@ -449,6 +472,7 @@ pnpm validate:full
 **Completed**: 5 new slash commands for quick skill access
 
 **New Commands**:
+
 1. `/rule-auditor [path]` - Audit code against rules
 2. `/rate-plan [file]` - Rate plan quality (min score: 7/10)
 3. `/generate-tests [file]` - Generate test code
@@ -482,15 +506,18 @@ pnpm validate:full
 ## Support & Documentation
 
 **Detailed Guides**:
+
 - `.claude/docs/SKILLS_TAXONOMY.md` - context:fork and model field documentation
 - `.claude/hooks/README.md` - Hook execution order and performance
 - `.claude/docs/AGENT_SKILL_MATRIX.md` - Agent-skill integration
 
 **Test Reports**:
+
 - `.claude/context/reports/zod-4-upgrade-report.md` - Zod compatibility testing
 - `.claude/context/reports/phase2-3-testing-report.md` - Comprehensive hook/skill testing
 
 **Issue Tracking**:
+
 - Check `.claude/context/reports/` for detailed test results
 - Review hook logs at `~/.claude/audit/tool-usage.log`
 
@@ -498,9 +525,9 @@ pnpm validate:full
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 2.1.2 | 2025-01-09 | Initial upgrade - Zod 4.0, context:fork, 3 new hooks |
+| Version | Date       | Changes                                              |
+| ------- | ---------- | ---------------------------------------------------- |
+| 2.1.2   | 2025-01-09 | Initial upgrade - Zod 4.0, context:fork, 3 new hooks |
 
 ---
 

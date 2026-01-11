@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Model Name Validation Script
- * 
+ *
  * Validates that model names in config.yaml match expected Claude API model identifiers.
  * This helps catch configuration errors before workflows are executed.
- * 
+ *
  * Usage:
  *   node scripts/validate-model-names.mjs
  *   node scripts/validate-model-names.mjs --verbose
@@ -37,12 +37,12 @@ const KNOWN_VALID_MODELS = [
 
 function validateModelName(modelName, context = '') {
   const issues = [];
-  
+
   // Check if it's a known valid model
   if (KNOWN_VALID_MODELS.includes(modelName)) {
     return { valid: true, issues: [] };
   }
-  
+
   // Check against patterns
   let matchesPattern = false;
   for (const [type, pattern] of Object.entries(VALID_MODEL_PATTERNS)) {
@@ -57,7 +57,7 @@ function validateModelName(modelName, context = '') {
       break;
     }
   }
-  
+
   if (!matchesPattern) {
     issues.push({
       severity: 'error',
@@ -65,7 +65,7 @@ function validateModelName(modelName, context = '') {
       suggestion: `Expected format: claude-3-opus-YYYYMMDD, claude-3-5-sonnet-YYYYMMDD, or claude-3-5-haiku-YYYYMMDD`,
     });
   }
-  
+
   return {
     valid: issues.filter(i => i.severity === 'error').length === 0,
     issues,
@@ -105,24 +105,24 @@ function extractModelNames(config) {
 function main() {
   const args = process.argv.slice(2);
   const verbose = args.includes('--verbose');
-  
+
   const configPath = resolve(__dirname, '..', '.claude', 'config.yaml');
-  
+
   console.log('🔍 Validating model names in config.yaml...\n');
-  
+
   try {
     const configContent = readFileSync(configPath, 'utf-8');
     const config = yaml.load(configContent);
-    
+
     const modelEntries = extractModelNames(config);
     let hasErrors = false;
     let hasWarnings = false;
-    
+
     console.log(`Found ${modelEntries.length} model references:\n`);
-    
+
     for (const entry of modelEntries) {
       const validation = validateModelName(entry.model, entry.source);
-      
+
       if (validation.valid && validation.issues.length === 0) {
         if (verbose) {
           console.log(`✅ ${entry.source}: ${entry.model}`);
@@ -144,9 +144,9 @@ function main() {
         }
       }
     }
-    
+
     console.log('');
-    
+
     if (hasErrors) {
       console.error('❌ Validation failed: Some model names are invalid.');
       console.error('   Please update config.yaml with correct Claude API model names.');
@@ -167,4 +167,3 @@ function main() {
 }
 
 main();
-

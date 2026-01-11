@@ -16,7 +16,7 @@ export async function getOrganization(organizationId) {
     name: 'Organization Name',
     created_at: new Date().toISOString(),
     members: [],
-    projects: []
+    projects: [],
   };
 }
 
@@ -26,7 +26,7 @@ export async function getOrganization(organizationId) {
 export async function listMembers(organizationId) {
   return {
     members: [],
-    total: 0
+    total: 0,
   };
 }
 
@@ -34,7 +34,7 @@ export async function addMember(organizationId, memberData) {
   return {
     id: `member_${Date.now()}`,
     ...memberData,
-    added_at: new Date().toISOString()
+    added_at: new Date().toISOString(),
   };
 }
 
@@ -44,7 +44,7 @@ export async function addMember(organizationId, memberData) {
 export async function listProjects(organizationId) {
   return {
     projects: [],
-    total: 0
+    total: 0,
   };
 }
 
@@ -52,7 +52,7 @@ export async function createProject(organizationId, projectData) {
   return {
     id: `project_${Date.now()}`,
     ...projectData,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
   };
 }
 
@@ -65,8 +65,8 @@ export async function getPermissions(organizationId, userId) {
     permissions: {
       read: true,
       write: false,
-      admin: false
-    }
+      admin: false,
+    },
   };
 }
 
@@ -76,6 +76,5 @@ export default {
   addMember,
   listProjects,
   createProject,
-  getPermissions
+  getPermissions,
 };
-

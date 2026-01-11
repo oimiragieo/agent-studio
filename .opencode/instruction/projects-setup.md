@@ -38,14 +38,18 @@ OpenCode Projects let us preload knowledge, style, and guardrails for each works
 ## Context Files
 
 ### Session Context
+
 The session context file (`context/session.json`) tracks:
+
 - Current workflow state
 - Agent handoff data
 - Generated artifact references
 - Quality gate results
 
 ### Artifacts
+
 Generated artifacts are stored in `context/artifacts/` with:
+
 - Unique identifiers
 - Creation timestamps
 - Agent ownership
@@ -54,16 +58,19 @@ Generated artifacts are stored in `context/artifacts/` with:
 ## Integration Points
 
 ### GitHub Integration
+
 - Automatic PR creation from artifacts
 - Issue tracking and linking
 - Commit message generation
 
 ### CI/CD Integration
+
 - Quality gate validation
 - Automated testing triggers
 - Deployment pipelines
 
 ### Team Communication
+
 - Slack notifications for gate results
 - Progress updates to stakeholders
 - Escalation for blocked workflows

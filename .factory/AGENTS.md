@@ -5,17 +5,20 @@ This file provides specific instructions for Factory Droid agents working with t
 ## Build & Test
 
 ### Core Commands
+
 - **Validate config**: `pnpm validate` (validates agent configuration files)
 - **Validate verbose**: `pnpm validate:verbose` (verbose validation output)
 - **Install agents**: `pnpm install-agents` (install agent configurations to a project)
 - **Cross-platform sync**: `bash scripts/validate-sync.sh` (validates agent sync across platforms)
 
 ### Pre-Run Validation
+
 - Run linting before making changes
 - Verify existing tests pass before modifying code
 - Check for merge conflicts in target files
 
 ### Post-Run Quality
+
 - Generate coverage report after changes
 - Run full lint and test suite
 - Validate code quality before committing
@@ -25,6 +28,7 @@ This file provides specific instructions for Factory Droid agents working with t
 Available specialized agents in `.factory/droids/`:
 
 **Core Development Agents:**
+
 - **analyst**: Market research, requirements gathering, competitive analysis
 - **pm**: Product requirements, epic definition, business validation
 - **architect**: System design, technology selection, security planning
@@ -33,6 +37,7 @@ Available specialized agents in `.factory/droids/`:
 - **ux-expert**: User experience design, accessibility, interface specification
 
 **Enterprise Agents:**
+
 - **security-architect**: Security design and threat modeling
 - **devops**: Infrastructure, CI/CD, and deployments
 - **database-architect**: Database design and optimization
@@ -40,15 +45,18 @@ Available specialized agents in `.factory/droids/`:
 - **data-engineer**: Data pipelines and analytics infrastructure
 
 **Support Agents:**
+
 - **technical-writer**: Documentation and knowledge management
 - **release-manager**: Release coordination and versioning
 
 **Code Quality Agents:**
+
 - **code-reviewer**: Systematic code review and PR analysis
 - **refactoring-specialist**: Code transformation and technical debt reduction
 - **performance-engineer**: Performance optimization and profiling
 
 **Specialized Agents:**
+
 - **llm-architect**: AI/LLM system design, RAG, prompt engineering
 - **api-designer**: REST/GraphQL/gRPC API design patterns
 - **legacy-modernizer**: Legacy system modernization strategies
@@ -62,6 +70,7 @@ Available specialized agents in `.factory/droids/`:
 ### Invoking Custom Droids
 
 Use the Task tool with subagent specification:
+
 ```
 Run the Task tool with subagent architect to design the authentication system.
 ```
@@ -69,12 +78,14 @@ Run the Task tool with subagent architect to design the authentication system.
 ## Specification Mode
 
 For complex features:
+
 1. Activate Specification Mode with `Shift+Tab`
 2. Describe feature in 4-6 sentences
 3. Review generated specification and plan
 4. Approve to begin implementation
 
 **When to use:**
+
 - Features touching multiple files
 - Architectural decisions required
 - Coordination across components needed
@@ -93,6 +104,7 @@ Choose autonomy based on task type:
 ## Context Layers
 
 Droid automatically combines:
+
 1. Repository code and documentation
 2. Cursor plans (`.cursor/plans/latest.md`)
 3. Claude artifacts (`.claude/context/artifacts/*`)
@@ -103,12 +115,14 @@ Use `context-router` skill to intelligently prioritize sources.
 ## Hooks
 
 ### Pre-Run Hook (`hooks/pre-run.yaml`)
+
 - Validates code quality (lint, test)
 - Attaches context artifacts
 - Checks for merge conflicts
 - Blocks dangerous commands
 
 ### Post-Run Hook (`hooks/post-run.yaml`)
+
 - Generates coverage reports
 - Publishes artifacts to Claude Projects
 - Syncs context to Cursor and Claude
@@ -117,6 +131,7 @@ Use `context-router` skill to intelligently prioritize sources.
 ## Artifact Publishing
 
 After completing work:
+
 - Save specifications to `.factory/docs/`
 - Publish artifacts to Claude Projects
 - Sync context to `.cursor/context/` and `.claude/context/artifacts/`
@@ -125,16 +140,19 @@ After completing work:
 ## Integration Points
 
 ### GitHub
+
 - Reference issues: `https://github.com/org/repo/issues/123`
 - Read PRs and discussions automatically
 - Use repository context for code analysis
 
 ### Linear
+
 - Reference tasks: `Complete Linear task PROJ-123`
 - Fetch acceptance criteria automatically
 - Update task status after completion
 
 ### Claude Projects
+
 - Publish artifacts for traceability
 - Share decision history
 - Reference artifacts in future work
@@ -142,13 +160,16 @@ After completing work:
 ## Security
 
 ### Droid Shield (Enabled)
+
 - Secret scanning before commits
 - Git guardrails (no force push to main)
 - Dangerous command blocking
 - Protected file validation
 
 ### Protected Operations
+
 Commands always require confirmation:
+
 - `rm -rf`, `sudo rm`, `format`, `dd`, `mkfs`
 - Force push to protected branches
 - Database migrations (unless explicitly approved)
@@ -167,17 +188,19 @@ Commands always require confirmation:
 ## Troubleshooting
 
 ### Custom Droids not available
+
 - Verify Custom Droids enabled: `/settings` → `enableCustomDroids: true`
 - Restart droid after enabling
 - Check droid files in `.factory/droids/` or `~/.factory/droids/`
 
 ### Context not syncing
+
 - Verify directories exist (`.cursor/context/`, `.claude/context/artifacts/`)
 - Check hook configurations
 - Review file permissions
 
 ### Too many prompts in Auto-Run
+
 - Check autonomy level in status banner
 - Verify commands aren't in denylist
 - Add safe commands to allowlist in settings
-

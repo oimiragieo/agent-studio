@@ -15,6 +15,7 @@ context:fork: true
 3. **DO NOT** read skill files directly yourself
 
 **Example proper delegation:**
+
 ```
 Task: developer
 Prompt: "Use the skill-manager skill to validate all skills in .claude/skills/.
@@ -29,23 +30,23 @@ Unified skill for managing Claude Code skills: create, validate, install, list, 
 
 ## Quick Reference
 
-| Operation | Command |
-|-----------|---------|
-| Create new skill | `node scripts/create.cjs <name> [--resources scripts,references,assets] [--no-test]` |
-| Validate skill | `node scripts/validate.cjs <path>` |
-| Install from GitHub | `node scripts/install.cjs --repo owner/repo --path path/to/skill` |
-| List installed | `node scripts/list.cjs` |
-| List from repo | `node scripts/list.cjs --repo owner/repo --path skills/` |
-| Convert MCP to skill | `node scripts/convert.cjs --server <name>` |
-| Convert from URL/name | `node scripts/convert.cjs <name-or-url>` |
-| List known servers | `node scripts/convert.cjs --known` |
-| List MCP servers | `node scripts/convert.cjs --list` |
-| Show MCP catalog | `node scripts/convert.cjs --catalog` |
-| Test a skill | `node scripts/test.cjs <path>` |
-| Port to Gemini | `node scripts/port.cjs <path> --to gemini` |
-| Port to Claude | `node scripts/port.cjs <path> --to claude` |
-| Make universal | `node scripts/port.cjs <path> --universal` |
-| Analyze platform | `node scripts/port.cjs <path> --analyze` |
+| Operation             | Command                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------ |
+| Create new skill      | `node scripts/create.cjs <name> [--resources scripts,references,assets] [--no-test]` |
+| Validate skill        | `node scripts/validate.cjs <path>`                                                   |
+| Install from GitHub   | `node scripts/install.cjs --repo owner/repo --path path/to/skill`                    |
+| List installed        | `node scripts/list.cjs`                                                              |
+| List from repo        | `node scripts/list.cjs --repo owner/repo --path skills/`                             |
+| Convert MCP to skill  | `node scripts/convert.cjs --server <name>`                                           |
+| Convert from URL/name | `node scripts/convert.cjs <name-or-url>`                                             |
+| List known servers    | `node scripts/convert.cjs --known`                                                   |
+| List MCP servers      | `node scripts/convert.cjs --list`                                                    |
+| Show MCP catalog      | `node scripts/convert.cjs --catalog`                                                 |
+| Test a skill          | `node scripts/test.cjs <path>`                                                       |
+| Port to Gemini        | `node scripts/port.cjs <path> --to gemini`                                           |
+| Port to Claude        | `node scripts/port.cjs <path> --to claude`                                           |
+| Make universal        | `node scripts/port.cjs <path> --universal`                                           |
+| Analyze platform      | `node scripts/port.cjs <path> --analyze`                                             |
 
 ## Creating Skills
 
@@ -66,7 +67,6 @@ skill-name/
 name: skill-name
 description: What the skill does and WHEN to use it. Include triggers.
 ---
-
 # Skill Title
 
 Instructions for using the skill...
@@ -98,11 +98,13 @@ node scripts/create.cjs my-skill --no-test
 **Concise is Key**: The context window is shared. Only add what Claude doesn't already know.
 
 **Progressive Disclosure**:
+
 1. Metadata (name + description) - Always loaded (~100 words)
 2. SKILL.md body - When skill triggers (<500 lines)
 3. Bundled resources - As needed (unlimited)
 
 **Degrees of Freedom**:
+
 - High freedom (text instructions): Multiple valid approaches
 - Medium freedom (pseudocode/parameters): Preferred pattern with variation
 - Low freedom (specific scripts): Fragile operations requiring consistency
@@ -114,6 +116,7 @@ node scripts/validate.cjs .claude/skills/my-skill
 ```
 
 Checks:
+
 - SKILL.md exists with valid YAML frontmatter
 - Required fields: `name`, `description`
 - Name format: lowercase, hyphens, digits only
@@ -168,10 +171,10 @@ Convert MCP servers to skills for 90%+ context savings. Instead of loading all M
 
 ### Why Convert?
 
-| Mode | Context Usage | When Loaded |
-|------|---------------|-------------|
-| MCP Server | ~30k tokens | Always (startup) |
-| Skill | ~500 tokens | On-demand |
+| Mode       | Context Usage | When Loaded      |
+| ---------- | ------------- | ---------------- |
+| MCP Server | ~30k tokens   | Always (startup) |
+| Skill      | ~500 tokens   | On-demand        |
 
 ### Convert Without .mcp.json (Recommended)
 
@@ -197,6 +200,7 @@ node scripts/convert.cjs --known
 ```
 
 **Known servers** are built-in with correct package names and environment variables. The converter supports both:
+
 - **npm servers**: Node.js packages (14 servers: filesystem, memory, github, slack, etc.)
 - **PyPI servers**: Python packages (9 servers: git, time, sentry, aws-kb-retrieval, etc.)
 
@@ -236,17 +240,20 @@ node scripts/convert.cjs --all
 ### Generated Files
 
 Converted skills include:
+
 - `SKILL.md`: Progressive disclosure documentation
 - `executor.py`: Python wrapper for MCP tool calls (with path auto-detection for servers like git)
 - `config.json`: MCP server configuration
 
 **Python servers** (PyPI) generate executors with special path handling:
+
 - `git`: Auto-detects git repository root
 - Future: Other servers may auto-detect project roots, working directories, etc.
 
 ### Catalog Integration
 
 The converter uses `.claude/skills/mcp-converter/mcp-catalog.yaml` for:
+
 - Tool count estimates
 - Token usage estimates
 - Conversion priority
@@ -255,6 +262,7 @@ The converter uses `.claude/skills/mcp-converter/mcp-catalog.yaml` for:
 ### When to Keep as MCP
 
 Some servers work better as MCP (always loaded):
+
 - **github**: Frequently used for PRs/issues
 - **filesystem**: Core file operations
 - **memory**: Always needed for context
@@ -303,10 +311,12 @@ node scripts/convert.cjs --server slack --no-test
 
 ```markdown
 ## Workflow Decision Tree
+
 1. If creating new → Section A
 2. If editing existing → Section B
 
 ## Section A: Creating
+
 Step-by-step instructions...
 ```
 
@@ -314,12 +324,15 @@ Step-by-step instructions...
 
 ```markdown
 ## Quick Start
+
 Basic usage example...
 
 ## Merge PDFs
+
 Instructions for merging...
 
 ## Extract Text
+
 Instructions for extraction...
 ```
 
@@ -327,9 +340,11 @@ Instructions for extraction...
 
 ```markdown
 ## Guidelines
+
 Core principles...
 
 ## Specifications
+
 Detailed specs...
 ```
 
@@ -337,9 +352,11 @@ Detailed specs...
 
 ```markdown
 ## Quick Start
+
 Basic example here...
 
 ## Advanced Features
+
 - **Form filling**: See [references/forms.md](references/forms.md)
 - **API reference**: See [references/api.md](references/api.md)
 ```
@@ -347,17 +364,23 @@ Basic example here...
 ## Resource Guidelines
 
 ### scripts/
+
 Executable code for deterministic operations.
+
 - When: Same code rewritten repeatedly, needs reliability
 - Example: `rotate_pdf.py`, `convert_image.py`
 
 ### references/
+
 Documentation loaded into context as needed.
+
 - When: Detailed info needed only for specific tasks
 - Example: `api_reference.md`, `schema.md`
 
 ### assets/
+
 Files used in output, not loaded into context.
+
 - When: Templates, images, fonts for final output
 - Example: `template.pptx`, `logo.png`
 
@@ -388,6 +411,7 @@ node scripts/port.cjs ./my-skill --analyze
 ```
 
 Output shows:
+
 - Detected platform (claude, gemini, universal, unknown)
 - Platform-specific files found
 - Metadata from config files
@@ -407,6 +431,7 @@ node scripts/port.cjs .claude/skills/my-skill --to gemini --force
 ```
 
 **What gets converted:**
+
 - `SKILL.md` → `gemini-extension.json` + `GEMINI.md`
 - `config.json` → MCP server entries in manifest
 - `allowed-tools` (allowlist) → `excludeTools` (denylist)
@@ -424,6 +449,7 @@ node scripts/port.cjs ./gemini-ext --to claude --output .claude/skills/converted
 ```
 
 **What gets converted:**
+
 - `gemini-extension.json` → `SKILL.md` frontmatter
 - `GEMINI.md` → `SKILL.md` body
 - `excludeTools` (denylist) → `allowed-tools` (allowlist)
@@ -441,21 +467,22 @@ node scripts/port.cjs .claude/skills/my-skill --universal --output ./universal-s
 ```
 
 This creates a skill that works on both Claude Code and Gemini CLI by including:
+
 - `SKILL.md` (Claude)
 - `gemini-extension.json` + `GEMINI.md` (Gemini)
 - Shared resources in `shared/`
 
 ### Tool Restriction Mapping
 
-| Claude (allowlist) | Gemini (denylist) |
-|--------------------|-------------------|
-| `allowed-tools: [Read, Write]` | `excludeTools: [Edit, Bash, Glob, Grep, WebFetch, ...]` |
-| `allowed-tools: []` (all allowed) | `excludeTools: []` (none excluded) |
+| Claude (allowlist)                | Gemini (denylist)                                       |
+| --------------------------------- | ------------------------------------------------------- |
+| `allowed-tools: [Read, Write]`    | `excludeTools: [Edit, Bash, Glob, Grep, WebFetch, ...]` |
+| `allowed-tools: []` (all allowed) | `excludeTools: []` (none excluded)                      |
 
 ### Path Variable Mapping
 
-| Claude | Gemini |
-|--------|--------|
+| Claude         | Gemini             |
+| -------------- | ------------------ |
 | `${skillPath}` | `${extensionPath}` |
 
 ### Limitations

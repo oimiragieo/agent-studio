@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Artifact Renderer - Deterministic Markdown rendering from JSON artifacts
- * 
+ *
  * Renders human-readable Markdown from JSON artifacts using Handlebars templates
  * Ensures 100% consistency between JSON (canonical) and Markdown (derived)
- * 
+ *
  * Usage:
  *   import { renderArtifact } from './artifact-renderer.mjs';
  */
@@ -27,40 +27,40 @@ export async function renderArtifact(jsonPath, templatePath = null, outputPath =
   if (!existsSync(jsonPath)) {
     throw new Error(`JSON artifact not found: ${jsonPath}`);
   }
-  
+
   const jsonContent = await readFile(jsonPath, 'utf-8');
   const artifactData = JSON.parse(jsonContent);
-  
+
   // Determine artifact type from filename or content
   const artifactType = inferArtifactType(jsonPath, artifactData);
-  
+
   // Resolve template path
   if (!templatePath) {
     templatePath = resolveTemplatePath(artifactType);
   }
-  
+
   if (!existsSync(templatePath)) {
     throw new Error(`Template not found: ${templatePath}`);
   }
-  
+
   // Load template
   const templateContent = await readFile(templatePath, 'utf-8');
   const template = Handlebars.compile(templateContent);
-  
+
   // Register Handlebars helpers
   registerHandlebarsHelpers();
-  
+
   // Render Markdown
   const markdown = template(artifactData);
-  
+
   // Resolve output path
   if (!outputPath) {
     outputPath = jsonPath.replace(/\.json$/, '.md');
   }
-  
+
   // Write rendered Markdown
   await writeFile(outputPath, markdown, 'utf-8');
-  
+
   return outputPath;
 }
 
@@ -69,20 +69,20 @@ export async function renderArtifact(jsonPath, templatePath = null, outputPath =
  */
 function inferArtifactType(jsonPath, artifactData) {
   const filename = jsonPath.split(/[/\\]/).pop().toLowerCase();
-  
+
   // Check filename patterns
   if (filename.includes('plan')) return 'plan';
   if (filename.includes('architecture')) return 'architecture';
   if (filename.includes('prd')) return 'prd';
   if (filename.includes('test')) return 'test-plan';
   if (filename.includes('epic') || filename.includes('story')) return 'epics-stories';
-  
+
   // Check content structure
   if (artifactData.phases || artifactData.tasks) return 'plan';
   if (artifactData.components || artifactData.layers) return 'architecture';
   if (artifactData.features || artifactData.requirements) return 'prd';
   if (artifactData.test_cases || artifactData.scenarios) return 'test-plan';
-  
+
   return 'generic';
 }
 
@@ -90,7 +90,12 @@ function inferArtifactType(jsonPath, artifactData) {
  * Resolve template path for artifact type
  */
 function resolveTemplatePath(artifactType) {
-  const templatesDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'templates', 'renderers');
+  const templatesDir = join(
+    dirname(fileURLToPath(import.meta.url)),
+    '..',
+    'templates',
+    'renderers'
+  );
   return join(templatesDir, `${artifactType}.hbs`);
 }
 
@@ -99,28 +104,28 @@ function resolveTemplatePath(artifactType) {
  */
 function registerHandlebarsHelpers() {
   // Format date
-  Handlebars.registerHelper('formatDate', (date) => {
+  Handlebars.registerHelper('formatDate', date => {
     if (!date) return '';
     const d = new Date(date);
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
   });
-  
+
   // Format JSON
-  Handlebars.registerHelper('json', (obj) => {
+  Handlebars.registerHelper('json', obj => {
     return JSON.stringify(obj, null, 2);
   });
-  
+
   // Markdown list
   Handlebars.registerHelper('list', (items, options) => {
     if (!Array.isArray(items)) return '';
     return items.map(item => `- ${options.fn(item)}`).join('\n');
   });
-  
+
   // Conditional block
   Handlebars.registerHelper('ifEquals', (arg1, arg2, options) => {
-    return (arg1 === arg2) ? options.fn(this) : options.inverse(this);
+    return arg1 === arg2 ? options.fn(this) : options.inverse(this);
   });
-  
+
   // Join array
   Handlebars.registerHelper('join', (array, separator = ', ') => {
     if (!Array.isArray(array)) return '';
@@ -152,6 +157,5 @@ export async function renderArtifacts(artifacts) {
 
 export default {
   renderArtifact,
-  renderArtifacts
+  renderArtifacts,
 };
-

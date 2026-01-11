@@ -104,6 +104,7 @@ result, messages = await send_query(
 ### Setting Sources
 
 **CRITICAL**: Must include `"project"` and `"local"` to load:
+
 - Slash commands from `.claude/commands/`
 - CLAUDE.md project instructions
 - Subagent definitions from `.claude/agents/`

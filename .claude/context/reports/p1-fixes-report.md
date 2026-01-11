@@ -10,13 +10,13 @@
 
 Fixed 5 critical content correctness issues across 11 CUJ files:
 
-| Issue | Files Affected | Status |
-|-------|---------------|--------|
-| Non-standard format | CUJ-063 | ✅ Fixed |
-| Missing backticks | CUJ-010 | ✅ Fixed |
-| Step 0/0.1 in skill-only CUJs | CUJ-017, CUJ-027, CUJ-044 | ✅ Fixed |
-| Missing Plan Rating Gate | CUJ-006, CUJ-007, CUJ-008, CUJ-028, CUJ-029, CUJ-058 | ✅ Fixed |
-| Non-existent workflow refs | CUJ-INDEX | ✅ Fixed |
+| Issue                         | Files Affected                                       | Status   |
+| ----------------------------- | ---------------------------------------------------- | -------- |
+| Non-standard format           | CUJ-063                                              | ✅ Fixed |
+| Missing backticks             | CUJ-010                                              | ✅ Fixed |
+| Step 0/0.1 in skill-only CUJs | CUJ-017, CUJ-027, CUJ-044                            | ✅ Fixed |
+| Missing Plan Rating Gate      | CUJ-006, CUJ-007, CUJ-008, CUJ-028, CUJ-029, CUJ-058 | ✅ Fixed |
+| Non-existent workflow refs    | CUJ-INDEX                                            | ✅ Fixed |
 
 **Total Files Modified**: 12 files
 **Total Issues Fixed**: 15 individual corrections
@@ -28,6 +28,7 @@ Fixed 5 critical content correctness issues across 11 CUJ files:
 **Problem**: CUJ-063 used "Overview table" format not supported by CUJ parsers.
 
 **Fix Applied**:
+
 - Converted to standard CUJ template format
 - Added required sections:
   - User Goal
@@ -56,11 +57,13 @@ Fixed 5 critical content correctness issues across 11 CUJ files:
 **Problem**: Line 13 of CUJ-010 had execution mode without backticks, breaking regex parsers.
 
 **Before**:
+
 ```markdown
 **Execution Mode**: brownfield-fullstack.yaml
 ```
 
 **After**:
+
 ```markdown
 **Execution Mode**: `brownfield-fullstack.yaml`
 ```
@@ -80,11 +83,13 @@ Fixed 5 critical content correctness issues across 11 CUJ files:
 **Fix**: Enhanced note to clarify skill-only CUJs skip planning when invoked directly.
 
 **Before**:
+
 ```markdown
 > **Note**: Skill-only CUJs execute directly without planning. If invoked via workflow, planning (Step 0) and rating (Step 0.1) occur first. Direct skill invocation skips planning.
 ```
 
 **After**:
+
 ```markdown
 > **Note**: Skill-only CUJs execute directly without planning. If invoked via workflow, planning (Step 0) and rating (Step 0.1) occur first. Direct skill invocation skips planning and proceeds directly to skill execution.
 ```
@@ -100,6 +105,7 @@ Fixed 5 critical content correctness issues across 11 CUJ files:
 **Fix**: Added enhanced note explaining skill-only execution and recovery skill usage.
 
 **Before**:
+
 ```markdown
 **Note**: This CUJ demonstrates the `recovery` skill as a shared primitive. All workflows should use this skill for recovery scenarios.
 
@@ -107,6 +113,7 @@ Fixed 5 critical content correctness issues across 11 CUJ files:
 ```
 
 **After**:
+
 ```markdown
 > **Note**: Skill-only CUJs execute directly without planning. If invoked via workflow, planning (Step 0) and rating (Step 0.1) occur first. Direct skill invocation skips planning and proceeds directly to recovery skill execution.
 >
@@ -118,6 +125,7 @@ Fixed 5 critical content correctness issues across 11 CUJ files:
 **File**: `.claude/docs/cujs/CUJ-027.md`
 
 **Changes**:
+
 - Renamed Step 0 → Step 1 (skill-only starts at Step 1)
 - Added clarification note
 
@@ -130,24 +138,30 @@ Fixed 5 critical content correctness issues across 11 CUJ files:
 **Fix**: Changed execution mode from `skill-only` to `workflow` (this CUJ requires multi-step workflow execution).
 
 **Before**:
+
 ```markdown
 **Execution Mode**: `skill-only`
 
 > **Note**: Skill-only CUJs execute directly without planning. If invoked via workflow, planning (Step 0) and rating (Step 0.1) occur first. Direct skill invocation skips planning.
 
 ### Step 0: Planning Phase
+
 ...
+
 ### Step 0.1: Plan Rating Gate
 ```
 
 **After**:
+
 ```markdown
 **Execution Mode**: `workflow`
 
 > **Note**: This CUJ requires workflow execution to test agent fallback routing. It includes planning (Step 0) and rating (Step 0.1) before testing fallback scenarios.
 
 ### Step 0: Planning Phase
+
 ...
+
 ### Step 0.1: Plan Rating Gate
 ```
 
@@ -165,6 +179,7 @@ Fixed 5 critical content correctness issues across 11 CUJ files:
 
 **Fix Applied to All**:
 Added Step 0.1 section after Step 0 with:
+
 - Agent: orchestrator
 - Skill: response-rater
 - Minimum score: 7/10
@@ -172,11 +187,14 @@ Added Step 0.1 section after Step 0 with:
 - Rating file location
 
 **Template Used**:
+
 ```markdown
 ### Step 0.1: Plan Rating Gate
+
 **Agent**: orchestrator
 **Skill**: response-rater
 **Validation**:
+
 - Minimum score: 7/10
 - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
 - If score < 7: Return to planner with feedback (max 3 attempts)
@@ -187,7 +205,9 @@ Added Step 0.1 section after Step 0 with:
 ### Files Updated
 
 #### CUJ-006 (Architecture Review)
+
 **File**: `.claude/docs/cujs/CUJ-006.md`
+
 - Renamed Step 1 "Planning" → Step 0 "Planning Phase"
 - Added Step 0.1 Plan Rating Gate
 - Renumbered subsequent steps (Step 2 → Step 1, etc.)
@@ -197,7 +217,9 @@ Added Step 0.1 section after Step 0 with:
 ---
 
 #### CUJ-007 (Technical Debt Planning)
+
 **File**: `.claude/docs/cujs/CUJ-007.md`
+
 - Renamed Step 1 "Planning" → Step 0 "Planning Phase"
 - Added Step 0.1 Plan Rating Gate
 - Renumbered subsequent steps (Step 2 → Step 1, Step 3 → Step 2, Step 4 → Step 3)
@@ -207,7 +229,9 @@ Added Step 0.1 section after Step 0 with:
 ---
 
 #### CUJ-008 (Database Schema Planning)
+
 **File**: `.claude/docs/cujs/CUJ-008.md`
+
 - Renamed Step 1 "Planning" → Step 0 "Planning Phase"
 - Added Step 0.1 Plan Rating Gate
 - Renumbered subsequent steps (Step 2 → Step 1, Step 3 → Step 2, Step 4 → Step 3)
@@ -217,7 +241,9 @@ Added Step 0.1 section after Step 0 with:
 ---
 
 #### CUJ-028 (Infrastructure-First Development)
+
 **File**: `.claude/docs/cujs/CUJ-028.md`
+
 - Added Step 0 "Planning Phase" (was missing)
 - Added Step 0.1 Plan Rating Gate
 - Kept existing Step 4 numbering intact (CUJ-028 starts at Step 4 because it extends greenfield-fullstack workflow)
@@ -227,7 +253,9 @@ Added Step 0.1 section after Step 0 with:
 ---
 
 #### CUJ-029 (Cloud Integration Workflow)
+
 **File**: `.claude/docs/cujs/CUJ-029.md`
+
 - Added Step 0 "Planning Phase" (was missing)
 - Added Step 0.1 Plan Rating Gate
 - Kept existing Step 7 numbering intact (CUJ-029 starts at Step 7 because it extends greenfield-fullstack workflow)
@@ -237,7 +265,9 @@ Added Step 0.1 section after Step 0 with:
 ---
 
 #### CUJ-058 (Error Recovery and Workflow Resilience)
+
 **File**: `.claude/docs/cujs/CUJ-058.md`
+
 - Added Step 0 "Planning Phase" (was missing)
 - Added Step 0.1 Plan Rating Gate
 - Renumbered subsequent steps (Step 1-5 now follow Step 0.1)
@@ -251,6 +281,7 @@ Added Step 0.1 section after Step 0 with:
 **Problem**: CUJ-INDEX referenced `artifact-publishing-flow.yaml` which doesn't exist in `.claude/workflows/`.
 
 **Workflows Available**:
+
 ```
 .claude/workflows/
   - ai-system-flow.yaml ✅
@@ -279,6 +310,7 @@ Updated CUJ-053, CUJ-054, CUJ-055 to use `automated-enterprise-flow.yaml` instea
 **File**: `.claude/docs/cujs/CUJ-INDEX.md`
 
 **Before**:
+
 ```markdown
 | CUJ-053 | workflow | `.claude/workflows/artifact-publishing-flow.yaml` | artifact-publisher |
 | CUJ-054 | workflow | `.claude/workflows/artifact-publishing-flow.yaml` | context-bridge |
@@ -286,6 +318,7 @@ Updated CUJ-053, CUJ-054, CUJ-055 to use `automated-enterprise-flow.yaml` instea
 ```
 
 **After**:
+
 ```markdown
 | CUJ-053 | workflow | `.claude/workflows/automated-enterprise-flow.yaml` | artifact-publisher |
 | CUJ-054 | workflow | `.claude/workflows/automated-enterprise-flow.yaml` | context-bridge |
@@ -293,6 +326,7 @@ Updated CUJ-053, CUJ-054, CUJ-055 to use `automated-enterprise-flow.yaml` instea
 ```
 
 **Rationale**:
+
 - CUJ-053, CUJ-054, CUJ-055 are testing/validation CUJs
 - `automated-enterprise-flow.yaml` is designed for comprehensive testing and validation
 - This workflow supports artifact publishing validation (CUJ-053), cross-platform sync (CUJ-054), and retry logic (CUJ-055)
@@ -303,20 +337,20 @@ Updated CUJ-053, CUJ-054, CUJ-055 to use `automated-enterprise-flow.yaml` instea
 
 ## Files Modified Summary
 
-| File | Changes | Lines Modified |
-|------|---------|---------------|
-| `.claude/docs/cujs/CUJ-006.md` | Added Step 0.1, renumbered steps | ~15 lines |
-| `.claude/docs/cujs/CUJ-007.md` | Added Step 0.1, renumbered steps | ~20 lines |
-| `.claude/docs/cujs/CUJ-008.md` | Added Step 0.1, renumbered steps | ~18 lines |
-| `.claude/docs/cujs/CUJ-010.md` | Fixed missing backticks | 1 line |
-| `.claude/docs/cujs/CUJ-017.md` | Clarified skill-only note | 1 line |
-| `.claude/docs/cujs/CUJ-027.md` | Enhanced note, renamed Step 0 → 1 | 8 lines |
-| `.claude/docs/cujs/CUJ-028.md` | Added Step 0 and 0.1 | ~16 lines |
-| `.claude/docs/cujs/CUJ-029.md` | Added Step 0 and 0.1 | ~16 lines |
-| `.claude/docs/cujs/CUJ-044.md` | Changed execution mode to workflow | 2 lines |
-| `.claude/docs/cujs/CUJ-058.md` | Added Step 0 and 0.1 | ~15 lines |
-| `.claude/docs/cujs/CUJ-063.md` | Complete format conversion | ~316 lines (full rewrite) |
-| `.claude/docs/cujs/CUJ-INDEX.md` | Fixed workflow references | 3 lines |
+| File                             | Changes                            | Lines Modified            |
+| -------------------------------- | ---------------------------------- | ------------------------- |
+| `.claude/docs/cujs/CUJ-006.md`   | Added Step 0.1, renumbered steps   | ~15 lines                 |
+| `.claude/docs/cujs/CUJ-007.md`   | Added Step 0.1, renumbered steps   | ~20 lines                 |
+| `.claude/docs/cujs/CUJ-008.md`   | Added Step 0.1, renumbered steps   | ~18 lines                 |
+| `.claude/docs/cujs/CUJ-010.md`   | Fixed missing backticks            | 1 line                    |
+| `.claude/docs/cujs/CUJ-017.md`   | Clarified skill-only note          | 1 line                    |
+| `.claude/docs/cujs/CUJ-027.md`   | Enhanced note, renamed Step 0 → 1  | 8 lines                   |
+| `.claude/docs/cujs/CUJ-028.md`   | Added Step 0 and 0.1               | ~16 lines                 |
+| `.claude/docs/cujs/CUJ-029.md`   | Added Step 0 and 0.1               | ~16 lines                 |
+| `.claude/docs/cujs/CUJ-044.md`   | Changed execution mode to workflow | 2 lines                   |
+| `.claude/docs/cujs/CUJ-058.md`   | Added Step 0 and 0.1               | ~15 lines                 |
+| `.claude/docs/cujs/CUJ-063.md`   | Complete format conversion         | ~316 lines (full rewrite) |
+| `.claude/docs/cujs/CUJ-INDEX.md` | Fixed workflow references          | 3 lines                   |
 
 **Total Lines Modified**: ~431 lines across 12 files
 
@@ -364,6 +398,7 @@ All P1 fixes validated against requirements:
 This report addresses **P1 (Content Correctness)** issues from the comprehensive CUJ validation audit.
 
 **Related Priority Categories**:
+
 - P2: Schema Validation (artifact references, gate files)
 - P3: Success Criteria Quality (measurability, verifiability)
 - P4: Documentation Quality (Related Documentation section)
@@ -372,9 +407,9 @@ This report addresses **P1 (Content Correctness)** issues from the comprehensive
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-08 | Initial P1 fixes report |
+| Version | Date       | Changes                 |
+| ------- | ---------- | ----------------------- |
+| 1.0.0   | 2026-01-08 | Initial P1 fixes report |
 
 ---
 

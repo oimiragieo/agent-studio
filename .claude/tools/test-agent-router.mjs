@@ -15,8 +15,8 @@ const testCases = [
       taskType: 'MOBILE',
       primaryAgent: 'mobile-developer',
       hasCrossCutting: true,
-      crossCuttingAgents: ['security-architect']
-    }
+      crossCuttingAgents: ['security-architect'],
+    },
   },
   {
     name: 'Database Migration',
@@ -25,16 +25,16 @@ const testCases = [
       taskType: 'DATABASE',
       primaryAgent: 'database-architect',
       hasCrossCutting: true,
-      crossCuttingAgents: ['database-architect']
-    }
+      crossCuttingAgents: ['database-architect'],
+    },
   },
   {
     name: 'UI Bug Fix',
     task: 'Fix button alignment issue in the login form',
     expected: {
       taskType: 'UI_UX',
-      primaryAgent: 'ux-expert'
-    }
+      primaryAgent: 'ux-expert',
+    },
   },
   {
     name: 'API Performance',
@@ -43,8 +43,8 @@ const testCases = [
       taskType: 'PERFORMANCE',
       primaryAgent: 'performance-engineer',
       hasCrossCutting: true,
-      crossCuttingAgents: ['performance-engineer']
-    }
+      crossCuttingAgents: ['performance-engineer'],
+    },
   },
   {
     name: 'Security Audit',
@@ -53,16 +53,16 @@ const testCases = [
       taskType: 'SECURITY',
       primaryAgent: 'security-architect',
       hasCrossCutting: true,
-      crossCuttingAgents: ['security-architect', 'compliance-auditor']
-    }
+      crossCuttingAgents: ['security-architect', 'compliance-auditor'],
+    },
   },
   {
     name: 'Documentation Update',
     task: 'Update API documentation for new endpoints',
     expected: {
       taskType: 'DOCUMENTATION',
-      primaryAgent: 'technical-writer'
-    }
+      primaryAgent: 'technical-writer',
+    },
   },
   {
     name: 'Production Incident',
@@ -71,24 +71,24 @@ const testCases = [
       taskType: 'INCIDENT',
       primaryAgent: 'incident-responder',
       hasCrossCutting: true,
-      crossCuttingAgents: ['incident-responder']
-    }
+      crossCuttingAgents: ['incident-responder'],
+    },
   },
   {
     name: 'Legacy Modernization',
     task: 'Modernize legacy monolith to microservices architecture',
     expected: {
       taskType: 'LEGACY',
-      primaryAgent: 'legacy-modernizer'
-    }
+      primaryAgent: 'legacy-modernizer',
+    },
   },
   {
     name: 'AI Feature',
     task: 'Implement RAG system with embeddings for document search',
     expected: {
       taskType: 'AI_LLM',
-      primaryAgent: 'llm-architect'
-    }
+      primaryAgent: 'llm-architect',
+    },
   },
   {
     name: 'Infrastructure Setup',
@@ -97,9 +97,9 @@ const testCases = [
       taskType: 'INFRASTRUCTURE',
       primaryAgent: 'devops',
       hasCrossCutting: true,
-      crossCuttingAgents: ['devops']
-    }
-  }
+      crossCuttingAgents: ['devops'],
+    },
+  },
 ];
 
 async function runTests() {
@@ -118,16 +118,22 @@ async function runTests() {
 
       // Validate task type
       const taskTypeMatch = result.taskType === testCase.expected.taskType;
-      console.log(`  Task Type: ${result.taskType} ${taskTypeMatch ? '✓' : '✗ (expected ' + testCase.expected.taskType + ')'}`);
+      console.log(
+        `  Task Type: ${result.taskType} ${taskTypeMatch ? '✓' : '✗ (expected ' + testCase.expected.taskType + ')'}`
+      );
 
       // Validate primary agent
       const primaryMatch = result.primary === testCase.expected.primaryAgent;
-      console.log(`  Primary Agent: ${result.primary} ${primaryMatch ? '✓' : '✗ (expected ' + testCase.expected.primaryAgent + ')'}`);
+      console.log(
+        `  Primary Agent: ${result.primary} ${primaryMatch ? '✓' : '✗ (expected ' + testCase.expected.primaryAgent + ')'}`
+      );
 
       // Validate cross-cutting
       if (testCase.expected.hasCrossCutting) {
         const hasCrossCutting = result.crossCutting.length > 0;
-        console.log(`  Cross-Cutting Agents: ${result.crossCutting.join(', ')} ${hasCrossCutting ? '✓' : '✗'}`);
+        console.log(
+          `  Cross-Cutting Agents: ${result.crossCutting.join(', ')} ${hasCrossCutting ? '✓' : '✗'}`
+        );
 
         if (testCase.expected.crossCuttingAgents) {
           const allPresent = testCase.expected.crossCuttingAgents.every(agent =>
@@ -142,7 +148,9 @@ async function runTests() {
 
       // Show complexity and gates
       console.log(`  Complexity: ${result.complexity}`);
-      console.log(`  Gates: Planner=${result.gates.planner}, Review=${result.gates.review}, Impact=${result.gates.impactAnalysis}`);
+      console.log(
+        `  Gates: Planner=${result.gates.planner}, Review=${result.gates.review}, Impact=${result.gates.impactAnalysis}`
+      );
 
       if (taskTypeMatch && primaryMatch) {
         passed++;
@@ -160,7 +168,9 @@ async function runTests() {
     console.log('-'.repeat(80));
   }
 
-  console.log(`\nTest Summary: ${passed}/${testCases.length} passed, ${failed}/${testCases.length} failed`);
+  console.log(
+    `\nTest Summary: ${passed}/${testCases.length} passed, ${failed}/${testCases.length} failed`
+  );
 
   if (failed === 0) {
     console.log('✓ All tests passed!');

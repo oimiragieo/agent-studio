@@ -6,7 +6,7 @@ project_type: optimization
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -28,17 +28,17 @@ fallback_agents:
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "performance"
-  - "optimize"
-  - "profiling"
-  - "benchmark"
-  - "load test"
-  - "slow"
-  - "latency"
+  - 'performance'
+  - 'optimize'
+  - 'profiling'
+  - 'benchmark'
+  - 'load test'
+  - 'slow'
+  - 'latency'
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - target_system
@@ -58,7 +58,7 @@ steps:
       - Create structured improvement plan
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -82,7 +82,7 @@ steps:
       - If score >= 7: Proceed with workflow execution
 
   - step: 0.5
-    name: "Baseline Measurement"
+    name: 'Baseline Measurement'
     agent: performance-engineer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -104,7 +104,7 @@ steps:
       - Store baseline in artifact for comparison
 
   - step: 1
-    name: "Performance Analysis"
+    name: 'Performance Analysis'
     agent: performance-engineer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -129,7 +129,7 @@ steps:
       - Compare against baseline metrics
 
   - step: 2
-    name: "Architecture Review"
+    name: 'Architecture Review'
     agent: architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -150,7 +150,7 @@ steps:
       - CDN and edge computing
 
   - step: 3
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -172,7 +172,7 @@ steps:
       - Async refactoring
 
   - step: 4
-    name: "Code Review"
+    name: 'Code Review'
     agent: code-reviewer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -185,7 +185,7 @@ steps:
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/04-code-reviewer.json
-    on_failure: "Return to implementation step with feedback"
+    on_failure: 'Return to implementation step with feedback'
     description: |
       Review performance optimization implementation for quality, security, and codebase impact:
       - Verify optimization techniques are correctly applied
@@ -195,7 +195,7 @@ steps:
       - Ensure database query optimizations are safe
 
   - step: 5
-    name: "Performance Validation"
+    name: 'Performance Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -220,7 +220,7 @@ steps:
       - Generate performance-comparison.json showing improvements
 
   - step: 5.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"

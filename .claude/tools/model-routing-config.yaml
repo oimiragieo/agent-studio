@@ -8,7 +8,7 @@ models:
     # Released Nov 24, 2025 - Current flagship
     # NOTE: --permission-mode bypassPermissions removed for security (Nov 28, 2025)
     # Use model-router.sh --bypass-permissions flag if needed (with warning)
-    command: "claude -p \"$PROMPT\" --model claude-opus-4-5-20251101 --output-format json"
+    command: 'claude -p "$PROMPT" --model claude-opus-4-5-20251101 --output-format json'
     strengths:
       - long_horizon_agentic_planning
       - multi_system_architecture
@@ -19,22 +19,22 @@ models:
       - complex_reasoning
     weaknesses:
       - slightly_higher_latency_than_sonnet
-    cost_tier: high_value  # $5 input / $25 output
+    cost_tier: high_value # $5 input / $25 output
     latency: medium
     context_window: 500000
     best_for:
-      - "Principal Engineering tasks"
-      - "Full-repository refactoring"
-      - "Security Red Teaming"
-      - "Complex asynchronous agent workflows"
-      - "System architecture design"
-      - "Ambiguous requirement resolution"
+      - 'Principal Engineering tasks'
+      - 'Full-repository refactoring'
+      - 'Security Red Teaming'
+      - 'Complex asynchronous agent workflows'
+      - 'System architecture design'
+      - 'Ambiguous requirement resolution'
 
   claude-sonnet-4-5:
     cli_name: sonnet
     # Released Sept 29, 2025 - Fast daily driver
     # NOTE: --permission-mode bypassPermissions removed for security (Nov 28, 2025)
-    command: "claude -p \"$PROMPT\" --model claude-sonnet-4-5-20250929 --output-format json"
+    command: 'claude -p "$PROMPT" --model claude-sonnet-4-5-20250929 --output-format json'
     strengths:
       - extreme_speed
       - high_precision_coding
@@ -47,21 +47,21 @@ models:
     latency: fast
     context_window: 500000
     best_for:
-      - "Daily driver coding"
-      - "Test generation (TDD)"
-      - "Quick UI iterations"
-      - "Documentation scaffolding"
-      - "CI/CD pipeline tasks"
-      - "CSS/Tailwind styling"
+      - 'Daily driver coding'
+      - 'Test generation (TDD)'
+      - 'Quick UI iterations'
+      - 'Documentation scaffolding'
+      - 'CI/CD pipeline tasks'
+      - 'CSS/Tailwind styling'
 
   gemini-3-pro-preview:
     cli_name: gemini
     # Latest Nov 2025 - Most intelligent model
     # NOTE: -p/--prompt flag is DEPRECATED, use positional prompt instead
-    command: "gemini \"$PROMPT\" --model gemini-3-pro-preview --output-format json"
-    command_interactive: "gemini -i \"$PROMPT\" --model gemini-3-pro-preview"
+    command: 'gemini "$PROMPT" --model gemini-3-pro-preview --output-format json'
+    command_interactive: 'gemini -i "$PROMPT" --model gemini-3-pro-preview'
     strengths:
-      - massive_context_window  # 1M tokens (verified)
+      - massive_context_window # 1M tokens (verified)
       - most_intelligent_model
       - best_for_coding_and_agents
       - complex_reasoning
@@ -71,61 +71,61 @@ models:
       - higher_cost_for_large_contexts
     cost_tier: medium
     latency: medium
-    context_window: 1000000  # 1M tokens (up to 2M for preview users)
+    context_window: 1000000 # 1M tokens (up to 2M for preview users)
     best_for:
-      - "Most intelligent model for coding and agents"
-      - "Ingesting entire enterprise codebases"
-      - "Complex reasoning tasks"
-      - "Research across large document sets"
-      - "Multi-file context understanding"
+      - 'Most intelligent model for coding and agents'
+      - 'Ingesting entire enterprise codebases'
+      - 'Complex reasoning tasks'
+      - 'Research across large document sets'
+      - 'Multi-file context understanding'
 
   # Cursor Agent - Multi-model gateway with Cursor subscription
   # IMPORTANT: Requires WSL on Windows - does NOT run in PowerShell/CMD
   cursor-agent:
     cli_name: cursor
-    description: "Cursor IDE agent with access to 17+ models"
+    description: 'Cursor IDE agent with access to 17+ models'
     requires_wsl_on_windows: true
 
     # Available models (verified November 2025)
     models:
       cursor_native:
-        - composer-1  # Cursor's proprietary model
-        - auto  # Free tier - auto-selects best model
+        - composer-1 # Cursor's proprietary model
+        - auto # Free tier - auto-selects best model
       claude:
-        - sonnet-4.5  # Balanced reasoning and speed
-        - sonnet-4.5-thinking  # Extended reasoning mode
-        - opus-4.5  # Best for complex tasks
-        - opus-4.5-thinking  # Extended reasoning mode
-        - opus-4.1  # Legacy Claude
+        - sonnet-4.5 # Balanced reasoning and speed
+        - sonnet-4.5-thinking # Extended reasoning mode
+        - opus-4.5 # Best for complex tasks
+        - opus-4.5-thinking # Extended reasoning mode
+        - opus-4.1 # Legacy Claude
       google:
-        - gemini-3-pro  # Large context, latest Gemini
+        - gemini-3-pro # Large context, latest Gemini
       openai:
-        - gpt-5  # Standard GPT-5
-        - gpt-5.1  # Latest GPT model
-        - gpt-5-high  # Extended reasoning
-        - gpt-5.1-high  # Latest with extended reasoning
+        - gpt-5 # Standard GPT-5
+        - gpt-5.1 # Latest GPT model
+        - gpt-5-high # Extended reasoning
+        - gpt-5.1-high # Latest with extended reasoning
       openai_codex:
-        - gpt-5-codex  # Code generation focused
-        - gpt-5-codex-high  # Code gen + extended reasoning
-        - gpt-5.1-codex  # Latest code generation
-        - gpt-5.1-codex-high  # Latest code + extended reasoning
+        - gpt-5-codex # Code generation focused
+        - gpt-5-codex-high # Code gen + extended reasoning
+        - gpt-5.1-codex # Latest code generation
+        - gpt-5.1-codex-high # Latest code + extended reasoning
       xai:
-        - grok  # Grok AI model
+        - grok # Grok AI model
 
     # Commands by use case (all require WSL on Windows)
     # Syntax: cursor-agent -p [--force] --model MODEL --output-format FORMAT "prompt"
     # --force enables file modifications (without it, only proposes changes)
     commands:
-      default: "wsl bash -lc \"cursor-agent -p --model sonnet-4.5 --output-format json '$PROMPT'\""
-      auto: "wsl bash -lc \"cursor-agent -p --model auto --output-format json '$PROMPT'\""
-      planning: "wsl bash -lc \"cursor-agent -p --model opus-4.5 --output-format json '$PROMPT'\""
-      thinking: "wsl bash -lc \"cursor-agent -p --model opus-4.5-thinking --output-format json '$PROMPT'\""
-      codex: "wsl bash -lc \"cursor-agent -p --model gpt-5.1-codex --output-format json '$PROMPT'\""
-      codex_high: "wsl bash -lc \"cursor-agent -p --model gpt-5.1-codex-high --output-format json '$PROMPT'\""
-      fast: "wsl bash -lc \"cursor-agent -p --model composer-1 --output-format json '$PROMPT'\""
-      research: "wsl bash -lc \"cursor-agent -p --model gemini-3-pro --output-format json '$PROMPT'\""
+      default: 'wsl bash -lc "cursor-agent -p --model sonnet-4.5 --output-format json ''$PROMPT''"'
+      auto: 'wsl bash -lc "cursor-agent -p --model auto --output-format json ''$PROMPT''"'
+      planning: 'wsl bash -lc "cursor-agent -p --model opus-4.5 --output-format json ''$PROMPT''"'
+      thinking: 'wsl bash -lc "cursor-agent -p --model opus-4.5-thinking --output-format json ''$PROMPT''"'
+      codex: 'wsl bash -lc "cursor-agent -p --model gpt-5.1-codex --output-format json ''$PROMPT''"'
+      codex_high: 'wsl bash -lc "cursor-agent -p --model gpt-5.1-codex-high --output-format json ''$PROMPT''"'
+      fast: 'wsl bash -lc "cursor-agent -p --model composer-1 --output-format json ''$PROMPT''"'
+      research: 'wsl bash -lc "cursor-agent -p --model gemini-3-pro --output-format json ''$PROMPT''"'
       # With file modifications enabled
-      write_default: "wsl bash -lc \"cursor-agent -p --force --model sonnet-4.5 --output-format json '$PROMPT'\""
+      write_default: 'wsl bash -lc "cursor-agent -p --force --model sonnet-4.5 --output-format json ''$PROMPT''"'
 
     strengths:
       - multi_model_access
@@ -140,17 +140,17 @@ models:
     cost_tier: cursor_subscription
     latency: fast
     best_for:
-      - "Applying diffs directly to files"
-      - "Linter error resolution"
-      - "Frontend component visual tweaks"
-      - "Iterative code refinement"
-      - "Extended reasoning with thinking modes"
+      - 'Applying diffs directly to files'
+      - 'Linter error resolution'
+      - 'Frontend component visual tweaks'
+      - 'Iterative code refinement'
+      - 'Extended reasoning with thinking modes'
 
   # OpenCode - Multi-model gateway via GitHub Copilot
   # After GitHub auth, opencode provides access to 17+ models
   opencode:
     cli_name: opencode
-    description: "Terminal-native multi-model gateway with GitHub Copilot integration"
+    description: 'Terminal-native multi-model gateway with GitHub Copilot integration'
 
     # Native OpenCode models
     native_models:
@@ -167,7 +167,7 @@ models:
       flagship:
         - github-copilot/gpt-5.1
         - github-copilot/gpt-5
-        - github-copilot/claude-opus-4.5  # Requires Copilot model enablement
+        - github-copilot/claude-opus-4.5 # Requires Copilot model enablement
         - github-copilot/claude-sonnet-4.5
         - github-copilot/gemini-3-pro-preview
       coding:
@@ -190,14 +190,14 @@ models:
     # Syntax: opencode run "message" --model provider/model [--continue] [--session ID]
     # Note: No --output-format flag - outputs text by default
     commands:
-      default: "opencode run \"$PROMPT\" --model github-copilot/claude-sonnet-4.5"
-      planning: "opencode run \"$PROMPT\" --model github-copilot/claude-opus-4.5"
-      fast: "opencode run \"$PROMPT\" --model github-copilot/grok-code-fast-1"
-      codex: "opencode run \"$PROMPT\" --model github-copilot/gpt-5.1-codex"
-      research: "opencode run \"$PROMPT\" --model github-copilot/gemini-3-pro-preview"
-      haiku: "opencode run \"$PROMPT\" --model github-copilot/claude-haiku-4.5"
+      default: 'opencode run "$PROMPT" --model github-copilot/claude-sonnet-4.5'
+      planning: 'opencode run "$PROMPT" --model github-copilot/claude-opus-4.5'
+      fast: 'opencode run "$PROMPT" --model github-copilot/grok-code-fast-1'
+      codex: 'opencode run "$PROMPT" --model github-copilot/gpt-5.1-codex'
+      research: 'opencode run "$PROMPT" --model github-copilot/gemini-3-pro-preview'
+      haiku: 'opencode run "$PROMPT" --model github-copilot/claude-haiku-4.5'
       # Continue last session
-      continue_default: "opencode run \"$PROMPT\" --model github-copilot/claude-sonnet-4.5 --continue"
+      continue_default: 'opencode run "$PROMPT" --model github-copilot/claude-sonnet-4.5 --continue'
 
     strengths:
       - multi_model_access
@@ -207,48 +207,48 @@ models:
       - fast_iteration
     weaknesses:
       - requires_github_auth_for_copilot_models
-    cost_tier: low  # GitHub Copilot subscription covers usage
+    cost_tier: low # GitHub Copilot subscription covers usage
     latency: fast
     best_for:
-      - "Cost-effective access to flagship models"
-      - "Terminal-based multi-model workflows"
-      - "Quick model switching without API key management"
-      - "GitHub Copilot integrated development"
+      - 'Cost-effective access to flagship models'
+      - 'Terminal-based multi-model workflows'
+      - 'Quick model switching without API key management'
+      - 'GitHub Copilot integrated development'
 
   # OpenAI Codex - 2025 CLI tool (not the 2021 model)
   # Syntax: codex exec "prompt" --model MODEL [--full-auto] [--json] [--sandbox MODE]
   codex:
     cli_name: codex
-    description: "OpenAI Codex CLI for UI generation and rapid prototyping"
+    description: 'OpenAI Codex CLI for UI generation and rapid prototyping'
 
     # Available models
     models:
-      - gpt-5.1-codex-max  # Latest flagship, deep reasoning (default)
-      - gpt-5.1-codex  # Standard Codex
-      - gpt-5.1-codex-mini  # Faster, cheaper
-      - gpt-5.1  # General reasoning (non-coding)
+      - gpt-5.1-codex-max # Latest flagship, deep reasoning (default)
+      - gpt-5.1-codex # Standard Codex
+      - gpt-5.1-codex-mini # Faster, cheaper
+      - gpt-5.1 # General reasoning (non-coding)
 
     # Sandbox modes
     sandbox_modes:
-      read_only: "Read-only sandbox (default), no file modifications"
-      workspace_write: "Allow file creation/editing within workspace"
-      danger_full_access: "Full file system access (DANGEROUS)"
+      read_only: 'Read-only sandbox (default), no file modifications'
+      workspace_write: 'Allow file creation/editing within workspace'
+      danger_full_access: 'Full file system access (DANGEROUS)'
 
     # Reasoning effort levels
     # --full-auto sets reasoning to "xhigh" which is NOT supported by mini model
     # Mini model only supports: low, medium, high
     reasoning_levels:
-      supported_by_all: ["low", "medium", "high"]
-      max_only: ["xhigh"]  # Only gpt-5.1-codex-max supports xhigh (--full-auto)
+      supported_by_all: ['low', 'medium', 'high']
+      max_only: ['xhigh'] # Only gpt-5.1-codex-max supports xhigh (--full-auto)
 
     # Commands by use case
     # Note: If global config (~/.codex/config.toml) has model_reasoning_effort=xhigh,
     # mini model will fail unless overridden with -c flag
     commands:
-      default: "codex exec \"$PROMPT\" --model gpt-5.1-codex-max --full-auto --json"
-      mini: "codex exec \"$PROMPT\" --model gpt-5.1-codex-mini -c 'model_reasoning_effort=\"medium\"' --json"
-      read_only: "codex exec \"$PROMPT\" --model gpt-5.1-codex-max --json"
-      full_access: "codex exec \"$PROMPT\" --model gpt-5.1-codex-max --sandbox danger-full-access --json"
+      default: 'codex exec "$PROMPT" --model gpt-5.1-codex-max --full-auto --json'
+      mini: 'codex exec "$PROMPT" --model gpt-5.1-codex-mini -c ''model_reasoning_effort="medium"'' --json'
+      read_only: 'codex exec "$PROMPT" --model gpt-5.1-codex-max --json'
+      full_access: 'codex exec "$PROMPT" --model gpt-5.1-codex-max --sandbox danger-full-access --json'
 
     strengths:
       - ui_generation
@@ -264,11 +264,11 @@ models:
     cost_tier: medium
     latency: fast
     best_for:
-      - "UI component generation"
-      - "Rapid prototyping"
-      - "CI/CD automation with GitHub Actions"
-      - "Structured output extraction"
-      - "Autofix CI failures"
+      - 'UI component generation'
+      - 'Rapid prototyping'
+      - 'CI/CD automation with GitHub Actions'
+      - 'Structured output extraction'
+      - 'Autofix CI failures'
 
 # Task Type Routing
 # Each task has primary model + cost-effective opencode alternative
@@ -277,9 +277,9 @@ task_routing:
   architecture_planning:
     primary: claude-opus-4-5
     secondary: gemini-3-0-pro
-    opencode_alt: opencode-opus  # github-copilot/claude-opus-4.5
+    opencode_alt: opencode-opus # github-copilot/claude-opus-4.5
     strategy: sequential
-    rationale: "Opus 4.5 for planning; Gemini provides research context; opencode-opus for cost savings"
+    rationale: 'Opus 4.5 for planning; Gemini provides research context; opencode-opus for cost savings'
 
   system_design:
     primary: claude-opus-4-5
@@ -291,15 +291,15 @@ task_routing:
   ambiguity_resolution:
     primary: claude-opus-4-5
     secondary: null
-    opencode_alt: opencode-gpt5  # github-copilot/gpt-5.1
+    opencode_alt: opencode-gpt5 # github-copilot/gpt-5.1
     strategy: single
-    rationale: "Opus 4.5 excels at resolving unclear requirements; GPT-5.1 as alternative"
+    rationale: 'Opus 4.5 excels at resolving unclear requirements; GPT-5.1 as alternative'
 
   # Research & Knowledge
   research:
     primary: gemini-3-0-pro
     secondary: null
-    opencode_alt: opencode-gemini  # github-copilot/gemini-3-pro-preview
+    opencode_alt: opencode-gemini # github-copilot/gemini-3-pro-preview
     strategy: single
     rationale: "Gemini 3.0's 1M context window; opencode-gemini via Copilot"
 
@@ -308,61 +308,61 @@ task_routing:
     secondary: claude-opus-4-5
     opencode_alt: opencode-gemini
     strategy: synthesis
-    rationale: "Gemini identifies relevant files; Opus analyzes the logic"
+    rationale: 'Gemini identifies relevant files; Opus analyzes the logic'
 
   documentation_review:
     primary: gemini-3-0-pro
     secondary: claude-sonnet-4-5
     opencode_alt: opencode-gemini
     strategy: single
-    rationale: "Gemini for coverage, Sonnet for speed"
+    rationale: 'Gemini for coverage, Sonnet for speed'
 
   # Coding & Implementation
   detailed_implementation:
     primary: cursor-agent-v2
     secondary: claude-sonnet-4-5
-    opencode_alt: opencode-codex  # github-copilot/gpt-5.1-codex
+    opencode_alt: opencode-codex # github-copilot/gpt-5.1-codex
     strategy: single
-    rationale: "Cursor for detail; GPT-5.1 Codex for code generation"
+    rationale: 'Cursor for detail; GPT-5.1 Codex for code generation'
 
   ui_frontend:
     primary: claude-sonnet-4-5
     secondary: cursor-agent-v2
     opencode_alt: opencode-codex
     strategy: single
-    rationale: "Sonnet 4.5 has superior spatial reasoning for CSS/Tailwind"
+    rationale: 'Sonnet 4.5 has superior spatial reasoning for CSS/Tailwind'
 
   standard_coding:
     primary: claude-sonnet-4-5
     secondary: null
-    opencode_alt: opencode  # github-copilot/claude-sonnet-4.5 (default)
+    opencode_alt: opencode # github-copilot/claude-sonnet-4.5 (default)
     strategy: single
-    rationale: "Sonnet 4.5 is the ideal daily driver"
+    rationale: 'Sonnet 4.5 is the ideal daily driver'
 
   test_generation:
     primary: claude-sonnet-4-5
     secondary: null
     opencode_alt: opencode
     strategy: single
-    rationale: "Sonnet 4.5 excels at TDD workflows"
+    rationale: 'Sonnet 4.5 excels at TDD workflows'
 
   quick_fix:
-    primary: opencode-fast  # github-copilot/grok-code-fast-1
-    secondary: opencode-haiku  # github-copilot/claude-haiku-4.5
+    primary: opencode-fast # github-copilot/grok-code-fast-1
+    secondary: opencode-haiku # github-copilot/claude-haiku-4.5
     strategy: single
-    rationale: "Grok Fast or Haiku for ultra-fast simple fixes"
+    rationale: 'Grok Fast or Haiku for ultra-fast simple fixes'
 
   fast_iteration:
     primary: opencode-fast
-    secondary: opencode-mini  # github-copilot/gpt-5-mini
+    secondary: opencode-mini # github-copilot/gpt-5-mini
     strategy: single
-    rationale: "Maximum speed for iteration cycles"
+    rationale: 'Maximum speed for iteration cycles'
 
   terminal_tasks:
     primary: opencode
     secondary: opencode-fast
     strategy: single
-    rationale: "OpenCode optimized for terminal-based workflows"
+    rationale: 'OpenCode optimized for terminal-based workflows'
 
   # Review & Security
   security_review:
@@ -370,14 +370,14 @@ task_routing:
     secondary: gemini-3-0-pro
     opencode_alt: opencode-opus
     strategy: parallel
-    rationale: "Opus for logic flaws; Gemini finds pattern-based vulnerabilities"
+    rationale: 'Opus for logic flaws; Gemini finds pattern-based vulnerabilities'
 
   code_review:
     primary: claude-opus-4-5
     secondary: null
     opencode_alt: opencode-opus
     strategy: single
-    rationale: "Opus 4.5 provides Senior Staff Engineer level feedback"
+    rationale: 'Opus 4.5 provides Senior Staff Engineer level feedback'
 
   # Debugging
   debugging:
@@ -385,28 +385,28 @@ task_routing:
     secondary: cursor-agent-v2
     opencode_alt: opencode-gpt5
     strategy: sequential
-    rationale: "Opus for root cause analysis, Cursor for applying fixes"
+    rationale: 'Opus for root cause analysis, Cursor for applying fixes'
 
 # Multi-Model Strategies
 strategies:
   single:
-    description: "Execute with one model"
-    use_when: "Task is straightforward or model is clearly optimal"
+    description: 'Execute with one model'
+    use_when: 'Task is straightforward or model is clearly optimal'
 
   sequential:
-    description: "Run models in sequence, each building on previous"
-    use_when: "Task benefits from different model strengths in stages"
-    example: "Gemini research -> Opus planning -> Sonnet implementation"
+    description: 'Run models in sequence, each building on previous'
+    use_when: 'Task benefits from different model strengths in stages'
+    example: 'Gemini research -> Opus planning -> Sonnet implementation'
 
   parallel:
-    description: "Run models simultaneously"
-    use_when: "Independent aspects can be processed concurrently"
-    example: "Security review from multiple angles simultaneously"
+    description: 'Run models simultaneously'
+    use_when: 'Independent aspects can be processed concurrently'
+    example: 'Security review from multiple angles simultaneously'
 
   synthesis:
-    description: "Get multiple perspectives, synthesize into one answer"
-    use_when: "Important decision needs validation from multiple sources"
-    example: "Codebase analysis from Gemini + logic analysis from Opus"
+    description: 'Get multiple perspectives, synthesize into one answer'
+    use_when: 'Important decision needs validation from multiple sources'
+    example: 'Codebase analysis from Gemini + logic analysis from Opus'
 
 # Defaults
 defaults:
@@ -418,79 +418,79 @@ defaults:
 # Cost Tiers (Nov 2025 pricing)
 cost_tiers:
   high_value:
-    description: "Direct API calls - pay per token"
+    description: 'Direct API calls - pay per token'
     models:
-      - claude-opus-4-5  # $5/$25 per 1M tokens
+      - claude-opus-4-5 # $5/$25 per 1M tokens
 
   medium:
-    description: "Direct API calls - moderate cost"
+    description: 'Direct API calls - moderate cost'
     models:
       - claude-sonnet-4-5
       - codex
       - gemini-3-0-pro
 
   cursor_subscription:
-    description: "Cursor Pro/Business subscription - access to all models"
+    description: 'Cursor Pro/Business subscription - access to all models'
     models:
-      - cursor  # Sonnet 4.5 (default)
-      - cursor-auto  # Free tier auto-select
-      - cursor-opus  # Opus 4.5
-      - cursor-thinking  # Opus 4.5 Thinking
-      - cursor-sonnet-thinking  # Sonnet 4.5 Thinking
-      - cursor-gpt5  # GPT-5.1
-      - cursor-gpt5-high  # GPT-5.1 High
-      - cursor-codex  # GPT-5.1 Codex
-      - cursor-gemini  # Gemini 3 Pro
-      - cursor-grok  # Grok
-      - cursor-composer  # Composer 1 (proprietary)
+      - cursor # Sonnet 4.5 (default)
+      - cursor-auto # Free tier auto-select
+      - cursor-opus # Opus 4.5
+      - cursor-thinking # Opus 4.5 Thinking
+      - cursor-sonnet-thinking # Sonnet 4.5 Thinking
+      - cursor-gpt5 # GPT-5.1
+      - cursor-gpt5-high # GPT-5.1 High
+      - cursor-codex # GPT-5.1 Codex
+      - cursor-gemini # Gemini 3 Pro
+      - cursor-grok # Grok
+      - cursor-composer # Composer 1 (proprietary)
 
   copilot_subscription:
-    description: "GitHub Copilot subscription - access to all models with cost multipliers"
+    description: 'GitHub Copilot subscription - access to all models with cost multipliers'
     # Cost multipliers affect Copilot quota usage (Nov 2025)
     # 0x = FREE, 0.33x = cheap, 1x = standard, 10x = expensive
     cost_multipliers:
-      free_tier:  # 0x - Use these for high-volume tasks!
+      free_tier: # 0x - Use these for high-volume tasks!
         - github-copilot/gpt-4.1
         - github-copilot/gpt-4o
-        - github-copilot/gpt-5-mini        # opencode-mini
-        - github-copilot/grok-code-fast-1  # opencode-fast
-      cheap_tier:  # 0.33x
-        - github-copilot/claude-haiku-4.5      # opencode-haiku
-        - github-copilot/gpt-5.1-codex-mini    # Fast code gen
-      standard_tier:  # 1x
-        - github-copilot/claude-sonnet-4       # Legacy
-        - github-copilot/claude-sonnet-4.5     # opencode (default)
-        - github-copilot/gemini-2.5-pro        # Legacy
-        - github-copilot/gemini-3-pro-preview  # opencode-gemini
-        - github-copilot/gpt-5                 # Standard GPT
-        - github-copilot/gpt-5-codex           # Code gen
-        - github-copilot/gpt-5.1               # opencode-gpt5
-        - github-copilot/gpt-5.1-codex         # opencode-codex
-      expensive_tier:  # 10x - Use sparingly!
-        - github-copilot/claude-opus-4.1       # Legacy Opus
-      premium_tier:  # Unknown/Premium pricing
-        - github-copilot/claude-opus-4.5       # opencode-opus (Preview)
-      auto_discount:  # 10% discount
-        - auto  # Auto-selects best model with discount
+        - github-copilot/gpt-5-mini # opencode-mini
+        - github-copilot/grok-code-fast-1 # opencode-fast
+      cheap_tier: # 0.33x
+        - github-copilot/claude-haiku-4.5 # opencode-haiku
+        - github-copilot/gpt-5.1-codex-mini # Fast code gen
+      standard_tier: # 1x
+        - github-copilot/claude-sonnet-4 # Legacy
+        - github-copilot/claude-sonnet-4.5 # opencode (default)
+        - github-copilot/gemini-2.5-pro # Legacy
+        - github-copilot/gemini-3-pro-preview # opencode-gemini
+        - github-copilot/gpt-5 # Standard GPT
+        - github-copilot/gpt-5-codex # Code gen
+        - github-copilot/gpt-5.1 # opencode-gpt5
+        - github-copilot/gpt-5.1-codex # opencode-codex
+      expensive_tier: # 10x - Use sparingly!
+        - github-copilot/claude-opus-4.1 # Legacy Opus
+      premium_tier: # Unknown/Premium pricing
+        - github-copilot/claude-opus-4.5 # opencode-opus (Preview)
+      auto_discount: # 10% discount
+        - auto # Auto-selects best model with discount
     models:
-      - opencode       # Sonnet 4.5 (1x)
-      - opencode-opus  # Opus 4.5 (Premium - use for important tasks only)
-      - opencode-gpt5  # GPT-5.1 (1x)
+      - opencode # Sonnet 4.5 (1x)
+      - opencode-opus # Opus 4.5 (Premium - use for important tasks only)
+      - opencode-gpt5 # GPT-5.1 (1x)
       - opencode-codex # GPT-5.1 Codex (1x)
       - opencode-gemini# Gemini 3 Pro (1x)
-      - opencode-fast  # Grok Code Fast (FREE!)
+      - opencode-fast # Grok Code Fast (FREE!)
       - opencode-haiku # Haiku 4.5 (0.33x)
-      - opencode-mini  # GPT-5 Mini (FREE!)
+      - opencode-mini # GPT-5 Mini (FREE!)
 
 # Required Environment/Auth
 required_auth:
   direct_api:
-    - ANTHROPIC_API_KEY  # For direct Claude API
-    - GOOGLE_API_KEY  # For direct Gemini API
-    - OPENAI_API_KEY  # For Codex
+    - ANTHROPIC_API_KEY # For direct Claude API
+    - GOOGLE_API_KEY # For direct Gemini API
+    - OPENAI_API_KEY # For Codex
   cursor:
-    - "Cursor Pro/Business subscription"
-    - "WSL on Windows (cursor-agent requires bash)"
+    - 'Cursor Pro/Business subscription'
+    - 'WSL on Windows (cursor-agent requires bash)'
   opencode:
-    - "GitHub Copilot subscription"
-    - "gh auth login (GitHub CLI authentication)"
+    - 'GitHub Copilot subscription'
+    - 'gh auth login (GitHub CLI authentication)'

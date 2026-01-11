@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+out/
+.claude/context/tmp/
+.claude/context/logs/
+.claude/context/runs/
+*.min.js
+*.min.mjs
+pnpm-lock.yaml
+package-lock.json
+
+# Files with special formatting (contain syntax prettier can't parse)
+.claude/tools/measure-hook-performance.mjs
+.claude/tools/test-results.json
+.claude/workflows/WORKFLOW-GUIDE.md
+.claude/evaluation/promptfoo_configs/classification_config.yaml
+.claude/evaluation/promptfoo_configs/rag_config.yaml
+.claude/tools/artifact-registry.mjs

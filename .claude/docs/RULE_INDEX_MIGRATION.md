@@ -7,12 +7,14 @@ The rule index system transforms rule discovery from static context loading to d
 ## Why We Moved to Index System
 
 ### Previous System (Static)
+
 - Rules hard-coded in skill instructions
 - Manual updates required when rules change
 - Limited to known rules at skill creation time
 - No systematic discovery of all available rules
 
 ### New System (Index-Based)
+
 - Rules discovered dynamically from index
 - Automatic discovery of new rules
 - Systematic coverage of all 1,081+ rules
@@ -25,6 +27,7 @@ The rule index system transforms rule discovery from static context loading to d
 **File**: `scripts/generate-rule-index.mjs`
 
 Scans all rule files and generates compressed JSON index:
+
 - Scans `.claude/rules-master/` (8 master rules)
 - Scans `.claude/archive/` recursively (1,073 archive rules)
 - Extracts YAML frontmatter metadata
@@ -88,32 +91,39 @@ User: "What rules apply to src/components/UserAuth.tsx?"
 ### Existing Skills (Updated)
 
 **rule-auditor**:
+
 - **Before**: Scanned filesystem with `find .claude/rules`
 - **After**: Loads index, queries `technology_map`, loads relevant rules
 
 **rule-selector**:
+
 - **Before**: Hard-coded rule mapping table
 - **After**: Queries index by detected technologies
 
 **scaffolder**:
+
 - **Before**: Hard-coded rule list per scaffold type
 - **After**: Queries index based on what's being scaffolded
 
 ### New Skills (Index-Based)
 
 **explaining-rules**:
+
 - Explains which rules apply to files
 - Uses index to discover all applicable rules
 
 **fixing-rule-violations**:
+
 - Provides fix instructions for violations
 - Uses index to locate violated rules
 
 **recommending-rules**:
+
 - Analyzes codebase for rule coverage gaps
 - Compares against all indexed rules
 
 **migrating-rules**:
+
 - Helps migrate code when rules are updated
 - Compares rule versions from index
 
@@ -143,18 +153,24 @@ pnpm index-rules
 ### Use Index for Discovery
 
 **Good**:
+
 ```markdown
 ### Step 1: Load Rule Index
+
 Load @.claude/context/rule-index.json
 
 ### Step 2: Query by Technology
+
 Query index.technology_map['nextjs'] for Next.js rules
 ```
 
 **Avoid**:
+
 ```markdown
 ### Step 1: Hard-Coded Rules
+
 Use these specific rules:
+
 - .claude/rules-master/TECH_STACK_NEXTJS.md
 - .claude/archive/nextjs.mdc
 ```
@@ -172,16 +188,19 @@ Use these specific rules:
 ## Context Usage
 
 ### Index Load (One-Time)
+
 - **Size**: ~10-15k tokens (compressed)
 - **When**: First skill invocation
 - **Caching**: Index may be cached in Claude's memory
 
 ### Rule Loading (Per Query)
+
 - **Size**: ~18k tokens (5-10 relevant rules)
 - **When**: Each skill invocation
 - **Optimization**: Only loads rules matching detected technologies
 
 ### Total Context Usage
+
 - **Cold Start**: ~50k tokens (index + rules + skill)
 - **Warm**: ~20k tokens (rules + skill, index cached)
 - **Hot**: ~2k tokens (skill only, everything cached)
@@ -210,6 +229,7 @@ Use these specific rules:
 **Issue**: Skill doesn't find relevant rules
 
 **Check**:
+
 1. Index is up to date (regenerate if needed)
 2. Technology detection is correct
 3. Technology name matches index keys (e.g., `nextjs` not `next.js`)
@@ -219,6 +239,7 @@ Use these specific rules:
 **Issue**: Context usage exceeds limits
 
 **Solutions**:
+
 1. Ensure progressive disclosure (only load relevant rules)
 2. Compress index further (remove unnecessary metadata)
 3. Cache index between invocations
@@ -237,4 +258,3 @@ Use these specific rules:
 - **Skills Directory**: `.claude/skills/`
 - **Master Rules**: `.claude/rules-master/`
 - **Archive Rules**: `.claude/archive/`
-

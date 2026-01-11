@@ -18,6 +18,7 @@ The `.cursorrules` file is a configuration file that provides AI-powered coding 
 ### 1. Prerequisites
 
 Before using the Beefree SDK, you'll need:
+
 - A Beefree account with API credentials
 - Node.js
 - A modern web browser
@@ -48,49 +49,49 @@ BEE_CLIENT_SECRET=your_client_secret_here
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>Beefree SDK Demo</title>
     <style>
-        #beefree-sdk-container {
-            height: 600px;
-            width: 90%;
-            margin: 20px auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
+      #beefree-sdk-container {
+        height: 600px;
+        width: 90%;
+        margin: 20px auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="beefree-sdk-container"></div>
-    
+
     <script src="https://app-rsrc.getbee.io/plugin/BeefreeSDK.js"></script>
     <script>
-        const beeConfig = {
-            container: 'beefree-sdk-container',
-            language: 'en-US',
-            onSave: function (jsonFile, htmlFile) {
-                console.log("Template saved:", jsonFile);
-            },
-            onError: function (errorMessage) {
-                console.error("Beefree SDK error:", errorMessage);
-            }
-        };
+      const beeConfig = {
+        container: 'beefree-sdk-container',
+        language: 'en-US',
+        onSave: function (jsonFile, htmlFile) {
+          console.log('Template saved:', jsonFile);
+        },
+        onError: function (errorMessage) {
+          console.error('Beefree SDK error:', errorMessage);
+        },
+      };
 
-        // Initialize with authentication
-        async function initializeBeefree() {
-            const token = await fetch('http://localhost:3001/proxy/bee-auth', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ uid: 'demo-user' })
-            }).then(res => res.json());
+      // Initialize with authentication
+      async function initializeBeefree() {
+        const token = await fetch('http://localhost:3001/proxy/bee-auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid: 'demo-user' }),
+        }).then(res => res.json());
 
-            const bee = new BeefreeSDK(token);
-            bee.start(beeConfig, {});
-        }
+        const bee = new BeefreeSDK(token);
+        bee.start(beeConfig, {});
+      }
 
-        initializeBeefree();
+      initializeBeefree();
     </script>
-</body>
+  </body>
 </html>
 ```
 
@@ -171,17 +172,17 @@ const BEE_CLIENT_SECRET = process.env.BEE_CLIENT_SECRET;
 app.post('/proxy/bee-auth', async (req, res) => {
   try {
     const { uid } = req.body;
-    
+
     const response = await axios.post(
       'https://auth.getbee.io/loginV2',
       {
         client_id: BEE_CLIENT_ID,
         client_secret: BEE_CLIENT_SECRET,
-        uid: uid || 'demo-user'
+        uid: uid || 'demo-user',
       },
       { headers: { 'Content-Type': 'application/json' } }
     );
-    
+
     res.json(response.data);
   } catch (error) {
     console.error('Auth error:', error.message);
@@ -203,27 +204,32 @@ node proxy-server.js
 ## Key Features Covered in .cursorrules
 
 ### 1. Container Setup
+
 - Proper HTML container configuration
 - CSS styling guidelines
 - React integration patterns
 
 ### 2. Configuration Options
+
 - Required parameters (container)
 - Optional parameters (language, merge tags, special links)
 - Callback functions (onSave, onError, onAutoSave, onSend)
 
 ### 3. Template Management
+
 - Loading existing templates
 - Saving templates to localStorage
 - Autosave functionality
 - HTML import capabilities
 
 ### 4. Error Handling
+
 - Comprehensive error handling patterns
 - User-friendly error messages
 - Authentication error recovery
 
 ### 5. Customization
+
 - UI theming
 - Language internationalization
 - Merge tags and special links
@@ -253,11 +259,11 @@ if (selectedTemplate) {
 const response = await fetch('https://api.getbee.io/v1/conversion/html-to-json', {
   method: 'POST',
   headers: {
-    "Authorization": "Bearer YOUR_API_KEY",
-    "Content-Type": "text/html"
+    Authorization: 'Bearer YOUR_API_KEY',
+    'Content-Type': 'text/html',
   },
-  body: "<!DOCTYPE html><html><body><h1>Hello World</h1></body></html>"
-}); 
+  body: '<!DOCTYPE html><html><body><h1>Hello World</h1></body></html>',
+});
 const data = await response.json();
 ```
 
@@ -269,23 +275,26 @@ const beeConfig = {
   onChange: function (jsonFile, response) {
     console.log('Template changed:', jsonFile);
     console.log('Response:', response);
-  }
+  },
 };
 ```
 
 ## Best Practices
 
 ### Performance
+
 - Initialize SDK only when needed
 - Clean up resources properly
 - Implement proper error handling
 
 ### Security
+
 - Never expose credentials in frontend code
 - Use proxy servers for authentication
 - Validate user inputs
 
 ### User Experience
+
 - Show loading indicators
 - Display helpful error messages
 - Implement autosave functionality
@@ -316,13 +325,13 @@ Enable debug logging:
 const beeConfig = {
   container: 'beefree-sdk-container',
   debug: {
-    all: true,                 // Enables all debug features
-    inspectJson: true,        // Shows an eye icon to inspect JSON data for rows/modules
-    showTranslationKeys: true // Displays translation keys instead of localized strings
+    all: true, // Enables all debug features
+    inspectJson: true, // Shows an eye icon to inspect JSON data for rows/modules
+    showTranslationKeys: true, // Displays translation keys instead of localized strings
   },
   onError: function (errorMessage) {
-    console.error("Beefree SDK error:", errorMessage);
-  }
+    console.error('Beefree SDK error:', errorMessage);
+  },
 };
 ```
 

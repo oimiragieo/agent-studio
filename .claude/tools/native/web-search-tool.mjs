@@ -12,17 +12,17 @@ const SEARCH_PROVIDERS = {
   exa: {
     name: 'Exa',
     apiKey: process.env.EXA_API_KEY,
-    endpoint: 'https://api.exa.ai/search'
+    endpoint: 'https://api.exa.ai/search',
   },
   google: {
     name: 'Google',
     apiKey: process.env.GOOGLE_SEARCH_API_KEY,
-    endpoint: 'https://www.googleapis.com/customsearch/v1'
+    endpoint: 'https://www.googleapis.com/customsearch/v1',
   },
   duckduckgo: {
     name: 'DuckDuckGo',
-    endpoint: 'https://api.duckduckgo.com/'
-  }
+    endpoint: 'https://api.duckduckgo.com/',
+  },
 };
 
 /**
@@ -38,14 +38,14 @@ async function searchExa(query, options = {}) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': provider.apiKey
+      'x-api-key': provider.apiKey,
     },
     body: JSON.stringify({
       query,
       num_results: options.num_results || 10,
       type: options.type || 'neural',
-      use_autoprompt: options.use_autoprompt !== false
-    })
+      use_autoprompt: options.use_autoprompt !== false,
+    }),
   });
 
   if (!response.ok) {
@@ -53,7 +53,7 @@ async function searchExa(query, options = {}) {
   }
 
   const data = await response.json();
-  
+
   return {
     provider: 'exa',
     query,
@@ -61,12 +61,12 @@ async function searchExa(query, options = {}) {
       title: result.title,
       url: result.url,
       snippet: result.text || result.snippet,
-      score: result.score || (1 - index * 0.1),
+      score: result.score || 1 - index * 0.1,
       published_date: result.published_date,
       author: result.author,
-      index: index + 1
+      index: index + 1,
     })),
-    total_results: data.results.length
+    total_results: data.results.length,
   };
 }
 
@@ -88,17 +88,17 @@ async function searchGoogle(query, options = {}) {
     key: provider.apiKey,
     cx,
     q: query,
-    num: (options.num_results || 10).toString()
+    num: (options.num_results || 10).toString(),
   });
 
   const response = await fetch(`${provider.endpoint}?${params}`);
-  
+
   if (!response.ok) {
     throw new Error(`Google API error: ${response.statusText}`);
   }
 
   const data = await response.json();
-  
+
   return {
     provider: 'google',
     query,
@@ -107,9 +107,9 @@ async function searchGoogle(query, options = {}) {
       url: item.link,
       snippet: item.snippet,
       score: 1 - index * 0.1,
-      index: index + 1
+      index: index + 1,
     })),
-    total_results: parseInt(data.searchInformation?.totalResults || '0', 10)
+    total_results: parseInt(data.searchInformation?.totalResults || '0', 10),
   };
 }
 
@@ -118,39 +118,39 @@ async function searchGoogle(query, options = {}) {
  */
 async function searchDuckDuckGo(query, options = {}) {
   const provider = SEARCH_PROVIDERS.duckduckgo;
-  
+
   // DuckDuckGo HTML scraping (simplified - production should use proper API)
   const params = new URLSearchParams({ q: query });
   const response = await fetch(`${provider.endpoint}?${params}`);
   const html = await response.text();
-  
+
   // Simple extraction (production should use proper HTML parsing)
   const results = [];
   const linkRegex = /<a[^>]+href="([^"]+)"[^>]*>([^<]+)<\/a>/g;
   let match;
   let count = 0;
-  
+
   while ((match = linkRegex.exec(html)) !== null && count < (options.num_results || 10)) {
     const url = match[1];
     const title = match[2];
-    
+
     if (url.startsWith('http') && !url.includes('duckduckgo.com')) {
       results.push({
         title: title.trim(),
         url,
         snippet: '',
         score: 1 - count * 0.1,
-        index: count + 1
+        index: count + 1,
       });
       count++;
     }
   }
-  
+
   return {
     provider: 'duckduckgo',
     query,
     results,
-    total_results: results.length
+    total_results: results.length,
   };
 }
 
@@ -165,7 +165,7 @@ export async function searchWeb(input, context = {}) {
     filter_domains = [],
     exclude_domains = [],
     date_range = null,
-    language = 'en'
+    language = 'en',
   } = input;
 
   if (!query || typeof query !== 'string') {
@@ -191,14 +191,14 @@ export async function searchWeb(input, context = {}) {
 
     // Filter results
     if (filter_domains.length > 0) {
-      searchResult.results = searchResult.results.filter(r => 
+      searchResult.results = searchResult.results.filter(r =>
         filter_domains.some(domain => r.url.includes(domain))
       );
     }
 
     if (exclude_domains.length > 0) {
-      searchResult.results = searchResult.results.filter(r => 
-        !exclude_domains.some(domain => r.url.includes(domain))
+      searchResult.results = searchResult.results.filter(
+        r => !exclude_domains.some(domain => r.url.includes(domain))
       );
     }
 
@@ -206,7 +206,7 @@ export async function searchWeb(input, context = {}) {
     searchResult.citations = searchResult.results.map(r => ({
       url: r.url,
       title: r.title,
-      snippet: r.snippet
+      snippet: r.snippet,
     }));
 
     return searchResult;
@@ -215,7 +215,7 @@ export async function searchWeb(input, context = {}) {
       success: false,
       error: error.message,
       query,
-      provider
+      provider,
     };
   }
 }
@@ -231,60 +231,60 @@ export const webSearchTool = {
     properties: {
       query: {
         type: 'string',
-        description: 'Search query'
+        description: 'Search query',
       },
       provider: {
         type: 'string',
         enum: ['exa', 'google', 'duckduckgo'],
         default: 'exa',
-        description: 'Search provider to use'
+        description: 'Search provider to use',
       },
       num_results: {
         type: 'number',
         default: 10,
-        description: 'Number of results to return'
+        description: 'Number of results to return',
       },
       filter_domains: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Filter results to specific domains'
+        description: 'Filter results to specific domains',
       },
       exclude_domains: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Exclude results from specific domains'
+        description: 'Exclude results from specific domains',
       },
       date_range: {
         type: 'object',
         properties: {
           start: { type: 'string' },
-          end: { type: 'string' }
+          end: { type: 'string' },
         },
-        description: 'Date range for results'
+        description: 'Date range for results',
       },
       language: {
         type: 'string',
         default: 'en',
-        description: 'Language code for results'
-      }
+        description: 'Language code for results',
+      },
     },
-    required: ['query']
+    required: ['query'],
   },
   outputSchema: {
     type: 'object',
     properties: {
       success: {
         type: 'boolean',
-        description: 'Whether the search succeeded'
+        description: 'Whether the search succeeded',
       },
       provider: {
         type: 'string',
         enum: ['exa', 'google', 'duckduckgo'],
-        description: 'Search provider used'
+        description: 'Search provider used',
       },
       query: {
         type: 'string',
-        description: 'Search query that was executed'
+        description: 'Search query that was executed',
       },
       results: {
         type: 'array',
@@ -298,14 +298,14 @@ export const webSearchTool = {
             score: { type: 'number' },
             index: { type: 'number' },
             published_date: { type: ['string', 'null'] },
-            author: { type: ['string', 'null'] }
+            author: { type: ['string', 'null'] },
           },
-          required: ['title', 'url', 'snippet', 'score', 'index']
-        }
+          required: ['title', 'url', 'snippet', 'score', 'index'],
+        },
       },
       total_results: {
         type: 'number',
-        description: 'Total number of results available'
+        description: 'Total number of results available',
       },
       citations: {
         type: 'array',
@@ -315,19 +315,18 @@ export const webSearchTool = {
           properties: {
             url: { type: 'string' },
             title: { type: 'string' },
-            snippet: { type: 'string' }
-          }
-        }
+            snippet: { type: 'string' },
+          },
+        },
       },
       error: {
         type: 'string',
-        description: 'Error message if search failed'
-      }
+        description: 'Error message if search failed',
+      },
     },
-    required: ['success', 'provider', 'query', 'results', 'total_results']
+    required: ['success', 'provider', 'query', 'results', 'total_results'],
   },
-  execute: searchWeb
+  execute: searchWeb,
 };
 
 export default webSearchTool;
-

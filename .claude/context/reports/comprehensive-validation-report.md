@@ -8,14 +8,14 @@
 
 ## Executive Summary
 
-| Category | Status | Details |
-|----------|--------|---------|
-| **Schema Validation** | PARTIAL PASS | 116 schemas valid; 78 non-critical skill metadata issues |
-| **CUJ Registry Sync** | PASS | 60 CUJs synced correctly (no null workflows bug) |
-| **CUJ Doctor** | PASS | 0 critical issues, 20 warnings (expected) |
-| **CUJ E2E Validation** | PARTIAL PASS | 57/60 runnable; 1 blocked (CUJ-044) |
-| **Workflow References** | PARTIAL PASS | 3 workflows fully valid; 1 workflow missing schemas |
-| **Agent Configuration** | PASS | architect.md has artifact-publisher skill |
+| Category                | Status       | Details                                                  |
+| ----------------------- | ------------ | -------------------------------------------------------- |
+| **Schema Validation**   | PARTIAL PASS | 116 schemas valid; 78 non-critical skill metadata issues |
+| **CUJ Registry Sync**   | PASS         | 60 CUJs synced correctly (no null workflows bug)         |
+| **CUJ Doctor**          | PASS         | 0 critical issues, 20 warnings (expected)                |
+| **CUJ E2E Validation**  | PARTIAL PASS | 57/60 runnable; 1 blocked (CUJ-044)                      |
+| **Workflow References** | PARTIAL PASS | 3 workflows fully valid; 1 workflow missing schemas      |
+| **Agent Configuration** | PASS         | architect.md has artifact-publisher skill                |
 
 **Overall Assessment**: CONCERNS - System is functional but has known issues requiring follow-up.
 
@@ -28,6 +28,7 @@
 **Command**: pnpm validate:all
 
 **Results**:
+
 - Total schemas: 116
 - Valid JSON Schema Draft 2020-12: All core schemas pass
 - 78 reported errors are non-critical skill metadata issues (missing version field)
@@ -43,24 +44,24 @@
 
 ### New Schemas Verified
 
-| Schema | Status |
-|--------|--------|
-| code-review.schema.json | EXISTS |
-| multi-ai-review-report.schema.json | EXISTS |
-| review-summary.schema.json | EXISTS |
-| fix-suggestions.schema.json | EXISTS |
-| security-review.schema.json | EXISTS |
-| quality-validation.schema.json | EXISTS |
-| plan-mode-handoff.schema.json | EXISTS |
-| implementation-plan.schema.json | EXISTS |
-| artifact-linking-validation.schema.json | EXISTS |
+| Schema                                         | Status |
+| ---------------------------------------------- | ------ |
+| code-review.schema.json                        | EXISTS |
+| multi-ai-review-report.schema.json             | EXISTS |
+| review-summary.schema.json                     | EXISTS |
+| fix-suggestions.schema.json                    | EXISTS |
+| security-review.schema.json                    | EXISTS |
+| quality-validation.schema.json                 | EXISTS |
+| plan-mode-handoff.schema.json                  | EXISTS |
+| implementation-plan.schema.json                | EXISTS |
+| artifact-linking-validation.schema.json        | EXISTS |
 | multi-file-coordination-validation.schema.json | EXISTS |
-| artifact-persistence-validation.schema.json | EXISTS |
-| integration-validation-report.schema.json | EXISTS |
-| checkpoint.schema.json | EXISTS |
-| restoration-validation.schema.json | EXISTS |
-| fallback-routing-log.schema.json | EXISTS |
-| recovery-test-report.schema.json | EXISTS |
+| artifact-persistence-validation.schema.json    | EXISTS |
+| integration-validation-report.schema.json      | EXISTS |
+| checkpoint.schema.json                         | EXISTS |
+| restoration-validation.schema.json             | EXISTS |
+| fallback-routing-log.schema.json               | EXISTS |
+| recovery-test-report.schema.json               | EXISTS |
 
 ---
 
@@ -73,6 +74,7 @@
 **Status**: PASS
 
 **Results**:
+
 - Total CUJs parsed: 60
 - No null workflow bugs (previously 36 had null workflows)
 - Schema validation: PASSED
@@ -95,6 +97,7 @@
 **Status**: PASS (0 critical issues)
 
 **Results**:
+
 - Critical issues: 0
 - Warnings: 20
 - Passed checks: 5
@@ -128,6 +131,7 @@
 ### Blocked CUJ Analysis
 
 **CUJ-044 (Agent Fallback Chain)**: BLOCKED
+
 - Workflow: fallback-routing-flow.yaml
 - Missing schemas:
   - fallback-routing-decision.schema.json
@@ -143,17 +147,17 @@
 
 ## 4. Previously Blocked CUJ Status
 
-| CUJ | Name | Previous Status | Current Status | Resolution |
-|-----|------|-----------------|----------------|------------|
-| CUJ-013 | Code Review | Blocked | PASS | Workflow: code-review-flow.yaml |
-| CUJ-030 | Multi-AI Validation | Blocked | PASS | Skill-only mode, primary_skill: multi-ai-code-review |
-| CUJ-040 | Stateless Recovery Test | Blocked | PASS | Workflow: recovery-test-flow.yaml |
-| CUJ-043 | Workflow Interruption Recovery | Blocked | PASS | Workflow: recovery-test-flow.yaml |
-| CUJ-044 | Agent Fallback Chain | Blocked | BLOCKED | Missing 3 schemas in fallback-routing-flow.yaml |
-| CUJ-045 | Missing Required Artifact Recovery | Blocked | PASS | Workflow: recovery-test-flow.yaml |
-| CUJ-049 | Cursor Plan Mode Deep Integration | Blocked | PASS | Workflow: cursor-plan-mode-integration-flow.yaml |
-| CUJ-056 | Workflow Recovery Protocol Test | Blocked | PASS | Workflow: recovery-test-flow.yaml |
-| CUJ-063 | Error Recovery and Checkpoint Restoration | Blocked | PASS | Workflow: recovery-test-flow.yaml |
+| CUJ     | Name                                      | Previous Status | Current Status | Resolution                                           |
+| ------- | ----------------------------------------- | --------------- | -------------- | ---------------------------------------------------- |
+| CUJ-013 | Code Review                               | Blocked         | PASS           | Workflow: code-review-flow.yaml                      |
+| CUJ-030 | Multi-AI Validation                       | Blocked         | PASS           | Skill-only mode, primary_skill: multi-ai-code-review |
+| CUJ-040 | Stateless Recovery Test                   | Blocked         | PASS           | Workflow: recovery-test-flow.yaml                    |
+| CUJ-043 | Workflow Interruption Recovery            | Blocked         | PASS           | Workflow: recovery-test-flow.yaml                    |
+| CUJ-044 | Agent Fallback Chain                      | Blocked         | BLOCKED        | Missing 3 schemas in fallback-routing-flow.yaml      |
+| CUJ-045 | Missing Required Artifact Recovery        | Blocked         | PASS           | Workflow: recovery-test-flow.yaml                    |
+| CUJ-049 | Cursor Plan Mode Deep Integration         | Blocked         | PASS           | Workflow: cursor-plan-mode-integration-flow.yaml     |
+| CUJ-056 | Workflow Recovery Protocol Test           | Blocked         | PASS           | Workflow: recovery-test-flow.yaml                    |
+| CUJ-063 | Error Recovery and Checkpoint Restoration | Blocked         | PASS           | Workflow: recovery-test-flow.yaml                    |
 
 **Improvement**: 8/9 previously blocked CUJs are now unblocked.
 
@@ -162,18 +166,23 @@
 ## 5. Workflow Validation
 
 ### code-review-flow.yaml
+
 **Status**: PASS - All schema references exist
 
 ### cursor-plan-mode-integration-flow.yaml
+
 **Status**: PASS - All schema references exist
 
 ### recovery-test-flow.yaml
+
 **Status**: PASS - All schema references exist
 
 ### fallback-routing-flow.yaml
+
 **Status**: FAIL - Missing 3 schemas
 
 ### greenfield-fullstack.yaml
+
 **Status**: PASS - publish_targets configured
 
 ---
@@ -181,9 +190,11 @@
 ## 6. Agent Configuration Validation
 
 ### architect.md
+
 **Status**: PASS - artifact-publisher skill present (line 98)
 
 ### developer.md
+
 **Status**: INFO - Context forking awareness section not found (recommended enhancement)
 
 ---
@@ -191,29 +202,34 @@
 ## 7. Remaining Issues
 
 ### Critical (Blocking)
-| Issue | Impact | Recommended Action |
-|-------|--------|-------------------|
+
+| Issue                                        | Impact          | Recommended Action                |
+| -------------------------------------------- | --------------- | --------------------------------- |
 | fallback-routing-flow.yaml missing 3 schemas | CUJ-044 blocked | Create schemas or update workflow |
 
 ### Non-Critical (Warnings)
-| Issue | Impact | Recommended Action |
-|-------|--------|-------------------|
-| 72 skills missing version field | Documentation completeness | Add version metadata |
-| 6 skills missing allowed-tools field | Documentation completeness | Add allowed-tools metadata |
-| CUJ-034 references MCP skills | Browser testing requires MCP | Document MCP requirements |
+
+| Issue                                | Impact                       | Recommended Action         |
+| ------------------------------------ | ---------------------------- | -------------------------- |
+| 72 skills missing version field      | Documentation completeness   | Add version metadata       |
+| 6 skills missing allowed-tools field | Documentation completeness   | Add allowed-tools metadata |
+| CUJ-034 references MCP skills        | Browser testing requires MCP | Document MCP requirements  |
 
 ---
 
 ## 8. Recommendations
 
 ### Immediate (P1)
+
 1. Create missing schemas for fallback-routing-flow.yaml
 
 ### Short-term (P2)
+
 2. Add version metadata to 72 skills
 3. Add allowed-tools to 6 rule-related skills
 
 ### Medium-term (P3)
+
 4. Add context forking documentation to developer.md
 5. Update CUJ-034 to clarify MCP skill dependencies
 

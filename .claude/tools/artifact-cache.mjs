@@ -61,20 +61,20 @@ function estimateSize(data) {
 export async function getCachedArtifact(artifactPath) {
   const fullPath = path.resolve(ROOT, artifactPath);
   const cacheKey = fullPath;
-  
+
   // Check if artifact is in cache
   if (!artifactCache.has(cacheKey)) {
     return null;
   }
-  
+
   const cached = artifactCache.get(cacheKey);
-  
+
   // Check if cache is expired
   if (Date.now() > cached.expiresAt) {
     artifactCache.delete(cacheKey);
     return null;
   }
-  
+
   // Check if file has changed
   try {
     const stats = await fs.stat(fullPath);
@@ -88,7 +88,7 @@ export async function getCachedArtifact(artifactPath) {
     artifactCache.delete(cacheKey);
     return null;
   }
-  
+
   return cached.data;
 }
 
@@ -99,14 +99,14 @@ export async function getCachedArtifact(artifactPath) {
 function pruneCache() {
   // Check if we need to prune based on entry count
   let needsPrune = artifactCache.size > MAX_CACHE_SIZE;
-  
+
   if (!needsPrune) {
     // Check memory usage
     let totalMemory = 0;
     for (const cached of artifactCache.values()) {
       totalMemory += estimateSize(cached.data);
     }
-    
+
     const memoryMB = totalMemory / 1024 / 1024;
     needsPrune = memoryMB > MAX_CACHE_MEMORY_MB;
   }
@@ -120,7 +120,7 @@ function pruneCache() {
     .map(([key, value]) => ({
       key,
       timestamp: value.cachedAt || 0,
-      size: estimateSize(value.data)
+      size: estimateSize(value.data),
     }))
     .sort((a, b) => a.timestamp - b.timestamp);
 
@@ -140,14 +140,16 @@ function pruneCache() {
         break;
       }
     }
-    
+
     artifactCache.delete(entry.key);
     removed++;
     freedMB += entry.size / 1024 / 1024;
   }
 
   if (removed > 0) {
-    console.log(`[Artifact Cache] Pruned ${removed} entries (freed ${freedMB.toFixed(2)}MB), cache size: ${artifactCache.size}`);
+    console.log(
+      `[Artifact Cache] Pruned ${removed} entries (freed ${freedMB.toFixed(2)}MB), cache size: ${artifactCache.size}`
+    );
   }
 
   return removed;
@@ -162,16 +164,16 @@ function pruneCache() {
 export async function cacheArtifact(artifactPath, artifactData, ttl = DEFAULT_TTL) {
   const fullPath = path.resolve(ROOT, artifactPath);
   const cacheKey = fullPath;
-  
+
   try {
     const stats = await fs.stat(fullPath);
     const expiresAt = Date.now() + ttl;
-    
+
     artifactCache.set(cacheKey, {
       data: artifactData,
       mtime: stats.mtime.getTime(),
       expiresAt,
-      cachedAt: Date.now()
+      cachedAt: Date.now(),
     });
   } catch (error) {
     // File doesn't exist yet, cache anyway (might be created later)
@@ -180,10 +182,10 @@ export async function cacheArtifact(artifactPath, artifactData, ttl = DEFAULT_TT
       data: artifactData,
       mtime: null,
       expiresAt,
-      cachedAt: Date.now()
+      cachedAt: Date.now(),
     });
   }
-  
+
   // Prune cache if needed
   pruneCache();
 }
@@ -200,14 +202,14 @@ export async function loadArtifact(artifactPath, ttl = DEFAULT_TTL) {
   if (cached !== null) {
     return cached;
   }
-  
+
   // Load from file
   const fullPath = path.resolve(ROOT, artifactPath);
   try {
     // Check file size first
     const stats = await fs.stat(fullPath);
     const sizeMB = stats.size / 1024 / 1024;
-    
+
     let data;
     if (sizeMB > 1) {
       // Use streaming for files > 1MB
@@ -247,7 +249,7 @@ export function getCacheStats() {
   let validEntries = 0;
   let expiredEntries = 0;
   let totalSize = 0;
-  
+
   for (const cached of artifactCache.values()) {
     if (now > cached.expiresAt) {
       expiredEntries++;
@@ -259,12 +261,12 @@ export function getCacheStats() {
       totalSize += estimateSize(cached.data);
     }
   }
-  
+
   return {
     total: artifactCache.size,
     valid: validEntries,
     expired: expiredEntries,
-    memoryUsage: totalSize
+    memoryUsage: totalSize,
   };
 }
 
@@ -319,7 +321,7 @@ export function stopAutoCleanup() {
 // CLI usage
 if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
-  
+
   if (command === 'clear') {
     const artifactPath = process.argv[3];
     invalidateArtifact(artifactPath);
@@ -341,4 +343,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('  node artifact-cache.mjs clean                - Clean expired entries');
   }
 }
-

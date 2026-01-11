@@ -1,0 +1,218 @@
+# CUJ Smoke Test - CI/CD Integration
+#
+# This workflow runs simulation-only smoke tests on all 62 CUJs without actual execution.
+# Designed for pull request validation and continuous integration.
+#
+# Checks performed:
+# 1. Mapping integrity: CUJ exists in CUJ-INDEX.md
+# 2. Workflow dry-run: Workflow file exists (if workflow mode)
+# 3. Required skill presence: All skills exist
+# 4. Platform compatibility: Validate platform truth table
+# 5. Schema validation: execution_contract validates against schema
+# 6. Artifact paths: Placeholder paths are well-formed
+#
+# Performance target: <60 seconds for all 62 CUJs
+
+name: CUJ Smoke Tests
+
+on:
+  pull_request:
+    paths:
+      - '.claude/docs/cujs/**'
+      - '.claude/workflows/**'
+      - '.claude/skills/**'
+      - 'codex-skills/**'
+      - '.claude/context/cuj-registry.json'
+      - '.claude/context/platform-compatibility.json'
+      - '.claude/tools/cuj-smoke-matrix.mjs'
+      - '.claude/tools/cuj-parser.mjs'
+      - 'scripts/validate-cujs.mjs'
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - '.claude/docs/cujs/**'
+      - '.claude/workflows/**'
+      - '.claude/skills/**'
+      - 'codex-skills/**'
+      - '.claude/context/cuj-registry.json'
+      - '.claude/context/platform-compatibility.json'
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    name: CUJ Smoke Test Matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run CUJ smoke tests
+        id: smoke-test
+        run: |
+          node .claude/tools/cuj-smoke-matrix.mjs \
+            --simulation-only \
+            --output-json smoke-results.json \
+            --output-md smoke-report.md
+        continue-on-error: true
+
+      - name: Upload smoke test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cuj-smoke-test-results
+          path: |
+            smoke-results.json
+            smoke-report.md
+          retention-days: 30
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Read smoke test results
+            let resultsComment = '## CUJ Smoke Test Results\n\n';
+
+            try {
+              const results = JSON.parse(fs.readFileSync('smoke-results.json', 'utf-8'));
+              const passRate = ((results.passed / results.total) * 100).toFixed(1);
+              const statusIcon = results.failed === 0 ? '✅' : '❌';
+
+              resultsComment += `${statusIcon} **${results.passed}/${results.total}** CUJs passed (${passRate}%)\n\n`;
+              resultsComment += `- Duration: ${(results.duration_ms / 1000).toFixed(2)}s\n`;
+              resultsComment += `- Performance target: ${results.duration_ms < 60000 ? '✅ Met (<60s)' : '⚠️ Missed'}\n\n`;
+
+              if (results.failed > 0) {
+                resultsComment += `### Failed CUJs (${results.failed})\n\n`;
+                resultsComment += '| CUJ ID | Execution Mode | Errors |\n';
+                resultsComment += '|--------|----------------|--------|\n';
+
+                results.cujs.filter(c => c.status === 'fail').forEach(cuj => {
+                  const errors = cuj.errors.join('; ');
+                  resultsComment += `| ${cuj.cujId} | ${cuj.execution_mode || 'N/A'} | ${errors} |\n`;
+                });
+
+                resultsComment += '\n';
+              }
+
+              // Read markdown report for detailed results
+              if (fs.existsSync('smoke-report.md')) {
+                resultsComment += '<details>\n<summary>View detailed report</summary>\n\n';
+                const report = fs.readFileSync('smoke-report.md', 'utf-8');
+                // Skip header and badge
+                const detailedSection = report.split('## Detailed Results')[1];
+                if (detailedSection) {
+                  resultsComment += '## Detailed Results' + detailedSection;
+                }
+                resultsComment += '\n</details>\n';
+              }
+            } catch (error) {
+              resultsComment += `⚠️ Failed to parse smoke test results: ${error.message}\n`;
+            }
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('CUJ Smoke Test Results')
+            );
+
+            // Create or update comment
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: resultsComment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: resultsComment
+              });
+            }
+
+      - name: Fail if smoke tests failed
+        if: steps.smoke-test.outcome == 'failure'
+        run: exit 1
+
+  # Optional: Generate and commit badge to README (only on main branch)
+  update-badge:
+    name: Update CUJ Smoke Test Badge
+    runs-on: ubuntu-latest
+    needs: smoke-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download smoke test results
+        uses: actions/download-artifact@v4
+        with:
+          name: cuj-smoke-test-results
+
+      - name: Generate badge
+        id: badge
+        run: |
+          # Extract pass/fail counts from JSON
+          PASSED=$(jq -r '.passed' smoke-results.json)
+          TOTAL=$(jq -r '.total' smoke-results.json)
+          FAILED=$(jq -r '.failed' smoke-results.json)
+
+          # Calculate pass rate
+          PASS_RATE=$(echo "scale=0; $PASSED * 100 / $TOTAL" | bc)
+
+          # Determine badge color
+          if [ $FAILED -eq 0 ]; then
+            COLOR="brightgreen"
+          elif [ $FAILED -lt 5 ]; then
+            COLOR="yellow"
+          else
+            COLOR="red"
+          fi
+
+          # Generate badge URL
+          BADGE_URL="https://img.shields.io/badge/CUJ%20Smoke%20Tests-${PASSED}%2F${TOTAL}%20passing%20(${PASS_RATE}%25)-${COLOR}"
+
+          echo "badge_url=$BADGE_URL" >> $GITHUB_OUTPUT
+
+      - name: Update README badge
+        run: |
+          # Update README.md with new badge (if badge marker exists)
+          if grep -q "<!-- CUJ_SMOKE_TEST_BADGE -->" README.md; then
+            sed -i "s|<!-- CUJ_SMOKE_TEST_BADGE -->.*|<!-- CUJ_SMOKE_TEST_BADGE -->![${{ steps.badge.outputs.badge_url }}]|" README.md
+
+            # Commit if changed
+            if git diff --quiet README.md; then
+              echo "No changes to README.md"
+            else
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git add README.md
+              git commit -m "chore: update CUJ smoke test badge [skip ci]"
+              git push
+            fi
+          fi

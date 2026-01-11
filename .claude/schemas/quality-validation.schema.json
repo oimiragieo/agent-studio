@@ -25,7 +25,12 @@
     },
     "coverage": {
       "type": "object",
-      "required": ["features_tested_percentage", "documentation_compared", "logs_analyzed", "performance_measured"],
+      "required": [
+        "features_tested_percentage",
+        "documentation_compared",
+        "logs_analyzed",
+        "performance_measured"
+      ],
       "description": "Coverage metrics for testing",
       "properties": {
         "features_tested_percentage": {
@@ -189,4 +194,3 @@
     }
   }
 }
-

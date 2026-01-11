@@ -6,7 +6,7 @@ project_type: ui-optimization
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -29,39 +29,39 @@ fallback_agents:
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "ui perfection"
-  - "visual perfection"
-  - "ui polish"
-  - "ux optimization"
-  - "glassmorphism"
-  - "ui audit"
-  - "visual quality"
-  - "ui refinement"
+  - 'ui perfection'
+  - 'visual perfection'
+  - 'ui polish'
+  - 'ux optimization'
+  - 'glassmorphism'
+  - 'ui audit'
+  - 'visual quality'
+  - 'ui refinement'
 
 # Workflow inputs
 inputs:
   target_component:
     type: string
-    description: "Component or page path to optimize"
+    description: 'Component or page path to optimize'
     required: true
   reference_images:
     type: array
-    description: "Array of user-provided image paths (optional)"
+    description: 'Array of user-provided image paths (optional)'
     required: false
     default: []
   target_score:
     type: number
-    description: "Minimum score threshold (default: 95)"
+    description: 'Minimum score threshold (default: 95)'
     required: false
     default: 95
   glassmorphism_required:
     type: boolean
-    description: "Boolean flag for glassmorphism enforcement"
+    description: 'Boolean flag for glassmorphism enforcement'
     required: false
     default: false
   max_iterations:
     type: number
-    description: "Maximum number of iterations (default: 5)"
+    description: 'Maximum number of iterations (default: 5)'
     required: false
     default: 5
 
@@ -71,7 +71,7 @@ context_dir: .claude/context/ui-perfection/{{workflow_id}}
 steps:
   # Phase 0: Planning
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - target_component
@@ -92,7 +92,7 @@ steps:
       - Create structured perfection plan
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -117,7 +117,7 @@ steps:
 
   # Phase 1: Capture & Audit
   - step: 1
-    name: "UX Analysis"
+    name: 'UX Analysis'
     agent: ux-expert
     parallel: true
     inputs:
@@ -142,7 +142,7 @@ steps:
       - Visual design patterns review
 
   - step: 2
-    name: "Accessibility Audit"
+    name: 'Accessibility Audit'
     agent: accessibility-expert
     parallel: true
     inputs:
@@ -167,7 +167,7 @@ steps:
 
   # Phase 2: Grading & Validation
   - step: 3
-    name: "Score Calculation & Multi-AI Validation"
+    name: 'Score Calculation & Multi-AI Validation'
     agent: model-orchestrator
     tool: multi-ai-validator
     inputs:
@@ -200,7 +200,7 @@ steps:
 
   # Phase 3: Execution
   - step: 4
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     parallel: false
     inputs:
@@ -226,10 +226,10 @@ steps:
       - Ensure design system compliance
 
   - step: 5
-    name: "Mobile Optimization"
+    name: 'Mobile Optimization'
     agent: mobile-developer
     parallel: false
-    condition: "mobile_issues_detected"
+    condition: 'mobile_issues_detected'
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - grading-score.json (from step 3)
@@ -251,7 +251,7 @@ steps:
 
   # Phase 4: Verification
   - step: 6
-    name: "Quality Verification"
+    name: 'Quality Verification'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -283,7 +283,7 @@ steps:
       - Note: mobile-optimization.json is optional - step 5 may be skipped if no mobile issues detected
 
   - step: 6.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"
@@ -299,16 +299,16 @@ steps:
 iteration:
   enabled: true
   max_iterations: 5
-  loop_back_step: 1  # Loop back to UX Analysis (step 1), not planning
+  loop_back_step: 1 # Loop back to UX Analysis (step 1), not planning
   condition:
-    type: "and"
+    type: 'and'
     checks:
-      - field: "final_score"
-        operator: "<"
-        value: "{{target_score}}"
-      - field: "iteration_count"
-        operator: "<"
-        value: "{{max_iterations}}"
+      - field: 'final_score'
+        operator: '<'
+        value: '{{target_score}}'
+      - field: 'iteration_count'
+        operator: '<'
+        value: '{{max_iterations}}'
   context_preservation:
     - ui-audit-ux.json
     - ui-audit-a11y.json
@@ -343,7 +343,7 @@ completion_criteria:
 # Integration points
 integrations:
   mobile_workflow:
-    trigger_condition: "mobile_issues_detected == true"
+    trigger_condition: 'mobile_issues_detected == true'
     workflow_file: .claude/workflows/mobile-flow.yaml
     shared_artifacts:
       - mobile-ux-spec.json
@@ -352,4 +352,3 @@ integrations:
     agent: accessibility-expert
     wcag_validation: true
     playwright_testing: true
-

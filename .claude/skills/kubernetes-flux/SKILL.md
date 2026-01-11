@@ -21,6 +21,7 @@ safety_level: high
 This skill provides comprehensive Kubernetes cluster management through kubectl, enabling AI agents to inspect, troubleshoot, and manage Kubernetes resources with progressive disclosure for optimal context usage.
 
 **Context Savings**: ~92% reduction
+
 - **MCP Mode**: ~30,000 tokens always loaded (multiple tools + schemas)
 - **Skill Mode**: ~800 tokens metadata + on-demand loading
 
@@ -74,13 +75,14 @@ The skill provides 18 tools across discovery, inspection, management, and troubl
 
 List pods in a namespace with status information.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `namespace` | string | Namespace to query | current context |
-| `selector` | string | Label selector (e.g., "app=nginx") | none |
-| `all_namespaces` | boolean | List across all namespaces | false |
+| Parameter        | Type    | Description                        | Default         |
+| ---------------- | ------- | ---------------------------------- | --------------- |
+| `namespace`      | string  | Namespace to query                 | current context |
+| `selector`       | string  | Label selector (e.g., "app=nginx") | none            |
+| `all_namespaces` | boolean | List across all namespaces         | false           |
 
 **Example**:
+
 ```bash
 python executor.py --tool list_pods --args '{"namespace": "production", "selector": "app=web"}'
 ```
@@ -91,13 +93,14 @@ python executor.py --tool list_pods --args '{"namespace": "production", "selecto
 
 List deployments with replica status.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `namespace` | string | Namespace to query | current context |
-| `selector` | string | Label selector | none |
-| `all_namespaces` | boolean | List across all namespaces | false |
+| Parameter        | Type    | Description                | Default         |
+| ---------------- | ------- | -------------------------- | --------------- |
+| `namespace`      | string  | Namespace to query         | current context |
+| `selector`       | string  | Label selector             | none            |
+| `all_namespaces` | boolean | List across all namespaces | false           |
 
 **Example**:
+
 ```bash
 python executor.py --tool list_deployments --args '{"namespace": "production"}'
 ```
@@ -108,13 +111,14 @@ python executor.py --tool list_deployments --args '{"namespace": "production"}'
 
 List services with cluster IPs and ports.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `namespace` | string | Namespace to query | current context |
-| `selector` | string | Label selector | none |
-| `all_namespaces` | boolean | List across all namespaces | false |
+| Parameter        | Type    | Description                | Default         |
+| ---------------- | ------- | -------------------------- | --------------- |
+| `namespace`      | string  | Namespace to query         | current context |
+| `selector`       | string  | Label selector             | none            |
+| `all_namespaces` | boolean | List across all namespaces | false           |
 
 **Example**:
+
 ```bash
 python executor.py --tool list_services --args '{"namespace": "default"}'
 ```
@@ -125,12 +129,13 @@ python executor.py --tool list_services --args '{"namespace": "default"}'
 
 List ConfigMaps in a namespace.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `namespace` | string | Namespace to query | current context |
-| `all_namespaces` | boolean | List across all namespaces | false |
+| Parameter        | Type    | Description                | Default         |
+| ---------------- | ------- | -------------------------- | --------------- |
+| `namespace`      | string  | Namespace to query         | current context |
+| `all_namespaces` | boolean | List across all namespaces | false           |
 
 **Example**:
+
 ```bash
 python executor.py --tool list_configmaps --args '{"namespace": "default"}'
 ```
@@ -139,12 +144,13 @@ python executor.py --tool list_configmaps --args '{"namespace": "default"}'
 
 List Secrets in a namespace (names only, values masked).
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `namespace` | string | Namespace to query | current context |
-| `all_namespaces` | boolean | List across all namespaces | false |
+| Parameter        | Type    | Description                | Default         |
+| ---------------- | ------- | -------------------------- | --------------- |
+| `namespace`      | string  | Namespace to query         | current context |
+| `all_namespaces` | boolean | List across all namespaces | false           |
 
 **Example**:
+
 ```bash
 python executor.py --tool list_secrets --args '{"namespace": "default"}'
 ```
@@ -156,6 +162,7 @@ python executor.py --tool list_secrets --args '{"namespace": "default"}'
 List all available namespaces.
 
 **Example**:
+
 ```bash
 python executor.py --tool list_namespaces --args '{}'
 ```
@@ -168,12 +175,13 @@ python executor.py --tool list_namespaces --args '{}'
 
 Get detailed information about a specific pod.
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `name` | string | Pod name | Yes |
-| `namespace` | string | Namespace | No (uses current) |
+| Parameter   | Type   | Description | Required          |
+| ----------- | ------ | ----------- | ----------------- |
+| `name`      | string | Pod name    | Yes               |
+| `namespace` | string | Namespace   | No (uses current) |
 
 **Example**:
+
 ```bash
 python executor.py --tool describe_pod --args '{"name": "nginx-abc123", "namespace": "default"}'
 ```
@@ -184,12 +192,13 @@ python executor.py --tool describe_pod --args '{"name": "nginx-abc123", "namespa
 
 Get detailed information about a deployment.
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `name` | string | Deployment name | Yes |
-| `namespace` | string | Namespace | No (uses current) |
+| Parameter   | Type   | Description     | Required          |
+| ----------- | ------ | --------------- | ----------------- |
+| `name`      | string | Deployment name | Yes               |
+| `namespace` | string | Namespace       | No (uses current) |
 
 **Example**:
+
 ```bash
 python executor.py --tool describe_deployment --args '{"name": "web-app", "namespace": "production"}'
 ```
@@ -198,12 +207,13 @@ python executor.py --tool describe_deployment --args '{"name": "web-app", "names
 
 Get detailed information about a service.
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `name` | string | Service name | Yes |
-| `namespace` | string | Namespace | No (uses current) |
+| Parameter   | Type   | Description  | Required          |
+| ----------- | ------ | ------------ | ----------------- |
+| `name`      | string | Service name | Yes               |
+| `namespace` | string | Namespace    | No (uses current) |
 
 **Example**:
+
 ```bash
 python executor.py --tool describe_service --args '{"name": "api-service", "namespace": "default"}'
 ```
@@ -212,12 +222,13 @@ python executor.py --tool describe_service --args '{"name": "api-service", "name
 
 Get ConfigMap contents and metadata.
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `name` | string | ConfigMap name | Yes |
-| `namespace` | string | Namespace | No (uses current) |
+| Parameter   | Type   | Description    | Required          |
+| ----------- | ------ | -------------- | ----------------- |
+| `name`      | string | ConfigMap name | Yes               |
+| `namespace` | string | Namespace      | No (uses current) |
 
 **Example**:
+
 ```bash
 python executor.py --tool describe_configmap --args '{"name": "app-config", "namespace": "default"}'
 ```
@@ -226,12 +237,13 @@ python executor.py --tool describe_configmap --args '{"name": "app-config", "nam
 
 Get Secret metadata (values masked for security).
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `name` | string | Secret name | Yes |
-| `namespace` | string | Namespace | No (uses current) |
+| Parameter   | Type   | Description | Required          |
+| ----------- | ------ | ----------- | ----------------- |
+| `name`      | string | Secret name | Yes               |
+| `namespace` | string | Namespace   | No (uses current) |
 
 **Example**:
+
 ```bash
 python executor.py --tool describe_secret --args '{"name": "db-credentials", "namespace": "default"}'
 ```
@@ -244,16 +256,17 @@ python executor.py --tool describe_secret --args '{"name": "db-credentials", "na
 
 Retrieve container logs from a pod.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `name` | string | Pod name | Required |
-| `namespace` | string | Namespace | current context |
-| `container` | string | Container name | first container |
-| `tail` | number | Number of lines | 100 |
-| `previous` | boolean | Get logs from previous container | false |
-| `since` | string | Time duration (e.g., "1h", "30m") | none |
+| Parameter   | Type    | Description                       | Default         |
+| ----------- | ------- | --------------------------------- | --------------- |
+| `name`      | string  | Pod name                          | Required        |
+| `namespace` | string  | Namespace                         | current context |
+| `container` | string  | Container name                    | first container |
+| `tail`      | number  | Number of lines                   | 100             |
+| `previous`  | boolean | Get logs from previous container  | false           |
+| `since`     | string  | Time duration (e.g., "1h", "30m") | none            |
 
 **Example**:
+
 ```bash
 python executor.py --tool get_logs --args '{"name": "app-pod", "tail": 50, "since": "1h"}'
 ```
@@ -262,14 +275,15 @@ python executor.py --tool get_logs --args '{"name": "app-pod", "tail": 50, "sinc
 
 List recent events in a namespace.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `namespace` | string | Namespace to query | current context |
-| `limit` | number | Number of events | 50 |
-| `all_namespaces` | boolean | All namespaces | false |
-| `field_selector` | string | Field selector filter | none |
+| Parameter        | Type    | Description           | Default         |
+| ---------------- | ------- | --------------------- | --------------- |
+| `namespace`      | string  | Namespace to query    | current context |
+| `limit`          | number  | Number of events      | 50              |
+| `all_namespaces` | boolean | All namespaces        | false           |
+| `field_selector` | string  | Field selector filter | none            |
 
 **Example**:
+
 ```bash
 python executor.py --tool list_events --args '{"namespace": "production", "limit": 100}'
 ```
@@ -280,12 +294,13 @@ python executor.py --tool list_events --args '{"namespace": "production", "limit
 
 Stream real-time events (30-second window).
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `namespace` | string | Namespace to watch | current context |
-| `duration` | number | Watch duration (seconds) | 30 |
+| Parameter   | Type   | Description              | Default         |
+| ----------- | ------ | ------------------------ | --------------- |
+| `namespace` | string | Namespace to watch       | current context |
+| `duration`  | number | Watch duration (seconds) | 30              |
 
 **Example**:
+
 ```bash
 python executor.py --tool watch_events --args '{"namespace": "default", "duration": 60}'
 ```
@@ -296,19 +311,21 @@ python executor.py --tool watch_events --args '{"namespace": "default", "duratio
 
 Execute read-only commands in a pod (read-only by default).
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `name` | string | Pod name | Yes |
-| `namespace` | string | Namespace | No (uses current) |
-| `container` | string | Container name | No (first container) |
-| `command` | array | Command to execute | Yes |
+| Parameter   | Type   | Description        | Required             |
+| ----------- | ------ | ------------------ | -------------------- |
+| `name`      | string | Pod name           | Yes                  |
+| `namespace` | string | Namespace          | No (uses current)    |
+| `container` | string | Container name     | No (first container) |
+| `command`   | array  | Command to execute | Yes                  |
 
 **Example**:
+
 ```bash
 python executor.py --tool exec_pod --args '{"name": "app-pod", "command": ["ls", "-la", "/app"]}'
 ```
 
 **Safety**:
+
 - Destructive commands (rm, dd, mkfs) are BLOCKED
 - Write operations require explicit confirmation flag
 - Default timeout: 10 seconds
@@ -319,13 +336,14 @@ python executor.py --tool exec_pod --args '{"name": "app-pod", "command": ["ls",
 
 Scale a deployment to a specific replica count.
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `name` | string | Deployment name | Yes |
-| `replicas` | number | Desired replica count | Yes |
-| `namespace` | string | Namespace | No (uses current) |
+| Parameter   | Type   | Description           | Required          |
+| ----------- | ------ | --------------------- | ----------------- |
+| `name`      | string | Deployment name       | Yes               |
+| `replicas`  | number | Desired replica count | Yes               |
+| `namespace` | string | Namespace             | No (uses current) |
 
 **Example**:
+
 ```bash
 python executor.py --tool scale_deployment --args '{"name": "web-app", "replicas": 5, "namespace": "production"}'
 ```
@@ -336,12 +354,13 @@ python executor.py --tool scale_deployment --args '{"name": "web-app", "replicas
 
 Check the rollout status of a deployment.
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `name` | string | Deployment name | Yes |
-| `namespace` | string | Namespace | No (uses current) |
+| Parameter   | Type   | Description     | Required          |
+| ----------- | ------ | --------------- | ----------------- |
+| `name`      | string | Deployment name | Yes               |
+| `namespace` | string | Namespace       | No (uses current) |
 
 **Example**:
+
 ```bash
 python executor.py --tool rollout_status --args '{"name": "api-server", "namespace": "production"}'
 ```
@@ -350,15 +369,16 @@ python executor.py --tool rollout_status --args '{"name": "api-server", "namespa
 
 Forward a local port to a pod (for debugging).
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `name` | string | Pod name | Yes |
-| `local_port` | number | Local port | Yes |
-| `remote_port` | number | Pod port | Yes |
-| `namespace` | string | Namespace | No (uses current) |
-| `duration` | number | Forward duration (seconds) | 60 |
+| Parameter     | Type   | Description                | Required          |
+| ------------- | ------ | -------------------------- | ----------------- |
+| `name`        | string | Pod name                   | Yes               |
+| `local_port`  | number | Local port                 | Yes               |
+| `remote_port` | number | Pod port                   | Yes               |
+| `namespace`   | string | Namespace                  | No (uses current) |
+| `duration`    | number | Forward duration (seconds) | 60                |
 
 **Example**:
+
 ```bash
 python executor.py --tool port_forward --args '{"name": "db-pod", "local_port": 5432, "remote_port": 5432, "duration": 300}'
 ```
@@ -374,6 +394,7 @@ The skill provides context management tools:
 Display the current kubectl context.
 
 **Example**:
+
 ```bash
 python executor.py --tool get_current_context --args '{}'
 ```
@@ -382,11 +403,12 @@ python executor.py --tool get_current_context --args '{}'
 
 Switch to a different kubectl context.
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `context` | string | Context name | Yes |
+| Parameter | Type   | Description  | Required |
+| --------- | ------ | ------------ | -------- |
+| `context` | string | Context name | Yes      |
 
 **Example**:
+
 ```bash
 python executor.py --tool switch_context --args '{"context": "production-cluster"}'
 ```
@@ -398,6 +420,7 @@ python executor.py --tool switch_context --args '{"context": "production-cluster
 List all available kubectl contexts.
 
 **Example**:
+
 ```bash
 python executor.py --tool list_contexts --args '{}'
 ```
@@ -488,16 +511,17 @@ python executor.py --tool list_pods --args '{"namespace": "production", "selecto
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `KUBECONFIG` | Path to kubeconfig file | `~/.kube/config` |
-| `KUBECTL_CONTEXT` | Default kubectl context | current-context |
-| `KUBECTL_NAMESPACE` | Default namespace | from context |
-| `KUBECTL_TIMEOUT` | Command timeout (seconds) | 30 |
+| Variable            | Description               | Default          |
+| ------------------- | ------------------------- | ---------------- |
+| `KUBECONFIG`        | Path to kubeconfig file   | `~/.kube/config` |
+| `KUBECTL_CONTEXT`   | Default kubectl context   | current-context  |
+| `KUBECTL_NAMESPACE` | Default namespace         | from context     |
+| `KUBECTL_TIMEOUT`   | Command timeout (seconds) | 30               |
 
 ### Setup
 
 1. **Install kubectl**:
+
    ```bash
    # macOS
    brew install kubectl
@@ -510,6 +534,7 @@ python executor.py --tool list_pods --args '{"namespace": "production", "selecto
    ```
 
 2. **Configure cluster access**:
+
    ```bash
    # Verify kubectl is configured
    kubectl cluster-info
@@ -522,6 +547,7 @@ python executor.py --tool list_pods --args '{"namespace": "production", "selecto
    ```
 
 3. **Verify RBAC permissions**:
+
    ```bash
    # Check your permissions
    kubectl auth can-i --list
@@ -568,13 +594,13 @@ The following data is automatically masked:
 
 **Common Errors**:
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `kubectl not found` | kubectl not installed | Install kubectl |
-| `Unable to connect to server` | Cluster unreachable | Check network, VPN, or cluster status |
-| `Forbidden` | Insufficient RBAC permissions | Request cluster admin for permissions |
-| `NotFound` | Resource doesn't exist | Verify name and namespace |
-| `context deadline exceeded` | Timeout | Increase KUBECTL_TIMEOUT or check cluster |
+| Error                         | Cause                         | Fix                                       |
+| ----------------------------- | ----------------------------- | ----------------------------------------- |
+| `kubectl not found`           | kubectl not installed         | Install kubectl                           |
+| `Unable to connect to server` | Cluster unreachable           | Check network, VPN, or cluster status     |
+| `Forbidden`                   | Insufficient RBAC permissions | Request cluster admin for permissions     |
+| `NotFound`                    | Resource doesn't exist        | Verify name and namespace                 |
+| `context deadline exceeded`   | Timeout                       | Increase KUBECTL_TIMEOUT or check cluster |
 
 **Recovery**:
 
@@ -588,10 +614,12 @@ The following data is automatically masked:
 This skill integrates with the following agents:
 
 ### Primary Agents
+
 - **devops**: Infrastructure management, deployments, scaling
 - **incident-responder**: Troubleshooting, debugging, post-mortems
 
 ### Secondary Agents
+
 - **cloud-integrator**: Cloud-native Kubernetes integrations (GKE, EKS, AKS)
 - **developer**: Application deployment and debugging
 - **qa**: Integration testing in Kubernetes environments
@@ -607,6 +635,7 @@ The skill uses progressive disclosure to minimize context usage:
 4. **Context Cleanup**: Old results cleared after use
 
 **Context Optimization**:
+
 - Use `--tail` to limit log output
 - Use `--limit` to restrict event counts
 - Use selectors to filter pod/deployment lists
@@ -617,6 +646,7 @@ The skill uses progressive disclosure to minimize context usage:
 ### Skill Issues
 
 **Executor not found**:
+
 ```bash
 # Verify Python is installed
 python --version
@@ -626,6 +656,7 @@ ls -la .claude/skills/kubernetes-flux/executor.py
 ```
 
 **kubectl not working**:
+
 ```bash
 # Verify kubectl installation
 kubectl version --client
@@ -638,6 +669,7 @@ kubectl cluster-info
 ```
 
 **Permission denied**:
+
 ```bash
 # Check RBAC permissions
 kubectl auth can-i get pods
@@ -647,6 +679,7 @@ kubectl auth can-i describe deployments
 ```
 
 **Context issues**:
+
 ```bash
 # List available contexts
 python executor.py --tool list_contexts

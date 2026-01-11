@@ -13,12 +13,14 @@ Create the missing configuration files and tools needed for Issues #2, #5, #8, a
 ## Context
 
 The project already has several of the requested files:
+
 - ✅ `.claude/config/response-rater.yaml` (exists)
 - ✅ `.claude/config/fallback-agents.json` (exists)
 - ✅ `.claude/schemas/checkpoint.schema.json` (exists)
 - ✅ `.claude/tools/fallback-router.mjs` (exists)
 
 Several validation and CUJ tools already exist:
+
 - `validate-cuj.mjs`
 - `validate-cuj-e2e.mjs`
 - `run-cuj.mjs`
@@ -27,9 +29,11 @@ Several validation and CUJ tools already exist:
 ## Files to Create
 
 ### 1. Gate Result Schema (Issue #8)
+
 **Path**: `.claude/schemas/gate-result.schema.json`
 
 Create a JSON schema for validation gate results with:
+
 - Required fields: `status`, `validation_timestamp`, `step`, `agent`
 - Status enum: `["pass", "fail", "warning", "skip"]`
 - Optional arrays: `validation_errors`, `warnings`, `artifacts_validated`
@@ -38,9 +42,11 @@ Create a JSON schema for validation gate results with:
 **Reference Existing Schema**: Use `.claude/schemas/checkpoint.schema.json` as a structural reference.
 
 ### 2. Schema Validation Script (Issue #8)
+
 **Path**: `.claude/tools/validate-schemas.mjs`
 
 Create a script that:
+
 - Scans all workflow YAML files in `.claude/workflows/`
 - Extracts schema references from workflow steps
 - Validates that each referenced schema exists in `.claude/schemas/`
@@ -50,9 +56,11 @@ Create a script that:
 **Reference Existing Tools**: Check `.claude/tools/validate-workflow-paths.mjs` for similar workflow scanning patterns.
 
 ### 3. CUJ Test Runner (Issue #10)
+
 **Path**: `.claude/tools/cuj-test-runner.mjs`
 
 Create a script that:
+
 - Accepts `--cuj CUJ-XXX` option to test a specific CUJ
 - Loads CUJ from `.claude/docs/cujs/`
 - Parses success criteria from CUJ document
@@ -63,9 +71,11 @@ Create a script that:
 **Reference Existing Tools**: Use `.claude/tools/run-cuj.mjs` as a starting point.
 
 ### 4. CUJ Validation Script (Issue #10)
+
 **Path**: `.claude/tools/validate-cuj-docs.mjs`
 
 Create a script that:
+
 - Validates CUJ documentation meets standards
 - Checks for required sections (Overview, Success Criteria, Workflow)
 - Validates workflow references exist
@@ -75,9 +85,11 @@ Create a script that:
 **Reference Existing Tools**: Check `.claude/tools/validate-cuj.mjs` for existing CUJ validation patterns.
 
 ### 5. Rating Cache (Issue #6)
+
 **Path**: `.claude/tools/rating-cache.mjs`
 
 Create a module that:
+
 - Caches plan ratings to avoid redundant API calls
 - Hash function for plan content
 - `getCache(planHash)` - retrieve cached rating
@@ -88,9 +100,11 @@ Create a module that:
 **Storage**: Use `.claude/context/cache/rating-cache.json`
 
 ### 6. Workflow Monitor (Issue #6)
+
 **Path**: `.claude/tools/workflow-monitor.mjs`
 
 Create a module that:
+
 - Tracks step execution times
 - Identifies bottlenecks
 - `recordStepStart(runId, step, agent)` - mark step start

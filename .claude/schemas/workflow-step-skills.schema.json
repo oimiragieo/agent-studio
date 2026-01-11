@@ -4,22 +4,28 @@
   "title": "Workflow Step Skill Requirements Schema",
   "description": "Schema for defining skill requirements per workflow step. This schema is designed to be referenced from workflow.schema.json and enforced by the skill-enforcement module.",
   "version": "2.0.0",
-  
+
   "definitions": {
     "skill_name": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9-]*$",
       "description": "Skill name in kebab-case format. Must match a skill in .claude/skills/ directory.",
-      "examples": ["scaffolder", "rule-auditor", "repo-rag", "response-rater", "sequential-thinking"]
+      "examples": [
+        "scaffolder",
+        "rule-auditor",
+        "repo-rag",
+        "response-rater",
+        "sequential-thinking"
+      ]
     },
-    
+
     "skill_list": {
       "type": "array",
       "items": { "$ref": "#/definitions/skill_name" },
       "uniqueItems": true,
       "description": "Array of unique skill names"
     },
-    
+
     "triggered_skill": {
       "type": "object",
       "description": "Skill that activates based on pattern matching against task description or context",
@@ -59,7 +65,7 @@
       },
       "additionalProperties": false
     },
-    
+
     "skill_output_mapping": {
       "type": "object",
       "description": "Maps a skill to its expected output artifacts for validation and traceability",
@@ -86,7 +92,7 @@
       },
       "additionalProperties": false
     },
-    
+
     "validation_config": {
       "type": "object",
       "description": "Validation configuration for skill usage compliance",
@@ -135,7 +141,7 @@
       "additionalProperties": false
     }
   },
-  
+
   "type": "object",
   "description": "Complete skill requirements definition for a workflow step",
   "properties": {
@@ -143,23 +149,23 @@
       "$ref": "#/definitions/skill_list",
       "description": "Skills that MUST be invoked during this step. Step execution is blocked if any are missing."
     },
-    
+
     "triggered": {
       "type": "array",
       "items": { "$ref": "#/definitions/triggered_skill" },
       "description": "Skills that activate conditionally based on pattern matching. Evaluated in order; first match wins for each skill."
     },
-    
+
     "recommended": {
       "$ref": "#/definitions/skill_list",
       "description": "Skills that SHOULD be used but won't block execution. Generates warnings in validation logs if missing."
     },
-    
+
     "forbidden": {
       "$ref": "#/definitions/skill_list",
       "description": "Skills that MUST NOT be used in this step. Useful for security-sensitive steps. Execution blocked if any are invoked."
     },
-    
+
     "outputs": {
       "type": "object",
       "additionalProperties": { "$ref": "#/definitions/skill_output_mapping" },
@@ -174,27 +180,27 @@
         }
       ]
     },
-    
+
     "validation": {
       "$ref": "#/definitions/validation_config",
       "description": "Validation settings for skill usage compliance"
     },
-    
+
     "inherit_from_agent": {
       "type": "boolean",
       "default": true,
       "description": "Whether to inherit required/recommended skills from agent's skill-integration-matrix.json entry. Step-level skills are merged with agent defaults."
     },
-    
+
     "override_agent_skills": {
       "type": "boolean",
       "default": false,
       "description": "If true, step-level skills completely replace agent defaults instead of merging. Use when step needs a different skill set than agent default."
     }
   },
-  
+
   "additionalProperties": false,
-  
+
   "examples": [
     {
       "required": ["scaffolder", "rule-auditor", "repo-rag"],

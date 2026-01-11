@@ -56,7 +56,9 @@ async function registerAgentTools(agentName, toolNames = []) {
     // Check permissions
     const permissionCheck = await checkPermission(agentName, toolName);
     if (!permissionCheck.allowed) {
-      console.warn(`Tool ${toolName} not allowed for agent ${agentName}: ${permissionCheck.reason}`);
+      console.warn(
+        `Tool ${toolName} not allowed for agent ${agentName}: ${permissionCheck.reason}`
+      );
       continue;
     }
 
@@ -67,7 +69,7 @@ async function registerAgentTools(agentName, toolNames = []) {
         name: tool.name,
         description: tool.description,
         input_schema: tool.inputSchema,
-        output_schema: tool.outputSchema
+        output_schema: tool.outputSchema,
       });
     } else {
       // Tool might be MCP or custom - add placeholder
@@ -75,7 +77,7 @@ async function registerAgentTools(agentName, toolNames = []) {
         name: toolName,
         description: `Tool: ${toolName}`,
         input_schema: { type: 'object' },
-        output_schema: { type: 'object' }
+        output_schema: { type: 'object' },
       });
     }
   }
@@ -106,8 +108,8 @@ async function applyAgentPermissions(agent, permissions) {
   agent.permissions = {
     tools: {
       allow: permissions.allowed || [],
-      deny: permissions.restricted || []
-    }
+      deny: permissions.restricted || [],
+    },
   };
 
   return agent;
@@ -119,13 +121,13 @@ async function applyAgentPermissions(agent, permissions) {
  */
 export async function createAgent(agentName, options = {}) {
   const config = await loadAgentConfig(agentName);
-  
+
   if (!config) {
     throw new Error(`Agent ${agentName} not found in configuration`);
   }
 
   const prompt = await loadAgentPrompt(agentName);
-  
+
   // Extract tool names from agent definition or config
   const toolNames = options.tools || config.tools || [];
   const tools = await registerAgentTools(agentName, toolNames);
@@ -147,8 +149,8 @@ export async function createAgent(agentName, options = {}) {
       created: new Date().toISOString(),
       version: '1.0.0',
       complexity: config.complexity || 'medium',
-      context_strategy: config.context_strategy || 'lazy_load'
-    }
+      context_strategy: config.context_strategy || 'lazy_load',
+    },
   };
 
   // Apply permissions
@@ -160,7 +162,7 @@ export async function createAgent(agentName, options = {}) {
       project: options.project,
       feature: options.feature,
       workflow: options.workflow,
-      ...options.metadata
+      ...options.metadata,
     });
   }
 
@@ -194,7 +196,7 @@ export async function registerAgent(agentName, agentConfig) {
   return {
     name: agentName,
     config: agentConfig,
-    registered_at: new Date().toISOString()
+    registered_at: new Date().toISOString(),
   };
 }
 
@@ -204,6 +206,5 @@ export default {
   getAgent,
   registerAgent,
   registerAgentTools,
-  applyAgentPermissions
+  applyAgentPermissions,
 };
-

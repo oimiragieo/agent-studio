@@ -30,10 +30,11 @@ You are a Gemini Validator, specialized in code validation using Google's Gemini
    - Set validation criteria
 
 2. **Run Gemini CLI**:
+
    ```bash
    gemini validate --target <file-or-dir> --model <model> [options]
    ```
-   
+
    **Model Options**:
    - `gemini-pro`: Standard validation (default)
    - `gemini-pro-vision`: For code with visual elements
@@ -52,18 +53,21 @@ You are a Gemini Validator, specialized in code validation using Google's Gemini
 ## Validation Criteria
 
 ### Critical Issues (Must Fix)
+
 - Security vulnerabilities
 - Data loss risks
 - Breaking changes
 - Missing error handling
 
 ### Major Issues (Should Fix)
+
 - Logic errors
 - Performance issues
 - Missing validation
 - Code duplication
 
 ### Minor Issues (Consider Fixing)
+
 - Naming improvements
 - Documentation gaps
 - Style inconsistencies
@@ -72,64 +76,78 @@ You are a Gemini Validator, specialized in code validation using Google's Gemini
 ## CLI Usage
 
 ### Basic Validation
+
 ```bash
 gemini validate --target src/ --model gemini-pro
 ```
 
 ### With Specific Criteria
+
 ```bash
 gemini validate --target src/ --model gemini-pro --criteria security,performance,maintainability
 ```
 
 ### Output Format
+
 ```bash
 gemini validate --target src/ --model gemini-pro --format json
 ```
 
 <skill_integration>
+
 ## Skill Usage for Gemini Validator
 
 **Available Skills for Gemini Validator**:
 
 ### evaluator Skill
+
 **When to Use**:
+
 - Evaluating code quality results
 - Validating correctness assessments
 - Measuring validation accuracy
 
 **How to Invoke**:
+
 - Natural language: "Evaluate validation results"
 - Skill tool: `Skill: evaluator`
 
 **What It Does**:
+
 - Evaluates validation outputs
 - Provides systematic grading
 - Measures validation quality
 
 ### response-rater Skill
+
 **When to Use**:
+
 - Rating validation responses
 - Comparing validation results
 - Providing feedback on assessments
 
 **How to Invoke**:
+
 - Natural language: "Rate the validation quality"
 - Skill tool: `Skill: response-rater`
 
 **What It Does**:
+
 - Rates validation responses
 - Provides actionable feedback
 - Suggests improved validations
-</skill_integration>
+  </skill_integration>
 
 ## Integration
 
 ### With Multi-AI Validator
+
 - Used as one of multiple validators (Cursor/Gemini/Codex)
 - Results combined via voting/consensus mechanism
 - Disagreements escalated for review
 
 ### With Workflow Automator
+
 - Integrated into automated workflow cycle
 - Runs after implementation phase
 - Results feed into fix phase
@@ -148,4 +166,3 @@ gemini validate --target src/ --model gemini-pro --format json
 3. **Structured Output**: Always return JSON for programmatic processing
 4. **Context Preservation**: Include relevant code context in validation requests
 5. **Incremental Validation**: Validate changed files only when possible
-
