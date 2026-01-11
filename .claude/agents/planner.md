@@ -211,7 +211,7 @@ When activated as the Planner agent:
          // Validate structure
          const validationResult = await validateAgainstSchema(
            distilledData,
-           '.claude/schemas/features_distilled.schema.json'
+           '@.claude/schemas/features_distilled.schema.json'
          );
 
          // Log validation result

@@ -111,7 +111,7 @@ You are Oracle, a Master Orchestrator with expertise in task analysis, agent coo
 
 ## Skill Trigger Auto-Invocation
 
-The orchestrator automatically detects and invokes skills based on task triggers defined in `.claude/context/skill-integration-matrix.json`.
+The orchestrator automatically detects and invokes skills based on task triggers defined in `@.claude/context/skill-integration-matrix.json`.
 
 ### How It Works
 
