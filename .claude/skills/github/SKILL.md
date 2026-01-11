@@ -12,6 +12,7 @@ allowed-tools: read, write, bash
 This skill provides access to the official GitHub MCP server with progressive disclosure for optimal context usage.
 
 **Context Savings**: ~95% reduction
+
 - **MCP Mode**: ~50,000 tokens always loaded (80+ tools)
 - **Skill Mode**: ~500 tokens metadata + on-demand loading
 
@@ -24,22 +25,22 @@ This skill provides access to the official GitHub MCP server with progressive di
 
 The server provides 80+ tools across 19 toolsets:
 
-| Toolset | Description |
-|---------|-------------|
-| `actions` | Workflow management, runs, jobs, artifacts |
-| `code_security` | Scanning alerts, code analysis |
-| `discussions` | Forum interactions |
-| `gists` | Code snippets management |
-| `issues` | Issue creation, updates, commenting |
-| `labels` | Label management and filtering |
-| `projects` | GitHub Projects board management |
-| `pull_requests` | PR creation, review, merging |
-| `repos` | Code search, commits, releases, branches |
-| `users` | User search and management |
-| `orgs` | Organization and team management |
-| `notifications` | Notification management |
-| `secret_scanning` | Secret scanning alerts |
-| `context` | Context about the user |
+| Toolset           | Description                                |
+| ----------------- | ------------------------------------------ |
+| `actions`         | Workflow management, runs, jobs, artifacts |
+| `code_security`   | Scanning alerts, code analysis             |
+| `discussions`     | Forum interactions                         |
+| `gists`           | Code snippets management                   |
+| `issues`          | Issue creation, updates, commenting        |
+| `labels`          | Label management and filtering             |
+| `projects`        | GitHub Projects board management           |
+| `pull_requests`   | PR creation, review, merging               |
+| `repos`           | Code search, commits, releases, branches   |
+| `users`           | User search and management                 |
+| `orgs`            | Organization and team management           |
+| `notifications`   | Notification management                    |
+| `secret_scanning` | Secret scanning alerts                     |
+| `context`         | Context about the user                     |
 
 ## Quick Reference
 
@@ -66,6 +67,7 @@ python executor.py --tool list_pull_requests --args '{"owner": "anthropics", "re
 ## Common Tools (Default Toolsets: 40 tools)
 
 ### Repository Operations
+
 - `search_repositories` - Search for repositories
 - `create_repository` - Create a new repository
 - `fork_repository` - Fork a repository
@@ -85,6 +87,7 @@ python executor.py --tool list_pull_requests --args '{"owner": "anthropics", "re
 - `get_release_by_tag` - Get release by tag
 
 ### Issue Operations
+
 - `list_issues` - List repository issues
 - `issue_read` - Read issue details
 - `issue_write` - Create/update issues
@@ -96,6 +99,7 @@ python executor.py --tool list_pull_requests --args '{"owner": "anthropics", "re
 - `assign_copilot_to_issue` - Assign Copilot to an issue
 
 ### Pull Request Operations
+
 - `list_pull_requests` - List repository pull requests
 - `pull_request_read` - Read PR details
 - `create_pull_request` - Create a new PR
@@ -108,6 +112,7 @@ python executor.py --tool list_pull_requests --args '{"owner": "anthropics", "re
 - `request_copilot_review` - Request Copilot review
 
 ### User & Team Operations
+
 - `get_me` - Get current authenticated user
 - `search_users` - Search for users
 - `get_teams` - Get organization teams
@@ -116,17 +121,18 @@ python executor.py --tool list_pull_requests --args '{"owner": "anthropics", "re
 ## Configuration
 
 The skill uses Docker to run the official GitHub MCP server:
+
 - **Image**: `ghcr.io/github/github-mcp-server`
 - **Auth**: `GITHUB_PERSONAL_ACCESS_TOKEN` environment variable
 
 ### Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | Yes | GitHub PAT for authentication |
-| `GITHUB_HOST` | No | For GitHub Enterprise (default: github.com) |
-| `GITHUB_TOOLSETS` | No | Comma-separated toolsets to enable |
-| `GITHUB_READ_ONLY` | No | Set to 1 for read-only mode |
+| Variable                       | Required | Description                                 |
+| ------------------------------ | -------- | ------------------------------------------- |
+| `GITHUB_PERSONAL_ACCESS_TOKEN` | Yes      | GitHub PAT for authentication               |
+| `GITHUB_HOST`                  | No       | For GitHub Enterprise (default: github.com) |
+| `GITHUB_TOOLSETS`              | No       | Comma-separated toolsets to enable          |
+| `GITHUB_READ_ONLY`             | No       | Set to 1 for read-only mode                 |
 
 ### Limiting Toolsets
 
@@ -143,6 +149,7 @@ GITHUB_TOOLSETS=pull_requests,code_security python executor.py --list
 ## Error Handling
 
 If tool execution fails:
+
 1. Verify Docker is running: `docker ps`
 2. Check GitHub token is set: `echo $GITHUB_PERSONAL_ACCESS_TOKEN`
 3. Ensure token has required permissions for the operation

@@ -7,6 +7,7 @@ Reads `skill-integration-matrix.json` and injects required skills into agent pro
 ## Purpose
 
 The skill injector is the foundational tool that enables:
+
 - **Dynamic skill loading**: Load only the skills an agent needs
 - **Trigger detection**: Automatically detect which skills to activate based on task description
 - **Prompt generation**: Generate skill injection prompts for agent spawning
@@ -41,20 +42,20 @@ import { injectSkillsForAgent } from '.claude/tools/skill-injector.mjs';
 // Inject skills for agent with task
 const result = await injectSkillsForAgent('developer', 'Create new UserProfile component');
 
-console.log(result.requiredSkills);   // ['scaffolder', 'rule-auditor', 'repo-rag']
-console.log(result.triggeredSkills);  // ['scaffolder']
-console.log(result.skillPrompt);      // Full skill injection markdown
+console.log(result.requiredSkills); // ['scaffolder', 'rule-auditor', 'repo-rag']
+console.log(result.triggeredSkills); // ['scaffolder']
+console.log(result.skillPrompt); // Full skill injection markdown
 ```
 
 ## Input/Output
 
 ### Input Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `agentType` | string | Yes | Agent type (e.g., 'developer', 'orchestrator') |
-| `taskDescription` | string | No | Task description for trigger detection |
-| `options.includeRecommended` | boolean | No | Include recommended skills (default: false) |
+| Parameter                    | Type    | Required | Description                                    |
+| ---------------------------- | ------- | -------- | ---------------------------------------------- |
+| `agentType`                  | string  | Yes      | Agent type (e.g., 'developer', 'orchestrator') |
+| `taskDescription`            | string  | No       | Task description for trigger detection         |
+| `options.includeRecommended` | boolean | No       | Include recommended skills (default: false)    |
 
 ### Output Object
 
@@ -139,6 +140,7 @@ Triggers are patterns in the task description that activate specific skills.
 ### How Triggers Work
 
 1. **Trigger keywords** are defined in `skill-integration-matrix.json`:
+
    ```json
    "skill_triggers": {
      "new_component": "scaffolder",
@@ -155,12 +157,12 @@ Triggers are patterns in the task description that activate specific skills.
 
 ### Examples
 
-| Task Description | Triggered Skills | Reason |
-|-----------------|------------------|--------|
-| "Create new UserProfile component" | scaffolder | "new" + "component" matches |
-| "Audit code for violations" | rule-auditor | "code" matches |
-| "Search codebase for patterns" | repo-rag | "codebase" + "search" matches |
-| "Test authentication flow" | test-generator | "test" matches |
+| Task Description                   | Triggered Skills | Reason                        |
+| ---------------------------------- | ---------------- | ----------------------------- |
+| "Create new UserProfile component" | scaffolder       | "new" + "component" matches   |
+| "Audit code for violations"        | rule-auditor     | "code" matches                |
+| "Search codebase for patterns"     | repo-rag         | "codebase" + "search" matches |
+| "Test authentication flow"         | test-generator   | "test" matches                |
 
 ## Integration Points
 
@@ -192,7 +194,7 @@ const injection = await injectSkillsForAgent('developer', taskDescription);
 await spawnTask({
   subagent_type: 'developer',
   task: taskDescription,
-  additional_context: injection.skillPrompt
+  additional_context: injection.skillPrompt,
 });
 ```
 
@@ -257,7 +259,7 @@ const result = await injectSkillsForAgent('nonexistent-agent');
 // If SKILL.md is missing, skill is included in failedSkills
 const result = await injectSkillsForAgent('developer');
 console.log(result.failedSkills); // ['missing-skill']
-console.log(result.skillPrompt);  // Includes warning for missing skills
+console.log(result.skillPrompt); // Includes warning for missing skills
 ```
 
 ### Invalid Matrix Format
@@ -273,14 +275,14 @@ try {
 
 ## Exported Functions
 
-| Function | Purpose | Returns |
-|----------|---------|---------|
-| `loadSkillMatrix()` | Load skill integration matrix | Promise\<Object\> |
-| `getSkillsForAgent(agentType)` | Get skills for agent | Promise\<Object\> |
-| `loadSkillContent(skillName)` | Load SKILL.md content | Promise\<string\|null\> |
-| `injectSkillsForAgent(agentType, taskDescription, options)` | Main injection function | Promise\<Object\> |
-| `listAvailableAgents()` | List all agent types | Promise\<string[]\> |
-| `getSkillCategories()` | Get skill categories | Promise\<Object\> |
+| Function                                                    | Purpose                       | Returns                 |
+| ----------------------------------------------------------- | ----------------------------- | ----------------------- |
+| `loadSkillMatrix()`                                         | Load skill integration matrix | Promise\<Object\>       |
+| `getSkillsForAgent(agentType)`                              | Get skills for agent          | Promise\<Object\>       |
+| `loadSkillContent(skillName)`                               | Load SKILL.md content         | Promise\<string\|null\> |
+| `injectSkillsForAgent(agentType, taskDescription, options)` | Main injection function       | Promise\<Object\>       |
+| `listAvailableAgents()`                                     | List all agent types          | Promise\<string[]\>     |
+| `getSkillCategories()`                                      | Get skill categories          | Promise\<Object\>       |
 
 ## Testing
 
@@ -291,6 +293,7 @@ node .claude/tools/test-skill-injector.mjs
 ```
 
 Expected output:
+
 ```
 🧪 Testing Skill Injector Programmatic API
 
@@ -359,6 +362,7 @@ The skill injector is part of Phase 2 orchestration enforcement:
 ### "Skill matrix not found"
 
 Ensure `.claude/context/skill-integration-matrix.json` exists:
+
 ```bash
 ls .claude/context/skill-integration-matrix.json
 ```
@@ -366,6 +370,7 @@ ls .claude/context/skill-integration-matrix.json
 ### "SKILL.md not found"
 
 Check if skill directory exists:
+
 ```bash
 ls .claude/skills/scaffolder/SKILL.md
 ```
@@ -373,6 +378,7 @@ ls .claude/skills/scaffolder/SKILL.md
 ### "Agent type not found"
 
 List available agents:
+
 ```bash
 node .claude/tools/skill-injector.mjs --list-agents
 ```
@@ -380,6 +386,7 @@ node .claude/tools/skill-injector.mjs --list-agents
 ### Trigger not detected
 
 Check trigger keywords in skill-integration-matrix.json:
+
 ```bash
 cat .claude/context/skill-integration-matrix.json | grep -A 10 "skill_triggers"
 ```

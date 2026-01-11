@@ -43,9 +43,7 @@
       "name": "Workflow YAML Syntax",
       "status": "FAIL",
       "details": "13 of 14 workflows valid, 1 has syntax error",
-      "errors": [
-        "bmad-greenfield-standard.yaml: bad indentation at line 304"
-      ]
+      "errors": ["bmad-greenfield-standard.yaml: bad indentation at line 304"]
     },
     {
       "name": "Step 0.1 Plan Rating Gate",
@@ -145,10 +143,7 @@
       "priority": "MEDIUM",
       "issue": "Create missing documentation files",
       "action": "Create STATELESS_RECOVERY.md and artifact-registry.json (or update broken links)",
-      "files": [
-        ".claude/docs/STATELESS_RECOVERY.md",
-        ".claude/context/artifact-registry.json"
-      ]
+      "files": [".claude/docs/STATELESS_RECOVERY.md", ".claude/context/artifact-registry.json"]
     },
     {
       "priority": "MEDIUM",

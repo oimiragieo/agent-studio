@@ -143,12 +143,7 @@
       "description": "Performance approval for SLA compliance, load testing, and optimization",
       "artifact_name": "performance-signoff-{{workflow_id}}.json",
       "schema": ".claude/schemas/performance-signoff.schema.json",
-      "required_fields": [
-        "verdict",
-        "sla_compliance",
-        "load_test_passed",
-        "performance_metrics"
-      ],
+      "required_fields": ["verdict", "sla_compliance", "load_test_passed", "performance_metrics"],
       "passing_conditions": {
         "verdict": "approved",
         "sla_compliance": true,
@@ -168,11 +163,7 @@
         "architecture_signoff",
         "product_signoff"
       ],
-      "optional_signoffs": [
-        "accessibility_signoff",
-        "performance_signoff",
-        "compliance_signoff"
-      ],
+      "optional_signoffs": ["accessibility_signoff", "performance_signoff", "compliance_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     },
@@ -184,10 +175,7 @@
         "product_signoff",
         "performance_signoff"
       ],
-      "optional_signoffs": [
-        "compliance_signoff",
-        "accessibility_signoff"
-      ],
+      "optional_signoffs": ["compliance_signoff", "accessibility_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     },
@@ -199,85 +187,44 @@
         "product_signoff",
         "accessibility_signoff"
       ],
-      "optional_signoffs": [
-        "performance_signoff",
-        "compliance_signoff"
-      ],
+      "optional_signoffs": ["performance_signoff", "compliance_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     },
     "code-quality": {
-      "required_signoffs": [
-        "quality_signoff",
-        "architecture_signoff"
-      ],
-      "optional_signoffs": [
-        "security_signoff",
-        "performance_signoff"
-      ],
+      "required_signoffs": ["quality_signoff", "architecture_signoff"],
+      "optional_signoffs": ["security_signoff", "performance_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     },
     "performance": {
-      "required_signoffs": [
-        "quality_signoff",
-        "performance_signoff",
-        "architecture_signoff"
-      ],
-      "optional_signoffs": [
-        "security_signoff"
-      ],
+      "required_signoffs": ["quality_signoff", "performance_signoff", "architecture_signoff"],
+      "optional_signoffs": ["security_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     },
     "refactoring": {
-      "required_signoffs": [
-        "quality_signoff",
-        "architecture_signoff"
-      ],
-      "optional_signoffs": [
-        "security_signoff",
-        "performance_signoff"
-      ],
+      "required_signoffs": ["quality_signoff", "architecture_signoff"],
+      "optional_signoffs": ["security_signoff", "performance_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     },
     "incident": {
-      "required_signoffs": [
-        "quality_signoff",
-        "security_signoff"
-      ],
-      "optional_signoffs": [
-        "architecture_signoff",
-        "product_signoff"
-      ],
+      "required_signoffs": ["quality_signoff", "security_signoff"],
+      "optional_signoffs": ["architecture_signoff", "product_signoff"],
       "signoff_order": "sequential",
       "all_required_must_pass": true,
       "expedited": true
     },
     "api-design": {
-      "required_signoffs": [
-        "quality_signoff",
-        "security_signoff",
-        "architecture_signoff"
-      ],
-      "optional_signoffs": [
-        "product_signoff",
-        "performance_signoff"
-      ],
+      "required_signoffs": ["quality_signoff", "security_signoff", "architecture_signoff"],
+      "optional_signoffs": ["product_signoff", "performance_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     },
     "database-design": {
-      "required_signoffs": [
-        "quality_signoff",
-        "security_signoff",
-        "architecture_signoff"
-      ],
-      "optional_signoffs": [
-        "performance_signoff",
-        "compliance_signoff"
-      ],
+      "required_signoffs": ["quality_signoff", "security_signoff", "architecture_signoff"],
+      "optional_signoffs": ["performance_signoff", "compliance_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     },
@@ -288,23 +235,13 @@
         "architecture_signoff",
         "product_signoff"
       ],
-      "optional_signoffs": [
-        "performance_signoff",
-        "compliance_signoff",
-        "accessibility_signoff"
-      ],
+      "optional_signoffs": ["performance_signoff", "compliance_signoff", "accessibility_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     },
     "compliance": {
-      "required_signoffs": [
-        "quality_signoff",
-        "security_signoff",
-        "compliance_signoff"
-      ],
-      "optional_signoffs": [
-        "architecture_signoff"
-      ],
+      "required_signoffs": ["quality_signoff", "security_signoff", "compliance_signoff"],
+      "optional_signoffs": ["architecture_signoff"],
       "signoff_order": "parallel",
       "all_required_must_pass": true
     }

@@ -34,6 +34,7 @@ Diagram Generator Skill - Generates architecture, database, and system diagrams 
 ### Step 1: Identify Diagram Type
 
 Determine what type of diagram is needed:
+
 - **Architecture Diagram**: System structure and components
 - **Database Diagram**: Schema and relationships
 - **Component Diagram**: Component interactions
@@ -43,6 +44,7 @@ Determine what type of diagram is needed:
 ### Step 2: Extract Structure
 
 Analyze code and documentation:
+
 - Read architecture documents
 - Analyze component structure
 - Extract database schema
@@ -52,6 +54,7 @@ Analyze code and documentation:
 ### Step 3: Generate Mermaid Diagram
 
 Create diagram using Mermaid syntax:
+
 - Use appropriate diagram type
 - Define nodes and relationships
 - Add labels and descriptions
@@ -60,10 +63,11 @@ Create diagram using Mermaid syntax:
 ### Step 4: Embed in Documentation
 
 Embed diagram in markdown:
+
 - Use mermaid code blocks
 - Add diagram description
 - Reference in documentation
-</execution_process>
+  </execution_process>
 
 <integration>
 **Integration with Architect Agent**:
@@ -72,24 +76,27 @@ Embed diagram in markdown:
 - Visualizes component relationships
 
 **Integration with Database Architect Agent**:
+
 - Generates database schema diagrams
 - Documents table relationships
 - Visualizes data models
 
 **Integration with Technical Writer Agent**:
+
 - Embeds diagrams in documentation
 - Creates visual documentation
 - Enhances documentation clarity
-</integration>
+  </integration>
 
 <best_practices>
+
 1. **Use Mermaid**: Standard syntax for compatibility
 2. **Keep Clear**: Simple, readable diagrams
 3. **Show Relationships**: Include all important connections
 4. **Add Labels**: Clear node and edge labels
 5. **Update Regularly**: Keep diagrams current with code
-</best_practices>
-</instructions>
+   </best_practices>
+   </instructions>
 
 <examples>
 <code_example>
@@ -102,13 +109,14 @@ graph TB
     Auth[Auth Service]
     User[User Service]
     DB[(Database)]
-    
+
     Client --> API
     API --> Auth
     API --> User
     User --> DB
     Auth --> DB
 ```
+
 </code_example>
 
 <code_example>
@@ -135,6 +143,7 @@ erDiagram
         int quantity
     }
 ```
+
 </code_example>
 
 <code_example>
@@ -147,6 +156,7 @@ graph LR
     B --> D[Component D]
     C --> D
 ```
+
 </code_example>
 
 <code_example>
@@ -158,7 +168,7 @@ sequenceDiagram
     participant API
     participant Auth
     participant DB
-    
+
     User->>API: Login Request
     API->>Auth: Validate Credentials
     Auth->>DB: Query User
@@ -166,6 +176,7 @@ sequenceDiagram
     Auth-->>API: JWT Token
     API-->>User: Auth Response
 ```
+
 </code_example>
 </examples>
 
@@ -186,6 +197,6 @@ Generate component diagram showing API service relationships
 # Generate sequence diagram
 Generate sequence diagram for user login flow
 ```
+
 </usage_example>
 </examples>
-

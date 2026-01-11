@@ -1,9 +1,7 @@
 {
   "skill_name": "chrome-devtools",
   "command": "npx",
-  "args": [
-    "chrome-devtools-mcp@latest"
-  ],
+  "args": ["chrome-devtools-mcp@latest"],
   "env": {},
   "description": "Chrome DevTools for AI agents. Control and inspect live Chrome browsers with performance tracing, network inspection, DOM snapshots, and automated interactions.",
   "converted_at": "2026-01-03T12:30:00.000Z",
@@ -37,11 +35,37 @@
     "get_console_message"
   ],
   "categories": {
-    "input_automation": ["click", "drag", "fill", "fill_form", "handle_dialog", "hover", "press_key", "upload_file"],
-    "navigation": ["navigate_page", "new_page", "close_page", "list_pages", "select_page", "wait_for"],
+    "input_automation": [
+      "click",
+      "drag",
+      "fill",
+      "fill_form",
+      "handle_dialog",
+      "hover",
+      "press_key",
+      "upload_file"
+    ],
+    "navigation": [
+      "navigate_page",
+      "new_page",
+      "close_page",
+      "list_pages",
+      "select_page",
+      "wait_for"
+    ],
     "emulation": ["emulate", "resize_page"],
-    "performance": ["performance_start_trace", "performance_stop_trace", "performance_analyze_insight"],
+    "performance": [
+      "performance_start_trace",
+      "performance_stop_trace",
+      "performance_analyze_insight"
+    ],
     "network": ["list_network_requests", "get_network_request"],
-    "debugging": ["take_screenshot", "take_snapshot", "evaluate_script", "list_console_messages", "get_console_message"]
+    "debugging": [
+      "take_screenshot",
+      "take_snapshot",
+      "evaluate_script",
+      "list_console_messages",
+      "get_console_message"
+    ]
   }
 }

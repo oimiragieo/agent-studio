@@ -21,41 +21,49 @@ node .claude/tools/test-skill-triggers.mjs
 ## Test Cases
 
 ### 1. Developer: Create Component
+
 - **Task**: "Create a new UserProfile component with TypeScript"
 - **Expected Trigger**: `new_component`
 - **Expected Skill**: `scaffolder`
 
 ### 2. Developer: Modify Code
+
 - **Task**: "Modify the authentication logic to support OAuth2"
 - **Expected Trigger**: `code_changes`
 - **Expected Skill**: `rule-auditor`
 
 ### 3. Code Reviewer: Review Code
+
 - **Task**: "Review the security changes in the authentication module"
 - **Expected Trigger**: `review_code`
 - **Expected Skill**: `rule-auditor`
 
 ### 4. Orchestrator: Validate Plan
+
 - **Task**: "Review and rate the implementation plan for quality"
 - **Expected Trigger**: `plan_validation`
 - **Expected Skill**: `response-rater`
 
 ### 5. QA: Create Tests
+
 - **Task**: "Write unit tests for the UserProfile component"
 - **Expected Trigger**: `test_creation`
 - **Expected Skill**: `test-generator`
 
 ### 6. Architect: Create Diagram
+
 - **Task**: "Create an architecture diagram for the authentication system"
 - **Expected Trigger**: `architecture_diagram`
 - **Expected Skill**: `diagram-generator`
 
 ### 7. Developer: Multiple Triggers
+
 - **Task**: "Create a new API module with tests and documentation"
 - **Expected Triggers**: `new_component`, `new_module`, `test_creation`
 - **Expected Skills**: `scaffolder`, `test-generator`
 
 ### 8. Security Architect: Security Audit
+
 - **Task**: "Audit the codebase for security vulnerabilities"
 - **Expected Trigger**: `security_audit`
 - **Expected Skill**: `rule-auditor`
@@ -85,6 +93,7 @@ node .claude/tools/test-skill-triggers.mjs
 ## Test Logic
 
 Each test validates:
+
 1. **Triggered Skills**: Expected skills are present in `result.triggered` or `result.required`
 2. **Matched Triggers**: At least one expected trigger matches `result.matchedTriggers`
 3. **Error Handling**: No exceptions during skill detection

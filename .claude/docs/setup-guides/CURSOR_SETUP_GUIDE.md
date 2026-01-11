@@ -15,18 +15,21 @@ Cursor automatically discovers and loads configuration from the `.cursor/` direc
 ### Step 1: Copy the Folder Structure
 
 **Option A: Copy Entire `.cursor/` Folder**
+
 ```bash
 # From production-dropin directory
 cp -r production-dropin/.cursor /path/to/your/project/.cursor
 ```
 
 **Option B: On Windows (PowerShell)**
+
 ```powershell
 # From production-dropin directory
 Copy-Item -Path "C:\dev\projects\LLM-RULES\production-dropin\.cursor" -Destination "C:\path\to\your\project\.cursor" -Recurse
 ```
 
 **Option C: Manual Copy**
+
 1. Copy the `production-dropin/.cursor/` folder (note: it's already named `.cursor`)
 2. Place it in your project root directory
 3. Ensure it stays named `.cursor` (with the dot)
@@ -34,6 +37,7 @@ Copy-Item -Path "C:\dev\projects\LLM-RULES\production-dropin\.cursor" -Destinati
 ### Step 2: Verify Structure
 
 Your project root should look like this:
+
 ```
 your-project/
 ├── .cursor/                    # ← Cursor configuration directory
@@ -51,7 +55,8 @@ your-project/
 └── [your source code]
 ```
 
-**IMPORTANT:** 
+**IMPORTANT:**
+
 - `.cursorrules` goes in the **project root**, NOT inside `.cursor/`
 - `.cursorignore` goes in the **project root**, NOT inside `.cursor/`
 - `.cursor/plans/` will be created automatically by Cursor when you use Plan Mode
@@ -112,8 +117,9 @@ Plan Mode is **essential** for working effectively with Cursor. It's not just a 
    - Or trigger automatically (hook fires when ≥2 files affected)
 
 2. **Describe Your Goal**
+
    ```
-   "Create a user authentication system with JWT tokens, login page, 
+   "Create a user authentication system with JWT tokens, login page,
    and protected routes"
    ```
 
@@ -171,6 +177,7 @@ Plan Mode is **essential** for working effectively with Cursor. It's not just a 
 ### Hooks Integration
 
 Our hooks automatically trigger Plan Mode:
+
 - **`preflight-plan.json`**: Auto-triggers Plan Mode when ≥2 files affected
 - Plan stored in `.cursor/plans/` with timestamp
 - Linked to chat transcript automatically
@@ -179,18 +186,18 @@ Our hooks automatically trigger Plan Mode:
 
 ### Available Agents (10 Total)
 
-| Agent | Icon | Best For | Plan Mode Required? |
-|-------|------|----------|---------------------|
-| Analyst 📊 | Analysis | Market research, requirements | For multi-step analysis |
-| PM 📋 | Product Management | PRDs, user stories, roadmaps | For full product specs |
-| Architect 🏗️ | Architecture | System design, tech selection | **Always** for architecture |
-| Developer 💻 | Development | Code implementation, debugging | **Always** for multi-file changes |
-| QA 🧪 | Quality Assurance | Test plans, quality gates | For comprehensive test plans |
-| UX Expert 🎨 | UX Design | UI/UX specs, accessibility | For full design systems |
-| Product Owner 👤 | Product Ownership | Story refinement, acceptance criteria | Recommended |
-| Scrum Master 🔄 | Process Management | Story preparation, agile facilitation | Recommended |
-| BMAD Orchestrator 🎭 | Workflow Coordination | Multi-agent orchestration | Recommended |
-| BMAD Master 🌟 | Universal Executor | Any task execution | Recommended |
+| Agent                | Icon                  | Best For                              | Plan Mode Required?               |
+| -------------------- | --------------------- | ------------------------------------- | --------------------------------- |
+| Analyst 📊           | Analysis              | Market research, requirements         | For multi-step analysis           |
+| PM 📋                | Product Management    | PRDs, user stories, roadmaps          | For full product specs            |
+| Architect 🏗️         | Architecture          | System design, tech selection         | **Always** for architecture       |
+| Developer 💻         | Development           | Code implementation, debugging        | **Always** for multi-file changes |
+| QA 🧪                | Quality Assurance     | Test plans, quality gates             | For comprehensive test plans      |
+| UX Expert 🎨         | UX Design             | UI/UX specs, accessibility            | For full design systems           |
+| Product Owner 👤     | Product Ownership     | Story refinement, acceptance criteria | Recommended                       |
+| Scrum Master 🔄      | Process Management    | Story preparation, agile facilitation | Recommended                       |
+| BMAD Orchestrator 🎭 | Workflow Coordination | Multi-agent orchestration             | Recommended                       |
+| BMAD Master 🌟       | Universal Executor    | Any task execution                    | Recommended                       |
 
 ### Agent Selection Strategy
 
@@ -218,6 +225,7 @@ Our hooks automatically trigger Plan Mode:
 ### Q: Will Cursor auto-discover everything?
 
 **A:** Yes! After copying `.cursor/` to your project root and restarting Cursor:
+
 - ✅ Agents auto-discover from `.cursor/subagents/*.mdc`
 - ✅ Rules auto-load from `.cursor/rules/`
 - ✅ Hooks auto-register from `.cursor/hooks/*.json`
@@ -226,6 +234,7 @@ Our hooks automatically trigger Plan Mode:
 ### Q: Do I need to configure anything?
 
 **A:** No initial configuration needed, but you can:
+
 - Edit agent prompts in `.cursor/subagents/*.mdc`
 - Add custom rules to `.cursor/rules/`
 - Adjust hooks in `.cursor/hooks/` (3 hooks currently: preflight-plan, post-run, security)
@@ -234,6 +243,7 @@ Our hooks automatically trigger Plan Mode:
 ### Q: What if Plan Mode doesn't activate?
 
 **A:** Check:
+
 1. Hook file exists: `.cursor/hooks/preflight-plan.json`
 2. Hooks enabled in settings: Cursor Settings → Workspace → Hooks
 3. Try manual activation: `Shift+Tab` or `/plan` command
@@ -241,6 +251,7 @@ Our hooks automatically trigger Plan Mode:
 ### Q: Can I use this in a monorepo?
 
 **A:** Yes! Structure for monorepos:
+
 ```
 monorepo/
 ├── .cursor/              # Shared config
@@ -255,6 +266,7 @@ monorepo/
 ### Q: How do agents work with Plan Mode?
 
 **A:** Agents automatically:
+
 - Reference plans when you mention them
 - Use plan context for decisions
 - Update plans as work progresses
@@ -292,6 +304,7 @@ monorepo/
 7. ✅ Start using agents with Plan Mode!
 
 **Important Files in `.cursor/`:**
+
 - `README.md` - Overview and features
 - `QUICK_START.md` - Fast setup steps
 - `USAGE.md` - Complete usage workflows
@@ -299,4 +312,3 @@ monorepo/
 - `instructions/` - 12 comprehensive guides
 
 Remember: **Plan Mode is the smart way to build**. Always use it for complex tasks!
-

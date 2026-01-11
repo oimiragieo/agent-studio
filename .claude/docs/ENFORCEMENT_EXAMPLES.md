@@ -5,6 +5,7 @@ Correct vs wrong patterns for orchestrator delegation.
 ## Example 1: File Cleanup Request
 
 **WRONG** (Orchestrator does work directly):
+
 ```
 User: "Remove the archived files"
 
@@ -15,6 +16,7 @@ Orchestrator Response:
 ```
 
 **CORRECT** (Orchestrator delegates):
+
 ```
 User: "Remove the archived files"
 
@@ -33,6 +35,7 @@ Follow these steps:
 ## Example 2: Documentation Update
 
 **WRONG** (Orchestrator edits directly):
+
 ```
 User: "Update the README to remove archive references"
 
@@ -44,6 +47,7 @@ Orchestrator Response:
 ```
 
 **CORRECT** (Orchestrator delegates):
+
 ```
 User: "Update the README to remove archive references"
 
@@ -59,6 +63,7 @@ Commit the changes with an appropriate message."
 ## Example 3: Code Review Request
 
 **WRONG** (Orchestrator reviews directly):
+
 ```
 User: "Review all the skills for issues"
 
@@ -70,6 +75,7 @@ Orchestrator Response:
 ```
 
 **CORRECT** (Orchestrator delegates):
+
 ```
 User: "Review all the skills for issues"
 
@@ -87,6 +93,7 @@ Report any issues found."
 ## Example 4: Multiple File Analysis
 
 **WRONG** (Orchestrator reads many files):
+
 ```
 User: "Analyze the agent system structure"
 
@@ -99,6 +106,7 @@ Orchestrator Response:
 ```
 
 **CORRECT** (Orchestrator delegates):
+
 ```
 User: "Analyze the agent system structure"
 
@@ -117,6 +125,7 @@ Review all agent definition files and provide:
 ## Example 5: Validation Script Execution
 
 **WRONG** (Orchestrator runs validation):
+
 ```
 User: "Validate the enforcement gates"
 
@@ -127,6 +136,7 @@ Orchestrator Response:
 ```
 
 **CORRECT** (Orchestrator delegates):
+
 ```
 User: "Validate the enforcement gates"
 

@@ -6,7 +6,10 @@
 
 import { cleanupAllCaches, stopAllAutoCleanup } from './memory-cleanup.mjs';
 import { canSpawnSubagent, logMemoryUsage } from './memory-monitor.mjs';
-import { startAutoCleanup as startArtifactCleanup, stopAutoCleanup as stopArtifactCleanup } from './artifact-cache.mjs';
+import {
+  startAutoCleanup as startArtifactCleanup,
+  stopAutoCleanup as stopArtifactCleanup,
+} from './artifact-cache.mjs';
 
 console.log('='.repeat(60));
 console.log('Priority 1 Memory Fixes - Verification Test');
@@ -65,7 +68,9 @@ try {
 console.log('\n✅ Test 4: cleanupAllCaches() function');
 try {
   const results = cleanupAllCaches();
-  console.log(`   Cleanup results: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`);
+  console.log(
+    `   Cleanup results: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`
+  );
   if (typeof results === 'object') {
     console.log('   ✅ cleanupAllCaches() works correctly');
     testsPass++;

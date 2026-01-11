@@ -17,9 +17,8 @@ function loadConfig() {
 
 function selectProviders(workflowName, config) {
   // Get workflow tier
-  const tier = config.workflow_mapping[workflowName]
-    || config.workflow_mapping.default
-    || 'standard';
+  const tier =
+    config.workflow_mapping[workflowName] || config.workflow_mapping.default || 'standard';
 
   // Get providers for tier
   const providers = config.providers[tier] || config.providers.standard;
@@ -30,7 +29,7 @@ function selectProviders(workflowName, config) {
     timeouts: config.timeouts,
     consensus: config.consensus,
     fallback: config.fallback,
-    retry: config.retry
+    retry: config.retry,
   };
 }
 

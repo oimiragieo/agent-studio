@@ -11,12 +11,14 @@ Phase 5 of Cursor 47 recommendations implements comprehensive monitoring and obs
 **Purpose**: JSONL-based logging for all skill executions
 
 **Features**:
+
 - Track skill name, params, result, duration, cache hits, agent context
 - Query logs by skill, agent, run ID, CUJ ID, result type
 - Aggregated statistics (by skill, by agent, by CUJ)
 - Sanitize sensitive data (passwords, tokens, secrets)
 
 **CLI Usage**:
+
 ```bash
 # Query logs
 node .claude/tools/structured-logger.mjs query --skill multi-ai-code-review --limit 10
@@ -27,6 +29,7 @@ node .claude/tools/structured-logger.mjs stats --cujId CUJ-005
 ```
 
 **API Usage**:
+
 ```javascript
 import { logSkillInvocation } from './structured-logger.mjs';
 
@@ -38,7 +41,7 @@ logSkillInvocation({
   cacheHit: false,
   agent: 'developer',
   runId: 'run-001',
-  cujId: 'CUJ-005'
+  cujId: 'CUJ-005',
 });
 ```
 
@@ -47,12 +50,14 @@ logSkillInvocation({
 **Purpose**: Track CUJ execution success/failure rates with historical trending
 
 **Features**:
+
 - Calculate success rates over time windows (1h, 24h, 7d, 30d)
 - Generate trending data with time buckets
 - Failure analysis with top error patterns
 - Performance percentiles (p50, p75, p90, p95, p99)
 
 **CLI Usage**:
+
 ```bash
 # Get success rate
 node .claude/tools/metrics-tracker.mjs rate CUJ-005
@@ -71,6 +76,7 @@ node .claude/tools/metrics-tracker.mjs percentiles CUJ-005
 ```
 
 **API Usage**:
+
 ```javascript
 import { recordCujExecution, getCujSuccessRate } from './metrics-tracker.mjs';
 
@@ -83,12 +89,14 @@ const rate = getCujSuccessRate('CUJ-005', 86400000); // Last 24 hours
 **Purpose**: Real-time progress updates using Node.js EventEmitter
 
 **Features**:
+
 - Track workflow execution progress with step-level granularity
 - Percentage-based progress tracking (0-100%)
 - Persist progress to JSONL for historical queries
 - ProgressTracker class for simplified tracking
 
 **CLI Usage**:
+
 ```bash
 # Watch progress (all runs)
 node .claude/tools/progress-emitter.mjs watch
@@ -104,6 +112,7 @@ node .claude/tools/progress-emitter.mjs current run-001
 ```
 
 **API Usage**:
+
 ```javascript
 import { emitProgress, createProgressTracker } from './progress-emitter.mjs';
 
@@ -113,7 +122,7 @@ emitProgress({
   step: 1,
   status: 'running',
   percentage: 25,
-  message: 'Analyzing code'
+  message: 'Analyzing code',
 });
 
 // Using ProgressTracker
@@ -129,6 +138,7 @@ tracker.complete();
 **Purpose**: Unified dashboard aggregating all monitoring data
 
 **Features**:
+
 - Aggregate CUJ metrics across time windows
 - Aggregate skill metrics from structured logger
 - Performance highlights (fastest/slowest/most reliable CUJs)
@@ -136,6 +146,7 @@ tracker.complete();
 - System resource usage (heap, RSS, CPU)
 
 **CLI Usage**:
+
 ```bash
 # Generate and save dashboard
 node .claude/tools/metrics-dashboard.mjs generate
@@ -148,6 +159,7 @@ node .claude/tools/metrics-dashboard.mjs json
 ```
 
 **API Usage**:
+
 ```javascript
 import { generateMetricsDashboard, saveDashboard } from './metrics-dashboard.mjs';
 
@@ -160,6 +172,7 @@ saveDashboard(dashboard);
 **Purpose**: Track availability and performance of AI model providers
 
 **Features**:
+
 - Track provider availability (Anthropic, OpenAI, Google)
 - Record success/failure rates per provider
 - Calculate latency percentiles (p50, p95, p99)
@@ -167,6 +180,7 @@ saveDashboard(dashboard);
 - Overall system health status
 
 **CLI Usage**:
+
 ```bash
 # Get provider status
 node .claude/tools/provider-health.mjs status anthropic
@@ -185,6 +199,7 @@ node .claude/tools/provider-health.mjs record anthropic true 1234
 ```
 
 **API Usage**:
+
 ```javascript
 import { recordProviderCall, getProviderHealth } from './provider-health.mjs';
 
@@ -217,9 +232,9 @@ function trackResourceUsage(stepName) {
         memory_delta_mb: (endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024,
         heap_used_mb: endMemory.heapUsed / 1024 / 1024,
         cpu_user_ms: endCpu.user / 1000,
-        cpu_system_ms: endCpu.system / 1000
+        cpu_system_ms: endCpu.system / 1000,
       };
-    }
+    },
   };
 }
 ```
@@ -230,7 +245,14 @@ Add monitoring to skill execution:
 
 ```javascript
 async function executeSkillWithCache(skillName, params, options = {}) {
-  const { cache = cacheEnabled, ttlMs = SKILL_CACHE_TTL_MS, executor, agent, runId, cujId } = options;
+  const {
+    cache = cacheEnabled,
+    ttlMs = SKILL_CACHE_TTL_MS,
+    executor,
+    agent,
+    runId,
+    cujId,
+  } = options;
 
   // Track resources
   const resourceTracker = trackResourceUsage(skillName);
@@ -250,7 +272,7 @@ async function executeSkillWithCache(skillName, params, options = {}) {
         cacheHit: true,
         agent,
         runId,
-        cujId
+        cujId,
       });
 
       return { ...cached, _from_cache: true };
@@ -258,7 +280,8 @@ async function executeSkillWithCache(skillName, params, options = {}) {
   }
 
   // Execute skill
-  let result, error = null;
+  let result,
+    error = null;
   try {
     result = await executor(skillName, params);
   } catch (err) {
@@ -281,8 +304,8 @@ async function executeSkillWithCache(skillName, params, options = {}) {
     error: error ? error.message : null,
     metadata: {
       memory_delta_mb: resources.memory_delta_mb,
-      cpu_user_ms: resources.cpu_user_ms
-    }
+      cpu_user_ms: resources.cpu_user_ms,
+    },
   });
 
   // Cache result
@@ -304,12 +327,30 @@ async function runCUJ(cujId) {
   const runId = `${cujId}-${Date.now()}`;
 
   // Pre-flight with progress
-  emitProgress({ runId, step: 0, status: 'running', percentage: 5, message: 'Running pre-flight checks' });
+  emitProgress({
+    runId,
+    step: 0,
+    status: 'running',
+    percentage: 5,
+    message: 'Running pre-flight checks',
+  });
   const preflightResult = await preflightCheck(cuj);
-  emitProgress({ runId, step: 0, status: 'completed', percentage: 10, message: 'Pre-flight checks passed' });
+  emitProgress({
+    runId,
+    step: 0,
+    status: 'completed',
+    percentage: 10,
+    message: 'Pre-flight checks passed',
+  });
 
   // Start workflow
-  emitProgress({ runId, step: 1, status: 'running', percentage: 15, message: `Starting workflow: ${cuj.workflow}` });
+  emitProgress({
+    runId,
+    step: 1,
+    status: 'running',
+    percentage: 15,
+    message: `Starting workflow: ${cuj.workflow}`,
+  });
 
   // Track resources
   const resourceTracker = trackResourceUsage(`CUJ-${cujId}`);
@@ -325,7 +366,7 @@ async function runCUJ(cujId) {
     recordCujExecution(cujId, code === 0, duration, code !== 0 ? new Error('CUJ failed') : null, {
       agents,
       warnings,
-      resources
+      resources,
     });
 
     // Emit final progress
@@ -334,7 +375,7 @@ async function runCUJ(cujId) {
       step: 999,
       status: code === 0 ? 'completed' : 'failed',
       percentage: 100,
-      message: code === 0 ? 'CUJ completed' : 'CUJ failed'
+      message: code === 0 ? 'CUJ completed' : 'CUJ failed',
     });
 
     // Log resources
@@ -374,6 +415,6 @@ All monitoring data is stored in `.claude/context/analytics/` and `.claude/conte
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-09 | Initial monitoring infrastructure |
+| Version | Date       | Changes                           |
+| ------- | ---------- | --------------------------------- |
+| 1.0.0   | 2026-01-09 | Initial monitoring infrastructure |

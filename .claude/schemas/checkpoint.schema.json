@@ -57,7 +57,10 @@
         "type": "number"
       },
       "description": "List of step numbers that have been completed",
-      "examples": [[1, 2, 3], [0, 1, 2, 3, 4, 5]]
+      "examples": [
+        [1, 2, 3],
+        [0, 1, 2, 3, 4, 5]
+      ]
     },
     "artifacts": {
       "type": "array",
@@ -161,7 +164,10 @@
           "type": "array",
           "items": { "type": "string" },
           "description": "Tags for categorizing checkpoints",
-          "examples": [["phase-1", "planning"], ["implementation", "validated"]]
+          "examples": [
+            ["phase-1", "planning"],
+            ["implementation", "validated"]
+          ]
         }
       }
     }

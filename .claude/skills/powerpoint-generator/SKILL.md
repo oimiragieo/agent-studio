@@ -31,6 +31,7 @@ PowerPoint Generator - Creates professional PowerPoint presentations with slides
 ### Basic PowerPoint Generation
 
 **When to Use**:
+
 - Executive presentations
 - Quarterly reports
 - Project updates
@@ -38,6 +39,7 @@ PowerPoint Generator - Creates professional PowerPoint presentations with slides
 - Visual communication
 
 **How to Invoke**:
+
 ```
 "Generate a PowerPoint presentation for Q4 results"
 "Create an executive presentation from the financial data"
@@ -45,6 +47,7 @@ PowerPoint Generator - Creates professional PowerPoint presentations with slides
 ```
 
 **What It Does**:
+
 - Uses Claude's built-in `pptx` skill (skill_id: `pptx`)
 - Creates PowerPoint presentations with multiple slides
 - Includes charts, formatting, and transitions
@@ -53,18 +56,21 @@ PowerPoint Generator - Creates professional PowerPoint presentations with slides
 ### Advanced Features
 
 **Multi-Slide Presentations**:
+
 - Title slide
 - Content slides
 - Summary slides
 - Appendix slides
 
 **Charts and Visualizations**:
+
 - Data visualizations from Excel
 - Trend charts
 - Comparison charts
 - Process diagrams
 
 **Formatting**:
+
 - Professional templates
 - Consistent styling
 - Brand guidelines
@@ -75,12 +81,14 @@ PowerPoint Generator - Creates professional PowerPoint presentations with slides
 ### Presentation Structure
 
 **Recommended Approach**:
+
 - **Clear slide structure**: Title, content, summary
 - **Visual focus**: Use charts and diagrams
 - **Consistent formatting**: Apply templates
 - **Concise content**: Keep slides focused
 
 **For Complex Presentations**:
+
 1. **Create from data**: Use Excel data as source
 2. **Visualize key insights**: Focus on important metrics
 3. **Tell a story**: Logical flow and narrative
@@ -98,6 +106,7 @@ PowerPoint Generator - Creates professional PowerPoint presentations with slides
 ### With Excel Generator
 
 PowerPoint can use Excel data:
+
 - Import charts from Excel
 - Reference data from spreadsheets
 - Create visualizations from analysis
@@ -105,6 +114,7 @@ PowerPoint can use Excel data:
 ### With Artifact Publisher
 
 PowerPoint files can be published as artifacts:
+
 - Save to `.claude/context/artifacts/`
 - Include in artifact manifests
 - Reference in workflow outputs
@@ -112,6 +122,7 @@ PowerPoint files can be published as artifacts:
 ### With Workflows
 
 PowerPoint generation integrates with workflows:
+
 - Reporting workflows
 - Presentation workflows
 - Communication workflows
@@ -169,6 +180,7 @@ PowerPoint Generator:
 ### API Usage
 
 Uses Claude's beta Skills API:
+
 ```python
 response = client.beta.messages.create(
     model="claude-sonnet-4-5",
@@ -180,6 +192,7 @@ response = client.beta.messages.create(
 ### File Download
 
 Files are returned as `file_id`:
+
 ```python
 file_id = response.content[0].file_id
 file_content = client.beta.files.content(file_id)
@@ -195,4 +208,3 @@ file_content = client.beta.files.content(file_id)
 
 - [Document Generation Guide](../docs/DOCUMENT_GENERATION.md) - Comprehensive guide
 - [Skills Cookbook](https://github.com/anthropics/anthropic-cookbook/tree/main/skills) - Reference implementation
-

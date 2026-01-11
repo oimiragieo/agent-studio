@@ -18,20 +18,26 @@ When you copy `.cursor/` to your project root and restart Cursor:
 Plan Mode is integrated throughout:
 
 #### 1. Auto-Trigger Hook
+
 `hooks/preflight-plan.json` automatically triggers Plan Mode when:
+
 - You're about to modify ≥2 files
 - Large refactoring detected
 - Multi-file feature addition
 
 #### 2. Agent Instructions
+
 All agents are instructed to:
+
 - Use Plan Mode before multi-file changes
 - Reference plans in their work
 - Update plans as work progresses
 - Store plans for handoffs
 
 #### 3. Instructions Directory
+
 `instructions/plan-mode.md` provides comprehensive guidance on:
+
 - When to use Plan Mode
 - How to create effective plans
 - Integrating plans with agents
@@ -88,7 +94,7 @@ All agents are instructed to:
 ✅ **Referenced** in all agent prompts  
 ✅ **Documented** in instructions/plan-mode.md  
 ✅ **Integrated** in hooks/preflight-plan.json  
-✅ **Emphasized** in this README  
+✅ **Emphasized** in this README
 
 ### Agent Capabilities
 
@@ -126,4 +132,3 @@ See `QUICK_START.md` for detailed troubleshooting guide.
 5. ✅ Start using agents with Plan Mode!
 
 **Remember: Plan Mode + Agents = Smart Development** 🚀
-

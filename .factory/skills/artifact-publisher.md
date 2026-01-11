@@ -18,6 +18,7 @@ Run Task tool with skill artifact-publisher to share test results
 ```
 
 Or after Auto-Run completion:
+
 ```
 Publish the implementation artifacts to Claude Projects
 ```
@@ -31,12 +32,12 @@ Publish the implementation artifacts to Claude Projects
 
 ## Artifact Types
 
-| Type | Format | Destination |
-|------|--------|-------------|
-| Specification | Markdown | `.factory/specs/` |
-| Test Results | JSON | `.factory/context/artifacts/` |
-| Implementation | Markdown | Claude Projects feed |
-| Handoff | Markdown | Cross-platform sync |
+| Type           | Format   | Destination                   |
+| -------------- | -------- | ----------------------------- |
+| Specification  | Markdown | `.factory/specs/`             |
+| Test Results   | JSON     | `.factory/context/artifacts/` |
+| Implementation | Markdown | Claude Projects feed          |
+| Handoff        | Markdown | Cross-platform sync           |
 
 ## Output Structure
 

@@ -51,10 +51,10 @@ Workflows can define custom placeholders in `workflow_inputs` section:
 ```yaml
 workflow_inputs:
   required:
-    - primary_agent  # Custom placeholder
-    - test_scenario  # Custom placeholder
+    - primary_agent # Custom placeholder
+    - test_scenario # Custom placeholder
   optional:
-    - max_fallback_attempts  # Optional placeholder
+    - max_fallback_attempts # Optional placeholder
 ```
 
 ## Validator Handling of Placeholders
@@ -64,6 +64,7 @@ workflow_inputs:
 Validators (e.g., `workflow-validator.mjs`) currently treat placeholders as missing agent definitions and flag them as errors.
 
 **Example Error**:
+
 ```
 ❌ Step 1 references undefined agent: {{primary_agent}}
 ```
@@ -71,22 +72,27 @@ Validators (e.g., `workflow-validator.mjs`) currently treat placeholders as miss
 ### Recommended Validator Strategy
 
 1. **Detect Template Mode**: Check for placeholders in agent field
+
    ```javascript
    const isTemplated = /\{\{.*\}\}/.test(step.agent);
    ```
 
 2. **Validate Placeholder Declaration**: Ensure placeholders are declared in `workflow_inputs`
+
    ```javascript
    if (isTemplated) {
      const placeholder = step.agent.match(/\{\{(.*)\}\}/)[1];
-     if (!workflowInputs.required.includes(placeholder) &&
-         !workflowInputs.optional.includes(placeholder)) {
+     if (
+       !workflowInputs.required.includes(placeholder) &&
+       !workflowInputs.optional.includes(placeholder)
+     ) {
        errors.push(`Undeclared placeholder: ${placeholder}`);
      }
    }
    ```
 
 3. **Skip Agent Existence Check**: For templated workflows, skip validation that agent exists in `.claude/agents/`
+
    ```javascript
    if (!isTemplated && !agentExists(step.agent)) {
      errors.push(`Undefined agent: ${step.agent}`);
@@ -112,15 +118,15 @@ type: testing
 
 workflow_inputs:
   required:
-    - primary_agent  # Dynamic agent selection
-    - failure_type   # Test scenario
+    - primary_agent # Dynamic agent selection
+    - failure_type # Test scenario
   optional:
     - max_fallback_attempts
 
 steps:
   - step: 1
-    name: "Primary Agent Execution"
-    agent: "{{primary_agent}}"  # Placeholder
+    name: 'Primary Agent Execution'
+    agent: '{{primary_agent}}' # Placeholder
     inputs:
       - test_scenario
     outputs:
@@ -131,9 +137,9 @@ steps:
 
 ```javascript
 const runtimeInputs = {
-  primary_agent: "architect",  // Concrete value
-  failure_type: "timeout",
-  max_fallback_attempts: 3
+  primary_agent: 'architect', // Concrete value
+  failure_type: 'timeout',
+  max_fallback_attempts: 3,
 };
 
 // Validator checks:
@@ -151,17 +157,18 @@ Provided at workflow start, available to all steps, not artifact files:
 ```yaml
 workflow_inputs:
   required:
-    - primary_agent  # Context input
-    - test_scenario  # Context input
+    - primary_agent # Context input
+    - test_scenario # Context input
 ```
 
 **Usage in Steps**:
+
 ```yaml
 steps:
   - step: 1
-    agent: "{{primary_agent}}"  # Use context input
+    agent: '{{primary_agent}}' # Use context input
     inputs:
-      - test_scenario  # Reference context input
+      - test_scenario # Reference context input
 ```
 
 ### Step-Level Artifact Inputs
@@ -172,8 +179,8 @@ Files produced by previous steps:
 steps:
   - step: 1
     inputs:
-      - plan-{{workflow_id}}.json (from step 0)  # Artifact file
-      - test_scenario  # Context input (not a file)
+      - plan-{{workflow_id}}.json (from step 0) # Artifact file
+      - test_scenario # Context input (not a file)
 ```
 
 ## Validator Implementation Checklist

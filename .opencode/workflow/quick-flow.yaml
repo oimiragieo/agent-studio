@@ -12,7 +12,7 @@ project_type: enhancement
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - user_requirements
@@ -31,7 +31,7 @@ steps:
       - Validate plan feasibility
 
   - step: 1
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -46,7 +46,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/01-developer.json
 
   - step: 2
-    name: "Quality Validation"
+    name: 'Quality Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)

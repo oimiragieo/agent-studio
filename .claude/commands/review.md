@@ -31,10 +31,11 @@ Command: /review - Perform a comprehensive code review of recent changes.
    - Verify code is properly documented
    - Check that complex logic has comments
    - Ensure README/docs are updated if needed
-</execution_steps>
+     </execution_steps>
 
 <output_format>
 Provide a structured review with:
+
 - Summary of findings
 - Critical issues (must fix)
 - Suggestions (nice to have)
@@ -44,4 +45,3 @@ Provide a structured review with:
 Use artifacts if the review is extensive.
 </output_format>
 </instructions>
-

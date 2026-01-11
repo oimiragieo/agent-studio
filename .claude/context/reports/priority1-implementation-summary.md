@@ -29,11 +29,13 @@ Implemented all **Priority 1 Critical Fixes** identified by the performance-engi
 **Scripts Modified**: 19 scripts (validate, validate:full, cuj, etc.)
 
 **Before**:
+
 ```json
 "cuj": "node --max-old-space-size=4096 .claude/tools/run-cuj.mjs"
 ```
 
 **After**:
+
 ```json
 "cuj": "node --max-old-space-size=4096 --expose-gc .claude/tools/run-cuj.mjs"
 ```
@@ -48,6 +50,7 @@ Implemented all **Priority 1 Critical Fixes** identified by the performance-engi
 **Root Cause**: Auto-start `setInterval(cleanExpiredEntries, 5 * 60 * 1000)` was never cleared
 
 **Before** (lines 272-274):
+
 ```javascript
 // Auto-clean expired entries every 5 minutes
 if (typeof setInterval !== 'undefined') {
@@ -56,6 +59,7 @@ if (typeof setInterval !== 'undefined') {
 ```
 
 **After** (lines 271-299):
+
 ```javascript
 // Module-level cleanup interval (single instance)
 let cleanupInterval = null;
@@ -89,6 +93,7 @@ export function stopAutoCleanup() {
 ```
 
 **Impact**:
+
 - Auto-start interval removed (no automatic leak)
 - Controllable start/stop functions added
 - Single instance enforcement prevents multiple intervals
@@ -101,6 +106,7 @@ export function stopAutoCleanup() {
 **Change**: Added controllable auto-cleanup functions (no auto-start interval existed)
 
 **Added** (lines 465-493):
+
 ```javascript
 // Module-level cleanup interval (single instance)
 let cleanupInterval = null;
@@ -134,6 +140,7 @@ export function stopAutoCleanup() {
 **Change**: Added controllable auto-cleanup functions (no auto-start interval existed)
 
 **Added** (lines 254-282):
+
 ```javascript
 // Module-level cleanup interval (single instance)
 let cleanupInterval = null;
@@ -167,13 +174,22 @@ export function stopAutoCleanup() {
 **Change**: Added `stopAllAutoCleanup()` function to stop all cache cleanup intervals
 
 **Imports Updated**:
+
 ```javascript
 import { clearCache as clearGitCache, stopAutoCleanup as stopGitCleanup } from './git-cache.mjs';
-import { invalidateArtifact, cleanExpiredEntries, stopAutoCleanup as stopArtifactCleanup } from './artifact-cache.mjs';
-import { clearCache as clearSkillCache, stopAutoCleanup as stopSkillCleanup } from './skill-cache.mjs';
+import {
+  invalidateArtifact,
+  cleanExpiredEntries,
+  stopAutoCleanup as stopArtifactCleanup,
+} from './artifact-cache.mjs';
+import {
+  clearCache as clearSkillCache,
+  stopAutoCleanup as stopSkillCleanup,
+} from './skill-cache.mjs';
 ```
 
 **Function Added**:
+
 ```javascript
 export function stopAllAutoCleanup() {
   try {
@@ -206,6 +222,7 @@ export function stopAllAutoCleanup() {
 **Change**: Added pre-spawn memory check function
 
 **Function Added** (lines 70-93):
+
 ```javascript
 /**
  * Check if there's enough memory to spawn a subagent
@@ -222,7 +239,7 @@ export function canSpawnSubagent(minFreeMB = 500) {
     canSpawn,
     currentUsageMB: usage.heapUsedMB,
     freeMB,
-    maxHeapMB
+    maxHeapMB,
   };
 
   if (!canSpawn) {
@@ -234,6 +251,7 @@ export function canSpawnSubagent(minFreeMB = 500) {
 ```
 
 **Impact**:
+
 - Checks available memory before spawning
 - Default threshold: 500MB free required
 - Returns actionable warning if insufficient
@@ -246,12 +264,14 @@ export function canSpawnSubagent(minFreeMB = 500) {
 **Change**: Added memory cleanup in finally block after each workflow step
 
 **Imports Added**:
+
 ```javascript
 import { cleanupAllCaches } from './memory-cleanup.mjs';
 import { logMemoryUsage } from './memory-monitor.mjs';
 ```
 
 **Finally Block Added** (lines 3533-3550):
+
 ```javascript
 } finally {
   // Priority 1 Critical Fix: Clean up memory after step execution
@@ -274,6 +294,7 @@ import { logMemoryUsage } from './memory-monitor.mjs';
 ```
 
 **Impact**:
+
 - Cleanup executes after EVERY workflow step (success or failure)
 - Forces GC if `--expose-gc` flag present
 - Logs memory usage before/after for visibility
@@ -286,11 +307,18 @@ import { logMemoryUsage } from './memory-monitor.mjs';
 **Change**: Added pre-spawn memory check before spawning child processes
 
 **Import Added**:
+
 ```javascript
-import { startMonitoring, stopMonitoring, logMemoryUsage, canSpawnSubagent } from './memory-monitor.mjs';
+import {
+  startMonitoring,
+  stopMonitoring,
+  logMemoryUsage,
+  canSpawnSubagent,
+} from './memory-monitor.mjs';
 ```
 
 **Pre-Spawn Check Added** (lines 342-360):
+
 ```javascript
 // Priority 1: Check memory before spawning
 const memCheck = canSpawnSubagent();
@@ -306,7 +334,9 @@ if (!memCheck.canSpawn) {
   const recheckMem = canSpawnSubagent();
   if (!recheckMem.canSpawn) {
     console.error('[Memory] ERROR: Insufficient memory even after cleanup');
-    console.error(`[Memory] Current: ${recheckMem.currentUsageMB.toFixed(2)}MB, Free: ${recheckMem.freeMB.toFixed(2)}MB`);
+    console.error(
+      `[Memory] Current: ${recheckMem.currentUsageMB.toFixed(2)}MB, Free: ${recheckMem.freeMB.toFixed(2)}MB`
+    );
     process.exit(1);
   }
   console.log('[Memory] Cleanup successful, proceeding with spawn');
@@ -314,6 +344,7 @@ if (!memCheck.canSpawn) {
 ```
 
 **Impact**:
+
 - Prevents spawning when memory critically low
 - Attempts cleanup + GC before failing
 - Exits with error if still insufficient
@@ -325,6 +356,7 @@ if (!memCheck.canSpawn) {
 ### Syntax Validation
 
 All files passed Node.js syntax checks:
+
 ```bash
 ✅ node --check .claude/tools/workflow_runner.js
 ✅ node --check .claude/tools/run-cuj.mjs
@@ -373,6 +405,7 @@ global.gc available: true
    - Memory check prevents spawning when low on memory
 
 **Test Command**:
+
 ```bash
 pnpm cuj:simulate CUJ-001
 ```
@@ -385,6 +418,7 @@ pnpm cuj:simulate CUJ-001
 ### Priority 2 Fixes (Next)
 
 NOT implemented in this phase (deferred):
+
 - Artifact streaming for large files (>10MB)
 - Cache size limits and LRU eviction tuning
 - Large artifact detection and streaming
@@ -392,6 +426,7 @@ NOT implemented in this phase (deferred):
 ### Priority 3 Fixes (Future)
 
 NOT implemented in this phase (deferred):
+
 - State compression for workflow runs
 - Incremental state snapshots
 - State archiving for completed workflows
@@ -411,12 +446,14 @@ NOT implemented in this phase (deferred):
 ## Risk Assessment
 
 **Low Risk**:
+
 - All changes are additive (no breaking changes)
 - Backward compatible (cleanup is optional, GC is guarded)
 - Syntax validated before deployment
 - Changes isolated to memory management (no business logic)
 
 **Testing Required**:
+
 - Simple workflow step execution
 - Memory monitoring during execution
 - Verify no regressions in existing workflows
@@ -426,10 +463,12 @@ NOT implemented in this phase (deferred):
 ## Documentation
 
 **Artifacts Created**:
+
 - `.claude/context/artifacts/dev-manifest-priority1-fixes.json` - Detailed change manifest
 - `.claude/context/reports/priority1-implementation-summary.md` - This summary
 
 **Related Documents**:
+
 - Performance analysis report (by performance-engineer)
 - Memory management documentation (`.claude/docs/MEMORY_MANAGEMENT.md`)
 

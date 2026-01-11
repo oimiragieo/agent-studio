@@ -1,6 +1,7 @@
 # LLM Rules Production Pack for OpenCode
 
 ## Overview
+
 - **Type**: Multi-platform agent configuration bundle
 - **Stack**: OpenCode, Cursor, Factory Droid with shared rule base
 - **Agents**: 23 specialized agents with defined roles
@@ -30,52 +31,53 @@ OpenCode has unique capabilities that set it apart from generic agent configurat
 
 ## Agents (23 Roles)
 
-| Agent | Purpose | Model |
-|-------|---------|-------|
-| **Core Development** | | |
-| planner | Strategic planning, plan generation, validation, and execution tracking | opus |
-| orchestrator | Task routing and coordination | opus |
-| model-orchestrator | Multi-model routing (Gemini, Cursor, etc.) | sonnet |
-| analyst | Research and discovery | sonnet |
-| pm | Product requirements, backlog, agile facilitation | sonnet |
-| architect | System design, API design | opus |
-| database-architect | Schema design, query optimization, migrations | opus |
-| developer | Code implementation | sonnet |
-| qa | Quality assurance and testing | opus |
-| ux-expert | Interface design and UX | sonnet |
-| **Enterprise** | | |
-| security-architect | Security and compliance | opus |
-| devops | Infrastructure, SRE, release management | sonnet |
-| technical-writer | Documentation | haiku |
-| **Code Quality** | | |
-| code-reviewer | Systematic code review, PR analysis | opus |
-| refactoring-specialist | Code transformation, tech debt reduction | opus |
-| performance-engineer | Performance optimization, profiling | opus |
-| **Specialized** | | |
-| llm-architect | AI/LLM system design, RAG, prompt engineering | opus |
-| api-designer | REST/GraphQL/gRPC API design | opus |
-| legacy-modernizer | Legacy system modernization | opus |
-| mobile-developer | iOS/Android/React Native/Flutter | sonnet |
-| accessibility-expert | WCAG compliance, a11y testing | sonnet |
-| compliance-auditor | GDPR/HIPAA/SOC2/PCI-DSS | opus |
-| incident-responder | Crisis management, post-mortems | sonnet |
+| Agent                  | Purpose                                                                 | Model  |
+| ---------------------- | ----------------------------------------------------------------------- | ------ |
+| **Core Development**   |                                                                         |        |
+| planner                | Strategic planning, plan generation, validation, and execution tracking | opus   |
+| orchestrator           | Task routing and coordination                                           | opus   |
+| model-orchestrator     | Multi-model routing (Gemini, Cursor, etc.)                              | sonnet |
+| analyst                | Research and discovery                                                  | sonnet |
+| pm                     | Product requirements, backlog, agile facilitation                       | sonnet |
+| architect              | System design, API design                                               | opus   |
+| database-architect     | Schema design, query optimization, migrations                           | opus   |
+| developer              | Code implementation                                                     | sonnet |
+| qa                     | Quality assurance and testing                                           | opus   |
+| ux-expert              | Interface design and UX                                                 | sonnet |
+| **Enterprise**         |                                                                         |        |
+| security-architect     | Security and compliance                                                 | opus   |
+| devops                 | Infrastructure, SRE, release management                                 | sonnet |
+| technical-writer       | Documentation                                                           | haiku  |
+| **Code Quality**       |                                                                         |        |
+| code-reviewer          | Systematic code review, PR analysis                                     | opus   |
+| refactoring-specialist | Code transformation, tech debt reduction                                | opus   |
+| performance-engineer   | Performance optimization, profiling                                     | opus   |
+| **Specialized**        |                                                                         |        |
+| llm-architect          | AI/LLM system design, RAG, prompt engineering                           | opus   |
+| api-designer           | REST/GraphQL/gRPC API design                                            | opus   |
+| legacy-modernizer      | Legacy system modernization                                             | opus   |
+| mobile-developer       | iOS/Android/React Native/Flutter                                        | sonnet |
+| accessibility-expert   | WCAG compliance, a11y testing                                           | sonnet |
+| compliance-auditor     | GDPR/HIPAA/SOC2/PCI-DSS                                                 | opus   |
+| incident-responder     | Crisis management, post-mortems                                         | sonnet |
 
 ## Skills (6 Utilities)
 
 Skills extend agent capabilities. Invoke with natural language or the Skill tool.
 
-| Skill | Purpose | Location |
-|-------|---------|----------|
-| repo-rag | Codebase retrieval and symbol indexing | `.opencode/skill/repo-rag/` |
-| artifact-publisher | Publish artifacts to project feed | `.opencode/skill/artifact-publisher/` |
-| context-bridge | Sync state across OpenCode, Cursor, Factory | `.opencode/skill/context-bridge/` |
-| rule-auditor | Validate code against loaded rules | `.opencode/skill/rule-auditor/` |
-| rule-selector | Auto-detect stack and configure rules | `.opencode/skill/rule-selector/` |
-| scaffolder | Generate rule-compliant boilerplate | `.opencode/skill/scaffolder/` |
+| Skill              | Purpose                                     | Location                              |
+| ------------------ | ------------------------------------------- | ------------------------------------- |
+| repo-rag           | Codebase retrieval and symbol indexing      | `.opencode/skill/repo-rag/`           |
+| artifact-publisher | Publish artifacts to project feed           | `.opencode/skill/artifact-publisher/` |
+| context-bridge     | Sync state across OpenCode, Cursor, Factory | `.opencode/skill/context-bridge/`     |
+| rule-auditor       | Validate code against loaded rules          | `.opencode/skill/rule-auditor/`       |
+| rule-selector      | Auto-detect stack and configure rules       | `.opencode/skill/rule-selector/`      |
+| scaffolder         | Generate rule-compliant boilerplate         | `.opencode/skill/scaffolder/`         |
 
 ### Skill Invocation
 
 **Natural Language** (recommended):
+
 ```
 "Audit src/components/ for rule violations"
 "Scaffold a new UserProfile component"
@@ -84,6 +86,7 @@ Skills extend agent capabilities. Invoke with natural language or the Skill tool
 ```
 
 **Skill Tool** (programmatic):
+
 ```
 Skill: rule-auditor
 Skill: scaffolder
@@ -92,29 +95,32 @@ Skill: rule-selector
 
 ### Skill Integration Points
 
-| Workflow Stage | Skill | Purpose |
-|----------------|-------|---------|
-| Project Setup | rule-selector | Configure optimal rules for tech stack |
-| Code Generation | scaffolder | Generate rule-compliant boilerplate |
-| Implementation | repo-rag | Search codebase for patterns |
-| Code Review | rule-auditor | Validate compliance before commit |
-| Cross-Platform | context-bridge | Sync state to Cursor/Factory |
-| Documentation | artifact-publisher | Publish to project feed |
+| Workflow Stage  | Skill              | Purpose                                |
+| --------------- | ------------------ | -------------------------------------- |
+| Project Setup   | rule-selector      | Configure optimal rules for tech stack |
+| Code Generation | scaffolder         | Generate rule-compliant boilerplate    |
+| Implementation  | repo-rag           | Search codebase for patterns           |
+| Code Review     | rule-auditor       | Validate compliance before commit      |
+| Cross-Platform  | context-bridge     | Sync state to Cursor/Factory           |
+| Documentation   | artifact-publisher | Publish to project feed                |
 
 ### Recommended Skill Workflows
 
 **New Project Setup:**
+
 1. `rule-selector` → Detect stack, configure manifest.yaml
 2. `scaffolder` → Generate initial components
 3. `rule-auditor` → Verify compliance
 
 **Feature Development:**
+
 1. `repo-rag` → Research existing patterns
 2. `scaffolder` → Generate new code
 3. Developer implements logic
 4. `rule-auditor` → Pre-commit validation
 
 **Code Review:**
+
 1. `rule-auditor` → Automated compliance check
 2. QA agent validates quality gates
 3. `artifact-publisher` → Document results
@@ -122,18 +128,21 @@ Skill: rule-selector
 ## Universal Development Rules
 
 ### Code Quality (MUST)
+
 - **MUST** create a Plan Mode artifact before modifying more than one file
 - **MUST** generate or update automated tests covering critical paths before requesting merge
 - **MUST** keep security controls (authz, secrets, PII) unchanged unless explicitly tasked
 - **MUST** document decisions in Artifacts or repo ADRs when deviating from defaults
 
 ### Collaboration (SHOULD)
+
 - **SHOULD** use OpenCode Projects instructions for shared vocabulary, business context, and tone
 - **SHOULD** sync Cursor and Droid executions back into the OpenCode Project activity feed after major milestones
 - **SHOULD** promote Artifacts to versioned documents for UI/UX deliverables
 - **SHOULD** prefer OpenCode's built-in repo search and diff MCP skills over manual file browsing
 
 ### Safeguards (MUST NOT)
+
 - **MUST NOT** delete secrets, env files, or production infrastructure manifests
 - **MUST NOT** bypass lint/test hooks; rerun failed commands with context
 - **MUST NOT** push directly to protected branches; use reviewed pull requests
@@ -142,32 +151,36 @@ Skill: rule-selector
 ## Slash Commands
 
 ### Core Commands
-| Command | Purpose |
-|---------|---------|
-| `/review` | Comprehensive code review |
-| `/fix-issue <n>` | Fix GitHub issue by number |
-| `/quick-ship` | Fast iteration for small changes |
-| `/run-workflow` | Execute a workflow step with validation |
+
+| Command          | Purpose                                 |
+| ---------------- | --------------------------------------- |
+| `/review`        | Comprehensive code review               |
+| `/fix-issue <n>` | Fix GitHub issue by number              |
+| `/quick-ship`    | Fast iteration for small changes        |
+| `/run-workflow`  | Execute a workflow step with validation |
 
 ### Skill Commands
-| Command | Purpose |
-|---------|---------|
+
+| Command         | Purpose                                    |
+| --------------- | ------------------------------------------ |
 | `/select-rules` | Auto-detect tech stack and configure rules |
-| `/audit` | Validate code against loaded rules |
-| `/scaffold` | Generate rule-compliant boilerplate |
+| `/audit`        | Validate code against loaded rules         |
+| `/scaffold`     | Generate rule-compliant boilerplate        |
 
 ### Workflow Commands
-| Command | Purpose |
-|---------|---------|
-| `/code-quality` | Code quality improvement workflow |
-| `/performance` | Performance optimization workflow |
-| `/ai-system` | AI/LLM system development workflow |
-| `/mobile` | Mobile application workflow |
-| `/incident` | Incident response workflow |
+
+| Command         | Purpose                            |
+| --------------- | ---------------------------------- |
+| `/code-quality` | Code quality improvement workflow  |
+| `/performance`  | Performance optimization workflow  |
+| `/ai-system`    | AI/LLM system development workflow |
+| `/mobile`       | Mobile application workflow        |
+| `/incident`     | Incident response workflow         |
 
 ## Common Bash Commands
 
 ### Development Workflow
+
 - `pnpm install`: Install project dependencies
 - `pnpm run build`: Build the project
 - `pnpm run typecheck`: Run TypeScript type checking
@@ -177,6 +190,7 @@ Skill: rule-selector
 - `pnpm test <file>`: Run specific test file
 
 ### Git Workflow
+
 - `git status`: Check working directory status
 - `git diff`: View unstaged changes
 - `git log --oneline`: View commit history
@@ -184,6 +198,7 @@ Skill: rule-selector
 - `gh pr create`: Create pull request
 
 ### Code Quality
+
 - Prefer running single test files for performance
 - Always typecheck before committing
 - Run linting before pushing changes
@@ -205,6 +220,7 @@ ls .opencode/schema/
 ```
 
 ### Configuration Analysis
+
 ```bash
 # Check agent routing configuration
 cat .opencode/config.yaml | grep -A 5 "trigger_words"
@@ -217,6 +233,7 @@ cat .opencode/settings.json | jq '.tool_permissions'
 ```
 
 ### Dependency Analysis
+
 ```bash
 # Check package dependencies (if applicable)
 pnpm why <package-name>
@@ -228,11 +245,13 @@ npx depcheck
 ## Core Files
 
 ### Configuration
+
 - `.opencode/config.yaml`: Agent routing and workflow configuration
 - `.opencode/settings.json`: Tool permissions
 - `OPENCODE.md`: This file (root instructions)
 
 ### Agent System
+
 - `.opencode/agent/`: 23 agent prompts
 - `.opencode/skill/`: 6 utility skills
 - `.opencode/workflow/`: 9 workflow definitions (see `WORKFLOW-GUIDE.md`)
@@ -241,21 +260,22 @@ npx depcheck
 
 ### Templates (14 Artifacts)
 
-| Template | Agent | Purpose |
-|----------|-------|---------|
-| project-brief.md | analyst | Project discovery and brief |
-| prd.md | pm | Product requirements |
-| architecture.md | architect | System architecture |
-| ui-spec.md | ux-expert | Interface specifications |
-| test-plan.md | qa | Test strategy |
-| implementation-plan.md | developer | Implementation plan |
-| code-review-report.md | code-reviewer | Code review findings |
-| performance-plan.md | performance-engineer | Performance optimization |
-| llm-architecture.md | llm-architect | AI/LLM system design |
-| incident-report.md | incident-responder | Incident post-mortem |
-| refactor-plan.md | refactoring-specialist | Refactoring strategy |
+| Template               | Agent                  | Purpose                     |
+| ---------------------- | ---------------------- | --------------------------- |
+| project-brief.md       | analyst                | Project discovery and brief |
+| prd.md                 | pm                     | Product requirements        |
+| architecture.md        | architect              | System architecture         |
+| ui-spec.md             | ux-expert              | Interface specifications    |
+| test-plan.md           | qa                     | Test strategy               |
+| implementation-plan.md | developer              | Implementation plan         |
+| code-review-report.md  | code-reviewer          | Code review findings        |
+| performance-plan.md    | performance-engineer   | Performance optimization    |
+| llm-architecture.md    | llm-architect          | AI/LLM system design        |
+| incident-report.md     | incident-responder     | Incident post-mortem        |
+| refactor-plan.md       | refactoring-specialist | Refactoring strategy        |
 
 ### Security
+
 - `.opencode/hook/security-pre-tool.sh`: Security validation hook
 - `.opencode/hook/audit-post-tool.sh`: Audit logging hook
 - `.opencode/system/guardrails.md`: Command safety and PII policies
@@ -264,11 +284,13 @@ npx depcheck
 ## Security & Secrets Management
 
 ### Protected Operations
+
 - **BLOCKED**: `.env*` files, `secrets/` directory, credential files
 - **BLOCKED**: Dangerous commands (`rm -rf`, `sudo rm`, `mkfs`, `dd`)
 - **BLOCKED**: Force push to main/master
 
 ### Tool Permissions
+
 - **Always Allowed**: Read, Search
 - **Require Confirmation**: Edit, Bash
 - **Always Blocked**: Destructive operations
@@ -323,6 +345,7 @@ bash scripts/validate-sync.sh
 ## Quick Reference
 
 ### Skill Commands
+
 ```bash
 # Setup - Configure rules for your stack
 "Select rules for this project"
@@ -348,6 +371,7 @@ bash scripts/validate-sync.sh
 ```
 
 ### Agent Triggers
+
 ```bash
 # Core Development
 "Research the market for..." → analyst
@@ -382,7 +406,7 @@ bash scripts/validate-sync.sh
 
 - **Setup Guide**: `.opencode/docs/setup-guides/OPENCODE_SETUP_GUIDE.md`
 - **Workflow Guide**: `.opencode/workflow/WORKFLOW-GUIDE.md`
-- **Enterprise Guardrails**: `.opencode/system/` 
+- **Enterprise Guardrails**: `.opencode/system/`
 - **Agent Details**: `.opencode/agent/` (each agent has full documentation)
 - **Skill Details**: `.opencode/skill/` (each skill has SKILL.md documentation)
 - **Instructions**: `.opencode/instruction/` (operational playbooks)
@@ -391,28 +415,31 @@ bash scripts/validate-sync.sh
 
 The `.opencode/.mcp.json` file contains optional MCP server configurations. This project does NOT ship an MCP server - these are configs consumed by OpenCode when you set the required environment variables:
 
-| Server | Purpose | Environment Variable |
-|--------|---------|---------------------|
-| repo | Codebase search | None (auto-configured) |
-| github | GitHub integration | `GITHUB_TOKEN` |
-| linear | Linear issues | `LINEAR_API_KEY` |
-| slack | Notifications | `SLACK_BOT_TOKEN` |
+| Server | Purpose            | Environment Variable   |
+| ------ | ------------------ | ---------------------- |
+| repo   | Codebase search    | None (auto-configured) |
+| github | GitHub integration | `GITHUB_TOKEN`         |
+| linear | Linear issues      | `LINEAR_API_KEY`       |
+| slack  | Notifications      | `SLACK_BOT_TOKEN`      |
 
 ## OpenCode Context Management
 
 ### Memory System Best Practices
+
 - **Use `#` key during sessions** to add memories organically to OPENCODE.md
 - Review and refactor OPENCODE.md monthly to remove stale instructions
 - Keep sections modular to prevent instruction bleeding between contexts
 - Use hierarchical OPENCODE.md files: root for universal rules, subdirectories for specific contexts
 
 ### Session Management
+
 - **Use `/clear`** between unrelated tasks to reset context window
 - **Use `/compact`** for long sessions to optimize token usage
 - **Reference specific files** with `@filename` rather than reading entire directories
 - **Use artifacts** for multi-file outputs instead of large inline responses
 
 ### Custom Commands Strategy
+
 - Start with 3-5 most common workflows
 - Use descriptive names (e.g., `/review`, `/fix-issue`, not `/r`, `/fi`)
 - Include validation steps in commands
@@ -420,6 +447,7 @@ The `.opencode/.mcp.json` file contains optional MCP server configurations. This
 - See `.opencode/command/` for available slash commands
 
 ## Escalation Playbook
+
 1. Flag blockers in the OpenCode Project feed; attach the current artifact or plan.
 2. Page the appropriate subagent (Architect vs. QA vs. PM) via OpenCode subagent commands.
 3. If automation fails, fall back to manual CLI with the same rules and document the resolution artifact.

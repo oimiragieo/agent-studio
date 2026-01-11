@@ -63,14 +63,17 @@ function parseTableRows(tableContent) {
 
   for (let i = 0; i < dataRows.length; i++) {
     const row = dataRows[i];
-    const cells = row.split('|').map(cell => cell.trim()).filter(cell => cell);
+    const cells = row
+      .split('|')
+      .map(cell => cell.trim())
+      .filter(cell => cell);
 
     // Validate column count
     if (cells.length < 4) {
       warnings.push({
         row: i + 3, // Account for header rows
         message: `Expected 4+ columns, got ${cells.length}`,
-        raw: row
+        raw: row,
       });
       continue;
     }
@@ -85,7 +88,7 @@ function parseTableRows(tableContent) {
       errors.push({
         row: i + 3,
         message: 'Missing CUJ ID',
-        raw: row
+        raw: row,
       });
       continue;
     }
@@ -94,7 +97,7 @@ function parseTableRows(tableContent) {
       errors.push({
         row: i + 3,
         message: `Missing execution mode for ${cujId}`,
-        raw: row
+        raw: row,
       });
       continue;
     }
@@ -104,7 +107,7 @@ function parseTableRows(tableContent) {
       errors.push({
         row: i + 3,
         message: `Invalid execution mode '${executionMode}' for ${cujId}. Expected one of: ${VALID_EXECUTION_MODES.join(', ')}`,
-        raw: row
+        raw: row,
       });
     }
 
@@ -113,7 +116,7 @@ function parseTableRows(tableContent) {
       executionMode,
       workflowPath,
       primarySkill,
-      row: i + 3
+      row: i + 3,
     });
   }
 
@@ -131,7 +134,7 @@ function checkDuplicateCUJs(entries) {
     if (seen.has(entry.cujId)) {
       duplicates.push({
         cujId: entry.cujId,
-        rows: [seen.get(entry.cujId), entry.row]
+        rows: [seen.get(entry.cujId), entry.row],
       });
     } else {
       seen.set(entry.cujId, entry.row);
@@ -158,7 +161,7 @@ function validateWorkflowPaths(entries) {
           row: entry.row,
           workflowPath: entry.workflowPath,
           resolvedPath: fullPath,
-          message: `Workflow file not found: ${entry.workflowPath}`
+          message: `Workflow file not found: ${entry.workflowPath}`,
         });
       }
     }
@@ -193,7 +196,7 @@ function validateSkillNames(entries) {
           row: entry.row,
           primarySkill: entry.primarySkill,
           message: `Skill not found: ${entry.primarySkill}`,
-          availableSkills: validSkills
+          availableSkills: validSkills,
         });
       }
     }
@@ -312,7 +315,9 @@ async function validateCUJMapping() {
     skillErrors.forEach(err => {
       console.error(`   ${err.cujId} (row ${err.row}): ${err.message}`);
       if (err.availableSkills && err.availableSkills.length > 0) {
-        console.error(`     Available skills: ${err.availableSkills.slice(0, 10).join(', ')}${err.availableSkills.length > 10 ? '...' : ''}`);
+        console.error(
+          `     Available skills: ${err.availableSkills.slice(0, 10).join(', ')}${err.availableSkills.length > 10 ? '...' : ''}`
+        );
       }
     });
     hasErrors = true;
@@ -325,7 +330,9 @@ async function validateCUJMapping() {
   console.log('\n' + '='.repeat(60));
   if (hasErrors) {
     console.error('❌ VALIDATION FAILED');
-    console.error(`   Total errors: ${allErrors.length + duplicates.length + workflowErrors.length + skillErrors.length}`);
+    console.error(
+      `   Total errors: ${allErrors.length + duplicates.length + workflowErrors.length + skillErrors.length}`
+    );
     console.error(`   Total warnings: ${allWarnings.length}`);
     return false;
   } else {
@@ -337,10 +344,12 @@ async function validateCUJMapping() {
 }
 
 // Run validation
-validateCUJMapping().then(success => {
-  process.exit(success ? 0 : 1);
-}).catch(error => {
-  console.error(`❌ Unexpected error: ${error.message}`);
-  console.error(error.stack);
-  process.exit(1);
-});
+validateCUJMapping()
+  .then(success => {
+    process.exit(success ? 0 : 1);
+  })
+  .catch(error => {
+    console.error(`❌ Unexpected error: ${error.message}`);
+    console.error(error.stack);
+    process.exit(1);
+  });

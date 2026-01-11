@@ -20,10 +20,10 @@ Skills in this location are used by the OpenAI Codex CLI for multi-AI validation
 
 ## Skills Available
 
-| Skill | Claude Code | Codex CLI | Purpose | Documentation |
-|-------|-------------|-----------|---------|---------------|
-| **multi-ai-code-review** | ✅ | ✅ | Multi-provider code review orchestration | [SKILL.md](./../skills/multi-ai-code-review/SKILL.md) |
-| **response-rater** | ✅ | ✅ | Response quality rating (0-10 scale) | [SKILL.md](./../skills/response-rater/SKILL.md) |
+| Skill                    | Claude Code | Codex CLI | Purpose                                  | Documentation                                         |
+| ------------------------ | ----------- | --------- | ---------------------------------------- | ----------------------------------------------------- |
+| **multi-ai-code-review** | ✅          | ✅        | Multi-provider code review orchestration | [SKILL.md](./../skills/multi-ai-code-review/SKILL.md) |
+| **response-rater**       | ✅          | ✅        | Response quality rating (0-10 scale)     | [SKILL.md](./../skills/response-rater/SKILL.md)       |
 
 ## Skill Synchronization
 
@@ -61,6 +61,7 @@ ls -la .claude/skills/multi-ai-code-review/
 **Automatic Discovery**: Skills are automatically discovered from `.claude/skills/` when Claude Code starts.
 
 **Invocation**:
+
 ```
 # Natural language
 "Use multi-ai-code-review to review this code"
@@ -77,6 +78,7 @@ Input: src/components/Button.tsx
 **Manual Invocation**: Skills must be explicitly invoked via Codex CLI commands.
 
 **Example**:
+
 ```bash
 # Multi-AI code review
 codex run-skill multi-ai-code-review --input src/components/Button.tsx
@@ -102,6 +104,7 @@ codex run-skill response-rater --input plan-001.json --rubric completeness,feasi
 ```
 
 **Key Characteristics**:
+
 - `SKILL.md` is the primary entry point
 - Scripts use `.mjs` extension (ES modules)
 - Configuration in `config.json`
@@ -120,6 +123,7 @@ codex-skills/multi-ai-code-review/
 ```
 
 **Key Characteristics**:
+
 - `SKILL.md` documents the skill
 - Scripts use `.mjs` or `.js` extension
 - Configuration in `manifest.json`
@@ -187,6 +191,7 @@ See [AGENT_SKILL_MATRIX.md](./AGENT_SKILL_MATRIX.md) for complete mapping.
 **Problem**: Claude Code cannot find skill in `.claude/skills/`
 
 **Solution**:
+
 1. Verify skill exists: `ls -la .claude/skills/<skill-name>/`
 2. Check SKILL.md exists: `cat .claude/skills/<skill-name>/SKILL.md`
 3. Verify skill is in rule index: `grep <skill-name> .claude/context/rule-index.json`
@@ -197,6 +202,7 @@ See [AGENT_SKILL_MATRIX.md](./AGENT_SKILL_MATRIX.md) for complete mapping.
 **Problem**: Codex CLI cannot find skill in `codex-skills/`
 
 **Solution**:
+
 1. Verify skill exists: `ls -la codex-skills/<skill-name>/`
 2. Check manifest.json exists: `cat codex-skills/<skill-name>/manifest.json`
 3. Verify Codex CLI path: `codex config get skills-path`
@@ -207,6 +213,7 @@ See [AGENT_SKILL_MATRIX.md](./AGENT_SKILL_MATRIX.md) for complete mapping.
 **Problem**: Skill in `.claude/skills/` differs from `codex-skills/`
 
 **Solution**:
+
 1. Compare directories: `diff -r .claude/skills/<skill-name>/ codex-skills/<skill-name>/`
 2. Synchronize from primary: `cp -r .claude/skills/<skill-name> codex-skills/`
 3. Verify synchronization: `diff -r .claude/skills/<skill-name>/ codex-skills/<skill-name>/`
@@ -221,6 +228,6 @@ See [AGENT_SKILL_MATRIX.md](./AGENT_SKILL_MATRIX.md) for complete mapping.
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-08 | Initial documentation of Codex skills canonical locations |
+| Version | Date       | Changes                                                   |
+| ------- | ---------- | --------------------------------------------------------- |
+| 1.0.0   | 2026-01-08 | Initial documentation of Codex skills canonical locations |

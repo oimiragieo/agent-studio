@@ -9,6 +9,7 @@ This directory contains executable scripts for the rule-auditor skill, enabling 
 Main executable for validating code against project rules.
 
 **Features**:
+
 - Loads rule index dynamically (no hard-coded rules)
 - Detects technologies from file extensions and imports
 - Extracts validation patterns from `<validation>` blocks in rules
@@ -16,6 +17,7 @@ Main executable for validating code against project rules.
 - Outputs JSON conforming to `skill-rule-auditor-output.schema.json`
 
 **Usage**:
+
 ```bash
 # Audit a directory
 node audit.mjs src/components/
@@ -40,6 +42,7 @@ node audit.mjs src/ --severity error
 ```
 
 **CLI Options**:
+
 - `--format <type>`: Output format (json, markdown) - default: json
 - `--fix`: Apply fixes with confirmation (creates .bak backups)
 - `--fix-dry-run`: Preview fixes without modifying files
@@ -48,6 +51,7 @@ node audit.mjs src/ --severity error
 - `--severity <level>`: Filter violations by severity (error, warning, info)
 
 **Exit Codes**:
+
 - `0`: No errors found (or only warnings in non-strict mode)
 - `1`: Errors found, or any violations in strict mode
 
@@ -105,11 +109,13 @@ All JSON output conforms to `.claude/schemas/skill-rule-auditor-output.schema.js
 Test suite for the audit script.
 
 **Usage**:
+
 ```bash
 node test-audit.mjs
 ```
 
 **Tests**:
+
 - ✅ Basic audit functionality
 - ✅ Technology detection (TypeScript, React, etc.)
 - ✅ Dry-run fix mode (preview without changes)
@@ -140,14 +146,15 @@ forbidden_patterns:
     severity: "warning"
     fix: ""
 
-  - pattern: "const (\\w+): any"
-    message: "Avoid using 'any' type"
-    severity: "error"
-    fix: "const $1: unknown"
-</validation>
+- pattern: "const (\\w+): any"
+  message: "Avoid using 'any' type"
+  severity: "error"
+  fix: "const $1: unknown"
+  </validation>
 ```
 
 **Fix Syntax**:
+
 - `""` (empty string): Delete entire match
 - `"const $1"`: Use capture groups ($1, $2, etc.)
 - `"// Removed"`: Replace with comment
@@ -238,6 +245,7 @@ pnpm index-rules
 ### Regex patterns not matching
 
 **Solution**: Remember to escape regex special characters in `<validation>` blocks:
+
 - Use `\\.` for literal dot
 - Use `\\(` and `\\)` for literal parentheses
 - Use `\\[` and `\\]` for literal brackets

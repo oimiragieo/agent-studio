@@ -2,7 +2,7 @@
 /**
  * Workflow Automator
  * Automated plan → implement → debug → fix cycle execution
- * 
+ *
  * Usage:
  *   node .claude/tools/workflow-automator.mjs --plan <plan-file> --project <project-name>
  */
@@ -22,7 +22,7 @@ const __dirname = dirname(__filename);
  */
 async function loadPlan(planPath) {
   const content = await readFile(planPath, 'utf-8');
-  
+
   // Try to parse as JSON first
   try {
     return JSON.parse(content);
@@ -33,12 +33,12 @@ async function loadPlan(planPath) {
     const plan = {
       tasks: [],
       phases: [],
-      metadata: {}
+      metadata: {},
     };
-    
+
     let currentPhase = null;
     let currentTask = null;
-    
+
     for (const line of lines) {
       if (line.startsWith('# ')) {
         plan.metadata.title = line.substring(2).trim();
@@ -48,7 +48,7 @@ async function loadPlan(planPath) {
         }
         currentPhase = {
           name: line.substring(3).trim(),
-          tasks: []
+          tasks: [],
         };
       } else if (line.startsWith('- [ ]') || line.startsWith('- [x]')) {
         const taskText = line.substring(5).trim();
@@ -59,20 +59,20 @@ async function loadPlan(planPath) {
           completed,
           phase: currentPhase?.name || 'default',
           agent: null,
-          dependencies: []
+          dependencies: [],
         };
-        
+
         if (currentPhase) {
           currentPhase.tasks.push(task);
         }
         plan.tasks.push(task);
       }
     }
-    
+
     if (currentPhase) {
       plan.phases.push(currentPhase);
     }
-    
+
     return plan;
   }
 }
@@ -85,46 +85,46 @@ async function executePhase(phase, plan, projectName, options = {}) {
     phase: phase.name,
     tasks: [],
     errors: [],
-    artifacts: []
+    artifacts: [],
   };
-  
+
   for (const task of phase.tasks) {
     if (task.completed) {
       results.tasks.push({
         id: task.id,
         status: 'skipped',
-        reason: 'already completed'
+        reason: 'already completed',
       });
       continue;
     }
-    
+
     try {
       // Delegate to assigned agent
       const agent = task.agent || 'developer';
       const result = await executeTask(task, agent, projectName, options);
-      
+
       results.tasks.push({
         id: task.id,
         status: 'completed',
-        result
+        result,
       });
-      
+
       if (result.artifacts) {
         results.artifacts.push(...result.artifacts);
       }
     } catch (error) {
       results.errors.push({
         task: task.id,
-        error: error.message
+        error: error.message,
       });
       results.tasks.push({
         id: task.id,
         status: 'failed',
-        error: error.message
+        error: error.message,
       });
     }
   }
-  
+
   return results;
 }
 
@@ -134,15 +134,15 @@ async function executePhase(phase, plan, projectName, options = {}) {
 async function executeTask(task, agent, projectName, options = {}) {
   // ACTUAL DELEGATION TO SUBAGENTS - Use orchestrator-coordinator for real delegation
   const { delegateTask } = await import('./orchestrator-coordinator.mjs');
-  
+
   try {
     // Delegate task to agent using orchestrator-coordinator
     const delegation = await delegateTask(task, [], null);
-    
+
     // In a real implementation, this would spawn the actual subagent
     // For now, we'll use the delegation prompt structure
     // The orchestrator should handle actual subagent spawning
-    
+
     // Register artifacts if runId provided
     const artifacts = [];
     if (options.runId) {
@@ -150,14 +150,14 @@ async function executeTask(task, agent, projectName, options = {}) {
       // Artifacts would come from actual subagent execution
       // This is a placeholder - actual implementation would wait for subagent completion
     }
-    
+
     return {
       success: true,
       output: `Task ${task.id} delegated to ${agent}`,
       artifacts: artifacts,
       delegation: delegation,
       validationStatus: 'pending',
-      gatePass: false
+      gatePass: false,
     };
   } catch (error) {
     // If delegation fails, try fallback agent
@@ -166,7 +166,7 @@ async function executeTask(task, agent, projectName, options = {}) {
       console.warn(`Agent ${agent} failed, trying fallback ${fallbackAgent}`);
       return await executeTask(task, fallbackAgent, projectName, options);
     }
-    
+
     throw new Error(`Task execution failed: ${error.message}`);
   }
 }
@@ -189,7 +189,7 @@ function getFallbackAgent(agent) {
     'incident-responder': 'devops',
     'model-orchestrator': 'architect',
     'gcp-cloud-agent': 'devops',
-    'ai-council': 'planner'
+    'ai-council': 'planner',
   };
   return FALLBACK_MAP[agent] || null;
 }
@@ -210,9 +210,9 @@ function routeIssues(validationReport) {
     developer: [],
     architect: [],
     security: [],
-    performance: []
+    performance: [],
   };
-  
+
   for (const issue of validationReport.consensus) {
     if (issue.category === 'security') {
       routes.security.push(issue);
@@ -224,7 +224,7 @@ function routeIssues(validationReport) {
       routes.developer.push(issue);
     }
   }
-  
+
   return routes;
 }
 
@@ -235,12 +235,12 @@ export async function executeAutomatedWorkflow(planPath, projectName, options = 
   const {
     maxIterations = 10,
     validators = ['cursor', 'gemini', 'codex'],
-    autoFix = true
+    autoFix = true,
   } = options;
-  
+
   // Load plan
   const plan = await loadPlan(planPath);
-  
+
   const workflowState = {
     plan,
     projectName,
@@ -249,55 +249,55 @@ export async function executeAutomatedWorkflow(planPath, projectName, options = 
     currentPhase: 0,
     validationResults: [],
     fixResults: [],
-    status: 'running'
+    status: 'running',
   };
-  
+
   // Save initial state
   const statePath = join(__dirname, '..', 'projects', projectName, 'workflow-state.json');
   await mkdir(dirname(statePath), { recursive: true });
   await writeFile(statePath, JSON.stringify(workflowState, null, 2), 'utf-8');
-  
+
   // Main workflow loop
   while (workflowState.currentIteration < maxIterations && workflowState.status === 'running') {
     workflowState.currentIteration++;
-    
+
     // 1. Plan Phase (if needed)
     if (workflowState.currentIteration === 1) {
       // Plan already loaded, proceed to implementation
     }
-    
+
     // 2. Implement Phase
     if (workflowState.currentPhase < plan.phases.length) {
       const phase = plan.phases[workflowState.currentPhase];
       const phaseResult = await executePhase(phase, plan, projectName, options);
-      
+
       workflowState.completedPhases.push(phaseResult);
-      
+
       if (phaseResult.errors.length > 0) {
         workflowState.status = 'error';
         workflowState.error = `Phase ${phase.name} failed with errors`;
         break;
       }
-      
+
       workflowState.currentPhase++;
     }
-    
+
     // 3. Debug/Validate Phase
     const target = join(__dirname, '..', 'projects', projectName);
     const validationReport = await runValidation(target, validators);
     workflowState.validationResults.push(validationReport);
-    
+
     // Check if validation found issues
     if (validationReport.summary.consensusIssues === 0) {
       // No issues found, workflow complete
       workflowState.status = 'completed';
       break;
     }
-    
+
     // 4. Fix Phase
     if (autoFix) {
       const issueRoutes = routeIssues(validationReport);
-      
+
       const fixResults = [];
       for (const [agent, issues] of Object.entries(issueRoutes)) {
         if (issues.length > 0) {
@@ -306,13 +306,13 @@ export async function executeAutomatedWorkflow(planPath, projectName, options = 
           fixResults.push({
             agent,
             issuesCount: issues.length,
-            status: 'routed'
+            status: 'routed',
           });
         }
       }
-      
+
       workflowState.fixResults.push(fixResults);
-      
+
       // Update plan with fixes
       // In a real implementation, this would update the plan with new tasks
     } else {
@@ -321,10 +321,10 @@ export async function executeAutomatedWorkflow(planPath, projectName, options = 
       break;
     }
   }
-  
+
   // Save final state
   await writeFile(statePath, JSON.stringify(workflowState, null, 2), 'utf-8');
-  
+
   return workflowState;
 }
 
@@ -338,28 +338,30 @@ async function main() {
   const maxIterationsIndex = args.indexOf('--max-iterations');
   const validatorsIndex = args.indexOf('--validators');
   const noAutoFix = args.includes('--no-auto-fix');
-  
-  if (planIndex === -1 || !args[planIndex + 1] ||
-      projectIndex === -1 || !args[projectIndex + 1]) {
-    console.error('Usage: node workflow-automator.mjs --plan <plan-file> --project <project-name> [--max-iterations <n>] [--validators cursor,gemini,codex] [--no-auto-fix]');
+
+  if (planIndex === -1 || !args[planIndex + 1] || projectIndex === -1 || !args[projectIndex + 1]) {
+    console.error(
+      'Usage: node workflow-automator.mjs --plan <plan-file> --project <project-name> [--max-iterations <n>] [--validators cursor,gemini,codex] [--no-auto-fix]'
+    );
     process.exit(1);
   }
-  
+
   const planPath = args[planIndex + 1];
   const projectName = args[projectIndex + 1];
   const maxIterations = maxIterationsIndex !== -1 ? parseInt(args[maxIterationsIndex + 1]) : 10;
-  const validators = validatorsIndex !== -1 && args[validatorsIndex + 1]
-    ? args[validatorsIndex + 1].split(',')
-    : ['cursor', 'gemini', 'codex'];
-  
+  const validators =
+    validatorsIndex !== -1 && args[validatorsIndex + 1]
+      ? args[validatorsIndex + 1].split(',')
+      : ['cursor', 'gemini', 'codex'];
+
   const options = {
     maxIterations,
     validators,
-    autoFix: !noAutoFix
+    autoFix: !noAutoFix,
   };
-  
+
   const result = await executeAutomatedWorkflow(planPath, projectName, options);
-  
+
   console.log(JSON.stringify(result, null, 2));
 }
 
@@ -373,6 +375,5 @@ export default {
   loadPlan,
   executePhase,
   runValidation,
-  routeIssues
+  routeIssues,
 };
-

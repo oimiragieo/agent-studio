@@ -29,7 +29,7 @@ function aggregateCujMetrics() {
     '1h': 3600000,
     '24h': 86400000,
     '7d': 604800000,
-    '30d': 2592000000
+    '30d': 2592000000,
   };
 
   const aggregated = {};
@@ -43,14 +43,15 @@ function aggregateCujMetrics() {
     if (allCujs.length > 0) {
       const totalExecutions = allCujs.reduce((sum, m) => sum + m.total, 0);
       const totalSuccessful = allCujs.reduce((sum, m) => sum + m.successful, 0);
-      const avgDuration = allCujs.reduce((sum, m) => sum + m.avg_duration_ms * m.total, 0) / totalExecutions;
+      const avgDuration =
+        allCujs.reduce((sum, m) => sum + m.avg_duration_ms * m.total, 0) / totalExecutions;
 
       aggregated[`${label}_summary`] = {
         total_cujs: allCujs.length,
         total_executions: totalExecutions,
         total_successful: totalSuccessful,
         overall_success_rate: totalSuccessful / totalExecutions,
-        avg_duration_ms: avgDuration
+        avg_duration_ms: avgDuration,
       };
     }
   }
@@ -68,7 +69,7 @@ function aggregateSkillMetrics() {
   const timeWindows = {
     '1h': { startDate: new Date(Date.now() - 3600000) },
     '24h': { startDate: new Date(Date.now() - 86400000) },
-    '7d': { startDate: new Date(Date.now() - 604800000) }
+    '7d': { startDate: new Date(Date.now() - 604800000) },
   };
 
   const aggregated = {};
@@ -85,7 +86,7 @@ function aggregateSkillMetrics() {
       total_duration_ms: stats.total_duration_ms,
       avg_duration_ms: stats.avg_duration_ms,
       by_skill: stats.by_skill,
-      by_agent: stats.by_agent
+      by_agent: stats.by_agent,
     };
 
     // Top 10 most used skills
@@ -95,7 +96,7 @@ function aggregateSkillMetrics() {
         count: data.count,
         avg_duration_ms: data.count > 0 ? data.duration_ms / data.count : 0,
         failure_rate: data.count > 0 ? data.failures / data.count : 0,
-        cache_hit_rate: data.count > 0 ? data.cache_hits / data.count : 0
+        cache_hit_rate: data.count > 0 ? data.cache_hits / data.count : 0,
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
@@ -113,12 +114,12 @@ function aggregateProviderMetrics() {
   // Placeholder for now - will be populated by provider-health.mjs
   return {
     providers: {
-      'anthropic': { available: true, success_rate: 0.99, avg_latency_ms: 1200 },
-      'openai': { available: true, success_rate: 0.98, avg_latency_ms: 1500 },
-      'google': { available: true, success_rate: 0.97, avg_latency_ms: 1800 }
+      anthropic: { available: true, success_rate: 0.99, avg_latency_ms: 1200 },
+      openai: { available: true, success_rate: 0.98, avg_latency_ms: 1500 },
+      google: { available: true, success_rate: 0.97, avg_latency_ms: 1800 },
     },
     last_updated: new Date().toISOString(),
-    note: 'Provider metrics integration pending'
+    note: 'Provider metrics integration pending',
   };
 }
 
@@ -138,14 +139,14 @@ function aggregateResourceMetrics() {
       external_mb: (memUsage.external / 1024 / 1024).toFixed(2),
       rss_mb: (memUsage.rss / 1024 / 1024).toFixed(2),
       cpu_user_ms: cpuUsage.user / 1000,
-      cpu_system_ms: cpuUsage.system / 1000
+      cpu_system_ms: cpuUsage.system / 1000,
     },
     system_info: {
       platform: process.platform,
       arch: process.arch,
       node_version: process.version,
-      uptime_seconds: process.uptime()
-    }
+      uptime_seconds: process.uptime(),
+    },
   };
 }
 
@@ -162,7 +163,7 @@ function getPerformanceHighlights() {
       fastest_cuj: null,
       slowest_cuj: null,
       most_reliable_cuj: null,
-      least_reliable_cuj: null
+      least_reliable_cuj: null,
     };
   }
 
@@ -197,20 +198,20 @@ function getPerformanceHighlights() {
   return {
     fastest_cuj: {
       cuj_id: fastest,
-      avg_duration_ms: cujMetrics[fastest].avg_duration_ms
+      avg_duration_ms: cujMetrics[fastest].avg_duration_ms,
     },
     slowest_cuj: {
       cuj_id: slowest,
-      avg_duration_ms: cujMetrics[slowest].avg_duration_ms
+      avg_duration_ms: cujMetrics[slowest].avg_duration_ms,
     },
     most_reliable_cuj: {
       cuj_id: mostReliable,
-      success_rate: cujMetrics[mostReliable].rate
+      success_rate: cujMetrics[mostReliable].rate,
     },
     least_reliable_cuj: {
       cuj_id: leastReliable,
-      success_rate: cujMetrics[leastReliable].rate
-    }
+      success_rate: cujMetrics[leastReliable].rate,
+    },
   };
 }
 
@@ -225,13 +226,13 @@ export function generateMetricsDashboard() {
       cujs: aggregateCujMetrics(),
       skills: aggregateSkillMetrics(),
       providers: aggregateProviderMetrics(),
-      resources: aggregateResourceMetrics()
+      resources: aggregateResourceMetrics(),
     },
     highlights: getPerformanceHighlights(),
     metadata: {
       dashboard_version: '1.0.0',
-      monitoring_enabled: true
-    }
+      monitoring_enabled: true,
+    },
   };
 
   return dashboard;
@@ -310,10 +311,14 @@ export function formatDashboard(dashboard) {
     lines.push('PERFORMANCE HIGHLIGHTS');
     lines.push('─────────────────────────────────────────────────────────');
     if (dashboard.highlights.fastest_cuj) {
-      lines.push(`  Fastest CUJ:          ${dashboard.highlights.fastest_cuj.cuj_id} (${dashboard.highlights.fastest_cuj.avg_duration_ms.toFixed(0)}ms)`);
+      lines.push(
+        `  Fastest CUJ:          ${dashboard.highlights.fastest_cuj.cuj_id} (${dashboard.highlights.fastest_cuj.avg_duration_ms.toFixed(0)}ms)`
+      );
     }
     if (dashboard.highlights.most_reliable_cuj) {
-      lines.push(`  Most Reliable:        ${dashboard.highlights.most_reliable_cuj.cuj_id} (${(dashboard.highlights.most_reliable_cuj.success_rate * 100).toFixed(1)}%)`);
+      lines.push(
+        `  Most Reliable:        ${dashboard.highlights.most_reliable_cuj.cuj_id} (${(dashboard.highlights.most_reliable_cuj.success_rate * 100).toFixed(1)}%)`
+      );
     }
     lines.push('');
   }
@@ -324,7 +329,9 @@ export function formatDashboard(dashboard) {
     lines.push('TOP 5 MOST USED SKILLS (Last 24 Hours)');
     lines.push('─────────────────────────────────────────────────────────');
     topSkills.slice(0, 5).forEach((skill, i) => {
-      lines.push(`  ${i + 1}. ${skill.skill.padEnd(30)} ${skill.count} calls, ${skill.avg_duration_ms.toFixed(0)}ms avg`);
+      lines.push(
+        `  ${i + 1}. ${skill.skill.padEnd(30)} ${skill.count} calls, ${skill.avg_duration_ms.toFixed(0)}ms avg`
+      );
     });
     lines.push('');
   }

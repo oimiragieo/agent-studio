@@ -7,18 +7,18 @@ project_type: ai
 # The actual workflow selection uses keywords from .opencode/config.yaml workflow_selection section.
 # See .opencode/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "ai system"
-  - "llm"
-  - "rag"
-  - "embeddings"
-  - "chatbot"
-  - "ai feature"
-  - "machine learning"
-  - "vector database"
+  - 'ai system'
+  - 'llm'
+  - 'rag'
+  - 'embeddings'
+  - 'chatbot'
+  - 'ai feature'
+  - 'machine learning'
+  - 'vector database'
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - ai_requirements
@@ -38,7 +38,7 @@ steps:
       - Create structured development plan
 
   - step: 1
-    name: "Model Strategy"
+    name: 'Model Strategy'
     agent: model-orchestrator
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -59,7 +59,7 @@ steps:
       - Rate limiting considerations
 
   - step: 2
-    name: "LLM Architecture Design"
+    name: 'LLM Architecture Design'
     agent: llm-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -81,7 +81,7 @@ steps:
       - Guardrails and safety
 
   - step: 3
-    name: "API Design"
+    name: 'API Design'
     agent: api-designer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -101,7 +101,7 @@ steps:
       - Webhook integrations
 
   - step: 4
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -123,7 +123,7 @@ steps:
       - Prompt templates
 
   - step: 5
-    name: "AI Quality Validation"
+    name: 'AI Quality Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)

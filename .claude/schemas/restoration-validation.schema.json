@@ -3,7 +3,13 @@
   "type": "object",
   "title": "Restoration Validation",
   "description": "Schema for validating checkpoint restoration after simulated failure",
-  "required": ["validation_id", "validated_at", "workflow_id", "restoration_status", "checkpoint_restored"],
+  "required": [
+    "validation_id",
+    "validated_at",
+    "workflow_id",
+    "restoration_status",
+    "checkpoint_restored"
+  ],
   "properties": {
     "validation_id": {
       "type": "string",

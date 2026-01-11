@@ -11,6 +11,7 @@ Use these flows to route the right agents and artifacts.
 - **Incident Flow**: Reliability/incident response. Agents: **planner** → incident-responder → devops → security-architect → qa.
 
 Templates:
+
 - `.opencode/template/code-review-report.md`
 - `.opencode/template/refactor-plan.md`
 - `.opencode/template/performance-plan.md`
@@ -43,6 +44,7 @@ WORKFLOW_ID="issue-123-fix-login-bug"
 ### Using Workflow IDs
 
 Workflow IDs are used in:
+
 - Artifact file names: `plan-{{workflow_id}}.json`
 - Gate file paths: `.opencode/context/history/gates/{{workflow_id}}/00-planner.json`
 - Reasoning file paths: `.opencode/context/history/reasoning/{{workflow_id}}/00-planner.json`
@@ -67,6 +69,7 @@ executeWorkflow('code-quality-flow', {
 ### Template Variable Resolution
 
 The workflow runner automatically interpolates `{{workflow_id}}` in:
+
 - Output artifact names
 - Gate file paths
 - Schema paths (if they contain template variables)
@@ -86,6 +89,7 @@ The workflow runner automatically verifies that all agent files referenced in wo
 ### Error Messages
 
 When an agent file is missing, you'll see:
+
 ```
 ❌ Dependency validation errors:
   - Agent file not found: .opencode/agent/planner.md
@@ -94,11 +98,13 @@ When an agent file is missing, you'll see:
 ### Troubleshooting
 
 **Issue**: Agent file not found error
+
 - **Solution 1**: Verify the agent file exists at `.opencode/agent/{agent-name}.md`
 - **Solution 2**: Check for typos in the workflow YAML `agent:` field
 - **Solution 3**: Ensure the agent name matches the filename (without `.md` extension)
 
 **Issue**: Agent file exists but workflow still fails
+
 - **Solution**: Check file permissions and ensure the file is readable
 
 ### Agent File Requirements

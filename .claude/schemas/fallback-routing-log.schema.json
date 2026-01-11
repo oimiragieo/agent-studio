@@ -28,7 +28,14 @@
       "description": "Array of routing events",
       "items": {
         "type": "object",
-        "required": ["event_id", "timestamp", "primary_agent", "failure_reason", "fallback_agent", "routing_successful"],
+        "required": [
+          "event_id",
+          "timestamp",
+          "primary_agent",
+          "failure_reason",
+          "fallback_agent",
+          "routing_successful"
+        ],
         "properties": {
           "event_id": {
             "type": "string",
@@ -50,7 +57,14 @@
           },
           "failure_reason": {
             "type": "string",
-            "enum": ["timeout", "validation_failure", "agent_unavailable", "network_error", "rate_limit", "simulated_failure"],
+            "enum": [
+              "timeout",
+              "validation_failure",
+              "agent_unavailable",
+              "network_error",
+              "rate_limit",
+              "simulated_failure"
+            ],
             "description": "Reason for primary agent failure"
           },
           "failure_details": {
@@ -99,7 +113,13 @@
             "properties": {
               "item_type": {
                 "type": "string",
-                "enum": ["task_description", "artifacts", "workflow_state", "dependencies", "success_criteria"],
+                "enum": [
+                  "task_description",
+                  "artifacts",
+                  "workflow_state",
+                  "dependencies",
+                  "success_criteria"
+                ],
                 "description": "Type of context item"
               },
               "preserved": {

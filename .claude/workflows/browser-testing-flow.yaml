@@ -6,7 +6,7 @@ project_type: ui-testing
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -28,34 +28,34 @@ fallback_agents:
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "browser test"
-  - "chrome devtools"
-  - "test all UI features"
-  - "browser automation"
-  - "test page"
-  - "find bugs browser"
-  - "test UI and optimize"
-  - "browser performance"
+  - 'browser test'
+  - 'chrome devtools'
+  - 'test all UI features'
+  - 'browser automation'
+  - 'test page'
+  - 'find bugs browser'
+  - 'test UI and optimize'
+  - 'browser performance'
 
 # Workflow inputs
 inputs:
   target_url:
     type: string
-    description: "URL of the application to test (e.g., http://localhost:3000)"
+    description: 'URL of the application to test (e.g., http://localhost:3000)'
     required: true
   documentation_sources:
     type: array
-    description: "Array of documentation paths to compare against (PRD, UX spec, user stories)"
+    description: 'Array of documentation paths to compare against (PRD, UX spec, user stories)'
     required: false
     default: []
   test_scope:
     type: string
-    description: "Scope of testing (full, critical_path, specific_features)"
+    description: 'Scope of testing (full, critical_path, specific_features)'
     required: false
-    default: "full"
+    default: 'full'
   performance_thresholds:
     type: object
-    description: "Performance thresholds for Core Web Vitals"
+    description: 'Performance thresholds for Core Web Vitals'
     required: false
     default:
       lcp_ms: 2500
@@ -70,14 +70,14 @@ context_dir: .claude/context/browser-testing/{{workflow_id}}
 steps:
   # Phase 0: Pre-validation
   - step: 0.5
-    name: "DevTools Availability Check"
+    name: 'DevTools Availability Check'
     agent: orchestrator
     inputs: []
     outputs:
       - devtools-availability-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.5-orchestrator.json
     validation:
-      check: "chrome-devtools-mcp-available"
+      check: 'chrome-devtools-mcp-available'
       gate: .claude/context/history/gates/{{workflow_id}}/00.5-orchestrator.json
     description: |
       Verify Chrome DevTools MCP is available before browser testing:
@@ -89,7 +89,7 @@ steps:
 
   # Phase 0: Planning
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - target_url
@@ -116,7 +116,7 @@ steps:
       - Create structured testing plan
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -141,7 +141,7 @@ steps:
 
   # Phase 1: Browser Initialization & Page Load
   - step: 1
-    name: "Browser Initialization & Page Load"
+    name: 'Browser Initialization & Page Load'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -169,7 +169,7 @@ steps:
 
   # Phase 2: Comprehensive UI Feature Testing
   - step: 2
-    name: "Comprehensive UI Feature Testing"
+    name: 'Comprehensive UI Feature Testing'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -210,7 +210,7 @@ steps:
 
   # Phase 3: Log Review & Error Analysis
   - step: 3
-    name: "Log Review & Error Analysis"
+    name: 'Log Review & Error Analysis'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -239,7 +239,7 @@ steps:
 
   # Phase 4: Performance Timing & Measurement
   - step: 4
-    name: "Performance Timing & Measurement"
+    name: 'Performance Timing & Measurement'
     agent: performance-engineer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -279,7 +279,7 @@ steps:
 
   # Phase 5: UI Optimization Analysis
   - step: 5
-    name: "UI Optimization Analysis"
+    name: 'UI Optimization Analysis'
     agent: ux-expert
     parallel: true
     inputs:
@@ -304,7 +304,7 @@ steps:
       - Follow ui-optimization-analysis.schema.json structure
 
   - step: 5.3
-    name: "Accessibility Testing"
+    name: 'Accessibility Testing'
     agent: accessibility-expert
     parallel: true
     inputs:
@@ -330,7 +330,7 @@ steps:
       - Automated accessibility testing (axe, Lighthouse)
 
   - step: 5.5
-    name: "Performance Optimization Analysis"
+    name: 'Performance Optimization Analysis'
     agent: performance-engineer
     parallel: true
     inputs:
@@ -355,7 +355,7 @@ steps:
 
   # Phase 5.7: Code Review of Findings
   - step: 5.7
-    name: "Code Review of Findings"
+    name: 'Code Review of Findings'
     agent: code-reviewer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -380,7 +380,7 @@ steps:
 
   # Phase 6: Comprehensive Report & Recommendations
   - step: 6
-    name: "Comprehensive Report & Recommendations"
+    name: 'Comprehensive Report & Recommendations'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -409,7 +409,7 @@ steps:
 
   # Phase 7: Quality Validation
   - step: 7
-    name: "Quality Validation"
+    name: 'Quality Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -432,7 +432,7 @@ steps:
       - Create quality validation report following quality-validation.schema.json structure
 
   - step: 7.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"
@@ -442,4 +442,3 @@ steps:
     retry:
       max_attempts: 3
       on_failure: log_and_continue
-

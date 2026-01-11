@@ -13,6 +13,7 @@
 This plan addresses 27 critical issues identified by three AI reviewers (Gemini, Codex, Cursor) in the CUJ (Customer User Journey) system. Issues span validation logic, missing files, registry consistency, execution mode standardization, workflow YAML updates, and tooling improvements.
 
 **Key Metrics**:
+
 - CUJ docs: 58 files found
 - CUJ-INDEX rows: 59 entries (CUJ-031, 032, 033 reserved, CUJ-056 referenced but missing)
 - Registry entries: 52 CUJs
@@ -31,33 +32,41 @@ This plan addresses 27 critical issues identified by three AI reviewers (Gemini,
 **Issue**: CUJ-056 is referenced in CUJ-INDEX.md (line 290) but the file does not exist.
 
 **Steps**:
+
 1. Create `.claude/docs/cujs/CUJ-056.md` with proper structure
 2. Copy template from existing CUJ (e.g., CUJ-055.md for consistency)
 3. Fill in content based on CUJ-INDEX entry: "Publishing Retry Logic Test"
 4. Ensure execution_mode, skills, triggers match INDEX
 
 **Expected Content**:
+
 ```markdown
 # CUJ-056: Publishing Retry Logic Test
 
 ## User Goal
+
 Test publishing retry logic with recovery skill integration.
 
 ## Execution Mode
+
 **Execution Mode**: `skill-only`
 
 ## Trigger
+
 - "Test publishing retry"
 - "Validate retry with backoff"
 
 ## Skills Used
+
 - `recovery`
 
 ## Expected Outputs
+
 - Retry test plan
 - Recovery validation report
 
 ## Success Criteria
+
 - Retry logic works as documented
 - Backoff delays measured correctly
 ```
@@ -95,6 +104,7 @@ if (!metadata.workflow) {
 ```
 
 **Affected CUJs** (workflow = null in registry but have workflow in INDEX):
+
 - CUJ-004: greenfield-fullstack.yaml
 - CUJ-005: greenfield-fullstack.yaml
 - CUJ-010: brownfield-fullstack.yaml
@@ -119,9 +129,10 @@ if (!metadata.workflow) {
 **Issue**: In `validate-cuj-dry-run.mjs` (if it exists) or validation tools, the check for "Step 0.1 (Plan Rating Gate)" emits Warning instead of Critical Error for workflow CUJs with Step 0.
 
 **Current Behavior** (from validate-cuj-e2e.mjs lines 378-384):
+
 ```javascript
 function checkPlanRatingStep(cujId, executionMode, hasStep0, hasStep0_1) {
-  const warnings = [];  // <-- Should be errors for workflow CUJs
+  const warnings = []; // <-- Should be errors for workflow CUJs
   if (executionMode === 'workflow' && hasStep0 && !hasStep0_1) {
     warnings.push(`CUJ ${cujId}: Has Step 0 but missing Step 0.1 (Plan Rating Gate)`);
   }
@@ -130,6 +141,7 @@ function checkPlanRatingStep(cujId, executionMode, hasStep0, hasStep0_1) {
 ```
 
 **Required Fix**:
+
 ```javascript
 function checkPlanRatingStep(cujId, executionMode, hasStep0, hasStep0_1) {
   const errors = [];
@@ -137,7 +149,7 @@ function checkPlanRatingStep(cujId, executionMode, hasStep0, hasStep0_1) {
     errors.push({
       severity: 'critical',
       message: `CUJ ${cujId}: Has Step 0 but missing Step 0.1 (Plan Rating Gate) - MANDATORY for workflow CUJs`,
-      fix: 'Add Step 0.1 with response-rater skill invocation'
+      fix: 'Add Step 0.1 with response-rater skill invocation',
     });
   }
   return errors;
@@ -149,12 +161,13 @@ function checkPlanRatingStep(cujId, executionMode, hasStep0, hasStep0_1) {
 ```javascript
 function validatePlanRatingContent(cujContent) {
   const hasStep0_1 = cujContent.includes('Step 0.1') || cujContent.includes('Plan Rating');
-  const hasResponseRater = cujContent.includes('response-rater') || cujContent.includes('Skill: response-rater');
+  const hasResponseRater =
+    cujContent.includes('response-rater') || cujContent.includes('Skill: response-rater');
 
   if (hasStep0_1 && !hasResponseRater) {
     return {
       valid: false,
-      error: 'Step 0.1 exists but does not invoke response-rater skill'
+      error: 'Step 0.1 exists but does not invoke response-rater skill',
     };
   }
   return { valid: hasStep0_1 && hasResponseRater };
@@ -193,11 +206,13 @@ function validateCUJ(cujId, cujEntry) {
 ### Task 1.5: Eliminate CUJ Count Drift
 
 **Issue**: Three sources have different counts:
+
 - CUJ docs: 58 files
 - CUJ-INDEX.md: 59 rows (includes CUJ-056 reference)
 - cuj-registry.json: 52 entries
 
 **Root Cause Analysis**:
+
 - CUJ-031, 032, 033 are reserved (not implemented) - explains 3 gap
 - CUJ-056 referenced but not created - explains 1 gap
 - Registry missing CUJ-057 through CUJ-062 (6 entries)
@@ -258,6 +273,7 @@ jobs:
 ### Task 2.1: Normalize Execution Modes
 
 **Issue**: CUJs use mixed execution mode values:
+
 - `workflow` (correct)
 - `skill-only` (correct)
 - `manual-setup` (correct)
@@ -266,6 +282,7 @@ jobs:
 - Raw YAML filenames like `greenfield-fullstack.yaml` (should be `workflow`)
 
 **Schema-Allowed Values** (from cuj-registry.schema.json):
+
 ```json
 {
   "execution_mode": {
@@ -283,14 +300,14 @@ function normalizeExecutionMode(rawMode) {
 
   // Map non-standard values to schema-allowed values
   const modeMap = {
-    'skill': 'skill-only',
+    skill: 'skill-only',
     'skill-only': 'skill-only',
     'delegated-skill': 'delegated-skill',
-    'delegated': 'delegated-skill',
-    'manual': 'manual-setup',
+    delegated: 'delegated-skill',
+    manual: 'manual-setup',
     'manual-setup': 'manual-setup',
-    'workflow': 'workflow',
-    'automated-workflow': 'workflow'
+    workflow: 'workflow',
+    'automated-workflow': 'workflow',
   };
 
   // If mode ends with .yaml, it's a workflow
@@ -334,7 +351,7 @@ function normalizeExecutionMode(rawMode) {
     },
     {
       "name": "feasibility",
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Plan is technically achievable with available resources",
       "scoring": {
         "10": "Fully feasible, resources identified, timeline realistic",
@@ -346,7 +363,7 @@ function normalizeExecutionMode(rawMode) {
     },
     {
       "name": "risk_mitigation",
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Risks identified with mitigation strategies",
       "scoring": {
         "10": "Comprehensive risk analysis with mitigations",
@@ -358,7 +375,7 @@ function normalizeExecutionMode(rawMode) {
     },
     {
       "name": "agent_coverage",
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Appropriate agents assigned to each step",
       "scoring": {
         "10": "Optimal agent assignments, clear responsibilities",
@@ -399,6 +416,7 @@ function normalizeExecutionMode(rawMode) {
 **Issue**: 21 CUJs have execution-mode mismatches between CUJ docs and CUJ-INDEX.md.
 
 **Resolution Strategy**:
+
 1. CUJ-INDEX.md is the source of truth for execution_mode
 2. Update CUJ docs to match INDEX
 3. Re-run sync-cuj-registry.mjs
@@ -434,6 +452,7 @@ done
 ### Task 2.4: Repair Broken Links
 
 **Issue**: Broken links in CUJ docs:
+
 - CUJ-014:86 - broken link
 - CUJ-057:114 - broken link
 - CUJ-061:262 - broken link
@@ -460,7 +479,7 @@ function validateCUJLinks(cujId, content) {
         brokenLinks.push({
           text: match[1],
           url: url,
-          line: content.substring(0, match.index).split('\n').length
+          line: content.substring(0, match.index).split('\n').length,
         });
       }
     }
@@ -482,6 +501,7 @@ function validateCUJLinks(cujId, content) {
 **Issue**: CUJs document Step 0.1 but workflow YAMLs don't implement it.
 
 **Clarification**:
+
 - Step 0.1 is **Plan Rating Gate** using `response-rater` skill
 - Different from "Plan Review Gate" which is parallel multi-reviewer gate
 
@@ -519,6 +539,7 @@ steps:
 ```
 
 **Workflows Requiring Update**:
+
 1. `greenfield-fullstack.yaml`
 2. `brownfield-fullstack.yaml`
 3. `enterprise-track.yaml`
@@ -550,24 +571,32 @@ async function executeStep(workflow, stepConfig, context) {
   if (stepConfig.name === 'Plan Rating Gate') {
     const rating = await invokeSkill('response-rater', {
       plan: context.artifacts['plan'],
-      rubric: stepConfig.gate.rubric
+      rubric: stepConfig.gate.rubric,
     });
 
     if (rating.score < stepConfig.gate.minimum_score) {
       const iteration = context.plan_iterations || 0;
 
       if (iteration >= stepConfig.gate.on_fail.max_iterations) {
-        throw new Error(`Plan failed rating after ${iteration} iterations. Score: ${rating.score}/10`);
+        throw new Error(
+          `Plan failed rating after ${iteration} iterations. Score: ${rating.score}/10`
+        );
       }
 
       // Return to Step 0 with feedback
       context.plan_feedback = rating.feedback;
       context.plan_iterations = iteration + 1;
 
-      console.log(`Plan scored ${rating.score}/10 (min: ${stepConfig.gate.minimum_score}). Returning to Step 0 for iteration ${context.plan_iterations}`);
+      console.log(
+        `Plan scored ${rating.score}/10 (min: ${stepConfig.gate.minimum_score}). Returning to Step 0 for iteration ${context.plan_iterations}`
+      );
 
       // Re-execute Step 0 with feedback
-      return executeStep(workflow, workflow.steps.find(s => s.step === 0), context);
+      return executeStep(
+        workflow,
+        workflow.steps.find(s => s.step === 0),
+        context
+      );
     }
 
     // Plan passed, save rating
@@ -585,10 +614,12 @@ async function executeStep(workflow, stepConfig, context) {
 **Issue**: `greenfield-fullstack.yaml` Step 0.1 is "Plan Review Gate" (parallel review) not response-rater.
 
 **Distinction**:
+
 - **Plan Review Gate**: Multi-agent parallel review (architect, security-architect, qa)
 - **Plan Rating Gate**: Single skill invocation (response-rater) with rubric scoring
 
 **Resolution**: Both gates should exist sequentially:
+
 - Step 0: Planner creates plan
 - Step 0.1: Plan Rating Gate (response-rater, must pass 7/10)
 - Step 0.2: Plan Review Gate (parallel multi-reviewer, optional but recommended)
@@ -626,6 +657,7 @@ steps:
 ### Task 3.4: Create Missing Workflow Files
 
 **Issue**: Referenced workflows don't exist:
+
 - `feature-development.yaml` (not referenced in CUJ-INDEX but may be expected)
 - `architecture-review.yaml`
 - `refactoring.yaml`
@@ -690,13 +722,16 @@ const issues = {
   critical: [],
   warning: [],
   info: [],
-  fixed: []
+  fixed: [],
 };
 
 async function checkCUJDocExistence() {
   console.log('Checking CUJ doc file existence...');
 
-  const indexContent = await fs.readFile(path.join(ROOT, '.claude/docs/cujs/CUJ-INDEX.md'), 'utf-8');
+  const indexContent = await fs.readFile(
+    path.join(ROOT, '.claude/docs/cujs/CUJ-INDEX.md'),
+    'utf-8'
+  );
   const indexCUJs = [...indexContent.matchAll(/\| (CUJ-\d{3}) \|/g)].map(m => m[1]);
 
   for (const cujId of indexCUJs) {
@@ -708,7 +743,7 @@ async function checkCUJDocExistence() {
         type: 'missing_doc',
         cujId,
         message: `CUJ doc file not found: ${cujId}.md`,
-        fix: `Create .claude/docs/cujs/${cujId}.md`
+        fix: `Create .claude/docs/cujs/${cujId}.md`,
       });
     }
   }
@@ -717,7 +752,9 @@ async function checkCUJDocExistence() {
 async function checkRegistrySync() {
   console.log('Checking registry sync status...');
 
-  const registry = JSON.parse(await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8'));
+  const registry = JSON.parse(
+    await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8')
+  );
   const docDir = path.join(ROOT, '.claude/docs/cujs');
   const docFiles = (await fs.readdir(docDir)).filter(f => /^CUJ-\d{3}\.md$/.test(f));
 
@@ -731,7 +768,7 @@ async function checkRegistrySync() {
         type: 'registry_missing_entry',
         cujId: docId,
         message: `CUJ ${docId} exists in docs but not in registry`,
-        fix: 'Run: node .claude/tools/sync-cuj-registry.mjs'
+        fix: 'Run: node .claude/tools/sync-cuj-registry.mjs',
       });
     }
   }
@@ -743,7 +780,7 @@ async function checkRegistrySync() {
         type: 'doc_missing_for_registry',
         cujId: regId,
         message: `CUJ ${regId} in registry but doc file missing`,
-        fix: `Create .claude/docs/cujs/${regId}.md`
+        fix: `Create .claude/docs/cujs/${regId}.md`,
       });
     }
   }
@@ -752,14 +789,22 @@ async function checkRegistrySync() {
 async function checkExecutionModeConsistency() {
   console.log('Checking execution mode consistency...');
 
-  const registry = JSON.parse(await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8'));
-  const indexContent = await fs.readFile(path.join(ROOT, '.claude/docs/cujs/CUJ-INDEX.md'), 'utf-8');
+  const registry = JSON.parse(
+    await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8')
+  );
+  const indexContent = await fs.readFile(
+    path.join(ROOT, '.claude/docs/cujs/CUJ-INDEX.md'),
+    'utf-8'
+  );
 
   // Parse INDEX mapping table
   const indexMapping = new Map();
   const tableLines = indexContent.split('\n').filter(l => l.startsWith('| CUJ-'));
   for (const line of tableLines) {
-    const cols = line.split('|').map(c => c.trim()).filter(c => c);
+    const cols = line
+      .split('|')
+      .map(c => c.trim())
+      .filter(c => c);
     if (cols[0].match(/^CUJ-\d{3}$/)) {
       indexMapping.set(cols[0], cols[1]); // execution mode from INDEX
     }
@@ -772,7 +817,7 @@ async function checkExecutionModeConsistency() {
         type: 'execution_mode_mismatch',
         cujId: cuj.id,
         message: `Execution mode mismatch: Registry="${cuj.execution_mode}", Index="${indexMode}"`,
-        fix: `Update CUJ doc to use "${indexMode}" execution mode`
+        fix: `Update CUJ doc to use "${indexMode}" execution mode`,
       });
     }
   }
@@ -781,7 +826,9 @@ async function checkExecutionModeConsistency() {
 async function checkWorkflowFiles() {
   console.log('Checking workflow file existence...');
 
-  const registry = JSON.parse(await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8'));
+  const registry = JSON.parse(
+    await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8')
+  );
 
   for (const cuj of registry.cujs) {
     if (cuj.execution_mode === 'workflow') {
@@ -790,7 +837,7 @@ async function checkWorkflowFiles() {
           type: 'missing_workflow_reference',
           cujId: cuj.id,
           message: `Workflow CUJ ${cuj.id} has null workflow field`,
-          fix: 'Update sync-cuj-registry.mjs to extract workflow path'
+          fix: 'Update sync-cuj-registry.mjs to extract workflow path',
         });
       } else {
         const workflowPath = path.join(ROOT, cuj.workflow);
@@ -801,7 +848,7 @@ async function checkWorkflowFiles() {
             type: 'missing_workflow_file',
             cujId: cuj.id,
             message: `Workflow file not found: ${cuj.workflow}`,
-            fix: `Create ${cuj.workflow}`
+            fix: `Create ${cuj.workflow}`,
           });
         }
       }
@@ -812,7 +859,9 @@ async function checkWorkflowFiles() {
 async function checkSkillFiles() {
   console.log('Checking skill file existence...');
 
-  const registry = JSON.parse(await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8'));
+  const registry = JSON.parse(
+    await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8')
+  );
   const checkedSkills = new Set();
 
   for (const cuj of registry.cujs) {
@@ -831,7 +880,7 @@ async function checkSkillFiles() {
             type: 'empty_skill',
             skill,
             message: `Skill ${skill} has empty SKILL.md`,
-            fix: `Add content to .claude/skills/${skill}/SKILL.md`
+            fix: `Add content to .claude/skills/${skill}/SKILL.md`,
           });
         }
       } catch {
@@ -839,7 +888,7 @@ async function checkSkillFiles() {
           type: 'missing_skill',
           skill,
           message: `Skill not found: ${skill}`,
-          fix: `Create .claude/skills/${skill}/SKILL.md`
+          fix: `Create .claude/skills/${skill}/SKILL.md`,
         });
       }
     }
@@ -849,7 +898,9 @@ async function checkSkillFiles() {
 async function checkPlanRatingSteps() {
   console.log('Checking plan rating step presence...');
 
-  const registry = JSON.parse(await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8'));
+  const registry = JSON.parse(
+    await fs.readFile(path.join(ROOT, '.claude/context/cuj-registry.json'), 'utf-8')
+  );
 
   for (const cuj of registry.cujs) {
     if (cuj.execution_mode === 'workflow') {
@@ -865,7 +916,7 @@ async function checkPlanRatingSteps() {
             type: 'missing_plan_rating_step',
             cujId: cuj.id,
             message: `Workflow CUJ ${cuj.id} has Step 0 but missing Step 0.1 (Plan Rating Gate)`,
-            fix: 'Add Step 0.1 with response-rater skill invocation'
+            fix: 'Add Step 0.1 with response-rater skill invocation',
           });
         }
 
@@ -874,7 +925,7 @@ async function checkPlanRatingSteps() {
             type: 'plan_rating_missing_skill',
             cujId: cuj.id,
             message: `CUJ ${cuj.id} has Step 0.1 but doesn't reference response-rater skill`,
-            fix: 'Add "Skill: response-rater" to Step 0.1'
+            fix: 'Add "Skill: response-rater" to Step 0.1',
           });
         }
       } catch {
@@ -891,9 +942,9 @@ async function generateReport() {
       critical: issues.critical.length,
       warning: issues.warning.length,
       info: issues.info.length,
-      fixed: issues.fixed.length
+      fixed: issues.fixed.length,
     },
-    issues
+    issues,
   };
 
   if (JSON_OUTPUT) {
@@ -1019,7 +1070,10 @@ async function validateSkill(skillName) {
     // Check required sections
     for (const section of REQUIRED_SECTIONS) {
       if (!content.includes(`## ${section}`)) {
-        issues.push({ type: 'missing_section', message: `Missing required section: ## ${section}` });
+        issues.push({
+          type: 'missing_section',
+          message: `Missing required section: ## ${section}`,
+        });
       }
     }
 
@@ -1084,16 +1138,19 @@ When rating plans for distillation CUJs (CUJ-025, CUJ-046):
 4. Verify dependency ordering matches distilled dependencies
 
 ### Example Invocation
-
 ```
+
 Skill: response-rater
 Plan: plan-workflow-123.json
 Rubric: standard-plan-rubric.json
 Context:
-  - features-distilled.json
-  - user_requirements.md (original)
-Distillation-Aware: true
+
+- features-distilled.json
+- user_requirements.md (original)
+  Distillation-Aware: true
+
 ```
+
 ```
 
 ---
@@ -1122,14 +1179,14 @@ async function ratePlan(plan, rubric, options = {}) {
         rewrittenScore,
         improvement,
         recommendation: 'Consider adopting rewritten plan for significant quality improvement',
-        rewrittenPlan
+        rewrittenPlan,
       };
     }
   }
 
   return {
     status: originalScore >= rubric.minimum_passing_score ? 'pass' : 'fail',
-    score: originalScore
+    score: originalScore,
   };
 }
 ```
@@ -1144,12 +1201,14 @@ async function ratePlan(plan, rubric, options = {}) {
 ### Task 5.1: Update CUJ-INDEX.md
 
 **Actions**:
+
 1. Remove CUJ-056 row (or create the file - see Phase 1)
 2. Ensure all execution modes use schema-allowed values
 3. Add count verification comment at top
 4. Add last-updated timestamp
 
 **Header Update**:
+
 ```markdown
 # Customer User Journey (CUJ) Index
 
@@ -1189,15 +1248,16 @@ The planning workflow includes two distinct gates:
 - **On Fail**: Collect feedback, return to Step 0
 
 ## Execution Order
-
 ```
+
 Step 0: Planner creates plan
-    ↓
+↓
 Step 0.1: Plan Rating Gate (MUST PASS 7/10)
-    ↓
+↓
 Step 0.2: Plan Review Gate (recommended)
-    ↓
+↓
 Step 1: First implementation step
+
 ```
 
 ## Key Differences
@@ -1232,30 +1292,35 @@ done
 ## Validation Checklist
 
 ### Phase 1 Validation
+
 - [ ] CUJ-056.md exists and validates
 - [ ] Registry workflow fields populated for all 14 workflow CUJs
 - [ ] validate-cuj-e2e.mjs checks doc existence
 - [ ] CI gate fails on count drift
 
 ### Phase 2 Validation
+
 - [ ] All execution modes use schema-allowed values
 - [ ] standard-plan-rubric.json exists and validates
 - [ ] No doc-index mismatches
 - [ ] No broken links
 
 ### Phase 3 Validation
+
 - [ ] All workflow YAMLs have Step 0.1
 - [ ] Plan iteration logic works (score < 7 retries)
 - [ ] greenfield-fullstack.yaml has both 0.1 and 0.2 gates
 - [ ] All referenced workflows exist
 
 ### Phase 4 Validation
+
 - [ ] cuj-doctor.mjs reports healthy
 - [ ] validate-skills.mjs passes
 - [ ] response-rater handles distillation context
 - [ ] Rewrite optimization prompts when improvement > 2
 
 ### Phase 5 Validation
+
 - [ ] CUJ-INDEX.md counts match registry
 - [ ] PLAN_GATES.md exists and is linked
 - [ ] All skills have non-empty descriptions
@@ -1264,13 +1329,13 @@ done
 
 ## Risk Assessment
 
-| Risk | Severity | Mitigation |
-|------|----------|------------|
-| Breaking existing CUJ execution | High | Test each fix in isolation, maintain backward compatibility |
-| Workflow YAML changes break runs | High | Dry-run validation before deployment |
-| Registry sync loses data | Medium | Backup registry before running sync |
-| CI gate too strict | Medium | Start with warning, promote to error after stabilization |
-| Skill fixes break agent invocations | Medium | Validate skill syntax after each change |
+| Risk                                | Severity | Mitigation                                                  |
+| ----------------------------------- | -------- | ----------------------------------------------------------- |
+| Breaking existing CUJ execution     | High     | Test each fix in isolation, maintain backward compatibility |
+| Workflow YAML changes break runs    | High     | Dry-run validation before deployment                        |
+| Registry sync loses data            | Medium   | Backup registry before running sync                         |
+| CI gate too strict                  | Medium   | Start with warning, promote to error after stabilization    |
+| Skill fixes break agent invocations | Medium   | Validate skill syntax after each change                     |
 
 ---
 
@@ -1312,14 +1377,14 @@ Phase 5 ◄───────────────────────
 
 ## Execution Timeline
 
-| Phase | Tasks | Est. Time | Dependencies |
-|-------|-------|-----------|--------------|
-| Phase 1 | 5 tasks | 1-2 hours | None |
-| Phase 2 | 4 tasks | 2-3 hours | Phase 1 |
-| Phase 3 | 4 tasks | 3-4 hours | Phase 2 |
-| Phase 4 | 4 tasks | 2-3 hours | Phase 3 |
-| Phase 5 | 3 tasks | 1-2 hours | Phase 4 |
-| **Total** | 20 tasks | **9-14 hours** | |
+| Phase     | Tasks    | Est. Time      | Dependencies |
+| --------- | -------- | -------------- | ------------ |
+| Phase 1   | 5 tasks  | 1-2 hours      | None         |
+| Phase 2   | 4 tasks  | 2-3 hours      | Phase 1      |
+| Phase 3   | 4 tasks  | 3-4 hours      | Phase 2      |
+| Phase 4   | 4 tasks  | 2-3 hours      | Phase 3      |
+| Phase 5   | 3 tasks  | 1-2 hours      | Phase 4      |
+| **Total** | 20 tasks | **9-14 hours** |              |
 
 ---
 
@@ -1337,6 +1402,7 @@ Phase 5 ◄───────────────────────
 ## Appendix: Quick Reference
 
 ### File Locations
+
 - CUJ docs: `.claude/docs/cujs/CUJ-*.md`
 - CUJ INDEX: `.claude/docs/cujs/CUJ-INDEX.md`
 - CUJ registry: `.claude/context/cuj-registry.json`
@@ -1347,6 +1413,7 @@ Phase 5 ◄───────────────────────
 - Skills: `.claude/skills/*/SKILL.md`
 
 ### Commands
+
 ```bash
 # Sync registry
 node .claude/tools/sync-cuj-registry.mjs

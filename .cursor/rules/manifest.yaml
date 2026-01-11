@@ -3,329 +3,338 @@
 # See: https://cursor.com/docs/rules
 
 version: 1.0
-project: "Omega AI"
-description: "Full-stack AI platform manifest (React, Node.js, Python/FastAPI)"
+project: 'Omega AI'
+description: 'Full-stack AI platform manifest (React, Node.js, Python/FastAPI)'
 
 # Stack Profiles
 # Each profile defines which rules apply to which file patterns
 stack_profiles:
   # Full-stack profile (default for most files)
   fullstack:
-    description: "Full-stack Omega AI platform (React, Node.js, FastAPI)"
+    description: 'Full-stack Omega AI platform (React, Node.js, FastAPI)'
     rules:
       # Frontend React/TypeScript
-      - pattern: "frontend/**/*.{js,jsx,ts,tsx}"
+      - pattern: 'frontend/**/*.{js,jsx,ts,tsx}'
         ruleSets:
-          - "cursor-ai-react-typescript-shadcn-ui-cursorrules-p"
-          - "typescript-react-cursorrules-prompt-file"
-          - "react-components-creation-cursorrules-prompt-file"
-          - "react-typescript-nextjs-nodejs-cursorrules-prompt-"
-          - "tailwind-css-nextjs-guide-cursorrules-prompt-file"
-          - "html-tailwind-css-javascript-cursorrules-prompt-fi"
-          - "code-guidelines-cursorrules-prompt-file"
-          - "code-style-consistency-cursorrules-prompt-file"
-          - "javascript-typescript-code-quality-cursorrules-pro"
-          - "typescript-code-convention-cursorrules-prompt-file"
-      
+          - 'cursor-ai-react-typescript-shadcn-ui-cursorrules-p'
+          - 'typescript-react-cursorrules-prompt-file'
+          - 'react-components-creation-cursorrules-prompt-file'
+          - 'react-typescript-nextjs-nodejs-cursorrules-prompt-'
+          - 'tailwind-css-nextjs-guide-cursorrules-prompt-file'
+          - 'html-tailwind-css-javascript-cursorrules-prompt-fi'
+          - 'code-guidelines-cursorrules-prompt-file'
+          - 'code-style-consistency-cursorrules-prompt-file'
+          - 'javascript-typescript-code-quality-cursorrules-pro'
+          - 'typescript-code-convention-cursorrules-prompt-file'
+
       # Backend Node.js/Express
-      - pattern: "server/**/*.{js,ts}"
-        exclude: "server/app/**"
+      - pattern: 'server/**/*.{js,ts}'
+        exclude: 'server/app/**'
         ruleSets:
-          - "es-module-nodejs-guidelines-cursorrules-prompt-fil"
-          - "nodejs-mongodb-cursorrules-prompt-file-tutorial"
-          - "nodejs-mongodb-jwt-express-react-cursorrules-promp"
-          - "typescript-nodejs-nextjs-app-cursorrules-prompt-fi"
-          - "typescript-nodejs-nextjs-react-ui-css-cursorrules-"
-          - "javascript-typescript-code-quality-cursorrules-pro"
-          - "code-guidelines-cursorrules-prompt-file"
-          - "code-style-consistency-cursorrules-prompt-file"
-      
+          - 'es-module-nodejs-guidelines-cursorrules-prompt-fil'
+          - 'nodejs-mongodb-cursorrules-prompt-file-tutorial'
+          - 'nodejs-mongodb-jwt-express-react-cursorrules-promp'
+          - 'typescript-nodejs-nextjs-app-cursorrules-prompt-fi'
+          - 'typescript-nodejs-nextjs-react-ui-css-cursorrules-'
+          - 'javascript-typescript-code-quality-cursorrules-pro'
+          - 'code-guidelines-cursorrules-prompt-file'
+          - 'code-style-consistency-cursorrules-prompt-file'
+
       # Python FastAPI
-      - pattern: "server/app/**/*.py"
+      - pattern: 'server/app/**/*.py'
         ruleSets:
-          - "py-fast-api"
-          - "python-fastapi-best-practices-cursorrules-prompt-f"
-          - "python-312-fastapi-best-practices-cursorrules-prom"
-          - "python-fastapi-cursorrules-prompt-file"
-          - "python-fastapi-scalable-api-cursorrules-prompt-fil"
-          - "python-cursorrules-prompt-file-best-practices"
-          - "python-developer-cursorrules-prompt-file"
-          - "python-llm-ml-workflow-cursorrules-prompt-file"
-          - "python-projects-guide-cursorrules-prompt-file"
-          - "python-containerization-cursorrules-prompt-file"
-          - "temporal-python-cursorrules"
-      
+          - 'py-fast-api'
+          - 'python-fastapi-best-practices-cursorrules-prompt-f'
+          - 'python-312-fastapi-best-practices-cursorrules-prom'
+          - 'python-fastapi-cursorrules-prompt-file'
+          - 'python-fastapi-scalable-api-cursorrules-prompt-fil'
+          - 'python-cursorrules-prompt-file-best-practices'
+          - 'python-developer-cursorrules-prompt-file'
+          - 'python-llm-ml-workflow-cursorrules-prompt-file'
+          - 'python-projects-guide-cursorrules-prompt-file'
+          - 'python-containerization-cursorrules-prompt-file'
+          - 'temporal-python-cursorrules'
+
       # Universal rules for all code files
-      - pattern: "**/*.{js,jsx,ts,tsx,py}"
+      - pattern: '**/*.{js,jsx,ts,tsx,py}'
         ruleSets:
-          - "code-guidelines-cursorrules-prompt-file"
-          - "code-style-consistency-cursorrules-prompt-file"
-          - "optimize-dry-solid-principles-cursorrules-prompt-f"
-          - "github-code-quality-cursorrules-prompt-file"
+          - 'code-guidelines-cursorrules-prompt-file'
+          - 'code-style-consistency-cursorrules-prompt-file'
+          - 'optimize-dry-solid-principles-cursorrules-prompt-f'
+          - 'github-code-quality-cursorrules-prompt-file'
 
   # Frontend-only profile
   frontend:
-    description: "React frontend development"
+    description: 'React frontend development'
     rules:
-      - pattern: "frontend/**/*.{js,jsx,ts,tsx}"
+      - pattern: 'frontend/**/*.{js,jsx,ts,tsx}'
         ruleSets:
-          - "cursor-ai-react-typescript-shadcn-ui-cursorrules-p"
-          - "typescript-react-cursorrules-prompt-file"
-          - "react-components-creation-cursorrules-prompt-file"
-          - "react-typescript-nextjs-nodejs-cursorrules-prompt-"
-          - "react-query-cursorrules-prompt-file"
-          - "react-redux-typescript-cursorrules-prompt-file"
-          - "react-styled-components-cursorrules-prompt-file"
-          - "react-chakra-ui-cursorrules-prompt-file"
-          - "react-graphql-apollo-client-cursorrules-prompt-file"
-          - "react-mobx-cursorrules-prompt-file"
-          - "react-nextjs-ui-development-cursorrules-prompt-fil"
-          - "tailwind-css-nextjs-guide-cursorrules-prompt-file"
-          - "tailwind-shadcn-ui-integration-cursorrules-prompt-"
-          - "html-tailwind-css-javascript-cursorrules-prompt-fi"
-          - "typescript-code-convention-cursorrules-prompt-file"
-          - "typescript-axios-cursorrules-prompt-file"
-          - "javascript-typescript-code-quality-cursorrules-pro"
-          - "code-guidelines-cursorrules-prompt-file"
+          - 'cursor-ai-react-typescript-shadcn-ui-cursorrules-p'
+          - 'typescript-react-cursorrules-prompt-file'
+          - 'react-components-creation-cursorrules-prompt-file'
+          - 'react-typescript-nextjs-nodejs-cursorrules-prompt-'
+          - 'react-query-cursorrules-prompt-file'
+          - 'react-redux-typescript-cursorrules-prompt-file'
+          - 'react-styled-components-cursorrules-prompt-file'
+          - 'react-chakra-ui-cursorrules-prompt-file'
+          - 'react-graphql-apollo-client-cursorrules-prompt-file'
+          - 'react-mobx-cursorrules-prompt-file'
+          - 'react-nextjs-ui-development-cursorrules-prompt-fil'
+          - 'tailwind-css-nextjs-guide-cursorrules-prompt-file'
+          - 'tailwind-shadcn-ui-integration-cursorrules-prompt-'
+          - 'html-tailwind-css-javascript-cursorrules-prompt-fi'
+          - 'typescript-code-convention-cursorrules-prompt-file'
+          - 'typescript-axios-cursorrules-prompt-file'
+          - 'javascript-typescript-code-quality-cursorrules-pro'
+          - 'code-guidelines-cursorrules-prompt-file'
 
   # Backend Node.js profile
   backend:
-    description: "Node.js/Express backend"
+    description: 'Node.js/Express backend'
     rules:
-      - pattern: "server/**/*.{js,ts}"
-        exclude: "server/app/**"
+      - pattern: 'server/**/*.{js,ts}'
+        exclude: 'server/app/**'
         ruleSets:
-          - "es-module-nodejs-guidelines-cursorrules-prompt-fil"
-          - "nodejs-mongodb-cursorrules-prompt-file-tutorial"
-          - "nodejs-mongodb-jwt-express-react-cursorrules-promp"
-          - "typescript-nodejs-nextjs-app-cursorrules-prompt-fi"
-          - "typescript-nodejs-nextjs-react-ui-css-cursorrules-"
-          - "typescript-nodejs-nextjs-ai-cursorrules-prompt-fil"
-          - "typescript-nestjs-best-practices-cursorrules-promp"
-          - "javascript-typescript-code-quality-cursorrules-pro"
-          - "code-guidelines-cursorrules-prompt-file"
+          - 'es-module-nodejs-guidelines-cursorrules-prompt-fil'
+          - 'nodejs-mongodb-cursorrules-prompt-file-tutorial'
+          - 'nodejs-mongodb-jwt-express-react-cursorrules-promp'
+          - 'typescript-nodejs-nextjs-app-cursorrules-prompt-fi'
+          - 'typescript-nodejs-nextjs-react-ui-css-cursorrules-'
+          - 'typescript-nodejs-nextjs-ai-cursorrules-prompt-fil'
+          - 'typescript-nestjs-best-practices-cursorrules-promp'
+          - 'javascript-typescript-code-quality-cursorrules-pro'
+          - 'code-guidelines-cursorrules-prompt-file'
 
   # Python/FastAPI profile
   python:
-    description: "Python FastAPI services"
+    description: 'Python FastAPI services'
     rules:
-      - pattern: "server/app/**/*.py"
+      - pattern: 'server/app/**/*.py'
         ruleSets:
-          - "py-fast-api"
-          - "python-fastapi-best-practices-cursorrules-prompt-f"
-          - "python-312-fastapi-best-practices-cursorrules-prom"
-          - "python-fastapi-cursorrules-prompt-file"
-          - "python-fastapi-scalable-api-cursorrules-prompt-fil"
-          - "python-cursorrules-prompt-file-best-practices"
-          - "python-developer-cursorrules-prompt-file"
-          - "python-llm-ml-workflow-cursorrules-prompt-file"
-          - "python-projects-guide-cursorrules-prompt-file"
-          - "python-containerization-cursorrules-prompt-file"
-          - "python-github-setup-cursorrules-prompt-file"
-          - "python-django-best-practices-cursorrules-prompt-fi"
-          - "python-flask-json-guide-cursorrules-prompt-file"
-          - "pandas-scikit-learn-guide-cursorrules-prompt-file"
-          - "pytorch-scikit-learn-cursorrules-prompt-file"
-          - "temporal-python-cursorrules"
-          - "linux-nvidia-cuda-python-cursorrules-prompt-file"
-          - "pyqt6-eeg-processing-cursorrules-prompt-file"
-          - "python--typescript-guide-cursorrules-prompt-file"
+          - 'py-fast-api'
+          - 'python-fastapi-best-practices-cursorrules-prompt-f'
+          - 'python-312-fastapi-best-practices-cursorrules-prom'
+          - 'python-fastapi-cursorrules-prompt-file'
+          - 'python-fastapi-scalable-api-cursorrules-prompt-fil'
+          - 'python-cursorrules-prompt-file-best-practices'
+          - 'python-developer-cursorrules-prompt-file'
+          - 'python-llm-ml-workflow-cursorrules-prompt-file'
+          - 'python-projects-guide-cursorrules-prompt-file'
+          - 'python-containerization-cursorrules-prompt-file'
+          - 'python-github-setup-cursorrules-prompt-file'
+          - 'python-django-best-practices-cursorrules-prompt-fi'
+          - 'python-flask-json-guide-cursorrules-prompt-file'
+          - 'pandas-scikit-learn-guide-cursorrules-prompt-file'
+          - 'pytorch-scikit-learn-cursorrules-prompt-file'
+          - 'temporal-python-cursorrules'
+          - 'linux-nvidia-cuda-python-cursorrules-prompt-file'
+          - 'pyqt6-eeg-processing-cursorrules-prompt-file'
+          - 'python--typescript-guide-cursorrules-prompt-file'
 
   # Testing profile
   testing:
-    description: "Test files (Jest, Playwright, Cypress)"
+    description: 'Test files (Jest, Playwright, Cypress)'
     rules:
-      - pattern: "**/*.{test,spec}.{js,ts,jsx,tsx}"
+      - pattern: '**/*.{test,spec}.{js,ts,jsx,tsx}'
         ruleSets:
-          - "jest-unit-testing-cursorrules-prompt-file"
-          - "vitest-unit-testing-cursorrules-prompt-file"
-          - "playwright-e2e-testing-cursorrules-prompt-file"
-          - "playwright-integration-testing-cursorrules-prompt-file"
-          - "playwright-api-testing-cursorrules-prompt-file"
-          - "playwright-accessibility-testing-cursorrules-prompt-file"
-          - "playwright-defect-tracking-cursorrules-prompt-file"
-          - "cypress-e2e-testing-cursorrules-prompt-file"
-          - "cypress-integration-testing-cursorrules-prompt-file"
-          - "cypress-api-testing-cursorrules-prompt-file"
-          - "cypress-accessibility-testing-cursorrules-prompt-file"
-          - "cypress-defect-tracking-cursorrules-prompt-file"
-          - "gherkin-style-testing-cursorrules-prompt-file"
-          - "typescript-expo-jest-detox-cursorrules-prompt-file"
-      
-      - pattern: "**/*.{test,spec}.py"
+          - 'jest-unit-testing-cursorrules-prompt-file'
+          - 'vitest-unit-testing-cursorrules-prompt-file'
+          - 'playwright-e2e-testing-cursorrules-prompt-file'
+          - 'playwright-integration-testing-cursorrules-prompt-file'
+          - 'playwright-api-testing-cursorrules-prompt-file'
+          - 'playwright-accessibility-testing-cursorrules-prompt-file'
+          - 'playwright-defect-tracking-cursorrules-prompt-file'
+          - 'cypress-e2e-testing-cursorrules-prompt-file'
+          - 'cypress-integration-testing-cursorrules-prompt-file'
+          - 'cypress-api-testing-cursorrules-prompt-file'
+          - 'cypress-accessibility-testing-cursorrules-prompt-file'
+          - 'cypress-defect-tracking-cursorrules-prompt-file'
+          - 'gherkin-style-testing-cursorrules-prompt-file'
+          - 'typescript-expo-jest-detox-cursorrules-prompt-file'
+
+      - pattern: '**/*.{test,spec}.py'
         ruleSets:
-          - "python-projects-guide-cursorrules-prompt-file"
-          - "python-cursorrules-prompt-file-best-practices"
+          - 'python-projects-guide-cursorrules-prompt-file'
+          - 'python-cursorrules-prompt-file-best-practices'
 
   # Documentation profile
   documentation:
-    description: "Documentation and markdown files"
+    description: 'Documentation and markdown files'
     rules:
-      - pattern: "docs/**/*.md"
+      - pattern: 'docs/**/*.md'
         ruleSets:
-          - "how-to-documentation-cursorrules-prompt-file"
-          - "toon-format"
-      
-      - pattern: "**/*.md"
+          - 'how-to-documentation-cursorrules-prompt-file'
+          - 'toon-format'
+
+      - pattern: '**/*.md'
         ruleSets:
-          - "how-to-documentation-cursorrules-prompt-file"
-          - "toon-format"
+          - 'how-to-documentation-cursorrules-prompt-file'
+          - 'toon-format'
 
   # Docker/DevOps profile
   docker:
-    description: "Docker and infrastructure files"
+    description: 'Docker and infrastructure files'
     rules:
-      - pattern: "**/Dockerfile*"
+      - pattern: '**/Dockerfile*'
         ruleSets:
-          - "python-containerization-cursorrules-prompt-file"
-          - "code-guidelines-cursorrules-prompt-file"
-      
-      - pattern: "**/docker-compose*.{yml,yaml}"
+          - 'python-containerization-cursorrules-prompt-file'
+          - 'code-guidelines-cursorrules-prompt-file'
+
+      - pattern: '**/docker-compose*.{yml,yaml}'
         ruleSets:
-          - "python-containerization-cursorrules-prompt-file"
-          - "code-guidelines-cursorrules-prompt-file"
+          - 'python-containerization-cursorrules-prompt-file'
+          - 'code-guidelines-cursorrules-prompt-file'
 
   # Configuration files
   config:
-    description: "Configuration files"
+    description: 'Configuration files'
     rules:
-      - pattern: "**/*.{json,yaml,yml}"
-        exclude: "**/node_modules/**"
+      - pattern: '**/*.{json,yaml,yml}'
+        exclude: '**/node_modules/**'
         ruleSets:
-          - "code-guidelines-cursorrules-prompt-file"
-          - "github-code-quality-cursorrules-prompt-file"
+          - 'code-guidelines-cursorrules-prompt-file'
+          - 'github-code-quality-cursorrules-prompt-file'
 
   # Git/Version control
   git:
-    description: "Git and version control files"
+    description: 'Git and version control files'
     rules:
-      - pattern: "**/.git*"
+      - pattern: '**/.git*'
         ruleSets:
-          - "git-conventional-commit-messages"
-      
-      - pattern: "**/*.gitignore"
+          - 'git-conventional-commit-messages'
+
+      - pattern: '**/*.gitignore'
         ruleSets:
-          - "git-conventional-commit-messages"
+          - 'git-conventional-commit-messages'
 
   # Default profile (applies when no specific profile matches)
   default:
-    description: "Default rules for all files"
+    description: 'Default rules for all files'
     rules:
-      - pattern: "**/*"
+      - pattern: '**/*'
         ruleSets:
-          - "code-guidelines-cursorrules-prompt-file"
-          - "code-style-consistency-cursorrules-prompt-file"
-          - "github-code-quality-cursorrules-prompt-file"
-          - "javascript-typescript-code-quality-cursorrules-pro"
+          - 'code-guidelines-cursorrules-prompt-file'
+          - 'code-style-consistency-cursorrules-prompt-file'
+          - 'github-code-quality-cursorrules-prompt-file'
+          - 'javascript-typescript-code-quality-cursorrules-pro'
 
 # Rule loading strategy
 loading:
   # Load rules based on file patterns (glob matching)
-  strategy: "pattern-based"
-  
+  strategy: 'pattern-based'
+
   # Priority order (first match wins)
   priority:
-    - "testing"
-    - "documentation"
-    - "docker"
-    - "config"
-    - "git"
-    - "fullstack"
-    - "frontend"
-    - "backend"
-    - "python"
-    - "default"
-  
+    - 'testing'
+    - 'documentation'
+    - 'docker'
+    - 'config'
+    - 'git'
+    - 'fullstack'
+    - 'frontend'
+    - 'backend'
+    - 'python'
+    - 'default'
+
   # File extensions that trigger rule loading
   extensions:
-    frontend: [".js", ".jsx", ".ts", ".tsx"]
-    backend: [".js", ".ts"]
-    python: [".py"]
-    testing: [".test.js", ".test.ts", ".test.jsx", ".test.tsx", ".spec.js", ".spec.ts", ".test.py", ".spec.py"]
-    documentation: [".md"]
-    config: [".json", ".yaml", ".yml"]
-  
+    frontend: ['.js', '.jsx', '.ts', '.tsx']
+    backend: ['.js', '.ts']
+    python: ['.py']
+    testing:
+      [
+        '.test.js',
+        '.test.ts',
+        '.test.jsx',
+        '.test.tsx',
+        '.spec.js',
+        '.spec.ts',
+        '.test.py',
+        '.spec.py',
+      ]
+    documentation: ['.md']
+    config: ['.json', '.yaml', '.yml']
+
   # Maximum number of rule files to load per file (to avoid token overflow)
   max_rules_per_file: 10
-  
+
   # Selection strategy when multiple rules match
-  selection: "most_relevant"
+  selection: 'most_relevant'
 
 # Excluded rules (frameworks not used in this project)
 # These are excluded to improve performance
 excludes:
-  - "android-jetpack-compose-cursorrules-prompt-file"
-  - "angular-*"
-  - "aspnet-*"
-  - "cpp-programming-guidelines-cursorrules-prompt-file"
-  - "dart-*"
-  - "drupal-*"
-  - "elixir-*"
-  - "flutter-*"
-  - "go-*"
-  - "java-*"
-  - "kotlin-*"
-  - "laravel-*"
-  - "nativescript-*"
-  - "rails-cursorrules-prompt-file"
-  - "solidity-*"
-  - "solidjs-*"
-  - "svelte*"
-  - "swiftui-guidelines-cursorrules-prompt-file"
-  - "unity-cursor-ai-c-cursorrules-prompt-file"
-  - "vue-*"
-  - "wordpress-*"
-  - "xian-smart-contracts-cursor-rules-prompt-file"
+  - 'android-jetpack-compose-cursorrules-prompt-file'
+  - 'angular-*'
+  - 'aspnet-*'
+  - 'cpp-programming-guidelines-cursorrules-prompt-file'
+  - 'dart-*'
+  - 'drupal-*'
+  - 'elixir-*'
+  - 'flutter-*'
+  - 'go-*'
+  - 'java-*'
+  - 'kotlin-*'
+  - 'laravel-*'
+  - 'nativescript-*'
+  - 'rails-cursorrules-prompt-file'
+  - 'solidity-*'
+  - 'solidjs-*'
+  - 'svelte*'
+  - 'swiftui-guidelines-cursorrules-prompt-file'
+  - 'unity-cursor-ai-c-cursorrules-prompt-file'
+  - 'vue-*'
+  - 'wordpress-*'
+  - 'xian-smart-contracts-cursor-rules-prompt-file'
 
 # Additional rule sets by category (for reference)
 # These rules are available but not actively loaded unless specifically needed
 additional_rules:
   # Next.js rules (if migrating to Next.js)
   nextjs:
-    - "nextjs-*"
-    - "cursorrules-cursor-ai-nextjs-14-tailwind-seo-setup"
-    - "next-type-llm"
-  
+    - 'nextjs-*'
+    - 'cursorrules-cursor-ai-nextjs-14-tailwind-seo-setup'
+    - 'next-type-llm'
+
   # React Native (if adding mobile support)
   react_native:
-    - "react-native-expo-cursorrules-prompt-file"
-    - "react-native-expo-router-typescript-windows-cursorrules-prompt-file"
-  
+    - 'react-native-expo-cursorrules-prompt-file'
+    - 'react-native-expo-router-typescript-windows-cursorrules-prompt-file'
+
   # Additional testing frameworks
   testing_additional:
-    - "testrail-test-case-cursorrules-prompt-file"
-    - "xray-test-case-cursorrules-prompt-file"
-  
+    - 'testrail-test-case-cursorrules-prompt-file'
+    - 'xray-test-case-cursorrules-prompt-file'
+
   # Templates and workflows
   templates:
-    - "pr-template-cursorrules-prompt-file"
-    - "project-epic-template-cursorrules-prompt-file"
-    - "engineering-ticket-template-cursorrules-prompt-file"
-    - "qa-bug-report-cursorrules-prompt-file"
-  
+    - 'pr-template-cursorrules-prompt-file'
+    - 'project-epic-template-cursorrules-prompt-file'
+    - 'engineering-ticket-template-cursorrules-prompt-file'
+    - 'qa-bug-report-cursorrules-prompt-file'
+
   # Specialized tools
   tools:
-    - "vscode-extension-dev-typescript-cursorrules-prompt-file"
-    - "chrome-extension-dev-js-typescript-cursorrules-pro"
-    - "beefreeSDK-nocode-content-editor-cursorrules-prompt-file"
-    - "plasticode-telegram-api-cursorrules-prompt-file"
+    - 'vscode-extension-dev-typescript-cursorrules-prompt-file'
+    - 'chrome-extension-dev-js-typescript-cursorrules-pro'
+    - 'beefreeSDK-nocode-content-editor-cursorrules-prompt-file'
+    - 'plasticode-telegram-api-cursorrules-prompt-file'
 
 # Metadata
 metadata:
-  project: "Omega AI"
+  project: 'Omega AI'
   techStack:
-    - "React 18"
-    - "Node.js/Express"
-    - "Python/FastAPI"
-    - "TypeScript"
-    - "JavaScript"
-    - "Tailwind CSS"
-    - "Docker"
-    - "Ollama"
-    - "LangChain"
-    - "Chroma"
-    - "Redis"
-  lastUpdated: "2025-01-29"
-  manifestVersion: "1.0"
+    - 'React 18'
+    - 'Node.js/Express'
+    - 'Python/FastAPI'
+    - 'TypeScript'
+    - 'JavaScript'
+    - 'Tailwind CSS'
+    - 'Docker'
+    - 'Ollama'
+    - 'LangChain'
+    - 'Chroma'
+    - 'Redis'
+  lastUpdated: '2025-01-29'
+  manifestVersion: '1.0'
   totalRules: 150+
-

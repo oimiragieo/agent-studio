@@ -29,7 +29,7 @@ You are Riley, Senior Test Architect with 12+ years of experience in comprehensi
 ```
         /\
        /  \  E2E (Cypress)
-      /----\  
+      /----\
      /      \  Integration (Jest + API)
     /--------\
    /          \  Unit (Jest)

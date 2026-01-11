@@ -21,7 +21,7 @@ const ROOT = path.join(__dirname, '..');
  */
 export async function loadWorkflow(workflowName) {
   const workflowFile = path.join(ROOT, '.claude/workflows', `${workflowName}.yaml`);
-  
+
   try {
     const content = await fs.readFile(workflowFile, 'utf-8');
     return yaml.load(content);
@@ -37,58 +37,58 @@ export async function loadWorkflow(workflowName) {
  */
 export function generatePreview(workflow) {
   const lines = [];
-  
+
   lines.push('='.repeat(60));
   lines.push(`Workflow: ${workflow.name || 'Unnamed Workflow'}`);
   lines.push('='.repeat(60));
-  
+
   if (workflow.description) {
     lines.push(`\nDescription: ${workflow.description}`);
   }
-  
+
   if (workflow.trigger_keywords && workflow.trigger_keywords.length > 0) {
     lines.push(`\nTrigger Keywords: ${workflow.trigger_keywords.join(', ')}`);
   }
-  
+
   if (workflow.steps && workflow.steps.length > 0) {
     lines.push(`\nSteps (${workflow.steps.length}):`);
     lines.push('-'.repeat(60));
-    
+
     workflow.steps.forEach((step, index) => {
       const stepNum = step.step || index;
       const stepName = step.name || 'Unnamed Step';
       const agent = step.agent || 'N/A';
-      
+
       lines.push(`\n${stepNum}. ${stepName}`);
       lines.push(`   Agent: ${agent}`);
-      
+
       if (step.inputs && step.inputs.length > 0) {
         lines.push(`   Inputs: ${step.inputs.join(', ')}`);
       }
-      
+
       if (step.outputs && step.outputs.length > 0) {
         lines.push(`   Outputs: ${step.outputs.join(', ')}`);
       }
-      
+
       if (step.description) {
         lines.push(`   Description: ${step.description.split('\n')[0]}`);
       }
-      
+
       if (step.validation) {
         lines.push(`   Validation: ${step.validation.schema || step.validation.gate || 'Yes'}`);
       }
     });
   }
-  
+
   if (workflow.completion_criteria && workflow.completion_criteria.length > 0) {
     lines.push(`\nCompletion Criteria:`);
     workflow.completion_criteria.forEach(criterion => {
       lines.push(`  - ${criterion}`);
     });
   }
-  
+
   lines.push('\n' + '='.repeat(60));
-  
+
   return lines.join('\n');
 }
 
@@ -109,11 +109,11 @@ export function estimateDuration(workflow) {
   if (!workflow.steps || workflow.steps.length === 0) {
     return 'Unknown';
   }
-  
+
   // Rough estimate: 2-5 minutes per step
   const avgMinutesPerStep = 3;
   const totalMinutes = workflow.steps.length * avgMinutesPerStep;
-  
+
   if (totalMinutes < 60) {
     return `~${totalMinutes} minutes`;
   } else {
@@ -130,7 +130,7 @@ export function estimateDuration(workflow) {
  */
 export async function previewWorkflows(workflowNames) {
   const previews = [];
-  
+
   for (const workflowName of workflowNames) {
     try {
       const workflow = await loadWorkflow(workflowName);
@@ -138,13 +138,13 @@ export async function previewWorkflows(workflowNames) {
         name: workflowName,
         workflow,
         preview: generatePreview(workflow),
-        estimatedDuration: estimateDuration(workflow)
+        estimatedDuration: estimateDuration(workflow),
       });
     } catch (error) {
       console.warn(`Warning: Could not load workflow ${workflowName}: ${error.message}`);
     }
   }
-  
+
   return previews;
 }
 
@@ -169,17 +169,17 @@ export async function showSelectionPreview(selectedWorkflow, alternativeWorkflow
   console.log('\n' + '='.repeat(60));
   console.log('WORKFLOW SELECTION PREVIEW');
   console.log('='.repeat(60));
-  
+
   try {
     const workflow = await loadWorkflow(selectedWorkflow);
     displayPreview(workflow);
-    
+
     console.log(`\nEstimated Duration: ${estimateDuration(workflow)}`);
-    
+
     if (alternativeWorkflows.length > 0) {
       console.log(`\nAlternative Workflows: ${alternativeWorkflows.join(', ')}`);
     }
-    
+
     console.log('\n' + '='.repeat(60));
   } catch (error) {
     console.error(`Error loading workflow: ${error.message}`);
@@ -189,14 +189,14 @@ export async function showSelectionPreview(selectedWorkflow, alternativeWorkflow
 // CLI usage
 if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
-  
+
   if (command === 'preview') {
     const workflowName = process.argv[3];
     if (!workflowName) {
       console.error('Usage: node workflow-preview.mjs preview <workflowName>');
       process.exit(1);
     }
-    
+
     loadWorkflow(workflowName)
       .then(workflow => {
         displayPreview(workflow);
@@ -226,4 +226,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('  node workflow-preview.mjs list                   - List available workflows');
   }
 }
-

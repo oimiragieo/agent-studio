@@ -14,7 +14,7 @@ export function startMonitoring(options = {}) {
   const {
     warnThresholdMB: threshold = DEFAULT_WARN_THRESHOLD_MB,
     checkIntervalMs = DEFAULT_CHECK_INTERVAL_MS,
-    onWarning = null
+    onWarning = null,
   } = options;
 
   warnThresholdMB = threshold;
@@ -29,11 +29,11 @@ export function startMonitoring(options = {}) {
     if (usage.rssMB > warnThresholdMB) {
       const warning = `[Memory] WARNING: RSS usage ${usage.rssMB.toFixed(2)}MB exceeds threshold ${warnThresholdMB}MB`;
       console.warn(warning);
-      
+
       if (onWarning) {
         onWarning(usage);
       }
-      
+
       // Attempt GC if available
       if (global.gc) {
         global.gc();
@@ -57,13 +57,15 @@ export function getMemoryUsage() {
     heapUsedMB: usage.heapUsed / 1024 / 1024,
     heapTotalMB: usage.heapTotal / 1024 / 1024,
     rssMB: usage.rss / 1024 / 1024,
-    externalMB: usage.external / 1024 / 1024
+    externalMB: usage.external / 1024 / 1024,
   };
 }
 
 export function logMemoryUsage(label = '') {
   const usage = getMemoryUsage();
-  console.log(`[Memory${label ? ` ${label}` : ''}] Heap: ${usage.heapUsedMB.toFixed(2)}MB / ${usage.heapTotalMB.toFixed(2)}MB, RSS: ${usage.rssMB.toFixed(2)}MB`);
+  console.log(
+    `[Memory${label ? ` ${label}` : ''}] Heap: ${usage.heapUsedMB.toFixed(2)}MB / ${usage.heapTotalMB.toFixed(2)}MB, RSS: ${usage.rssMB.toFixed(2)}MB`
+  );
   return usage;
 }
 
@@ -81,12 +83,12 @@ export function canSpawnSubagent(minFreeMB = 500) {
 
   const result = {
     canSpawn,
-    currentUsageMB: usage.rssMB,  // Changed from heapUsedMB
-    freeMB: freeRSSMB,  // Changed from freeMB
-    maxRSSMB,  // NEW
+    currentUsageMB: usage.rssMB, // Changed from heapUsedMB
+    freeMB: freeRSSMB, // Changed from freeMB
+    maxRSSMB, // NEW
     // BACKWARD COMPAT: Keep old fields
     heapUsedMB: usage.heapUsedMB,
-    maxHeapMB: 4096
+    maxHeapMB: 4096,
   };
 
   if (!canSpawn) {

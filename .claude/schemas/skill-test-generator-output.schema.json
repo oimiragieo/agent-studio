@@ -106,12 +106,7 @@
       "items": {
         "type": "string"
       },
-      "examples": [
-        "Arrange-Act-Assert",
-        "Given-When-Then",
-        "Page Object Model",
-        "Test fixtures"
-      ]
+      "examples": ["Arrange-Act-Assert", "Given-When-Then", "Page Object Model", "Test fixtures"]
     },
     "dependencies_detected": {
       "type": "array",
@@ -126,12 +121,7 @@
       "items": {
         "type": "string"
       },
-      "examples": [
-        "null/undefined inputs",
-        "empty arrays",
-        "boundary values",
-        "error conditions"
-      ]
+      "examples": ["null/undefined inputs", "empty arrays", "boundary values", "error conditions"]
     },
     "test_configuration": {
       "type": "object",

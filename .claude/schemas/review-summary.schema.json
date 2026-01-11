@@ -3,7 +3,14 @@
   "type": "object",
   "title": "Review Summary",
   "description": "Schema for consolidated review summary artifacts from code review workflow",
-  "required": ["summary_id", "review_date", "files_reviewed", "total_issues", "severity_breakdown", "recommendations"],
+  "required": [
+    "summary_id",
+    "review_date",
+    "files_reviewed",
+    "total_issues",
+    "severity_breakdown",
+    "recommendations"
+  ],
   "properties": {
     "summary_id": {
       "type": "string",

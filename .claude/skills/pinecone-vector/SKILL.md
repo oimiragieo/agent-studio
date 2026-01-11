@@ -8,13 +8,13 @@ required-agents: [llm-architect, database-architect]
 recommended-agents: [developer, qa]
 context-cost: medium
 triggers:
-  - "vector search"
-  - "similarity search"
-  - "embedding storage"
-  - "RAG system"
-  - "semantic search"
-  - "pinecone"
-  - "vector database"
+  - 'vector search'
+  - 'similarity search'
+  - 'embedding storage'
+  - 'RAG system'
+  - 'semantic search'
+  - 'pinecone'
+  - 'vector database'
 ---
 
 # Pinecone Vector Skill
@@ -35,36 +35,36 @@ Provides vector database operations for similarity search, semantic search, and 
 
 ### Index Management
 
-| Tool | Purpose | Confirmation Required |
-|------|---------|----------------------|
-| `list-indexes` | List all Pinecone indexes | No |
-| `describe-index` | Get index configuration and stats | No |
-| `create-index` | Create new vector index | **YES** |
-| `delete-index` | Delete vector index permanently | **YES** |
+| Tool             | Purpose                           | Confirmation Required |
+| ---------------- | --------------------------------- | --------------------- |
+| `list-indexes`   | List all Pinecone indexes         | No                    |
+| `describe-index` | Get index configuration and stats | No                    |
+| `create-index`   | Create new vector index           | **YES**               |
+| `delete-index`   | Delete vector index permanently   | **YES**               |
 
 ### Vector Operations
 
-| Tool | Purpose | Confirmation Required |
-|------|---------|----------------------|
-| `upsert` | Insert or update vectors | No |
-| `query` | Similarity search by vector | No |
-| `fetch` | Retrieve vectors by ID | No |
-| `delete-vectors` | Delete specific vectors | No |
+| Tool             | Purpose                     | Confirmation Required |
+| ---------------- | --------------------------- | --------------------- |
+| `upsert`         | Insert or update vectors    | No                    |
+| `query`          | Similarity search by vector | No                    |
+| `fetch`          | Retrieve vectors by ID      | No                    |
+| `delete-vectors` | Delete specific vectors     | No                    |
 
 ### Index Statistics
 
-| Tool | Purpose | Confirmation Required |
-|------|---------|----------------------|
-| `describe-stats` | Get index statistics (vector count, namespaces) | No |
-| `list-namespaces` | List all namespaces in index | No |
+| Tool              | Purpose                                         | Confirmation Required |
+| ----------------- | ----------------------------------------------- | --------------------- |
+| `describe-stats`  | Get index statistics (vector count, namespaces) | No                    |
+| `list-namespaces` | List all namespaces in index                    | No                    |
 
 ### Collections
 
-| Tool | Purpose | Confirmation Required |
-|------|---------|----------------------|
-| `list-collections` | List all collections | No |
-| `create-collection` | Create collection from index snapshot | **YES** |
-| `delete-collection` | Delete collection permanently | **YES** |
+| Tool                | Purpose                               | Confirmation Required |
+| ------------------- | ------------------------------------- | --------------------- |
+| `list-collections`  | List all collections                  | No                    |
+| `create-collection` | Create collection from index snapshot | **YES**               |
+| `delete-collection` | Delete collection permanently         | **YES**               |
 
 ## Usage Patterns
 
@@ -74,7 +74,7 @@ Provides vector database operations for similarity search, semantic search, and 
 import { Pinecone } from '@pinecone-database/pinecone';
 
 const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY // NEVER hardcode
+  apiKey: process.env.PINECONE_API_KEY, // NEVER hardcode
 });
 ```
 
@@ -89,9 +89,9 @@ await pinecone.createIndex({
   spec: {
     serverless: {
       cloud: 'aws',
-      region: 'us-east-1'
-    }
-  }
+      region: 'us-east-1',
+    },
+  },
 });
 ```
 
@@ -132,8 +132,8 @@ const results = await index.query({
   topK: 10, // Return top 10 matches
   includeMetadata: true,
   filter: {
-    category: { $eq: 'documentation' }
-  }
+    category: { $eq: 'documentation' },
+  },
 });
 
 // Process results
@@ -162,7 +162,7 @@ await index.deleteOne('doc-1');
 
 // Delete by filter
 await index.deleteMany({
-  category: { $eq: 'deprecated' }
+  category: { $eq: 'deprecated' },
 });
 
 // Delete all vectors in namespace
@@ -189,24 +189,26 @@ console.log(`Namespaces: ${Object.keys(stats.namespaces).join(', ')}`);
 ```typescript
 // ✅ CORRECT: Use environment variables
 const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY
+  apiKey: process.env.PINECONE_API_KEY,
 });
 
 // ❌ WRONG: Hardcoded API key
 const pinecone = new Pinecone({
-  apiKey: 'pk-abc123...' // NEVER DO THIS
+  apiKey: 'pk-abc123...', // NEVER DO THIS
 });
 ```
 
 ### Environment Configuration
 
 **.env.local** (local development):
+
 ```bash
 PINECONE_API_KEY=your-api-key-here
 PINECONE_ENVIRONMENT=us-east-1-aws
 ```
 
 **.env.example** (committed to git):
+
 ```bash
 PINECONE_API_KEY=your-pinecone-api-key
 PINECONE_ENVIRONMENT=your-pinecone-environment
@@ -215,12 +217,14 @@ PINECONE_ENVIRONMENT=your-pinecone-environment
 ### Destructive Operations
 
 **Require user confirmation before**:
+
 - Creating indexes (costs apply)
 - Deleting indexes (permanent data loss)
 - Creating collections (costs apply)
 - Deleting collections (permanent data loss)
 
 **Confirmation Pattern**:
+
 ```typescript
 // Before destructive operation
 console.warn('⚠️ WARNING: This will permanently delete index "semantic-search"');
@@ -240,12 +244,14 @@ await pinecone.deleteIndex('semantic-search');
 ### Primary Agents
 
 **llm-architect** (Primary):
+
 - Design RAG system architecture
 - Choose index configuration (dimension, metric)
 - Design metadata schema
 - Optimize query patterns
 
 **database-architect** (Primary):
+
 - Index capacity planning
 - Namespace strategy
 - Performance optimization
@@ -254,12 +260,14 @@ await pinecone.deleteIndex('semantic-search');
 ### Supporting Agents
 
 **developer**:
+
 - Implement vector operations
 - Integrate with embedding models
 - Build search APIs
 - Handle error cases
 
 **qa**:
+
 - Test similarity search accuracy
 - Validate metadata filtering
 - Performance testing
@@ -270,11 +278,13 @@ await pinecone.deleteIndex('semantic-search');
 ### 1. Index Configuration
 
 **Choose the right metric**:
+
 - `cosine`: Most common for normalized embeddings (default)
 - `euclidean`: For absolute distance
 - `dotproduct`: For non-normalized embeddings
 
 **Set correct dimension**:
+
 - OpenAI ada-002: 1536
 - OpenAI text-embedding-3-small: 1536
 - OpenAI text-embedding-3-large: 3072
@@ -283,6 +293,7 @@ await pinecone.deleteIndex('semantic-search');
 ### 2. Metadata Design
 
 **Use metadata for filtering**:
+
 ```typescript
 metadata: {
   category: 'documentation',
@@ -294,6 +305,7 @@ metadata: {
 ```
 
 **Filter during query**:
+
 ```typescript
 await index.query({
   vector: queryVector,
@@ -301,14 +313,15 @@ await index.query({
   filter: {
     category: { $eq: 'documentation' },
     language: { $eq: 'en' },
-    published_date: { $gte: '2024-01-01' }
-  }
+    published_date: { $gte: '2024-01-01' },
+  },
 });
 ```
 
 ### 3. Batch Operations
 
 **Upsert in batches (100-200 vectors)**:
+
 ```typescript
 const BATCH_SIZE = 100;
 
@@ -321,6 +334,7 @@ for (let i = 0; i < vectors.length; i += BATCH_SIZE) {
 ### 4. Namespace Strategy
 
 **Use namespaces for multi-tenancy**:
+
 ```typescript
 // Separate data by tenant
 const tenantIndex = index.namespace('tenant-123');
@@ -332,6 +346,7 @@ await tenantIndex.query({ vector: queryVector, topK: 10 });
 ### 5. Error Handling
 
 **Handle rate limits and retries**:
+
 ```typescript
 async function upsertWithRetry(index, vectors, maxRetries = 3) {
   for (let i = 0; i < maxRetries; i++) {
@@ -402,16 +417,17 @@ async function upsertWithRetry(index, vectors, maxRetries = 3) {
 
 ### Common Errors
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| `404 Index not found` | Index doesn't exist | Create index first |
-| `400 Dimension mismatch` | Vector dimension wrong | Match embedding model dimension |
-| `429 Rate limit exceeded` | Too many requests | Implement retry with backoff |
-| `401 Unauthorized` | Invalid API key | Check PINECONE_API_KEY |
+| Error                     | Cause                  | Solution                        |
+| ------------------------- | ---------------------- | ------------------------------- |
+| `404 Index not found`     | Index doesn't exist    | Create index first              |
+| `400 Dimension mismatch`  | Vector dimension wrong | Match embedding model dimension |
+| `429 Rate limit exceeded` | Too many requests      | Implement retry with backoff    |
+| `401 Unauthorized`        | Invalid API key        | Check PINECONE_API_KEY          |
 
 ### Validation
 
 **Before operations**:
+
 ```typescript
 // Validate index exists
 const indexes = await pinecone.listIndexes();
@@ -422,7 +438,9 @@ if (!indexes.indexes.some(i => i.name === 'semantic-search')) {
 // Validate vector dimension
 const indexInfo = await pinecone.describeIndex('semantic-search');
 if (vector.length !== indexInfo.dimension) {
-  throw new Error(`Vector dimension mismatch: expected ${indexInfo.dimension}, got ${vector.length}`);
+  throw new Error(
+    `Vector dimension mismatch: expected ${indexInfo.dimension}, got ${vector.length}`
+  );
 }
 ```
 
@@ -441,7 +459,7 @@ async function ragQuery(question: string) {
   // 1. Generate embedding for question
   const embedding = await openai.embeddings.create({
     model: 'text-embedding-ada-002',
-    input: question
+    input: question,
   });
 
   // 2. Query Pinecone for relevant context
@@ -449,21 +467,19 @@ async function ragQuery(question: string) {
   const results = await index.query({
     vector: embedding.data[0].embedding,
     topK: 5,
-    includeMetadata: true
+    includeMetadata: true,
   });
 
   // 3. Build context from results
-  const context = results.matches
-    .map(match => match.metadata.text)
-    .join('\n\n');
+  const context = results.matches.map(match => match.metadata.text).join('\n\n');
 
   // 4. Generate answer with LLM
   const completion = await openai.chat.completions.create({
     model: 'gpt-4',
     messages: [
       { role: 'system', content: 'Answer based on the provided context.' },
-      { role: 'user', content: `Context:\n${context}\n\nQuestion: ${question}` }
-    ]
+      { role: 'user', content: `Context:\n${context}\n\nQuestion: ${question}` },
+    ],
   });
 
   return completion.choices[0].message.content;
@@ -475,6 +491,7 @@ async function ragQuery(question: string) {
 ### Index Creation Fails
 
 **Check**:
+
 - API key is valid
 - Dimension matches embedding model
 - Region is supported
@@ -483,6 +500,7 @@ async function ragQuery(question: string) {
 ### Query Returns No Results
 
 **Check**:
+
 - Vectors were successfully upserted
 - Query vector dimension matches index
 - Filters aren't too restrictive
@@ -491,6 +509,7 @@ async function ragQuery(question: string) {
 ### Slow Queries
 
 **Optimize**:
+
 - Add metadata filters to reduce search space
 - Use appropriate topK value
 - Check index stats for vector count

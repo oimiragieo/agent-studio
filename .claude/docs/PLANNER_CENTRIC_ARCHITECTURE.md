@@ -24,11 +24,13 @@ flowchart TD
 ### 1. Plan-First Approach
 
 All complex tasks (workflow-based CUJs) MUST begin with a planning phase:
+
 - **Step 0**: Planner creates comprehensive plan
 - **Step 0.1**: Plan rated via response-rater (minimum 7/10)
 - **Unrated plans NEVER execute**
 
 **Rationale**: Planning ensures:
+
 - All requirements understood before implementation
 - Risks identified and mitigated early
 - Correct agents assigned to tasks
@@ -60,12 +62,14 @@ Large projects use hierarchical plan structure to manage complexity:
 ### 3. Multi-Phase Organization
 
 Projects exceeding 3,000 lines are organized into phases:
+
 - **Each phase**: 1,000-3,000 lines of code
 - **Clear phase boundaries** with validation gates
 - **Phase completion** triggers next phase planning
 - **Context recycling** between phases (everlasting agents)
 
 **Phase Structure**:
+
 ```
 Phase 1: Foundation (0-1,000 lines)
 ├── Core models and schemas
@@ -86,36 +90,42 @@ Phase 3: Polish (2,000-3,000 lines)
 ## Planner Agent Responsibilities
 
 ### 1. Scope Analysis
+
 - Parse user requirements and constraints
 - Identify explicit and implicit requirements
 - Clarify ambiguities via AskUserQuestion
 - Document assumptions and dependencies
 
 ### 2. Risk Assessment
+
 - Identify technical risks (complexity, dependencies, unknowns)
 - Identify business risks (deadlines, resource constraints)
 - Assess severity and likelihood
 - Define mitigation strategies
 
 ### 3. Agent Selection
+
 - Map tasks to appropriate specialized agents
 - Ensure security agents included for sensitive tasks
 - Include supporting agents for complex tasks
 - Document agent responsibilities
 
 ### 4. Phase Organization
+
 - Break large projects into 1,000-3,000 line phases
 - Define phase boundaries and milestones
 - Establish phase dependencies
 - Plan context recycling points
 
 ### 5. Dependency Mapping
+
 - Identify task dependencies and ordering
 - Map artifact inputs and outputs
 - Ensure no circular dependencies
 - Plan parallel vs sequential execution
 
 ### 6. Success Criteria
+
 - Define measurable completion criteria
 - Specify validation gates for each step
 - Establish quality metrics
@@ -130,6 +140,7 @@ Phase 3: Polish (2,000-3,000 lines)
    - Conforms to `.claude/schemas/plan.schema.json`
 
 2. **Orchestrator invokes response-rater skill**
+
    ```bash
    Skill: response-rater
    Content: [Plan artifact]
@@ -199,22 +210,22 @@ Phase 3: Polish (2,000-3,000 lines)
 
 All 14 workflows begin with Planner:
 
-| Workflow | Planning Complexity | Typical Score |
-|----------|---------------------|---------------|
-| quick-flow.yaml | Low | 7-8 |
-| greenfield-fullstack.yaml | High | 8-9 |
-| code-quality-flow.yaml | Medium | 7-8 |
-| performance-optimization.yaml | Medium | 8-9 |
-| ai-system.yaml | Very High | 9-10 |
-| mobile.yaml | High | 8-9 |
-| incident.yaml | Low | 7-8 |
-| ui-perfection.yaml | Medium | 8-9 |
-| browser-testing.yaml | Medium | 7-8 |
-| legacy-modernization.yaml | Very High | 9-10 |
-| brownfield.yaml | High | 8-9 |
-| enterprise.yaml | Very High | 9-10 |
-| automated-enterprise.yaml | Very High | 9-10 |
-| bmad-greenfield.yaml | High | 8-9 |
+| Workflow                      | Planning Complexity | Typical Score |
+| ----------------------------- | ------------------- | ------------- |
+| quick-flow.yaml               | Low                 | 7-8           |
+| greenfield-fullstack.yaml     | High                | 8-9           |
+| code-quality-flow.yaml        | Medium              | 7-8           |
+| performance-optimization.yaml | Medium              | 8-9           |
+| ai-system.yaml                | Very High           | 9-10          |
+| mobile.yaml                   | High                | 8-9           |
+| incident.yaml                 | Low                 | 7-8           |
+| ui-perfection.yaml            | Medium              | 8-9           |
+| browser-testing.yaml          | Medium              | 7-8           |
+| legacy-modernization.yaml     | Very High           | 9-10          |
+| brownfield.yaml               | High                | 8-9           |
+| enterprise.yaml               | Very High           | 9-10          |
+| automated-enterprise.yaml     | Very High           | 9-10          |
+| bmad-greenfield.yaml          | High                | 8-9           |
 
 ### Workflow Step 0 Pattern
 
@@ -222,9 +233,9 @@ All workflows follow this pattern:
 
 ```yaml
 - step: 0
-  name: "Planning Phase"
+  name: 'Planning Phase'
   agent: planner
-  description: "Create comprehensive plan for [workflow purpose]"
+  description: 'Create comprehensive plan for [workflow purpose]'
   inputs: []
   outputs:
     - plan.json (required)
@@ -301,10 +312,12 @@ Plans are stored in a hierarchical structure:
 When context is lost during execution:
 
 1. **Recovery skill reads plan files**
+
    ```bash
    Skill: recovery
    Run ID: abc123
    ```
+
    - Loads plan from `.claude/context/runs/<run_id>/plans/`
    - Reads artifact registry
    - Reconstructs workflow state
@@ -322,11 +335,13 @@ When context is lost during execution:
 ### Plan Modification
 
 Plans can be modified during execution if:
+
 - User requirements change
 - Unforeseen technical constraints discovered
 - Risk mitigation requires scope adjustment
 
 **Modification process**:
+
 1. Pause workflow execution
 2. Spawn Planner to revise plan
 3. Re-rate revised plan (minimum 7/10)
@@ -489,7 +504,7 @@ Track plan execution success:
     "successful": 128,
     "failed": 8,
     "in_progress": 6,
-    "success_rate": 0.90,
+    "success_rate": 0.9,
     "average_completion_time": "4.2 hours",
     "plan_deviation_rate": 0.15
   }
@@ -515,18 +530,22 @@ Track plan execution success:
 ### Common Issues
 
 **Issue**: Plan repeatedly fails rating
+
 - **Cause**: Missing requirements or unrealistic timeline
 - **Solution**: Review rubric feedback, add missing elements, adjust timeline
 
 **Issue**: Workflow deviates from plan
+
 - **Cause**: Unforeseen technical constraints
 - **Solution**: Pause execution, revise plan, re-rate, resume
 
 **Issue**: Context lost mid-execution
+
 - **Cause**: Token limit or session timeout
 - **Solution**: Use recovery skill to reconstruct state from plan files
 
 **Issue**: Agent assignments incorrect
+
 - **Cause**: Task complexity underestimated
 - **Solution**: Add supporting agents, revise plan, re-rate
 
@@ -543,6 +562,7 @@ Planned improvements to planner-centric architecture:
 ## Conclusion
 
 The planner-centric architecture ensures:
+
 - **Quality**: All complex tasks properly scoped and validated
 - **Reliability**: Risks identified and mitigated early
 - **Efficiency**: Correct agents assigned from the start

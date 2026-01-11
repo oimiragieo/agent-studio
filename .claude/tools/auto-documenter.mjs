@@ -83,7 +83,7 @@ export async function documentWorkflowCompletion(workflowResult) {
     outcome: workflowResult.outcome,
     duration: workflowResult.duration,
     feedback: workflowResult.feedback || {},
-    complexity: workflowResult.complexity
+    complexity: workflowResult.complexity,
   });
 
   // Generate workflow summary
@@ -107,7 +107,7 @@ export async function documentWorkflowCompletion(workflowResult) {
       taskType: workflowResult.taskType,
       agents: workflowResult.agents,
       duration: workflowResult.duration,
-      insight: workflowResult.feedback?.insight || 'Successful execution'
+      insight: workflowResult.feedback?.insight || 'Successful execution',
     });
   }
 
@@ -230,7 +230,10 @@ export async function generatePatternReport(taskType = null) {
     }
   }
 
-  const reportPath = join(DOCS_DIR, taskType ? `pattern-report-${taskType}.md` : 'pattern-report-all.md');
+  const reportPath = join(
+    DOCS_DIR,
+    taskType ? `pattern-report-${taskType}.md` : 'pattern-report-all.md'
+  );
   await writeFile(reportPath, lines.join('\n'));
 
   return reportPath;
@@ -274,7 +277,9 @@ function formatTaskTypeInsights(taskType, insights) {
     lines.push('| Agent Chain | Success Rate | Count | Avg Duration |');
     lines.push('|-------------|--------------|-------|--------------|');
     insights.topAgentCombinations.forEach(combo => {
-      lines.push(`| ${combo.agents} | ${combo.successRate.toFixed(1)}% | ${combo.count} | ${combo.avgDuration.toFixed(1)}m |`);
+      lines.push(
+        `| ${combo.agents} | ${combo.successRate.toFixed(1)}% | ${combo.count} | ${combo.avgDuration.toFixed(1)}m |`
+      );
     });
     lines.push('');
   }
@@ -284,7 +289,9 @@ function formatTaskTypeInsights(taskType, insights) {
     lines.push('');
     insights.recentExecutions.forEach(exec => {
       const timestamp = new Date(exec.timestamp).toLocaleString();
-      lines.push(`- **${timestamp}**: ${exec.outcome} (${exec.duration}m) - ${exec.agents.join(' → ')}`);
+      lines.push(
+        `- **${timestamp}**: ${exec.outcome} (${exec.duration}m) - ${exec.agents.join(' → ')}`
+      );
     });
     lines.push('');
   }
@@ -318,16 +325,18 @@ export async function updateRoutingDocs(pattern) {
   let content = await readFile(ROUTING_DOCS_PATH, 'utf-8');
 
   // Update "Last Updated" line
-  content = content.replace(
-    /Last Updated: .*/,
-    `Last Updated: ${timestamp}`
-  );
+  content = content.replace(/Last Updated: .*/, `Last Updated: ${timestamp}`);
 
   // Find the "Learned Patterns" section and append
   const markerIndex = content.indexOf('<!-- Auto-generated content follows -->');
   if (markerIndex !== -1) {
-    const beforeMarker = content.substring(0, markerIndex + '<!-- Auto-generated content follows -->'.length);
-    const afterMarker = content.substring(markerIndex + '<!-- Auto-generated content follows -->'.length);
+    const beforeMarker = content.substring(
+      0,
+      markerIndex + '<!-- Auto-generated content follows -->'.length
+    );
+    const afterMarker = content.substring(
+      markerIndex + '<!-- Auto-generated content follows -->'.length
+    );
 
     content = beforeMarker + '\n' + entry + afterMarker;
   } else {
@@ -347,7 +356,7 @@ function parseArgs(args) {
     file: null,
     taskType: null,
     json: false,
-    help: false
+    help: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -451,7 +460,7 @@ async function main() {
               taskType,
               agents: topCombo.agents.split(' → '),
               duration: topCombo.avgDuration,
-              insight: `${topCombo.successRate.toFixed(1)}% success rate over ${topCombo.count} executions`
+              insight: `${topCombo.successRate.toFixed(1)}% success rate over ${topCombo.count} executions`,
             });
           }
         }
@@ -478,5 +487,5 @@ if (import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))) {
 export default {
   documentWorkflowCompletion,
   generatePatternReport,
-  updateRoutingDocs
+  updateRoutingDocs,
 };

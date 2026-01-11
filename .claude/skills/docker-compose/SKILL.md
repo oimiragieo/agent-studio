@@ -21,6 +21,7 @@ safety_level: high
 This skill provides comprehensive Docker Compose management, enabling AI agents to orchestrate multi-container applications, manage services, inspect logs, and troubleshoot containerized environments with progressive disclosure for optimal context usage.
 
 **Context Savings**: ~92% reduction
+
 - **MCP Mode**: ~25,000 tokens always loaded (multiple tools + schemas)
 - **Skill Mode**: ~700 tokens metadata + on-demand loading
 
@@ -74,15 +75,16 @@ The skill provides 15 tools across service management, monitoring, build operati
 
 Start services defined in docker-compose.yml.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `detached` | boolean | Run in detached mode | true |
-| `build` | boolean | Build images before starting | false |
-| `force_recreate` | boolean | Recreate containers | false |
-| `project_name` | string | Project name override | directory name |
-| `services` | array | Specific services to start | all services |
+| Parameter        | Type    | Description                  | Default        |
+| ---------------- | ------- | ---------------------------- | -------------- |
+| `detached`       | boolean | Run in detached mode         | true           |
+| `build`          | boolean | Build images before starting | false          |
+| `force_recreate` | boolean | Recreate containers          | false          |
+| `project_name`   | string  | Project name override        | directory name |
+| `services`       | array   | Specific services to start   | all services   |
 
 **Example**:
+
 ```bash
 docker compose up -d
 docker compose up --build
@@ -95,13 +97,14 @@ docker compose up web api
 
 Stop and remove containers, networks, volumes.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `volumes` | boolean | Remove volumes (BLOCKED) | false |
-| `remove_orphans` | boolean | Remove orphaned containers | false |
-| `project_name` | string | Project name override | directory name |
+| Parameter        | Type    | Description                | Default        |
+| ---------------- | ------- | -------------------------- | -------------- |
+| `volumes`        | boolean | Remove volumes (BLOCKED)   | false          |
+| `remove_orphans` | boolean | Remove orphaned containers | false          |
+| `project_name`   | string  | Project name override      | directory name |
 
 **Example**:
+
 ```bash
 docker compose down
 docker compose down --remove-orphans
@@ -113,12 +116,13 @@ docker compose down --remove-orphans
 
 Start existing containers without recreating them.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `services` | array | Specific services to start | all services |
-| `project_name` | string | Project name override | directory name |
+| Parameter      | Type   | Description                | Default        |
+| -------------- | ------ | -------------------------- | -------------- |
+| `services`     | array  | Specific services to start | all services   |
+| `project_name` | string | Project name override      | directory name |
 
 **Example**:
+
 ```bash
 docker compose start
 docker compose start web
@@ -128,13 +132,14 @@ docker compose start web
 
 Stop running containers without removing them.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `timeout` | number | Shutdown timeout (seconds) | 10 |
-| `services` | array | Specific services to stop | all services |
-| `project_name` | string | Project name override | directory name |
+| Parameter      | Type   | Description                | Default        |
+| -------------- | ------ | -------------------------- | -------------- |
+| `timeout`      | number | Shutdown timeout (seconds) | 10             |
+| `services`     | array  | Specific services to stop  | all services   |
+| `project_name` | string | Project name override      | directory name |
 
 **Example**:
+
 ```bash
 docker compose stop
 docker compose stop --timeout 30 web
@@ -144,13 +149,14 @@ docker compose stop --timeout 30 web
 
 Restart services (stop + start).
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `timeout` | number | Shutdown timeout (seconds) | 10 |
-| `services` | array | Specific services to restart | all services |
-| `project_name` | string | Project name override | directory name |
+| Parameter      | Type   | Description                  | Default        |
+| -------------- | ------ | ---------------------------- | -------------- |
+| `timeout`      | number | Shutdown timeout (seconds)   | 10             |
+| `services`     | array  | Specific services to restart | all services   |
+| `project_name` | string | Project name override        | directory name |
 
 **Example**:
+
 ```bash
 docker compose restart
 docker compose restart api
@@ -162,13 +168,14 @@ docker compose restart api
 
 List containers with status information.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `all` | boolean | Show all containers (including stopped) | false |
-| `services` | array | Filter by services | all services |
-| `project_name` | string | Project name override | directory name |
+| Parameter      | Type    | Description                             | Default        |
+| -------------- | ------- | --------------------------------------- | -------------- |
+| `all`          | boolean | Show all containers (including stopped) | false          |
+| `services`     | array   | Filter by services                      | all services   |
+| `project_name` | string  | Project name override                   | directory name |
 
 **Example**:
+
 ```bash
 docker compose ps
 docker compose ps --all
@@ -180,16 +187,17 @@ docker compose ps --all
 
 View service logs with streaming support.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `services` | array | Services to view logs for | all services |
-| `follow` | boolean | Follow log output (stream) | false |
-| `tail` | number | Number of lines to show | 100 |
-| `timestamps` | boolean | Show timestamps | false |
-| `since` | string | Show logs since timestamp/duration | none |
-| `project_name` | string | Project name override | directory name |
+| Parameter      | Type    | Description                        | Default        |
+| -------------- | ------- | ---------------------------------- | -------------- |
+| `services`     | array   | Services to view logs for          | all services   |
+| `follow`       | boolean | Follow log output (stream)         | false          |
+| `tail`         | number  | Number of lines to show            | 100            |
+| `timestamps`   | boolean | Show timestamps                    | false          |
+| `since`        | string  | Show logs since timestamp/duration | none           |
+| `project_name` | string  | Project name override              | directory name |
 
 **Example**:
+
 ```bash
 docker compose logs web
 docker compose logs --tail 50 --follow api
@@ -202,12 +210,13 @@ docker compose logs --since "2024-01-01T10:00:00"
 
 Display running processes in containers.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `services` | array | Services to inspect | all services |
+| Parameter      | Type   | Description           | Default        |
+| -------------- | ------ | --------------------- | -------------- |
+| `services`     | array  | Services to inspect   | all services   |
 | `project_name` | string | Project name override | directory name |
 
 **Example**:
+
 ```bash
 docker compose top
 docker compose top web
@@ -221,15 +230,16 @@ docker compose top web
 
 Build or rebuild service images.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `no_cache` | boolean | Build without cache | false |
-| `pull` | boolean | Pull newer image versions | false |
-| `parallel` | boolean | Build in parallel | true |
-| `services` | array | Services to build | all services |
-| `project_name` | string | Project name override | directory name |
+| Parameter      | Type    | Description               | Default        |
+| -------------- | ------- | ------------------------- | -------------- |
+| `no_cache`     | boolean | Build without cache       | false          |
+| `pull`         | boolean | Pull newer image versions | false          |
+| `parallel`     | boolean | Build in parallel         | true           |
+| `services`     | array   | Services to build         | all services   |
+| `project_name` | string  | Project name override     | directory name |
 
 **Example**:
+
 ```bash
 docker compose build
 docker compose build --no-cache web
@@ -242,13 +252,14 @@ docker compose build --pull
 
 Pull service images from registry.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `ignore_pull_failures` | boolean | Continue if pull fails | false |
-| `services` | array | Services to pull | all services |
-| `project_name` | string | Project name override | directory name |
+| Parameter              | Type    | Description            | Default        |
+| ---------------------- | ------- | ---------------------- | -------------- |
+| `ignore_pull_failures` | boolean | Continue if pull fails | false          |
+| `services`             | array   | Services to pull       | all services   |
+| `project_name`         | string  | Project name override  | directory name |
 
 **Example**:
+
 ```bash
 docker compose pull
 docker compose pull web api
@@ -260,11 +271,12 @@ docker compose pull web api
 
 List images used by services.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
+| Parameter      | Type   | Description           | Default        |
+| -------------- | ------ | --------------------- | -------------- |
 | `project_name` | string | Project name override | directory name |
 
 **Example**:
+
 ```bash
 docker compose images
 ```
@@ -277,16 +289,17 @@ docker compose images
 
 Execute a command in a running container.
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `service` | string | Service name | Yes |
-| `command` | array | Command to execute | Yes |
-| `user` | string | User to execute as | container default |
-| `workdir` | string | Working directory | container default |
-| `env` | object | Environment variables | none |
-| `project_name` | string | Project name override | directory name |
+| Parameter      | Type   | Description           | Required          |
+| -------------- | ------ | --------------------- | ----------------- |
+| `service`      | string | Service name          | Yes               |
+| `command`      | array  | Command to execute    | Yes               |
+| `user`         | string | User to execute as    | container default |
+| `workdir`      | string | Working directory     | container default |
+| `env`          | object | Environment variables | none              |
+| `project_name` | string | Project name override | directory name    |
 
 **Example**:
+
 ```bash
 docker compose exec web bash
 docker compose exec -u root api ls -la /app
@@ -294,6 +307,7 @@ docker compose exec db psql -U postgres
 ```
 
 **Safety**:
+
 - Destructive commands (`rm -rf`, `dd`, `mkfs`) are **BLOCKED**
 - Root user execution requires confirmation
 - Default timeout: 30 seconds
@@ -302,17 +316,18 @@ docker compose exec db psql -U postgres
 
 Run a one-off command in a new container.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `service` | string | Service to run | Required |
-| `command` | array | Command to execute | service default |
-| `rm` | boolean | Remove container after run | true |
-| `no_deps` | boolean | Don't start linked services | false |
-| `user` | string | User to execute as | container default |
-| `env` | object | Environment variables | none |
-| `project_name` | string | Project name override | directory name |
+| Parameter      | Type    | Description                 | Default           |
+| -------------- | ------- | --------------------------- | ----------------- |
+| `service`      | string  | Service to run              | Required          |
+| `command`      | array   | Command to execute          | service default   |
+| `rm`           | boolean | Remove container after run  | true              |
+| `no_deps`      | boolean | Don't start linked services | false             |
+| `user`         | string  | User to execute as          | container default |
+| `env`          | object  | Environment variables       | none              |
+| `project_name` | string  | Project name override       | directory name    |
 
 **Example**:
+
 ```bash
 docker compose run --rm web npm test
 docker compose run --no-deps api python manage.py migrate
@@ -326,13 +341,14 @@ docker compose run --no-deps api python manage.py migrate
 
 Validate and view the Compose file configuration.
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `resolve_image_digests` | boolean | Pin image tags to digests | false |
-| `no_interpolate` | boolean | Don't interpolate env vars | false |
-| `project_name` | string | Project name override | directory name |
+| Parameter               | Type    | Description                | Default        |
+| ----------------------- | ------- | -------------------------- | -------------- |
+| `resolve_image_digests` | boolean | Pin image tags to digests  | false          |
+| `no_interpolate`        | boolean | Don't interpolate env vars | false          |
+| `project_name`          | string  | Project name override      | directory name |
 
 **Example**:
+
 ```bash
 docker compose config
 docker compose config --resolve-image-digests
@@ -344,14 +360,15 @@ docker compose config --resolve-image-digests
 
 Print the public port binding for a service port.
 
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `service` | string | Service name | Yes |
-| `private_port` | number | Container port | Yes |
-| `protocol` | string | Protocol (tcp/udp) | tcp |
+| Parameter      | Type   | Description           | Required       |
+| -------------- | ------ | --------------------- | -------------- |
+| `service`      | string | Service name          | Yes            |
+| `private_port` | number | Container port        | Yes            |
+| `protocol`     | string | Protocol (tcp/udp)    | tcp            |
 | `project_name` | string | Project name override | directory name |
 
 **Example**:
+
 ```bash
 docker compose port web 80
 docker compose port db 5432
@@ -464,18 +481,19 @@ docker compose images
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `COMPOSE_PROJECT_NAME` | Default project name | directory name |
-| `COMPOSE_FILE` | Compose file path | `docker-compose.yml` |
+| Variable                 | Description                       | Default                        |
+| ------------------------ | --------------------------------- | ------------------------------ |
+| `COMPOSE_PROJECT_NAME`   | Default project name              | directory name                 |
+| `COMPOSE_FILE`           | Compose file path                 | `docker-compose.yml`           |
 | `COMPOSE_PATH_SEPARATOR` | Path separator for multiple files | `:` (Linux/Mac), `;` (Windows) |
-| `DOCKER_HOST` | Docker daemon socket | `unix:///var/run/docker.sock` |
-| `COMPOSE_HTTP_TIMEOUT` | HTTP timeout for API calls | 60 |
-| `COMPOSE_PARALLEL_LIMIT` | Max parallel operations | unlimited |
+| `DOCKER_HOST`            | Docker daemon socket              | `unix:///var/run/docker.sock`  |
+| `COMPOSE_HTTP_TIMEOUT`   | HTTP timeout for API calls        | 60                             |
+| `COMPOSE_PARALLEL_LIMIT` | Max parallel operations           | unlimited                      |
 
 ### Setup
 
 1. **Install Docker Engine**:
+
    ```bash
    # macOS
    brew install --cask docker
@@ -489,6 +507,7 @@ docker compose images
    ```
 
 2. **Verify Docker Compose**:
+
    ```bash
    # Check Docker version
    docker --version
@@ -498,13 +517,14 @@ docker compose images
    ```
 
 3. **Create docker-compose.yml**:
+
    ```yaml
    version: '3.8'
    services:
      web:
        build: .
        ports:
-         - "8080:80"
+         - '8080:80'
      db:
        image: postgres:14
        environment:
@@ -551,14 +571,14 @@ The following operations auto-terminate to prevent resource issues:
 
 **Common Errors**:
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `docker: command not found` | Docker not installed | Install Docker Engine |
-| `Cannot connect to Docker daemon` | Docker not running | Start Docker service |
-| `network ... not found` | Network cleanup issue | Run `docker compose down` then `up` |
-| `port is already allocated` | Port conflict | Change port mapping or stop conflicting service |
-| `no configuration file provided` | Missing compose file | Create `docker-compose.yml` |
-| `service ... must be built` | Image not built | Run `docker compose build` |
+| Error                             | Cause                 | Fix                                             |
+| --------------------------------- | --------------------- | ----------------------------------------------- |
+| `docker: command not found`       | Docker not installed  | Install Docker Engine                           |
+| `Cannot connect to Docker daemon` | Docker not running    | Start Docker service                            |
+| `network ... not found`           | Network cleanup issue | Run `docker compose down` then `up`             |
+| `port is already allocated`       | Port conflict         | Change port mapping or stop conflicting service |
+| `no configuration file provided`  | Missing compose file  | Create `docker-compose.yml`                     |
+| `service ... must be built`       | Image not built       | Run `docker compose build`                      |
 
 **Recovery**:
 
@@ -573,10 +593,12 @@ The following operations auto-terminate to prevent resource issues:
 This skill integrates with the following agents:
 
 ### Primary Agents
+
 - **devops**: Local development, CI/CD integration, container orchestration
 - **developer**: Application development, testing, debugging
 
 ### Secondary Agents
+
 - **qa**: Integration testing, test environment setup
 - **incident-responder**: Debugging production issues, service recovery
 - **cloud-integrator**: Cloud deployment, migration to Kubernetes
@@ -592,6 +614,7 @@ The skill uses progressive disclosure to minimize context usage:
 4. **Context Cleanup**: Old results cleared after use
 
 **Context Optimization**:
+
 - Use `--tail` to limit log output
 - Use service filters to target specific containers
 - Prefer `ps` over `ps --all` for active services only
@@ -602,6 +625,7 @@ The skill uses progressive disclosure to minimize context usage:
 ### Skill Issues
 
 **Docker Compose not found**:
+
 ```bash
 # Check Docker Compose version
 docker compose version
@@ -614,6 +638,7 @@ docker-compose version
 ```
 
 **Permission denied**:
+
 ```bash
 # Add user to docker group (Linux)
 sudo usermod -aG docker $USER
@@ -624,6 +649,7 @@ docker ps
 ```
 
 **Compose file issues**:
+
 ```bash
 # Validate syntax
 docker compose config
@@ -636,6 +662,7 @@ docker compose config --resolve-image-digests
 ```
 
 **Network issues**:
+
 ```bash
 # List networks
 docker network ls

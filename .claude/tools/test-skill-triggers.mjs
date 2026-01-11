@@ -18,57 +18,57 @@ const testCases = [
     agent: 'developer',
     task: 'Create a new UserProfile component with TypeScript',
     expectedTriggered: ['scaffolder'],
-    expectedTriggers: ['new_component']
+    expectedTriggers: ['new_component'],
   },
   {
     name: 'Developer: Modify code',
     agent: 'developer',
     task: 'Modify the authentication logic to support OAuth2',
     expectedTriggered: ['rule-auditor'],
-    expectedTriggers: ['code_changes']
+    expectedTriggers: ['code_changes'],
   },
   {
     name: 'Code Reviewer: Review code',
     agent: 'code-reviewer',
     task: 'Review the security changes in the authentication module',
     expectedTriggered: ['rule-auditor'],
-    expectedTriggers: ['review_code']
+    expectedTriggers: ['review_code'],
   },
   {
     name: 'Orchestrator: Validate plan',
     agent: 'orchestrator',
     task: 'Review and rate the implementation plan for quality',
     expectedTriggered: ['response-rater'],
-    expectedTriggers: ['plan_validation']
+    expectedTriggers: ['plan_validation'],
   },
   {
     name: 'QA: Create tests',
     agent: 'qa',
     task: 'Write unit tests for the UserProfile component',
     expectedTriggered: ['test-generator'],
-    expectedTriggers: ['test_creation']
+    expectedTriggers: ['test_creation'],
   },
   {
     name: 'Architect: Create diagram',
     agent: 'architect',
     task: 'Create an architecture diagram for the authentication system',
     expectedTriggered: ['diagram-generator'],
-    expectedTriggers: ['architecture_diagram']
+    expectedTriggers: ['architecture_diagram'],
   },
   {
     name: 'Developer: Multiple triggers',
     agent: 'developer',
     task: 'Create a new API module with tests and documentation',
     expectedTriggered: ['scaffolder', 'test-generator'],
-    expectedTriggers: ['new_component', 'new_module', 'test_creation']
+    expectedTriggers: ['new_component', 'new_module', 'test_creation'],
   },
   {
     name: 'Security Architect: Security audit',
     agent: 'security-architect',
     task: 'Audit the codebase for security vulnerabilities',
     expectedTriggered: ['rule-auditor', 'dependency-analyzer'],
-    expectedTriggers: ['security_audit']
-  }
+    expectedTriggers: ['security_audit'],
+  },
 ];
 
 // Test runner
@@ -109,7 +109,9 @@ async function runTests() {
       }
 
       if (!triggerKeywordMatch && testCase.expectedTriggers.length > 0) {
-        console.log(`   ⚠️  WARNING: None of the expected triggers matched: ${testCase.expectedTriggers.join(', ')}`);
+        console.log(
+          `   ⚠️  WARNING: None of the expected triggers matched: ${testCase.expectedTriggers.join(', ')}`
+        );
         console.log(`   📝 Note: This may be okay if skill is required by default`);
       }
 

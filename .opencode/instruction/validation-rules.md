@@ -7,7 +7,9 @@ This document defines validation rules for all artifacts, outputs, and processes
 ## Document Validation
 
 ### Required Metadata
+
 All generated documents must include:
+
 ```yaml
 metadata:
   title: string (required)
@@ -20,11 +22,13 @@ metadata:
 ```
 
 ### Section Completeness
+
 - All required sections must be present
 - Optional sections should be marked as "N/A" if not applicable
 - Empty sections are not allowed for required fields
 
 ### Reference Validation
+
 - All internal links must resolve to existing documents
 - External links should be validated for accessibility
 - Cross-references between documents must be bidirectional
@@ -32,21 +36,25 @@ metadata:
 ## Code Quality Validation
 
 ### Syntax Requirements
+
 - Code must pass linting with zero errors
 - Warnings should be addressed or documented
 - Consistent formatting per project standards
 
 ### Type Safety
+
 - TypeScript: No `any` types without explicit justification
 - Strict null checks enabled
 - All function parameters and returns typed
 
 ### Testing Coverage
+
 - Minimum 80% code coverage for new code
 - All critical paths must have tests
 - Edge cases must be documented and tested
 
 ### Security Checks
+
 - No hardcoded secrets or credentials
 - Input validation on all external data
 - SQL injection prevention verified
@@ -55,6 +63,7 @@ metadata:
 ## Architecture Validation
 
 ### Design Document Requirements
+
 ```yaml
 architecture_doc:
   required_sections:
@@ -71,11 +80,13 @@ architecture_doc:
 ```
 
 ### Technology Decisions
+
 - All technology choices must have documented rationale
 - Alternatives considered must be listed
 - Trade-offs must be explicitly stated
 
 ### Integration Points
+
 - All external dependencies documented
 - API contracts defined
 - Error handling for integrations specified
@@ -83,6 +94,7 @@ architecture_doc:
 ## Requirements Validation
 
 ### User Story Format
+
 ```
 As a [user type]
 I want to [action]
@@ -95,12 +107,14 @@ Acceptance Criteria:
 ```
 
 ### Acceptance Criteria Rules
+
 - Must be testable (yes/no verification possible)
 - Must be specific and measurable
 - Must not include implementation details
 - Must cover happy path and error cases
 
 ### Priority Assignment
+
 - Must use consistent priority scale (P0-P4 or MoSCoW)
 - Priority must have documented justification
 - Dependencies must be considered in prioritization
@@ -108,6 +122,7 @@ Acceptance Criteria:
 ## Test Validation
 
 ### Test Plan Requirements
+
 ```yaml
 test_plan:
   required:
@@ -124,12 +139,14 @@ test_plan:
 ```
 
 ### Test Case Quality
+
 - Each test case must have unique ID
 - Clear description of what is being tested
 - Explicit expected results
 - Reproducible steps
 
 ### Coverage Requirements
+
 - Unit tests: 80% minimum
 - Integration tests: All API endpoints
 - E2E tests: Critical user journeys
@@ -138,16 +155,19 @@ test_plan:
 ## Process Validation
 
 ### Workflow Compliance
+
 - All workflow steps must be completed in order
 - Skip steps require explicit approval and documentation
 - Rollback procedures must be defined
 
 ### Handoff Validation
+
 - Sender must confirm artifact completeness
 - Receiver must acknowledge receipt
 - Any issues must be documented immediately
 
 ### Review Requirements
+
 - All code changes require review
 - Architecture changes require senior review
 - Security changes require security team review
@@ -155,6 +175,7 @@ test_plan:
 ## Artifact Validation Schema
 
 ### Project Brief
+
 ```json
 {
   "required": ["project_name", "executive_summary", "problem_statement", "solution_overview"],
@@ -163,6 +184,7 @@ test_plan:
 ```
 
 ### PRD (Product Requirements Document)
+
 ```json
 {
   "required": ["title", "overview", "goals", "user_stories", "acceptance_criteria"],
@@ -171,6 +193,7 @@ test_plan:
 ```
 
 ### Architecture Document
+
 ```json
 {
   "required": ["system_overview", "components", "data_model", "api_design"],
@@ -181,12 +204,14 @@ test_plan:
 ## Validation Enforcement
 
 ### Pre-Commit Hooks
+
 - Lint check
 - Type check
 - Test execution
 - Security scan
 
 ### CI/CD Pipeline
+
 - Build verification
 - Test suite execution
 - Code coverage check
@@ -194,6 +219,7 @@ test_plan:
 - Documentation generation
 
 ### Review Gates
+
 - Peer review required
 - Automated checks passed
 - Documentation updated
@@ -202,16 +228,19 @@ test_plan:
 ## Error Handling for Validation Failures
 
 ### Soft Failures
+
 - Log warning
 - Continue with notification
 - Track for later resolution
 
 ### Hard Failures
+
 - Stop execution
 - Notify responsible party
 - Require explicit override to continue
 
 ### Override Process
+
 - Document reason for override
 - Require approval from appropriate authority
 - Track all overrides for audit

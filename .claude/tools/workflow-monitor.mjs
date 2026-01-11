@@ -73,9 +73,7 @@ async function listRuns() {
     }
 
     const entries = await readdir(RUNS_DIR, { withFileTypes: true });
-    return entries
-      .filter(entry => entry.isDirectory())
-      .map(entry => entry.name);
+    return entries.filter(entry => entry.isDirectory()).map(entry => entry.name);
   } catch (error) {
     console.warn(`Warning: Failed to list runs: ${error.message}`);
     return [];
@@ -140,7 +138,7 @@ export async function monitorRun(runId) {
     progress: {
       steps_completed: 0,
       total_steps: 0,
-      percent_complete: 0
+      percent_complete: 0,
     },
     stalled: false,
     stalled_duration_ms: 0,
@@ -149,12 +147,12 @@ export async function monitorRun(runId) {
       total: 0,
       validated: 0,
       pending: 0,
-      failed: 0
+      failed: 0,
     },
     last_update: null,
     age_ms: 0,
     metadata: {},
-    warnings: []
+    warnings: [],
   };
 
   try {
@@ -176,7 +174,9 @@ export async function monitorRun(runId) {
     result.stalled = isStalled(run, STALE_THRESHOLD);
     if (result.stalled) {
       result.stalled_duration_ms = result.age_ms;
-      result.warnings.push(`Run stalled for ${Math.round(result.age_ms / 1000)}s (threshold: ${STALE_THRESHOLD / 1000}s)`);
+      result.warnings.push(
+        `Run stalled for ${Math.round(result.age_ms / 1000)}s (threshold: ${STALE_THRESHOLD / 1000}s)`
+      );
     }
 
     // Count artifacts
@@ -195,17 +195,18 @@ export async function monitorRun(runId) {
           agent: stepStatus.agent,
           allowed: stepStatus.allowed,
           blockers: stepStatus.blockers || [],
-          warnings: stepStatus.warnings || []
+          warnings: stepStatus.warnings || [],
         };
 
         if (stepStatus.blockers && stepStatus.blockers.length > 0) {
-          result.warnings.push(`Step ${run.current_step} has ${stepStatus.blockers.length} blocker(s)`);
+          result.warnings.push(
+            `Step ${run.current_step} has ${stepStatus.blockers.length} blocker(s)`
+          );
         }
       }
     }
 
     return result;
-
   } catch (error) {
     result.status = 'error';
     result.warnings.push(`Error monitoring run: ${error.message}`);
@@ -225,7 +226,7 @@ export async function monitorAllRuns() {
     completed_runs: 0,
     failed_runs: 0,
     runs: [],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   try {
@@ -253,7 +254,6 @@ export async function monitorAllRuns() {
         console.warn(`Warning: Failed to monitor run ${runId}: ${error.message}`);
       }
     }
-
   } catch (error) {
     result.error = error.message;
   }
@@ -280,9 +280,7 @@ async function watchMode(options = {}) {
 
   const monitor = async () => {
     try {
-      const result = runId
-        ? await monitorRun(runId)
-        : await monitorAllRuns();
+      const result = runId ? await monitorRun(runId) : await monitorAllRuns();
 
       // Clear screen (optional)
       if (options.clearScreen) {
@@ -299,7 +297,9 @@ async function watchMode(options = {}) {
         console.log(`  Current Agent: ${result.current_agent || 'none'}`);
         console.log(`  Last Update: ${Math.round(result.age_ms / 1000)}s ago`);
         console.log(`  Stalled: ${result.stalled ? 'YES ⚠' : 'no'}`);
-        console.log(`  Artifacts: ${result.artifacts.validated}/${result.artifacts.total} validated`);
+        console.log(
+          `  Artifacts: ${result.artifacts.validated}/${result.artifacts.total} validated`
+        );
 
         if (result.warnings.length > 0) {
           console.log(`\nWarnings:`);
@@ -328,13 +328,14 @@ async function watchMode(options = {}) {
           result.runs.forEach(run => {
             const stalledFlag = run.stalled ? ' ⚠ STALLED' : '';
             const age = Math.round(run.age_ms / 1000);
-            console.log(`  ${run.run_id}: ${run.status} (step ${run.current_step}, ${age}s ago)${stalledFlag}`);
+            console.log(
+              `  ${run.run_id}: ${run.status} (step ${run.current_step}, ${age}s ago)${stalledFlag}`
+            );
           });
         }
       }
 
       console.log(`\n(Updated every ${interval / 1000}s)`);
-
     } catch (error) {
       console.error(`\nError: ${error.message}`);
     }
@@ -391,12 +392,12 @@ Exit codes:
     process.exit(0);
   }
 
-  const getArg = (name) => {
+  const getArg = name => {
     const index = args.indexOf(`--${name}`);
     return index !== -1 && args[index + 1] ? args[index + 1] : null;
   };
 
-  const hasFlag = (name) => args.includes(`--${name}`);
+  const hasFlag = name => args.includes(`--${name}`);
 
   try {
     const runId = getArg('run-id');
@@ -407,7 +408,7 @@ Exit codes:
       await watchMode({
         runId,
         interval,
-        clearScreen: hasFlag('clear-screen')
+        clearScreen: hasFlag('clear-screen'),
       });
       return; // Never exits (Ctrl+C to stop)
     }
@@ -481,7 +482,6 @@ Exit codes:
 
       process.exit(result.stalled ? 1 : 0);
     }
-
   } catch (error) {
     console.error('Fatal error:', error.message);
     process.exit(1);
@@ -489,8 +489,9 @@ Exit codes:
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main().catch(error => {
     console.error('Fatal error:', error);
@@ -500,5 +501,5 @@ if (isMainModule) {
 
 export default {
   monitorRun,
-  monitorAllRuns
+  monitorAllRuns,
 };

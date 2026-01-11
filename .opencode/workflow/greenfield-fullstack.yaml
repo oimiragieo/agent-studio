@@ -9,7 +9,7 @@ project_type: fullstack
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - user_requirements
@@ -29,7 +29,7 @@ steps:
       - Validate plan completeness and feasibility
 
   - step: 1
-    name: "Project Discovery"
+    name: 'Project Discovery'
     agent: analyst
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -43,7 +43,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/01-analyst.json
 
   - step: 2
-    name: "Product Requirements"
+    name: 'Product Requirements'
     agent: pm
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -56,7 +56,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/02-pm.json
 
   - step: 3
-    name: "UX Design"
+    name: 'UX Design'
     agent: ux-expert
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -69,7 +69,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/03-ux-expert.json
 
   - step: 4
-    name: "System Architecture"
+    name: 'System Architecture'
     agent: architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -83,7 +83,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/04-architect.json
 
   - step: 5
-    name: "Database Architecture"
+    name: 'Database Architecture'
     agent: database-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -97,7 +97,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/05-database-architect.json
 
   - step: 6
-    name: "Test Planning"
+    name: 'Test Planning'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -112,7 +112,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/06-qa.json
 
   - step: 7
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -129,7 +129,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/07-developer.json
 
   - step: 8
-    name: "Documentation"
+    name: 'Documentation'
     agent: technical-writer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -143,7 +143,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/08-technical-writer.json
 
   - step: 9
-    name: "Quality Assurance"
+    name: 'Quality Assurance'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)

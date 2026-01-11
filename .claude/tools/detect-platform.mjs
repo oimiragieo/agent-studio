@@ -2,10 +2,10 @@
 /**
  * Platform Detection Utility
  * Detects current platform and loads appropriate adapter
- * 
+ *
  * @module tools/detect-platform
  * @version 1.0.0
- * 
+ *
  * Usage:
  *   node .claude/tools/detect-platform.mjs [--json]
  *   node .claude/tools/detect-platform.mjs --translate <workflow.yaml> --platform <platform>
@@ -27,32 +27,36 @@ function detectPlatform() {
   if (process.env.CLAUDE_CODE || process.env.ANTHROPIC_API_KEY) {
     return 'claude';
   }
-  
+
   if (process.env.CURSOR_SESSION) {
     return 'cursor';
   }
-  
+
   if (process.env.FACTORY_DROID) {
     return 'factory';
   }
-  
+
   // Check for platform-specific files
   const projectRoot = findProjectRoot();
-  
-  if (fs.existsSync(path.join(projectRoot, '.claude', 'CLAUDE.md')) ||
-      fs.existsSync(path.join(projectRoot, '.claude', 'config.yaml'))) {
+
+  if (
+    fs.existsSync(path.join(projectRoot, '.claude', 'CLAUDE.md')) ||
+    fs.existsSync(path.join(projectRoot, '.claude', 'config.yaml'))
+  ) {
     return 'claude';
   }
-  
-  if (fs.existsSync(path.join(projectRoot, '.cursor', 'settings.json')) ||
-      fs.existsSync(path.join(projectRoot, '.cursorrules'))) {
+
+  if (
+    fs.existsSync(path.join(projectRoot, '.cursor', 'settings.json')) ||
+    fs.existsSync(path.join(projectRoot, '.cursorrules'))
+  ) {
     return 'cursor';
   }
-  
+
   if (fs.existsSync(path.join(projectRoot, '.factory', 'config.json'))) {
     return 'factory';
   }
-  
+
   // Default to claude
   return 'claude';
 }
@@ -64,16 +68,18 @@ function detectPlatform() {
 function findProjectRoot() {
   let currentDir = process.cwd();
   const root = path.parse(currentDir).root;
-  
+
   while (currentDir !== root) {
-    if (fs.existsSync(path.join(currentDir, 'package.json')) ||
-        fs.existsSync(path.join(currentDir, '.git')) ||
-        fs.existsSync(path.join(currentDir, '.claude'))) {
+    if (
+      fs.existsSync(path.join(currentDir, 'package.json')) ||
+      fs.existsSync(path.join(currentDir, '.git')) ||
+      fs.existsSync(path.join(currentDir, '.claude'))
+    ) {
       return currentDir;
     }
     currentDir = path.dirname(currentDir);
   }
-  
+
   return process.cwd();
 }
 
@@ -83,11 +89,11 @@ function findProjectRoot() {
  */
 function loadRegistry() {
   const registryPath = path.join(__dirname, '..', 'platform-adapters', 'adapter-registry.json');
-  
+
   if (!fs.existsSync(registryPath)) {
     throw new Error(`Adapter registry not found at ${registryPath}`);
   }
-  
+
   return JSON.parse(fs.readFileSync(registryPath, 'utf8'));
 }
 
@@ -98,18 +104,20 @@ function loadRegistry() {
  */
 async function loadAdapter(platform) {
   const registry = loadRegistry();
-  
+
   const adapterInfo = registry.adapters[platform];
   if (!adapterInfo) {
-    throw new Error(`Unknown platform: ${platform}. Available: ${Object.keys(registry.adapters).join(', ')}`);
+    throw new Error(
+      `Unknown platform: ${platform}. Available: ${Object.keys(registry.adapters).join(', ')}`
+    );
   }
-  
+
   const adapterPath = path.join(__dirname, '..', 'platform-adapters', adapterInfo.file);
-  
+
   if (!fs.existsSync(adapterPath)) {
     throw new Error(`Adapter file not found: ${adapterPath}`);
   }
-  
+
   const module = await import(`file://${adapterPath}`);
   return new module[adapterInfo.class]();
 }
@@ -122,18 +130,18 @@ async function loadAdapter(platform) {
 function getPlatformCapabilities(platform) {
   const registry = loadRegistry();
   const adapterInfo = registry.adapters[platform];
-  
+
   if (!adapterInfo) {
     return null;
   }
-  
+
   return {
     platform,
     native: adapterInfo.native,
     capabilities: adapterInfo.capabilities,
     cuj_support: adapterInfo.cuj_support,
     recommended_for: adapterInfo.recommended_for || [],
-    limitations: adapterInfo.limitations || []
+    limitations: adapterInfo.limitations || [],
   };
 }
 
@@ -147,18 +155,18 @@ function compareCapabilities(from, to) {
   const registry = loadRegistry();
   const fromInfo = registry.adapters[from];
   const toInfo = registry.adapters[to];
-  
+
   if (!fromInfo || !toInfo) {
     throw new Error(`Invalid platform: ${!fromInfo ? from : to}`);
   }
-  
+
   const translationKey = `${from}_to_${to}`;
   const translation = registry.translation_matrix[translationKey] || {
     difficulty: 'unknown',
     automation: 'unknown',
-    fidelity: 'unknown'
+    fidelity: 'unknown',
   };
-  
+
   const capabilityLoss = [];
   for (const [cap, fromValue] of Object.entries(fromInfo.capabilities)) {
     const toValue = toInfo.capabilities[cap];
@@ -166,19 +174,18 @@ function compareCapabilities(from, to) {
       capabilityLoss.push({
         capability: cap,
         from: fromValue,
-        to: toValue
+        to: toValue,
       });
     }
   }
-  
+
   return {
     from,
     to,
     translation,
     capability_loss: capabilityLoss,
-    warnings: capabilityLoss.length > 0 
-      ? [`${capabilityLoss.length} capabilities will be degraded`]
-      : []
+    warnings:
+      capabilityLoss.length > 0 ? [`${capabilityLoss.length} capabilities will be degraded`] : [],
   };
 }
 
@@ -192,14 +199,14 @@ function getAvailablePlatforms() {
     id,
     name: info.class.replace('Adapter', ''),
     native: info.native,
-    cuj_support: info.cuj_support
+    cuj_support: info.cuj_support,
   }));
 }
 
 // CLI Interface
 async function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
 Platform Detection Utility
@@ -224,9 +231,9 @@ Options:
 `);
     process.exit(0);
   }
-  
+
   const outputJson = args.includes('--json');
-  
+
   if (args.includes('--list')) {
     const platforms = getAvailablePlatforms();
     if (outputJson) {
@@ -239,17 +246,17 @@ Options:
     }
     return;
   }
-  
+
   if (args.includes('--compare')) {
     const compareIdx = args.indexOf('--compare');
     const from = args[compareIdx + 1];
     const to = args[compareIdx + 2];
-    
+
     if (!from || !to) {
       console.error('Error: --compare requires two platform arguments');
       process.exit(1);
     }
-    
+
     const comparison = compareCapabilities(from, to);
     if (outputJson) {
       console.log(JSON.stringify(comparison, null, 2));
@@ -267,39 +274,39 @@ Options:
     }
     return;
   }
-  
+
   if (args.includes('--translate')) {
     const translateIdx = args.indexOf('--translate');
     const workflowPath = args[translateIdx + 1];
     const platformIdx = args.indexOf('--platform');
     const targetPlatform = platformIdx !== -1 ? args[platformIdx + 1] : null;
-    
+
     if (!workflowPath) {
       console.error('Error: --translate requires a workflow file path');
       process.exit(1);
     }
-    
+
     if (!targetPlatform) {
       console.error('Error: --translate requires --platform <target>');
       process.exit(1);
     }
-    
+
     if (!fs.existsSync(workflowPath)) {
       console.error(`Error: Workflow file not found: ${workflowPath}`);
       process.exit(1);
     }
-    
+
     const adapter = await loadAdapter(targetPlatform);
     const workflow = JSON.parse(fs.readFileSync(workflowPath, 'utf8'));
     const translated = adapter.translateWorkflow(workflow);
-    
+
     console.log(JSON.stringify(translated, null, 2));
     return;
   }
-  
+
   // Default: detect platform
   const platform = detectPlatform();
-  
+
   if (args.includes('--capabilities')) {
     const capabilities = getPlatformCapabilities(platform);
     if (outputJson) {
@@ -315,7 +322,7 @@ Options:
     }
     return;
   }
-  
+
   if (outputJson) {
     console.log(JSON.stringify({ platform, detected: true }, null, 2));
   } else {
@@ -324,13 +331,13 @@ Options:
 }
 
 // Export functions for programmatic use
-export { 
-  detectPlatform, 
-  loadAdapter, 
+export {
+  detectPlatform,
+  loadAdapter,
   getPlatformCapabilities,
   compareCapabilities,
   getAvailablePlatforms,
-  findProjectRoot
+  findProjectRoot,
 };
 
 // Run CLI if executed directly

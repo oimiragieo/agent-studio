@@ -9,6 +9,7 @@ The skill trigger system automatically detects and invokes skills based on task 
 ### 1. Trigger Detection
 
 When the orchestrator processes a user request:
+
 1. Task description is analyzed against 216 trigger patterns
 2. Patterns match keywords and phrases (e.g., "create component" → `new_component`)
 3. Matched triggers are mapped to agent-specific skills
@@ -35,6 +36,7 @@ Each agent has a `skill_triggers` mapping in `.claude/context/skill-integration-
 ### 3. Auto-Invocation
 
 Triggered skills are:
+
 - **Added to execution plan**: Skills automatically included in step execution
 - **Logged to artifacts**: All triggers saved to `skill-detection.json`
 - **Validated post-execution**: `skill-validator.mjs` checks for actual usage
@@ -59,101 +61,101 @@ skill-validator.mjs → Validates skill usage post-execution
 
 ### Component/Feature Creation
 
-| Trigger | Pattern | Invoked Skill |
-|---------|---------|---------------|
-| `new_component` | "create component", "new feature", "implement module" | scaffolder |
-| `new_module` | "create module", "add folder", "initialize package" | claude-md-generator |
+| Trigger         | Pattern                                               | Invoked Skill       |
+| --------------- | ----------------------------------------------------- | ------------------- |
+| `new_component` | "create component", "new feature", "implement module" | scaffolder          |
+| `new_module`    | "create module", "add folder", "initialize package"   | claude-md-generator |
 
 ### Code Modification
 
-| Trigger | Pattern | Invoked Skill |
-|---------|---------|---------------|
-| `code_changes` | "modify code", "update function", "refactor class" | rule-auditor |
-| `review_code` | "review code", "analyze PR", "inspect changes" | rule-auditor |
+| Trigger        | Pattern                                            | Invoked Skill |
+| -------------- | -------------------------------------------------- | ------------- |
+| `code_changes` | "modify code", "update function", "refactor class" | rule-auditor  |
+| `review_code`  | "review code", "analyze PR", "inspect changes"     | rule-auditor  |
 
 ### Documentation
 
-| Trigger | Pattern | Invoked Skill |
-|---------|---------|---------------|
-| `documentation` | "write docs", "create readme", "api documentation" | doc-generator |
-| `architecture_docs` | "document architecture", "system design docs" | doc-generator |
+| Trigger             | Pattern                                            | Invoked Skill |
+| ------------------- | -------------------------------------------------- | ------------- |
+| `documentation`     | "write docs", "create readme", "api documentation" | doc-generator |
+| `architecture_docs` | "document architecture", "system design docs"      | doc-generator |
 
 ### Testing
 
-| Trigger | Pattern | Invoked Skill |
-|---------|---------|---------------|
-| `test_creation` | "write tests", "generate test suite", "add unit tests" | test-generator |
-| `browser_testing` | "test in browser", "chrome devtools", "ui testing" | chrome-devtools |
+| Trigger           | Pattern                                                | Invoked Skill   |
+| ----------------- | ------------------------------------------------------ | --------------- |
+| `test_creation`   | "write tests", "generate test suite", "add unit tests" | test-generator  |
+| `browser_testing` | "test in browser", "chrome devtools", "ui testing"     | chrome-devtools |
 
 ### Planning
 
-| Trigger | Pattern | Invoked Skill |
-|---------|---------|---------------|
+| Trigger           | Pattern                                            | Invoked Skill  |
+| ----------------- | -------------------------------------------------- | -------------- |
 | `plan_validation` | "validate plan", "rate plan", "check plan quality" | response-rater |
-| `plan_creation` | "create plan", "roadmap", "strategy" | plan-generator |
+| `plan_creation`   | "create plan", "roadmap", "strategy"               | plan-generator |
 
 ### Security
 
-| Trigger | Pattern | Invoked Skill |
-|---------|---------|---------------|
-| `security_audit` | "audit security", "vulnerability scan", "threat assessment" | rule-auditor |
-| `vulnerability_scan` | "scan for vulnerabilities", "detect CVEs" | dependency-analyzer |
+| Trigger              | Pattern                                                     | Invoked Skill       |
+| -------------------- | ----------------------------------------------------------- | ------------------- |
+| `security_audit`     | "audit security", "vulnerability scan", "threat assessment" | rule-auditor        |
+| `vulnerability_scan` | "scan for vulnerabilities", "detect CVEs"                   | dependency-analyzer |
 
 ### Performance
 
-| Trigger | Pattern | Invoked Skill |
-|---------|---------|---------------|
+| Trigger                 | Pattern                                            | Invoked Skill       |
+| ----------------------- | -------------------------------------------------- | ------------------- |
 | `optimization_analysis` | "analyze performance", "profile code", "benchmark" | sequential-thinking |
-| `dependency_analysis` | "analyze dependencies", "check packages" | dependency-analyzer |
+| `dependency_analysis`   | "analyze dependencies", "check packages"           | dependency-analyzer |
 
 ## Agent-Specific Triggers
 
 ### Orchestrator
 
-| Trigger | Skill | Use Case |
-|---------|-------|----------|
-| `plan_validation` | response-rater | Rate plans before execution (min 7/10) |
-| `workflow_error` | recovery | Recover from workflow failures |
-| `task_complete` | artifact-publisher | Publish completed artifacts |
-| `platform_handoff` | context-bridge | Sync to Cursor/Factory |
-| `agent_conflict` | conflict-resolution | Resolve conflicting outputs |
+| Trigger            | Skill               | Use Case                               |
+| ------------------ | ------------------- | -------------------------------------- |
+| `plan_validation`  | response-rater      | Rate plans before execution (min 7/10) |
+| `workflow_error`   | recovery            | Recover from workflow failures         |
+| `task_complete`    | artifact-publisher  | Publish completed artifacts            |
+| `platform_handoff` | context-bridge      | Sync to Cursor/Factory                 |
+| `agent_conflict`   | conflict-resolution | Resolve conflicting outputs            |
 
 ### Developer
 
-| Trigger | Skill | Use Case |
-|---------|-------|----------|
-| `new_component` | scaffolder | Generate boilerplate components |
-| `code_changes` | rule-auditor | Validate code before commit |
-| `codebase_search` | repo-rag | Search for patterns/examples |
-| `test_creation` | test-generator | Generate test suites |
-| `new_module` | claude-md-generator | Document new modules |
+| Trigger           | Skill               | Use Case                        |
+| ----------------- | ------------------- | ------------------------------- |
+| `new_component`   | scaffolder          | Generate boilerplate components |
+| `code_changes`    | rule-auditor        | Validate code before commit     |
+| `codebase_search` | repo-rag            | Search for patterns/examples    |
+| `test_creation`   | test-generator      | Generate test suites            |
+| `new_module`      | claude-md-generator | Document new modules            |
 
 ### Code Reviewer
 
-| Trigger | Skill | Use Case |
-|---------|-------|----------|
-| `review_code` | rule-auditor | Validate compliance |
-| `style_review` | code-style-validator | Check formatting |
-| `multi_ai_review` | multi-ai-code-review | Consensus-based reviews |
-| `violation_fix` | fixing-rule-violations | Auto-fix violations |
+| Trigger           | Skill                  | Use Case                |
+| ----------------- | ---------------------- | ----------------------- |
+| `review_code`     | rule-auditor           | Validate compliance     |
+| `style_review`    | code-style-validator   | Check formatting        |
+| `multi_ai_review` | multi-ai-code-review   | Consensus-based reviews |
+| `violation_fix`   | fixing-rule-violations | Auto-fix violations     |
 
 ### QA
 
-| Trigger | Skill | Use Case |
-|---------|-------|----------|
-| `test_creation` | test-generator | Generate test suites |
-| `quality_check` | rule-auditor | Validate quality standards |
-| `browser_testing` | chrome-devtools | Browser-based testing |
-| `ui_testing` | computer-use | UI automation |
+| Trigger           | Skill           | Use Case                   |
+| ----------------- | --------------- | -------------------------- |
+| `test_creation`   | test-generator  | Generate test suites       |
+| `quality_check`   | rule-auditor    | Validate quality standards |
+| `browser_testing` | chrome-devtools | Browser-based testing      |
+| `ui_testing`      | computer-use    | UI automation              |
 
 ### Architect
 
-| Trigger | Skill | Use Case |
-|---------|-------|----------|
-| `architecture_diagram` | diagram-generator | Create architecture diagrams |
-| `pattern_search` | repo-rag | Find existing patterns |
-| `dependency_analysis` | dependency-analyzer | Analyze tech stack |
-| `api_design` | api-contract-generator | Design API contracts |
+| Trigger                | Skill                  | Use Case                     |
+| ---------------------- | ---------------------- | ---------------------------- |
+| `architecture_diagram` | diagram-generator      | Create architecture diagrams |
+| `pattern_search`       | repo-rag               | Find existing patterns       |
+| `dependency_analysis`  | dependency-analyzer    | Analyze tech stack           |
+| `api_design`           | api-contract-generator | Design API contracts         |
 
 ## Configuration
 
@@ -162,6 +164,7 @@ skill-validator.mjs → Validates skill usage post-execution
 Location: `.claude/context/skill-integration-matrix.json`
 
 Structure:
+
 ```json
 {
   "agents": {
@@ -181,9 +184,10 @@ Structure:
 Location: `.claude/tools/skill-trigger-detector.mjs`
 
 Pattern format:
+
 ```javascript
 const TRIGGER_PATTERNS = {
-  trigger_name: /\b(keyword1|keyword2)\b.*\b(context)\b/i
+  trigger_name: /\b(keyword1|keyword2)\b.*\b(context)\b/i,
 };
 ```
 
@@ -200,6 +204,7 @@ node .claude/tools/skill-trigger-detector.mjs \
 ```
 
 Output:
+
 ```json
 {
   "required": ["scaffolder", "rule-auditor", "repo-rag"],
@@ -215,6 +220,7 @@ Output:
 After orchestrator processes a request, check:
 
 1. **Console output**:
+
    ```
    [Orchestrator Entry] Skill detection for orchestrator:
      Required skills: response-rater, recovery, artifact-publisher
@@ -232,11 +238,13 @@ After orchestrator processes a request, check:
 You can manually invoke skills even if not triggered:
 
 **Natural language**:
+
 ```
 "Use repo-rag to search for authentication patterns"
 ```
 
 **Skill tool**:
+
 ```
 Skill: repo-rag
 Query: "authentication patterns"
@@ -256,6 +264,7 @@ node .claude/tools/skill-validator.mjs \
 ```
 
 Validation checks:
+
 1. **Explicit invocation**: `Skill: scaffolder` in logs
 2. **Natural language**: "using scaffolder skill" in output
 3. **Artifact evidence**: Expected skill outputs present
@@ -269,7 +278,7 @@ steps:
   - agent: developer
     required_skills: [scaffolder, rule-auditor]
     validation:
-      skill_usage: strict  # Fail if required skills not used
+      skill_usage: strict # Fail if required skills not used
 ```
 
 ## Adding New Triggers
@@ -281,7 +290,7 @@ Edit `.claude/tools/skill-trigger-detector.mjs`:
 ```javascript
 const TRIGGER_PATTERNS = {
   // Add new trigger
-  custom_operation: /\b(custom|special|unique)\b.*\b(operation|task)\b/i
+  custom_operation: /\b(custom|special|unique)\b.*\b(operation|task)\b/i,
 };
 ```
 

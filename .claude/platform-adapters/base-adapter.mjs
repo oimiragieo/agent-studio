@@ -1,7 +1,7 @@
 /**
  * Base Platform Adapter
  * Abstract class for platform-specific workflow translation
- * 
+ *
  * @module platform-adapters/base-adapter
  * @version 1.0.0
  */
@@ -18,10 +18,10 @@ export class BasePlatformAdapter {
       subagents: false,
       plan_mode: false,
       task_tool: false,
-      skills: false
+      skills: false,
     };
   }
-  
+
   /**
    * Translate a workflow step to platform-specific format
    * @param {Object} step - Workflow step definition
@@ -31,7 +31,7 @@ export class BasePlatformAdapter {
   translateStep(step) {
     throw new Error('translateStep must be implemented by subclass');
   }
-  
+
   /**
    * Translate entire workflow to platform format
    * @param {Object} workflow - Full workflow definition
@@ -41,7 +41,7 @@ export class BasePlatformAdapter {
   translateWorkflow(workflow) {
     throw new Error('translateWorkflow must be implemented by subclass');
   }
-  
+
   /**
    * Get platform-specific agent invocation
    * @param {string} agent - Agent name
@@ -52,7 +52,7 @@ export class BasePlatformAdapter {
   getAgentInvocation(agent, context) {
     throw new Error('getAgentInvocation must be implemented by subclass');
   }
-  
+
   /**
    * Check if workflow is compatible with platform
    * @param {Object} workflow - Workflow to check
@@ -60,7 +60,7 @@ export class BasePlatformAdapter {
    */
   checkCompatibility(workflow) {
     const issues = [];
-    
+
     for (const step of workflow.steps || []) {
       if (step.skill && !this.capabilities.skills) {
         issues.push(`Step ${step.step}: Skills not supported on ${this.platform}`);
@@ -72,13 +72,13 @@ export class BasePlatformAdapter {
         issues.push(`Step ${step.step}: Validation gates require native workflow support`);
       }
     }
-    
+
     return {
       compatible: issues.length === 0,
-      issues
+      issues,
     };
   }
-  
+
   /**
    * Get platform capabilities summary
    * @returns {Object} Capabilities object
@@ -86,7 +86,7 @@ export class BasePlatformAdapter {
   getCapabilities() {
     return { ...this.capabilities };
   }
-  
+
   /**
    * Get platform identifier
    * @returns {string} Platform name

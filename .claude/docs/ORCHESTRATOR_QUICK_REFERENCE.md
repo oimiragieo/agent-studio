@@ -25,22 +25,22 @@
 
 ## BLOCKED TOOLS (Will Be Rejected by Hook)
 
-| Tool | When Blocked | Delegate To |
-|------|--------------|-------------|
-| **Write** | Always (for orchestrators) | developer |
-| **Edit** | Always (for orchestrators) | developer |
-| **Bash** | Commands with: rm, git add, git commit, git push, node .claude/tools/ | developer (for rm/git), qa (for scripts) |
-| **Read** | After 2nd read (3-FILE RULE) | analyst or Explore |
-| **Grep** | Always (for orchestrators) | analyst |
-| **Glob** | Always (for orchestrators) | analyst |
+| Tool      | When Blocked                                                          | Delegate To                              |
+| --------- | --------------------------------------------------------------------- | ---------------------------------------- |
+| **Write** | Always (for orchestrators)                                            | developer                                |
+| **Edit**  | Always (for orchestrators)                                            | developer                                |
+| **Bash**  | Commands with: rm, git add, git commit, git push, node .claude/tools/ | developer (for rm/git), qa (for scripts) |
+| **Read**  | After 2nd read (3-FILE RULE)                                          | analyst or Explore                       |
+| **Grep**  | Always (for orchestrators)                                            | analyst                                  |
+| **Glob**  | Always (for orchestrators)                                            | analyst                                  |
 
 ## ALLOWED TOOLS
 
-| Tool | Purpose | Notes |
-|------|---------|-------|
-| **Task** | Spawn subagents | Primary coordination tool |
-| **Search** | Semantic search | For finding information |
-| **Bash** (safe) | Simple commands | Only pwd, ls, echo, etc. |
+| Tool            | Purpose         | Notes                     |
+| --------------- | --------------- | ------------------------- |
+| **Task**        | Spawn subagents | Primary coordination tool |
+| **Search**      | Semantic search | For finding information   |
+| **Bash** (safe) | Simple commands | Only pwd, ls, echo, etc.  |
 
 ## 5-QUESTION SELF-CHECK
 
@@ -68,11 +68,13 @@ Before using ANY tool, ask:
 ### Pattern 1: File Operations
 
 **WRONG**:
+
 ```
 [Orchestrator uses Write/Edit directly]
 ```
 
 **CORRECT**:
+
 ```
 Task: developer
 Prompt: "Create/modify the file at <path>. <instructions>"
@@ -81,6 +83,7 @@ Prompt: "Create/modify the file at <path>. <instructions>"
 ### Pattern 2: File Deletion/Git Operations
 
 **WRONG**:
+
 ```
 Bash: rm -rf .claude/archive/
 Bash: git add .
@@ -88,6 +91,7 @@ Bash: git commit -m "message"
 ```
 
 **CORRECT**:
+
 ```
 Task: developer
 Prompt: "Remove .claude/archive/ and commit the changes with message '<message>'"
@@ -96,6 +100,7 @@ Prompt: "Remove .claude/archive/ and commit the changes with message '<message>'
 ### Pattern 3: Code Analysis (Multiple Files)
 
 **WRONG**:
+
 ```
 [Orchestrator reads file 1]
 [Orchestrator reads file 2]
@@ -103,6 +108,7 @@ Prompt: "Remove .claude/archive/ and commit the changes with message '<message>'
 ```
 
 **CORRECT** (after 2 reads):
+
 ```
 Task: analyst (or Explore)
 Prompt: "Analyze the files in <directory>. Provide <analysis type>."
@@ -111,11 +117,13 @@ Prompt: "Analyze the files in <directory>. Provide <analysis type>."
 ### Pattern 4: Validation/Testing
 
 **WRONG**:
+
 ```
 Bash: node .claude/tools/enforcement-gate.mjs validate-all
 ```
 
 **CORRECT**:
+
 ```
 Task: qa
 Prompt: "Run enforcement gate validation and report results."
@@ -124,6 +132,7 @@ Prompt: "Run enforcement gate validation and report results."
 ### Pattern 5: Code Review
 
 **WRONG**:
+
 ```
 [Orchestrator searches for files with Glob]
 [Orchestrator reads multiple files]
@@ -131,6 +140,7 @@ Prompt: "Run enforcement gate validation and report results."
 ```
 
 **CORRECT**:
+
 ```
 Task: code-reviewer
 Prompt: "Review all files in <directory> for <criteria>."
@@ -138,17 +148,17 @@ Prompt: "Review all files in <directory> for <criteria>."
 
 ## AGENT SELECTION GUIDE
 
-| Task Type | Primary Agent | Supporting Agents |
-|-----------|---------------|-------------------|
-| File creation/editing | developer | - |
-| File deletion | developer | - |
-| Git operations | developer | - |
-| Code analysis | analyst | - |
-| Code review | code-reviewer | security-architect (if security) |
-| Validation | qa | - |
-| Testing | qa | developer |
-| Architecture | architect | developer, database-architect |
-| Security review | security-architect | code-reviewer |
+| Task Type             | Primary Agent      | Supporting Agents                |
+| --------------------- | ------------------ | -------------------------------- |
+| File creation/editing | developer          | -                                |
+| File deletion         | developer          | -                                |
+| Git operations        | developer          | -                                |
+| Code analysis         | analyst            | -                                |
+| Code review           | code-reviewer      | security-architect (if security) |
+| Validation            | qa                 | -                                |
+| Testing               | qa                 | developer                        |
+| Architecture          | architect          | developer, database-architect    |
+| Security review       | security-architect | code-reviewer                    |
 
 ## VIOLATION RECOVERY PROTOCOL
 
@@ -161,6 +171,7 @@ If you catch yourself violating:
 5. **Synthesize** results after completion
 
 **Example**:
+
 ```
 "I was about to edit the file directly, which violates orchestration rules.
 Delegating to developer instead.
@@ -179,6 +190,7 @@ The hook tracks Read tool usage:
 - **After Task**: ✅ Counter resets to 0
 
 This allows you to:
+
 1. Read plan file
 2. Read registry file
 3. Delegate to analyst/Explore for further analysis
@@ -244,6 +256,7 @@ Expected: All 20 tests pass ✅
 ## DOCUMENTATION
 
 Full documentation:
+
 - `.claude/CLAUDE.md` - HARD BLOCKS and DELEGATION EXAMPLES
 - `.claude/agents/orchestrator.md` - CRITICAL CONSTRAINTS
 - `.claude/agents/master-orchestrator.md` - Enforcement self-check

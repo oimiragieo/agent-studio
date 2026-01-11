@@ -31,7 +31,7 @@ export async function parseLargeJSON(filePath, options = {}) {
   const {
     maxSize = DEFAULT_MAX_SIZE,
     encoding = 'utf-8',
-    highWaterMark = 64 * 1024 // 64KB chunks
+    highWaterMark = 64 * 1024, // 64KB chunks
   } = options;
 
   return new Promise((resolve, reject) => {
@@ -41,28 +41,26 @@ export async function parseLargeJSON(filePath, options = {}) {
 
     const fileStream = createReadStream(filePath, {
       encoding,
-      highWaterMark
+      highWaterMark,
     });
 
     // Track file size without buffering
-    fileStream.on('data', (chunk) => {
+    fileStream.on('data', chunk => {
       totalSize += Buffer.byteLength(chunk, encoding);
       if (totalSize > maxSize) {
         fileStream.destroy();
-        reject(new Error(`File ${filePath} exceeds size limit (${totalSize} bytes > ${maxSize} bytes)`));
+        reject(
+          new Error(`File ${filePath} exceeds size limit (${totalSize} bytes > ${maxSize} bytes)`)
+        );
       }
     });
 
     // Use stream-json for true streaming parsing
-    const pipeline = chain([
-      fileStream,
-      parser(),
-      streamObject()
-    ]);
+    const pipeline = chain([fileStream, parser(), streamObject()]);
 
     // Build object from streaming key-value pairs
     const obj = {};
-    pipeline.on('data', (data) => {
+    pipeline.on('data', data => {
       if (isComplete) return;
       // data.key is the property name, data.value is the value
       obj[data.key] = data.value;
@@ -74,14 +72,14 @@ export async function parseLargeJSON(filePath, options = {}) {
       resolve(obj);
     });
 
-    pipeline.on('error', (error) => {
+    pipeline.on('error', error => {
       if (!isComplete) {
         isComplete = true;
         reject(new Error(`Failed to parse JSON from ${filePath}: ${error.message}`));
       }
     });
 
-    fileStream.on('error', (error) => {
+    fileStream.on('error', error => {
       if (!isComplete) {
         isComplete = true;
         reject(error);

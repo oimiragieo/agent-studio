@@ -93,17 +93,11 @@
           },
           "wrapper": {
             "description": "Raw wrapper object from provider CLI (if any)",
-            "oneOf": [
-              { "type": "object" },
-              { "type": "null" }
-            ]
+            "oneOf": [{ "type": "object" }, { "type": "null" }]
           },
           "parsed": {
             "description": "Parsed review object from provider",
-            "oneOf": [
-              { "$ref": "#/$defs/reviewObject" },
-              { "type": "null" }
-            ]
+            "oneOf": [{ "$ref": "#/$defs/reviewObject" }, { "type": "null" }]
           },
           "parsedOk": {
             "type": "boolean",
@@ -111,10 +105,7 @@
           },
           "review": {
             "description": "Review object (alias for parsed, used in strict mode)",
-            "oneOf": [
-              { "$ref": "#/$defs/reviewObject" },
-              { "type": "null" }
-            ]
+            "oneOf": [{ "$ref": "#/$defs/reviewObject" }, { "type": "null" }]
           },
           "stdout": {
             "type": "string",
@@ -144,10 +135,7 @@
             },
             "wrapper": {
               "description": "Raw wrapper object from synthesis (if any)",
-              "oneOf": [
-                { "type": "object" },
-                { "type": "null" }
-              ]
+              "oneOf": [{ "type": "object" }, { "type": "null" }]
             },
             "parsed": {
               "$ref": "#/$defs/reviewObject",

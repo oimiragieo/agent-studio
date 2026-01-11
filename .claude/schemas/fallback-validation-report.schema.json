@@ -17,7 +17,14 @@
     },
     "test_scenario": {
       "type": "string",
-      "enum": ["explicit_fallback", "capability_matrix", "context_preservation", "fallback_chain", "invalid_output", "all"],
+      "enum": [
+        "explicit_fallback",
+        "capability_matrix",
+        "context_preservation",
+        "fallback_chain",
+        "invalid_output",
+        "all"
+      ],
       "description": "Test scenario that was validated"
     },
     "overall_status": {
@@ -71,7 +78,14 @@
           },
           "test_type": {
             "type": "string",
-            "enum": ["routing_accuracy", "context_preservation", "capability_verification", "recovery_time", "artifact_validation", "error_handling"]
+            "enum": [
+              "routing_accuracy",
+              "context_preservation",
+              "capability_verification",
+              "recovery_time",
+              "artifact_validation",
+              "error_handling"
+            ]
           },
           "status": {
             "type": "string",

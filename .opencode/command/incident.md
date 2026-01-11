@@ -14,6 +14,7 @@ Launch an incident response workflow for production issues.
 This command coordinates multiple agents for incident response:
 
 ### 1. Incident Responder
+
 - Severity classification
 - Impact assessment
 - Affected users/services
@@ -22,6 +23,7 @@ This command coordinates multiple agents for incident response:
 - Immediate mitigation steps
 
 ### 2. DevOps
+
 - Log analysis
 - Metric correlation
 - Resource utilization
@@ -30,6 +32,7 @@ This command coordinates multiple agents for incident response:
 - Rollback assessment
 
 ### 3. Security Architect
+
 - Breach indicators
 - Vulnerability assessment
 - Attack vector analysis
@@ -37,6 +40,7 @@ This command coordinates multiple agents for incident response:
 - Compliance impact
 
 ### 4. QA
+
 - Fix verification
 - Regression testing
 - Service restoration confirmation

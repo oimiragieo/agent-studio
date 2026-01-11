@@ -21,7 +21,7 @@ const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 export function createSession(agentName, metadata = {}) {
   const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const timestamp = new Date().toISOString();
-  
+
   const session = {
     sessionId,
     agent: agentName,
@@ -34,10 +34,10 @@ export function createSession(agentName, metadata = {}) {
     contextFiles: [],
     cost: {
       total: 0,
-      tokens: 0
-    }
+      tokens: 0,
+    },
   };
-  
+
   saveSession(session);
   return session;
 }
@@ -47,11 +47,11 @@ export function createSession(agentName, metadata = {}) {
  */
 export function getSession(sessionId) {
   const filePath = path.join(SESSIONS_DIR, `${sessionId}.json`);
-  
+
   if (!fs.existsSync(filePath)) {
     return null;
   }
-  
+
   try {
     const data = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(data);
@@ -66,15 +66,15 @@ export function getSession(sessionId) {
  */
 export function updateSession(sessionId, updates) {
   const session = getSession(sessionId);
-  
+
   if (!session) {
     throw new Error(`Session ${sessionId} not found`);
   }
-  
+
   Object.assign(session, updates, {
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   });
-  
+
   saveSession(session);
   return session;
 }
@@ -84,21 +84,21 @@ export function updateSession(sessionId, updates) {
  */
 export function addMessage(sessionId, role, content, metadata = {}) {
   const session = getSession(sessionId);
-  
+
   if (!session) {
     throw new Error(`Session ${sessionId} not found`);
   }
-  
+
   const message = {
     role, // 'user' | 'assistant' | 'system'
     content,
     timestamp: new Date().toISOString(),
-    metadata
+    metadata,
   };
-  
+
   session.messages.push(message);
   updateSession(sessionId, { messages: session.messages });
-  
+
   return message;
 }
 
@@ -107,22 +107,22 @@ export function addMessage(sessionId, role, content, metadata = {}) {
  */
 export function addToolCall(sessionId, toolName, input, output, metadata = {}) {
   const session = getSession(sessionId);
-  
+
   if (!session) {
     throw new Error(`Session ${sessionId} not found`);
   }
-  
+
   const toolCall = {
     tool: toolName,
     input,
     output,
     timestamp: new Date().toISOString(),
-    metadata
+    metadata,
   };
-  
+
   session.toolCalls.push(toolCall);
   updateSession(sessionId, { toolCalls: session.toolCalls });
-  
+
   return toolCall;
 }
 
@@ -133,7 +133,7 @@ export function closeSession(sessionId, reason = 'completed') {
   return updateSession(sessionId, {
     status: 'closed',
     closedAt: new Date().toISOString(),
-    closeReason: reason
+    closeReason: reason,
   });
 }
 
@@ -144,10 +144,10 @@ export function listActiveSessions(agentName = null) {
   if (!fs.existsSync(SESSIONS_DIR)) {
     return [];
   }
-  
+
   const files = fs.readdirSync(SESSIONS_DIR);
   const sessions = [];
-  
+
   files.forEach(file => {
     if (file.endsWith('.json')) {
       const session = getSession(file.replace('.json', ''));
@@ -158,10 +158,8 @@ export function listActiveSessions(agentName = null) {
       }
     }
   });
-  
-  return sessions.sort((a, b) => 
-    new Date(b.updatedAt) - new Date(a.updatedAt)
-  );
+
+  return sessions.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 }
 
 /**
@@ -171,11 +169,11 @@ export function cleanupOldSessions() {
   if (!fs.existsSync(SESSIONS_DIR)) {
     return;
   }
-  
+
   const files = fs.readdirSync(SESSIONS_DIR);
   const now = Date.now();
   let cleaned = 0;
-  
+
   files.forEach(file => {
     if (file.endsWith('.json')) {
       const session = getSession(file.replace('.json', ''));
@@ -189,7 +187,7 @@ export function cleanupOldSessions() {
       }
     }
   });
-  
+
   return cleaned;
 }
 
@@ -200,11 +198,11 @@ export function getSessionStats(agentName = null, days = 7) {
   if (!fs.existsSync(SESSIONS_DIR)) {
     return null;
   }
-  
+
   const files = fs.readdirSync(SESSIONS_DIR);
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
-  
+
   const sessions = [];
   files.forEach(file => {
     if (file.endsWith('.json')) {
@@ -217,11 +215,11 @@ export function getSessionStats(agentName = null, days = 7) {
       }
     }
   });
-  
+
   if (sessions.length === 0) {
     return null;
   }
-  
+
   const stats = {
     totalSessions: sessions.length,
     activeSessions: sessions.filter(s => s.status === 'active').length,
@@ -233,9 +231,9 @@ export function getSessionStats(agentName = null, days = 7) {
       sessions.reduce((sum, s) => sum + s.toolCalls.length, 0) / sessions.length
     ),
     totalCost: sessions.reduce((sum, s) => sum + (s.cost?.total || 0), 0),
-    byAgent: groupBy(sessions, 'agent', 'length')
+    byAgent: groupBy(sessions, 'agent', 'length'),
   };
-  
+
   return stats;
 }
 
@@ -246,13 +244,9 @@ function saveSession(session) {
   if (!fs.existsSync(SESSIONS_DIR)) {
     fs.mkdirSync(SESSIONS_DIR, { recursive: true });
   }
-  
+
   const filePath = path.join(SESSIONS_DIR, `${session.sessionId}.json`);
-  fs.writeFileSync(
-    filePath,
-    JSON.stringify(session, null, 2),
-    'utf8'
-  );
+  fs.writeFileSync(filePath, JSON.stringify(session, null, 2), 'utf8');
 }
 
 /**
@@ -279,7 +273,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
   const arg1 = process.argv[3];
   const arg2 = process.argv[4];
-  
+
   if (command === 'create' && arg1) {
     const session = createSession(arg1, {});
     console.log(JSON.stringify(session, null, 2));
@@ -302,4 +296,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('Usage: session-manager.mjs [create|get|list|close|stats|cleanup] [args...]');
   }
 }
-

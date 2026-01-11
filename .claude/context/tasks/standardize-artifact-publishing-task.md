@@ -1,6 +1,7 @@
 Task: Standardize artifact publishing integration across all workflows
 
 Workflows to update:
+
 1. ai-system-flow.yaml
 2. automated-enterprise-flow.yaml
 3. bmad-greenfield-standard.yaml
@@ -17,6 +18,7 @@ Workflows to update:
 14. ui-perfection-loop.yaml
 
 Required changes:
+
 1. Add explicit Step X.5 publishing steps after major gates
 2. Add publishing validation gate
 3. Improve retry and alert logic

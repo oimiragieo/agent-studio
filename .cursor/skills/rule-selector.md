@@ -26,15 +26,15 @@ Use @rule-selector to update manifest.yaml
 
 ## Detection Matrix
 
-| Signal | Rule Packs |
-|--------|------------|
-| `next` in package.json | nextjs.mdc, nextjs-app-router-* |
-| `react` + `typescript` | react.mdc, typescript.mdc |
-| `tailwindcss` | tailwind.mdc, tailwind-* |
-| `fastapi` in requirements | fastapi.mdc, python-fastapi-* |
-| `vue` in package.json | vue.mdc, vue3-* |
-| `cypress` in devDeps | cypress-* |
-| `playwright` | playwright-* |
+| Signal                    | Rule Packs                       |
+| ------------------------- | -------------------------------- |
+| `next` in package.json    | nextjs.mdc, nextjs-app-router-\* |
+| `react` + `typescript`    | react.mdc, typescript.mdc        |
+| `tailwindcss`             | tailwind.mdc, tailwind-\*        |
+| `fastapi` in requirements | fastapi.mdc, python-fastapi-\*   |
+| `vue` in package.json     | vue.mdc, vue3-\*                 |
+| `cypress` in devDeps      | cypress-\*                       |
+| `playwright`              | playwright-\*                    |
 
 ## Output
 
@@ -44,13 +44,13 @@ Updates `.cursor/rules/manifest.yaml`:
 stack_profiles:
   my-project:
     include:
-      - "nextjs.mdc"
-      - "typescript.mdc"
-      - "react.mdc"
+      - 'nextjs.mdc'
+      - 'typescript.mdc'
+      - 'react.mdc'
     exclude:
-      - "angular-*"
-      - "vue-*"
-      - "python-*"
+      - 'angular-*'
+      - 'vue-*'
+      - 'python-*'
 ```
 
 ## Integration with Cursor

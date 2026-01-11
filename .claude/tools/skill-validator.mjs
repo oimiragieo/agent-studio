@@ -34,7 +34,7 @@ const SKILL_INVOCATION_PATTERNS = {
 
   // Skill-specific artifact patterns (evidence of skill execution)
   skill_artifacts: {
-    'scaffolder': [
+    scaffolder: [
       /generated.*(?:component|boilerplate|scaffold)/i,
       /SCAFFOLD_OUTPUT/i,
       /scaffolded.*files/i,
@@ -102,7 +102,7 @@ const SKILL_INVOCATION_PATTERNS = {
       /MEMORY_OUTPUT/i,
       /knowledge.*(?:stored|retrieved)/i,
     ],
-    'recovery': [
+    recovery: [
       /(?:recovered|retried).*(?:from\s+)?(?:failure|error)/i,
       /RECOVERY_OUTPUT/i,
       /workflow.*recovered/i,
@@ -128,36 +128,24 @@ const SKILL_INVOCATION_PATTERNS = {
       /API_CONTRACT_OUTPUT/i,
       /api.*specification.*generated/i,
     ],
-    'excel-generator': [
-      /(?:generated|created).*excel/i,
-      /EXCEL_OUTPUT/i,
-      /\.xlsx.*created/i,
-    ],
+    'excel-generator': [/(?:generated|created).*excel/i, /EXCEL_OUTPUT/i, /\.xlsx.*created/i],
     'powerpoint-generator': [
       /(?:generated|created).*(?:powerpoint|presentation)/i,
       /POWERPOINT_OUTPUT/i,
       /\.pptx.*created/i,
     ],
-    'pdf-generator': [
-      /(?:generated|created).*pdf/i,
-      /PDF_OUTPUT/i,
-      /\.pdf.*created/i,
-    ],
-    'evaluator': [
+    'pdf-generator': [/(?:generated|created).*pdf/i, /PDF_OUTPUT/i, /\.pdf.*created/i],
+    evaluator: [
       /(?:evaluated|assessed).*(?:quality|performance)/i,
       /EVALUATION_OUTPUT/i,
       /evaluation.*results/i,
     ],
-    'classifier': [
+    classifier: [
       /(?:classified|categorized)/i,
       /CLASSIFICATION_OUTPUT/i,
       /classification.*results/i,
     ],
-    'summarizer': [
-      /(?:summarized|condensed)/i,
-      /SUMMARY_OUTPUT/i,
-      /summary.*generated/i,
-    ],
+    summarizer: [/(?:summarized|condensed)/i, /SUMMARY_OUTPUT/i, /summary.*generated/i],
   },
 };
 
@@ -216,15 +204,48 @@ export function extractUsedSkills(executionLog) {
  */
 function isKnownSkill(name) {
   const knownSkills = [
-    'scaffolder', 'rule-auditor', 'repo-rag', 'test-generator', 'diagram-generator',
-    'response-rater', 'claude-md-generator', 'plan-generator', 'code-style-validator',
-    'dependency-analyzer', 'memory-manager', 'memory', 'recovery', 'conflict-resolution',
-    'sequential-thinking', 'doc-generator', 'api-contract-generator', 'excel-generator',
-    'powerpoint-generator', 'pdf-generator', 'evaluator', 'classifier', 'summarizer',
-    'explaining-rules', 'fixing-rule-violations', 'migrating-rules', 'rule-selector',
-    'artifact-publisher', 'context-bridge', 'tool-search', 'mcp-converter', 'skill-manager',
-    'commit-validator', 'optional-artifact-handler', 'text-to-sql', 'filesystem', 'git',
-    'github', 'puppeteer', 'chrome-devtools', 'cloud-run', 'computer-use',
+    'scaffolder',
+    'rule-auditor',
+    'repo-rag',
+    'test-generator',
+    'diagram-generator',
+    'response-rater',
+    'claude-md-generator',
+    'plan-generator',
+    'code-style-validator',
+    'dependency-analyzer',
+    'memory-manager',
+    'memory',
+    'recovery',
+    'conflict-resolution',
+    'sequential-thinking',
+    'doc-generator',
+    'api-contract-generator',
+    'excel-generator',
+    'powerpoint-generator',
+    'pdf-generator',
+    'evaluator',
+    'classifier',
+    'summarizer',
+    'explaining-rules',
+    'fixing-rule-violations',
+    'migrating-rules',
+    'rule-selector',
+    'artifact-publisher',
+    'context-bridge',
+    'tool-search',
+    'mcp-converter',
+    'skill-manager',
+    'commit-validator',
+    'optional-artifact-handler',
+    'text-to-sql',
+    'filesystem',
+    'git',
+    'github',
+    'puppeteer',
+    'chrome-devtools',
+    'cloud-run',
+    'computer-use',
   ];
 
   return knownSkills.includes(name.toLowerCase());
@@ -258,9 +279,8 @@ export async function validateSkillUsage(agentType, taskDescription, executionLo
   // 4. Calculate compliance score
   const totalExpected = expectedSkills.length;
   const totalMissing = missingRequired.length + missingTriggered.length;
-  const complianceScore = totalExpected > 0
-    ? Math.round(((totalExpected - totalMissing) / totalExpected) * 100)
-    : 100; // 100% if no skills expected
+  const complianceScore =
+    totalExpected > 0 ? Math.round(((totalExpected - totalMissing) / totalExpected) * 100) : 100; // 100% if no skills expected
 
   // 5. Determine overall compliance (must have all required skills)
   const compliant = missingRequired.length === 0;
@@ -271,16 +291,17 @@ export async function validateSkillUsage(agentType, taskDescription, executionLo
     expected: expectedSkills,
     used,
     violations: {
-      missingRequired,  // BLOCKING
+      missingRequired, // BLOCKING
       missingTriggered, // WARNING
-      unexpectedUsed,   // INFO
+      unexpectedUsed, // INFO
     },
     recommendation: generateRecommendation(missingRequired, missingTriggered, unexpectedUsed),
     details: {
       required,
       triggered,
       agentType,
-      taskDescription: taskDescription.substring(0, 100) + (taskDescription.length > 100 ? '...' : ''),
+      taskDescription:
+        taskDescription.substring(0, 100) + (taskDescription.length > 100 ? '...' : ''),
     },
   };
 }
@@ -298,21 +319,21 @@ function generateRecommendation(missingRequired, missingTriggered, unexpectedUse
   if (missingRequired.length > 0) {
     recommendations.push(
       `❌ CRITICAL: Agent must use required skills: ${missingRequired.join(', ')}. ` +
-      `These skills are mandatory for this agent type.`
+        `These skills are mandatory for this agent type.`
     );
   }
 
   if (missingTriggered.length > 0) {
     recommendations.push(
       `⚠️ WARNING: Task triggers suggest using: ${missingTriggered.join(', ')}. ` +
-      `Consider using these skills for better results.`
+        `Consider using these skills for better results.`
     );
   }
 
   if (unexpectedUsed.length > 0) {
     recommendations.push(
       `ℹ️ INFO: Agent used unexpected skills: ${unexpectedUsed.join(', ')}. ` +
-      `This is acceptable but may indicate skill matrix needs updating.`
+        `This is acceptable but may indicate skill matrix needs updating.`
     );
   }
 
@@ -333,7 +354,8 @@ function generateRecommendation(missingRequired, missingTriggered, unexpectedUse
  * @returns {string} Markdown report
  */
 export function generateViolationReport(validationResult) {
-  const { compliant, complianceScore, violations, expected, used, details, recommendation } = validationResult;
+  const { compliant, complianceScore, violations, expected, used, details, recommendation } =
+    validationResult;
 
   let report = `## Skill Usage Validation Report\n\n`;
   report += `**Agent**: ${details.agentType}\n`;
@@ -533,7 +555,6 @@ Options:
 
     // Exit with appropriate code
     process.exit(validationResult.compliant ? 0 : 1);
-
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);
@@ -541,8 +562,9 @@ Options:
 }
 
 // Run CLI if invoked directly (cross-platform detection)
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main();
 }

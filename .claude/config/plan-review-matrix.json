@@ -14,11 +14,7 @@
         "database-design",
         "legacy-modernization"
       ],
-      "optional_for": [
-        "code-quality",
-        "performance",
-        "refactoring"
-      ],
+      "optional_for": ["code-quality", "performance", "refactoring"],
       "skip_conditions": [
         "plan_type == 'hotfix' && scope_lines < 50",
         "plan_type == 'documentation-only'"
@@ -38,19 +34,8 @@
     "security_implications": {
       "reviewer_agent": "security-architect",
       "description": "Assesses security risks, compliance requirements, and security controls",
-      "mandatory_for": [
-        "fullstack",
-        "ai-system",
-        "mobile",
-        "api-design",
-        "legacy-modernization"
-      ],
-      "optional_for": [
-        "code-quality",
-        "performance",
-        "refactoring",
-        "database-design"
-      ],
+      "mandatory_for": ["fullstack", "ai-system", "mobile", "api-design", "legacy-modernization"],
+      "optional_for": ["code-quality", "performance", "refactoring", "database-design"],
       "skip_conditions": [
         "plan_type == 'documentation-only'",
         "plan_type == 'ui-only' && no_backend_changes == true"
@@ -70,11 +55,7 @@
     "product_alignment": {
       "reviewer_agent": "pm",
       "description": "Validates alignment with product requirements, user stories, and business objectives",
-      "mandatory_for": [
-        "fullstack",
-        "mobile",
-        "ai-system"
-      ],
+      "mandatory_for": ["fullstack", "mobile", "ai-system"],
       "optional_for": [
         "api-design",
         "code-quality",
@@ -83,10 +64,7 @@
         "database-design",
         "legacy-modernization"
       ],
-      "skip_conditions": [
-        "plan_type == 'technical-debt'",
-        "plan_type == 'infrastructure-only'"
-      ],
+      "skip_conditions": ["plan_type == 'technical-debt'", "plan_type == 'infrastructure-only'"],
       "minimum_score": 7,
       "blocking_score": 5,
       "review_criteria": [
@@ -102,12 +80,7 @@
     "testability": {
       "reviewer_agent": "qa",
       "description": "Evaluates test coverage, test strategy, and quality assurance approach",
-      "mandatory_for": [
-        "fullstack",
-        "ai-system",
-        "mobile",
-        "api-design"
-      ],
+      "mandatory_for": ["fullstack", "ai-system", "mobile", "api-design"],
       "optional_for": [
         "code-quality",
         "performance",
@@ -134,15 +107,8 @@
     "ux_accessibility": {
       "reviewer_agent": "ux-expert",
       "description": "Reviews user experience design, accessibility compliance, and interface usability",
-      "mandatory_for": [
-        "fullstack",
-        "mobile"
-      ],
-      "optional_for": [
-        "ai-system",
-        "api-design",
-        "legacy-modernization"
-      ],
+      "mandatory_for": ["fullstack", "mobile"],
+      "optional_for": ["ai-system", "api-design", "legacy-modernization"],
       "skip_conditions": [
         "plan_type == 'backend-only'",
         "plan_type == 'api-only'",
@@ -164,10 +130,7 @@
     "performance_impact": {
       "reviewer_agent": "performance-engineer",
       "description": "Assesses performance implications, optimization strategies, and SLA compliance",
-      "mandatory_for": [
-        "performance",
-        "ai-system"
-      ],
+      "mandatory_for": ["performance", "ai-system"],
       "optional_for": [
         "fullstack",
         "mobile",
@@ -197,16 +160,8 @@
     "database_design": {
       "reviewer_agent": "database-architect",
       "description": "Reviews database schema, migrations, query optimization, and data integrity",
-      "mandatory_for": [
-        "database-design",
-        "fullstack"
-      ],
-      "optional_for": [
-        "ai-system",
-        "mobile",
-        "api-design",
-        "legacy-modernization"
-      ],
+      "mandatory_for": ["database-design", "fullstack"],
+      "optional_for": ["ai-system", "mobile", "api-design", "legacy-modernization"],
       "skip_conditions": [
         "plan_type == 'frontend-only'",
         "plan_type == 'ui-only'",
@@ -228,16 +183,8 @@
     "api_contract": {
       "reviewer_agent": "api-designer",
       "description": "Validates API design, contracts, versioning, and backward compatibility",
-      "mandatory_for": [
-        "api-design",
-        "fullstack"
-      ],
-      "optional_for": [
-        "ai-system",
-        "mobile",
-        "database-design",
-        "legacy-modernization"
-      ],
+      "mandatory_for": ["api-design", "fullstack"],
+      "optional_for": ["ai-system", "mobile", "database-design", "legacy-modernization"],
       "skip_conditions": [
         "plan_type == 'frontend-only'",
         "plan_type == 'ui-only'",

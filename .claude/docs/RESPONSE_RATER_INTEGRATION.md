@@ -27,9 +27,10 @@ This document describes how the `response-rater` skill integrates into workflow 
 **Location**: All workflows must include a Step 0.1 plan rating gate.
 
 **Example YAML**:
+
 ```yaml
 - step: 0.1
-  name: "Plan Rating Gate"
+  name: 'Plan Rating Gate'
   agent: orchestrator
   type: validation
   skill: response-rater
@@ -42,8 +43,8 @@ This document describes how the `response-rater` skill integrates into workflow 
     minimum_score: 7
     rubric_file: .claude/context/artifacts/standard-plan-rubric.json
     gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
-    providers: ["claude", "gemini"]  # Optional: defaults to ["claude", "gemini"]
-    timeout: 180  # Optional: 180 seconds per provider
+    providers: ['claude', 'gemini'] # Optional: defaults to ["claude", "gemini"]
+    timeout: 180 # Optional: 180 seconds per provider
   retry:
     max_attempts: 3
     on_failure: escalate_to_human
@@ -56,12 +57,14 @@ This document describes how the `response-rater` skill integrates into workflow 
 ```
 
 **Required Fields**:
+
 - `skill: response-rater` - Invokes the response-rater skill
 - `validation.minimum_score` - Minimum passing score (default: 7)
 - `validation.rubric_file` - Path to rubric JSON (default: `.claude/context/artifacts/standard-plan-rubric.json`)
 - `retry.max_attempts` - Maximum retry attempts (recommended: 3)
 
 **Optional Fields**:
+
 - `validation.providers` - AI providers to use (default: `["claude", "gemini"]`)
 - `validation.timeout` - Timeout per provider in seconds (default: 180)
 - `retry.on_failure` - Escalation strategy (default: `escalate_to_human`)
@@ -73,6 +76,7 @@ This document describes how the `response-rater` skill integrates into workflow 
 **Required Integration**: After Step 0 (Planner) completes, orchestrator MUST invoke response-rater before proceeding to Step 1.
 
 **Pseudo-code**:
+
 ```javascript
 // After Step 0 completes
 async function executePlanRatingStep(runId, workflowConfig, planArtifact) {
@@ -84,8 +88,8 @@ async function executePlanRatingStep(runId, workflowConfig, planArtifact) {
   const planContent = await readFile(planPath, 'utf-8');
 
   // Load rubric
-  const rubricPath = stepConfig.validation?.rubric_file ||
-    '.claude/context/artifacts/standard-plan-rubric.json';
+  const rubricPath =
+    stepConfig.validation?.rubric_file || '.claude/context/artifacts/standard-plan-rubric.json';
   const rubricContent = await readFile(rubricPath, 'utf-8');
 
   // Invoke response-rater skill
@@ -93,7 +97,7 @@ async function executePlanRatingStep(runId, workflowConfig, planArtifact) {
     content: planContent,
     rubric: rubricContent,
     providers: stepConfig.validation?.providers || ['claude', 'gemini'],
-    timeout: stepConfig.validation?.timeout || 180
+    timeout: stepConfig.validation?.timeout || 180,
   });
 
   // Parse rating results
@@ -102,14 +106,21 @@ async function executePlanRatingStep(runId, workflowConfig, planArtifact) {
 
   // Save rating artifact
   const ratingPath = resolveArtifactPath(runId, `plan-rating-${runId}.json`);
-  await writeFile(ratingPath, JSON.stringify({
-    plan_artifact: planArtifact,
-    overall_score: overallScore,
-    provider_results: ratingResult.providers,
-    minimum_score: minimumScore,
-    passed: overallScore >= minimumScore,
-    timestamp: new Date().toISOString()
-  }, null, 2));
+  await writeFile(
+    ratingPath,
+    JSON.stringify(
+      {
+        plan_artifact: planArtifact,
+        overall_score: overallScore,
+        provider_results: ratingResult.providers,
+        minimum_score: minimumScore,
+        passed: overallScore >= minimumScore,
+        timestamp: new Date().toISOString(),
+      },
+      null,
+      2
+    )
+  );
 
   // Register artifact
   await registerArtifact(runId, {
@@ -117,7 +128,7 @@ async function executePlanRatingStep(runId, workflowConfig, planArtifact) {
     step: 0.1,
     agent: 'orchestrator',
     path: ratingPath,
-    validationStatus: overallScore >= minimumScore ? 'pass' : 'fail'
+    validationStatus: overallScore >= minimumScore ? 'pass' : 'fail',
   });
 
   // Handle pass/fail
@@ -130,14 +141,14 @@ async function executePlanRatingStep(runId, workflowConfig, planArtifact) {
       status: 'retry',
       step: 0, // Return to planning step
       feedback: feedback,
-      rating: ratingResult
+      rating: ratingResult,
     };
   }
 
   // Passed - proceed to next step
   return {
     status: 'passed',
-    rating: ratingResult
+    rating: ratingResult,
   };
 }
 ```
@@ -167,7 +178,7 @@ async function invokeSkill(skillName, params) {
   // Execute skill
   const result = await execAsync(command, {
     timeout: timeout * 1000 * providers.length, // Total timeout
-    maxBuffer: 10 * 1024 * 1024
+    maxBuffer: 10 * 1024 * 1024,
   });
 
   // Clean up temp file
@@ -183,21 +194,18 @@ async function invokeSkill(skillName, params) {
  * @returns {number} Overall score (0-10)
  */
 function calculateOverallScore(ratingResult) {
-  const providers = Object.entries(ratingResult.providers)
-    .filter(([_, p]) => p.ok && p.parsed?.scores);
+  const providers = Object.entries(ratingResult.providers).filter(
+    ([_, p]) => p.ok && p.parsed?.scores
+  );
 
   if (providers.length === 0) {
     throw new Error('No successful provider responses for plan rating');
   }
 
   // Calculate average score across all providers
-  const allScores = providers.flatMap(([_, p]) =>
-    Object.values(p.parsed.scores)
-  );
+  const allScores = providers.flatMap(([_, p]) => Object.values(p.parsed.scores));
 
-  return Math.round(
-    allScores.reduce((sum, score) => sum + score, 0) / allScores.length
-  );
+  return Math.round(allScores.reduce((sum, score) => sum + score, 0) / allScores.length);
 }
 
 /**
@@ -206,8 +214,7 @@ function calculateOverallScore(ratingResult) {
  * @returns {string[]} Feedback items
  */
 function extractFeedback(ratingResult) {
-  const providers = Object.entries(ratingResult.providers)
-    .filter(([_, p]) => p.ok && p.parsed);
+  const providers = Object.entries(ratingResult.providers).filter(([_, p]) => p.ok && p.parsed);
 
   const feedbackItems = [];
 
@@ -216,9 +223,7 @@ function extractFeedback(ratingResult) {
       feedbackItems.push(`[${providerName}] ${result.parsed.summary}`);
     }
     if (result.parsed.improvements) {
-      feedbackItems.push(...result.parsed.improvements.map(
-        item => `[${providerName}] ${item}`
-      ));
+      feedbackItems.push(...result.parsed.improvements.map(item => `[${providerName}] ${item}`));
     }
   }
 
@@ -239,11 +244,9 @@ function extractFeedback(ratingResult) {
  * Handle provider failures gracefully
  */
 function handleProviderFailures(ratingResult) {
-  const successfulProviders = Object.entries(ratingResult.providers)
-    .filter(([_, p]) => p.ok);
+  const successfulProviders = Object.entries(ratingResult.providers).filter(([_, p]) => p.ok);
 
-  const failedProviders = Object.entries(ratingResult.providers)
-    .filter(([_, p]) => !p.ok);
+  const failedProviders = Object.entries(ratingResult.providers).filter(([_, p]) => !p.ok);
 
   // Log failures for debugging
   for (const [name, result] of failedProviders) {
@@ -254,27 +257,27 @@ function handleProviderFailures(ratingResult) {
   if (successfulProviders.length === 0) {
     throw new Error(
       `All providers failed for plan rating. ` +
-      `Failed providers: ${failedProviders.map(([n]) => n).join(', ')}`
+        `Failed providers: ${failedProviders.map(([n]) => n).join(', ')}`
     );
   }
 
   // Continue with successful providers
   console.log(
     `[response-rater] Using ${successfulProviders.length} successful providers: ` +
-    successfulProviders.map(([n]) => n).join(', ')
+      successfulProviders.map(([n]) => n).join(', ')
   );
 }
 ```
 
 **Provider-Specific Failures**:
 
-| Provider | Common Failures | Resolution |
-|----------|----------------|------------|
-| Claude | Missing `ANTHROPIC_API_KEY` or session | Run `claude` interactively once to authenticate |
-| Gemini | Missing `GEMINI_API_KEY`/`GOOGLE_API_KEY` | Set environment variable or run `gemini` interactively |
-| Codex | Missing `OPENAI_API_KEY`/`CODEX_API_KEY` | Set environment variable |
-| Cursor | Missing Cursor CLI in WSL | Install via `curl https://cursor.com/install -fsS \| bash` |
-| Copilot | Missing GitHub auth | Run `gh auth login` or `copilot` interactively |
+| Provider | Common Failures                           | Resolution                                                 |
+| -------- | ----------------------------------------- | ---------------------------------------------------------- |
+| Claude   | Missing `ANTHROPIC_API_KEY` or session    | Run `claude` interactively once to authenticate            |
+| Gemini   | Missing `GEMINI_API_KEY`/`GOOGLE_API_KEY` | Set environment variable or run `gemini` interactively     |
+| Codex    | Missing `OPENAI_API_KEY`/`CODEX_API_KEY`  | Set environment variable                                   |
+| Cursor   | Missing Cursor CLI in WSL                 | Install via `curl https://cursor.com/install -fsS \| bash` |
+| Copilot  | Missing GitHub auth                       | Run `gh auth login` or `copilot` interactively             |
 
 ### 4. Timeout Handling
 
@@ -283,10 +286,12 @@ function handleProviderFailures(ratingResult) {
 **Total Timeout Calculation**: `timeout_per_provider * number_of_providers`
 
 **Example**:
+
 - 2 providers (claude, gemini): 360 seconds (6 minutes)
 - 3 providers (claude, gemini, codex): 540 seconds (9 minutes)
 
 **Timeout Behavior**:
+
 ```javascript
 /**
  * Handle timeout for response-rater invocation
@@ -300,13 +305,13 @@ async function invokeSkillWithTimeout(skillName, params) {
       invokeSkill(skillName, params),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Skill timeout')), totalTimeout)
-      )
+      ),
     ]);
   } catch (error) {
     if (error.message === 'Skill timeout') {
       throw new Error(
         `response-rater timed out after ${totalTimeout / 1000}s ` +
-        `(${timeout}s per provider × ${providers.length} providers)`
+          `(${timeout}s per provider × ${providers.length} providers)`
       );
     }
     throw error;
@@ -317,6 +322,7 @@ async function invokeSkillWithTimeout(skillName, params) {
 ### 5. Retry Logic
 
 **Retry Configuration** (from workflow YAML):
+
 ```yaml
 retry:
   max_attempts: 3
@@ -352,8 +358,8 @@ async function executePlanRatingWithRetry(runId, workflowConfig, planArtifact) {
           current_step: 0, // Return to planning
           metadata: {
             plan_rating_attempt: attempt,
-            feedback: result.feedback
-          }
+            feedback: result.feedback,
+          },
         });
 
         // Re-execute Planner with feedback
@@ -366,14 +372,13 @@ async function executePlanRatingWithRetry(runId, workflowConfig, planArtifact) {
 
       // Max attempts exhausted
       throw new Error(`Plan rating failed after ${maxAttempts} attempts`);
-
     } catch (error) {
       if (attempt === maxAttempts) {
         // Final attempt failed
         if (onFailure === 'escalate_to_human') {
           await requestApproval(runId, 0.1, {
             reason: `Plan rating failed: ${error.message}`,
-            artifact: planArtifact
+            artifact: planArtifact,
           });
           return { status: 'awaiting_approval' };
         }
@@ -391,16 +396,17 @@ async function executePlanRatingWithRetry(runId, workflowConfig, planArtifact) {
 **Location**: `.claude/context/artifacts/standard-plan-rubric.json`
 
 **Rubric Structure**:
+
 ```json
 {
   "rubric_version": "1.0",
   "criteria": {
     "correctness": {
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Plan addresses the user's requirements accurately"
     },
     "completeness": {
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "All necessary steps and components are included"
     },
     "clarity": {
@@ -416,7 +422,7 @@ async function executePlanRatingWithRetry(runId, workflowConfig, planArtifact) {
       "description": "Potential risks and mitigation strategies are identified"
     },
     "constraint_alignment": {
-      "weight": 0.10,
+      "weight": 0.1,
       "description": "Plan adheres to project constraints and standards"
     },
     "brevity": {
@@ -472,7 +478,7 @@ const rating = await invokeSkill('response-rater', {
   content: planContent,
   rubric: rubricContent,
   providers: ['claude', 'gemini'],
-  timeout: 180
+  timeout: 180,
 });
 ```
 
@@ -481,6 +487,7 @@ const rating = await invokeSkill('response-rater', {
 **File**: `plan-rating-{{workflow_id}}.json`
 
 **Schema**:
+
 ```json
 {
   "plan_artifact": "plan-001.json",
@@ -547,6 +554,7 @@ When integrating response-rater into a new workflow:
 **File**: `.claude/tools/orchestrator-entry.mjs`
 
 **Changes Needed**:
+
 ```javascript
 // After executeStep0() completes
 const step0Result = await executeStep0(runId, selectedWorkflow);
@@ -567,7 +575,7 @@ try {
       routing: routingResult,
       step0Result,
       planRatingResult,
-      status: planRatingResult.status
+      status: planRatingResult.status,
     };
   }
 } catch (error) {
@@ -576,8 +584,8 @@ try {
     status: 'failed',
     metadata: {
       error: error.message,
-      failed_at_step: 0.1
-    }
+      failed_at_step: 0.1,
+    },
   });
   throw error;
 }
@@ -590,15 +598,12 @@ try {
 **File**: `.claude/tools/workflow_runner.js`
 
 **Changes Needed**:
+
 ```javascript
 // Add support for skill-based steps
 if (stepConfig.skill) {
   // Invoke skill instead of spawning agent
-  const skillResult = await executeSkillStep(
-    stepConfig.skill,
-    runId,
-    stepConfig
-  );
+  const skillResult = await executeSkillStep(stepConfig.skill, runId, stepConfig);
 
   // Validate skill output
   if (stepConfig.validation) {
@@ -614,6 +619,7 @@ if (stepConfig.skill) {
 **File**: `.claude/tools/skill-executor.mjs` (NEW FILE)
 
 **Implementation**:
+
 ```javascript
 /**
  * Execute a skill-based workflow step
@@ -627,10 +633,9 @@ export async function executeSkillStep(skillName, runId, stepConfig) {
   // Build skill parameters
   const params = {
     content: inputContent,
-    rubric: validation?.rubric_file ?
-      await readFile(validation.rubric_file, 'utf-8') : undefined,
+    rubric: validation?.rubric_file ? await readFile(validation.rubric_file, 'utf-8') : undefined,
     providers: validation?.providers || ['claude', 'gemini'],
-    timeout: validation?.timeout || 180
+    timeout: validation?.timeout || 180,
   };
 
   // Invoke skill
@@ -653,7 +658,7 @@ describe('response-rater integration', () => {
     const result = await invokeSkill('response-rater', {
       content: samplePlan,
       rubric: standardRubric,
-      providers: ['claude', 'gemini']
+      providers: ['claude', 'gemini'],
     });
 
     expect(result.providers.claude.ok).toBe(true);
@@ -665,7 +670,7 @@ describe('response-rater integration', () => {
     const result = await invokeSkill('response-rater', {
       content: samplePlan,
       rubric: standardRubric,
-      providers: ['claude', 'invalid-provider']
+      providers: ['claude', 'invalid-provider'],
     });
 
     expect(result.providers.claude.ok).toBe(true);
@@ -673,11 +678,7 @@ describe('response-rater integration', () => {
   });
 
   it('should enforce minimum score threshold', async () => {
-    const result = await executePlanRatingStep(
-      'test-run-001',
-      workflowConfig,
-      'plan-test.json'
-    );
+    const result = await executePlanRatingStep('test-run-001', workflowConfig, 'plan-test.json');
 
     if (result.status === 'retry') {
       expect(result.feedback).toBeDefined();
@@ -708,6 +709,7 @@ cat .claude/context/runs/test-rating-001/artifacts/plan-rating-test-rating-001.j
 **Symptoms**: Error "All providers failed for plan rating"
 
 **Resolution**:
+
 1. Check provider authentication (run `claude`, `gemini`, etc. interactively)
 2. Set environment variables (`ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, etc.)
 3. Verify network connectivity
@@ -717,6 +719,7 @@ cat .claude/context/runs/test-rating-001/artifacts/plan-rating-test-rating-001.j
 **Symptoms**: Error "response-rater timed out after Xs"
 
 **Resolution**:
+
 1. Increase `validation.timeout` in workflow YAML
 2. Reduce number of providers
 3. Check plan size (large plans take longer to rate)
@@ -726,6 +729,7 @@ cat .claude/context/runs/test-rating-001/artifacts/plan-rating-test-rating-001.j
 **Symptoms**: Max retry attempts exhausted
 
 **Resolution**:
+
 1. Review feedback from rating results
 2. Improve plan quality based on feedback
 3. Consider lowering `validation.minimum_score` (not recommended)

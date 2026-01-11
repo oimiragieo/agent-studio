@@ -16,15 +16,16 @@ Successfully implemented **context optimization layer** for skill orchestration 
 - **CLI interface**: Generate summaries, test optimization, optimize for specific agents
 
 **Key Functions**:
+
 ```javascript
 // Main optimization API
-optimizeSkillContext(requiredSkills, triggeredSkills, options)
+optimizeSkillContext(requiredSkills, triggeredSkills, options);
 
 // Generate summaries for all skills (one-time setup)
-generateAllSummaries()
+generateAllSummaries();
 
 // Self-test validation
-runSelfTest()
+runSelfTest();
 ```
 
 ### 2. Skill Summaries Cache
@@ -37,6 +38,7 @@ runSelfTest()
 - **Key commands**: Extracted invocation patterns for quick reference
 
 **Sample Entry**:
+
 ```json
 {
   "scaffolder": {
@@ -59,18 +61,20 @@ runSelfTest()
 **File**: `.claude/tools/skill-injector.mjs`
 
 **New Options**:
+
 - `--optimize`: Enable context optimizer
 - `--context-level <level>`: Set optimization level (MINIMAL, ESSENTIAL, STANDARD, FULL)
 - `--max-tokens <n>`: Set token budget (default: 1000)
 
 **Programmatic API**:
+
 ```javascript
 import { injectSkillsForAgent } from './skill-injector.mjs';
 
 const result = await injectSkillsForAgent('developer', 'task description', {
   useOptimizer: true,
   contextLevel: 'ESSENTIAL',
-  maxSkillTokens: 1000
+  maxSkillTokens: 1000,
 });
 ```
 
@@ -81,6 +85,7 @@ const result = await injectSkillsForAgent('developer', 'task description', {
 **File**: `.claude/docs/SKILL_CONTEXT_OPTIMIZATION.md`
 
 Comprehensive guide covering:
+
 - Architecture and workflow
 - Usage examples (CLI and programmatic)
 - Token budgeting strategies
@@ -93,12 +98,12 @@ Comprehensive guide covering:
 
 ### Token Savings (Developer Agent - 3 Required Skills)
 
-| Mode | Character Count | Approx Tokens | Savings |
-|------|-----------------|---------------|---------|
-| **Legacy (Full)** | 51,517 chars | ~12,879 tokens | 0% |
-| **Optimized (STANDARD)** | 21,673 chars | ~5,418 tokens | **58%** |
-| **Optimized (ESSENTIAL)** | ~8,000 chars (est) | ~2,000 tokens | **84%** |
-| **Optimized (MINIMAL)** | ~600 chars (est) | ~150 tokens | **99%** |
+| Mode                      | Character Count    | Approx Tokens  | Savings |
+| ------------------------- | ------------------ | -------------- | ------- |
+| **Legacy (Full)**         | 51,517 chars       | ~12,879 tokens | 0%      |
+| **Optimized (STANDARD)**  | 21,673 chars       | ~5,418 tokens  | **58%** |
+| **Optimized (ESSENTIAL)** | ~8,000 chars (est) | ~2,000 tokens  | **84%** |
+| **Optimized (MINIMAL)**   | ~600 chars (est)   | ~150 tokens    | **99%** |
 
 ### Actual Test Results
 
@@ -150,6 +155,7 @@ else level = 'FULL';
 **Critical Requirement**: Agents must still know they MUST use skills and HOW to invoke them.
 
 **How It's Preserved**:
+
 - ✅ Skill awareness: All levels include skill name and description
 - ✅ Invocation instructions: ESSENTIAL+ levels include key commands
 - ✅ Mandatory language: "MANDATORY" and "MUST" retained in prompt
@@ -178,6 +184,7 @@ node .claude/tools/skill-context-optimizer.mjs --generate-summaries
 ```
 
 **Output**:
+
 ```
 Generating skill summaries...
 Found 44 skills to process
@@ -198,6 +205,7 @@ node .claude/tools/skill-context-optimizer.mjs --test
 ```
 
 **Output**:
+
 ```
 Running skill context optimizer self-test...
 
@@ -245,7 +253,7 @@ import { injectSkillsForAgent } from './.claude/tools/skill-injector.mjs';
 const result = await injectSkillsForAgent('developer', 'Create component', {
   useOptimizer: true,
   contextLevel: 'ESSENTIAL',
-  maxSkillTokens: 1000
+  maxSkillTokens: 1000,
 });
 
 console.log(`Injected ${result.skillCount} skills`);
@@ -319,23 +327,23 @@ User Request
 
 ## Token Targets Achieved
 
-| Level | Target Tokens/Skill | Actual Tokens/Skill | ✓ |
-|-------|---------------------|---------------------|---|
-| **MINIMAL** | 20-50 | 25 (scaffolder) | ✅ |
-| **ESSENTIAL** | 100-200 | 180 (scaffolder) | ✅ |
-| **STANDARD** | 300-500 | 450 (scaffolder) | ✅ |
-| **FULL** | 800-1500 | 1200 (scaffolder) | ✅ |
+| Level         | Target Tokens/Skill | Actual Tokens/Skill | ✓   |
+| ------------- | ------------------- | ------------------- | --- |
+| **MINIMAL**   | 20-50               | 25 (scaffolder)     | ✅  |
+| **ESSENTIAL** | 100-200             | 180 (scaffolder)    | ✅  |
+| **STANDARD**  | 300-500             | 450 (scaffolder)    | ✅  |
+| **FULL**      | 800-1500            | 1200 (scaffolder)   | ✅  |
 
 ## Best Practices
 
 ### 1. When to Use Each Level
 
-| Level | Use Case |
-|-------|----------|
-| **MINIMAL** | Avoid unless context severely limited |
-| **ESSENTIAL** | **Default for most tasks** (recommended) |
-| **STANDARD** | Complex tasks needing concrete examples |
-| **FULL** | Single critical skill (e.g., response-rater for plan validation) |
+| Level         | Use Case                                                         |
+| ------------- | ---------------------------------------------------------------- |
+| **MINIMAL**   | Avoid unless context severely limited                            |
+| **ESSENTIAL** | **Default for most tasks** (recommended)                         |
+| **STANDARD**  | Complex tasks needing concrete examples                          |
+| **FULL**      | Single critical skill (e.g., response-rater for plan validation) |
 
 ### 2. Token Budget Guidelines
 
@@ -357,6 +365,7 @@ User Request
 ### Error: "Skill summaries not found"
 
 **Fix**:
+
 ```bash
 node skill-context-optimizer.mjs --generate-summaries
 ```
@@ -364,11 +373,13 @@ node skill-context-optimizer.mjs --generate-summaries
 ### Warning: "Optimizer failed, falling back to full content"
 
 **Causes**:
+
 - Summaries file corrupted
 - Missing skill in summaries
 - Invalid JSON
 
 **Fix**:
+
 1. Check `.claude/context/skill-summaries.json` exists
 2. Regenerate: `node skill-context-optimizer.mjs --generate-summaries`
 
@@ -377,6 +388,7 @@ node skill-context-optimizer.mjs --generate-summaries
 **Cause**: Auto-level selection may choose higher level based on budget.
 
 **Fix**: Explicitly set level:
+
 ```bash
 node skill-injector.mjs --agent developer --optimize --context-level ESSENTIAL
 ```

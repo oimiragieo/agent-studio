@@ -17,11 +17,13 @@ All CUJ files, workflow templates, and primary documentation already use the can
 ## Canonical Path Standard
 
 **Adopted Standard**:
+
 ```
 .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
 ```
 
 **Alternative formats** (all equivalent, using variable substitution):
+
 - `.claude/context/runs/{run_id}/plans/{plan_id}-rating.json` (curly braces)
 - `.claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json` (double braces for YAML templates)
 
@@ -36,12 +38,14 @@ All CUJ files, workflow templates, and primary documentation already use the can
 All 58 CUJ files with "Step 0.1: Plan Rating Gate" sections use the canonical path format.
 
 **Sample CUJs Verified**:
+
 - CUJ-004.md: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json` ✅
 - CUJ-005.md: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json` ✅
 - CUJ-006.md: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json` ✅
 - CUJ-007.md through CUJ-063.md: All use canonical path ✅
 
 **Unique Path Patterns Found**:
+
 ```bash
 - Records rating in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
 - File present at `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
@@ -58,6 +62,7 @@ All patterns conform to the canonical path structure.
 All 14 workflow YAML files use the canonical path with template variable format:
 
 **Files Verified**:
+
 - `ai-system-flow.yaml`: Line 71 ✅
 - `automated-enterprise-flow.yaml`: Line 104 ✅
 - `brownfield-fullstack.yaml`: Line 68 ✅
@@ -79,6 +84,7 @@ All use format: `.claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json`
 **Status**: ✅ **STANDARDIZED**
 
 **WORKFLOW-GUIDE.md**:
+
 - Line 116: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json` ✅
 - Line 1875: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json` ✅
 
@@ -89,6 +95,7 @@ All use format: `.claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json`
 Found 5 references to legacy gate path `.claude/context/history/gates/` in non-critical contexts:
 
 **Locations**:
+
 1. `CUJ-039.md` Line 151: Gate file reference (for PM step, not plan rating)
 2. `CUJ-040.md` Lines 49, 124: General gate directory reference (not plan rating)
 3. `CUJ-063.md` Line 216: Checkpoint gate example (not plan rating)
@@ -103,6 +110,7 @@ Found 5 references to legacy gate path `.claude/context/history/gates/` in non-c
 ### Current Validation Scripts
 
 **Scripts Checked**:
+
 - `validate-cuj.mjs`
 - `validate-cuj-docs.mjs`
 - `validate-cuj-e2e.mjs`
@@ -120,9 +128,11 @@ All CUJs follow this standardized format:
 
 ```markdown
 ### Step 0.1: Plan Rating Gate
+
 **Agent**: orchestrator
 **Skill**: response-rater
 **Validation**:
+
 - Minimum score: 7/10
 - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
 - If score < 7: Return to planner with feedback (max 3 attempts)
@@ -136,11 +146,11 @@ All CUJs follow this standardized format:
 
 ### Path Formats Used (All Equivalent)
 
-| Format | Usage | Count | Status |
-|--------|-------|-------|--------|
-| `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json` | CUJ docs (angle brackets) | 45+ | ✅ Standard |
-| `.claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json` | Workflow YAMLs (double braces) | 13 | ✅ Standard |
-| `.claude/context/runs/{run_id}/plans/{plan_id}-rating.json` | Alternative (curly braces) | 5+ | ✅ Standard |
+| Format                                                          | Usage                          | Count | Status      |
+| --------------------------------------------------------------- | ------------------------------ | ----- | ----------- |
+| `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`     | CUJ docs (angle brackets)      | 45+   | ✅ Standard |
+| `.claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json` | Workflow YAMLs (double braces) | 13    | ✅ Standard |
+| `.claude/context/runs/{run_id}/plans/{plan_id}-rating.json`     | Alternative (curly braces)     | 5+    | ✅ Standard |
 
 All formats use the same canonical directory structure and differ only in variable substitution syntax.
 
@@ -149,6 +159,7 @@ All formats use the same canonical directory structure and differ only in variab
 ## Recommendations
 
 ### 1. No Changes Required (HIGH PRIORITY)
+
 ✅ **COMPLETED** - All files already standardized
 
 ### 2. Add Regression Prevention (OPTIONAL)
@@ -160,11 +171,13 @@ All formats use the same canonical directory structure and differ only in variab
 function validatePlanRatingPath(cujContent) {
   const step01Match = cujContent.match(/### Step 0\.1:[\s\S]*?rating\.json/);
   if (step01Match) {
-    const hasCanonicalPath = /\.claude\/context\/runs\/.+\/plans\/.+-rating\.json/.test(step01Match[0]);
+    const hasCanonicalPath = /\.claude\/context\/runs\/.+\/plans\/.+-rating\.json/.test(
+      step01Match[0]
+    );
     if (!hasCanonicalPath) {
       return {
         valid: false,
-        error: 'Step 0.1 does not use canonical plan rating path'
+        error: 'Step 0.1 does not use canonical plan rating path',
       };
     }
   }
@@ -177,6 +190,7 @@ function validatePlanRatingPath(cujContent) {
 ### 3. Update Legacy References (LOW PRIORITY)
 
 **Optional cleanup** of 5 legacy gate path references in:
+
 - `CUJ-039.md` (PM gate - not plan rating)
 - `CUJ-040.md` (general gates - not plan rating)
 - `CUJ-063.md` (checkpoint gate - not plan rating)
@@ -195,6 +209,7 @@ All CUJ files, workflow YAML templates, and primary documentation already use th
 The standardization work has been completed previously, and the system is fully compliant with the canonical path standard.
 
 **Optional Next Steps**:
+
 1. Add regression prevention validation (optional)
 2. Clean up 5 legacy gate references (low priority, non-breaking)
 

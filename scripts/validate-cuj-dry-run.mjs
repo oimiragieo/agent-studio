@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
  * CUJ Dry-Run Validation Script
- * 
+ *
  * Validates CUJs without mutating .claude/context/ directory.
  * CI-safe and fast for automated validation.
- * 
+ *
  * This script:
  * - Resolves workflow/schema/template paths without executing
  * - Checks required artifacts/outputs exist in workflow definitions
  * - Verifies agent/skill references without creating runs/artifacts
  * - Validates CUJ structure without side effects
- * 
+ *
  * Usage:
  *   node scripts/validate-cuj-dry-run.mjs [--verbose]
  */
@@ -49,7 +49,7 @@ function resolveWorkflowPath(workflowName) {
   if (workflowName === 'skill-only') {
     return { exists: true, path: null, type: 'skill-only' };
   }
-  
+
   const workflowPath = path.join(WORKFLOWS_DIR, `${workflowName}.yaml`);
   return { exists: null, path: workflowPath, type: 'workflow' };
 }
@@ -69,13 +69,13 @@ function normalizeExecutionMode(mode) {
   if (!mode) return null;
 
   const modeMap = {
-    'workflow': 'workflow',
+    workflow: 'workflow',
     'automated-workflow': 'workflow',
     'delegated-skill': 'skill-only',
     'skill-only': 'skill-only',
-    'skill': 'skill-only',
+    skill: 'skill-only',
     'manual-setup': 'manual-setup',
-    'manual': 'manual-setup'
+    manual: 'manual-setup',
   };
 
   // Handle raw .yaml references as 'workflow'
@@ -90,13 +90,17 @@ function normalizeExecutionMode(mode) {
  * Extract execution mode from CUJ content
  */
 function extractExecutionMode(content) {
-  const executionModeMatch = content.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)`?/i);
+  const executionModeMatch = content.match(
+    /\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)`?/i
+  );
   if (executionModeMatch) {
     return normalizeExecutionMode(executionModeMatch[1]);
   }
 
   // Fallback to legacy format
-  const legacyMatch = content.match(/(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)(?:`)?/i);
+  const legacyMatch = content.match(
+    /(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)(?:`)?/i
+  );
   if (legacyMatch) {
     return normalizeExecutionMode(legacyMatch[1]);
   }
@@ -139,7 +143,7 @@ function extractSections(content) {
  */
 function extractAgentReferences(content) {
   const agents = new Set();
-  
+
   // Backticked agents
   const backtickMatches = content.match(/`([a-z-]+)`/g) || [];
   backtickMatches.forEach(m => {
@@ -148,7 +152,7 @@ function extractAgentReferences(content) {
       agents.add(slug);
     }
   });
-  
+
   return Array.from(agents);
 }
 
@@ -157,7 +161,7 @@ function extractAgentReferences(content) {
  */
 function extractSkillReferences(content) {
   const skills = new Set();
-  
+
   // Backticked skills
   const backtickMatches = content.match(/`([a-z-]+)`/g) || [];
   backtickMatches.forEach(m => {
@@ -166,7 +170,7 @@ function extractSkillReferences(content) {
       skills.add(slug);
     }
   });
-  
+
   return Array.from(skills);
 }
 
@@ -205,10 +209,13 @@ function checkPlanRatingStep(content, executionMode) {
       const step01Match = content.match(/## Step 0\.1:[\s\S]*?(?=## Step|$)/);
       if (step01Match) {
         const step01Content = step01Match[0];
-        const hasResponseRater = step01Content.toLowerCase().includes('skill: response-rater') ||
-                                 step01Content.toLowerCase().includes('response-rater');
+        const hasResponseRater =
+          step01Content.toLowerCase().includes('skill: response-rater') ||
+          step01Content.toLowerCase().includes('response-rater');
         if (!hasResponseRater) {
-          errors.push('Step 0.1 exists but does not contain "Skill: response-rater" - correct mechanism required');
+          errors.push(
+            'Step 0.1 exists but does not contain "Skill: response-rater" - correct mechanism required'
+          );
         }
       }
     }
@@ -224,9 +231,10 @@ function checkErrorRecovery(content, executionMode) {
   const warnings = [];
 
   if (executionMode === 'workflow') {
-    const hasRecovery = content.toLowerCase().includes('error recovery') ||
-                       content.toLowerCase().includes('failure handling') ||
-                       content.toLowerCase().includes('retry');
+    const hasRecovery =
+      content.toLowerCase().includes('error recovery') ||
+      content.toLowerCase().includes('failure handling') ||
+      content.toLowerCase().includes('retry');
 
     if (!hasRecovery) {
       warnings.push('Workflow CUJ missing error recovery steps');
@@ -287,7 +295,9 @@ async function validateCUJDryRun(filePath) {
       const workflowPath = path.join(WORKFLOWS_DIR, `${workflowName}.yaml`);
       const workflowExists = await fileExists(workflowPath);
       if (!workflowExists) {
-        issues.push(`Referenced workflow file does not exist: ${workflowFile} (checked ${workflowPath})`);
+        issues.push(
+          `Referenced workflow file does not exist: ${workflowFile} (checked ${workflowPath})`
+        );
       }
     }
 
@@ -313,7 +323,7 @@ async function validateCUJDryRun(filePath) {
       const recoveryWarnings = checkErrorRecovery(content, executionMode);
       warnings.push(...recoveryWarnings);
     }
-    
+
     // Validate agent references
     if (sections['## Agents Used']) {
       const agentRefs = extractAgentReferences(sections['## Agents Used']);
@@ -325,7 +335,7 @@ async function validateCUJDryRun(filePath) {
         }
       }
     }
-    
+
     // Validate skill references
     if (sections['## Skills Used']) {
       const skillRefs = extractSkillReferences(sections['## Skills Used']);
@@ -337,7 +347,7 @@ async function validateCUJDryRun(filePath) {
         }
       }
     }
-    
+
     // Check for required sections
     const requiredSections = [
       '## User Goal',
@@ -346,11 +356,12 @@ async function validateCUJDryRun(filePath) {
       '## Agents Used',
       '## Expected Outputs',
       '## Success Criteria',
-      '## Example Prompts'
+      '## Example Prompts',
     ];
-    
-    const hasSkillsOrCapabilities = sections['## Skills Used'] || sections['## Capabilities/Tools Used'];
-    
+
+    const hasSkillsOrCapabilities =
+      sections['## Skills Used'] || sections['## Capabilities/Tools Used'];
+
     for (const section of requiredSections) {
       if (section === '## Skills Used') {
         // Skip - checked separately
@@ -360,24 +371,23 @@ async function validateCUJDryRun(filePath) {
         issues.push(`Missing required section: ${section}`);
       }
     }
-    
+
     if (!hasSkillsOrCapabilities) {
       issues.push('Missing required section: "## Skills Used" or "## Capabilities/Tools Used"');
     }
-    
+
     return {
       file: fileName,
       issues,
       warnings,
-      valid: issues.length === 0
+      valid: issues.length === 0,
     };
-    
   } catch (error) {
     return {
       file: fileName,
       issues: [`Error reading file: ${error.message}`],
       warnings: [],
-      valid: false
+      valid: false,
     };
   }
 }
@@ -387,7 +397,7 @@ async function validateCUJDryRun(filePath) {
  */
 async function validateAllCUJsDryRun() {
   console.log('🔍 Validating CUJ files (DRY-RUN - no mutations)...\n');
-  
+
   try {
     const files = await fs.readdir(CUJ_DIR);
     // Only match CUJ-XXX.md where XXX is a 3-digit number (e.g., CUJ-001.md)
@@ -395,19 +405,19 @@ async function validateAllCUJsDryRun() {
     const cujFiles = files.filter(f => /^CUJ-\d{3}\.md$/.test(f));
 
     console.log(`Found ${cujFiles.length} CUJ files to validate\n`);
-    
+
     const results = [];
     for (const file of cujFiles.sort()) {
       const filePath = path.join(CUJ_DIR, file);
       const result = await validateCUJDryRun(filePath);
       results.push(result);
     }
-    
+
     // Report results
     let totalIssues = 0;
     let totalWarnings = 0;
     let validCount = 0;
-    
+
     for (const result of results) {
       if (result.valid) {
         validCount++;
@@ -423,14 +433,14 @@ async function validateAllCUJsDryRun() {
       totalIssues += result.issues.length;
       totalWarnings += result.warnings.length;
     }
-    
+
     console.log(`\n${'='.repeat(60)}`);
     console.log(`Summary (DRY-RUN):`);
     console.log(`  ✅ Valid: ${validCount}/${results.length}`);
     console.log(`  ❌ Issues: ${totalIssues}`);
     console.log(`  ⚠️  Warnings: ${totalWarnings}`);
     console.log(`${'='.repeat(60)}\n`);
-    
+
     if (totalIssues > 0) {
       console.log('💡 This is a dry-run validation. No files were modified.');
       process.exit(1);
@@ -443,7 +453,6 @@ async function validateAllCUJsDryRun() {
       console.log('💡 This is a dry-run validation. No files were modified.');
       process.exit(0);
     }
-    
   } catch (error) {
     console.error('❌ Error during validation:', error);
     process.exit(1);
@@ -468,4 +477,3 @@ if (args.includes('--help') || args.includes('-h')) {
 
 // Run validation
 validateAllCUJsDryRun();
-

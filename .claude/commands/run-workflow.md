@@ -32,12 +32,13 @@ node .claude/tools/workflow_runner.js --workflow .claude/workflows/greenfield-fu
 **Implementation Details**:
 
 This command acts as a wrapper around the `workflow_runner.js` tool:
+
 1. Parses the YAML workflow definition.
 2. Locates the specified step.
 3. Identifies the expected output artifact, schema, and gate path.
 4. Executes `gate.mjs` to perform the validation.
-</execution_steps>
-</instructions>
+   </execution_steps>
+   </instructions>
 
 <examples>
 <usage_example>
@@ -50,5 +51,6 @@ node .claude/tools/workflow_runner.js --workflow .claude/workflows/greenfield-fu
 # Validate Step 3 with a custom ID
 node .claude/tools/workflow_runner.js --workflow .claude/workflows/greenfield-fullstack.yaml --step 3 --id feature-login-01
 ```
+
 </usage_example>
 </examples>

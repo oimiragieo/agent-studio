@@ -32,12 +32,14 @@ Evaluator - Provides systematic evaluation of agent performance, rule compliance
 **Best for**: Exact matches, structured outputs, rule compliance
 
 **Examples**:
+
 - JSON schema validation
 - Rule violation detection
 - Test pass/fail counts
 - File creation verification
 
 **Usage**:
+
 ```
 Evaluate agent output against expected structure
 Check for required files and validation status
@@ -48,12 +50,14 @@ Check for required files and validation status
 **Best for**: Subjective quality, complex analysis, free-form outputs
 
 **Examples**:
+
 - Code quality assessment
 - Architecture evaluation
 - Documentation quality
 - User experience evaluation
 
 **Usage**:
+
 ```
 Evaluate code quality on scale of 0-1
 Assess architecture decisions
@@ -65,12 +69,14 @@ Review documentation completeness
 **Best for**: Final validation, critical decisions, complex scenarios
 
 **Examples**:
+
 - Production readiness
 - Security review
 - Architecture approval
 - User acceptance
 
 **Usage**:
+
 ```
 Request human review for critical decisions
 Validate production readiness
@@ -82,12 +88,14 @@ Assess security implications
 ### Evaluate Agent Performance
 
 **When to Use**:
+
 - After agent updates
 - Testing new agent capabilities
 - Validating agent improvements
 - Benchmarking performance
 
 **How to Invoke**:
+
 ```
 "Evaluate developer agent performance"
 "Run evaluation on architect agent"
@@ -95,6 +103,7 @@ Assess security implications
 ```
 
 **What It Does**:
+
 - Loads evaluation dataset
 - Runs agent on test tasks
 - Grades outputs (code-based + model-based)
@@ -103,12 +112,14 @@ Assess security implications
 ### Evaluate Rule Compliance
 
 **When to Use**:
+
 - Before committing code
 - After rule updates
 - Validating codebase compliance
 - Testing new rules
 
 **How to Invoke**:
+
 ```
 "Evaluate rule compliance for src/components"
 "Check if code follows TECH_STACK_NEXTJS rules"
@@ -116,6 +127,7 @@ Assess security implications
 ```
 
 **What It Does**:
+
 - Loads applicable rules
 - Scans code files for violations
 - Reports violations with line numbers
@@ -124,12 +136,14 @@ Assess security implications
 ### Evaluate Workflow Quality
 
 **When to Use**:
+
 - Testing workflow execution
 - Validating workflow outputs
 - Improving workflow efficiency
 - Benchmarking workflows
 
 **How to Invoke**:
+
 ```
 "Evaluate greenfield-fullstack workflow"
 "Test workflow execution quality"
@@ -137,6 +151,7 @@ Assess security implications
 ```
 
 **What It Does**:
+
 - Executes workflow on test scenarios
 - Validates step outputs
 - Checks artifact completeness
@@ -147,6 +162,7 @@ Assess security implications
 ### Creating Test Datasets
 
 **Agent Tasks Dataset** (`.claude/evaluation/datasets/agent-tasks.jsonl`):
+
 ```json
 {
   "input": "Implement a user authentication API",
@@ -161,6 +177,7 @@ Assess security implications
 ```
 
 **Rule Test Cases Dataset** (`.claude/evaluation/datasets/rule-test-cases.jsonl`):
+
 ```json
 {
   "file": "src/components/Button.tsx",
@@ -175,6 +192,7 @@ Assess security implications
 ### With Rule Auditor
 
 The evaluator works with the rule-auditor skill:
+
 - Rule-auditor finds violations
 - Evaluator measures compliance rate
 - Both provide actionable feedback
@@ -182,6 +200,7 @@ The evaluator works with the rule-auditor skill:
 ### With Workflow Runner
 
 The evaluator validates workflow execution:
+
 - Workflow runner executes steps
 - Evaluator validates outputs
 - Both ensure quality gates
@@ -245,4 +264,3 @@ Evaluator:
 
 - [Evaluation Guide](../docs/EVALUATION_GUIDE.md) - Comprehensive evaluation guide
 - [Evaluation Framework](../evaluation/README.md) - Framework overview
-

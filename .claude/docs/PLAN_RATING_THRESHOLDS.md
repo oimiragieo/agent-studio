@@ -27,6 +27,7 @@ This is the standard quality gate for most workflows. Plans scoring below 7/10 m
 ### Standard Workflows (7/10)
 
 **Workflows**:
+
 - `greenfield-fullstack.yaml` - New full-stack application development
 - `feature-addition-flow.yaml` - Adding new features to existing apps
 - `code-quality-flow.yaml` - Code quality improvement
@@ -36,12 +37,14 @@ This is the standard quality gate for most workflows. Plans scoring below 7/10 m
 - `ai-system-flow.yaml` - AI/LLM system development
 
 **Rationale**: These workflows involve standard software development with well-defined processes. A score of 7/10 ensures:
+
 - Clear objectives and success criteria
 - Proper agent selection and sequencing
 - Adequate risk mitigation strategies
 - Comprehensive integration testing
 
 **Rating Rubric**:
+
 - **Completeness** (2 pts): All required steps and agents included
 - **Feasibility** (2 pts): Plan is realistic and achievable
 - **Risk Mitigation** (2 pts): Identified risks with mitigation strategies
@@ -55,16 +58,19 @@ This is the standard quality gate for most workflows. Plans scoring below 7/10 m
 ### Quick Workflows (6/10)
 
 **Workflows**:
+
 - `quick-flow.yaml` - Rapid iteration and deployment
 - `hotfix-flow.yaml` - Critical bug fixes
 
 **Rationale**: Time-sensitive workflows where speed is critical. Lower bar allows faster iteration while maintaining basic quality:
+
 - Focus on immediate impact over perfect planning
 - Streamlined agent chain for rapid execution
 - Essential risk mitigation only
 - Fast feedback loops
 
 **Rating Rubric**:
+
 - **Completeness** (2 pts): Core steps identified
 - **Feasibility** (2 pts): Plan is achievable quickly
 - **Risk Mitigation** (1 pt): Critical risks addressed
@@ -75,15 +81,18 @@ This is the standard quality gate for most workflows. Plans scoring below 7/10 m
 ### Incident Workflows (5/10)
 
 **Workflows**:
+
 - `incident-flow.yaml` - Incident response and resolution
 
 **Rationale**: Incident response requires immediate action. Minimum bar ensures basic structure without impeding urgent response:
+
 - Time-critical - every minute counts
 - Focus on containment and resolution
 - Post-incident review compensates for lower planning bar
 - Documented runbooks reduce planning overhead
 
 **Rating Rubric**:
+
 - **Completeness** (1 pt): Immediate response steps identified
 - **Feasibility** (2 pts): Plan addresses incident effectively
 - **Risk Mitigation** (1 pt): Containment strategy defined
@@ -94,17 +103,20 @@ This is the standard quality gate for most workflows. Plans scoring below 7/10 m
 ### Enterprise Workflows (8/10)
 
 **Workflows**:
+
 - `enterprise-integration-flow.yaml` - Large-scale enterprise integration
 - `compliance-flow.yaml` - Compliance and regulatory workflows
 - `performance-optimization-flow.yaml` - System-wide performance tuning
 
 **Rationale**: High-stakes, complex workflows affecting multiple systems. Higher bar ensures thorough planning:
+
 - Multi-system dependencies require detailed coordination
 - Organizational impact demands careful planning
 - Rollback strategies are critical
 - Stakeholder alignment is essential
 
 **Rating Rubric**:
+
 - **Completeness** (2 pts): All systems and dependencies mapped
 - **Feasibility** (2 pts): Realistic timeline with buffer
 - **Risk Mitigation** (2 pts): Comprehensive risk analysis with rollback plans
@@ -118,18 +130,21 @@ This is the standard quality gate for most workflows. Plans scoring below 7/10 m
 ### Security Workflows (9/10)
 
 **Workflows**:
+
 - `auth-flow.yaml` - Authentication and authorization
 - `data-protection-flow.yaml` - Data encryption and protection
 - `vulnerability-remediation-flow.yaml` - Security vulnerability fixes
 - `penetration-testing-flow.yaml` - Security testing
 
 **Rationale**: Security-critical workflows require near-perfect planning. Elevated threshold ensures:
+
 - Threat modeling is comprehensive
 - Security controls are properly designed
 - Compliance requirements are met
 - No security gaps in implementation
 
 **Rating Rubric**:
+
 - **Completeness** (2 pts): All security controls defined
 - **Feasibility** (2 pts): Security measures are implementable
 - **Risk Mitigation** (3 pts): Threat model, attack vectors, defenses
@@ -144,14 +159,15 @@ This is the standard quality gate for most workflows. Plans scoring below 7/10 m
 
 In addition to workflow type, task complexity can adjust thresholds:
 
-| Complexity | Threshold Adjustment | Example Tasks |
-|------------|---------------------|---------------|
-| **Simple** | -1 point | Single-file changes, configuration updates |
-| **Standard** | 0 points | Multi-file features, standard integrations |
-| **Complex** | +1 point | Architecture changes, new systems |
-| **Critical** | +2 points | Core infrastructure, security-critical changes |
+| Complexity   | Threshold Adjustment | Example Tasks                                  |
+| ------------ | -------------------- | ---------------------------------------------- |
+| **Simple**   | -1 point             | Single-file changes, configuration updates     |
+| **Standard** | 0 points             | Multi-file features, standard integrations     |
+| **Complex**  | +1 point             | Architecture changes, new systems              |
+| **Critical** | +2 points            | Core infrastructure, security-critical changes |
 
 **Example**:
+
 - Standard `greenfield-fullstack.yaml` (7/10) + Complex task → 8/10 required
 - Quick `quick-flow.yaml` (6/10) + Simple task → 5/10 required
 - Security `auth-flow.yaml` (9/10) + Critical task → Cannot exceed 10/10 (stays at 9/10)
@@ -162,14 +178,15 @@ In addition to workflow type, task complexity can adjust thresholds:
 
 When security triggers are activated (see `.claude/context/security-triggers-v2.json`), thresholds are elevated:
 
-| Security Priority | Threshold Override | Rationale |
-|-------------------|-------------------|-----------|
-| **Low** | +0 points | Informational, no override |
-| **Medium** | +1 point | Security considerations require better planning |
-| **High** | +2 points | Security controls must be comprehensive |
-| **Critical** | +3 points (min 9/10) | Security cannot be compromised |
+| Security Priority | Threshold Override   | Rationale                                       |
+| ----------------- | -------------------- | ----------------------------------------------- |
+| **Low**           | +0 points            | Informational, no override                      |
+| **Medium**        | +1 point             | Security considerations require better planning |
+| **High**          | +2 points            | Security controls must be comprehensive         |
+| **Critical**      | +3 points (min 9/10) | Security cannot be compromised                  |
 
 **Example**:
+
 - `greenfield-fullstack.yaml` (7/10) + High security trigger → 9/10 required
 - `incident-flow.yaml` (5/10) + Critical security trigger → 9/10 required (minimum)
 
@@ -178,12 +195,12 @@ When security triggers are activated (see `.claude/context/security-triggers-v2.
 ## Rating Matrix Reference
 
 | Workflow Type | Base Threshold | Complexity Adjustment | Security Override | Final Range |
-|---------------|----------------|----------------------|------------------|-------------|
-| Standard | 7/10 | -1 to +2 | 0 to +3 | 6-10/10 |
-| Quick | 6/10 | -1 to +2 | 0 to +3 | 5-10/10 |
-| Incident | 5/10 | -1 to +2 | 0 to +3 | 4-10/10 |
-| Enterprise | 8/10 | -1 to +2 | 0 to +3 | 7-10/10 |
-| Security | 9/10 | -1 to +2 | 0 to +3 | 8-10/10 |
+| ------------- | -------------- | --------------------- | ----------------- | ----------- |
+| Standard      | 7/10           | -1 to +2              | 0 to +3           | 6-10/10     |
+| Quick         | 6/10           | -1 to +2              | 0 to +3           | 5-10/10     |
+| Incident      | 5/10           | -1 to +2              | 0 to +3           | 4-10/10     |
+| Enterprise    | 8/10           | -1 to +2              | 0 to +3           | 7-10/10     |
+| Security      | 9/10           | -1 to +2              | 0 to +3           | 8-10/10     |
 
 **Note**: Final threshold cannot exceed 10/10 or go below 4/10 (absolute minimum for any plan).
 
@@ -278,6 +295,7 @@ Rubric: completeness, feasibility, risk_mitigation, agent_coverage, integration,
 ### When to Override Thresholds
 
 Only the **orchestrator** can override thresholds, and only with:
+
 1. **Documented justification** - Explain why override is necessary
 2. **Risk acknowledgment** - Document risks of proceeding with lower score
 3. **Compensating controls** - Define how risks will be mitigated
@@ -310,6 +328,6 @@ node .claude/tools/enforcement-gate.mjs record-override \
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-08 | Initial threshold documentation |
+| Version | Date       | Changes                         |
+| ------- | ---------- | ------------------------------- |
+| 1.0.0   | 2026-01-08 | Initial threshold documentation |

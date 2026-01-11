@@ -7,6 +7,7 @@ This document summarizes the enhancements made to prevent orchestrators from dir
 ## Problem Statement
 
 The orchestrator violated its own rules by:
+
 1. Using Bash to run `rm -f` and `rm -rf` commands directly
 2. Using Write tool to edit README.md directly
 3. Using Bash to run `git add`, `git commit`, `git push` directly
@@ -19,13 +20,16 @@ The orchestrator violated its own rules by:
 **File**: `.claude/CLAUDE.md`
 
 **Additions**:
+
 - **HARD BLOCKS section**: Explicit list of forbidden tools/commands
 - **SELF-CHECK section**: 5 questions orchestrators must ask before every action
 - **DELEGATION EXAMPLES section**: 5 detailed examples showing wrong vs. correct patterns
 
 **Key Changes**:
+
 ```markdown
 ### HARD BLOCKS - Tools/Commands FORBIDDEN for Orchestrators
+
 - Write tool → spawn developer
 - Edit tool → spawn developer
 - Bash with rm/git → spawn developer
@@ -36,6 +40,7 @@ The orchestrator violated its own rules by:
 ```
 
 **Self-Check Questions**:
+
 1. "Is this coordination or implementation?"
 2. "Would a specialized agent do this better?"
 3. "Am I about to read my 3rd file?"
@@ -43,6 +48,7 @@ The orchestrator violated its own rules by:
 5. "Am I about to run a command that modifies the codebase?"
 
 **Delegation Examples** (5 detailed patterns):
+
 1. File cleanup request (rm -rf)
 2. Documentation update (Write/Edit)
 3. Code review request (Read many files)
@@ -50,6 +56,7 @@ The orchestrator violated its own rules by:
 5. Validation script execution (Bash with scripts)
 
 Each example shows:
+
 - **WRONG**: What the orchestrator did
 - **CORRECT**: How to delegate properly via Task tool
 
@@ -58,15 +65,18 @@ Each example shows:
 **File**: `.claude/agents/orchestrator.md`
 
 **Additions**:
+
 - **CRITICAL CONSTRAINTS section**: List of blocked tools
 - **Self-Check Questions**: Before every action checklist
 - **Specific Command Blocks**: Exact commands that are forbidden
 
 **Key Changes**:
+
 ```markdown
 ## CRITICAL CONSTRAINTS - Tools BLOCKED for Orchestrators
 
 BLOCKED OPERATIONS:
+
 - Write tool → spawn developer instead
 - Edit tool → spawn developer instead
 - Bash with rm/git commands → spawn developer instead
@@ -81,15 +91,18 @@ BLOCKED OPERATIONS:
 **File**: `.claude/agents/master-orchestrator.md`
 
 **Additions**:
+
 - **CRITICAL CONSTRAINTS section**: Hard blocks for master orchestrator
 - **Enforcement Self-Check**: 5-question checklist before every action
 - **VIOLATION PROTOCOL**: What to do if caught violating
 
 **Key Changes**:
+
 ```markdown
 ## CRITICAL CONSTRAINTS - Tools BLOCKED for Master Orchestrator
 
 HARD BLOCKS - NEVER USE THESE TOOLS:
+
 - Write tool → spawn developer
 - Edit tool → spawn developer
 - Bash with rm commands → spawn developer
@@ -101,6 +114,7 @@ HARD BLOCKS - NEVER USE THESE TOOLS:
 ```
 
 **Violation Protocol**:
+
 1. STOP the current action
 2. Acknowledge the violation
 3. Spawn the appropriate subagent via Task tool
@@ -113,6 +127,7 @@ HARD BLOCKS - NEVER USE THESE TOOLS:
 **Purpose**: PreToolUse hook that blocks orchestrators from using implementation tools
 
 **Features**:
+
 - Blocks Write/Edit tools for orchestrators (always)
 - Blocks Bash with dangerous commands (rm, git add, git commit, etc.)
 - Blocks Read tool after 2 uses (2-FILE RULE enforcement)
@@ -122,6 +137,7 @@ HARD BLOCKS - NEVER USE THESE TOOLS:
 - Resets Read counter after Task tool (allows orchestrator to delegate then resume)
 
 **Blocked Tools**:
+
 ```javascript
 BLOCKED_TOOLS = {
   Write: 'spawn developer subagent',
@@ -129,11 +145,12 @@ BLOCKED_TOOLS = {
   Bash: 'check command (rm/git blocked → spawn developer)',
   Read: 'check file count (>2 files → spawn analyst/Explore)',
   Grep: 'spawn analyst subagent',
-  Glob: 'spawn analyst subagent'
-}
+  Glob: 'spawn analyst subagent',
+};
 ```
 
 **Dangerous Bash Commands**:
+
 ```javascript
 DANGEROUS_BASH_COMMANDS = [
   'rm -f',
@@ -143,12 +160,13 @@ DANGEROUS_BASH_COMMANDS = [
   'git push',
   'node .claude/tools/', // Validation scripts
   'npm run',
-  'pnpm'
-]
+  'pnpm',
+];
 ```
 
 **Violation Messages**:
 When orchestrator attempts a forbidden operation, the hook returns:
+
 ```
 ╔═══════════════════════════════════════════════════════════════════╗
 ║  ORCHESTRATOR VIOLATION DETECTED                                  ║
@@ -164,6 +182,7 @@ When orchestrator attempts a forbidden operation, the hook returns:
 ```
 
 **Read Counter Tracking**:
+
 - First Read: Allowed (count = 1)
 - Second Read: Allowed (count = 2)
 - Third Read: BLOCKED (2-FILE RULE violation)
@@ -176,6 +195,7 @@ When orchestrator attempts a forbidden operation, the hook returns:
 **Purpose**: Comprehensive test suite for enforcement hook
 
 **Test Coverage** (20 tests):
+
 1. ✅ Write tool blocked for orchestrator
 2. ✅ Write tool allowed for developer
 3. ✅ Edit tool blocked for master-orchestrator
@@ -199,6 +219,7 @@ When orchestrator attempts a forbidden operation, the hook returns:
 **File**: `.claude/hooks/README.md`
 
 **Additions**:
+
 - Orchestrator Enforcement Hook section
 - Configuration instructions
 - Violation example
@@ -209,16 +230,19 @@ When orchestrator attempts a forbidden operation, the hook returns:
 ### Hook Architecture
 
 **PreToolUse Hook**:
+
 - Intercepts tool calls before execution
 - Checks if agent is orchestrator (orchestrator, master-orchestrator, model-orchestrator)
 - Blocks forbidden tools with detailed violation messages
 - Returns `{ decision: "allow" }` or `{ decision: "block", message: "..." }`
 
 **PostToolUse Hook**:
+
 - Resets Read counter after Task tool
 - Allows orchestrator to delegate work, then resume coordination without Read limit
 
 **Read Counter Tracking**:
+
 - Map of agent name → read count
 - Increments on each Read tool use
 - Resets to 0 after Task tool (delegation)
@@ -227,6 +251,7 @@ When orchestrator attempts a forbidden operation, the hook returns:
 ### Integration Points
 
 **Claude Code Settings**:
+
 ```json
 {
   "hooks": {
@@ -247,6 +272,7 @@ When orchestrator attempts a forbidden operation, the hook returns:
 ```
 
 **Agent Definitions**:
+
 - `orchestrator.md`: Enhanced with CRITICAL CONSTRAINTS section
 - `master-orchestrator.md`: Enhanced with enforcement self-check
 - `CLAUDE.md`: Enhanced with HARD BLOCKS and DELEGATION EXAMPLES
@@ -260,6 +286,7 @@ node .claude/hooks/test-orchestrator-enforcement-hook.mjs
 ```
 
 **Expected Output**:
+
 ```
 🧪 Testing Orchestrator Enforcement Hook
 
@@ -298,6 +325,7 @@ node .claude/hooks/test-orchestrator-enforcement-hook.mjs
 ## Future Enhancements
 
 Potential improvements:
+
 1. **Violation Logging**: Log violations to `.claude/context/violations/` for audit trail
 2. **Metrics Tracking**: Count violations per session, identify patterns
 3. **Configuration File**: Allow custom blocked commands via config
@@ -329,6 +357,7 @@ Potential improvements:
 To verify the enhancement is working:
 
 1. **Run Tests**:
+
    ```bash
    node .claude/hooks/test-orchestrator-enforcement-hook.mjs
    ```
@@ -348,16 +377,19 @@ To verify the enhancement is working:
 These enhancements provide **multi-layered enforcement** of orchestration rules:
 
 **Layer 1 - Documentation** (`.claude/CLAUDE.md`, agent definitions):
+
 - Clear, explicit rules
 - Self-check questions
 - Delegation examples
 
 **Layer 2 - Hook Enforcement** (`orchestrator-enforcement-hook.mjs`):
+
 - Hard blocks at tool level
 - Automatic enforcement
 - Clear violation messages
 
 **Layer 3 - Testing** (`test-orchestrator-enforcement-hook.mjs`):
+
 - Comprehensive test coverage
 - Regression prevention
 - Continuous validation

@@ -67,9 +67,10 @@ Invokes the **ai-system-flow** workflow with this agent sequence:
 
 <output_format>
 **Outputs**:
+
 - `model-strategy.json` - Model selection plan
 - `llm-architecture.json` - System architecture
 - `api-specification.json` - API design
 - `ai-test-results.json` - Quality assessment
-</output_format>
-</instructions>
+  </output_format>
+  </instructions>

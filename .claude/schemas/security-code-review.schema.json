@@ -38,7 +38,15 @@
       "description": "Security issues found in code review",
       "items": {
         "type": "object",
-        "required": ["finding_id", "severity", "category", "file", "line_numbers", "description", "recommendation"],
+        "required": [
+          "finding_id",
+          "severity",
+          "category",
+          "file",
+          "line_numbers",
+          "description",
+          "recommendation"
+        ],
         "properties": {
           "finding_id": {
             "type": "string",

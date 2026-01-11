@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Checkpoint Cleanup Tool
- * 
+ *
  * Removes old checkpoints based on retention policy:
  * - Failed runs: 7 days
  * - Successful runs: 30 days (archive instead of delete)
- * 
+ *
  * Usage:
  *   node .claude/tools/checkpoint-cleanup.mjs [--dry-run] [--run-id <id>]
  */
@@ -31,28 +31,30 @@ async function cleanupRunCheckpoints(runId, dryRun = false) {
   try {
     const runRecord = await readRun(runId);
     const checkpoints = await listCheckpoints(runId);
-    
+
     if (checkpoints.length === 0) {
       return { deleted: 0, archived: 0, errors: [] };
     }
-    
+
     const runStatus = runRecord.status || 'unknown';
     const isFailed = runStatus === 'failed' || runStatus === 'error';
     const retentionDays = isFailed ? RETENTION_DAYS_FAILED : RETENTION_DAYS_SUCCESS;
-    const cutoffDate = new Date(Date.now() - (retentionDays * MS_PER_DAY));
-    
+    const cutoffDate = new Date(Date.now() - retentionDays * MS_PER_DAY);
+
     let deletedCount = 0;
     let archivedCount = 0;
     const errors = [];
-    
+
     for (const checkpoint of checkpoints) {
       const checkpointDate = new Date(checkpoint.timestamp);
-      
+
       if (checkpointDate < cutoffDate) {
         if (isFailed) {
           // Delete failed run checkpoints
           if (dryRun) {
-            console.log(`[DRY-RUN] Would delete checkpoint: ${checkpoint.checkpoint_id} (${checkpointDate.toISOString()})`);
+            console.log(
+              `[DRY-RUN] Would delete checkpoint: ${checkpoint.checkpoint_id} (${checkpointDate.toISOString()})`
+            );
           } else {
             try {
               await unlink(checkpoint.path);
@@ -65,7 +67,9 @@ async function cleanupRunCheckpoints(runId, dryRun = false) {
         } else {
           // Archive successful run checkpoints (for now, just log - could move to archive dir)
           if (dryRun) {
-            console.log(`[DRY-RUN] Would archive checkpoint: ${checkpoint.checkpoint_id} (${checkpointDate.toISOString()})`);
+            console.log(
+              `[DRY-RUN] Would archive checkpoint: ${checkpoint.checkpoint_id} (${checkpointDate.toISOString()})`
+            );
           } else {
             // TODO: Move to archive directory instead of deleting
             archivedCount++;
@@ -74,7 +78,7 @@ async function cleanupRunCheckpoints(runId, dryRun = false) {
         }
       }
     }
-    
+
     return { deleted: deletedCount, archived: archivedCount, errors };
   } catch (error) {
     return { deleted: 0, archived: 0, errors: [error.message] };
@@ -86,16 +90,16 @@ async function cleanupRunCheckpoints(runId, dryRun = false) {
  */
 async function cleanupAllCheckpoints(dryRun = false) {
   const runsDir = join(__dirname, '..', 'context', 'runs');
-  
+
   if (!existsSync(runsDir)) {
     return { deleted: 0, archived: 0, errors: [] };
   }
-  
+
   const runDirs = await readdir(runsDir);
   let totalDeleted = 0;
   let totalArchived = 0;
   const allErrors = [];
-  
+
   for (const runDir of runDirs) {
     const runId = runDir;
     const result = await cleanupRunCheckpoints(runId, dryRun);
@@ -103,7 +107,7 @@ async function cleanupAllCheckpoints(dryRun = false) {
     totalArchived += result.archived;
     allErrors.push(...result.errors);
   }
-  
+
   return { deleted: totalDeleted, archived: totalArchived, errors: allErrors };
 }
 
@@ -112,13 +116,13 @@ async function main() {
   const dryRun = args.includes('--dry-run');
   const runIdIndex = args.indexOf('--run-id');
   const runId = runIdIndex !== -1 && args[runIdIndex + 1] ? args[runIdIndex + 1] : null;
-  
+
   console.log('🧹 Checkpoint Cleanup Tool\n');
-  
+
   if (dryRun) {
     console.log('🔍 DRY-RUN MODE: No files will be deleted\n');
   }
-  
+
   let result;
   if (runId) {
     console.log(`Cleaning up checkpoints for run: ${runId}\n`);
@@ -127,7 +131,7 @@ async function main() {
     console.log('Cleaning up checkpoints for all runs\n');
     result = await cleanupAllCheckpoints(dryRun);
   }
-  
+
   console.log(`\n📊 Cleanup Summary:`);
   console.log(`   Deleted: ${result.deleted}`);
   console.log(`   Archived: ${result.archived}`);
@@ -135,7 +139,7 @@ async function main() {
     console.log(`   Errors: ${result.errors.length}`);
     result.errors.forEach(err => console.error(`     - ${err}`));
   }
-  
+
   process.exit(result.errors.length > 0 ? 1 : 0);
 }
 

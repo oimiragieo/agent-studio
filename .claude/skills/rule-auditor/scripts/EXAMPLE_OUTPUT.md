@@ -5,11 +5,13 @@ This document shows example outputs from the rule-auditor executable script.
 ## Example 1: Clean Code (No Violations)
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs src/components/CleanComponent.tsx --format json
 ```
 
 **Input File** (`src/components/CleanComponent.tsx`):
+
 ```typescript
 import React from 'react';
 
@@ -29,6 +31,7 @@ export const CleanComponent: React.FC<UserProps> = ({ name, email }) => {
 ```
 
 **Output**:
+
 ```json
 {
   "skill_name": "rule-auditor",
@@ -69,11 +72,13 @@ export const CleanComponent: React.FC<UserProps> = ({ name, email }) => {
 ## Example 2: Code with Violations
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs src/components/UserAuth.tsx --format json
 ```
 
 **Input File** (`src/components/UserAuth.tsx`):
+
 ```typescript
 import React from 'react';
 
@@ -87,6 +92,7 @@ export function UserAuth() {
 ```
 
 **Output**:
+
 ```json
 {
   "skill_name": "rule-auditor",
@@ -158,11 +164,13 @@ export function UserAuth() {
 ## Example 3: Dry-Run Fix Mode
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs src/components/UserAuth.tsx --fix-dry-run --format json
 ```
 
 **Output**:
+
 ```json
 {
   "skill_name": "rule-auditor",
@@ -257,11 +265,13 @@ node .claude/skills/rule-auditor/scripts/audit.mjs src/components/UserAuth.tsx -
 ## Example 4: Fix Mode with Backups
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs src/components/UserAuth.tsx --fix --format json
 ```
 
 **Before** (`src/components/UserAuth.tsx`):
+
 ```typescript
 import React from 'react';
 
@@ -275,6 +285,7 @@ export function UserAuth() {
 ```
 
 **After** (`src/components/UserAuth.tsx`):
+
 ```typescript
 import React from 'react';
 
@@ -296,11 +307,13 @@ export function UserAuth() {
 ## Example 5: Strict Mode
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs src/ --strict --format json
 ```
 
 **Behavior**:
+
 - Exit code `1` if **any** violations found (even warnings)
 - Useful for CI/CD pipelines requiring zero violations
 
@@ -309,6 +322,7 @@ node .claude/skills/rule-auditor/scripts/audit.mjs src/ --strict --format json
 ## Example 6: Severity Filtering
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs src/ --severity error --format json
 ```
@@ -320,6 +334,7 @@ node .claude/skills/rule-auditor/scripts/audit.mjs src/ --severity error --forma
 ## Example 7: Rule Filtering
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs src/ --rules nextjs,typescript --format json
 ```
@@ -331,11 +346,13 @@ node .claude/skills/rule-auditor/scripts/audit.mjs src/ --rules nextjs,typescrip
 ## Example 8: Markdown Output
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs src/components/UserAuth.tsx --format markdown
 ```
 
 **Output**:
+
 ```markdown
 ## Rule Audit Report
 
@@ -344,18 +361,21 @@ node .claude/skills/rule-auditor/scripts/audit.mjs src/components/UserAuth.tsx -
 **Violations**: 3 (1 errors, 2 warnings)
 
 ### ERROR: Avoid using 'any' type
+
 - **File**: src/components/UserAuth.tsx:4:9
 - **Rule**: TECH_STACK_NEXTJS
 - **Code**: `const user: any = getUser();`
 - **Fix**: const user: unknown = getUser();
 
 ### WARNING: Remove console.log statements before commit
+
 - **File**: src/components/UserAuth.tsx:5:3
 - **Rule**: TECH_STACK_NEXTJS
 - **Code**: `console.log('User authenticated:', user);`
 - **Fix**:
 
 ### WARNING: Use 'const' or 'let' instead of 'var'
+
 - **File**: src/components/UserAuth.tsx:6:3
 - **Rule**: TECH_STACK_NEXTJS
 - **Code**: `var isAuthenticated = true;`
@@ -367,11 +387,13 @@ node .claude/skills/rule-auditor/scripts/audit.mjs src/components/UserAuth.tsx -
 ## Example 9: Multiple Files
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs src/components/ --format json
 ```
 
 **Output**:
+
 ```json
 {
   "skill_name": "rule-auditor",
@@ -424,6 +446,7 @@ node .claude/skills/rule-auditor/scripts/audit.mjs src/components/ --format json
 All outputs strictly conform to `.claude/schemas/skill-rule-auditor-output.schema.json`:
 
 **Required Fields** (always present):
+
 - ✅ `skill_name`: "rule-auditor"
 - ✅ `files_audited`: Array with path, lines_analyzed, violations_count
 - ✅ `rules_applied`: Array with rule_path, rule_name, violations_found
@@ -432,6 +455,7 @@ All outputs strictly conform to `.claude/schemas/skill-rule-auditor-output.schem
 - ✅ `timestamp`: ISO 8601 timestamp
 
 **Optional Fields** (context-dependent):
+
 - ✅ `fixes_applied`: Present when `--fix` or `--fix-dry-run` used
 - ✅ `rule_index_consulted`: Boolean (always true for this implementation)
 - ✅ `technologies_detected`: Array of detected technologies

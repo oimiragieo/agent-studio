@@ -7,6 +7,7 @@ Phase-based project structure organizes large projects into manageable phases, e
 ## The Problem
 
 Traditional project files grow unbounded:
+
 - Single plan files reach 50k+ lines
 - CLAUDE.md files become massive
 - AI agents cannot ingest such large files
@@ -103,6 +104,7 @@ Phases follow the pattern: `phase-{number}-{name}/`
 ### Custom Phases
 
 Projects may have custom phases based on needs:
+
 - `phase-02-research/` - Research and prototyping
 - `phase-03-migration/` - Legacy system migration
 - `phase-04-optimization/` - Performance optimization
@@ -115,9 +117,11 @@ Each `plan.md` file follows this structure:
 # Phase {Number}: {Phase Name}
 
 ## Overview
+
 Brief description of what this phase accomplishes.
 
 ## Objectives
+
 - Objective 1
 - Objective 2
 - Objective 3
@@ -125,6 +129,7 @@ Brief description of what this phase accomplishes.
 ## Tasks
 
 ### Task 1: {Task Name}
+
 - **Status**: pending | in_progress | completed | blocked
 - **Assigned Agent**: developer
 - **Dependencies**: [Task IDs]
@@ -132,18 +137,22 @@ Brief description of what this phase accomplishes.
 - **Description**: Task details
 
 ### Task 2: {Task Name}
+
 ...
 
 ## Dependencies
+
 - Depends on: phase-01-planning
 - Blocks: phase-03-implementation
 
 ## Progress
+
 - Completed: 5/10 tasks
 - In Progress: 2/10 tasks
 - Pending: 3/10 tasks
 
 ## Notes
+
 Any phase-specific notes or decisions.
 ```
 
@@ -155,18 +164,23 @@ Each `claude.md` file contains phase-specific context:
 # {Phase Name} - Project Context
 
 ## Phase Overview
+
 Context specific to this phase.
 
 ## Patterns and Conventions
+
 Phase-specific coding patterns and conventions.
 
 ## Dependencies
+
 References to previous phases and their outputs.
 
 ## Current State
+
 What has been completed in this phase.
 
 ## Next Steps
+
 What needs to be done next.
 ```
 
@@ -193,14 +207,8 @@ The `orchestrator-state.json` file tracks overall project state:
       "startedAt": "2025-01-20T09:00:00Z"
     }
   },
-  "completedTasks": [
-    "Task 1: Project planning",
-    "Task 2: Architecture design"
-  ],
-  "pendingTasks": [
-    "Task 3: API implementation",
-    "Task 4: Frontend components"
-  ]
+  "completedTasks": ["Task 1: Project planning", "Task 2: Architecture design"],
+  "pendingTasks": ["Task 3: API implementation", "Task 4: Frontend components"]
 }
 ```
 
@@ -209,6 +217,7 @@ The `orchestrator-state.json` file tracks overall project state:
 ### Creating a New Phase
 
 1. **Create Phase Directory**:
+
    ```bash
    mkdir -p .claude/projects/{project}/phase-{number}-{name}
    ```
@@ -405,4 +414,3 @@ To migrate an existing project:
 │   └── claude.md (2,700 lines)
 └── orchestrator-state.json
 ```
-

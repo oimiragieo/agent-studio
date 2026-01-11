@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "multi-ai-review-output.schema.json",
+  "title": "Multi-AI Review Provider Output",
+  "description": "Schema for individual provider outputs from multi-ai-code-review skill. Each provider's review is persisted to a separate artifact file for auditability and traceability.",
+  "type": "object",
+  "required": ["provider", "timestamp", "success"],
+  "properties": {
+    "provider": {
+      "type": "string",
+      "enum": ["claude", "gemini", "codex", "cursor", "copilot", "consensus"],
+      "description": "Name of the AI provider or 'consensus' for synthesized output"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the review was generated"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model used by the provider (e.g., 'claude-sonnet-4.5', 'gemini-2.5-flash')"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether the provider successfully completed the review"
+    },
+    "review": {
+      "description": "Provider's review output (full text or structured data)",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Raw text review output"
+        },
+        {
+          "type": "object",
+          "description": "Structured review output conforming to review schema",
+          "properties": {
+            "overall_risk": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "critical"],
+              "description": "Overall risk level of the changes"
+            },
+            "summary": {
+              "type": "string",
+              "description": "High-level summary of the review"
+            },
+            "key_changes": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Key changes identified in the diff"
+            },
+            "findings": {
+              "type": "array",
+              "description": "List of specific findings or issues",
+              "items": {
+                "type": "object",
+                "required": ["severity", "area", "issue", "recommendation"],
+                "properties": {
+                  "severity": {
+                    "type": "string",
+                    "enum": ["nit", "low", "medium", "high", "critical"],
+                    "description": "Severity level of the finding"
+                  },
+                  "area": {
+                    "type": "string",
+                    "enum": [
+                      "correctness",
+                      "security",
+                      "performance",
+                      "reliability",
+                      "maintainability",
+                      "observability"
+                    ],
+                    "description": "Category of the finding"
+                  },
+                  "file": {
+                    "type": "string",
+                    "description": "File path where the issue occurs"
+                  },
+                  "issue": {
+                    "type": "string",
+                    "description": "Description of the issue"
+                  },
+                  "recommendation": {
+                    "type": "string",
+                    "description": "Recommended fix or improvement"
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Confidence level of the finding (0-1)"
+                  }
+                }
+              }
+            },
+            "tests_to_add": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Suggested tests to add"
+            },
+            "questions": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Questions for the author"
+            }
+          }
+        },
+        {
+          "type": "null",
+          "description": "No review output (on failure)"
+        }
+      ]
+    },
+    "parsed": {
+      "description": "Structured review data extracted from provider output (if parseable)",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Parsed structured review"
+        },
+        {
+          "type": "null",
+          "description": "Could not parse provider output"
+        }
+      ]
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if the review failed"
+    },
+    "exitCode": {
+      "type": "integer",
+      "description": "Exit code from the provider CLI"
+    },
+    "stderr": {
+      "type": "string",
+      "description": "Standard error output from the provider"
+    },
+    "stdout": {
+      "type": "string",
+      "description": "Standard output from the provider (may be truncated if >10MB)"
+    },
+    "truncated": {
+      "type": "boolean",
+      "description": "Whether the output was truncated due to size limits"
+    },
+    "fullOutputPath": {
+      "type": "string",
+      "description": "Path to full output file if truncated"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the review execution",
+      "properties": {
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Time taken to complete the review in milliseconds"
+        },
+        "retryCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of retries attempted"
+        },
+        "authMode": {
+          "type": "string",
+          "enum": ["session-first", "env-first"],
+          "description": "Authentication mode used"
+        },
+        "cliVersion": {
+          "type": "string",
+          "description": "Version of the provider CLI"
+        },
+        "circuitBreakerState": {
+          "type": "string",
+          "enum": ["closed", "open", "half-open"],
+          "description": "Circuit breaker state at time of execution"
+        }
+      }
+    },
+    "diffMeta": {
+      "type": "object",
+      "description": "Metadata about the diff being reviewed",
+      "properties": {
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Size of the diff in bytes"
+        },
+        "sha256": {
+          "type": "string",
+          "description": "SHA256 hash of the diff (first 16 chars)"
+        },
+        "truncated": {
+          "type": "boolean",
+          "description": "Whether the diff was truncated before review"
+        },
+        "truncation": {
+          "type": "object",
+          "properties": {
+            "omittedChars": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "strategy": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "provider": "claude",
+      "timestamp": "2025-01-10T15:30:45.123Z",
+      "model": "claude-sonnet-4.5",
+      "success": true,
+      "review": {
+        "overall_risk": "low",
+        "summary": "Code changes look good with minor improvements suggested.",
+        "key_changes": [
+          "Added artifact persistence to multi-ai-code-review",
+          "Created new schema for review outputs"
+        ],
+        "findings": [
+          {
+            "severity": "low",
+            "area": "maintainability",
+            "file": "codex-skills/multi-ai-code-review/scripts/review.js",
+            "issue": "Consider extracting artifact persistence logic to separate function",
+            "recommendation": "Create a persistArtifact() helper function for reusability",
+            "confidence": 0.8
+          }
+        ],
+        "tests_to_add": [
+          "Test artifact persistence with large outputs (>10MB)",
+          "Test artifact discovery after run completion"
+        ],
+        "questions": []
+      },
+      "parsed": {
+        "overall_risk": "low",
+        "summary": "Code changes look good with minor improvements suggested.",
+        "findings": []
+      },
+      "metadata": {
+        "durationMs": 12500,
+        "retryCount": 0,
+        "authMode": "session-first",
+        "cliVersion": "claude-1.2.3",
+        "circuitBreakerState": "closed"
+      },
+      "diffMeta": {
+        "bytes": 4567,
+        "sha256": "a1b2c3d4e5f6g7h8",
+        "truncated": false
+      }
+    },
+    {
+      "provider": "gemini",
+      "timestamp": "2025-01-10T15:30:50.456Z",
+      "model": "gemini-2.5-flash",
+      "success": false,
+      "review": null,
+      "error": "Provider CLI timed out after 240000ms",
+      "exitCode": 1,
+      "stderr": "Error: Request timeout",
+      "metadata": {
+        "durationMs": 240000,
+        "retryCount": 3,
+        "authMode": "session-first",
+        "circuitBreakerState": "open"
+      }
+    },
+    {
+      "provider": "consensus",
+      "timestamp": "2025-01-10T15:31:00.789Z",
+      "model": "claude-sonnet-4.5",
+      "success": true,
+      "review": {
+        "overall_risk": "low",
+        "summary": "Synthesized review from multiple providers. Changes are safe with minor improvements.",
+        "findings": [
+          {
+            "severity": "low",
+            "area": "maintainability",
+            "file": "codex-skills/multi-ai-code-review/scripts/review.js",
+            "issue": "Extract artifact persistence logic",
+            "recommendation": "Create helper function for reusability",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "metadata": {
+        "durationMs": 8000,
+        "retryCount": 0,
+        "authMode": "session-first"
+      }
+    }
+  ]
+}

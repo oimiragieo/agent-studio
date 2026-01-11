@@ -3,7 +3,14 @@
   "type": "object",
   "title": "UI Test Results",
   "description": "Schema for results from systematic UI feature testing",
-  "required": ["test_id", "test_date", "tester_agent", "target_url", "features_tested", "test_summary"],
+  "required": [
+    "test_id",
+    "test_date",
+    "tester_agent",
+    "target_url",
+    "features_tested",
+    "test_summary"
+  ],
   "properties": {
     "test_id": {
       "type": "string",
@@ -36,7 +43,16 @@
           },
           "feature_type": {
             "type": "string",
-            "enum": ["navigation", "form", "interactive", "data_display", "search_filter", "pagination", "authentication", "other"],
+            "enum": [
+              "navigation",
+              "form",
+              "interactive",
+              "data_display",
+              "search_filter",
+              "pagination",
+              "authentication",
+              "other"
+            ],
             "description": "Type of feature"
           },
           "location": {
@@ -243,4 +259,3 @@
     }
   }
 }
-

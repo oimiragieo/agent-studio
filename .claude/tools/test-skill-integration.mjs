@@ -29,22 +29,16 @@ const __dirname = dirname(__filename);
 const PROJECT_ROOT = join(__dirname, '../..');
 
 // Import modules under test
-import {
-  loadSkillMatrix,
-  getSkillsForAgent,
-  injectSkillsForAgent
-} from './skill-injector.mjs';
+import { loadSkillMatrix, getSkillsForAgent, injectSkillsForAgent } from './skill-injector.mjs';
 
-import {
-  optimizeSkillContext
-} from './skill-context-optimizer.mjs';
+import { optimizeSkillContext } from './skill-context-optimizer.mjs';
 
 // Define optimization levels locally (from skill-context-optimizer.mjs)
 const OPTIMIZATION_LEVELS = {
   MINIMAL: 'MINIMAL',
   ESSENTIAL: 'ESSENTIAL',
   STANDARD: 'STANDARD',
-  FULL: 'FULL'
+  FULL: 'FULL',
 };
 
 // Test configuration
@@ -61,7 +55,7 @@ const results = {
   failed: 0,
   skipped: 0,
   results: [],
-  duration_ms: 0
+  duration_ms: 0,
 };
 
 /**
@@ -90,7 +84,7 @@ function recordTest(testName, status, error = null, duration = 0) {
   const result = {
     test: testName,
     status,
-    duration_ms: duration
+    duration_ms: duration,
   };
 
   if (error) {
@@ -105,7 +99,9 @@ function recordTest(testName, status, error = null, duration = 0) {
   const color = status === 'pass' ? '\x1b[32m' : status === 'fail' ? '\x1b[31m' : '\x1b[33m';
   const reset = '\x1b[0m';
 
-  log(`${color}${icon}${reset} ${testName} ${status === 'fail' && error ? `(${error.message})` : ''}`);
+  log(
+    `${color}${icon}${reset} ${testName} ${status === 'fail' && error ? `(${error.message})` : ''}`
+  );
 }
 
 /**
@@ -167,7 +163,10 @@ async function testSkillInjectorGetSkills() {
       throw new Error(`Invalid skills format for ${agentType}`);
     }
 
-    log(`  ${agentType}: ${skills.requiredSkills.length} required, ${skills.recommendedSkills?.length || 0} recommended`, 'info');
+    log(
+      `  ${agentType}: ${skills.requiredSkills.length} required, ${skills.recommendedSkills?.length || 0} recommended`,
+      'info'
+    );
   }
 }
 
@@ -176,7 +175,11 @@ async function testSkillInjectorDetectTriggers() {
     { agent: 'developer', task: 'Create a new component', expectedTrigger: 'scaffolder' },
     { agent: 'developer', task: 'Review code changes', expectedTrigger: 'rule-auditor' },
     { agent: 'code-reviewer', task: 'Review code', expectedTrigger: 'rule-auditor' },
-    { agent: 'architect', task: 'Create architecture diagram', expectedTrigger: 'diagram-generator' }
+    {
+      agent: 'architect',
+      task: 'Create architecture diagram',
+      expectedTrigger: 'diagram-generator',
+    },
   ];
 
   for (const testCase of testCases) {
@@ -189,7 +192,7 @@ async function testSkillInjectorDetectTriggers() {
     if (!result.triggeredSkills.includes(testCase.expectedTrigger)) {
       throw new Error(
         `Expected trigger '${testCase.expectedTrigger}' not found. ` +
-        `Got: ${result.triggeredSkills.join(', ')}`
+          `Got: ${result.triggeredSkills.join(', ')}`
       );
     }
 
@@ -242,11 +245,10 @@ async function testOptimizerLoadSummaries() {
 }
 
 async function testOptimizerMinimalLevel() {
-  const result = await optimizeSkillContext(
-    ['scaffolder', 'rule-auditor'],
-    [],
-    { level: OPTIMIZATION_LEVELS.MINIMAL, maxTokens: 1000 }
-  );
+  const result = await optimizeSkillContext(['scaffolder', 'rule-auditor'], [], {
+    level: OPTIMIZATION_LEVELS.MINIMAL,
+    maxTokens: 1000,
+  });
 
   if (!result || !result.skills) {
     throw new Error('Optimization failed');
@@ -281,11 +283,10 @@ async function testOptimizerEssentialLevel() {
 }
 
 async function testOptimizerStandardLevel() {
-  const result = await optimizeSkillContext(
-    ['scaffolder'],
-    [],
-    { level: OPTIMIZATION_LEVELS.STANDARD, maxTokens: 10000 }
-  );
+  const result = await optimizeSkillContext(['scaffolder'], [], {
+    level: OPTIMIZATION_LEVELS.STANDARD,
+    maxTokens: 10000,
+  });
 
   if (!result || !result.skills) {
     throw new Error('Optimization failed');
@@ -300,11 +301,10 @@ async function testOptimizerStandardLevel() {
 }
 
 async function testOptimizerFullLevel() {
-  const result = await optimizeSkillContext(
-    ['scaffolder'],
-    [],
-    { level: OPTIMIZATION_LEVELS.FULL, maxTokens: 3000 }
-  );
+  const result = await optimizeSkillContext(['scaffolder'], [], {
+    level: OPTIMIZATION_LEVELS.FULL,
+    maxTokens: 3000,
+  });
 
   if (!result || !result.skills) {
     throw new Error('Optimization failed');
@@ -395,13 +395,11 @@ async function testSchemaValidationScaffolder() {
   // Test valid output
   const validOutput = {
     skill_name: 'scaffolder',
-    files_generated: [
-      { path: '/test/Component.tsx', type: 'component', lines_of_code: 50 }
-    ],
+    files_generated: [{ path: '/test/Component.tsx', type: 'component', lines_of_code: 50 }],
     patterns_applied: ['React functional component'],
     rules_loaded: ['.claude/rules-master/TECH_STACK_NEXTJS.md'],
     rule_index_consulted: true,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   if (!validate(validOutput)) {
@@ -411,7 +409,7 @@ async function testSchemaValidationScaffolder() {
   // Test invalid output
   const invalidOutput = {
     skill_name: 'wrong-skill',
-    files_generated: []
+    files_generated: [],
   };
 
   if (validate(invalidOutput)) {
@@ -437,11 +435,9 @@ async function testSchemaValidationRuleAuditor() {
   // Test valid output
   const validOutput = {
     skill_name: 'rule-auditor',
-    files_audited: [
-      { path: '/test/file.ts', lines_analyzed: 100, violations_count: 2 }
-    ],
+    files_audited: [{ path: '/test/file.ts', lines_analyzed: 100, violations_count: 2 }],
     rules_applied: [
-      { rule_path: '.claude/rules-master/TECH_STACK_NEXTJS.md', rule_name: 'Next.js Rules' }
+      { rule_path: '.claude/rules-master/TECH_STACK_NEXTJS.md', rule_name: 'Next.js Rules' },
     ],
     compliance_score: 85,
     violations_found: [
@@ -450,11 +446,11 @@ async function testSchemaValidationRuleAuditor() {
         line: 10,
         rule: 'no-any',
         severity: 'error',
-        message: 'Avoid using any type'
-      }
+        message: 'Avoid using any type',
+      },
     ],
     rule_index_consulted: true,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   if (!validate(validOutput)) {
@@ -509,15 +505,11 @@ async function testHookIntegrationFlow() {
 
 async function testE2EInjectionWithOptimizer() {
   // Test full pipeline: injection → optimization
-  const injectionResult = await injectSkillsForAgent(
-    'developer',
-    'Create new component',
-    {
-      useOptimizer: true,
-      contextLevel: 'ESSENTIAL',
-      maxSkillTokens: 10000
-    }
-  );
+  const injectionResult = await injectSkillsForAgent('developer', 'Create new component', {
+    useOptimizer: true,
+    contextLevel: 'ESSENTIAL',
+    maxSkillTokens: 10000,
+  });
 
   if (!injectionResult.success) {
     throw new Error(`Injection failed: ${injectionResult.error}`);
@@ -600,7 +592,9 @@ async function runAllTests() {
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('\n📊 Test Summary\n');
   console.log(`Total Tests:  ${results.total_tests}`);
-  console.log(`✓ Passed:     ${results.passed} (${Math.round(results.passed / results.total_tests * 100)}%)`);
+  console.log(
+    `✓ Passed:     ${results.passed} (${Math.round((results.passed / results.total_tests) * 100)}%)`
+  );
   console.log(`✗ Failed:     ${results.failed}`);
   console.log(`○ Skipped:    ${results.skipped}`);
   console.log(`⏱  Duration:   ${results.duration_ms}ms`);
@@ -665,7 +659,6 @@ Examples:
 
     // Exit with appropriate code
     process.exit(testResults.failed > 0 ? 1 : 0);
-
   } catch (error) {
     console.error('\n❌ Fatal error:', error.message);
     if (VERBOSE) {
@@ -676,8 +669,9 @@ Examples:
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main();
 }

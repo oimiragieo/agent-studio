@@ -7,11 +7,13 @@ A comprehensive validation tool to prevent workflow path inconsistencies across 
 ## Quick Start
 
 ### Basic Validation
+
 ```bash
 node .claude/tools/validate-workflow-paths.mjs
 ```
 
 ### Auto-Fix Mode
+
 ```bash
 node .claude/tools/validate-workflow-paths.mjs --fix
 ```
@@ -21,20 +23,26 @@ node .claude/tools/validate-workflow-paths.mjs --fix
 ## What It Validates
 
 ### 1. Double-Prefix Detection
+
 Detects malformed paths with duplicate prefixes:
+
 - ❌ `.claude/workflows/.claude/workflows/file.yaml`
 - ❌ `workflows/.claude/workflows/file.yaml`
 - ❌ `.claude/workflows/workflows/file.yaml`
 - ✅ `.claude/workflows/file.yaml` (correct format)
 
 ### 2. File Existence
+
 Checks if referenced workflow files actually exist:
+
 - Scans `.claude/workflows/` directory
 - Verifies all references in `cuj-registry.json`
 - Checks links in CUJ documentation files
 
 ### 3. Path Normalization
+
 Ensures consistent path format:
+
 - All paths use `.claude/workflows/` prefix
 - No relative paths like `../../workflows/`
 - `null` for skill-only CUJs
@@ -44,6 +52,7 @@ Ensures consistent path format:
 ## Usage Examples
 
 ### Check for Issues
+
 ```bash
 $ node .claude/tools/validate-workflow-paths.mjs
 
@@ -63,6 +72,7 @@ $ node .claude/tools/validate-workflow-paths.mjs
 ```
 
 ### Auto-Fix Issues
+
 ```bash
 $ node .claude/tools/validate-workflow-paths.mjs --fix
 
@@ -78,6 +88,7 @@ $ node .claude/tools/validate-workflow-paths.mjs --fix
 ## Output Explanation
 
 ### Summary Section
+
 ```
 📊 Summary:
   • CUJs in registry: 59          # Total CUJs in registry
@@ -89,6 +100,7 @@ $ node .claude/tools/validate-workflow-paths.mjs --fix
 ### Issue Types
 
 #### 1. Double-Prefix Issues
+
 ```
 🔴 Double-Prefix Issues (1):
   • CUJ-005 (line ~133):
@@ -97,6 +109,7 @@ $ node .claude/tools/validate-workflow-paths.mjs --fix
 ```
 
 #### 2. Missing Workflow Files
+
 ```
 🔴 Missing Workflow Files (1):
   • CUJ-022 (line ~712): .claude/workflows/ai-system-flow.yaml
@@ -107,6 +120,7 @@ $ node .claude/tools/validate-workflow-paths.mjs --fix
 ```
 
 #### 3. Broken Links
+
 ```
 🔴 Broken Workflow Links (1):
   • CUJ-019.md (line 151):
@@ -136,7 +150,9 @@ fi
 ## Integration
 
 ### Pre-Commit Hook
+
 Add to `.git/hooks/pre-commit`:
+
 ```bash
 #!/bin/bash
 node .claude/tools/validate-workflow-paths.mjs
@@ -148,12 +164,14 @@ fi
 ```
 
 ### CI/CD Pipeline (GitHub Actions)
+
 ```yaml
 - name: Validate Workflow Paths
   run: node .claude/tools/validate-workflow-paths.mjs
 ```
 
 ### CI/CD Pipeline (GitLab CI)
+
 ```yaml
 validate-workflows:
   script:
@@ -161,7 +179,9 @@ validate-workflows:
 ```
 
 ### NPM Script
+
 Add to `package.json`:
+
 ```json
 {
   "scripts": {
@@ -172,6 +192,7 @@ Add to `package.json`:
 ```
 
 Then run:
+
 ```bash
 npm run validate:workflows
 npm run fix:workflows
@@ -182,17 +203,20 @@ npm run fix:workflows
 ## When to Run
 
 ### During Development
+
 - ✅ Before committing changes to CUJ files
 - ✅ After adding new CUJs
 - ✅ After renaming workflow files
 - ✅ After updating workflow references
 
 ### In CI/CD
+
 - ✅ On every pull request
 - ✅ Before merging to main branch
 - ✅ As part of validation suite
 
 ### Periodic Maintenance
+
 - ✅ Weekly validation run
 - ✅ After bulk CUJ updates
 - ✅ After workflow refactoring
@@ -202,12 +226,15 @@ npm run fix:workflows
 ## Common Issues
 
 ### Issue: Double-Prefix Path
+
 **Problem**: Path has duplicate prefix
+
 ```
 .claude/workflows/.claude/workflows/greenfield-fullstack.yaml
 ```
 
 **Solution**: Run with `--fix` flag
+
 ```bash
 node .claude/tools/validate-workflow-paths.mjs --fix
 ```
@@ -217,13 +244,16 @@ node .claude/tools/validate-workflow-paths.mjs --fix
 ---
 
 ### Issue: Missing Workflow File
+
 **Problem**: CUJ references non-existent workflow
+
 ```
 CUJ-022 references: .claude/workflows/ai-system-flow.yaml
 File does not exist
 ```
 
 **Solution**: Either create the workflow file OR change CUJ to `skill-only`:
+
 ```json
 {
   "execution_mode": "skill-only",
@@ -234,7 +264,9 @@ File does not exist
 ---
 
 ### Issue: Broken Link in Documentation
+
 **Problem**: CUJ doc has broken workflow link
+
 ```
 CUJ-019.md (line 151):
   Link: ../../workflows/performance-flow.yaml
@@ -248,17 +280,20 @@ CUJ-019.md (line 151):
 ## Validation Rules
 
 ### Path Format Rules
+
 1. **Always** use `.claude/workflows/` prefix
 2. **Never** use relative paths like `../../workflows/`
 3. **Never** use double prefixes
 4. **Use** `null` for skill-only CUJs
 
 ### Workflow Reference Rules
+
 1. **workflow-based CUJs**: Must have `workflow` field with valid path
 2. **skill-only CUJs**: Must have `workflow: null`
 3. **All paths**: Must point to existing files
 
 ### Documentation Rules
+
 1. **Workflow links**: Use relative paths from CUJ docs directory
 2. **Inline references**: Use canonical `.claude/workflows/` format
 3. **Broken links**: Must be fixed or updated
@@ -268,11 +303,13 @@ CUJ-019.md (line 151):
 ## Technical Details
 
 ### Files Scanned
+
 - `.claude/context/cuj-registry.json` - CUJ registry with workflow mappings
 - `.claude/docs/cujs/CUJ-*.md` - Individual CUJ documentation files
 - `.claude/workflows/*.yaml` - Available workflow files
 
 ### Detection Patterns
+
 ```javascript
 // Double-prefix patterns detected
 /\.claude\/workflows\/\.claude\/workflows\//
@@ -281,6 +318,7 @@ CUJ-019.md (line 151):
 ```
 
 ### Path Normalization
+
 ```javascript
 // Input:  .claude/workflows/.claude/workflows/greenfield-fullstack.yaml
 // Output: .claude/workflows/greenfield-fullstack.yaml
@@ -291,9 +329,11 @@ CUJ-019.md (line 151):
 ## Troubleshooting
 
 ### Validation Script Won't Run
+
 **Problem**: Permission denied or syntax error
 
 **Solution**:
+
 ```bash
 # Make executable (Unix/Mac)
 chmod +x .claude/tools/validate-workflow-paths.mjs
@@ -305,9 +345,11 @@ node .claude/tools/validate-workflow-paths.mjs
 ---
 
 ### False Positives
+
 **Problem**: Tool reports issues that don't exist
 
 **Solution**: Check file paths and ensure:
+
 - Workflow files exist in `.claude/workflows/`
 - CUJ registry is valid JSON
 - Paths use forward slashes (/)
@@ -315,9 +357,11 @@ node .claude/tools/validate-workflow-paths.mjs
 ---
 
 ### Auto-Fix Not Working
+
 **Problem**: `--fix` flag doesn't correct issues
 
 **Solution**: Auto-fix only corrects double-prefix issues. Other issues require manual intervention:
+
 - **Missing files**: Create the file or change CUJ to skill-only
 - **Broken links**: Update documentation to fix links
 
@@ -326,7 +370,9 @@ node .claude/tools/validate-workflow-paths.mjs
 ## Advanced Usage
 
 ### Custom Validation
+
 Modify the script to add custom validations:
+
 ```javascript
 // Add custom pattern
 function hasCustomPattern(workflowPath) {
@@ -335,7 +381,9 @@ function hasCustomPattern(workflowPath) {
 ```
 
 ### Extend Detection
+
 Add new issue types:
+
 ```javascript
 const issues = [];
 if (myCustomCheck(cuj.workflow)) {
@@ -371,6 +419,7 @@ if (myCustomCheck(cuj.workflow)) {
 ## Version History
 
 ### v1.0.0 (2026-01-06)
+
 - ✅ Initial release
 - ✅ Double-prefix detection
 - ✅ Missing file detection
@@ -390,6 +439,7 @@ MIT License - Part of LLM-RULES project
 ## Support
 
 For issues or questions:
+
 1. Check this README
 2. Review [CUJ Index](../docs/cujs/CUJ-INDEX.md)
 3. Check [Workflow Guide](../workflows/WORKFLOW-GUIDE.md)

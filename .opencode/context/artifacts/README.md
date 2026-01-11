@@ -14,7 +14,7 @@ artifacts/
 
 ## Usage
 
-Artifacts are created and managed by agents during workflows. 
+Artifacts are created and managed by agents during workflows.
 Reference artifacts by path in handoffs between agents.
 
 ## Retention

@@ -30,12 +30,14 @@ Classifier - Categorizes code, documents, and data into predefined categories us
 ### Code Classification
 
 **When to Use**:
+
 - Organizing codebase by functionality
 - Identifying code patterns
 - Categorizing components
 - Code review organization
 
 **How to Invoke**:
+
 ```
 "Classify all files in src/components by functionality"
 "Categorize API routes by resource type"
@@ -43,6 +45,7 @@ Classifier - Categorizes code, documents, and data into predefined categories us
 ```
 
 **What It Does**:
+
 - Analyzes code files
 - Assigns categories based on patterns
 - Returns classification results
@@ -51,12 +54,14 @@ Classifier - Categorizes code, documents, and data into predefined categories us
 ### Document Classification
 
 **When to Use**:
+
 - Organizing documentation
 - Categorizing content
 - Topic classification
 - Content management
 
 **How to Invoke**:
+
 ```
 "Classify documentation files by topic"
 "Categorize markdown files by purpose"
@@ -91,6 +96,7 @@ Classifier - Categorizes code, documents, and data into predefined categories us
 ### With Database Architect
 
 Classifier can categorize database schemas:
+
 - Table types (entities, relationships, lookup)
 - Schema patterns (normalized, denormalized)
 - Data domains (user, product, order)
@@ -98,6 +104,7 @@ Classifier can categorize database schemas:
 ### With Code Reviewer
 
 Classifier helps organize code reviews:
+
 - Review categories
 - Priority classification
 - Pattern identification
@@ -141,4 +148,3 @@ Classifier:
 ## Related Documentation
 
 - [Classification Patterns](../docs/CLASSIFICATION_PATTERNS.md) - Comprehensive guide
-

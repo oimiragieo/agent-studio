@@ -111,7 +111,7 @@ agent_mappings:
     use_when:
       - creating_comprehensive_plans
       - analyzing_requirements
-  
+
   orchestrator:
     recommended_templates:
       - codebase-walkthrough
@@ -119,7 +119,7 @@ agent_mappings:
     use_when:
       - coordinating_multi_agent_workflows
       - routing_complex_tasks
-  
+
   code-reviewer:
     recommended_templates:
       - senior-review
@@ -128,7 +128,7 @@ agent_mappings:
       - performing_code_reviews
       - security_audits
       - performance_reviews
-  
+
   ux-expert:
     recommended_templates:
       - ui-perfection-loop
@@ -141,5 +141,4 @@ usage_stats:
   total_templates: 4
   categories: 5
   agents_mapped: 8
-  last_updated: "2025-01-17"
-
+  last_updated: '2025-01-17'

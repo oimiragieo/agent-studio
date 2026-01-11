@@ -90,7 +90,8 @@ function getAllWorkflowFiles() {
   if (!fs.existsSync(workflowDir)) {
     return [];
   }
-  return fs.readdirSync(workflowDir)
+  return fs
+    .readdirSync(workflowDir)
     .filter(file => file.endsWith('.yaml'))
     .map(file => `.claude/workflows/${file}`);
 }
@@ -155,7 +156,7 @@ function validateCUJRegistry() {
  */
 function calculateLineNumber(registry, cujIndex) {
   // Rough estimate: header (~5 lines) + avg 30 lines per CUJ
-  return 5 + (cujIndex * 30);
+  return 5 + cujIndex * 30;
 }
 
 /**
@@ -169,7 +170,8 @@ function validateCUJDocs() {
     return { valid: false, issues: [] };
   }
 
-  const cujFiles = fs.readdirSync(cujDocsDir)
+  const cujFiles = fs
+    .readdirSync(cujDocsDir)
     .filter(file => file.startsWith('CUJ-') && file.endsWith('.md'));
 
   const issues = [];
@@ -416,7 +418,10 @@ function main() {
   const exitCode = generateReport(registryResult, docsResult);
 
   if (exitCode !== 0) {
-    log(`\n❌ Validation failed with ${registryResult.issues.length + docsResult.issues.length} issues`, 'red');
+    log(
+      `\n❌ Validation failed with ${registryResult.issues.length + docsResult.issues.length} issues`,
+      'red'
+    );
     log(`Run with --fix to auto-correct double-prefix issues`, 'yellow');
   } else {
     log(`\n✅ All workflow paths are valid!`, 'green');

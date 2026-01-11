@@ -56,14 +56,14 @@ import { test, expect } from '@playwright/test';
 
 test.describe('User Login', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/auth/login', async (route) => {
+    await page.route('**/api/auth/login', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ token: 'mock-token', user: { id: 1, name: 'Test User' } })
+        body: JSON.stringify({ token: 'mock-token', user: { id: 1, name: 'Test User' } }),
       });
     });
-    
+
     await page.goto('/login');
   });
 
@@ -71,24 +71,24 @@ test.describe('User Login', () => {
     await page.getByTestId('email-input').fill('user@example.com');
     await page.getByTestId('password-input').fill('password123');
     await page.getByTestId('login-button').click();
-    
+
     await expect(page).toHaveURL(/.*dashboard/);
     await expect(page.getByTestId('user-name')).toContainText('Test User');
   });
 
   test('should display error message with invalid credentials', async ({ page }) => {
-    await page.route('**/api/auth/login', async (route) => {
+    await page.route('**/api/auth/login', async route => {
       await route.fulfill({
         status: 401,
         contentType: 'application/json',
-        body: JSON.stringify({ error: 'Invalid credentials' })
+        body: JSON.stringify({ error: 'Invalid credentials' }),
       });
     });
-    
+
     await page.getByTestId('email-input').fill('user@example.com');
     await page.getByTestId('password-input').fill('wrong-password');
     await page.getByTestId('login-button').click();
-    
+
     await expect(page.getByTestId('error-message')).toBeVisible();
     await expect(page.getByTestId('error-message')).toContainText('Invalid credentials');
   });
@@ -120,9 +120,9 @@ import { test, expect } from '@playwright/test';
 test.describe('API: User Endpoints', () => {
   test('should fetch user profile', async ({ request }) => {
     const response = await request.get('/api/users/1', {
-      headers: { Authorization: 'Bearer token' }
+      headers: { Authorization: 'Bearer token' },
     });
-    
+
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body).toHaveProperty('id');
@@ -181,10 +181,9 @@ import AxeBuilder from '@axe-core/playwright';
 test.describe('Accessibility', () => {
   test('should have no accessibility violations', async ({ page }) => {
     await page.goto('/');
-    
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .analyze();
-    
+
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
@@ -339,9 +338,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  ],
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:3000',
@@ -385,6 +382,7 @@ export default defineConfig({
 ## Migration Notes
 
 This master file consolidates rules from:
+
 - `playwright-e2e-testing-cursorrules-prompt-file`
 - `playwright-api-testing-cursorrules-prompt-file`
 - `playwright-defect-tracking-cursorrules-prompt-file`
@@ -392,4 +390,3 @@ This master file consolidates rules from:
 - `playwright-integration-testing-cursorrules-prompt-file`
 
 **Old rule files can be archived** - this master file is the single source of truth for Playwright testing.
-

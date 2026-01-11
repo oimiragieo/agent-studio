@@ -30,12 +30,14 @@ Text-to-SQL - Converts natural language queries to SQL using database schema con
 ### Basic SQL Generation
 
 **When to Use**:
+
 - Database queries from natural language
 - Data analysis requests
 - Reporting queries
 - Ad-hoc database queries
 
 **How to Invoke**:
+
 ```
 "Generate SQL to find all users who signed up in the last month"
 "Create a query to calculate total revenue by product"
@@ -43,6 +45,7 @@ Text-to-SQL - Converts natural language queries to SQL using database schema con
 ```
 
 **What It Does**:
+
 - Analyzes natural language query
 - References database schema
 - Generates SQL query
@@ -52,18 +55,21 @@ Text-to-SQL - Converts natural language queries to SQL using database schema con
 ### Advanced Features
 
 **Schema Integration**:
+
 - Loads database schema
 - Understands table relationships
 - Uses column types and constraints
 - Handles joins and aggregations
 
 **Query Optimization**:
+
 - Generates efficient queries
 - Uses appropriate indexes
 - Optimizes joins
 - Minimizes data transfer
 
 **Safety**:
+
 - Parameterized queries (prevents SQL injection)
 - Validates query syntax
 - Tests on sample data
@@ -82,6 +88,7 @@ Text-to-SQL - Converts natural language queries to SQL using database schema con
 ### With Database Architect
 
 Text-to-SQL uses schema from database-architect:
+
 - Table definitions
 - Relationships
 - Constraints
@@ -90,6 +97,7 @@ Text-to-SQL uses schema from database-architect:
 ### With Developer
 
 Text-to-SQL generates queries for developers:
+
 - Query templates
 - Parameterized queries
 - Query optimization
@@ -106,7 +114,7 @@ Text-to-SQL:
 1. Analyzes query
 2. References users table schema
 3. Generates SQL:
-   SELECT * FROM users 
+   SELECT * FROM users
    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
 4. Returns parameterized query
 ```
@@ -123,7 +131,7 @@ Text-to-SQL:
    SELECT p.name, SUM(o.total) as revenue
    FROM orders o
    JOIN products p ON o.product_id = p.id
-   WHERE o.created_at >= '2024-10-01' 
+   WHERE o.created_at >= '2024-10-01'
      AND o.created_at < '2025-01-01'
    GROUP BY p.id, p.name
 4. Returns optimized query
@@ -136,16 +144,19 @@ Text-to-SQL:
 Based on Claude Cookbooks patterns, text-to-SQL evaluation includes:
 
 **Syntax Validation**:
+
 - SQL syntax correctness
 - Schema compliance
 - Query structure validation
 
 **Functional Testing**:
+
 - Query execution on test database
 - Result correctness
 - Performance validation
 
 **Promptfoo Integration**:
+
 - Multiple prompt variants (basic, few-shot, chain-of-thought, RAG)
 - Temperature sweeps
 - Model comparisons (Haiku vs Sonnet)
@@ -172,6 +183,7 @@ npx promptfoo@latest eval -c .claude/evaluation/promptfoo_configs/text_to_sql_co
 ### 1. Provide Schema Context
 
 Always include complete database schema:
+
 - Table definitions with column types
 - Relationships and foreign keys
 - Constraints and indexes
@@ -180,6 +192,7 @@ Always include complete database schema:
 ### 2. Use Few-Shot Examples
 
 Provide examples of similar queries:
+
 - Simple queries
 - Complex queries with joins
 - Aggregation queries
@@ -188,6 +201,7 @@ Provide examples of similar queries:
 ### 3. Chain-of-Thought for Complex Queries
 
 For complex queries, use chain-of-thought reasoning:
+
 - Break down query into steps
 - Identify required tables
 - Plan joins and aggregations
@@ -196,6 +210,7 @@ For complex queries, use chain-of-thought reasoning:
 ### 4. RAG for Schema Understanding
 
 Use RAG to retrieve relevant schema information:
+
 - Find relevant tables for query
 - Understand relationships
 - Get column details
@@ -212,4 +227,3 @@ Use RAG to retrieve relevant schema information:
 - [Classification Patterns](../docs/CLASSIFICATION_PATTERNS.md) - Classification guide
 - [Evaluation Guide](../docs/EVALUATION_GUIDE.md) - Comprehensive evaluation
 - [Claude Cookbooks - Text-to-SQL](https://github.com/anthropics/anthropic-cookbook/tree/main/capabilities/text_to_sql)
-

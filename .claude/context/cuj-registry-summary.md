@@ -7,6 +7,7 @@ Created a comprehensive CUJ (Customer User Journey) Registry system that serves 
 ## Files Created
 
 ### 1. Schema Definition
+
 **File**: `.claude/schemas/cuj-registry.schema.json`
 
 - Defines the structure and validation rules for the CUJ registry
@@ -16,9 +17,11 @@ Created a comprehensive CUJ (Customer User Journey) Registry system that serves 
 - Ensures data integrity with required fields and constraints
 
 ### 2. Sync Tool
+
 **File**: `.claude/tools/sync-cuj-registry.mjs`
 
 **Features**:
+
 - Parses all CUJ markdown files in `.claude/docs/cujs/`
 - Extracts metadata automatically:
   - Execution mode (workflow, skill-only, etc.)
@@ -32,6 +35,7 @@ Created a comprehensive CUJ (Customer User Journey) Registry system that serves 
 - Provides detailed statistics and reporting
 
 **Usage**:
+
 ```bash
 pnpm sync-cuj-registry                    # Generate registry
 pnpm sync-cuj-registry:validate          # Validate without writing
@@ -39,15 +43,18 @@ node .claude/tools/sync-cuj-registry.mjs --output custom.json  # Custom output
 ```
 
 ### 3. Registry Data
+
 **File**: `.claude/context/cuj-registry.json`
 
 **Contents**:
+
 - 52 CUJs parsed and cataloged
 - Complete metadata for each CUJ
 - Validated against schema
 - Ready for programmatic querying
 
 **Statistics**:
+
 - Total CUJs: 52
 - Execution Modes:
   - Skill-only: 36 (69%)
@@ -61,9 +68,11 @@ node .claude/tools/sync-cuj-registry.mjs --output custom.json  # Custom output
 - Categories: 9
 
 ### 4. Documentation
+
 **File**: `.claude/context/CUJ-REGISTRY-README.md`
 
 Comprehensive documentation covering:
+
 - Registry structure and schema
 - Usage examples (JavaScript queries)
 - Syncing and validation
@@ -76,6 +85,7 @@ Comprehensive documentation covering:
 ### 1. Automated Metadata Extraction
 
 The sync tool automatically extracts:
+
 - **Execution Mode**: From `**Execution Mode**: \`mode\`` pattern
 - **Workflow Files**: From workflow references in markdown
 - **Agents**: From `## Agents Used` section
@@ -102,6 +112,7 @@ The sync tool automatically extracts:
 ### 4. Statistics and Reporting
 
 Provides insights into:
+
 - CUJ distribution by execution mode
 - CUJ distribution by category
 - Platform compatibility coverage
@@ -115,9 +126,7 @@ Provides insights into:
 import registry from './.claude/context/cuj-registry.json' assert { type: 'json' };
 
 // Find all skill-only CUJs
-const skillOnlyCUJs = registry.cujs.filter(cuj =>
-  cuj.execution_mode === 'skill-only'
-);
+const skillOnlyCUJs = registry.cujs.filter(cuj => cuj.execution_mode === 'skill-only');
 console.log(`${skillOnlyCUJs.length} skill-only CUJs`);
 ```
 
@@ -125,26 +134,22 @@ console.log(`${skillOnlyCUJs.length} skill-only CUJs`);
 
 ```javascript
 // Find all development-related CUJs
-const devCUJs = registry.cujs.filter(cuj =>
-  cuj.category === 'Development'
-);
+const devCUJs = registry.cujs.filter(cuj => cuj.category === 'Development');
 ```
 
 ### Query by Skill
 
 ```javascript
 // Find all CUJs using the scaffolder skill
-const scaffolderCUJs = registry.cujs.filter(cuj =>
-  cuj.skills.includes('scaffolder')
-);
+const scaffolderCUJs = registry.cujs.filter(cuj => cuj.skills.includes('scaffolder'));
 ```
 
 ### Query by Platform
 
 ```javascript
 // Find Claude-only CUJs
-const claudeOnlyCUJs = registry.cujs.filter(cuj =>
-  cuj.platform_compatibility.claude && !cuj.platform_compatibility.cursor
+const claudeOnlyCUJs = registry.cujs.filter(
+  cuj => cuj.platform_compatibility.claude && !cuj.platform_compatibility.cursor
 );
 ```
 
@@ -161,12 +166,11 @@ console.log(`${cuj.name}: ${cuj.description}`);
 ### 1. Orchestration
 
 The registry enables intelligent routing:
+
 ```javascript
 function routeCUJ(userInput) {
   // Find matching CUJ by trigger
-  const cuj = registry.cujs.find(c =>
-    c.triggers.some(t => userInput.includes(t))
-  );
+  const cuj = registry.cujs.find(c => c.triggers.some(t => userInput.includes(t)));
 
   if (!cuj) return null;
 
@@ -182,6 +186,7 @@ function routeCUJ(userInput) {
 ### 2. Validation
 
 Ensure CUJs are properly defined:
+
 ```bash
 pnpm sync-cuj-registry:validate
 ```
@@ -189,6 +194,7 @@ pnpm sync-cuj-registry:validate
 ### 3. CI/CD
 
 Add to pipeline:
+
 ```yaml
 steps:
   - name: Sync CUJ Registry
@@ -201,18 +207,22 @@ steps:
 ## Benefits
 
 ### 1. Performance
+
 - **Fast Lookups**: O(1) by ID, O(n) by filter
 - **No Parsing**: Registry pre-parsed, no need to read 52+ markdown files
 
 ### 2. Consistency
+
 - **Single Source of Truth**: All CUJ metadata in one place
 - **Schema Validation**: Ensures data integrity
 
 ### 3. Discoverability
+
 - **Query by Any Field**: Filter by category, skill, agent, platform, etc.
 - **Build Tools**: Dashboards, analytics, routing logic
 
 ### 4. Maintainability
+
 - **Automated Sync**: No manual JSON editing
 - **Validation**: Catches errors early
 - **Documentation**: Self-documenting via markdown
@@ -222,6 +232,7 @@ steps:
 ### When to Sync
 
 Sync the registry whenever:
+
 - ✅ New CUJs are added
 - ✅ Existing CUJs are modified
 - ✅ Execution modes change
@@ -231,6 +242,7 @@ Sync the registry whenever:
 ### Automation
 
 Add to `validate:full` script in `package.json`:
+
 ```json
 "validate:full": "pnpm validate && ... && pnpm sync-cuj-registry:validate"
 ```
@@ -283,12 +295,12 @@ The CUJ Registry System provides a robust, maintainable, and performant foundati
 
 ## Files Summary
 
-| File | Purpose | Lines |
-|------|---------|-------|
-| `.claude/schemas/cuj-registry.schema.json` | JSON Schema for validation | 90 |
-| `.claude/tools/sync-cuj-registry.mjs` | Sync tool (parsing, generation, validation) | 400 |
-| `.claude/context/cuj-registry.json` | Generated registry data | 2,500+ |
-| `.claude/context/CUJ-REGISTRY-README.md` | User documentation | 400 |
-| `package.json` | Added sync scripts | +2 lines |
+| File                                       | Purpose                                     | Lines    |
+| ------------------------------------------ | ------------------------------------------- | -------- |
+| `.claude/schemas/cuj-registry.schema.json` | JSON Schema for validation                  | 90       |
+| `.claude/tools/sync-cuj-registry.mjs`      | Sync tool (parsing, generation, validation) | 400      |
+| `.claude/context/cuj-registry.json`        | Generated registry data                     | 2,500+   |
+| `.claude/context/CUJ-REGISTRY-README.md`   | User documentation                          | 400      |
+| `package.json`                             | Added sync scripts                          | +2 lines |
 
 **Total**: ~3,400 lines of code and documentation

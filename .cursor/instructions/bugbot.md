@@ -12,6 +12,7 @@ Cursor's Bugbot is an automated bug detection and fixing system that can help id
 ## Configuration
 
 Bugbot can be configured in Cursor settings to:
+
 - Run automatically on file save
 - Scan specific file types
 - Exclude certain directories
@@ -20,6 +21,7 @@ Bugbot can be configured in Cursor settings to:
 ## Integration with Agents
 
 Agents can leverage Bugbot by:
+
 - Running Bugbot scans as part of quality gates
 - Reviewing Bugbot findings during code review
 - Auto-fixing issues flagged by Bugbot (if safe)
@@ -30,4 +32,3 @@ Agents can leverage Bugbot by:
 - Use Bugbot in combination with manual code review
 - Configure severity levels appropriate for your project
 - Integrate Bugbot findings into quality gate decisions
-

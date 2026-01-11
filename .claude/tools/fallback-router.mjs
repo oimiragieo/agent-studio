@@ -64,7 +64,7 @@ function getFallbackAgent(failedAgent, attemptNumber = 0) {
     attempt: attemptNumber + 1,
     remaining: Math.min(fallbacks.length - attemptNumber - 1, maxAttempts - attemptNumber - 1),
     totalFallbacks: fallbacks.length,
-    maxAttempts: maxAttempts
+    maxAttempts: maxAttempts,
   };
 }
 
@@ -86,7 +86,7 @@ function routeToFallback(task, failedAgent, error) {
       message: `No fallback agents available for ${failedAgent} (attempt ${fallbackAttempt})`,
       originalError: error,
       escalationStrategy: config.fallback_rules.escalation_strategy || 'orchestrator',
-      recommendation: 'Route to orchestrator for manual review'
+      recommendation: 'Route to orchestrator for manual review',
     };
   }
 
@@ -106,17 +106,17 @@ function routeToFallback(task, failedAgent, error) {
           agent: failedAgent,
           error: error,
           timestamp: new Date().toISOString(),
-          attemptNumber: fallbackAttempt
-        }
-      ]
-    }
+          attemptNumber: fallbackAttempt,
+        },
+      ],
+    },
   };
 
   if (config.fallback_rules.notify_on_fallback) {
     routingInfo.notification = {
       message: `Routing from ${failedAgent} to ${fallback.agent} (attempt ${fallback.attempt}/${fallback.maxAttempts})`,
       reason: error,
-      remainingFallbacks: fallback.remaining
+      remainingFallbacks: fallback.remaining,
     };
   }
 
@@ -138,7 +138,7 @@ function listFallbacks(agent) {
     fallbacks: fallbacks,
     maxAttempts: config.fallback_rules.max_fallback_attempts,
     capabilities: capabilities,
-    hasFallbacks: fallbacks.length > 0
+    hasFallbacks: fallbacks.length > 0,
   };
 }
 
@@ -156,8 +156,13 @@ function validateConfig() {
     // Check all fallback agents exist in the map
     for (const [agent, fallbacks] of Object.entries(config.fallback_map)) {
       for (const fallbackAgent of fallbacks) {
-        if (!config.fallback_map[fallbackAgent] && !['orchestrator', 'master-orchestrator'].includes(fallbackAgent)) {
-          warnings.push(`Fallback agent "${fallbackAgent}" for "${agent}" not found in fallback_map`);
+        if (
+          !config.fallback_map[fallbackAgent] &&
+          !['orchestrator', 'master-orchestrator'].includes(fallbackAgent)
+        ) {
+          warnings.push(
+            `Fallback agent "${fallbackAgent}" for "${agent}" not found in fallback_map`
+          );
         }
       }
     }
@@ -188,13 +193,16 @@ function validateConfig() {
       errors: errors,
       warnings: warnings,
       agentCount: Object.keys(config.fallback_map).length,
-      totalFallbackPaths: Object.values(config.fallback_map).reduce((sum, arr) => sum + arr.length, 0)
+      totalFallbackPaths: Object.values(config.fallback_map).reduce(
+        (sum, arr) => sum + arr.length,
+        0
+      ),
     };
   } catch (error) {
     return {
       valid: false,
       errors: [error.message],
-      warnings: warnings
+      warnings: warnings,
     };
   }
 }
@@ -206,12 +214,12 @@ function main() {
   const args = process.argv.slice(2);
 
   // Parse arguments
-  const getArg = (flag) => {
+  const getArg = flag => {
     const idx = args.indexOf(flag);
     return idx >= 0 ? args[idx + 1] : null;
   };
 
-  const hasFlag = (flag) => args.includes(flag);
+  const hasFlag = flag => args.includes(flag);
 
   try {
     // Validate command
@@ -240,7 +248,9 @@ function main() {
     const errorMsg = getArg('--error') || 'Agent failed';
 
     if (!taskFile || !failedAgent) {
-      console.error('Usage: fallback-router.mjs --task <file> --failed-agent <agent> [--error <msg>]');
+      console.error(
+        'Usage: fallback-router.mjs --task <file> --failed-agent <agent> [--error <msg>]'
+      );
       console.error('       fallback-router.mjs --agent <agent> --list-fallbacks');
       console.error('       fallback-router.mjs --validate');
       process.exit(1);

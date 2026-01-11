@@ -254,7 +254,10 @@
             {
               "rule-auditor": {
                 "primary": "code-review-{{workflow_id}}.json",
-                "secondary": ["rule-violations-{{workflow_id}}.json", "compliance-report-{{workflow_id}}.md"],
+                "secondary": [
+                  "rule-violations-{{workflow_id}}.json",
+                  "compliance-report-{{workflow_id}}.md"
+                ],
                 "validation_schema": ".claude/schemas/code_review.schema.json"
               },
               "response-rater": {
@@ -324,11 +327,30 @@
                 "type": "object",
                 "required": ["pattern", "skills"],
                 "properties": {
-                  "pattern": { "type": "string", "description": "Regex pattern to match against task description" },
-                  "skills": { "type": "array", "items": { "type": "string" }, "description": "Skills to activate when pattern matches" },
-                  "priority": { "type": "string", "enum": ["required", "recommended", "optional"], "default": "recommended" },
-                  "context_keys": { "type": "array", "items": { "type": "string" }, "description": "Additional context keys to check" },
-                  "skill_params": { "type": "object", "additionalProperties": true, "description": "Parameters to pass to triggered skills" }
+                  "pattern": {
+                    "type": "string",
+                    "description": "Regex pattern to match against task description"
+                  },
+                  "skills": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Skills to activate when pattern matches"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": ["required", "recommended", "optional"],
+                    "default": "recommended"
+                  },
+                  "context_keys": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Additional context keys to check"
+                  },
+                  "skill_params": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Parameters to pass to triggered skills"
+                  }
                 }
               },
               "description": "Skills that activate conditionally based on pattern matching"
@@ -351,9 +373,15 @@
                 "type": "object",
                 "required": ["primary"],
                 "properties": {
-                  "primary": { "type": "string", "description": "Primary artifact path (supports template variables)" },
+                  "primary": {
+                    "type": "string",
+                    "description": "Primary artifact path (supports template variables)"
+                  },
                   "secondary": { "type": "array", "items": { "type": "string" } },
-                  "schema": { "type": "string", "description": "Path to JSON schema for validation" },
+                  "schema": {
+                    "type": "string",
+                    "description": "Path to JSON schema for validation"
+                  },
                   "required_for_completion": { "type": "boolean", "default": true }
                 }
               },
@@ -362,27 +390,44 @@
             "validation": {
               "type": "object",
               "properties": {
-                "mode": { "type": "string", "enum": ["blocking", "warning", "info"], "default": "blocking" },
-                "min_compliance": { "type": "integer", "minimum": 0, "maximum": 100, "default": 100 },
+                "mode": {
+                  "type": "string",
+                  "enum": ["blocking", "warning", "info"],
+                  "default": "blocking"
+                },
+                "min_compliance": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "default": 100
+                },
                 "allow_unlisted_skills": { "type": "boolean", "default": true },
                 "require_output_validation": { "type": "boolean", "default": false },
                 "compliance_report_path": { "type": "string" },
-                "on_failure": { "type": "string", "enum": ["block", "warn_and_continue", "retry", "escalate"], "default": "block" },
+                "on_failure": {
+                  "type": "string",
+                  "enum": ["block", "warn_and_continue", "retry", "escalate"],
+                  "default": "block"
+                },
                 "max_retries": { "type": "integer", "minimum": 0, "maximum": 5, "default": 1 }
               },
               "description": "Validation settings for skill usage compliance"
             },
-            "inherit_from_agent": { "type": "boolean", "default": true, "description": "Merge step skills with agent defaults from skill-integration-matrix.json" },
-            "override_agent_skills": { "type": "boolean", "default": false, "description": "Replace agent defaults entirely instead of merging" }
+            "inherit_from_agent": {
+              "type": "boolean",
+              "default": true,
+              "description": "Merge step skills with agent defaults from skill-integration-matrix.json"
+            },
+            "override_agent_skills": {
+              "type": "boolean",
+              "default": false,
+              "description": "Replace agent defaults entirely instead of merging"
+            }
           },
           "additionalProperties": false
         }
       }
     }
   },
-  "oneOf": [
-    { "required": ["steps"] },
-    { "required": ["phases"] }
-  ]
+  "oneOf": [{ "required": ["steps"] }, { "required": ["phases"] }]
 }
-

@@ -11,6 +11,7 @@
 **Location**: `.claude/skills/rule-auditor/scripts/audit.mjs`
 
 **Key Features**:
+
 - ✅ Loads rule index from `.claude/context/rule-index.json`
 - ✅ Detects technologies from file extensions and imports
 - ✅ Queries technology map for relevant rules
@@ -23,6 +24,7 @@
 - ✅ Exit codes: 0 for success, 1 for errors
 
 **CLI Options**:
+
 ```bash
 --format <type>      Output format (json, markdown)
 --fix                Apply fixes with backups
@@ -37,6 +39,7 @@
 **Location**: `.claude/skills/rule-auditor/scripts/test-audit.mjs`
 
 **Tests Implemented**:
+
 - ✅ Basic audit functionality
 - ✅ Technology detection (TypeScript, React, etc.)
 - ✅ Dry-run fix mode
@@ -46,6 +49,7 @@
 - ✅ Exit codes validation
 
 **Usage**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/test-audit.mjs
 ```
@@ -55,6 +59,7 @@ node .claude/skills/rule-auditor/scripts/test-audit.mjs
 **Location**: `.claude/skills/rule-auditor/SKILL.md`
 
 **Changes**:
+
 - ✅ Added `executable: scripts/audit.mjs` to frontmatter
 - ✅ Incremented version to 3.1
 - ✅ Added "Executable Script" section with installation and usage
@@ -64,6 +69,7 @@ node .claude/skills/rule-auditor/scripts/test-audit.mjs
 ### 4. Documentation
 
 **README.md** (`.claude/skills/rule-auditor/scripts/README.md`):
+
 - ✅ Complete CLI usage guide
 - ✅ Output schema documentation
 - ✅ Integration examples (pre-commit, GitHub Actions, NPM scripts)
@@ -91,6 +97,7 @@ audit.mjs
 ### Technology Detection
 
 The script detects technologies based on:
+
 1. **File extensions**: `.tsx` → React, `.ts` → TypeScript, `.py` → Python
 2. **Imports**: `next` → Next.js, `fastapi` → FastAPI
 3. **Content analysis**: First 2000 characters scanned for keywords
@@ -110,6 +117,7 @@ forbidden_patterns:
 ```
 
 **Extraction Method**:
+
 - Regex match: `/<validation>([\s\S]*?)<\/validation>/`
 - Pattern parsing: `/- pattern:\s*"([^"]+)"\s+message:\s*"([^"]+)"\s+severity:\s*"([^"]+)"(?:\s+fix:\s*"([^"]*)")?/gs`
 - Graceful fallback if patterns are invalid
@@ -117,10 +125,12 @@ forbidden_patterns:
 ### Fix Application
 
 **Dry-Run Mode** (`--fix-dry-run`):
+
 - Previews changes without modifying files
 - Outputs `fixes_applied` array with before/after
 
 **Fix Mode** (`--fix`):
+
 - Creates `.bak` backups before modification
 - Applies regex replacements with capture group substitution
 - Processes violations in reverse order (preserves line numbers)
@@ -134,11 +144,11 @@ function calculateComplianceScore(files, violations) {
   const errorCount = violations.filter(v => v.severity === 'error').length;
   const warningCount = violations.filter(v => v.severity === 'warning').length;
 
-  const penaltyPoints = (errorCount * 2) + (warningCount * 1);
+  const penaltyPoints = errorCount * 2 + warningCount * 1;
   const violationsPerThousandLines = (penaltyPoints / totalLines) * 1000;
 
   // 0 violations = 100, 10 per 1k lines = 50, 20+ = 0
-  const score = Math.max(0, 100 - (violationsPerThousandLines * 5));
+  const score = Math.max(0, 100 - violationsPerThousandLines * 5);
 
   return Math.round(score * 10) / 10;
 }
@@ -149,6 +159,7 @@ function calculateComplianceScore(files, violations) {
 All JSON output conforms to `.claude/schemas/skill-rule-auditor-output.schema.json`:
 
 **Required Fields**:
+
 - ✅ `skill_name`: "rule-auditor"
 - ✅ `files_audited`: Array with path, lines_analyzed, violations_count
 - ✅ `rules_applied`: Array with rule_path, rule_name, violations_found
@@ -157,6 +168,7 @@ All JSON output conforms to `.claude/schemas/skill-rule-auditor-output.schema.js
 - ✅ `timestamp`: ISO 8601 format
 
 **Optional Fields**:
+
 - ✅ `fixes_applied`: Array (when --fix or --fix-dry-run used)
 - ✅ `rule_index_consulted`: Boolean
 - ✅ `technologies_detected`: Array
@@ -165,11 +177,13 @@ All JSON output conforms to `.claude/schemas/skill-rule-auditor-output.schema.js
 ## Testing Results
 
 **Command**:
+
 ```bash
 node .claude/skills/rule-auditor/scripts/audit.mjs .claude/skills/rule-auditor --format json
 ```
 
 **Result**:
+
 - ✅ Loaded rule index successfully
 - ✅ Detected technologies: javascript
 - ✅ Found 2 code files (audit.mjs, test-audit.mjs)
@@ -178,6 +192,7 @@ node .claude/skills/rule-auditor/scripts/audit.mjs .claude/skills/rule-auditor -
 - ✅ No violations found (compliance score: 100)
 
 **Warnings**:
+
 - Some rules contain invalid regex patterns (unescaped parentheses)
 - Script handles these gracefully with error messages
 
@@ -212,6 +227,7 @@ node .claude/skills/rule-auditor/scripts/audit.mjs "$staged_files" --strict
 ## Dependencies
 
 **Zero dependencies** - Uses only Node.js built-in modules:
+
 - `fs/promises` - File system operations
 - `path` - Path manipulation
 - `url` - URL utilities
@@ -243,6 +259,7 @@ node .claude/skills/rule-auditor/scripts/audit.mjs "$staged_files" --strict
 ## Conclusion
 
 The rule-auditor skill now has a fully functional executable script that:
+
 - ✅ Validates code against 1,081+ rules
 - ✅ Supports auto-fix with backups
 - ✅ Outputs verifiable JSON

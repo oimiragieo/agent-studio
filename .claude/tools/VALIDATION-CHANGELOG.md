@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-01-05
 
 ### Added
+
 - Initial release of comprehensive E2E CUJ smoke test script
 - Main validation script: `validate-cuj-e2e.mjs`
 - Comprehensive documentation: `README-CUJ-VALIDATION.md`
@@ -15,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deliverable summary: `CUJ-E2E-VALIDATION-SUMMARY.md`
 
 ### Features
+
 - **6 Validation Test Suites**:
   1. Config validation (`validate-config.mjs`)
   2. CUJ file validation (`validate-cujs.mjs`)
@@ -54,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Cross-platform compatibility verified
 
 ### Documentation
+
 - Comprehensive README with:
   - Quick start guide
   - Test suite descriptions
@@ -78,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Future enhancement ideas
 
 ### Technical Details
+
 - **Language**: Node.js (ES modules)
 - **Dependencies**: None (uses built-in Node.js modules and existing validation scripts)
 - **File Size**: ~600 lines of code
@@ -85,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Compatibility**: Node.js 14+
 
 ### Validation Results Format
+
 ```json
 {
   "timestamp": "ISO-8601",
@@ -117,10 +122,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ```
 
 ### Known Issues
+
 - Some CUJs show "workflow.yaml" instead of actual workflow names (due to CUJ-INDEX.md mapping format)
 - Config and CUJ file validations may show non-critical failures (allowed to continue)
 
 ### Future Roadmap
+
 - [ ] Performance metrics and optimization
 - [ ] Trend analysis across validation runs
 - [ ] Auto-fix mode for common issues
@@ -133,6 +140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
+
 - Performance optimizations for large CUJ catalogs
 - Caching mechanism for validation results
 - Delta validation (only validate changed CUJs)
@@ -145,9 +153,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
-| Version | Date | Description |
-|---------|------|-------------|
-| 1.0.0 | 2026-01-05 | Initial release with comprehensive E2E validation |
+| Version | Date       | Description                                       |
+| ------- | ---------- | ------------------------------------------------- |
+| 1.0.0   | 2026-01-05 | Initial release with comprehensive E2E validation |
 
 ---
 
@@ -178,6 +186,7 @@ Same as parent project (LLM Rules Production Pack)
 ## Contact
 
 For questions or support:
+
 - Open an issue in the repository
 - Check the documentation in `.claude/tools/README-CUJ-VALIDATION.md`
 - Run `node .claude/tools/validate-cuj-e2e.mjs --help`

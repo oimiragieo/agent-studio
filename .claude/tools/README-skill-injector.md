@@ -10,12 +10,12 @@ The `skill-injector.mjs` module is the core infrastructure for Phase 2A skill or
 
 ## Files
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `skill-injector.mjs` | Core module (510 lines) | ✅ Complete |
-| `skill-injector-test.mjs` | Test suite (8 tests) | ✅ All passing |
-| `../docs/SKILL_INJECTOR_GUIDE.md` | Comprehensive guide | ✅ Complete |
-| `../docs/skill-injector-implementation-summary.md` | Implementation summary | ✅ Complete |
+| File                                               | Purpose                 | Status         |
+| -------------------------------------------------- | ----------------------- | -------------- |
+| `skill-injector.mjs`                               | Core module (510 lines) | ✅ Complete    |
+| `skill-injector-test.mjs`                          | Test suite (8 tests)    | ✅ All passing |
+| `../docs/SKILL_INJECTOR_GUIDE.md`                  | Comprehensive guide     | ✅ Complete    |
+| `../docs/skill-injector-implementation-summary.md` | Implementation summary  | ✅ Complete    |
 
 ## Quick Start
 
@@ -80,6 +80,7 @@ Failed: 0/8
 ```
 
 **Run tests**:
+
 ```bash
 node skill-injector-test.mjs
 ```
@@ -174,11 +175,11 @@ Triggered by: "new component" in task
 
 ## Documentation
 
-| Document | Purpose |
-|----------|---------|
-| [SKILL_INJECTOR_GUIDE.md](../docs/SKILL_INJECTOR_GUIDE.md) | Complete user guide with examples |
-| [skill-injector-implementation-summary.md](../docs/skill-injector-implementation-summary.md) | Implementation validation |
-| This file (README) | Quick reference |
+| Document                                                                                     | Purpose                           |
+| -------------------------------------------------------------------------------------------- | --------------------------------- |
+| [SKILL_INJECTOR_GUIDE.md](../docs/SKILL_INJECTOR_GUIDE.md)                                   | Complete user guide with examples |
+| [skill-injector-implementation-summary.md](../docs/skill-injector-implementation-summary.md) | Implementation validation         |
+| This file (README)                                                                           | Quick reference                   |
 
 ## Examples
 
@@ -238,6 +239,7 @@ $ node skill-injector.mjs --agent code-reviewer --task "Review authentication co
 Main injection function.
 
 **Parameters**:
+
 - `agentType` (string): Agent type (e.g., 'developer', 'code-reviewer')
 - `taskDescription` (string): Task description for trigger detection
 - `options` (object, optional):
@@ -250,6 +252,7 @@ Main injection function.
 Get skills configuration for a specific agent.
 
 **Parameters**:
+
 - `agentType` (string): Agent type
 
 **Returns**: Promise<Object> - Skills configuration
@@ -271,18 +274,21 @@ List all available agent types.
 ### Common Issues
 
 **"Skill integration matrix not found"**
+
 ```bash
 # Verify matrix file exists
 ls .claude/context/skill-integration-matrix.json
 ```
 
 **"SKILL.md not found for skill"**
+
 ```bash
 # Verify skill directory exists
 ls .claude/skills/<skill-name>/SKILL.md
 ```
 
 **Incorrect skill triggers**
+
 ```bash
 # Debug trigger matching
 node skill-injector.mjs --agent developer --task "your task" --json | jq '.triggeredSkills'

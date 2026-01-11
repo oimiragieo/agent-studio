@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
  * Dashboard Generator - Creates and updates run-summary.md
- * 
+ *
  * Generates a continuously updated operator dashboard that highlights:
  * - Current status and awaiting_approval states
  * - Current step and next steps
  * - Blockers and open questions
  * - Artifact links
  * - Recent milestones
- * 
+ *
  * Usage:
  *   import { generateRunSummary, updateRunSummary } from './dashboard-generator.mjs';
  */
@@ -16,7 +16,12 @@
 import { readFile, writeFile } from 'fs/promises';
 import { join, relative } from 'path';
 import { existsSync } from 'fs';
-import { readRun, readArtifactRegistry, getRunDirectoryStructure, getArtifactsArray } from './run-manager.mjs';
+import {
+  readRun,
+  readArtifactRegistry,
+  getRunDirectoryStructure,
+  getArtifactsArray,
+} from './run-manager.mjs';
 import { readFileSync } from 'fs';
 
 /**
@@ -27,25 +32,25 @@ import { readFileSync } from 'fs';
 export async function generateRunSummary(runId) {
   const runRecord = await readRun(runId);
   const runDirs = getRunDirectoryStructure(runId);
-  
+
   let artifactRegistry = { artifacts: {} };
   try {
     artifactRegistry = await readArtifactRegistry(runId);
   } catch (error) {
     // Registry may not exist yet
   }
-  
+
   // Use shared helper to handle both map and array formats
   const artifactsArray = getArtifactsArray(artifactRegistry);
-  
+
   // Determine status emoji and color
   const statusInfo = getStatusInfo(runRecord.status);
-  
+
   // Build summary
   let summary = `# Run Summary: ${runId}\n\n`;
   summary += `**Last Updated**: ${new Date().toISOString()}\n\n`;
   summary += `---\n\n`;
-  
+
   // Status Section
   summary += `## ${statusInfo.emoji} Status: ${runRecord.status}\n\n`;
   if (runRecord.status === 'awaiting_approval') {
@@ -59,7 +64,7 @@ export async function generateRunSummary(runId) {
       summary += `**Action Required**: Review the artifact and approve to continue.\n\n`;
     }
   }
-  
+
   summary += `- **Workflow**: \`${runRecord.selected_workflow || 'Not selected'}\`\n`;
   summary += `- **Current Step**: ${runRecord.current_step}\n`;
   summary += `- **Created**: ${runRecord.created_at}\n`;
@@ -70,7 +75,7 @@ export async function generateRunSummary(runId) {
     summary += `- **Completed**: ${runRecord.timestamps.completed_at}\n`;
   }
   summary += `\n---\n\n`;
-  
+
   // Routing Section
   if (runRecord.metadata?.intent || runRecord.metadata?.routing_confidence) {
     summary += `## 🧭 Routing\n\n`;
@@ -88,27 +93,27 @@ export async function generateRunSummary(runId) {
     }
     summary += `\n---\n\n`;
   }
-  
+
   // Progress Section
   summary += `## 📊 Progress\n\n`;
-  
+
   if (runRecord.completed_steps && runRecord.completed_steps.length > 0) {
     summary += `- **Completed Steps**: ${runRecord.completed_steps.join(', ')}\n`;
   }
-  
+
   if (runRecord.task_queue && runRecord.task_queue.length > 0) {
     const pending = runRecord.task_queue.filter(t => t.status === 'pending').length;
     const inProgress = runRecord.task_queue.filter(t => t.status === 'in_progress').length;
     const completed = runRecord.task_queue.filter(t => t.status === 'completed').length;
-    
+
     summary += `- **Tasks**: ${completed} completed, ${inProgress} in progress, ${pending} pending\n`;
   }
-  
+
   summary += `\n---\n\n`;
-  
+
   // Next Steps Section
   summary += `## 🎯 Next Steps\n\n`;
-  
+
   if (runRecord.status === 'awaiting_approval') {
     summary += `1. **REQUIRED**: Review and approve step ${runRecord.metadata?.approval_request?.step || runRecord.current_step}\n`;
     summary += `2. After approval, workflow will continue automatically\n`;
@@ -134,9 +139,9 @@ export async function generateRunSummary(runId) {
   } else if (runRecord.status === 'completed') {
     summary += `✅ Workflow completed successfully!\n`;
   }
-  
+
   summary += `\n---\n\n`;
-  
+
   // Blockers Section
   if (runRecord.metadata?.blockers && runRecord.metadata.blockers.length > 0) {
     summary += `## 🚫 Blockers\n\n`;
@@ -145,7 +150,7 @@ export async function generateRunSummary(runId) {
     });
     summary += `\n---\n\n`;
   }
-  
+
   // Open Questions Section
   if (runRecord.metadata?.open_questions && runRecord.metadata.open_questions.length > 0) {
     summary += `## ❓ Open Questions\n\n`;
@@ -154,13 +159,13 @@ export async function generateRunSummary(runId) {
     });
     summary += `\n---\n\n`;
   }
-  
+
   // Artifacts Section
   summary += `## 📦 Artifacts\n\n`;
-  
+
   if (artifactsArray && artifactsArray.length > 0) {
     summary += `**Total Artifacts**: ${artifactsArray.length}\n\n`;
-    
+
     // Group by step
     const artifactsByStep = {};
     artifactsArray.forEach(artifact => {
@@ -170,28 +175,31 @@ export async function generateRunSummary(runId) {
       }
       artifactsByStep[step].push(artifact);
     });
-    
-    Object.keys(artifactsByStep).sort((a, b) => parseInt(a) - parseInt(b)).forEach(step => {
-      summary += `### Step ${step}\n\n`;
-      artifactsByStep[step].forEach(artifact => {
-        // Standardize on validation_status (snake_case) with backward compatibility
-        const validationStatus = artifact.metadata?.validation_status || artifact.validationStatus || 'pending';
-        const statusEmoji = validationStatus === 'pass' ? '✅' : 
-                           validationStatus === 'fail' ? '❌' : '⏳';
-        summary += `- ${statusEmoji} \`${artifact.name}\` (${artifact.agent || 'unknown'})\n`;
-        if (artifact.path && existsSync(artifact.path)) {
-          const relativePath = relative(process.cwd(), artifact.path);
-          summary += `  - Path: \`${relativePath}\`\n`;
-        }
+
+    Object.keys(artifactsByStep)
+      .sort((a, b) => parseInt(a) - parseInt(b))
+      .forEach(step => {
+        summary += `### Step ${step}\n\n`;
+        artifactsByStep[step].forEach(artifact => {
+          // Standardize on validation_status (snake_case) with backward compatibility
+          const validationStatus =
+            artifact.metadata?.validation_status || artifact.validationStatus || 'pending';
+          const statusEmoji =
+            validationStatus === 'pass' ? '✅' : validationStatus === 'fail' ? '❌' : '⏳';
+          summary += `- ${statusEmoji} \`${artifact.name}\` (${artifact.agent || 'unknown'})\n`;
+          if (artifact.path && existsSync(artifact.path)) {
+            const relativePath = relative(process.cwd(), artifact.path);
+            summary += `  - Path: \`${relativePath}\`\n`;
+          }
+        });
+        summary += `\n`;
       });
-      summary += `\n`;
-    });
   } else {
     summary += `No artifacts registered yet.\n\n`;
   }
-  
+
   summary += `---\n\n`;
-  
+
   // Links Section
   summary += `## 🔗 Links\n\n`;
   summary += `- **Run Record**: \`${relative(process.cwd(), runDirs.run_json)}\`\n`;
@@ -202,9 +210,9 @@ export async function generateRunSummary(runId) {
   if (existsSync(runDirs.handoff_md)) {
     summary += `- **Handoff Summary**: \`${relative(process.cwd(), runDirs.handoff_md)}\`\n`;
   }
-  
+
   summary += `\n---\n\n`;
-  
+
   // Recent Milestones
   if (runRecord.state_transitions && runRecord.state_transitions.length > 0) {
     summary += `## 📅 Recent Milestones\n\n`;
@@ -217,7 +225,7 @@ export async function generateRunSummary(runId) {
     });
     summary += `\n`;
   }
-  
+
   return summary;
 }
 
@@ -236,9 +244,9 @@ function getStatusInfo(status) {
     paused: { emoji: '⏸️', color: 'gray' },
     completed: { emoji: '✅', color: 'green' },
     failed: { emoji: '❌', color: 'red' },
-    cancelled: { emoji: '🚫', color: 'gray' }
+    cancelled: { emoji: '🚫', color: 'gray' },
   };
-  
+
   return statusMap[status] || { emoji: '❓', color: 'gray' };
 }
 
@@ -251,9 +259,9 @@ export async function updateRunSummary(runId) {
   const summary = await generateRunSummary(runId);
   const runDirs = getRunDirectoryStructure(runId);
   const summaryPath = join(runDirs.run_dir, 'run-summary.md');
-  
+
   await writeFile(summaryPath, summary, 'utf-8');
-  
+
   return summaryPath;
 }
 
@@ -265,7 +273,7 @@ export async function updateRunSummary(runId) {
 export async function getRunSummary(runId) {
   const runDirs = getRunDirectoryStructure(runId);
   const summaryPath = join(runDirs.run_dir, 'run-summary.md');
-  
+
   if (existsSync(summaryPath)) {
     try {
       return await readFile(summaryPath, 'utf-8');
@@ -273,7 +281,7 @@ export async function getRunSummary(runId) {
       // If read fails, regenerate
     }
   }
-  
+
   // Generate if doesn't exist
   return await generateRunSummary(runId);
 }
@@ -281,5 +289,5 @@ export async function getRunSummary(runId) {
 export default {
   generateRunSummary,
   updateRunSummary,
-  getRunSummary
+  getRunSummary,
 };

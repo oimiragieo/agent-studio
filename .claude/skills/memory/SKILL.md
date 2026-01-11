@@ -25,6 +25,7 @@ This skill provides persistent memory using a local knowledge graph. It enables 
 - **Observations**: Discrete, atomic facts attached to specific entities
 
 **Context Savings**: ~95% reduction
+
 - **MCP Mode**: ~12,000 tokens always loaded
 - **Skill Mode**: ~400 tokens metadata + on-demand loading
 
@@ -60,19 +61,20 @@ Create new entities in the knowledge graph.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter  | Type  | Description             |
+| ---------- | ----- | ----------------------- |
 | `entities` | array | Array of entity objects |
 
 **Entity Object:**
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `name` | string | Unique identifier for the entity |
-| `entityType` | string | Type classification (person, organization, concept, etc.) |
-| `observations` | array | Initial observations about the entity |
+| Field          | Type   | Description                                               |
+| -------------- | ------ | --------------------------------------------------------- |
+| `name`         | string | Unique identifier for the entity                          |
+| `entityType`   | string | Type classification (person, organization, concept, etc.) |
+| `observations` | array  | Initial observations about the entity                     |
 
 **Example:**
+
 ```bash
 python executor.py --tool create_entities --args '{
   "entities": [
@@ -91,19 +93,20 @@ Create relations between existing entities.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter   | Type  | Description               |
+| ----------- | ----- | ------------------------- |
 | `relations` | array | Array of relation objects |
 
 **Relation Object:**
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `from` | string | Source entity name |
-| `to` | string | Target entity name |
+| Field          | Type   | Description                         |
+| -------------- | ------ | ----------------------------------- |
+| `from`         | string | Source entity name                  |
+| `to`           | string | Target entity name                  |
 | `relationType` | string | Type of relationship (active voice) |
 
 **Example:**
+
 ```bash
 python executor.py --tool create_relations --args '{
   "relations": [
@@ -122,18 +125,19 @@ Add new observations to existing entities.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter      | Type  | Description                  |
+| -------------- | ----- | ---------------------------- |
 | `observations` | array | Array of observation objects |
 
 **Observation Object:**
 
-| Field | Type | Description |
-|-------|------|-------------|
+| Field        | Type   | Description                           |
+| ------------ | ------ | ------------------------------------- |
 | `entityName` | string | Name of entity to add observations to |
-| `contents` | array | New observations to add |
+| `contents`   | array  | New observations to add               |
 
 **Example:**
+
 ```bash
 python executor.py --tool add_observations --args '{
   "observations": [
@@ -151,11 +155,12 @@ Delete entities and their associated relations.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter     | Type  | Description                 |
+| ------------- | ----- | --------------------------- |
 | `entityNames` | array | Names of entities to delete |
 
 **Example:**
+
 ```bash
 python executor.py --tool delete_entities --args '{
   "entityNames": ["OldEntity"]
@@ -168,18 +173,19 @@ Delete specific observations from entities.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter   | Type  | Description               |
+| ----------- | ----- | ------------------------- |
 | `deletions` | array | Array of deletion objects |
 
 **Deletion Object:**
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `entityName` | string | Name of entity |
-| `observations` | array | Specific observations to delete |
+| Field          | Type   | Description                     |
+| -------------- | ------ | ------------------------------- |
+| `entityName`   | string | Name of entity                  |
+| `observations` | array  | Specific observations to delete |
 
 **Example:**
+
 ```bash
 python executor.py --tool delete_observations --args '{
   "deletions": [
@@ -197,11 +203,12 @@ Delete specific relations between entities.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter   | Type  | Description                         |
+| ----------- | ----- | ----------------------------------- |
 | `relations` | array | Array of relation objects to delete |
 
 **Example:**
+
 ```bash
 python executor.py --tool delete_relations --args '{
   "relations": [
@@ -221,11 +228,13 @@ Read the entire knowledge graph.
 **Parameters:** None
 
 **Example:**
+
 ```bash
 python executor.py --tool read_graph --args '{}'
 ```
 
 **Returns:**
+
 ```json
 {
   "entities": [
@@ -251,11 +260,12 @@ Search for entities by name, type, or observation content.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `query` | string | Search query string |
+| Parameter | Type   | Description         |
+| --------- | ------ | ------------------- |
+| `query`   | string | Search query string |
 
 **Example:**
+
 ```bash
 python executor.py --tool search_nodes --args '{"query": "software engineer"}'
 ```
@@ -266,11 +276,12 @@ Open specific entities by name.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `names` | array | Names of entities to retrieve |
+| Parameter | Type  | Description                   |
+| --------- | ----- | ----------------------------- |
+| `names`   | array | Names of entities to retrieve |
 
 **Example:**
+
 ```bash
 python executor.py --tool open_nodes --args '{"names": ["Alice", "Bob"]}'
 ```
@@ -312,6 +323,7 @@ The recommended approach for using memory:
 ## Configuration
 
 MCP server configuration stored in `config.json`:
+
 - **Command**: `npx -y @modelcontextprotocol/server-memory`
 - **Environment**: `MEMORY_FILE_PATH` for custom storage location
 
@@ -330,12 +342,14 @@ MCP server configuration stored in `config.json`:
 ### With Memory Manager Skill
 
 This skill works alongside the `memory-manager` skill:
+
 - **memory**: Low-level knowledge graph operations
 - **memory-manager**: High-level patterns for dual persistence
 
 ### With Agents
 
 All agents can use memory to:
+
 - Store learned patterns
 - Track user preferences
 - Remember decisions and rationale
@@ -344,11 +358,13 @@ All agents can use memory to:
 ## Error Handling
 
 **Common Issues:**
+
 - Entity not found: Search first, create if needed
 - Duplicate entity: Use unique names or merge observations
 - Relation invalid: Both entities must exist
 
 **Recovery:**
+
 - Read graph to verify state
 - Delete and recreate if corrupted
 - Use search to find correct entity names

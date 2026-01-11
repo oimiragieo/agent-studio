@@ -32,11 +32,13 @@ Before any assessment, systematically evaluate:
 ## TESTING STANDARDS
 
 **Test Documentation**:
+
 - Use Gherkin format (Given-When-Then) for all test scenarios
 - Write from user perspective, not technical implementation
 - Make accessible to non-technical stakeholders
 
 **Test Coverage Standards**:
+
 - Unit Tests: 80%+ coverage for business logic
 - Integration Tests: Cover all API endpoints
 - E2E Tests: Cover all critical user journeys

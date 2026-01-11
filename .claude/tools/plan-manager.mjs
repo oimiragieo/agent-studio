@@ -26,10 +26,10 @@ async function ensurePlansDir() {
  */
 export async function createMasterPlan(planData) {
   await ensurePlansDir();
-  
+
   const planId = planData.planId || `plan-${Date.now()}`;
   const masterPlanPath = join(PLANS_DIR, `${planId}.md`);
-  
+
   const masterPlan = {
     metadata: {
       planId,
@@ -37,17 +37,17 @@ export async function createMasterPlan(planData) {
       lastUpdated: new Date().toISOString(),
       orchestratorSessionId: planData.orchestratorSessionId || null,
       planName: planData.planName || 'Untitled Plan',
-      planVersion: planData.planVersion || 1
+      planVersion: planData.planVersion || 1,
     },
     phases: planData.phases || [],
     overallStatus: {
       status: 'planning',
       currentPhase: null,
       totalPhases: planData.phases?.length || 0,
-      completedPhases: 0
-    }
+      completedPhases: 0,
+    },
   };
-  
+
   // Create markdown overview (lightweight)
   const markdown = `# ${masterPlan.metadata.planName}
 
@@ -57,11 +57,15 @@ export async function createMasterPlan(planData) {
 
 ## Phases
 
-${masterPlan.phases.map((phase, idx) => `### Phase ${idx + 1}: ${phase.phaseName}
+${masterPlan.phases
+  .map(
+    (phase, idx) => `### Phase ${idx + 1}: ${phase.phaseName}
 - **Status**: ${phase.status}
 - **Plan**: ${phase.phasePlanPath}
 - **Tasks**: ${phase.completedTasks || 0}/${phase.estimatedTasks || 0} completed
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## Overall Progress
 
@@ -69,13 +73,13 @@ ${masterPlan.phases.map((phase, idx) => `### Phase ${idx + 1}: ${phase.phaseName
 - **Completed**: ${masterPlan.overallStatus.completedPhases}
 - **Current Phase**: ${masterPlan.overallStatus.currentPhase || 'None'}
 `;
-  
+
   await writeFile(masterPlanPath, markdown, 'utf-8');
-  
+
   // Also save JSON for programmatic access
   const jsonPath = join(PLANS_DIR, `${planId}.json`);
   await writeFile(jsonPath, JSON.stringify(masterPlan, null, 2), 'utf-8');
-  
+
   return masterPlanPath;
 }
 
@@ -87,17 +91,17 @@ ${masterPlan.phases.map((phase, idx) => `### Phase ${idx + 1}: ${phase.phaseName
  */
 export async function createPhasePlan(phaseData, masterPlanId) {
   await ensurePlansDir();
-  
+
   const phaseId = phaseData.phaseId || `phase-${Date.now()}`;
   const phasePlanPath = join(PLANS_DIR, `${masterPlanId}-${phaseId}.json`);
-  
+
   const phasePlan = {
     metadata: {
       phaseId,
       phaseName: phaseData.phaseName || 'Untitled Phase',
       masterPlanId,
       createdAt: new Date().toISOString(),
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     },
     tasks: phaseData.tasks || [],
     agentAssignments: phaseData.agentAssignments || {},
@@ -109,7 +113,7 @@ export async function createPhasePlan(phaseData, masterPlanId) {
       pendingTasks: phaseData.tasks?.length || 0,
       failedTasks: 0,
       lastTaskCompleted: null,
-      nextTask: phaseData.tasks?.[0]?.taskId || null
+      nextTask: phaseData.tasks?.[0]?.taskId || null,
     },
     recoveryMetadata: {
       canResume: false,
@@ -117,17 +121,19 @@ export async function createPhasePlan(phaseData, masterPlanId) {
       contextSummary: '',
       completedWork: '',
       pendingWork: '',
-      scratchpad: []
+      scratchpad: [],
     },
-    councilDecisions: []
+    councilDecisions: [],
   };
-  
+
   // Validate size
   const jsonString = JSON.stringify(phasePlan, null, 2);
   if (jsonString.length > MAX_PHASE_PLAN_SIZE) {
-    throw new Error(`Phase plan exceeds size limit: ${jsonString.length} bytes (max: ${MAX_PHASE_PLAN_SIZE})`);
+    throw new Error(
+      `Phase plan exceeds size limit: ${jsonString.length} bytes (max: ${MAX_PHASE_PLAN_SIZE})`
+    );
   }
-  
+
   await writeFile(phasePlanPath, jsonString, 'utf-8');
   return phasePlanPath;
 }
@@ -172,7 +178,7 @@ export async function getPhasePlanSize(phaseId) {
  */
 export async function optimizePhasePlanSize(phaseId) {
   const phasePlan = await getPhasePlan(phaseId);
-  
+
   // Archive completed tasks (keep only essential metadata)
   const archivedTasks = phasePlan.tasks
     .filter(t => t.status === 'completed')
@@ -181,17 +187,15 @@ export async function optimizePhasePlanSize(phaseId) {
       description: t.description,
       status: t.status,
       completedAt: t.completedAt,
-      artifacts: t.artifacts // Keep artifacts for downstream tasks
+      artifacts: t.artifacts, // Keep artifacts for downstream tasks
     }));
-  
+
   // Keep only pending/in-progress/failed tasks with full detail
-  const activeTasks = phasePlan.tasks.filter(t => 
-    t.status !== 'completed'
-  );
-  
+  const activeTasks = phasePlan.tasks.filter(t => t.status !== 'completed');
+
   phasePlan.tasks = [...activeTasks, ...archivedTasks];
   phasePlan.metadata.lastUpdated = new Date().toISOString();
-  
+
   // Save optimized plan
   const phasePlanPath = join(PLANS_DIR, `${phaseId}.json`);
   await writeFile(phasePlanPath, JSON.stringify(phasePlan, null, 2), 'utf-8');
@@ -205,23 +209,22 @@ export async function optimizePhasePlanSize(phaseId) {
  */
 export async function updateMasterPlanStatus(planId, updates) {
   const masterPlan = await getMasterPlan(planId);
-  
+
   if (updates.phaseStatus) {
     const phase = masterPlan.phases.find(p => p.phaseId === updates.phaseStatus.phaseId);
     if (phase) {
       phase.status = updates.phaseStatus.status;
-      phase.completedAt = updates.phaseStatus.status === 'completed' 
-        ? new Date().toISOString() 
-        : phase.completedAt;
+      phase.completedAt =
+        updates.phaseStatus.status === 'completed' ? new Date().toISOString() : phase.completedAt;
     }
   }
-  
+
   if (updates.overallStatus) {
     Object.assign(masterPlan.overallStatus, updates.overallStatus);
   }
-  
+
   masterPlan.metadata.lastUpdated = new Date().toISOString();
-  
+
   const jsonPath = join(PLANS_DIR, `${planId}.json`);
   await writeFile(jsonPath, JSON.stringify(masterPlan, null, 2), 'utf-8');
 }
@@ -234,42 +237,43 @@ export async function updateMasterPlanStatus(planId, updates) {
  */
 export async function updatePhasePlanStatus(phaseId, updates) {
   const phasePlan = await getPhasePlan(phaseId);
-  
+
   if (updates.taskStatus) {
     const task = phasePlan.tasks.find(t => t.taskId === updates.taskStatus.taskId);
     if (task) {
       task.status = updates.taskStatus.status;
-      task.startedAt = updates.taskStatus.status === 'in_progress' && !task.startedAt
-        ? new Date().toISOString()
-        : task.startedAt;
-      task.completedAt = updates.taskStatus.status === 'completed'
-        ? new Date().toISOString()
-        : task.completedAt;
+      task.startedAt =
+        updates.taskStatus.status === 'in_progress' && !task.startedAt
+          ? new Date().toISOString()
+          : task.startedAt;
+      task.completedAt =
+        updates.taskStatus.status === 'completed' ? new Date().toISOString() : task.completedAt;
       if (updates.taskStatus.result) {
         task.result = updates.taskStatus.result;
       }
     }
   }
-  
+
   // Update status tracking
   phasePlan.statusTracking = {
     completedTasks: phasePlan.tasks.filter(t => t.status === 'completed').length,
     inProgressTasks: phasePlan.tasks.filter(t => t.status === 'in_progress').length,
     pendingTasks: phasePlan.tasks.filter(t => t.status === 'pending').length,
     failedTasks: phasePlan.tasks.filter(t => t.status === 'failed').length,
-    lastTaskCompleted: phasePlan.tasks
-      .filter(t => t.status === 'completed')
-      .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))[0]?.taskId || null,
+    lastTaskCompleted:
+      phasePlan.tasks
+        .filter(t => t.status === 'completed')
+        .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))[0]?.taskId || null,
     nextTask: phasePlan.tasks.find(t => t.status === 'pending')?.taskId || null,
     overallStatus: phasePlan.tasks.every(t => t.status === 'completed' || t.status === 'failed')
       ? 'completed'
       : phasePlan.tasks.some(t => t.status === 'in_progress')
-      ? 'in_progress'
-      : 'planning'
+        ? 'in_progress'
+        : 'planning',
   };
-  
+
   phasePlan.metadata.lastUpdated = new Date().toISOString();
-  
+
   const phasePlanPath = join(PLANS_DIR, `${phaseId}.json`);
   await writeFile(phasePlanPath, JSON.stringify(phasePlan, null, 2), 'utf-8');
 }
@@ -284,14 +288,14 @@ export async function updatePhasePlanStatus(phaseId, updates) {
 export async function addArtifactToTask(phaseId, taskId, artifact) {
   const phasePlan = await getPhasePlan(phaseId);
   const task = phasePlan.tasks.find(t => t.taskId === taskId);
-  
+
   if (task) {
     if (!task.artifacts) {
       task.artifacts = [];
     }
     task.artifacts.push(artifact);
     phasePlan.metadata.lastUpdated = new Date().toISOString();
-    
+
     const phasePlanPath = join(PLANS_DIR, `${phaseId}.json`);
     await writeFile(phasePlanPath, JSON.stringify(phasePlan, null, 2), 'utf-8');
   }
@@ -305,21 +309,21 @@ export async function addArtifactToTask(phaseId, taskId, artifact) {
  */
 export async function addScratchpadEntry(phaseId, entry) {
   const phasePlan = await getPhasePlan(phaseId);
-  
+
   if (!phasePlan.recoveryMetadata.scratchpad) {
     phasePlan.recoveryMetadata.scratchpad = [];
   }
-  
+
   phasePlan.recoveryMetadata.scratchpad.push({
     taskId: entry.taskId,
     attempts: entry.attempts || 1,
     failureReason: entry.failureReason,
     timestamp: new Date().toISOString(),
-    avoidApproach: entry.avoidApproach
+    avoidApproach: entry.avoidApproach,
   });
-  
+
   phasePlan.metadata.lastUpdated = new Date().toISOString();
-  
+
   const phasePlanPath = join(PLANS_DIR, `${phaseId}.json`);
   await writeFile(phasePlanPath, JSON.stringify(phasePlan, null, 2), 'utf-8');
 }
@@ -346,8 +350,7 @@ export async function markTaskComplete(phaseId, taskId, result) {
     taskStatus: {
       taskId,
       status: 'completed',
-      result
-    }
+      result,
+    },
   });
 }
-

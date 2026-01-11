@@ -5,6 +5,7 @@ Detects which skills should be activated for a given agent type and task descrip
 ## Purpose
 
 This tool matches task descriptions against comprehensive trigger patterns to determine:
+
 - **Required skills**: Always needed for the agent
 - **Triggered skills**: Activated based on task keywords
 - **Recommended skills**: Optional but useful
@@ -235,10 +236,10 @@ import { detectAllSkills } from './.claude/tools/skill-trigger-detector.mjs';
 
 const result = await detectAllSkills('developer', 'Create new UserProfile component');
 
-console.log(result.required);      // Always needed skills
-console.log(result.triggered);     // Task-activated skills
-console.log(result.recommended);   // Optional skills
-console.log(result.all);           // Combined required + triggered
+console.log(result.required); // Always needed skills
+console.log(result.triggered); // Task-activated skills
+console.log(result.recommended); // Optional skills
+console.log(result.all); // Combined required + triggered
 console.log(result.matchedTriggers); // Which triggers matched
 ```
 
@@ -254,6 +255,7 @@ This tool is part of the Phase 2 skill orchestration enhancement. It enables:
 ## Pattern Matching Strategy
 
 Patterns use flexible word boundary matching (`\b.*\b`) to handle:
+
 - Multiple words between key terms: "Create **new UserProfile** component"
 - Different word orders: "security audit" vs "audit security"
 - Variations in phrasing: "write tests" vs "create unit tests"

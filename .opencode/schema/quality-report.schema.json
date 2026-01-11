@@ -185,7 +185,15 @@
         "properties": {
           "category": {
             "type": "string",
-            "enum": ["test_coverage", "code_quality", "security", "performance", "accessibility", "documentation", "other"]
+            "enum": [
+              "test_coverage",
+              "code_quality",
+              "security",
+              "performance",
+              "accessibility",
+              "documentation",
+              "other"
+            ]
           },
           "severity": {
             "type": "string",
@@ -243,4 +251,3 @@
     }
   }
 }
-

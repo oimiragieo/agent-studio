@@ -10,11 +10,13 @@ Get started with the rule-auditor executable in 5 minutes.
 ## Quick Test
 
 1. **Audit a directory**:
+
    ```bash
    node .claude/skills/rule-auditor/scripts/audit.mjs src/
    ```
 
 2. **Preview fixes**:
+
    ```bash
    node .claude/skills/rule-auditor/scripts/audit.mjs src/ --fix-dry-run
    ```
@@ -91,6 +93,7 @@ Add to `package.json`:
 ```
 
 Usage:
+
 ```bash
 npm run audit
 npm run audit:fix
@@ -124,6 +127,7 @@ echo "✅ Rule audit passed"
 ```
 
 Make executable:
+
 ```bash
 chmod +x .git/hooks/pre-commit
 ```
@@ -176,6 +180,7 @@ jobs:
 ### "Failed to load rule index"
 
 **Solution**: Generate the rule index:
+
 ```bash
 pnpm index-rules
 ```
@@ -191,6 +196,7 @@ pnpm index-rules
 ### Regex patterns not matching
 
 **Solution**: Escape regex special characters in `<validation>` blocks:
+
 ```markdown
 <validation>
 forbidden_patterns:
@@ -210,6 +216,7 @@ forbidden_patterns:
 ## Support
 
 For issues or questions:
+
 1. Check the [README](./README.md) troubleshooting section
 2. Review [example outputs](./EXAMPLE_OUTPUT.md)
 3. Run the test suite: `node .claude/skills/rule-auditor/scripts/test-audit.mjs`

@@ -76,7 +76,7 @@ const FORKABLE_SKILLS = [
   'mcp-converter',
   'rule-selector',
   'skill-manager',
-  'memory'
+  'memory',
 ];
 
 // Skills to exclude (orchestration-only, not forkable)
@@ -86,7 +86,7 @@ const EXCLUDED_SKILLS = [
   'recovery',
   'conflict-resolution',
   'memory-manager',
-  'optional-artifact-handler'
+  'optional-artifact-handler',
 ];
 
 /**
@@ -113,16 +113,12 @@ function addContextForkToSkill(skillPath, skillName) {
     // Add context:fork after description line in frontmatter
     // Pattern: description: ... \n
     // Replace with: description: ... \ncontext:fork: true\n
-    content = content.replace(
-      /(description: .+)\n/,
-      '$1\ncontext:fork: true\n'
-    );
+    content = content.replace(/(description: .+)\n/, '$1\ncontext:fork: true\n');
 
     // Write updated content
     writeFileSync(skillPath, content, 'utf-8');
     console.log(`  ✅ ${skillName}: Added context:fork: true`);
     return true;
-
   } catch (error) {
     console.error(`  ❌ ${skillName}: Error - ${error.message}`);
     return false;
@@ -201,8 +197,10 @@ async function main() {
 }
 
 // Run if called directly
-if (import.meta.url === `file://${process.argv[1]}` ||
-    import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
+if (
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`
+) {
   main().catch(error => {
     console.error('Fatal error:', error);
     process.exit(1);

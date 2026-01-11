@@ -16,6 +16,7 @@ Advanced Context Management System - Protocols for persistent context between ag
 ## Proposed Context Management Architecture
 
 ### Context Store Structure
+
 ```json
 {
   "session_id": "uuid-here",
@@ -54,7 +55,7 @@ Advanced Context Management System - Protocols for persistent context between ag
   "global_context": {
     "project_constraints": {
       "budget": "startup",
-      "timeline": "3_months", 
+      "timeline": "3_months",
       "team_size": "2_developers"
     },
     "technical_stack": {
@@ -66,23 +67,24 @@ Advanced Context Management System - Protocols for persistent context between ag
 ```
 
 ### Context Passing Mechanisms
+
 ```yaml
 # Enhanced workflow with context management
 - step: 2
-  name: "Requirements Documentation"
+  name: 'Requirements Documentation'
   agent: pm
   context_inputs:
-    - source: "agents.analyst.outputs.project_brief"
-      extract: ["target_users", "core_features", "constraints"]
-    - source: "global_context.technical_stack"
-      as: "tech_preferences"
+    - source: 'agents.analyst.outputs.project_brief'
+      extract: ['target_users', 'core_features', 'constraints']
+    - source: 'global_context.technical_stack'
+      as: 'tech_preferences'
   context_validation:
-    required: ["target_users", "core_features"]
-    optional: ["constraints", "tech_preferences"]
+    required: ['target_users', 'core_features']
+    optional: ['constraints', 'tech_preferences']
   context_transformation:
-    - transform: "target_users"
-      to: "user_personas"
-      method: "expand_with_demographics"
+    - transform: 'target_users'
+      to: 'user_personas'
+      method: 'expand_with_demographics'
 ```
 
 ## Phase-Based Project Structure
@@ -113,6 +115,7 @@ Projects are organized into phases, each capped at 1-3k lines, enabling unlimite
 ### File Limits
 
 **Critical**: Each file must stay under 3,000 lines:
+
 - `plan.md`: Maximum 3,000 lines
 - `claude.md`: Maximum 3,000 lines
 - If exceeded, split phase into sub-phases
@@ -129,6 +132,7 @@ Projects are organized into phases, each capped at 1-3k lines, enabling unlimite
 ### Token Monitoring
 
 **Monitor Context Usage Continuously**:
+
 - Track context usage: `node .claude/tools/token-monitor.mjs --session-id <id>`
 - Threshold: 90% (180k tokens of 200k) triggers handoff
 - Check context usage before major operations
@@ -145,9 +149,11 @@ When context usage reaches 90%:
    - Save orchestrator state to handoff package
 
 2. **Create Handoff Package**:
+
    ```bash
    node .claude/tools/orchestrator-handoff.mjs --session-id <current-id> --project <project-name>
    ```
+
    Package includes: plan files, CLAUDE.md files, artifacts, memory files, project state
 
 3. **Initialize New Orchestrator**:
@@ -245,17 +251,19 @@ Agents use **BOTH** CLAUDE.md files and memory tool for redundancy:
 ### Configuration
 
 Add to `.claude/config.yaml`:
+
 ```yaml
 context_editing:
   clear_tool_uses:
     enabled: true
     trigger_tokens: 40000
-    retention_policy: "keep_recent"
+    retention_policy: 'keep_recent'
   clear_thinking:
     enabled: true
     trigger_tokens: 50000
-    retention_policy: "keep_recent"
+    retention_policy: 'keep_recent'
 ```
+
 </protocol_steps>
 </instructions>
 
@@ -264,3 +272,5 @@ context_editing:
 **Context Store Structure**:
 
 ```json
+
+```

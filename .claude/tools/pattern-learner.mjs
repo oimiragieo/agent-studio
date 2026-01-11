@@ -48,8 +48,8 @@ async function initRegistry() {
       metadata: {
         created: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),
-        totalExecutions: 0
-      }
+        totalExecutions: 0,
+      },
     };
 
     await writeFile(PATTERN_REGISTRY_PATH, JSON.stringify(initialRegistry, null, 2));
@@ -97,7 +97,7 @@ export async function recordExecution(execution) {
       successRate: 0,
       avgDuration: 0,
       lastUpdated: null,
-      agentCombinations: {}
+      agentCombinations: {},
     };
   }
 
@@ -111,7 +111,7 @@ export async function recordExecution(execution) {
     outcome: execution.outcome,
     duration: execution.duration || 0,
     feedback: execution.feedback || {},
-    complexity: execution.complexity || 'unknown'
+    complexity: execution.complexity || 'unknown',
   };
 
   pattern.executions.push(executionRecord);
@@ -128,7 +128,7 @@ export async function recordExecution(execution) {
       count: 0,
       successes: 0,
       failures: 0,
-      avgDuration: 0
+      avgDuration: 0,
     };
   }
 
@@ -141,7 +141,8 @@ export async function recordExecution(execution) {
   }
 
   // Update average duration
-  combo.avgDuration = ((combo.avgDuration * (combo.count - 1)) + (execution.duration || 0)) / combo.count;
+  combo.avgDuration =
+    (combo.avgDuration * (combo.count - 1) + (execution.duration || 0)) / combo.count;
 
   // Recalculate metrics
   const successes = pattern.executions.filter(e => e.outcome === 'success').length;
@@ -173,16 +174,24 @@ function generateInsights(pattern) {
 
   // Success rate insights
   if (pattern.successRate >= 90) {
-    insights.push(`High success rate (${pattern.successRate.toFixed(1)}%) indicates reliable routing for this task type`);
+    insights.push(
+      `High success rate (${pattern.successRate.toFixed(1)}%) indicates reliable routing for this task type`
+    );
   } else if (pattern.successRate < 70) {
-    insights.push(`Low success rate (${pattern.successRate.toFixed(1)}%) suggests routing may need adjustment`);
+    insights.push(
+      `Low success rate (${pattern.successRate.toFixed(1)}%) suggests routing may need adjustment`
+    );
   }
 
   // Duration insights
   if (pattern.avgDuration > 60) {
-    insights.push(`Average duration of ${pattern.avgDuration.toFixed(1)} minutes is high - consider parallel execution`);
+    insights.push(
+      `Average duration of ${pattern.avgDuration.toFixed(1)} minutes is high - consider parallel execution`
+    );
   } else if (pattern.avgDuration < 15) {
-    insights.push(`Quick turnaround time (${pattern.avgDuration.toFixed(1)} minutes) indicates efficient routing`);
+    insights.push(
+      `Quick turnaround time (${pattern.avgDuration.toFixed(1)} minutes) indicates efficient routing`
+    );
   }
 
   // Agent combination insights
@@ -198,7 +207,9 @@ function generateInsights(pattern) {
     const [agents, stats] = bestCombo;
     const successRate = (stats.successes / stats.count) * 100;
     if (successRate >= 80) {
-      insights.push(`Agent chain "${agents}" has ${successRate.toFixed(1)}% success rate with avg ${stats.avgDuration.toFixed(1)} min duration`);
+      insights.push(
+        `Agent chain "${agents}" has ${successRate.toFixed(1)}% success rate with avg ${stats.avgDuration.toFixed(1)} min duration`
+      );
     }
   }
 
@@ -218,7 +229,9 @@ function generateInsights(pattern) {
   for (const [complexity, stats] of Object.entries(complexityBreakdown)) {
     const successRate = (stats.successes / stats.count) * 100;
     if (stats.count >= 3 && successRate < 70) {
-      insights.push(`${complexity} complexity tasks have lower success rate (${successRate.toFixed(1)}%)`);
+      insights.push(
+        `${complexity} complexity tasks have lower success rate (${successRate.toFixed(1)}%)`
+      );
     }
   }
 
@@ -237,7 +250,7 @@ export async function getPatternInsights(taskType) {
     return {
       taskType,
       hasData: false,
-      message: `No execution data available for task type: ${taskType}`
+      message: `No execution data available for task type: ${taskType}`,
     };
   }
 
@@ -257,14 +270,14 @@ export async function getPatternInsights(taskType) {
         agents,
         count: stats.count,
         successRate: (stats.successes / stats.count) * 100,
-        avgDuration: stats.avgDuration
+        avgDuration: stats.avgDuration,
       })),
     recentExecutions: pattern.executions.slice(-5).map(e => ({
       timestamp: e.timestamp,
       outcome: e.outcome,
       duration: e.duration,
-      agents: e.agents
-    }))
+      agents: e.agents,
+    })),
   };
 }
 
@@ -281,13 +294,16 @@ export async function suggestRoutingImprovement(task, taskType, proposedAgents) 
   const suggestions = {
     hasRecommendations: false,
     recommendations: [],
-    confidence: 'low'
+    confidence: 'low',
   };
 
-  if (!registry.patterns[taskType] || registry.patterns[taskType].executions.length < MIN_EXECUTIONS_FOR_INSIGHTS) {
+  if (
+    !registry.patterns[taskType] ||
+    registry.patterns[taskType].executions.length < MIN_EXECUTIONS_FOR_INSIGHTS
+  ) {
     suggestions.recommendations.push({
       type: 'insufficient_data',
-      message: `Not enough historical data for ${taskType} to make recommendations (need ${MIN_EXECUTIONS_FOR_INSIGHTS} executions)`
+      message: `Not enough historical data for ${taskType} to make recommendations (need ${MIN_EXECUTIONS_FOR_INSIGHTS} executions)`,
     });
     return suggestions;
   }
@@ -304,14 +320,14 @@ export async function suggestRoutingImprovement(task, taskType, proposedAgents) 
       suggestions.recommendations.push({
         type: 'validated_chain',
         message: `Proposed chain has ${successRate.toFixed(1)}% success rate based on ${proposedCombo.count} previous executions`,
-        confidence: 'high'
+        confidence: 'high',
       });
       suggestions.confidence = 'high';
     } else if (successRate < 50) {
       suggestions.recommendations.push({
         type: 'low_success_chain',
         message: `Warning: Proposed chain has only ${successRate.toFixed(1)}% success rate. Consider alternative routing.`,
-        confidence: 'high'
+        confidence: 'high',
       });
       suggestions.confidence = 'high';
     }
@@ -326,8 +342,8 @@ export async function suggestRoutingImprovement(task, taskType, proposedAgents) 
       return successRate >= 80;
     })
     .sort((a, b) => {
-      const rateA = (a[1].successes / a[1].count);
-      const rateB = (b[1].successes / b[1].count);
+      const rateA = a[1].successes / a[1].count;
+      const rateB = b[1].successes / b[1].count;
       return rateB - rateA;
     });
 
@@ -338,7 +354,7 @@ export async function suggestRoutingImprovement(task, taskType, proposedAgents) 
       type: 'alternative_chain',
       message: `Alternative chain "${agents}" has ${successRate.toFixed(1)}% success rate (${stats.count} executions)`,
       suggestedAgents: agents.split(' → '),
-      confidence: 'medium'
+      confidence: 'medium',
     });
     suggestions.hasRecommendations = true;
     if (suggestions.confidence === 'low') {
@@ -364,7 +380,7 @@ export async function suggestRoutingImprovement(task, taskType, proposedAgents) 
           type: 'similar_task',
           message: `Similar task "${exec.task?.substring(0, 50)}..." succeeded with chain: ${agentKey}`,
           suggestedAgents: exec.agents,
-          confidence: 'low'
+          confidence: 'low',
         });
         suggestions.hasRecommendations = true;
       }
@@ -410,7 +426,7 @@ function parseArgs(args) {
     task: null,
     file: null,
     json: false,
-    help: false
+    help: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -530,7 +546,9 @@ async function main() {
             console.log(`\nTop Agent Combinations:`);
             insights.topAgentCombinations.forEach(c => {
               console.log(`  ${c.agents}`);
-              console.log(`    Success: ${c.successRate.toFixed(1)}% | Count: ${c.count} | Avg: ${c.avgDuration.toFixed(1)}m`);
+              console.log(
+                `    Success: ${c.successRate.toFixed(1)}% | Count: ${c.count} | Avg: ${c.avgDuration.toFixed(1)}m`
+              );
             });
           }
         }
@@ -539,7 +557,9 @@ async function main() {
 
       case 'suggest': {
         console.log('Error: --suggest requires integration with task classifier');
-        console.log('Use programmatically: suggestRoutingImprovement(task, taskType, proposedAgents)');
+        console.log(
+          'Use programmatically: suggestRoutingImprovement(task, taskType, proposedAgents)'
+        );
         process.exit(1);
         break;
       }
@@ -550,7 +570,7 @@ async function main() {
           taskType,
           executions: pattern.executions.length,
           successRate: pattern.successRate,
-          avgDuration: pattern.avgDuration
+          avgDuration: pattern.avgDuration,
         }));
 
         if (args.json) {
@@ -561,7 +581,9 @@ async function main() {
           console.log(`Last Updated: ${registry.metadata.lastUpdated}`);
           console.log(`\nTask Types:`);
           summary.forEach(s => {
-            console.log(`  ${s.taskType}: ${s.executions} executions, ${s.successRate.toFixed(1)}% success, ${s.avgDuration.toFixed(1)}m avg`);
+            console.log(
+              `  ${s.taskType}: ${s.executions} executions, ${s.successRate.toFixed(1)}% success, ${s.avgDuration.toFixed(1)}m avg`
+            );
           });
         }
         break;
@@ -597,5 +619,5 @@ export default {
   getPatternInsights,
   suggestRoutingImprovement,
   getAllPatterns,
-  clearPatterns
+  clearPatterns,
 };

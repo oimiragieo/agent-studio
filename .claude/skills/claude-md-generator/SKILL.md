@@ -32,6 +32,7 @@ claude.md Generator Skill - Automatically generates claude.md files for new fold
 ### Step 1: Identify Target Location
 
 Determine where claude.md should be created:
+
 - Check if target directory exists
 - Identify parent directory and its claude.md (if exists)
 - Understand module purpose from directory structure
@@ -40,6 +41,7 @@ Determine where claude.md should be created:
 ### Step 2: Extract Context from Code
 
 Analyze existing code to understand module:
+
 - Read key files in target directory (index files, main components, etc.)
 - Identify patterns and conventions used
 - Extract dependencies and relationships
@@ -49,6 +51,7 @@ Analyze existing code to understand module:
 ### Step 3: Load Template
 
 Load claude.md template from `.claude/templates/claude-md-template.md`:
+
 - Use template as base structure
 - Customize sections based on module type
 - Include module-specific information
@@ -61,24 +64,30 @@ Create claude.md following this structure:
 # [Module/Feature Name]
 
 ## Purpose
+
 [What this module/feature does - extracted from code analysis]
 
 ## Key Patterns
+
 [Important patterns and conventions found in code]
 
 ## Rules & Guidelines
+
 [Module-specific rules and guidelines]
 
 ## Dependencies
+
 [Key dependencies and relationships]
 
 ## Usage Examples
+
 [How to use this module/feature - from code examples]
 ```
 
 ### Step 5: Inherit from Parent
 
 If parent directory has claude.md:
+
 - Reference parent claude.md for inherited rules
 - Add module-specific overrides
 - Maintain consistency with parent guidelines
@@ -86,12 +95,13 @@ If parent directory has claude.md:
 ### Step 6: Validate Generated File
 
 Ensure generated claude.md:
+
 - Follows template structure
 - Has all required sections
 - Uses consistent formatting
 - Has valid markdown syntax
 - References parent claude.md if applicable
-</execution_process>
+  </execution_process>
 
 <integration>
 **Integration with Developer Agent**:
@@ -103,20 +113,22 @@ When Developer agent creates new modules:
 
 **Integration with Technical Writer Agent**:
 Technical Writer agent can:
+
 - Automatically generate claude.md for new modules
 - Update existing claude.md files
 - Validate claude.md files exist where required
 - Ensure consistency across claude.md files
-</integration>
+  </integration>
 
 <best_practices>
+
 1. **Extract from Code**: Always analyze existing code before generating
 2. **Follow Hierarchy**: Reference parent claude.md for inheritance
 3. **Be Specific**: Include module-specific patterns and rules
 4. **Keep Updated**: Update claude.md as module evolves
 5. **Validate Structure**: Ensure generated file follows template
-</best_practices>
-</instructions>
+   </best_practices>
+   </instructions>
 
 <examples>
 <code_example>
@@ -126,25 +138,29 @@ Technical Writer agent can:
 
 **Generated**: `src/modules/auth/CLAUDE.md`
 
-```markdown
+````markdown
 # Authentication Module
 
 ## Purpose
+
 Handles user authentication, authorization, and session management. Provides JWT-based authentication with refresh token support.
 
 ## Key Patterns
+
 - Use `useAuth()` hook for authentication state
 - Protect routes with `withAuth()` HOC
 - Use `AuthProvider` for context management
 - JWT tokens stored in httpOnly cookies
 
 ## Rules & Guidelines
+
 - Always validate tokens server-side
 - Use refresh tokens for long-lived sessions
 - Implement proper error handling for auth failures
 - Follow OAuth2 best practices
 
 ## Dependencies
+
 - `@/lib/jwt` - JWT token handling
 - `@/lib/db` - User database operations
 - `@/hooks/use-auth` - Authentication hook
@@ -152,22 +168,26 @@ Handles user authentication, authorization, and session management. Provides JWT
 ## Usage Examples
 
 ### Using Authentication Hook
+
 ```typescript
-import { useAuth } from '@/modules/auth'
+import { useAuth } from '@/modules/auth';
 
 function MyComponent() {
-  const { user, login, logout } = useAuth()
+  const { user, login, logout } = useAuth();
   // ...
 }
 ```
+````
 
 ### Protecting Routes
-```typescript
-import { withAuth } from '@/modules/auth'
 
-export default withAuth(ProtectedPage)
+```typescript
+import { withAuth } from '@/modules/auth';
+
+export default withAuth(ProtectedPage);
 ```
-```
+
+````
 </code_example>
 
 <code_example>
@@ -210,8 +230,9 @@ const user = await createUser({
   email: 'user@example.com',
   name: 'John Doe'
 })
-```
-```
+````
+
+````
 </code_example>
 
 <code_example>
@@ -250,14 +271,16 @@ RESTful API endpoints for user management operations.
 ### GET /api/users
 ```bash
 curl -X GET http://localhost:3000/api/users?page=1&limit=10
-```
+````
 
 ### POST /api/users
+
 ```bash
 curl -X POST http://localhost:3000/api/users \
   -H "Content-Type: application/json" \
   -d '{"email": "user@example.com", "name": "John Doe"}'
 ```
+
 ```
 </code_example>
 
@@ -265,17 +288,23 @@ curl -X POST http://localhost:3000/api/users \
 **Quick Commands**:
 
 ```
+
 # Generate claude.md for a module
+
 Generate claude.md for src/modules/auth
 
 # Generate claude.md for a feature
+
 Generate claude.md for app/features/user-management
 
 # Generate claude.md for an API
+
 Generate claude.md for app/api/users
 
 # Generate with parent reference
+
 Generate claude.md for src/modules/auth --parent src/modules/CLAUDE.md
+
 ```
 
 **Template Customization**:
@@ -288,3 +317,4 @@ Customize templates in `.claude/templates/claude-md-template.md`:
 </usage_example>
 </examples>
 
+```

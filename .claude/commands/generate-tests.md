@@ -32,6 +32,7 @@ Automatically generates test code for components, functions, or API endpoints.
 ## Output
 
 Creates test files following project conventions:
+
 - React: `ComponentName.test.tsx`
 - Node: `functionName.test.js`
 - API: `endpoint.integration.test.js`

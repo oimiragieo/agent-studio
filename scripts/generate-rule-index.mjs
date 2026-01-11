@@ -30,19 +30,65 @@ const CACHE_PATH = path.join(ROOT, '.claude/context/rule-index-cache.json');
 
 // Technology keywords for detection
 const TECH_KEYWORDS = [
-  'nextjs', 'next.js', 'react', 'typescript', 'javascript', 'jsx', 'tsx',
-  'python', 'fastapi', 'django', 'flask', 'pydantic',
-  'cypress', 'playwright', 'jest', 'vitest', 'pytest',
-  'solidity', 'ethereum', 'web3',
-  'vue', 'angular', 'svelte', 'sveltekit',
-  'flutter', 'react-native', 'android', 'ios', 'swift', 'kotlin',
-  'nodejs', 'node.js', 'express', 'nestjs',
-  'tailwind', 'css', 'scss', 'sass',
-  'prisma', 'sql', 'postgresql', 'mongodb',
-  'docker', 'kubernetes', 'terraform',
-  'go', 'golang', 'rust', 'java', 'php', 'ruby', 'rails',
-  'graphql', 'rest', 'api',
-  'html', 'htmx', 'webassembly', 'wasm'
+  'nextjs',
+  'next.js',
+  'react',
+  'typescript',
+  'javascript',
+  'jsx',
+  'tsx',
+  'python',
+  'fastapi',
+  'django',
+  'flask',
+  'pydantic',
+  'cypress',
+  'playwright',
+  'jest',
+  'vitest',
+  'pytest',
+  'solidity',
+  'ethereum',
+  'web3',
+  'vue',
+  'angular',
+  'svelte',
+  'sveltekit',
+  'flutter',
+  'react-native',
+  'android',
+  'ios',
+  'swift',
+  'kotlin',
+  'nodejs',
+  'node.js',
+  'express',
+  'nestjs',
+  'tailwind',
+  'css',
+  'scss',
+  'sass',
+  'prisma',
+  'sql',
+  'postgresql',
+  'mongodb',
+  'docker',
+  'kubernetes',
+  'terraform',
+  'go',
+  'golang',
+  'rust',
+  'java',
+  'php',
+  'ruby',
+  'rails',
+  'graphql',
+  'rest',
+  'api',
+  'html',
+  'htmx',
+  'webassembly',
+  'wasm',
 ];
 
 /**
@@ -58,7 +104,7 @@ function calculateHash(content) {
 function extractFrontmatter(content) {
   const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
   if (!frontmatterMatch) return {};
-  
+
   if (yaml) {
     try {
       return yaml.load(frontmatterMatch[1]) || {};
@@ -67,31 +113,33 @@ function extractFrontmatter(content) {
       console.warn(`⚠️  YAML parsing failed, using simple parser: ${error.message}`);
     }
   }
-  
+
   // Fallback to simple parsing
   const metadata = {};
   const frontmatter = frontmatterMatch[1];
   frontmatter.split('\n').forEach(line => {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) return;
-    
+
     const colonIndex = trimmed.indexOf(':');
     if (colonIndex === -1) return;
-    
+
     const key = trimmed.substring(0, colonIndex).trim();
     let value = trimmed.substring(colonIndex + 1).trim();
-    
+
     // Remove quotes if present
-    if ((value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))) {
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
       value = value.slice(1, -1);
     }
-    
+
     if (key && value) {
       metadata[key] = value;
     }
   });
-  
+
   return metadata;
 }
 
@@ -124,15 +172,15 @@ async function needsReindexing(filePath, cache) {
     const stats = await fs.stat(filePath);
     const relativePath = path.relative(ROOT, filePath).replace(/\\/g, '/');
     const cached = cache[relativePath];
-    
+
     if (!cached) return true;
-    
+
     // Check mtime
     if (cached.mtime !== stats.mtimeMs.toString()) return true;
-    
+
     // Check hash (optional, more expensive)
     // For now, we'll rely on mtime which is faster
-    
+
     return false;
   } catch {
     return true;
@@ -149,7 +197,7 @@ async function updateCacheEntry(filePath, cache, content) {
     cache[relativePath] = {
       mtime: stats.mtimeMs.toString(),
       hash: calculateHash(content),
-      indexed_at: new Date().toISOString()
+      indexed_at: new Date().toISOString(),
     };
   } catch (error) {
     // Ignore cache update errors
@@ -163,7 +211,7 @@ function extractTechnologies(filePath, content) {
   const found = new Set();
   const lowerPath = filePath.toLowerCase();
   const lowerContent = content.toLowerCase();
-  
+
   TECH_KEYWORDS.forEach(tech => {
     const techLower = tech.toLowerCase();
     // Check filename/path
@@ -176,7 +224,7 @@ function extractTechnologies(filePath, content) {
       found.add(tech);
     }
   });
-  
+
   // Normalize common variations
   const normalized = new Set();
   found.forEach(tech => {
@@ -184,7 +232,7 @@ function extractTechnologies(filePath, content) {
     else if (tech === 'node.js') normalized.add('nodejs');
     else normalized.add(tech);
   });
-  
+
   return Array.from(normalized).sort();
 }
 
@@ -196,7 +244,7 @@ async function extractRuleMetadata(filePath, content) {
   const fileName = path.basename(filePath, path.extname(filePath));
   const metadata = extractFrontmatter(content);
   const technologies = extractTechnologies(filePath, content);
-  
+
   return {
     path: relativePath,
     name: fileName,
@@ -206,7 +254,7 @@ async function extractRuleMetadata(filePath, content) {
     technologies,
     type: filePath.includes('rules-master') ? 'master' : 'library',
     size: content.length,
-    line_count: content.split('\n').length
+    line_count: content.split('\n').length,
   };
 }
 
@@ -216,18 +264,17 @@ async function extractRuleMetadata(filePath, content) {
 async function scanDirectory(dirPath, rules = [], cache = {}) {
   try {
     const entries = await fs.readdir(dirPath, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
-      
+
       if (entry.isDirectory()) {
         await scanDirectory(fullPath, rules, cache);
-      } else if (entry.isFile() && 
-                 (entry.name.endsWith('.md') || entry.name.endsWith('.mdc'))) {
+      } else if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdc'))) {
         try {
           // Check if file needs re-indexing
           const needsReindex = await needsReindexing(fullPath, cache);
-          
+
           if (needsReindex) {
             const content = await fs.readFile(fullPath, 'utf-8');
             const metadata = await extractRuleMetadata(fullPath, content);
@@ -251,7 +298,7 @@ async function scanDirectory(dirPath, rules = [], cache = {}) {
       console.warn(`⚠️  Error scanning ${dirPath}: ${error.message}`);
     }
   }
-  
+
   return rules;
 }
 
@@ -260,7 +307,7 @@ async function scanDirectory(dirPath, rules = [], cache = {}) {
  */
 function buildTechnologyMap(rules) {
   const techMap = {};
-  
+
   rules.forEach(rule => {
     rule.technologies.forEach(tech => {
       if (!techMap[tech]) {
@@ -270,12 +317,12 @@ function buildTechnologyMap(rules) {
       techMap[tech].push(rule.path);
     });
   });
-  
+
   // Sort paths for consistency
   Object.keys(techMap).forEach(tech => {
     techMap[tech].sort();
   });
-  
+
   return techMap;
 }
 
@@ -302,46 +349,58 @@ async function generateIndex() {
   // Check for pre-built index
   const prebuiltIndex = await loadPrebuiltIndex();
   const isPrebuilt = process.argv.includes('--prebuilt') || process.argv.includes('-p');
-  
+
   if (prebuiltIndex && !isPrebuilt) {
-    console.log('ℹ️  Pre-built index found. Use --prebuilt flag to regenerate lightweight version.');
+    console.log(
+      'ℹ️  Pre-built index found. Use --prebuilt flag to regenerate lightweight version.'
+    );
     console.log('   For full index, this script will generate all rules.\n');
   }
-  
+
   // Load cache for incremental indexing
   const cache = await loadCache();
   const cacheSize = Object.keys(cache).length;
   if (cacheSize > 0) {
     console.log(`📦 Loaded cache with ${cacheSize} entries (incremental indexing enabled)\n`);
   }
-  
+
   console.log('🔍 Scanning rules...\n');
-  
+
   // Scan master rules
   const masterRules = [];
-  if (await fs.access(MASTER_RULES_DIR).then(() => true).catch(() => false)) {
+  if (
+    await fs
+      .access(MASTER_RULES_DIR)
+      .then(() => true)
+      .catch(() => false)
+  ) {
     await scanDirectory(MASTER_RULES_DIR, masterRules, cache);
   }
-  
+
   // Scan library rules (formerly archive)
   const libraryRules = [];
-  if (await fs.access(LIBRARY_DIR).then(() => true).catch(() => false)) {
+  if (
+    await fs
+      .access(LIBRARY_DIR)
+      .then(() => true)
+      .catch(() => false)
+  ) {
     await scanDirectory(LIBRARY_DIR, libraryRules, cache);
   }
-  
+
   // Save updated cache
   await saveCache(cache);
-  
+
   const allRules = [...masterRules, ...libraryRules];
-  
+
   if (allRules.length === 0) {
     console.error('❌ No rules found!');
     process.exit(1);
   }
-  
+
   // Build technology map
   const technologyMap = buildTechnologyMap(allRules);
-  
+
   // Create index structure
   const index = {
     version: '1.1.0', // Updated: Added versioning metadata
@@ -356,37 +415,39 @@ async function generateIndex() {
       increment_guide: {
         major: 'Breaking changes to index structure (e.g., renamed fields, removed properties)',
         minor: 'New rules added, rule paths changed, or new metadata fields added',
-        patch: 'Bug fixes, metadata corrections, or re-indexing without content changes'
-      }
+        patch: 'Bug fixes, metadata corrections, or re-indexing without content changes',
+      },
     },
     rules: allRules,
-    technology_map: technologyMap
+    technology_map: technologyMap,
   };
-  
+
   // Ensure output directory exists
   const outputDir = path.dirname(OUTPUT_PATH);
   await fs.mkdir(outputDir, { recursive: true });
-  
+
   // Write index file
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(index, null, 2), 'utf-8');
-  
+
   // Calculate approximate token count (rough estimate: 1 token ≈ 4 chars)
   const indexSize = JSON.stringify(index).length;
   const estimatedTokens = Math.ceil(indexSize / 4);
-  
+
   const indexType = isPrebuilt ? 'pre-built (lightweight)' : 'full';
   console.log(`✅ Generated ${indexType} index with ${allRules.length} rules`);
   console.log(`   - ${masterRules.length} master rules`);
   console.log(`   - ${libraryRules.length} library rules (formerly archive)`);
   console.log(`   - ${Object.keys(technologyMap).length} technologies mapped`);
-  console.log(`   - Index size: ${(indexSize / 1024).toFixed(2)} KB (~${estimatedTokens.toLocaleString()} tokens)`);
+  console.log(
+    `   - Index size: ${(indexSize / 1024).toFixed(2)} KB (~${estimatedTokens.toLocaleString()} tokens)`
+  );
   console.log(`📄 Index saved to: ${path.relative(ROOT, OUTPUT_PATH)}`);
-  
+
   if (isPrebuilt && indexSize > 100000) {
     console.warn(`⚠️  Pre-built index exceeds 100KB limit (${(indexSize / 1024).toFixed(2)} KB)`);
     console.warn('   Consider reducing archive rules further');
   }
-  
+
   return index;
 }
 
@@ -409,4 +470,3 @@ generateIndex().catch(error => {
   console.error('❌ Error generating index:', error);
   process.exit(1);
 });
-

@@ -5,75 +5,75 @@
 # Global Tool Registry (Active MCPs)
 mcp_registry:
   active_tools:
-    - name: "shadcn"
-      description: "Component library management and lookup"
-    - name: "SequentialThinking"
-      description: "Deep reasoning and step-by-step logic chains"
-    - name: "Git"
-      description: "Version control, diffs, commits, and history"
-    - name: "GitHub Official"
-      description: "PRs, Issues, and Repository management"
-    - name: "Memory"
-      description: "Long-term context retention across sessions"
-    - name: "Filesystem"
-      description: "File manipulation"
-    - name: "Docker"
-      description: "Container management"
-    - name: "SQLite"
-      description: "Database interaction"
-    - name: "Markitdown"
-      description: "Documentation generation and formatting"
-    - name: "Paper Search"
-      description: "Academic and technical paper research"
-    - name: "Curl"
-      description: "Network requests and API testing"
+    - name: 'shadcn'
+      description: 'Component library management and lookup'
+    - name: 'SequentialThinking'
+      description: 'Deep reasoning and step-by-step logic chains'
+    - name: 'Git'
+      description: 'Version control, diffs, commits, and history'
+    - name: 'GitHub Official'
+      description: 'PRs, Issues, and Repository management'
+    - name: 'Memory'
+      description: 'Long-term context retention across sessions'
+    - name: 'Filesystem'
+      description: 'File manipulation'
+    - name: 'Docker'
+      description: 'Container management'
+    - name: 'SQLite'
+      description: 'Database interaction'
+    - name: 'Markitdown'
+      description: 'Documentation generation and formatting'
+    - name: 'Paper Search'
+      description: 'Academic and technical paper research'
+    - name: 'Curl'
+      description: 'Network requests and API testing'
 
 # Agent Routing Configuration
 agent_routing:
   analyst:
     trigger_words:
-      - "market research"
-      - "competitive analysis"
-      - "project brief"
-      - "requirements gathering"
-      - "feasibility"
-      - "stakeholder analysis"
-      - "brainstorming"
-      - "discovery"
-      - "brownfield"
+      - 'market research'
+      - 'competitive analysis'
+      - 'project brief'
+      - 'requirements gathering'
+      - 'feasibility'
+      - 'stakeholder analysis'
+      - 'brainstorming'
+      - 'discovery'
+      - 'brownfield'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.7
 
   pm:
     trigger_words:
-      - "prd"
-      - "product requirements"
-      - "user stories"
-      - "epic"
-      - "backlog"
-      - "roadmap"
-      - "prioritization"
-      - "feature specification"
-      - "sprint planning"
-      - "story refinement"
-      - "product owner"
-      - "scrum"
-      - "agile"
+      - 'prd'
+      - 'product requirements'
+      - 'user stories'
+      - 'epic'
+      - 'backlog'
+      - 'roadmap'
+      - 'prioritization'
+      - 'feature specification'
+      - 'sprint planning'
+      - 'story refinement'
+      - 'product owner'
+      - 'scrum'
+      - 'agile'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.7
 
   architect:
     trigger_words:
-      - "architecture"
-      - "system design"
-      - "technology stack"
-      - "api design"
-      - "infrastructure"
-      - "scalability"
-      - "security architecture"
-      - "integration"
+      - 'architecture'
+      - 'system design'
+      - 'technology stack'
+      - 'api design'
+      - 'infrastructure'
+      - 'scalability'
+      - 'security architecture'
+      - 'integration'
     complexity: high
     model: claude-opus-4
     temperature: 0.5
@@ -81,22 +81,22 @@ agent_routing:
 
   database-architect:
     trigger_words:
-      - "database"
-      - "schema"
-      - "data modeling"
-      - "query optimization"
-      - "migration"
-      - "SQL"
-      - "NoSQL"
-      - "PostgreSQL"
-      - "MongoDB"
-      - "Redis"
-      - "indexing"
-      - "sharding"
-      - "replication"
-      - "high availability"
-      - "backup"
-      - "data architecture"
+      - 'database'
+      - 'schema'
+      - 'data modeling'
+      - 'query optimization'
+      - 'migration'
+      - 'SQL'
+      - 'NoSQL'
+      - 'PostgreSQL'
+      - 'MongoDB'
+      - 'Redis'
+      - 'indexing'
+      - 'sharding'
+      - 'replication'
+      - 'high availability'
+      - 'backup'
+      - 'data architecture'
     complexity: high
     model: claude-opus-4
     temperature: 0.5
@@ -104,31 +104,31 @@ agent_routing:
 
   developer:
     trigger_words:
-      - "implement"
-      - "code"
-      - "development"
-      - "debug"
-      - "refactor"
-      - "feature"
-      - "bug fix"
-      - "write tests"
-      - "shadcn"
-      - "component"
+      - 'implement'
+      - 'code'
+      - 'development'
+      - 'debug'
+      - 'refactor'
+      - 'feature'
+      - 'bug fix'
+      - 'write tests'
+      - 'shadcn'
+      - 'component'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.3
 
   qa:
     trigger_words:
-      - "test"
-      - "quality"
-      - "testing"
-      - "test plan"
-      - "qa"
-      - "quality gate"
-      - "test coverage"
-      - "regression"
-      - "smoke test"
+      - 'test'
+      - 'quality'
+      - 'testing'
+      - 'test plan'
+      - 'qa'
+      - 'quality gate'
+      - 'test coverage'
+      - 'regression'
+      - 'smoke test'
     complexity: high
     model: claude-opus-4
     temperature: 0.4
@@ -136,30 +136,30 @@ agent_routing:
 
   ux-expert:
     trigger_words:
-      - "ux"
-      - "ui"
-      - "design"
-      - "wireframe"
-      - "prototype"
-      - "user experience"
-      - "interface"
-      - "accessibility"
-      - "shadcn"
-      - "tailwind"
-      - "css"
+      - 'ux'
+      - 'ui'
+      - 'design'
+      - 'wireframe'
+      - 'prototype'
+      - 'user experience'
+      - 'interface'
+      - 'accessibility'
+      - 'shadcn'
+      - 'tailwind'
+      - 'css'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.7
 
   orchestrator:
     trigger_words:
-      - "orchestrate"
-      - "coordinate"
-      - "multi-agent"
-      - "complex workflow"
-      - "end-to-end"
-      - "workflow"
-      - "project planning"
+      - 'orchestrate'
+      - 'coordinate'
+      - 'multi-agent'
+      - 'complex workflow'
+      - 'end-to-end'
+      - 'workflow'
+      - 'project planning'
     complexity: high
     model: claude-opus-4
     temperature: 0.6
@@ -167,18 +167,18 @@ agent_routing:
 
   model-orchestrator:
     trigger_words:
-      - "call gemini"
-      - "call opus"
-      - "call cursor"
-      - "use gemini"
-      - "use cursor"
-      - "multi-model"
-      - "model routing"
-      - "research with gemini"
-      - "plan with opus"
-      - "implement with cursor"
-      - "get second opinion"
-      - "synthesize models"
+      - 'call gemini'
+      - 'call opus'
+      - 'call cursor'
+      - 'use gemini'
+      - 'use cursor'
+      - 'multi-model'
+      - 'model routing'
+      - 'research with gemini'
+      - 'plan with opus'
+      - 'implement with cursor'
+      - 'get second opinion'
+      - 'synthesize models'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.4
@@ -191,14 +191,14 @@ agent_routing:
 
   security-architect:
     trigger_words:
-      - "security"
-      - "authentication"
-      - "authorization"
-      - "compliance"
-      - "threat"
-      - "vulnerability"
-      - "encryption"
-      - "zero-trust"
+      - 'security'
+      - 'authentication'
+      - 'authorization'
+      - 'compliance'
+      - 'threat'
+      - 'vulnerability'
+      - 'encryption'
+      - 'zero-trust'
     complexity: high
     model: claude-opus-4
     temperature: 0.4
@@ -206,38 +206,38 @@ agent_routing:
 
   devops:
     trigger_words:
-      - "infrastructure"
-      - "deployment"
-      - "ci/cd"
-      - "kubernetes"
-      - "docker"
-      - "terraform"
-      - "monitoring"
-      - "observability"
-      - "slo"
-      - "sli"
-      - "sla"
-      - "reliability"
-      - "incident"
-      - "release"
-      - "versioning"
-      - "rollout"
+      - 'infrastructure'
+      - 'deployment'
+      - 'ci/cd'
+      - 'kubernetes'
+      - 'docker'
+      - 'terraform'
+      - 'monitoring'
+      - 'observability'
+      - 'slo'
+      - 'sli'
+      - 'sla'
+      - 'reliability'
+      - 'incident'
+      - 'release'
+      - 'versioning'
+      - 'rollout'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.4
 
   technical-writer:
     trigger_words:
-      - "documentation"
-      - "api docs"
-      - "user manual"
-      - "onboarding"
-      - "guide"
-      - "tutorial"
-      - "changelog"
-      - "release notes"
-      - "technical writing"
-      - "markdown"
+      - 'documentation'
+      - 'api docs'
+      - 'user manual'
+      - 'onboarding'
+      - 'guide'
+      - 'tutorial'
+      - 'changelog'
+      - 'release notes'
+      - 'technical writing'
+      - 'markdown'
     complexity: low
     model: claude-3-5-haiku
     temperature: 0.7
@@ -246,18 +246,18 @@ agent_routing:
 
   llm-architect:
     trigger_words:
-      - "ai system"
-      - "llm"
-      - "prompt engineering"
-      - "rag"
-      - "embeddings"
-      - "vector database"
-      - "model selection"
-      - "fine-tuning"
-      - "ai architecture"
-      - "chatbot"
-      - "conversational ai"
-      - "prompt template"
+      - 'ai system'
+      - 'llm'
+      - 'prompt engineering'
+      - 'rag'
+      - 'embeddings'
+      - 'vector database'
+      - 'model selection'
+      - 'fine-tuning'
+      - 'ai architecture'
+      - 'chatbot'
+      - 'conversational ai'
+      - 'prompt template'
     complexity: high
     model: claude-opus-4
     temperature: 0.6
@@ -265,14 +265,14 @@ agent_routing:
 
   code-reviewer:
     trigger_words:
-      - "code review"
-      - "review this"
-      - "review the code"
-      - "pr review"
-      - "pull request review"
-      - "check this code"
-      - "audit code"
-      - "git diff"
+      - 'code review'
+      - 'review this'
+      - 'review the code'
+      - 'pr review'
+      - 'pull request review'
+      - 'check this code'
+      - 'audit code'
+      - 'git diff'
     complexity: high
     model: claude-opus-4
     temperature: 0.3
@@ -280,17 +280,17 @@ agent_routing:
 
   performance-engineer:
     trigger_words:
-      - "performance"
-      - "optimize"
-      - "profiling"
-      - "benchmark"
-      - "load testing"
-      - "latency"
-      - "throughput"
-      - "core web vitals"
-      - "slow"
-      - "memory leak"
-      - "bottleneck"
+      - 'performance'
+      - 'optimize'
+      - 'profiling'
+      - 'benchmark'
+      - 'load testing'
+      - 'latency'
+      - 'throughput'
+      - 'core web vitals'
+      - 'slow'
+      - 'memory leak'
+      - 'bottleneck'
     complexity: high
     model: claude-opus-4
     temperature: 0.4
@@ -298,15 +298,15 @@ agent_routing:
 
   api-designer:
     trigger_words:
-      - "api design"
-      - "rest api"
-      - "graphql"
-      - "grpc"
-      - "openapi"
-      - "swagger"
-      - "api contract"
-      - "endpoint design"
-      - "api versioning"
+      - 'api design'
+      - 'rest api'
+      - 'graphql'
+      - 'grpc'
+      - 'openapi'
+      - 'swagger'
+      - 'api contract'
+      - 'endpoint design'
+      - 'api versioning'
     complexity: high
     model: claude-opus-4
     temperature: 0.5
@@ -314,15 +314,15 @@ agent_routing:
 
   legacy-modernizer:
     trigger_words:
-      - "legacy"
-      - "modernize"
-      - "migration"
-      - "strangler fig"
-      - "technical debt"
-      - "old codebase"
-      - "upgrade"
-      - "rewrite"
-      - "obsolete"
+      - 'legacy'
+      - 'modernize'
+      - 'migration'
+      - 'strangler fig'
+      - 'technical debt'
+      - 'old codebase'
+      - 'upgrade'
+      - 'rewrite'
+      - 'obsolete'
     complexity: high
     model: claude-opus-4
     temperature: 0.5
@@ -330,30 +330,30 @@ agent_routing:
 
   accessibility-expert:
     trigger_words:
-      - "accessibility"
-      - "wcag"
-      - "a11y"
-      - "screen reader"
-      - "aria"
-      - "inclusive design"
-      - "keyboard navigation"
-      - "color contrast"
+      - 'accessibility'
+      - 'wcag'
+      - 'a11y'
+      - 'screen reader'
+      - 'aria'
+      - 'inclusive design'
+      - 'keyboard navigation'
+      - 'color contrast'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.4
 
   compliance-auditor:
     trigger_words:
-      - "gdpr"
-      - "hipaa"
-      - "soc2"
-      - "pci"
-      - "regulatory"
-      - "compliance audit"
-      - "data protection"
-      - "privacy"
-      - "ccpa"
-      - "audit"
+      - 'gdpr'
+      - 'hipaa'
+      - 'soc2'
+      - 'pci'
+      - 'regulatory'
+      - 'compliance audit'
+      - 'data protection'
+      - 'privacy'
+      - 'ccpa'
+      - 'audit'
     complexity: high
     model: claude-opus-4
     temperature: 0.3
@@ -361,31 +361,31 @@ agent_routing:
 
   incident-responder:
     trigger_words:
-      - "incident"
-      - "outage"
-      - "down"
-      - "production issue"
-      - "emergency"
-      - "post-mortem"
-      - "postmortem"
-      - "root cause"
-      - "crisis"
-      - "runbook"
+      - 'incident'
+      - 'outage'
+      - 'down'
+      - 'production issue'
+      - 'emergency'
+      - 'post-mortem'
+      - 'postmortem'
+      - 'root cause'
+      - 'crisis'
+      - 'runbook'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.2
 
   refactoring-specialist:
     trigger_words:
-      - "refactor"
-      - "code smell"
-      - "clean code"
-      - "extract method"
-      - "technical debt"
-      - "complexity"
-      - "maintainability"
-      - "solid principles"
-      - "design patterns"
+      - 'refactor'
+      - 'code smell'
+      - 'clean code'
+      - 'extract method'
+      - 'technical debt'
+      - 'complexity'
+      - 'maintainability'
+      - 'solid principles'
+      - 'design patterns'
     complexity: high
     model: claude-opus-4
     temperature: 0.4
@@ -393,15 +393,15 @@ agent_routing:
 
   mobile-developer:
     trigger_words:
-      - "mobile"
-      - "ios"
-      - "android"
-      - "react native"
-      - "flutter"
-      - "swift"
-      - "kotlin"
-      - "app store"
-      - "mobile app"
+      - 'mobile'
+      - 'ios'
+      - 'android'
+      - 'react native'
+      - 'flutter'
+      - 'swift'
+      - 'kotlin'
+      - 'app store'
+      - 'mobile app'
     complexity: medium
     model: claude-sonnet-4
     temperature: 0.5
@@ -411,13 +411,13 @@ workflow_selection:
   quick_flow:
     priority: 1
     keywords:
-      - "bug fix"
-      - "hotfix"
-      - "quick fix"
-      - "small feature"
-      - "documentation"
-      - "refactor"
-      - "minor change"
+      - 'bug fix'
+      - 'hotfix'
+      - 'quick fix'
+      - 'small feature'
+      - 'documentation'
+      - 'refactor'
+      - 'minor change'
     complexity: low
     workflow_file: .opencode/workflow/quick-flow.yaml
     agents_sequence:
@@ -428,13 +428,13 @@ workflow_selection:
   fullstack:
     priority: 2
     keywords:
-      - "new project"
-      - "greenfield"
-      - "from scratch"
-      - "full stack"
-      - "fullstack"
-      - "enterprise"
-      - "production"
+      - 'new project'
+      - 'greenfield'
+      - 'from scratch'
+      - 'full stack'
+      - 'fullstack'
+      - 'enterprise'
+      - 'production'
     complexity: medium
     workflow_file: .opencode/workflow/greenfield-fullstack.yaml
     agents_sequence:
@@ -450,12 +450,12 @@ workflow_selection:
   code_quality:
     priority: 3
     keywords:
-      - "code quality"
-      - "code review"
-      - "refactor"
-      - "tech debt"
-      - "code smell"
-      - "clean up"
+      - 'code quality'
+      - 'code review'
+      - 'refactor'
+      - 'tech debt'
+      - 'code smell'
+      - 'clean up'
     complexity: medium
     workflow_file: .opencode/workflow/code-quality-flow.yaml
     agents_sequence:
@@ -468,13 +468,13 @@ workflow_selection:
   performance:
     priority: 3
     keywords:
-      - "performance"
-      - "optimize"
-      - "profiling"
-      - "benchmark"
-      - "load test"
-      - "slow"
-      - "latency"
+      - 'performance'
+      - 'optimize'
+      - 'profiling'
+      - 'benchmark'
+      - 'load test'
+      - 'slow'
+      - 'latency'
     complexity: medium
     workflow_file: .opencode/workflow/performance-flow.yaml
     agents_sequence:
@@ -487,14 +487,14 @@ workflow_selection:
   ai_system:
     priority: 3
     keywords:
-      - "ai system"
-      - "llm"
-      - "rag"
-      - "embeddings"
-      - "chatbot"
-      - "ai feature"
-      - "machine learning"
-      - "vector database"
+      - 'ai system'
+      - 'llm'
+      - 'rag'
+      - 'embeddings'
+      - 'chatbot'
+      - 'ai feature'
+      - 'machine learning'
+      - 'vector database'
     complexity: high
     workflow_file: .opencode/workflow/ai-system-flow.yaml
     agents_sequence:
@@ -508,13 +508,13 @@ workflow_selection:
   mobile:
     priority: 3
     keywords:
-      - "mobile app"
-      - "ios"
-      - "android"
-      - "react native"
-      - "flutter"
-      - "native app"
-      - "app store"
+      - 'mobile app'
+      - 'ios'
+      - 'android'
+      - 'react native'
+      - 'flutter'
+      - 'native app'
+      - 'app store'
     complexity: medium
     workflow_file: .opencode/workflow/mobile-flow.yaml
     agents_sequence:
@@ -525,15 +525,15 @@ workflow_selection:
       - qa
 
   incident:
-    priority: 0  # Highest priority for critical incidents
+    priority: 0 # Highest priority for critical incidents
     keywords:
-      - "incident"
-      - "outage"
-      - "production issue"
-      - "post-mortem"
-      - "crisis"
-      - "downtime"
-      - "emergency"
+      - 'incident'
+      - 'outage'
+      - 'production issue'
+      - 'post-mortem'
+      - 'crisis'
+      - 'downtime'
+      - 'emergency'
     complexity: high
     workflow_file: .opencode/workflow/incident-flow.yaml
     agents_sequence:

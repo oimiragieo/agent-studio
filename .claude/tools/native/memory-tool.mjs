@@ -24,14 +24,14 @@ async function loadMemories() {
   } catch (error) {
     // File doesn't exist or is invalid, return empty structure
   }
-  
+
   return {
     memories: [],
     metadata: {
       created: new Date().toISOString(),
       last_updated: new Date().toISOString(),
-      version: '1.0'
-    }
+      version: '1.0',
+    },
   };
 }
 
@@ -51,14 +51,14 @@ function calculateSimilarity(text1, text2) {
   const words1 = text1.toLowerCase().split(/\s+/);
   const words2 = text2.toLowerCase().split(/\s+/);
   const allWords = new Set([...words1, ...words2]);
-  
+
   let intersection = 0;
   for (const word of words1) {
     if (words2.includes(word)) {
       intersection++;
     }
   }
-  
+
   return intersection / allWords.size;
 }
 
@@ -66,16 +66,10 @@ function calculateSimilarity(text1, text2) {
  * Store a memory
  */
 export async function storeMemory(input, context = {}) {
-  const {
-    content,
-    tags = [],
-    importance = 'medium',
-    expires_at = null,
-    metadata = {}
-  } = input;
+  const { content, tags = [], importance = 'medium', expires_at = null, metadata = {} } = input;
 
   const data = await loadMemories();
-  
+
   const memory = {
     id: `mem_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     content,
@@ -86,8 +80,8 @@ export async function storeMemory(input, context = {}) {
     metadata: {
       ...metadata,
       agent: context.agent || 'unknown',
-      session: context.session || 'unknown'
-    }
+      session: context.session || 'unknown',
+    },
   };
 
   data.memories.push(memory);
@@ -96,7 +90,7 @@ export async function storeMemory(input, context = {}) {
   return {
     success: true,
     memory_id: memory.id,
-    stored_at: memory.created_at
+    stored_at: memory.created_at,
   };
 }
 
@@ -104,13 +98,7 @@ export async function storeMemory(input, context = {}) {
  * Retrieve memories
  */
 export async function retrieveMemories(input, context = {}) {
-  const {
-    query = null,
-    tags = [],
-    limit = 10,
-    importance = null,
-    since = null
-  } = input;
+  const { query = null, tags = [], limit = 10, importance = null, since = null } = input;
 
   const data = await loadMemories();
   let results = [...data.memories];
@@ -121,9 +109,7 @@ export async function retrieveMemories(input, context = {}) {
 
   // Filter by tags
   if (tags.length > 0) {
-    results = results.filter(m => 
-      tags.some(tag => m.tags.includes(tag))
-    );
+    results = results.filter(m => tags.some(tag => m.tags.includes(tag)));
   }
 
   // Filter by importance
@@ -139,10 +125,12 @@ export async function retrieveMemories(input, context = {}) {
 
   // Search by query
   if (query) {
-    results = results.map(m => ({
-      ...m,
-      similarity: calculateSimilarity(query, m.content)
-    })).filter(m => m.similarity > 0.1)
+    results = results
+      .map(m => ({
+        ...m,
+        similarity: calculateSimilarity(query, m.content),
+      }))
+      .filter(m => m.similarity > 0.1)
       .sort((a, b) => b.similarity - a.similarity);
   } else {
     // Sort by creation date (newest first)
@@ -161,9 +149,9 @@ export async function retrieveMemories(input, context = {}) {
       importance: m.importance,
       created_at: m.created_at,
       metadata: m.metadata,
-      similarity: m.similarity
+      similarity: m.similarity,
     })),
-    total_found: results.length
+    total_found: results.length,
   };
 }
 
@@ -175,15 +163,15 @@ export async function deleteMemory(input, context = {}) {
 
   const data = await loadMemories();
   const initialLength = data.memories.length;
-  
+
   data.memories = data.memories.filter(m => m.id !== memory_id);
-  
+
   if (data.memories.length < initialLength) {
     await saveMemories(data);
     return {
       success: true,
       deleted: true,
-      memory_id
+      memory_id,
     };
   }
 
@@ -191,7 +179,7 @@ export async function deleteMemory(input, context = {}) {
     success: false,
     deleted: false,
     error: 'Memory not found',
-    memory_id
+    memory_id,
   };
 }
 
@@ -199,13 +187,7 @@ export async function deleteMemory(input, context = {}) {
  * Update a memory
  */
 export async function updateMemory(input, context = {}) {
-  const {
-    memory_id,
-    content = null,
-    tags = null,
-    importance = null,
-    metadata = null
-  } = input;
+  const { memory_id, content = null, tags = null, importance = null, metadata = null } = input;
 
   const data = await loadMemories();
   const memory = data.memories.find(m => m.id === memory_id);
@@ -214,7 +196,7 @@ export async function updateMemory(input, context = {}) {
     return {
       success: false,
       error: 'Memory not found',
-      memory_id
+      memory_id,
     };
   }
 
@@ -229,7 +211,7 @@ export async function updateMemory(input, context = {}) {
   return {
     success: true,
     memory_id,
-    updated_at: memory.updated_at
+    updated_at: memory.updated_at,
   };
 }
 
@@ -245,7 +227,7 @@ export const memoryTool = {
       operation: {
         type: 'string',
         enum: ['store', 'retrieve', 'delete', 'update'],
-        description: 'Memory operation to perform'
+        description: 'Memory operation to perform',
       },
       // Store operation
       content: { type: 'string', description: 'Memory content to store' },
@@ -258,28 +240,28 @@ export const memoryTool = {
       limit: { type: 'number', default: 10, description: 'Maximum number of results' },
       since: { type: 'string', description: 'ISO timestamp to filter memories' },
       // Delete/Update operations
-      memory_id: { type: 'string', description: 'Memory ID to delete or update' }
+      memory_id: { type: 'string', description: 'Memory ID to delete or update' },
     },
-    required: ['operation']
+    required: ['operation'],
   },
   outputSchema: {
     type: 'object',
     properties: {
       success: {
         type: 'boolean',
-        description: 'Whether the memory operation succeeded'
+        description: 'Whether the memory operation succeeded',
       },
       memory_id: {
         type: 'string',
-        description: 'Memory ID (for store, update, delete operations)'
+        description: 'Memory ID (for store, update, delete operations)',
       },
       stored_at: {
         type: 'string',
-        description: 'ISO timestamp when memory was stored'
+        description: 'ISO timestamp when memory was stored',
       },
       updated_at: {
         type: 'string',
-        description: 'ISO timestamp when memory was updated'
+        description: 'ISO timestamp when memory was updated',
       },
       memories: {
         type: 'array',
@@ -294,20 +276,20 @@ export const memoryTool = {
             created_at: { type: 'string' },
             expires_at: { type: ['string', 'null'] },
             metadata: { type: 'object' },
-            similarity: { type: 'number' }
-          }
-        }
+            similarity: { type: 'number' },
+          },
+        },
       },
       count: {
         type: 'number',
-        description: 'Number of memories retrieved'
+        description: 'Number of memories retrieved',
       },
       error: {
         type: 'string',
-        description: 'Error message if operation failed'
-      }
+        description: 'Error message if operation failed',
+      },
     },
-    required: ['success']
+    required: ['success'],
   },
   execute: async (input, context) => {
     const { operation, ...params } = input;
@@ -324,8 +306,7 @@ export const memoryTool = {
       default:
         throw new Error(`Unknown operation: ${operation}`);
     }
-  }
+  },
 };
 
 export default memoryTool;
-

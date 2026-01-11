@@ -11,6 +11,7 @@ Handles optional artifact inputs in workflows, allowing workflows to proceed wit
 ## When to Use
 
 Use this skill when:
+
 - **Executing workflow steps** with inputs marked as `(optional)` in YAML
 - **Building adaptive workflows** that gracefully degrade without certain inputs
 - **Implementing fallback logic** for missing documentation artifacts
@@ -18,6 +19,7 @@ Use this skill when:
 - **Recovering from incomplete previous steps** without blocking progress
 
 **Trigger Phrases**:
+
 - "Check for optional artifact X"
 - "Handle missing optional input"
 - "Provide defaults for optional artifact"
@@ -26,6 +28,7 @@ Use this skill when:
 ## Invocation Examples
 
 ### Natural Language (Recommended)
+
 ```
 "Check if infrastructure-config.json is available as an optional input"
 "Handle the optional UX spec artifact for code review"
@@ -33,15 +36,16 @@ Use this skill when:
 ```
 
 ### Skill Tool (Programmatic)
+
 ```javascript
 // In agent workflow execution
-Skill: optional-artifact-handler
+Skill: optional - artifact - handler;
 
 // With specific context
 await skillManager.invoke('optional-artifact-handler', {
   artifactName: 'infrastructure-config.json',
   workflowId: 'workflow-123',
-  step: 7
+  step: 7,
 });
 ```
 
@@ -60,6 +64,7 @@ await skillManager.invoke('optional-artifact-handler', {
    - Verify artifact validation status if present
 
 **Example Registry Check**:
+
 ```json
 {
   "artifacts": [
@@ -88,6 +93,7 @@ await skillManager.invoke('optional-artifact-handler', {
    - Use artifact value
 
 **Example Handling Logic**:
+
 ```javascript
 // Check registry
 const registry = await readFile('.claude/context/artifacts/registry-workflow-123.json');
@@ -95,7 +101,9 @@ const artifact = registry.artifacts.find(a => a.name === 'infrastructure-config.
 
 if (!artifact) {
   // Missing optional artifact - use defaults
-  console.log('[optional-artifact-handler] infrastructure-config.json not found, using empty config');
+  console.log(
+    '[optional-artifact-handler] infrastructure-config.json not found, using empty config'
+  );
   const config = { resources: [], environment_variables: {} };
 
   // Log decision
@@ -104,14 +112,16 @@ if (!artifact) {
       artifact: 'infrastructure-config.json',
       status: 'missing',
       default_used: 'empty config object',
-      impact: 'Cloud service integration stubs will use placeholder values'
-    }
+      impact: 'Cloud service integration stubs will use placeholder values',
+    },
   });
 
   return config;
 } else {
   // Artifact available - load it
-  console.log('[optional-artifact-handler] infrastructure-config.json found, loading from registry');
+  console.log(
+    '[optional-artifact-handler] infrastructure-config.json found, loading from registry'
+  );
   const config = await readFile(artifact.path);
 
   // Log decision
@@ -120,8 +130,8 @@ if (!artifact) {
       artifact: 'infrastructure-config.json',
       status: 'available',
       source: artifact.path,
-      impact: 'Cloud service integration will use actual resource names'
-    }
+      impact: 'Cloud service integration will use actual resource names',
+    },
   });
 
   return config;
@@ -142,12 +152,12 @@ if (!artifact) {
 
 **Example Default Strategies**:
 
-| Optional Artifact | Default Value | Rationale |
-|-------------------|---------------|-----------|
-| `infrastructure-config.json` | `{ resources: [], environment_variables: {} }` | Empty config allows code generation to proceed with stubs |
-| `ui-spec.json` | `null` | Code reviewer skips UI compliance checks |
-| `test-plan.json` | `{ test_cases: [] }` | Developer proceeds without test guidance |
-| `prd.json` | `null` | Architect designs without product requirements (technical debt) |
+| Optional Artifact            | Default Value                                  | Rationale                                                       |
+| ---------------------------- | ---------------------------------------------- | --------------------------------------------------------------- |
+| `infrastructure-config.json` | `{ resources: [], environment_variables: {} }` | Empty config allows code generation to proceed with stubs       |
+| `ui-spec.json`               | `null`                                         | Code reviewer skips UI compliance checks                        |
+| `test-plan.json`             | `{ test_cases: [] }`                           | Developer proceeds without test guidance                        |
+| `prd.json`                   | `null`                                         | Architect designs without product requirements (technical debt) |
 
 ### Step 4: Document Handling
 
@@ -162,6 +172,7 @@ if (!artifact) {
    - Track optional artifact usage
 
 **Example Reasoning File Output**:
+
 ```json
 {
   "step": 7,
@@ -198,6 +209,7 @@ if (!artifact) {
 ### Scenario: Developer Step with Optional Infrastructure Config
 
 **Workflow YAML** (Step 7):
+
 ```yaml
 - step: 7
   agent: developer
@@ -213,6 +225,7 @@ if (!artifact) {
 ```
 
 **Step 1: Check Registry**
+
 ```bash
 # Agent reads artifact registry
 cat .claude/context/artifacts/registry-workflow-123.json
@@ -238,6 +251,7 @@ cat .claude/context/artifacts/registry-workflow-123.json
 ```
 
 **Step 2: Detect Missing Optional Artifact**
+
 ```javascript
 // Developer agent logic
 const requiredArtifacts = ['plan.json', 'architecture.json'];
@@ -259,6 +273,7 @@ if (!infraConfig) {
 ```
 
 **Step 3: Apply Defaults**
+
 ```javascript
 // Use default empty infrastructure config
 const infrastructureConfig = infraConfig
@@ -267,7 +282,7 @@ const infrastructureConfig = infraConfig
       cloud_provider: 'gcp',
       resources: [],
       environment_variables: {},
-      service_accounts: []
+      service_accounts: [],
     };
 
 // Generate code with placeholders
@@ -279,6 +294,7 @@ const storage = new Storage({ projectId: process.env.GCP_PROJECT_ID });
 ```
 
 **Step 4: Document in Reasoning File**
+
 ```json
 {
   "step": 7,
@@ -310,13 +326,14 @@ const storage = new Storage({ projectId: process.env.GCP_PROJECT_ID });
 ```
 
 **Step 5: Continue Execution**
+
 ```javascript
 // Developer continues with implementation
 const manifest = {
   files_created: [
-    'src/services/storage.ts',  // Uses placeholder bucket name
+    'src/services/storage.ts', // Uses placeholder bucket name
     'src/services/database.ts', // Uses placeholder connection string
-    'src/api/upload.ts'         // API endpoint implementation
+    'src/api/upload.ts', // API endpoint implementation
   ],
   files_modified: [],
   dependencies_added: ['@google-cloud/storage', 'pg'],
@@ -324,8 +341,8 @@ const manifest = {
   notes: [
     'infrastructure-config.json was not available',
     'Cloud service clients use placeholder resource names',
-    'Run DevOps step (4.5) and update service configurations'
-  ]
+    'Run DevOps step (4.5) and update service configurations',
+  ],
 };
 
 // Save manifest
@@ -348,15 +365,16 @@ await writeFile('.claude/context/artifacts/dev-manifest-workflow-123.json', mani
 ```
 
 **Handling Logic**:
+
 ```javascript
 const prd = await loadOptionalArtifact('prd.json');
 const uiSpec = await loadOptionalArtifact('ui-spec.json');
 
 const reviewChecks = {
-  code_quality: true,           // Always check
+  code_quality: true, // Always check
   architecture_compliance: true, // Always check
-  prd_alignment: !!prd,         // Only if PRD available
-  ui_compliance: !!uiSpec       // Only if UI spec available
+  prd_alignment: !!prd, // Only if PRD available
+  ui_compliance: !!uiSpec, // Only if UI spec available
 };
 
 if (!prd) {
@@ -381,6 +399,7 @@ if (!uiSpec) {
 ```
 
 **Handling Logic**:
+
 ```javascript
 const legacyAnalysis = await loadOptionalArtifact('legacy-analysis.json');
 
@@ -388,12 +407,12 @@ const architectureConstraints = legacyAnalysis
   ? {
       legacy_integrations: legacyAnalysis.integration_points,
       migration_requirements: legacyAnalysis.migration_strategy,
-      compatibility_constraints: legacyAnalysis.constraints
+      compatibility_constraints: legacyAnalysis.constraints,
     }
   : {
       legacy_integrations: [],
       migration_requirements: 'greenfield',
-      compatibility_constraints: []
+      compatibility_constraints: [],
     };
 ```
 
@@ -410,14 +429,15 @@ const architectureConstraints = legacyAnalysis
 ```
 
 **Handling Logic**:
+
 ```javascript
 const performanceBaseline = await loadOptionalArtifact('performance-baseline.json');
 
 const testSuite = {
-  unit_tests: true,              // Always run
-  integration_tests: true,        // Always run
-  e2e_tests: true,               // Always run
-  performance_tests: !!performanceBaseline  // Only if baseline available
+  unit_tests: true, // Always run
+  integration_tests: true, // Always run
+  e2e_tests: true, // Always run
+  performance_tests: !!performanceBaseline, // Only if baseline available
 };
 
 if (!performanceBaseline) {
@@ -429,6 +449,7 @@ if (!performanceBaseline) {
 ## Example Output/Logging Format
 
 ### Console Logging Pattern
+
 ```
 [optional-artifact-handler] Checking for optional artifact: infrastructure-config.json
 [optional-artifact-handler] Registry path: .claude/context/artifacts/registry-workflow-123.json
@@ -440,6 +461,7 @@ if (!performanceBaseline) {
 ```
 
 ### Reasoning File Entry
+
 ```json
 {
   "optional_artifact_handling": {
@@ -481,6 +503,7 @@ if (!performanceBaseline) {
 ```
 
 ### Artifact Registry Update
+
 ```json
 {
   "artifacts": [

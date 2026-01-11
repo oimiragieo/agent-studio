@@ -13,6 +13,7 @@ This directory contains specialized rubrics for plan rating that override the st
 **Use Cases**: Security audits, compliance audits, authentication/authorization, data protection
 
 **Dimensions**:
+
 - **completeness** (15%): All security information present, threat model, compliance mapping
 - **feasibility** (10%): Security controls are realistic and achievable
 - **risk_mitigation** (30%): Comprehensive security risk management and incident response
@@ -20,6 +21,7 @@ This directory contains specialized rubrics for plan rating that override the st
 - **compliance** (20%): Meets all compliance requirements with audit trail
 
 **Key Differences from Standard**:
+
 - Higher minimum score (9 vs 7)
 - Greater emphasis on risk mitigation (30% vs 20%)
 - New dimension: security_coverage (25%)
@@ -70,7 +72,7 @@ node .claude/tools/enforcement-gate.mjs validate-rubric --rubric-file <rubric-fi
 
 ```yaml
 - step: 0.1
-  name: "Plan Rating Gate"
+  name: 'Plan Rating Gate'
   agent: orchestrator
   type: validation
   skill: response-rater
@@ -97,22 +99,25 @@ node .claude/skills/response-rater/scripts/rate.cjs \
 All dimension weights must add up to exactly 1.0. This ensures consistent scoring across rubrics.
 
 **Example**:
+
 ```json
 {
   "dimensions": [
     { "name": "completeness", "weight": 0.15 },
-    { "name": "feasibility", "weight": 0.10 },
-    { "name": "risk_mitigation", "weight": 0.30 },
+    { "name": "feasibility", "weight": 0.1 },
+    { "name": "risk_mitigation", "weight": 0.3 },
     { "name": "security_coverage", "weight": 0.25 },
-    { "name": "compliance", "weight": 0.20 }
+    { "name": "compliance", "weight": 0.2 }
   ]
 }
 ```
+
 **Total**: 0.15 + 0.10 + 0.30 + 0.25 + 0.20 = 1.0 ✅
 
 ### 2. Use Consistent Scoring Ranges
 
 Use the standard scoring ranges for consistency:
+
 - **1-3**: Poor/inadequate
 - **4-6**: Basic/acceptable
 - **7-8**: Good/strong
@@ -121,6 +126,7 @@ Use the standard scoring ranges for consistency:
 ### 3. Clear, Actionable Descriptions
 
 Each dimension should have:
+
 - Clear name (lowercase with underscores)
 - Concise description (1-2 sentences)
 - Specific scoring criteria for each range
@@ -129,6 +135,7 @@ Each dimension should have:
 ### 4. Document Rationale
 
 Include metadata explaining:
+
 - Why this custom rubric is needed
 - What task types it applies to
 - How it differs from the standard rubric
@@ -137,6 +144,7 @@ Include metadata explaining:
 ### 5. Validate Before Use
 
 Always validate custom rubrics:
+
 1. Dimension weights sum to 1.0
 2. All required fields present
 3. Version format correct (semantic versioning)
@@ -183,6 +191,7 @@ Always validate custom rubrics:
 **Pattern**: `<task-type>-plan-rubric.json`
 
 **Examples**:
+
 - `security-plan-rubric.json` - Security/compliance tasks
 - `performance-plan-rubric.json` - Performance optimization
 - `ui-ux-plan-rubric.json` - UI/UX design

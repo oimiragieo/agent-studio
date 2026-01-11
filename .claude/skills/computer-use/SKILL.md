@@ -12,6 +12,7 @@ allowed-tools: read, write, bash
 This skill provides Playwright-powered browser automation capabilities via MCP, enabling programmatic interaction with web pages including clicking, typing, scrolling, and screenshot capture.
 
 **Context Savings**: ~90% reduction
+
 - **MCP Mode**: ~12,000 tokens always loaded (6 tools + cursor overlay)
 - **Skill Mode**: ~300 tokens metadata + on-demand loading
 
@@ -27,23 +28,23 @@ The server provides 6 tools for browser automation:
 
 ### Lifecycle Tools
 
-| Tool | Description |
-|------|-------------|
+| Tool                 | Description                                                    |
+| -------------------- | -------------------------------------------------------------- |
 | `initialize_browser` | Launch Chromium browser with URL, viewport size, headless mode |
-| `close_browser` | Close browser and release all resources |
+| `close_browser`      | Close browser and release all resources                        |
 
 ### Interaction Tools
 
-| Tool | Description |
-|------|-------------|
+| Tool             | Description                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------- |
 | `execute_action` | Execute actions: click_at, type_text_at, scroll_to_percent, press_key, execute_javascript |
-| `click_selector` | Click element by CSS selector |
-| `fill_selector` | Fill form field by CSS selector |
+| `click_selector` | Click element by CSS selector                                                             |
+| `fill_selector`  | Fill form field by CSS selector                                                           |
 
 ### State Capture Tools
 
-| Tool | Description |
-|------|-------------|
+| Tool            | Description                                   |
+| --------------- | --------------------------------------------- |
 | `capture_state` | Take screenshot and return path + current URL |
 
 ## Quick Reference
@@ -87,17 +88,18 @@ python executor.py --tool close_browser
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `CU_HEADFUL` | Show browser window (1/true/yes) | `false` (headless) |
-| `CU_SLOW_MO` | Delay between actions (ms) | `250` |
-| `CU_SHOW_CURSOR` | Show cursor overlay (1/true/yes) | `false` |
-| `CU_NO_SANDBOX` | Disable Chromium sandbox | `false` |
-| `CU_DEVICE_SCALE` | Device scale factor | `2` |
+| Variable          | Description                      | Default            |
+| ----------------- | -------------------------------- | ------------------ |
+| `CU_HEADFUL`      | Show browser window (1/true/yes) | `false` (headless) |
+| `CU_SLOW_MO`      | Delay between actions (ms)       | `250`              |
+| `CU_SHOW_CURSOR`  | Show cursor overlay (1/true/yes) | `false`            |
+| `CU_NO_SANDBOX`   | Disable Chromium sandbox         | `false`            |
+| `CU_DEVICE_SCALE` | Device scale factor              | `2`                |
 
 ### Setup
 
 1. **First run** (auto-installs dependencies):
+
    ```bash
    python .claude/skills/computer-use/executor.py --list
    ```
@@ -118,8 +120,9 @@ The system uses a **0-1000 normalized scale** for viewport-independent automatio
 This allows the same coordinates to work across different screen sizes.
 
 **Example**: To click the center of the viewport:
+
 ```json
-{"action_name": "click_at", "args": {"x": 500, "y": 500}}
+{ "action_name": "click_at", "args": { "x": 500, "y": 500 } }
 ```
 
 ## Tool Details
@@ -129,12 +132,14 @@ This allows the same coordinates to work across different screen sizes.
 Launch Playwright Chromium browser with specified configuration.
 
 **Parameters**:
+
 - `url` (string, required): Initial URL to navigate to
 - `width` (number, optional): Viewport width in pixels (default: 1440)
 - `height` (number, optional): Viewport height in pixels (default: 900)
 - `headless` (boolean, optional): Run headless (overrides `CU_HEADFUL` env var)
 
 **Returns**:
+
 ```json
 {
   "ok": true,
@@ -151,6 +156,7 @@ Launch Playwright Chromium browser with specified configuration.
 Execute a single browser automation action.
 
 **Parameters**:
+
 - `action_name` (string, required): One of:
   - `open_web_browser` - Navigate to URL
   - `click_at` - Click at coordinates
@@ -162,25 +168,27 @@ Execute a single browser automation action.
 
 **Action Arguments**:
 
-| Action | Required Args | Optional Args |
-|--------|---------------|---------------|
-| `open_web_browser` | `url` | - |
-| `click_at` | `x`, `y` (0-1000) | - |
-| `type_text_at` | `x`, `y`, `text` | `press_enter` |
-| `scroll_to_percent` | `y` (0-1000) | - |
-| `press_key` | `key` (e.g., "Enter", "Meta+L") | - |
-| `execute_javascript` | `code` | - |
+| Action               | Required Args                   | Optional Args |
+| -------------------- | ------------------------------- | ------------- |
+| `open_web_browser`   | `url`                           | -             |
+| `click_at`           | `x`, `y` (0-1000)               | -             |
+| `type_text_at`       | `x`, `y`, `text`                | `press_enter` |
+| `scroll_to_percent`  | `y` (0-1000)                    | -             |
+| `press_key`          | `key` (e.g., "Enter", "Meta+L") | -             |
+| `execute_javascript` | `code`                          | -             |
 
 ### capture_state
 
 Take a screenshot of the current browser state.
 
 **Parameters**:
+
 - `action_name` (string, required): Label for the screenshot file
 - `result_ok` (boolean, optional): Whether previous action succeeded
 - `error_msg` (string, optional): Error message if action failed
 
 **Returns**:
+
 ```json
 {
   "ok": true,
@@ -195,6 +203,7 @@ Take a screenshot of the current browser state.
 Click an element by CSS selector.
 
 **Parameters**:
+
 - `selector` (string, required): CSS selector for the element
 - `nth` (number, optional): Index if multiple matches (default: 0)
 
@@ -203,6 +212,7 @@ Click an element by CSS selector.
 Fill a form field by CSS selector.
 
 **Parameters**:
+
 - `selector` (string, required): CSS selector for the input field
 - `text` (string, required): Text to enter
 - `press_enter` (boolean, optional): Press Enter after typing
@@ -265,19 +275,20 @@ python executor.py --tool execute_action --args '{"action_name": "execute_javasc
 ## Integration with Agents
 
 This skill integrates with the following agents:
+
 - **qa**: For automated browser testing and visual verification
 - **developer**: For debugging web applications
 - **devops**: For deployment verification and smoke tests
 
 ## Troubleshooting
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| "Browser not initialized" | Tool called before `initialize_browser` | Call `initialize_browser` first |
-| "Playwright not found" | Dependencies not installed | Run `pip install playwright && playwright install chromium` |
-| "click_at requires x and y" | Missing coordinates | Provide both `x` and `y` in 0-1000 range |
-| "Page load wait timed out" | Slow page load | Increase timeout or wait for specific element |
-| "No editable element at click point" | Wrong coordinates | Use `fill_selector` instead for form fields |
+| Error                                | Cause                                   | Fix                                                         |
+| ------------------------------------ | --------------------------------------- | ----------------------------------------------------------- |
+| "Browser not initialized"            | Tool called before `initialize_browser` | Call `initialize_browser` first                             |
+| "Playwright not found"               | Dependencies not installed              | Run `pip install playwright && playwright install chromium` |
+| "click_at requires x and y"          | Missing coordinates                     | Provide both `x` and `y` in 0-1000 range                    |
+| "Page load wait timed out"           | Slow page load                          | Increase timeout or wait for specific element               |
+| "No editable element at click point" | Wrong coordinates                       | Use `fill_selector` instead for form fields                 |
 
 ## Security Notes
 

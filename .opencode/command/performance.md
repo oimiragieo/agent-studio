@@ -14,6 +14,7 @@ Launch a performance optimization workflow.
 This command coordinates multiple agents for performance optimization:
 
 ### 1. Performance Engineer
+
 - Bottleneck identification
 - Resource utilization assessment
 - Latency hotspots
@@ -21,6 +22,7 @@ This command coordinates multiple agents for performance optimization:
 - Database query performance
 
 ### 2. Architect
+
 - Caching strategy design
 - Load balancing recommendations
 - Async processing patterns
@@ -28,12 +30,14 @@ This command coordinates multiple agents for performance optimization:
 - CDN and edge computing
 
 ### 3. Developer
+
 - Performance-critical code changes
 - Caching implementation
 - Query optimization
 - Resource pooling
 
 ### 4. QA
+
 - Benchmark comparison (before/after)
 - Load testing
 - Stress testing

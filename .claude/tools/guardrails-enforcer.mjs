@@ -18,38 +18,28 @@ const GUARDRAILS = {
   latency: {
     maxToolExecutionTime: 30000, // 30 seconds
     maxResponseLength: 10000, // 10k characters
-    blockedCommands: [
-      /npm\s+install/,
-      /npm\s+run\s+dev/,
-      /docker\s+build/,
-      /npm\s+run\s+build/
-    ]
+    blockedCommands: [/npm\s+install/, /npm\s+run\s+dev/, /docker\s+build/, /npm\s+run\s+build/],
   },
-  
+
   // Reduce hallucinations: Require verification
   hallucinations: {
     requireSourceCitation: true,
-    blockedPatterns: [
-      /I\s+think/,
-      /probably/,
-      /might\s+be/,
-      /could\s+be/
-    ],
+    blockedPatterns: [/I\s+think/, /probably/, /might\s+be/, /could\s+be/],
     requireVerification: [
       'API endpoints',
       'library versions',
       'configuration values',
-      'command syntax'
-    ]
+      'command syntax',
+    ],
   },
-  
+
   // Increase consistency: Enforce patterns
   consistency: {
     requireTemplates: true,
     enforceNaming: true,
-    requireTests: true
+    requireTests: true,
   },
-  
+
   // Mitigate jailbreaks: Block suspicious patterns
   jailbreaks: {
     blockedPatterns: [
@@ -57,42 +47,28 @@ const GUARDRAILS = {
       /forget\s+all\s+rules/i,
       /act\s+as\s+if/i,
       /pretend\s+you\s+are/i,
-      /system\s+override/i
+      /system\s+override/i,
     ],
-    suspiciousKeywords: [
-      'bypass',
-      'override',
-      'ignore',
-      'forget',
-      'pretend'
-    ]
+    suspiciousKeywords: ['bypass', 'override', 'ignore', 'forget', 'pretend'],
   },
-  
+
   // Handle streaming refusals
   streaming: {
     checkRefusals: true,
-    maxRetries: 3
+    maxRetries: 3,
   },
-  
+
   // Reduce prompt leak
   promptLeak: {
-    blockPatterns: [
-      /system\s+prompt/i,
-      /instructions\s+are/i,
-      /you\s+are\s+an\s+ai/i
-    ]
+    blockPatterns: [/system\s+prompt/i, /instructions\s+are/i, /you\s+are\s+an\s+ai/i],
   },
-  
+
   // Keep Claude in character
   character: {
     enforcePersona: true,
     validateResponses: true,
-    blockedPersonaChanges: [
-      /act as/i,
-      /pretend you are/i,
-      /you are now/i
-    ]
-  }
+    blockedPersonaChanges: [/act as/i, /pretend you are/i, /you are now/i],
+  },
 };
 
 /**
@@ -100,25 +76,25 @@ const GUARDRAILS = {
  */
 export function checkLatency(command, responseLength) {
   const latency = GUARDRAILS.latency;
-  
+
   // Check response length
   if (responseLength > latency.maxResponseLength) {
     return {
       passed: false,
-      reason: `Response length ${responseLength} exceeds maximum ${latency.maxResponseLength}`
+      reason: `Response length ${responseLength} exceeds maximum ${latency.maxResponseLength}`,
     };
   }
-  
+
   // Check blocked commands
   for (const pattern of latency.blockedCommands) {
     if (pattern.test(command)) {
       return {
         passed: false,
-        reason: `Command matches blocked pattern: ${pattern}`
+        reason: `Command matches blocked pattern: ${pattern}`,
       };
     }
   }
-  
+
   return { passed: true };
 }
 
@@ -127,18 +103,18 @@ export function checkLatency(command, responseLength) {
  */
 export function checkHallucinations(text, requireVerification = false) {
   const hallucinations = GUARDRAILS.hallucinations;
-  
+
   // Check for uncertain language
   for (const pattern of hallucinations.blockedPatterns) {
     if (pattern.test(text)) {
       return {
         passed: false,
         reason: `Text contains uncertain language: ${pattern}`,
-        suggestion: 'Use definitive statements with citations'
+        suggestion: 'Use definitive statements with citations',
       };
     }
   }
-  
+
   // Check if verification is required
   if (requireVerification && hallucinations.requireSourceCitation) {
     const hasCitation = /\[.*?\]|\(.*?\)|source:|reference:/i.test(text);
@@ -146,11 +122,11 @@ export function checkHallucinations(text, requireVerification = false) {
       return {
         passed: false,
         reason: 'Source citation required but not found',
-        suggestion: 'Add citations for claims'
+        suggestion: 'Add citations for claims',
       };
     }
   }
-  
+
   return { passed: true };
 }
 
@@ -159,27 +135,27 @@ export function checkHallucinations(text, requireVerification = false) {
  */
 export function checkConsistency(code, options = {}) {
   const consistency = GUARDRAILS.consistency;
-  
+
   const issues = [];
-  
+
   // Check naming conventions
   if (consistency.enforceNaming && options.namingPattern) {
     // Would implement actual naming validation
   }
-  
+
   // Check for templates
   if (consistency.requireTemplates && options.template) {
     // Would check if code follows template
   }
-  
+
   // Check for tests
   if (consistency.requireTests && options.requireTests) {
     // Would check if tests exist
   }
-  
+
   return {
     passed: issues.length === 0,
-    issues
+    issues,
   };
 }
 
@@ -188,79 +164,83 @@ export function checkConsistency(code, options = {}) {
  */
 export function checkJailbreaks(prompt) {
   const jailbreaks = GUARDRAILS.jailbreaks;
-  
+
   // Check blocked patterns
   for (const pattern of jailbreaks.blockedPatterns) {
     if (pattern.test(prompt)) {
       return {
         passed: false,
         reason: `Jailbreak pattern detected: ${pattern}`,
-        severity: 'high'
+        severity: 'high',
       };
     }
   }
-  
+
   // Check suspicious keywords
   const suspiciousCount = jailbreaks.suspiciousKeywords.filter(keyword =>
     new RegExp(`\\b${keyword}\\b`, 'i').test(prompt)
   ).length;
-  
+
   if (suspiciousCount > 2) {
     return {
       passed: false,
       reason: `Multiple suspicious keywords detected (${suspiciousCount})`,
-      severity: 'medium'
+      severity: 'medium',
     };
   }
-  
+
   return { passed: true };
 }
 
 /**
  * Handle streaming refusals (official pattern)
  */
-export function handleStreamingRefusals(stream, maxRetries = 3, fallbackStrategy = 'simplify_request') {
+export function handleStreamingRefusals(
+  stream,
+  maxRetries = 3,
+  fallbackStrategy = 'simplify_request'
+) {
   const streaming = GUARDRAILS.streaming;
-  
+
   let retryCount = 0;
   const refusalPatterns = [
     /I\s+cannot/i,
     /I\s+cannot\s+help/i,
     /I'm\s+not\s+able/i,
     /I\s+don't\s+have/i,
-    /I\s+can't\s+assist/i
+    /I\s+can't\s+assist/i,
   ];
-  
+
   return {
-    check: async (chunk) => {
+    check: async chunk => {
       const isRefusal = refusalPatterns.some(pattern => pattern.test(chunk));
-      
+
       if (isRefusal) {
         if (retryCount < (maxRetries || streaming.maxRetries)) {
           retryCount++;
-          return { 
-            shouldRetry: true, 
+          return {
+            shouldRetry: true,
             retryCount,
             strategy: fallbackStrategy,
-            suggestion: 'Simplify request or break into smaller steps'
+            suggestion: 'Simplify request or break into smaller steps',
           };
         }
-        return { 
-          shouldRetry: false, 
+        return {
+          shouldRetry: false,
           reason: 'Max retries exceeded',
-          suggestion: 'Request may be too complex or outside capabilities'
+          suggestion: 'Request may be too complex or outside capabilities',
         };
       }
       return { shouldRetry: false };
     },
-    simplify: (request) => {
+    simplify: request => {
       // Simplify request by breaking into smaller parts
       return {
         original: request,
         simplified: request.split('.').slice(0, 2).join('.') + '.',
-        strategy: 'break_into_steps'
+        strategy: 'break_into_steps',
       };
-    }
+    },
   };
 }
 
@@ -269,17 +249,17 @@ export function handleStreamingRefusals(stream, maxRetries = 3, fallbackStrategy
  */
 export function checkPromptLeak(output) {
   const promptLeak = GUARDRAILS.promptLeak;
-  
+
   for (const pattern of promptLeak.blockPatterns) {
     if (pattern.test(output)) {
       return {
         passed: false,
         reason: `Potential prompt leak detected: ${pattern}`,
-        action: 'sanitize'
+        action: 'sanitize',
       };
     }
   }
-  
+
   return { passed: true };
 }
 
@@ -288,13 +268,13 @@ export function checkPromptLeak(output) {
  */
 export function checkCharacter(response, expectedPersona) {
   const character = GUARDRAILS.character;
-  
+
   if (!character.enforcePersona) {
     return { passed: true };
   }
-  
+
   const issues = [];
-  
+
   // Check for persona changes
   for (const pattern of character.blockedPersonaChanges) {
     if (pattern.test(response)) {
@@ -302,33 +282,33 @@ export function checkCharacter(response, expectedPersona) {
         type: 'character',
         severity: 'error',
         message: `Persona change attempt detected: ${pattern}`,
-        action: 'reject'
+        action: 'reject',
       });
     }
   }
-  
+
   // Validate response alignment with expected persona
   if (character.validateResponses && expectedPersona) {
     // Check if response maintains persona characteristics
     const personaKeywords = expectedPersona.toLowerCase().split(/\s+/);
     const responseLower = response.toLowerCase();
-    const personaMatch = personaKeywords.some(keyword => 
-      keyword.length > 3 && responseLower.includes(keyword)
+    const personaMatch = personaKeywords.some(
+      keyword => keyword.length > 3 && responseLower.includes(keyword)
     );
-    
+
     if (!personaMatch && response.length > 100) {
       issues.push({
         type: 'character',
         severity: 'warning',
         message: 'Response may not align with expected persona',
-        suggestion: 'Ensure response maintains agent character'
+        suggestion: 'Ensure response maintains agent character',
       });
     }
   }
-  
+
   return {
     passed: issues.filter(i => i.severity === 'error').length === 0,
-    issues
+    issues,
   };
 }
 
@@ -397,40 +377,41 @@ export function createSDKGuardrails(config = {}) {
   // For now, return guardrails configuration
   return {
     reduce_latency: {
-      max_tool_execution_time: config.maxToolExecutionTime || GUARDRAILS.latency.maxToolExecutionTime,
+      max_tool_execution_time:
+        config.maxToolExecutionTime || GUARDRAILS.latency.maxToolExecutionTime,
       timeout_handling: config.timeoutHandling || 'fail_fast',
-      max_response_length: config.maxResponseLength || GUARDRAILS.latency.maxResponseLength
+      max_response_length: config.maxResponseLength || GUARDRAILS.latency.maxResponseLength,
     },
     reduce_hallucinations: {
       require_citations: config.requireCitations !== false,
       validate_claims: config.validateClaims !== false,
-      blocked_patterns: GUARDRAILS.hallucinations.blockedPatterns
+      blocked_patterns: GUARDRAILS.hallucinations.blockedPatterns,
     },
     increase_consistency: {
       enforce_templates: config.enforceTemplates !== false,
       validate_outputs: config.validateOutputs !== false,
-      require_tests: GUARDRAILS.consistency.requireTests
+      require_tests: GUARDRAILS.consistency.requireTests,
     },
     mitigate_jailbreaks: {
       detect_patterns: true,
       block_suspicious: true,
-      blocked_patterns: GUARDRAILS.jailbreaks.blockedPatterns
+      blocked_patterns: GUARDRAILS.jailbreaks.blockedPatterns,
     },
     handle_streaming_refusals: {
       max_retries: config.maxRetries || GUARDRAILS.streaming.maxRetries,
       fallback_strategy: config.fallbackStrategy || 'simplify_request',
-      check_refusals: GUARDRAILS.streaming.checkRefusals
+      check_refusals: GUARDRAILS.streaming.checkRefusals,
     },
     reduce_prompt_leak: {
       sanitize_outputs: true,
       detect_leaks: true,
-      block_patterns: GUARDRAILS.promptLeak.blockPatterns
+      block_patterns: GUARDRAILS.promptLeak.blockPatterns,
     },
     keep_in_character: {
       enforce_persona: GUARDRAILS.character.enforcePersona,
       validate_responses: GUARDRAILS.character.validateResponses,
-      blocked_persona_changes: GUARDRAILS.character.blockedPersonaChanges
-    }
+      blocked_persona_changes: GUARDRAILS.character.blockedPersonaChanges,
+    },
   };
 }
 
@@ -439,17 +420,17 @@ export function createSDKGuardrails(config = {}) {
  */
 export function checkLatencyGuardrail(command, context = {}) {
   const issues = [];
-  
+
   // Check execution time estimate
   if (context.estimatedTime && context.estimatedTime > GUARDRAILS.latency.maxToolExecutionTime) {
     issues.push({
       type: 'latency',
       severity: 'warning',
       message: `Command may take longer than ${GUARDRAILS.latency.maxToolExecutionTime}ms`,
-      suggestion: 'Consider running in background or breaking into smaller steps'
+      suggestion: 'Consider running in background or breaking into smaller steps',
     });
   }
-  
+
   // Check blocked commands
   for (const pattern of GUARDRAILS.latency.blockedCommands) {
     if (pattern.test(command)) {
@@ -458,14 +439,14 @@ export function checkLatencyGuardrail(command, context = {}) {
         severity: 'error',
         message: 'Command is blocked to reduce latency',
         command: command,
-        suggestion: 'Use alternative approach or run manually'
+        suggestion: 'Use alternative approach or run manually',
       });
     }
   }
-  
+
   return {
     allowed: issues.filter(i => i.severity === 'error').length === 0,
-    issues
+    issues,
   };
 }
 
@@ -474,11 +455,11 @@ export function checkLatencyGuardrail(command, context = {}) {
  */
 export function checkHallucinationGuardrail(content, context = {}) {
   const issues = [];
-  
+
   if (!GUARDRAILS.hallucinations.requireSourceCitation) {
     return { allowed: true, issues: [] };
   }
-  
+
   // Check for unverified claims
   for (const pattern of GUARDRAILS.hallucinations.blockedPatterns) {
     if (pattern.test(content)) {
@@ -487,28 +468,28 @@ export function checkHallucinationGuardrail(content, context = {}) {
         severity: 'warning',
         message: 'Uncertain language detected',
         pattern: pattern.toString(),
-        suggestion: 'Verify information and cite sources'
+        suggestion: 'Verify information and cite sources',
       });
     }
   }
-  
+
   // Check for unverified technical claims
-  const requiresVerification = GUARDRAILS.hallucinations.requireVerification.some(
-    topic => content.toLowerCase().includes(topic.toLowerCase())
+  const requiresVerification = GUARDRAILS.hallucinations.requireVerification.some(topic =>
+    content.toLowerCase().includes(topic.toLowerCase())
   );
-  
+
   if (requiresVerification && !context.hasSource) {
     issues.push({
       type: 'hallucination',
       severity: 'warning',
       message: 'Technical claim requires source verification',
-      suggestion: 'Cite documentation or code reference'
+      suggestion: 'Cite documentation or code reference',
     });
   }
-  
+
   return {
     allowed: true, // Warnings don't block
-    issues
+    issues,
   };
 }
 
@@ -517,7 +498,7 @@ export function checkHallucinationGuardrail(content, context = {}) {
  */
 export function checkJailbreakGuardrail(prompt) {
   const issues = [];
-  
+
   // Check blocked patterns
   for (const pattern of GUARDRAILS.jailbreaks.blockedPatterns) {
     if (pattern.test(prompt)) {
@@ -526,29 +507,29 @@ export function checkJailbreakGuardrail(prompt) {
         severity: 'error',
         message: 'Potential jailbreak attempt detected',
         pattern: pattern.toString(),
-        action: 'blocked'
+        action: 'blocked',
       });
     }
   }
-  
+
   // Check suspicious keywords
-  const suspiciousCount = GUARDRAILS.jailbreaks.suspiciousKeywords.filter(
-    keyword => prompt.toLowerCase().includes(keyword.toLowerCase())
+  const suspiciousCount = GUARDRAILS.jailbreaks.suspiciousKeywords.filter(keyword =>
+    prompt.toLowerCase().includes(keyword.toLowerCase())
   ).length;
-  
+
   if (suspiciousCount >= 2) {
     issues.push({
       type: 'jailbreak',
       severity: 'warning',
       message: 'Multiple suspicious keywords detected',
       keywords: suspiciousCount,
-      suggestion: 'Review prompt for potential manipulation'
+      suggestion: 'Review prompt for potential manipulation',
     });
   }
-  
+
   return {
     allowed: issues.filter(i => i.severity === 'error').length === 0,
-    issues
+    issues,
   };
 }
 
@@ -557,7 +538,7 @@ export function checkJailbreakGuardrail(prompt) {
  */
 export function checkPromptLeakGuardrail(content) {
   const issues = [];
-  
+
   for (const pattern of GUARDRAILS.promptLeak.blockedPatterns) {
     if (pattern.test(content)) {
       issues.push({
@@ -565,14 +546,14 @@ export function checkPromptLeakGuardrail(content) {
         severity: 'warning',
         message: 'Potential prompt leak detected',
         pattern: pattern.toString(),
-        suggestion: 'Review content for sensitive information'
+        suggestion: 'Review content for sensitive information',
       });
     }
   }
-  
+
   return {
     allowed: true, // Warnings don't block
-    issues
+    issues,
   };
 }
 
@@ -581,7 +562,7 @@ export function checkPromptLeakGuardrail(content) {
  */
 export function checkConsistencyGuardrail(code, template = null) {
   const issues = [];
-  
+
   if (GUARDRAILS.consistency.requireTemplates && template) {
     // Check if code follows template structure
     // This is a simplified check - implement full AST comparison if needed
@@ -590,14 +571,14 @@ export function checkConsistencyGuardrail(code, template = null) {
         type: 'consistency',
         severity: 'warning',
         message: 'Code may not follow project template',
-        suggestion: 'Use scaffolder skill to generate compliant code'
+        suggestion: 'Use scaffolder skill to generate compliant code',
       });
     }
   }
-  
+
   return {
     allowed: true,
-    issues
+    issues,
   };
 }
 
@@ -608,9 +589,9 @@ export function checkAllGuardrails(prompt, command = null, context = {}) {
   const results = {
     allowed: true,
     issues: [],
-    checks: {}
+    checks: {},
   };
-  
+
   // Check jailbreak
   const jailbreakCheck = checkJailbreakGuardrail(prompt);
   results.checks.jailbreak = jailbreakCheck;
@@ -618,12 +599,12 @@ export function checkAllGuardrails(prompt, command = null, context = {}) {
     results.allowed = false;
   }
   results.issues.push(...jailbreakCheck.issues);
-  
+
   // Check prompt leak
   const leakCheck = checkPromptLeakGuardrail(prompt);
   results.checks.promptLeak = leakCheck;
   results.issues.push(...leakCheck.issues);
-  
+
   // Check latency (if command provided)
   if (command) {
     const latencyCheck = checkLatencyGuardrail(command, context);
@@ -633,12 +614,12 @@ export function checkAllGuardrails(prompt, command = null, context = {}) {
     }
     results.issues.push(...latencyCheck.issues);
   }
-  
+
   // Check hallucinations
   const hallucinationCheck = checkHallucinationGuardrail(prompt, context);
   results.checks.hallucination = hallucinationCheck;
   results.issues.push(...hallucinationCheck.issues);
-  
+
   // Check character (if persona provided)
   if (context.expectedPersona) {
     const characterCheck = checkCharacter(prompt, context.expectedPersona);
@@ -648,7 +629,7 @@ export function checkAllGuardrails(prompt, command = null, context = {}) {
     }
     results.issues.push(...(characterCheck.issues || []));
   }
-  
+
   return results;
 }
 
@@ -656,7 +637,7 @@ export function checkAllGuardrails(prompt, command = null, context = {}) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
   const input = process.argv[3];
-  
+
   if (command === 'check' && input) {
     const results = checkAllGuardrails(input);
     console.log(JSON.stringify(results, null, 2));
@@ -670,4 +651,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('Usage: guardrails-enforcer.mjs [check|jailbreak|latency] <input>');
   }
 }
-

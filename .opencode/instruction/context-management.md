@@ -7,18 +7,21 @@ This document describes how to manage context across agent sessions, maintain st
 ## Context Types
 
 ### Session Context
+
 - Current conversation state
 - Active agent and workflow
 - User preferences and settings
 - Temporary working data
 
 ### Project Context
+
 - Project configuration
 - Technology stack
 - Architectural decisions
 - Team conventions
 
 ### Artifact Context
+
 - Generated documents
 - Code files
 - Test results
@@ -43,17 +46,20 @@ This document describes how to manage context across agent sessions, maintain st
 ## Context Loading
 
 ### Priority Order
+
 1. **Immediate Context**: Current file, current task
 2. **Session Context**: Current session state
 3. **Project Context**: Project-wide configuration
 4. **Historical Context**: Previous decisions, patterns
 
 ### Lazy Loading
+
 - Load context on-demand, not upfront
 - Cache frequently accessed context
 - Evict stale context periodically
 
 ### Context Size Management
+
 ```yaml
 context_limits:
   max_files: 10
@@ -68,23 +74,28 @@ context_limits:
 ## Context Preservation
 
 ### Between Agents
+
 When handing off between agents:
+
 1. Summarize key decisions
 2. List active requirements
 3. Document open questions
 4. Provide artifact references
 
 ### Between Sessions
+
 For long-running projects:
+
 1. Persist critical state
 2. Document stopping point
 3. Create resumption summary
 4. Archive completed work
 
 ### Checkpoint Format
+
 ```yaml
 checkpoint:
-  timestamp: "2025-01-01T10:00:00Z"
+  timestamp: '2025-01-01T10:00:00Z'
   agent: architect
   workflow_step: 3
   completed:
@@ -94,29 +105,31 @@ checkpoint:
     - system_architecture
   pending:
     - implementation_plan
-  notes: "Waiting for user decision on database choice"
+  notes: 'Waiting for user decision on database choice'
 ```
 
 ## Context Refresh
 
 ### When to Refresh
+
 - User provides new information
 - External dependencies change
 - Project configuration updates
 - Time-sensitive data expires
 
 ### Refresh Strategy
+
 ```javascript
 async function refreshContext(trigger) {
   switch (trigger) {
     case 'user_input':
-      return mergeUserContext(currentContext, newInput)
+      return mergeUserContext(currentContext, newInput);
     case 'file_change':
-      return reloadFileContext(changedFiles)
+      return reloadFileContext(changedFiles);
     case 'periodic':
-      return validateAndRefresh(currentContext)
+      return validateAndRefresh(currentContext);
     default:
-      return currentContext
+      return currentContext;
   }
 }
 ```
@@ -124,12 +137,14 @@ async function refreshContext(trigger) {
 ## Context Sharing
 
 ### Cross-Agent Sharing
+
 - Use structured handoff documents
 - Reference artifacts by ID
 - Avoid duplicating large content
 - Maintain single source of truth
 
 ### User Visibility
+
 - Provide context summary on request
 - Show relevant context in outputs
 - Allow user to modify context
@@ -138,12 +153,14 @@ async function refreshContext(trigger) {
 ## Best Practices
 
 ### Do
+
 - Keep context focused and relevant
 - Use references instead of copies
 - Version control context changes
 - Document context decisions
 
 ### Don't
+
 - Load entire codebase into context
 - Duplicate information across agents
 - Ignore context size limits
@@ -152,6 +169,7 @@ async function refreshContext(trigger) {
 ## Troubleshooting
 
 ### Missing Context
+
 ```
 Issue: Required context not found
 Check:
@@ -162,6 +180,7 @@ Check:
 ```
 
 ### Stale Context
+
 ```
 Issue: Context data is outdated
 Resolution:
@@ -172,6 +191,7 @@ Resolution:
 ```
 
 ### Context Conflicts
+
 ```
 Issue: Conflicting information from multiple sources
 Resolution:

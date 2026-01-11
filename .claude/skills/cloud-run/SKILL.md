@@ -12,6 +12,7 @@ allowed-tools: read, write, bash
 This skill provides access to the Google Cloud Platform Cloud Run MCP server with progressive disclosure for optimal context usage.
 
 **Context Savings**: ~90% reduction
+
 - **MCP Mode**: ~15,000 tokens always loaded (7 tools + prompts)
 - **Skill Mode**: ~300 tokens metadata + on-demand loading
 
@@ -27,25 +28,25 @@ The server provides 8 tools across deployment and management categories:
 
 ### Deployment Tools
 
-| Tool | Description | Mode |
-|------|-------------|------|
-| `deploy-file-contents` | Deploy files to Cloud Run by providing contents directly | Local + Remote |
-| `deploy-local-folder` | Deploy a local folder to Cloud Run | Local only |
-| `deploy-container-image` | Deploy a container image URL to Cloud Run | Local + Remote |
+| Tool                     | Description                                              | Mode           |
+| ------------------------ | -------------------------------------------------------- | -------------- |
+| `deploy-file-contents`   | Deploy files to Cloud Run by providing contents directly | Local + Remote |
+| `deploy-local-folder`    | Deploy a local folder to Cloud Run                       | Local only     |
+| `deploy-container-image` | Deploy a container image URL to Cloud Run                | Local + Remote |
 
 ### Service Management Tools
 
-| Tool | Description | Mode |
-|------|-------------|------|
-| `list-services` | List Cloud Run services in a project/region | Local + Remote |
-| `get-service` | Get details for a specific Cloud Run service | Local + Remote |
-| `get-service-log` | Get logs and errors for a specific service | Local + Remote |
+| Tool              | Description                                  | Mode           |
+| ----------------- | -------------------------------------------- | -------------- |
+| `list-services`   | List Cloud Run services in a project/region  | Local + Remote |
+| `get-service`     | Get details for a specific Cloud Run service | Local + Remote |
+| `get-service-log` | Get logs and errors for a specific service   | Local + Remote |
 
 ### Project Management Tools (Local Only)
 
-| Tool | Description |
-|------|-------------|
-| `list-projects` | List available GCP projects |
+| Tool             | Description                                    |
+| ---------------- | ---------------------------------------------- |
+| `list-projects`  | List available GCP projects                    |
 | `create-project` | Create a new GCP project and attach to billing |
 
 ## Quick Reference
@@ -74,22 +75,24 @@ python executor.py --tool list-projects
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `GOOGLE_CLOUD_PROJECT` | Default GCP project ID | None |
-| `GOOGLE_CLOUD_REGION` | Default Cloud Run region | `us-central1` |
-| `DEFAULT_SERVICE_NAME` | Default service name for deployments | None |
-| `SKIP_IAM_CHECK` | Skip IAM permission validation | `false` |
-| `ENABLE_HOST_VALIDATION` | Enable Host header validation | `false` |
+| Variable                 | Description                          | Default       |
+| ------------------------ | ------------------------------------ | ------------- |
+| `GOOGLE_CLOUD_PROJECT`   | Default GCP project ID               | None          |
+| `GOOGLE_CLOUD_REGION`    | Default Cloud Run region             | `us-central1` |
+| `DEFAULT_SERVICE_NAME`   | Default service name for deployments | None          |
+| `SKIP_IAM_CHECK`         | Skip IAM permission validation       | `false`       |
+| `ENABLE_HOST_VALIDATION` | Enable Host header validation        | `false`       |
 
 ### Setup
 
 1. **Authenticate with GCP**:
+
    ```bash
    gcloud auth application-default login
    ```
 
 2. **Set default project** (optional):
+
    ```bash
    export GOOGLE_CLOUD_PROJECT=my-project-id
    export GOOGLE_CLOUD_REGION=us-central1
@@ -104,10 +107,10 @@ python executor.py --tool list-projects
 
 The MCP server also provides natural language prompts:
 
-| Prompt | Description |
-|--------|-------------|
+| Prompt   | Description                                   |
+| -------- | --------------------------------------------- |
 | `deploy` | Deploy current working directory to Cloud Run |
-| `logs` | Get logs for a Cloud Run service |
+| `logs`   | Get logs for a Cloud Run service              |
 
 ## Tool Details
 
@@ -116,20 +119,22 @@ The MCP server also provides natural language prompts:
 Deploy files to Cloud Run by providing their contents directly.
 
 **Parameters**:
+
 - `projectId` (string, required): GCP project ID
 - `region` (string, required): Cloud Run region
 - `serviceName` (string, required): Name for the Cloud Run service
 - `files` (array, required): Array of file objects with `path` and `contents`
 
 **Example**:
+
 ```json
 {
   "projectId": "my-project",
   "region": "us-central1",
   "serviceName": "my-api",
   "files": [
-    {"path": "main.py", "contents": "from flask import Flask\napp = Flask(__name__)\n..."},
-    {"path": "requirements.txt", "contents": "flask==2.0.0\ngunicorn==20.1.0"}
+    { "path": "main.py", "contents": "from flask import Flask\napp = Flask(__name__)\n..." },
+    { "path": "requirements.txt", "contents": "flask==2.0.0\ngunicorn==20.1.0" }
   ]
 }
 ```
@@ -139,6 +144,7 @@ Deploy files to Cloud Run by providing their contents directly.
 List Cloud Run services in a given project and region.
 
 **Parameters**:
+
 - `projectId` (string, required): GCP project ID
 - `region` (string, optional): Cloud Run region (defaults to configured region)
 
@@ -147,6 +153,7 @@ List Cloud Run services in a given project and region.
 Get detailed information about a specific Cloud Run service.
 
 **Parameters**:
+
 - `projectId` (string, required): GCP project ID
 - `region` (string, required): Cloud Run region
 - `serviceName` (string, required): Cloud Run service name
@@ -156,6 +163,7 @@ Get detailed information about a specific Cloud Run service.
 Get logs and error messages for a specific Cloud Run service.
 
 **Parameters**:
+
 - `projectId` (string, required): GCP project ID
 - `region` (string, required): Cloud Run region
 - `serviceName` (string, required): Cloud Run service name
@@ -166,6 +174,7 @@ Get logs and error messages for a specific Cloud Run service.
 Deploy a local folder to a Cloud Run service (local mode only).
 
 **Parameters**:
+
 - `projectId` (string, required): GCP project ID
 - `region` (string, required): Cloud Run region
 - `serviceName` (string, required): Cloud Run service name
@@ -182,21 +191,23 @@ List available GCP projects (local mode only).
 Create a new GCP project and attach it to billing (local mode only).
 
 **Parameters**:
+
 - `projectId` (string, required): Desired project ID
 - `projectName` (string, optional): Human-readable project name
 
 ## Integration with Agents
 
 This skill integrates with the following agents:
+
 - **devops**: For Cloud Run deployments and infrastructure management
 - **developer**: For deploying applications during development
 - **architect**: For service architecture decisions
 
 ## Troubleshooting
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| "Permission denied" | Missing GCP credentials | Run `gcloud auth application-default login` |
-| "Project not found" | Invalid project ID | Verify project ID with `gcloud projects list` |
-| "Region not found" | Invalid region | Use valid Cloud Run regions (e.g., `us-central1`) |
-| "Service not found" | Service doesn't exist | Check service name with `list-services` |
+| Error               | Cause                   | Fix                                               |
+| ------------------- | ----------------------- | ------------------------------------------------- |
+| "Permission denied" | Missing GCP credentials | Run `gcloud auth application-default login`       |
+| "Project not found" | Invalid project ID      | Verify project ID with `gcloud projects list`     |
+| "Region not found"  | Invalid region          | Use valid Cloud Run regions (e.g., `us-central1`) |
+| "Service not found" | Service doesn't exist   | Check service name with `list-services`           |

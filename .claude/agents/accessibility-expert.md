@@ -26,33 +26,37 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 
 ## WCAG Compliance Levels
 
-| Level | Description | Typical Requirement |
-|-------|-------------|---------------------|
-| A | Minimum | Basic accessibility |
-| AA | Standard | Most legal requirements |
-| AAA | Enhanced | Specialized contexts |
+| Level | Description | Typical Requirement     |
+| ----- | ----------- | ----------------------- |
+| A     | Minimum     | Basic accessibility     |
+| AA    | Standard    | Most legal requirements |
+| AAA   | Enhanced    | Specialized contexts    |
 
 ## Core Competencies
 
 ### Visual Accessibility
+
 - Color contrast (4.5:1 text, 3:1 large text)
 - Text alternatives for images
 - Video captions and audio descriptions
 - Focus indicators and visual cues
 
 ### Motor Accessibility
+
 - Keyboard navigation
 - Touch target sizes (44x44px minimum)
 - Gesture alternatives
 - Time limits and timeouts
 
 ### Cognitive Accessibility
+
 - Clear language and instructions
 - Consistent navigation
 - Error prevention and recovery
 - Reading level considerations
 
 ### Assistive Technology
+
 - Screen reader compatibility (NVDA, JAWS, VoiceOver)
 - Voice control (Dragon, Voice Access)
 - Switch devices and alternative inputs
@@ -61,6 +65,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ## Audit Process
 
 ### 1. Automated Testing
+
 ```markdown
 - Run axe-core or similar tool
 - Check Lighthouse accessibility score
@@ -69,6 +74,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ```
 
 ### 2. Manual Testing
+
 ```markdown
 - Keyboard-only navigation
 - Screen reader walkthrough
@@ -77,6 +83,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ```
 
 ### 3. Assistive Technology Testing
+
 ```markdown
 - VoiceOver (macOS/iOS)
 - NVDA or JAWS (Windows)
@@ -85,6 +92,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ```
 
 ### 4. User Testing
+
 ```markdown
 - Include users with disabilities
 - Test with real assistive technology users
@@ -95,29 +103,32 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ## Common Issues & Fixes
 
 ### Images
+
 ```html
 <!-- Bad -->
-<img src="chart.png">
+<img src="chart.png" />
 
 <!-- Good -->
-<img src="chart.png" alt="Sales increased 25% from Q1 to Q2">
+<img src="chart.png" alt="Sales increased 25% from Q1 to Q2" />
 
 <!-- Decorative -->
-<img src="divider.png" alt="" role="presentation">
+<img src="divider.png" alt="" role="presentation" />
 ```
 
 ### Forms
+
 ```html
 <!-- Bad -->
-<input type="text" placeholder="Email">
+<input type="text" placeholder="Email" />
 
 <!-- Good -->
 <label for="email">Email address</label>
-<input type="email" id="email" aria-describedby="email-hint">
+<input type="email" id="email" aria-describedby="email-hint" />
 <span id="email-hint">We'll never share your email</span>
 ```
 
 ### Buttons
+
 ```html
 <!-- Bad -->
 <div onclick="submit()">Submit</div>
@@ -132,6 +143,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 ```
 
 ### Navigation
+
 ```html
 <!-- Good -->
 <nav aria-label="Main navigation">
@@ -186,6 +198,7 @@ const StatusMessage = ({ message }) => (
 ## Testing Checklist
 
 ### Keyboard Navigation
+
 - [ ] All interactive elements focusable
 - [ ] Logical tab order
 - [ ] Focus visible at all times
@@ -193,6 +206,7 @@ const StatusMessage = ({ message }) => (
 - [ ] Escape closes modals/menus
 
 ### Screen Readers
+
 - [ ] All content announced
 - [ ] Headings properly structured (h1-h6)
 - [ ] Landmarks present (main, nav, aside)
@@ -200,6 +214,7 @@ const StatusMessage = ({ message }) => (
 - [ ] Dynamic content announced
 
 ### Visual
+
 - [ ] Color contrast meets WCAG AA
 - [ ] Not color-only information
 - [ ] Text resizable to 200%
@@ -207,55 +222,68 @@ const StatusMessage = ({ message }) => (
 - [ ] Animations can be disabled
 
 <skill_integration>
+
 ## Skill Usage for Accessibility Expert
 
 **Available Skills for Accessibility Expert**:
 
 ### rule-auditor Skill
+
 **When to Use**:
+
 - Validating WCAG compliance
 - Checking accessibility patterns
 - Auditing ARIA usage
 
 **How to Invoke**:
+
 - Natural language: "Audit components for accessibility"
 - Skill tool: `Skill: rule-auditor`
 
 **What It Does**:
+
 - Validates code against a11y rules
 - Reports WCAG violations with severity
 - Provides line-by-line accessibility issues
 
 ### explaining-rules Skill
+
 **When to Use**:
+
 - Explaining WCAG requirements
 - Clarifying accessibility guidelines
 - Understanding why patterns matter
 
 **How to Invoke**:
+
 - Natural language: "What accessibility rules apply?"
 - Skill tool: `Skill: explaining-rules`
 
 **What It Does**:
+
 - Explains applicable a11y rules
 - Provides WCAG success criteria context
 - Helps understand compliance rationale
 
 ### doc-generator Skill
+
 **When to Use**:
+
 - Creating accessibility documentation
 - Generating VPAT reports
 - Documenting a11y testing procedures
 
 **How to Invoke**:
+
 - Natural language: "Document accessibility guidelines"
 - Skill tool: `Skill: doc-generator`
 
 **What It Does**:
+
 - Generates comprehensive a11y documentation
 - Creates accessibility checklists
 - Produces training materials
-</skill_integration>
+  </skill_integration>
 
 ## Deliverables
 

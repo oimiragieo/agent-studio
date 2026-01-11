@@ -20,6 +20,7 @@ Provides direct integration with OpenAI's API for chat completions, embeddings, 
 ## When to Use
 
 **Primary Use Cases**:
+
 - Chat completion generation (streaming and non-streaming)
 - Text embeddings for semantic search and RAG systems
 - Assistant creation and management
@@ -28,6 +29,7 @@ Provides direct integration with OpenAI's API for chat completions, embeddings, 
 - Fine-tuning job management (with explicit confirmation)
 
 **Triggered By**:
+
 - "Generate chat completion using OpenAI"
 - "Create embeddings for semantic search"
 - "Set up OpenAI assistant"
@@ -40,6 +42,7 @@ Provides direct integration with OpenAI's API for chat completions, embeddings, 
 ### 1. Chat Completions
 
 **chat**: Generate chat completion (non-streaming)
+
 ```bash
 curl https://api.openai.com/v1/chat/completions \
   -H "Content-Type: application/json" \
@@ -52,6 +55,7 @@ curl https://api.openai.com/v1/chat/completions \
 ```
 
 **chat-stream**: Generate streaming chat completion
+
 ```bash
 curl https://api.openai.com/v1/chat/completions \
   -H "Content-Type: application/json" \
@@ -66,6 +70,7 @@ curl https://api.openai.com/v1/chat/completions \
 ### 2. Embeddings
 
 **embed**: Generate single embedding
+
 ```bash
 curl https://api.openai.com/v1/embeddings \
   -H "Content-Type: application/json" \
@@ -77,6 +82,7 @@ curl https://api.openai.com/v1/embeddings \
 ```
 
 **embed-batch**: Generate embeddings for multiple texts
+
 ```bash
 curl https://api.openai.com/v1/embeddings \
   -H "Content-Type: application/json" \
@@ -90,6 +96,7 @@ curl https://api.openai.com/v1/embeddings \
 ### 3. Assistants
 
 **list-assistants**: List all assistants
+
 ```bash
 curl https://api.openai.com/v1/assistants \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
@@ -97,6 +104,7 @@ curl https://api.openai.com/v1/assistants \
 ```
 
 **create-assistant**: Create new assistant
+
 ```bash
 curl https://api.openai.com/v1/assistants \
   -H "Content-Type: application/json" \
@@ -111,6 +119,7 @@ curl https://api.openai.com/v1/assistants \
 ```
 
 **create-thread**: Create conversation thread
+
 ```bash
 curl https://api.openai.com/v1/threads \
   -H "Content-Type: application/json" \
@@ -122,6 +131,7 @@ curl https://api.openai.com/v1/threads \
 ```
 
 **run-assistant**: Run assistant on thread
+
 ```bash
 curl https://api.openai.com/v1/threads/{thread_id}/runs \
   -H "Content-Type: application/json" \
@@ -135,12 +145,14 @@ curl https://api.openai.com/v1/threads/{thread_id}/runs \
 ### 4. File Operations
 
 **list-files**: List all uploaded files
+
 ```bash
 curl https://api.openai.com/v1/files \
   -H "Authorization: Bearer $OPENAI_API_KEY"
 ```
 
 **upload-file**: Upload file for assistants/fine-tuning
+
 ```bash
 curl https://api.openai.com/v1/files \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
@@ -149,6 +161,7 @@ curl https://api.openai.com/v1/files \
 ```
 
 **delete-file**: Delete uploaded file
+
 ```bash
 curl -X DELETE https://api.openai.com/v1/files/{file_id} \
   -H "Authorization: Bearer $OPENAI_API_KEY"
@@ -157,12 +170,14 @@ curl -X DELETE https://api.openai.com/v1/files/{file_id} \
 ### 5. Models
 
 **list-models**: List all available models
+
 ```bash
 curl https://api.openai.com/v1/models \
   -H "Authorization: Bearer $OPENAI_API_KEY"
 ```
 
 **model-info**: Get specific model details
+
 ```bash
 curl https://api.openai.com/v1/models/{model_id} \
   -H "Authorization: Bearer $OPENAI_API_KEY"
@@ -171,12 +186,14 @@ curl https://api.openai.com/v1/models/{model_id} \
 ### 6. Fine-tuning (⚠️ CONFIRMATION REQUIRED)
 
 **list-jobs**: List fine-tuning jobs
+
 ```bash
 curl https://api.openai.com/v1/fine_tuning/jobs \
   -H "Authorization: Bearer $OPENAI_API_KEY"
 ```
 
 **create-job**: Create fine-tuning job (⚠️ COSTS MONEY)
+
 ```bash
 # REQUIRES USER CONFIRMATION - INCURS SIGNIFICANT COSTS
 curl https://api.openai.com/v1/fine_tuning/jobs \
@@ -207,6 +224,7 @@ curl https://api.openai.com/v1/fine_tuning/jobs \
 **MANDATORY: Fine-tuning incurs significant costs and MUST have user confirmation**
 
 Before creating fine-tuning job:
+
 1. Confirm with user: "⚠️ Fine-tuning will incur costs. Estimated cost: $X. Proceed? (yes/no)"
 2. Document training data size and expected cost
 3. Only proceed with explicit "yes" confirmation
@@ -223,12 +241,14 @@ Before creating fine-tuning job:
 ### Primary Agents
 
 **llm-architect**:
+
 - Design RAG systems using embeddings
 - Configure assistants for AI features
 - Optimize model selection and parameters
 - Plan fine-tuning strategies
 
 **developer**:
+
 - Implement chat completion integrations
 - Build embedding pipelines
 - Integrate assistants into applications
@@ -237,11 +257,13 @@ Before creating fine-tuning job:
 ### Supporting Agents
 
 **qa**:
+
 - Test API integrations
 - Validate embedding quality
 - Verify assistant responses
 
 **security-architect**:
+
 - Audit API key usage
 - Review data privacy compliance
 - Validate security controls
@@ -257,13 +279,13 @@ async function getChatCompletion(prompt: string): Promise<string> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
       model: 'gpt-4',
       messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7
-    })
+      temperature: 0.7,
+    }),
   });
 
   const data = await response.json();
@@ -285,7 +307,7 @@ async function semanticSearch(query: string, documents: string[]): Promise<strin
   // 3. Calculate cosine similarity
   const similarities = docEmbeddings.map((docEmb, idx) => ({
     document: documents[idx],
-    similarity: cosineSimilarity(queryEmbedding, docEmb)
+    similarity: cosineSimilarity(queryEmbedding, docEmb),
   }));
 
   // 4. Return top matches
@@ -300,12 +322,12 @@ async function generateEmbedding(text: string): Promise<number[]> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
       model: 'text-embedding-3-small',
-      input: text
-    })
+      input: text,
+    }),
   });
 
   const data = await response.json();
@@ -323,15 +345,15 @@ class OpenAIAssistantClient {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        'OpenAI-Beta': 'assistants=v2'
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        'OpenAI-Beta': 'assistants=v2',
       },
       body: JSON.stringify({
         model: 'gpt-4',
         name,
         instructions,
-        tools: [{ type: 'code_interpreter' }]
-      })
+        tools: [{ type: 'code_interpreter' }],
+      }),
     });
 
     const data = await response.json();
@@ -359,21 +381,25 @@ class OpenAIAssistantClient {
 ### Common Errors
 
 **401 Unauthorized**:
+
 - Check `OPENAI_API_KEY` environment variable is set
 - Verify API key is valid via OpenAI dashboard
 - Ensure key has required permissions
 
 **429 Rate Limit**:
+
 - Implement exponential backoff
 - Use batch operations when possible
 - Consider upgrading API tier
 
 **400 Bad Request**:
+
 - Validate request payload matches API spec
 - Check model availability
 - Verify file format for uploads
 
 **500 Server Error**:
+
 - Retry with exponential backoff
 - Check OpenAI status page
 - Implement fallback logic
@@ -381,10 +407,7 @@ class OpenAIAssistantClient {
 ### Retry Logic
 
 ```typescript
-async function callOpenAIWithRetry<T>(
-  apiCall: () => Promise<T>,
-  maxRetries = 3
-): Promise<T> {
+async function callOpenAIWithRetry<T>(apiCall: () => Promise<T>, maxRetries = 3): Promise<T> {
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await apiCall();
@@ -416,6 +439,7 @@ async function callOpenAIWithRetry<T>(
 ## Context Efficiency
 
 **High Efficiency** (90%+ savings vs MCP):
+
 - Skill loads only when invoked
 - No persistent MCP server connection
 - Minimal context footprint

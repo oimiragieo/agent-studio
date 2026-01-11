@@ -64,7 +64,7 @@ export function recordCujExecution(cujId, success, duration, error = null, metad
     success: success,
     duration_ms: duration,
     error: error ? sanitize(error.message || error.toString()) : null,
-    metadata: metadata
+    metadata: metadata,
   };
 
   try {
@@ -85,7 +85,10 @@ function loadMetrics(cujId = null, timeWindow = null) {
     return [];
   }
 
-  const lines = fs.readFileSync(metricsFile, 'utf-8').split('\n').filter(l => l.trim());
+  const lines = fs
+    .readFileSync(metricsFile, 'utf-8')
+    .split('\n')
+    .filter(l => l.trim());
   const metrics = [];
   const now = Date.now();
 
@@ -129,7 +132,7 @@ export function getCujSuccessRate(cujId, timeWindow = 86400000) {
       failed: 0,
       rate: 0,
       avg_duration_ms: 0,
-      time_window_ms: timeWindow
+      time_window_ms: timeWindow,
     };
   }
 
@@ -147,7 +150,7 @@ export function getCujSuccessRate(cujId, timeWindow = 86400000) {
     avg_duration_ms: totalDuration / total,
     time_window_ms: timeWindow,
     window_start: new Date(Date.now() - timeWindow).toISOString(),
-    window_end: new Date().toISOString()
+    window_end: new Date().toISOString(),
   };
 }
 
@@ -199,7 +202,7 @@ export function getCujTrending(cujId, buckets = 24, bucketSize = 3600000) {
       total,
       successful,
       failed: total - successful,
-      rate: total > 0 ? successful / total : 0
+      rate: total > 0 ? successful / total : 0,
     });
   }
 
@@ -236,8 +239,8 @@ export function getFailureAnalysis(cujId, timeWindow = 86400000) {
     recent_failures: failures.slice(-5).map(f => ({
       timestamp: f.timestamp,
       error: f.error,
-      duration_ms: f.duration_ms
-    }))
+      duration_ms: f.duration_ms,
+    })),
   };
 }
 
@@ -255,7 +258,7 @@ export function getPerformancePercentiles(cujId, timeWindow = 86400000) {
     return { p50: 0, p75: 0, p90: 0, p95: 0, p99: 0 };
   }
 
-  const percentile = (p) => {
+  const percentile = p => {
     const index = Math.ceil((p / 100) * durations.length) - 1;
     return durations[Math.max(0, index)];
   };
@@ -269,7 +272,7 @@ export function getPerformancePercentiles(cujId, timeWindow = 86400000) {
     p99: percentile(99),
     min: durations[0],
     max: durations[durations.length - 1],
-    count: durations.length
+    count: durations.length,
   };
 }
 

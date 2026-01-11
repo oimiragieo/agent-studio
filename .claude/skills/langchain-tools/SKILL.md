@@ -16,6 +16,7 @@ The LangChain Tools skill provides configuration utilities and template generati
 **Context Savings**: 90%+ reduction vs raw documentation by providing focused, task-specific interfaces to LangChain configurations.
 
 **Use Cases**:
+
 - Chain configuration and template generation
 - Agent setup and tool integration
 - Document loader configuration
@@ -28,11 +29,13 @@ The LangChain Tools skill provides configuration utilities and template generati
 ## Requirements
 
 **Python Dependencies**:
+
 ```bash
 pip install langchain langchain-community langchain-openai
 ```
 
 **Optional Dependencies** (based on use case):
+
 ```bash
 # For OpenAI models
 pip install openai
@@ -48,6 +51,7 @@ pip install langsmith
 ```
 
 **Installation Verification**:
+
 ```bash
 python -c "import langchain; print(langchain.__version__)"
 ```
@@ -56,48 +60,48 @@ python -c "import langchain; print(langchain.__version__)"
 
 ### Chain Utilities
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `list-chain-types` | List available chain types | Show all chain types |
-| `chain-template` | Get chain configuration template | Get LLMChain template |
-| `validate-chain` | Validate chain configuration | Validate chain config file |
+| Tool               | Description                      | Example                    |
+| ------------------ | -------------------------------- | -------------------------- |
+| `list-chain-types` | List available chain types       | Show all chain types       |
+| `chain-template`   | Get chain configuration template | Get LLMChain template      |
+| `validate-chain`   | Validate chain configuration     | Validate chain config file |
 
 ### Agent Utilities
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `list-agent-types` | List available agent types | Show all agent types |
-| `agent-template` | Get agent configuration template | Get ReAct agent template |
-| `list-tools` | List available agent tools | Show built-in tools |
+| Tool               | Description                      | Example                  |
+| ------------------ | -------------------------------- | ------------------------ |
+| `list-agent-types` | List available agent types       | Show all agent types     |
+| `agent-template`   | Get agent configuration template | Get ReAct agent template |
+| `list-tools`       | List available agent tools       | Show built-in tools      |
 
 ### Document Loaders
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `list-loaders` | List available document loaders | Show all loader types |
+| Tool            | Description                       | Example               |
+| --------------- | --------------------------------- | --------------------- |
+| `list-loaders`  | List available document loaders   | Show all loader types |
 | `loader-config` | Get loader configuration template | Get PDF loader config |
 
 ### Vector Stores
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `list-vectorstores` | List vector store types | Show all vector stores |
-| `vectorstore-config` | Get vector store configuration | Get Chroma config |
+| Tool                 | Description                    | Example                |
+| -------------------- | ------------------------------ | ---------------------- |
+| `list-vectorstores`  | List vector store types        | Show all vector stores |
+| `vectorstore-config` | Get vector store configuration | Get Chroma config      |
 
 ### Embeddings
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `list-embeddings` | List embedding providers | Show all embedding models |
+| Tool               | Description                 | Example                      |
+| ------------------ | --------------------------- | ---------------------------- |
+| `list-embeddings`  | List embedding providers    | Show all embedding models    |
 | `embedding-config` | Get embedding configuration | Get OpenAI embeddings config |
 
 ### LangSmith (Tracing)
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `list-traces` | List recent traces | Show last 10 traces |
-| `trace-details` | Get trace details | Get trace by ID |
-| `list-datasets` | List evaluation datasets | Show all datasets |
+| Tool            | Description              | Example             |
+| --------------- | ------------------------ | ------------------- |
+| `list-traces`   | List recent traces       | Show last 10 traces |
+| `trace-details` | Get trace details        | Get trace by ID     |
+| `list-datasets` | List evaluation datasets | Show all datasets   |
 
 ## Quick Reference
 
@@ -350,13 +354,13 @@ result = chain.run(topic="programming")
 
 ### Environment Variables
 
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `LANGCHAIN_API_KEY` | LangSmith API key for tracing | None |
-| `LANGCHAIN_TRACING_V2` | Enable LangSmith tracing | `false` |
-| `LANGCHAIN_PROJECT` | LangSmith project name | `default` |
-| `LANGCHAIN_ENDPOINT` | Custom LangSmith endpoint | `https://api.smith.langchain.com` |
-| `OPENAI_API_KEY` | OpenAI API key for models/embeddings | None |
+| Variable               | Purpose                              | Default                           |
+| ---------------------- | ------------------------------------ | --------------------------------- |
+| `LANGCHAIN_API_KEY`    | LangSmith API key for tracing        | None                              |
+| `LANGCHAIN_TRACING_V2` | Enable LangSmith tracing             | `false`                           |
+| `LANGCHAIN_PROJECT`    | LangSmith project name               | `default`                         |
+| `LANGCHAIN_ENDPOINT`   | Custom LangSmith endpoint            | `https://api.smith.langchain.com` |
+| `OPENAI_API_KEY`       | OpenAI API key for models/embeddings | None                              |
 
 ### LangSmith Setup
 
@@ -406,19 +410,19 @@ class ChainConfig:
 
 ### Primary Agents
 
-| Agent | Use Case |
-|-------|----------|
+| Agent             | Use Case                                                |
+| ----------------- | ------------------------------------------------------- |
 | **llm-architect** | LangChain system design, RAG architecture, agent design |
-| **developer** | Chain implementation, agent integration, RAG setup |
-| **architect** | System architecture, integration patterns |
+| **developer**     | Chain implementation, agent integration, RAG setup      |
+| **architect**     | System architecture, integration patterns               |
 
 ### Secondary Agents
 
-| Agent | Use Case |
-|-------|----------|
-| **qa** | Chain testing, agent validation |
-| **performance-engineer** | Chain optimization, embedding performance |
-| **security-architect** | Security review, prompt injection prevention |
+| Agent                    | Use Case                                     |
+| ------------------------ | -------------------------------------------- |
+| **qa**                   | Chain testing, agent validation              |
+| **performance-engineer** | Chain optimization, embedding performance    |
+| **security-architect**   | Security review, prompt injection prevention |
 
 ### Integration Pattern
 
@@ -669,12 +673,14 @@ print(f"\nIntroduction: {result['introduction']}")
 ### Common Issues
 
 **Issue**: `ImportError: No module named 'langchain'`
+
 ```bash
 # Solution: Install the package
 pip install langchain langchain-community langchain-openai
 ```
 
 **Issue**: `ValueError: Did not find openai_api_key`
+
 ```bash
 # Solution: Set API key
 export OPENAI_API_KEY="your-api-key"
@@ -685,6 +691,7 @@ os.environ["OPENAI_API_KEY"] = "your-api-key"
 ```
 
 **Issue**: `ChromaDB connection error`
+
 ```bash
 # Solution: Install ChromaDB
 pip install chromadb
@@ -700,6 +707,7 @@ vectorstore = Chroma.from_documents(
 ```
 
 **Issue**: Agent stuck in loop or gives poor results
+
 ```python
 # Solution: Adjust temperature and add max_iterations
 from langchain_openai import ChatOpenAI
@@ -718,6 +726,7 @@ agent = initialize_agent(
 ```
 
 **Issue**: Memory errors with large documents
+
 ```python
 # Solution: Use smaller chunk sizes and streaming
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -737,6 +746,7 @@ vectorstore = Chroma.from_documents(
 ```
 
 **Issue**: LangSmith traces not appearing
+
 ```bash
 # Solution: Verify environment variables
 echo $LANGCHAIN_TRACING_V2  # Should be "true"

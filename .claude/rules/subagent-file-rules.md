@@ -26,15 +26,16 @@ This document defines MANDATORY file location rules for all subagents to prevent
 
 **BLOCKED PATTERNS** - If you see these, STOP and fix:
 
-| Pattern | Problem | Example |
-|---------|---------|---------|
-| `C:dev` | Missing backslash after drive | `C:devprojects` |
-| `C:projects` | Missing segments | `C:projectsLLM-RULES` |
-| Path without separators | Concatenated segments | `Cdevprojects` |
-| Double drive letters | Path corruption | `C:C:dev` |
-| Mixed slash/no-slash | Inconsistent separators | `C:/dev/projectsLLM-RULES` |
+| Pattern                 | Problem                       | Example                    |
+| ----------------------- | ----------------------------- | -------------------------- |
+| `C:dev`                 | Missing backslash after drive | `C:devprojects`            |
+| `C:projects`            | Missing segments              | `C:projectsLLM-RULES`      |
+| Path without separators | Concatenated segments         | `Cdevprojects`             |
+| Double drive letters    | Path corruption               | `C:C:dev`                  |
+| Mixed slash/no-slash    | Inconsistent separators       | `C:/dev/projectsLLM-RULES` |
 
 **Self-Check Before Any File Write**:
+
 ```
 Before writing to a path, verify:
 1. Does the path contain proper separators between ALL segments?
@@ -49,25 +50,25 @@ Before writing to a path, verify:
 
 ### MANDATORY Locations by File Type
 
-| File Type | Required Location | Pattern |
-|-----------|-------------------|---------|
-| **Reports** | `.claude/context/reports/` | `*-report.md`, `*-report.json` |
-| **Task Briefs** | `.claude/context/tasks/` | `*-task.md`, `*-task.json` |
-| **Artifacts** | `.claude/context/artifacts/` | `*.json`, `*.md` (workflow outputs) |
-| **Plans** | `.claude/context/artifacts/` | `plan-*.md`, `plan-*.json` |
-| **Reasoning** | `.claude/context/history/reasoning/<workflow>/` | `<agent>.json` |
-| **Gate Results** | `.claude/context/history/gates/<workflow>/` | `<step>-<agent>.json` |
-| **Documentation** | `.claude/docs/` | `*.md` |
-| **Agent Definitions** | `.claude/agents/` | `<agent-name>.md` |
-| **Skills** | `.claude/skills/<skill-name>/` | `SKILL.md` |
-| **Schemas** | `.claude/schemas/` | `*.schema.json` |
-| **Templates** | `.claude/templates/` | `*.md`, `*.json` |
-| **Workflows** | `.claude/workflows/` | `*.yaml` |
-| **Guardrails** | `.claude/system/guardrails/` | `*.md` |
-| **Permissions** | `.claude/system/permissions/` | `*.md` |
-| **Temporary Files** | `.claude/context/tmp/` | `tmp-*.md`, `tmp-*.json` |
-| **Logs** | `.claude/context/logs/` | `*.log`, `*.txt` |
-| **Run State** | `.claude/context/runs/<run_id>/` | Various |
+| File Type             | Required Location                               | Pattern                             |
+| --------------------- | ----------------------------------------------- | ----------------------------------- |
+| **Reports**           | `.claude/context/reports/`                      | `*-report.md`, `*-report.json`      |
+| **Task Briefs**       | `.claude/context/tasks/`                        | `*-task.md`, `*-task.json`          |
+| **Artifacts**         | `.claude/context/artifacts/`                    | `*.json`, `*.md` (workflow outputs) |
+| **Plans**             | `.claude/context/artifacts/`                    | `plan-*.md`, `plan-*.json`          |
+| **Reasoning**         | `.claude/context/history/reasoning/<workflow>/` | `<agent>.json`                      |
+| **Gate Results**      | `.claude/context/history/gates/<workflow>/`     | `<step>-<agent>.json`               |
+| **Documentation**     | `.claude/docs/`                                 | `*.md`                              |
+| **Agent Definitions** | `.claude/agents/`                               | `<agent-name>.md`                   |
+| **Skills**            | `.claude/skills/<skill-name>/`                  | `SKILL.md`                          |
+| **Schemas**           | `.claude/schemas/`                              | `*.schema.json`                     |
+| **Templates**         | `.claude/templates/`                            | `*.md`, `*.json`                    |
+| **Workflows**         | `.claude/workflows/`                            | `*.yaml`                            |
+| **Guardrails**        | `.claude/system/guardrails/`                    | `*.md`                              |
+| **Permissions**       | `.claude/system/permissions/`                   | `*.md`                              |
+| **Temporary Files**   | `.claude/context/tmp/`                          | `tmp-*.md`, `tmp-*.json`            |
+| **Logs**              | `.claude/context/logs/`                         | `*.log`, `*.txt`                    |
+| **Run State**         | `.claude/context/runs/<run_id>/`                | Various                             |
 
 ### PROHIBITED Locations
 
@@ -116,11 +117,13 @@ SECURITY.md
 ### Windows-Specific Patterns
 
 **BLOCKED Patterns** (detected and blocked by file-path-validator hook):
+
 - `CdevprojectsLLM-RULES.claude...` → Malformed Windows path (missing separator)
 - `nul`, `con`, `prn`, `aux` → Windows reserved names
 - `ReportAnalysis.md` → Concatenated path segments (missing separators)
 
 **CORRECT Patterns**:
+
 - `.claude/context/reports/report-analysis.md` → Proper path with separators
 - `.claude/context/tasks/analysis-task.md` → Correct hierarchy
 
@@ -131,6 +134,7 @@ SECURITY.md
 ### Reports
 
 **CORRECT**:
+
 ```
 .claude/context/reports/security-audit-report.md
 .claude/context/reports/code-review-2025-01-05.json
@@ -138,6 +142,7 @@ SECURITY.md
 ```
 
 **INCORRECT**:
+
 ```
 security-audit-report.md                    ← Root directory!
 C:devprojectsLLM-RULES.claudereports.md     ← Mangled path!
@@ -147,6 +152,7 @@ C:devprojectsLLM-RULES.claudereports.md     ← Mangled path!
 ### Task Files
 
 **CORRECT**:
+
 ```
 .claude/context/tasks/cuj-validation-task.md
 .claude/context/tasks/refactoring-task.json
@@ -154,6 +160,7 @@ C:devprojectsLLM-RULES.claudereports.md     ← Mangled path!
 ```
 
 **INCORRECT**:
+
 ```
 cuj-validation-task.md                      ← Root directory!
 .claude/context/cuj-validation-task.md      ← Missing /tasks/ subdirectory!
@@ -163,6 +170,7 @@ task.md                                     ← Root + ambiguous name!
 ### Artifacts
 
 **CORRECT**:
+
 ```
 .claude/context/artifacts/plan-greenfield-2025-01-05.md
 .claude/context/artifacts/dev-manifest.json
@@ -170,6 +178,7 @@ task.md                                     ← Root + ambiguous name!
 ```
 
 **INCORRECT**:
+
 ```
 plan-greenfield.md                          ← Root directory!
 .claude/artifacts/plan.md                   ← Missing /context/!
@@ -190,33 +199,48 @@ CdevprojectsLLM-RULES.claudecontextartifactsplan.md  ← Mangled!
  */
 function validateFilePath(filePath) {
   const errors = [];
-  
+
   // Check for malformed Windows paths
   if (/C:[a-zA-Z]/.test(filePath) && !/C:\\/.test(filePath) && !/C:\//.test(filePath)) {
     errors.push('Malformed Windows path: missing separator after drive letter');
   }
-  
+
   // Check for concatenated segments (no separators)
   if (/[a-z]{3,}[A-Z][a-z]/.test(filePath) && !/[\/\\]/.test(filePath)) {
     errors.push('Path appears to have concatenated segments without separators');
   }
-  
+
   // Check if in root (not in .claude, src, scripts, etc.)
   const allowedRootFiles = [
-    'package.json', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock',
-    'README.md', 'GETTING_STARTED.md', 'LICENSE', '.gitignore', '.npmrc',
-    '.nvmrc', '.editorconfig', 'tsconfig.json', 'eslint.config.js',
-    '.eslintrc.json', 'prettier.config.js', '.prettierrc', 'CHANGELOG.md',
-    'CONTRIBUTING.md', 'CODE_OF_CONDUCT.md', 'SECURITY.md'
+    'package.json',
+    'package-lock.json',
+    'pnpm-lock.yaml',
+    'yarn.lock',
+    'README.md',
+    'GETTING_STARTED.md',
+    'LICENSE',
+    '.gitignore',
+    '.npmrc',
+    '.nvmrc',
+    '.editorconfig',
+    'tsconfig.json',
+    'eslint.config.js',
+    '.eslintrc.json',
+    'prettier.config.js',
+    '.prettierrc',
+    'CHANGELOG.md',
+    'CONTRIBUTING.md',
+    'CODE_OF_CONDUCT.md',
+    'SECURITY.md',
   ];
-  
+
   const basename = filePath.split(/[\/\\]/).pop();
   const isInSubdir = /[\/\\]/.test(filePath.replace(/^[A-Z]:[\/\\]/, ''));
-  
+
   if (!isInSubdir && !allowedRootFiles.includes(basename)) {
     errors.push(`File "${basename}" not allowed in project root`);
   }
-  
+
   return { valid: errors.length === 0, errors };
 }
 ```
@@ -230,15 +254,15 @@ from pathlib import Path
 def validate_file_path(file_path: str) -> tuple[bool, list[str]]:
     """Validate file path before writing."""
     errors = []
-    
+
     # Check for malformed Windows paths
     if re.search(r'C:[a-zA-Z]', file_path) and not re.search(r'C:[\\\/]', file_path):
         errors.append('Malformed Windows path: missing separator after drive letter')
-    
+
     # Check for concatenated segments
     if re.search(r'[a-z]{3,}[A-Z][a-z]', file_path) and not re.search(r'[\/\\]', file_path):
         errors.append('Path appears to have concatenated segments without separators')
-    
+
     # Check if in root
     allowed_root_files = {
         'package.json', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock',
@@ -247,11 +271,11 @@ def validate_file_path(file_path: str) -> tuple[bool, list[str]]:
         '.eslintrc.json', 'prettier.config.js', '.prettierrc', 'CHANGELOG.md',
         'CONTRIBUTING.md', 'CODE_OF_CONDUCT.md', 'SECURITY.md'
     }
-    
+
     path = Path(file_path)
     if len(path.parts) <= 2 and path.name not in allowed_root_files:  # Drive + filename only
         errors.append(f'File "{path.name}" not allowed in project root')
-    
+
     return len(errors) == 0, errors
 ```
 
@@ -322,6 +346,7 @@ This document integrates with:
 - `.claude/tools/enforcement-gate.mjs` - Gate validation function
 
 **Validation Command**:
+
 ```bash
 node .claude/tools/enforcement-gate.mjs validate-file-location --path "<file_path>"
 ```
@@ -330,6 +355,6 @@ node .claude/tools/enforcement-gate.mjs validate-file-location --path "<file_pat
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-05 | Initial release - address SLOP issues |
+| Version | Date       | Changes                               |
+| ------- | ---------- | ------------------------------------- |
+| 1.0.0   | 2025-01-05 | Initial release - address SLOP issues |

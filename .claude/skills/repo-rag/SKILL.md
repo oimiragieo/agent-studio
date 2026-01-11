@@ -33,11 +33,12 @@ Repo RAG (Retrieval Augmented Generation) - Provides advanced codebase search ca
 </execution_process>
 
 <usage_patterns>
+
 - **Architecture Review**: Run symbol searches on key interfaces to understand the dependency graph.
 - **Plan Mode**: Use this skill to populate the "Context" section of a Plan Mode artifact.
 - **Refactoring**: Identify all usages of a symbol before renaming or modifying it.
-</usage_patterns>
-</instructions>
+  </usage_patterns>
+  </instructions>
 
 <examples>
 <code_example>
@@ -52,6 +53,7 @@ symbols "UserAuthentication"
 ```
 search "authentication middleware logic"
 ```
+
 </code_example>
 </examples>
 
@@ -64,6 +66,7 @@ Systematic evaluation of RAG quality using retrieval and end-to-end metrics. Bas
 ### Evaluation Metrics
 
 **Retrieval Metrics** (from `.claude/evaluation/retrieval_metrics.py`):
+
 - **Precision**: Proportion of retrieved chunks that are actually relevant
   - Formula: `Precision = True Positives / Total Retrieved`
   - High precision (0.8-1.0): System retrieves mostly relevant items
@@ -78,6 +81,7 @@ Systematic evaluation of RAG quality using retrieval and end-to-end metrics. Bas
   - High MRR (0.8-1.0): Correct items ranked first
 
 **End-to-End Metrics** (from `.claude/evaluation/end_to_end_eval.py`):
+
 - **Accuracy (LLM-as-Judge)**: Overall correctness using Claude evaluation
   - Compares generated answer to correct answer
   - Focuses on substance and meaning, not exact wording
@@ -86,6 +90,7 @@ Systematic evaluation of RAG quality using retrieval and end-to-end metrics. Bas
 ### Evaluation Process
 
 1. **Create Evaluation Dataset**:
+
    ```json
    {
      "query": "How is user authentication implemented?",
@@ -96,10 +101,11 @@ Systematic evaluation of RAG quality using retrieval and end-to-end metrics. Bas
    ```
 
 2. **Run Retrieval Evaluation**:
+
    ```bash
    # Using Promptfoo
    npx promptfoo@latest eval -c .claude/evaluation/promptfoo_configs/rag_config.yaml
-   
+
    # Or using Python directly
    from .claude.evaluation.retrieval_metrics import evaluate_retrieval
    metrics = evaluate_retrieval(retrieved_chunks, correct_chunks)
@@ -107,10 +113,11 @@ Systematic evaluation of RAG quality using retrieval and end-to-end metrics. Bas
    ```
 
 3. **Run End-to-End Evaluation**:
+
    ```bash
    # Using Promptfoo
    npx promptfoo@latest eval -c .claude/evaluation/promptfoo_configs/rag_config.yaml
-   
+
    # Or using Python directly
    from .claude.evaluation.end_to_end_eval import evaluate_end_to_end
    result = evaluate_end_to_end(query, generated_answer, correct_answer)
@@ -120,6 +127,7 @@ Systematic evaluation of RAG quality using retrieval and end-to-end metrics. Bas
 ### Expected Performance
 
 Based on Claude Cookbooks results:
+
 - **Basic RAG**: Precision 0.43, Recall 0.66, F1 0.52, MRR 0.74, Accuracy 71%
 - **With Re-ranking**: Precision 0.44, Recall 0.69, F1 0.54, MRR 0.87, Accuracy 81%
 

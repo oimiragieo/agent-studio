@@ -66,14 +66,7 @@
       "npm run typecheck"
     ],
     "require_confirmation": [],
-    "blocked_patterns": [
-      "rm -rf /",
-      "rm -rf ~",
-      "sudo rm",
-      "format *",
-      "dd if=",
-      "mkfs *"
-    ]
+    "blocked_patterns": ["rm -rf /", "rm -rf ~", "sudo rm", "format *", "dd if=", "mkfs *"]
   },
   "session": {
     "auto_save": true,
@@ -81,9 +74,7 @@
     "max_context_tokens": 100000
   },
   "rules": {
-    "exclude_patterns": [
-      ".claude/archive/**"
-    ],
+    "exclude_patterns": [".claude/archive/**"],
     "archive_access": "on_demand"
   },
   "agent_config": {

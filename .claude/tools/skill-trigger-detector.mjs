@@ -30,47 +30,60 @@ const __dirname = path.dirname(__filename);
 // Comprehensive trigger patterns based on skill-integration-matrix.json
 const TRIGGER_PATTERNS = {
   // Component/feature creation
-  new_component: /\b(new|create|add|implement|build|scaffold|generate)\b.*\b(component|module|feature|widget|screen|page|view)\b/i,
+  new_component:
+    /\b(new|create|add|implement|build|scaffold|generate)\b.*\b(component|module|feature|widget|screen|page|view)\b/i,
 
   // Module/folder creation
-  new_module: /\b(new|create|add|initialize)\b.*\b(module|folder|directory|package|namespace|subdirectory)\b/i,
+  new_module:
+    /\b(new|create|add|initialize)\b.*\b(module|folder|directory|package|namespace|subdirectory)\b/i,
 
   // Code modification
-  code_changes: /\b(modify|update|change|edit|refactor|alter|fix|improve)\b.*\b(code|file|function|class|method|logic)\b/i,
+  code_changes:
+    /\b(modify|update|change|edit|refactor|alter|fix|improve)\b.*\b(code|file|function|class|method|logic)\b/i,
 
   // Code review
-  review_code: /\b(review|analyze|inspect|examine|check|validate)\b.*\b(code|changes|pr|pull\s+request|commit|diff)\b/i,
-  code_review: /\b(review|analyze|inspect|examine|check|validate)\b.*\b(code|changes|pr|pull\s+request|commit|diff)\b/i,
+  review_code:
+    /\b(review|analyze|inspect|examine|check|validate)\b.*\b(code|changes|pr|pull\s+request|commit|diff)\b/i,
+  code_review:
+    /\b(review|analyze|inspect|examine|check|validate)\b.*\b(code|changes|pr|pull\s+request|commit|diff)\b/i,
 
   // Codebase search
-  codebase_search: /\b(find|search|locate|discover|look\s+for|query)\b.*\b(pattern|example|usage|implementation|reference)\b/i,
-  pattern_search: /\b(find|search|locate|discover)\b.*\b(pattern|example|usage|implementation|best\s+practice)\b/i,
-  codebase_analysis: /\b(analyze|examine|explore|investigate)\b.*\b(codebase|repository|project|source)\b/i,
+  codebase_search:
+    /\b(find|search|locate|discover|look\s+for|query)\b.*\b(pattern|example|usage|implementation|reference)\b/i,
+  pattern_search:
+    /\b(find|search|locate|discover)\b.*\b(pattern|example|usage|implementation|best\s+practice)\b/i,
+  codebase_analysis:
+    /\b(analyze|examine|explore|investigate)\b.*\b(codebase|repository|project|source)\b/i,
 
   // Test operations
   test_creation: /\b(write|create|generate|add|implement)\b.*(test|spec|unit|integration|e2e)/i,
 
   // Style and formatting
-  style_review: /\b(check|validate|review|enforce)\b.*\b(style|format|formatting|code\s+style|conventions)\b/i,
+  style_review:
+    /\b(check|validate|review|enforce)\b.*\b(style|format|formatting|code\s+style|conventions)\b/i,
   style_check: /\b(check|validate|lint|format)\b.*\b(style|code|formatting)\b/i,
   style_validation: /\b(validate|check|enforce)\b.*\b(style|formatting|conventions)\b/i,
 
   // Rule compliance
-  rule_explanation: /\b(explain|clarify|understand|describe)\b.*\b(rule|violation|standard|guideline)\b/i,
+  rule_explanation:
+    /\b(explain|clarify|understand|describe)\b.*\b(rule|violation|standard|guideline)\b/i,
   rule_compliance: /\b(check|validate|ensure|enforce)\b.*\b(compliance|rule|standard|guideline)\b/i,
   violation_fix: /\b(fix|resolve|correct|address)\b.*\b(violation|issue|error|warning)\b/i,
   violation_fixes: /\b(fix|resolve|correct|address)\b.*\b(violations|issues|errors|warnings)\b/i,
   simplification_fixes: /\b(simplify|reduce|optimize)\b.*\b(complexity|code|logic)\b/i,
 
   // Quality checks
-  quality_check: /\b(check|validate|verify|ensure|assess)\b.*\b(quality|standard|compliance|correctness)\b/i,
+  quality_check:
+    /\b(check|validate|verify|ensure|assess)\b.*\b(quality|standard|compliance|correctness)\b/i,
 
   // Architecture and diagrams
-  architecture_diagram: /(\b(diagram|visualize|draw|sketch|illustrate)\b.*\b(architecture|system|design|structure)\b|\b(design|architect)\b.*\b(diagram)\b|\b(architecture)\b.*\b(diagram)\b)/i,
+  architecture_diagram:
+    /(\b(diagram|visualize|draw|sketch|illustrate)\b.*\b(architecture|system|design|structure)\b|\b(design|architect)\b.*\b(diagram)\b|\b(architecture)\b.*\b(diagram)\b)/i,
   plan_diagram: /\b(diagram|visualize|chart)\b.*\b(plan|roadmap|timeline)\b/i,
   schema_diagram: /\b(diagram|visualize|erd|model)\b.*\b(schema|database|data\s+model|entity)\b/i,
   api_diagram: /\b(diagram|visualize|map)\b.*\b(api|endpoint|interface|contract)\b/i,
-  user_flow_diagram: /\b(diagram|visualize|map)\b.*\b(user\s+flow|user\s+journey|flow|interaction)\b/i,
+  user_flow_diagram:
+    /\b(diagram|visualize|map)\b.*\b(user\s+flow|user\s+journey|flow|interaction)\b/i,
   performance_diagram: /\b(diagram|visualize|chart)\b.*\b(performance|metrics|benchmark)\b/i,
   refactor_diagram: /\b(diagram|visualize)\b.*\b(refactor|transformation|migration)\b/i,
   migration_diagram: /\b(diagram|visualize|map)\b.*\b(migration|modernization|upgrade)\b/i,
@@ -106,11 +119,14 @@ const TRIGGER_PATTERNS = {
   test_summary: /\b(summarize|report)\b.*\b(test|results|coverage)\b/i,
 
   // Performance
-  performance_pattern_search: /\b(find|search|identify)\b.*\b(performance|optimization|bottleneck|slow)\b/i,
-  optimization_analysis: /\b(analyze|profile|benchmark)\b.*\b(performance|optimization|speed|latency)\b/i,
+  performance_pattern_search:
+    /\b(find|search|identify)\b.*\b(performance|optimization|bottleneck|slow)\b/i,
+  optimization_analysis:
+    /\b(analyze|profile|benchmark)\b.*\b(performance|optimization|speed|latency)\b/i,
 
   // Security
-  security_audit: /\b(audit|review|assess|scan|perform)\b.*\b(security|vulnerability|threat|risk)\b/i,
+  security_audit:
+    /\b(audit|review|assess|scan|perform)\b.*\b(security|vulnerability|threat|risk)\b/i,
   security_explanation: /\b(explain)\b.*\b(security|vulnerability|threat|risk)\b/i,
   vulnerability_scan: /\b(scan|check|detect)\b.*\b(vulnerability|cve|exploit|weakness)\b/i,
   threat_modeling: /\b(threat|attack|risk)\b.*\b(model|modeling|analysis|assessment)\b/i,
@@ -128,11 +144,13 @@ const TRIGGER_PATTERNS = {
   migration_planning: /\b(plan)\b.*\b(migration|modernization|upgrade)\b/i,
 
   // Analysis
-  complex_analysis: /\b(analyze|deep\s+dive|investigate|research)\b.*\b(complex|detailed|comprehensive)\b/i,
+  complex_analysis:
+    /\b(analyze|deep\s+dive|investigate|research)\b.*\b(complex|detailed|comprehensive)\b/i,
   deep_analysis: /\b(deep|thorough|comprehensive)\b.*\b(analysis|investigation|research)\b/i,
   complex_decision: /\b(decide|choose|select)\b.*\b(complex|critical|architectural)\b/i,
   dependency_analysis: /\b(analyze|check|review)\b.*\b(dependency|dependencies|package|library)\b/i,
-  legacy_analysis: /(\b(analyze|assess|evaluate)\b.*\b(legacy|old|outdated|deprecated)\b|\b(migrate|modernize)\b.*\b(legacy|old|codebase)\b)/i,
+  legacy_analysis:
+    /(\b(analyze|assess|evaluate)\b.*\b(legacy|old|outdated|deprecated)\b|\b(migrate|modernize)\b.*\b(legacy|old|codebase)\b)/i,
   incident_analysis: /\b(analyze|investigate|diagnose)\b.*\b(incident|outage|failure|error)\b/i,
   root_cause_analysis: /\b(root\s+cause|rca|postmortem)\b.*\b(analysis|investigation)\b/i,
   complexity_analysis: /\b(analyze|measure|assess)\b.*\b(complexity|cyclomatic|cognitive)\b/i,
@@ -212,7 +230,7 @@ const TRIGGER_PATTERNS = {
   issue_tracking: /\b(track|manage|create)\b.*\b(issue|ticket|bug|github)\b/i,
 
   // Complex design
-  complex_design: /\b(design|architect)\b.*\b(complex|sophisticated|advanced)\b/i
+  complex_design: /\b(design|architect)\b.*\b(complex|sophisticated|advanced)\b/i,
 };
 
 /**
@@ -308,7 +326,7 @@ export async function detectAllSkills(agentType, taskDescription) {
     triggered,
     recommended,
     all,
-    matchedTriggers
+    matchedTriggers,
   };
 }
 
@@ -334,9 +352,13 @@ async function main() {
 
   // Validate required arguments
   if (!agentType || !taskDescription) {
-    console.error('Usage: node skill-trigger-detector.mjs --agent <agent-type> --task "<task-description>"');
+    console.error(
+      'Usage: node skill-trigger-detector.mjs --agent <agent-type> --task "<task-description>"'
+    );
     console.error('\nExample:');
-    console.error('  node skill-trigger-detector.mjs --agent developer --task "Create new UserProfile component"');
+    console.error(
+      '  node skill-trigger-detector.mjs --agent developer --task "Create new UserProfile component"'
+    );
     console.error('\nAvailable agent types:');
     const matrix = await loadSkillMatrix();
     console.error('  ' + Object.keys(matrix.agents).join(', '));

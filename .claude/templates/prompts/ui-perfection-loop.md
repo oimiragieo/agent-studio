@@ -1,6 +1,7 @@
 # UI Perfection Loop Prompt Template
 
 ## Purpose
+
 Iterative UI improvement with visual perfection focus.
 
 ## Template
@@ -42,14 +43,15 @@ Max iterations: [N] (default: 5)
 ```
 
 ## Usage
+
 - UI quality improvement
 - Accessibility enhancement
 - Design system compliance
 - Visual polish
 
 ## Agent
+
 - ux-expert
 - accessibility-expert
 - developer
 - mobile-developer
-

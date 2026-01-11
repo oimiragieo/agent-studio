@@ -12,6 +12,7 @@ Added a new validation step after every Step 0 planning phase:
 
 ```markdown
 ### Step 0.1: Plan Rating Gate
+
 - Agent: orchestrator
 - Type: validation
 - Skill: response-rater
@@ -42,6 +43,7 @@ Added `response-rater` to the Skills Used section (where applicable):
 ## CUJs Updated (40 total)
 
 ### Core Workflows
+
 - CUJ-005: Greenfield Project Planning
 - CUJ-009: Component Scaffolding
 - CUJ-010: API Endpoint Development
@@ -55,6 +57,7 @@ Added `response-rater` to the Skills Used section (where applicable):
 - CUJ-018: API Design
 
 ### Specialized Workflows
+
 - CUJ-019: Performance Optimization
 - CUJ-020: Security Audit
 - CUJ-021: Mobile Development
@@ -65,6 +68,7 @@ Added `response-rater` to the Skills Used section (where applicable):
 - CUJ-026: Phase-Based Project Planning
 
 ### Advanced Workflows
+
 - CUJ-034 through CUJ-055 (21 additional CUJs)
 
 ## CUJs NOT Updated (12 total)
@@ -78,6 +82,7 @@ The following CUJs do not have Step 0 planning phases and were correctly skipped
 ## Validation Results
 
 ✅ **100% SUCCESS**: All 40 CUJs with Step 0 planning phases have:
+
 - Step 0.1: Plan Rating Gate section
 - Updated Success Criteria with plan rating validation
 - response-rater skill documented (where applicable)
@@ -85,6 +90,7 @@ The following CUJs do not have Step 0 planning phases and were correctly skipped
 ## Implementation Details
 
 ### Execution Method
+
 - Automated batch processing using Python scripts
 - Three-pass approach:
   1. **Pass 1**: Added rating gate and basic success criteria (40 files)
@@ -92,6 +98,7 @@ The following CUJs do not have Step 0 planning phases and were correctly skipped
   3. **Pass 3**: Fixed remaining success criteria and edge cases (18 files + 2 special cases)
 
 ### Edge Cases Handled
+
 - **CUJ-025**: Special handling for "Subsequent Steps" instead of "Step 1"
 - **CUJ-026**: Special handling for "Step 1-N: Phase Execution"
 - **Capabilities vs Skills**: Some CUJs use "Capabilities/Tools Used" instead of "Skills Used"
@@ -115,7 +122,9 @@ This integration ensures that:
 4. **Consistency across workflows** - every planning CUJ follows the same pattern
 
 This aligns with CLAUDE.md enforcement requirements:
+
 > **CRITICAL: All plans MUST be rated before execution**
+>
 > - Use response-rater skill to evaluate plan quality
 > - Minimum passing score: 7/10
 > - Never execute an unrated plan

@@ -36,9 +36,7 @@ console.log(cuj.name, '→', cuj.primary_skill);
 ### 2. Get All Skill-Only CUJs
 
 ```javascript
-const skillOnlyCUJs = registry.cujs.filter(c =>
-  c.execution_mode === 'skill-only'
-);
+const skillOnlyCUJs = registry.cujs.filter(c => c.execution_mode === 'skill-only');
 console.log(`${skillOnlyCUJs.length} skill-only CUJs`);
 // Output: "36 skill-only CUJs"
 ```
@@ -46,18 +44,14 @@ console.log(`${skillOnlyCUJs.length} skill-only CUJs`);
 ### 3. Find CUJs by Category
 
 ```javascript
-const developmentCUJs = registry.cujs.filter(c =>
-  c.category === 'Development'
-);
+const developmentCUJs = registry.cujs.filter(c => c.category === 'Development');
 developmentCUJs.forEach(c => console.log(`${c.id}: ${c.name}`));
 ```
 
 ### 4. Find CUJs Using a Specific Skill
 
 ```javascript
-const scaffolderCUJs = registry.cujs.filter(c =>
-  c.skills.includes('scaffolder')
-);
+const scaffolderCUJs = registry.cujs.filter(c => c.skills.includes('scaffolder'));
 console.log(`${scaffolderCUJs.length} CUJs use scaffolder`);
 ```
 
@@ -66,9 +60,7 @@ console.log(`${scaffolderCUJs.length} CUJs use scaffolder`);
 ```javascript
 function findCUJByTrigger(userInput) {
   return registry.cujs.find(cuj =>
-    cuj.triggers.some(trigger =>
-      userInput.toLowerCase().includes(trigger.toLowerCase())
-    )
+    cuj.triggers.some(trigger => userInput.toLowerCase().includes(trigger.toLowerCase()))
   );
 }
 
@@ -81,14 +73,12 @@ console.log(cuj.id, '→', cuj.primary_skill);
 
 ```javascript
 // Claude-only CUJs
-const claudeOnly = registry.cujs.filter(c =>
-  c.platform_compatibility.claude && !c.platform_compatibility.cursor
+const claudeOnly = registry.cujs.filter(
+  c => c.platform_compatibility.claude && !c.platform_compatibility.cursor
 );
 
 // Cursor-compatible CUJs
-const cursorCompatible = registry.cujs.filter(c =>
-  c.platform_compatibility.cursor
-);
+const cursorCompatible = registry.cujs.filter(c => c.platform_compatibility.cursor);
 ```
 
 ### 7. Group CUJs by Execution Mode
@@ -107,8 +97,8 @@ console.log('Skill-only CUJs:', byMode['skill-only'].length);
 ### 8. Find Fast CUJs (< 60 seconds)
 
 ```javascript
-const fastCUJs = registry.cujs.filter(c =>
-  c.execution_mode === 'skill-only' || c.execution_mode === 'delegated-skill'
+const fastCUJs = registry.cujs.filter(
+  c => c.execution_mode === 'skill-only' || c.execution_mode === 'delegated-skill'
 );
 console.log(`${fastCUJs.length} CUJs execute in < 60 seconds`);
 ```
@@ -173,12 +163,12 @@ console.log(JSON.stringify(skillOnly.slice(0, 3), null, 2));
 
 ## Execution Modes
 
-| Mode | Description | Example | Duration |
-|------|-------------|---------|----------|
-| `workflow` | Multi-agent workflow | CUJ-005 (Greenfield Project) | 2-10 min |
-| `skill-only` | Direct skill invocation | CUJ-002 (Rule Configuration) | 2-60 sec |
-| `delegated-skill` | Agent-managed skill | Custom skills | 2-60 sec |
-| `manual-setup` | Manual user steps | CUJ-001 (Installation) | varies |
+| Mode              | Description             | Example                      | Duration |
+| ----------------- | ----------------------- | ---------------------------- | -------- |
+| `workflow`        | Multi-agent workflow    | CUJ-005 (Greenfield Project) | 2-10 min |
+| `skill-only`      | Direct skill invocation | CUJ-002 (Rule Configuration) | 2-60 sec |
+| `delegated-skill` | Agent-managed skill     | Custom skills                | 2-60 sec |
+| `manual-setup`    | Manual user steps       | CUJ-001 (Installation)       | varies   |
 
 ## Categories
 
@@ -212,7 +202,7 @@ function routeUserRequest(input) {
     execution_mode: cuj.execution_mode,
     workflow: cuj.workflow,
     skill: cuj.primary_skill,
-    agents: cuj.agents
+    agents: cuj.agents,
   };
 }
 
@@ -232,7 +222,7 @@ function buildCUJMenu(category) {
       id: c.id,
       name: c.name,
       trigger: c.triggers[0] || 'N/A',
-      duration: c.estimated_duration
+      duration: c.estimated_duration,
     }));
 }
 
@@ -269,6 +259,7 @@ console.log('Cursor-compatible:', r.cujs.filter(c => c.platform_compatibility.cu
 ## When to Sync
 
 Sync the registry after:
+
 - ✅ Adding new CUJs
 - ✅ Modifying CUJ metadata
 - ✅ Changing execution modes
@@ -282,16 +273,19 @@ pnpm sync-cuj-registry
 ## Troubleshooting
 
 ### Registry not found?
+
 ```bash
 pnpm sync-cuj-registry
 ```
 
 ### Validation errors?
+
 ```bash
 node .claude/tools/sync-cuj-registry.mjs --validate-only
 ```
 
 ### Missing metadata?
+
 - Check CUJ markdown has proper formatting
 - Ensure `## Agents Used` section exists
 - Verify `**Execution Mode**: \`mode\`` is present

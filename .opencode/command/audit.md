@@ -10,23 +10,27 @@ Perform a comprehensive security review of the Omega codebase.
 ## Audit Scope
 
 ### Authentication & Authorization
+
 - JWT implementation in `server/middleware/auth.js`
 - Session management
 - API key handling
 - Role-based access control
 
 ### Input Validation
+
 - Request validation with Joi
 - SQL injection prevention
 - XSS prevention
 - Path traversal checks
 
 ### Secrets Management
+
 - Environment variables usage
 - No hardcoded secrets
 - `.env` not in git
 
 ### API Security
+
 - Rate limiting in `server/middleware/rateLimiter.js`
 - CORS configuration
 - Helmet security headers
@@ -45,6 +49,7 @@ Perform a comprehensive security review of the Omega codebase.
 ## Output
 
 Provide a security report with:
+
 - Critical vulnerabilities
 - High-risk issues
 - Medium-risk issues

@@ -48,7 +48,10 @@ async function runTests() {
   // Test 3: Trigger detection - new component
   console.log('Test 3: Skill Triggering - "Create new UserProfile component"');
   try {
-    const result = await injectSkillsForAgent('developer', 'Create new UserProfile component with tests');
+    const result = await injectSkillsForAgent(
+      'developer',
+      'Create new UserProfile component with tests'
+    );
     console.log(`✓ Required skills: ${result.requiredSkills.length}`);
     console.log(`  ${result.requiredSkills.join(', ')}`);
     console.log(`✓ Triggered skills: ${result.triggeredSkills.length}`);
@@ -64,7 +67,10 @@ async function runTests() {
   // Test 4: Trigger detection - code review
   console.log('Test 4: Skill Triggering - "Review authentication code"');
   try {
-    const result = await injectSkillsForAgent('code-reviewer', 'Review authentication code for security issues');
+    const result = await injectSkillsForAgent(
+      'code-reviewer',
+      'Review authentication code for security issues'
+    );
     console.log(`✓ Required skills: ${result.requiredSkills.length}`);
     console.log(`  ${result.requiredSkills.join(', ')}`);
     console.log(`✓ Triggered skills: ${result.triggeredSkills.length}`);
@@ -80,7 +86,10 @@ async function runTests() {
   // Test 5: Orchestrator skills
   console.log('Test 5: Orchestrator Skills (Plan Rating)');
   try {
-    const result = await injectSkillsForAgent('orchestrator', 'Create and execute development plan');
+    const result = await injectSkillsForAgent(
+      'orchestrator',
+      'Create and execute development plan'
+    );
     console.log(`✓ Required skills: ${result.requiredSkills.length}`);
     console.log(`  ${result.requiredSkills.join(', ')}`);
 

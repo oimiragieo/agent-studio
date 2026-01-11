@@ -17,7 +17,7 @@ Invokes the **rule-selector** skill to:
 
 1. **Scan Configuration Files**
    - package.json, requirements.txt, go.mod, Cargo.toml
-   - next.config.*, nuxt.config.*, angular.json, svelte.config.*
+   - next.config._, nuxt.config._, angular.json, svelte.config.\*
    - tsconfig.json, pyproject.toml, composer.json
 
 2. **Detect Tech Stack**
@@ -47,6 +47,7 @@ Invokes the **rule-selector** skill to:
 **Detected Stack**: Next.js 14 + TypeScript + Tailwind
 
 ### Recommended Rules
+
 1. nextjs.mdc (primary)
 2. typescript.mdc (language)
 3. react.mdc (framework patterns)
@@ -54,9 +55,10 @@ Invokes the **rule-selector** skill to:
 5. clean-code.mdc (universal)
 
 ### Excluded (not relevant)
-- angular-* (No Angular detected)
-- vue-* (No Vue detected)
-- python-* (No Python detected)
+
+- angular-\* (No Angular detected)
+- vue-\* (No Vue detected)
+- python-\* (No Python detected)
 ```
 
 ### JSON Format (with --format json)
@@ -87,3 +89,4 @@ Invokes the **rule-selector** skill to:
 - `/scaffold` - Generate rule-compliant boilerplate
 </usage_example>
 </examples>
+```

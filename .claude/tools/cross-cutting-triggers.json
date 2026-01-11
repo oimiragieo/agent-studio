@@ -281,15 +281,7 @@
       "description": "Breaking changes require impact analysis"
     },
     "code-reviewer": {
-      "keywords": [
-        "pr",
-        "pull request",
-        "merge",
-        "review",
-        "code review",
-        "diff",
-        "git diff"
-      ],
+      "keywords": ["pr", "pull request", "merge", "review", "code review", "diff", "git diff"],
       "triggerLevel": "always",
       "priority": "medium",
       "description": "Code changes should be reviewed"

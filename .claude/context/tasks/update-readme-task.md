@@ -1,9 +1,11 @@
 # Task: Update README.md with Current Project Stats
 
 ## Objective
+
 Update the project root README.md file with current, accurate information about the LLM Rules Production Pack.
 
 ## Current Stats (Use These Exact Numbers)
+
 - **Agents**: 34 specialized agents (24 core + 10 extended)
 - **Skills**: 43 utility skills (34 native + 9 MCP-converted)
 - **Workflows**: 14 workflow definitions
@@ -12,6 +14,7 @@ Update the project root README.md file with current, accurate information about 
 - **Rules**: 1,081+ technology-specific rule packs (8 master + 1,073 rules-library)
 
 ## Key Features to Highlight
+
 1. **Master Orchestrator**: Single entry point for all requests
 2. **Enforcement System (Phase 1)**: Plan rating gates, signoff validation, security triggers
 3. **Platform Adapters**: Cross-platform support for Claude Code, Cursor, Factory Droid
@@ -20,6 +23,7 @@ Update the project root README.md file with current, accurate information about 
 6. **Rule Index System**: Dynamic rule discovery with progressive disclosure
 
 ## Key Tools to Mention
+
 - `enforcement-gate.mjs` - Hard validation gates
 - `run-manager.mjs` - Canonical run state management
 - `fallback-router.mjs` - Fallback agent routing
@@ -29,6 +33,7 @@ Update the project root README.md file with current, accurate information about 
 - `rating-cache.mjs` - Plan rating cache
 
 ## Structure to Follow
+
 1. Title and brief description
 2. Quick Start section
 3. Features overview with current stats
@@ -41,6 +46,7 @@ Update the project root README.md file with current, accurate information about 
 10. License
 
 ## Requirements
+
 1. Reference CLAUDE.md for authoritative information (already read)
 2. Keep the README concise but comprehensive
 3. Use accurate file paths and statistics
@@ -53,10 +59,12 @@ Update the project root README.md file with current, accurate information about 
 10. Update skill descriptions with new skills
 
 ## Sources
+
 - `.claude/CLAUDE.md` - Authoritative source for all stats
 - Current README.md - Existing structure to improve
 
 ## Deliverable
+
 - Updated `README.md` in project root
 - Accurate stats matching CLAUDE.md
 - Clear, professional documentation

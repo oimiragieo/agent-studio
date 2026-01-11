@@ -2,7 +2,7 @@
 /**
  * Rule Migration Script
  * Automates rule consolidation, master file generation, archiving, and reference updates
- * 
+ *
  * NOTE: This is a reference implementation. Actual migration should be done manually
  * with careful review to ensure no content is lost.
  */
@@ -30,7 +30,7 @@ const MIGRATION_MAP = {
     'cursor-ai-react-typescript-shadcn-ui-cursorrules-p',
     'tailwind-css-nextjs-guide-cursorrules-prompt-file',
     'typescript-nextjs-react-cursorrules-prompt-file',
-    'typescript-shadcn-ui-nextjs-cursorrules-prompt-file'
+    'typescript-shadcn-ui-nextjs-cursorrules-prompt-file',
   ],
   'PROTOCOL_ENGINEERING.md': [
     'code-guidelines-cursorrules-prompt-file',
@@ -38,18 +38,21 @@ const MIGRATION_MAP = {
     'git-conventional-commit-messages',
     'github-code-quality-cursorrules-prompt-file',
     'pr-template-cursorrules-prompt-file',
-    'how-to-documentation-cursorrules-prompt-file'
-  ]
+    'how-to-documentation-cursorrules-prompt-file',
+  ],
 };
 
 /**
  * Library mapping: patterns -> library directory (formerly archive)
  */
 const LIBRARY_PATTERNS = [
-  { pattern: /^(dragonruby|elixir|go-|unity|webassembly|salesforce|swift)/, category: 'niche-languages' },
+  {
+    pattern: /^(dragonruby|elixir|go-|unity|webassembly|salesforce|swift)/,
+    category: 'niche-languages',
+  },
   { pattern: /^(laravel|drupal|typo3cms|wordpress)/, category: 'unused-frameworks' },
   { pattern: /^(android-|flutter|react-native)/, category: 'mobile' },
-  { pattern: /^(rails|svelte|vue-)/, category: 'other-frameworks' }
+  { pattern: /^(rails|svelte|vue-)/, category: 'other-frameworks' },
 ];
 
 /**
@@ -58,25 +61,25 @@ const LIBRARY_PATTERNS = [
 function generateMigrationReport() {
   console.log('📋 Rule Migration Report\n');
   console.log('='.repeat(60));
-  
+
   console.log('\n✅ Master Files Created:');
   const masterFiles = fs.readdirSync(CORE_DIR).filter(f => f.endsWith('.md'));
   masterFiles.forEach(file => {
     console.log(`   ✓ ${file}`);
   });
-  
+
   console.log('\n📦 Files to Library:');
   if (fs.existsSync(LIBRARY_DIR)) {
     const libraryFiles = fs.readdirSync(LIBRARY_DIR);
     console.log(`   ${libraryFiles.length} directories in library (formerly archive)`);
   }
-  
+
   console.log('\n📝 Next Steps:');
   console.log('   1. Review master files for completeness');
   console.log('   2. Test agent activation with new context files');
   console.log('   3. Update any remaining references to old rule files');
   console.log('   4. Monitor context usage after migration');
-  
+
   console.log('\n' + '='.repeat(60));
 }
 
@@ -85,9 +88,9 @@ function generateMigrationReport() {
  */
 function validateMigration() {
   console.log('🔍 Validating migration...\n');
-  
+
   const issues = [];
-  
+
   // Check master files exist
   const requiredMasters = [
     'TECH_STACK_NEXTJS.md',
@@ -96,21 +99,21 @@ function validateMigration() {
     'TOOL_PLAYWRIGHT_MASTER.md',
     'LANG_PYTHON_GENERAL.md',
     'FRAMEWORK_FASTAPI.md',
-    'LANG_SOLIDITY.md'
+    'LANG_SOLIDITY.md',
   ];
-  
+
   requiredMasters.forEach(master => {
     const filePath = path.join(CORE_DIR, master);
     if (!fs.existsSync(filePath)) {
       issues.push(`Missing master file: ${master}`);
     }
   });
-  
+
   // Check library directory exists
   if (!fs.existsSync(LIBRARY_DIR)) {
     issues.push('Library directory not found (formerly archive)');
   }
-  
+
   // Check config.yaml has context_files
   const configPath = path.join(__dirname, '../.claude/config.yaml');
   if (fs.existsSync(configPath)) {
@@ -119,7 +122,7 @@ function validateMigration() {
       issues.push('config.yaml missing context_files configuration');
     }
   }
-  
+
   if (issues.length === 0) {
     console.log('✅ Migration validation passed!\n');
     return true;
@@ -133,7 +136,7 @@ function validateMigration() {
 // CLI interface
 if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
-  
+
   if (command === 'report') {
     generateMigrationReport();
   } else if (command === 'validate') {
@@ -144,4 +147,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('Actual migration should be done manually with careful review.');
   }
 }
-

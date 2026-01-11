@@ -19,11 +19,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Configuration
-const ORCHESTRATOR_AGENTS = [
-  'orchestrator',
-  'master-orchestrator',
-  'model-orchestrator'
-];
+const ORCHESTRATOR_AGENTS = ['orchestrator', 'master-orchestrator', 'model-orchestrator'];
 
 const BLOCKED_TOOLS = {
   Write: 'spawn developer subagent',
@@ -31,7 +27,7 @@ const BLOCKED_TOOLS = {
   Bash: 'check command (rm/git blocked → spawn developer)',
   Read: 'check file count (>2 files → spawn analyst/Explore)',
   Grep: 'spawn analyst subagent',
-  Glob: 'spawn analyst subagent'
+  Glob: 'spawn analyst subagent',
 };
 
 // Dangerous Bash commands that orchestrators should never run
@@ -45,7 +41,7 @@ const DANGEROUS_BASH_COMMANDS = [
   'git merge',
   'node .claude/tools/', // Validation scripts
   'npm run',
-  'pnpm'
+  'pnpm',
 ];
 
 // Track Read tool usage per agent session
@@ -84,7 +80,7 @@ export async function PreToolUse(context) {
 ║  Task: developer                                                  ║
 ║  Prompt: "Create/modify the file at ${parameters.file_path}"     ║
 ╚═══════════════════════════════════════════════════════════════════╝
-      `.trim()
+      `.trim(),
     };
   }
 
@@ -103,7 +99,7 @@ export async function PreToolUse(context) {
 ║  Task: developer                                                  ║
 ║  Prompt: "Edit the file at ${parameters.file_path}"              ║
 ╚═══════════════════════════════════════════════════════════════════╝
-      `.trim()
+      `.trim(),
     };
   }
 
@@ -132,7 +128,7 @@ export async function PreToolUse(context) {
 ║  Task: qa                                                         ║
 ║  Prompt: "Run validation: ${command}"                             ║
 ╚═══════════════════════════════════════════════════════════════════╝
-          `.trim()
+          `.trim(),
         };
       }
     }
@@ -164,7 +160,7 @@ export async function PreToolUse(context) {
 ║  Task: analyst (or Explore)                                       ║
 ║  Prompt: "Analyze the files in ${parameters.file_path}"          ║
 ╚═══════════════════════════════════════════════════════════════════╝
-        `.trim()
+        `.trim(),
       };
     }
 
@@ -187,7 +183,7 @@ export async function PreToolUse(context) {
 ║  Task: analyst                                                    ║
 ║  Prompt: "Search codebase for: ${parameters.pattern}"            ║
 ╚═══════════════════════════════════════════════════════════════════╝
-      `.trim()
+      `.trim(),
     };
   }
 
@@ -206,7 +202,7 @@ export async function PreToolUse(context) {
 ║  Task: analyst                                                    ║
 ║  Prompt: "Find files matching: ${parameters.pattern}"            ║
 ╚═══════════════════════════════════════════════════════════════════╝
-      `.trim()
+      `.trim(),
     };
   }
 
@@ -248,5 +244,5 @@ export default {
   PreToolUse,
   PostToolUse,
   resetReadCounter,
-  getReadCount
+  getReadCount,
 };

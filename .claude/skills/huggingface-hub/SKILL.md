@@ -16,6 +16,7 @@ The Hugging Face Hub skill provides seamless integration with the Hugging Face m
 **Context Savings**: 90%+ reduction vs raw MCP server by providing focused, task-specific interfaces to Hugging Face Hub capabilities.
 
 **Use Cases**:
+
 - Model discovery and evaluation
 - Dataset exploration and download
 - Quick inference testing
@@ -25,11 +26,13 @@ The Hugging Face Hub skill provides seamless integration with the Hugging Face m
 ## Requirements
 
 **Python Dependencies**:
+
 ```bash
 pip install huggingface_hub transformers torch
 ```
 
 **Optional Authentication**:
+
 ```bash
 # For private models/datasets and inference API
 export HF_TOKEN="your_hf_token_here"
@@ -39,6 +42,7 @@ huggingface-cli login
 ```
 
 **Installation Verification**:
+
 ```bash
 python -c "import huggingface_hub; print(huggingface_hub.__version__)"
 huggingface-cli --version
@@ -48,39 +52,39 @@ huggingface-cli --version
 
 ### Model Operations
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `search-models` | Search HF Hub for models by keywords, tags, or author | Search for "text-generation" models |
-| `model-info` | Retrieve model card, metadata, and configuration | Get info for "gpt2" |
-| `download-model` | Download model files to local cache | Download "bert-base-uncased" |
-| `list-model-files` | List all files in a model repository | List files in "openai/whisper-large" |
+| Tool               | Description                                           | Example                              |
+| ------------------ | ----------------------------------------------------- | ------------------------------------ |
+| `search-models`    | Search HF Hub for models by keywords, tags, or author | Search for "text-generation" models  |
+| `model-info`       | Retrieve model card, metadata, and configuration      | Get info for "gpt2"                  |
+| `download-model`   | Download model files to local cache                   | Download "bert-base-uncased"         |
+| `list-model-files` | List all files in a model repository                  | List files in "openai/whisper-large" |
 
 ### Dataset Operations
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `search-datasets` | Search for datasets by keywords, tags, or task | Search for "sentiment-analysis" datasets |
-| `dataset-info` | Get dataset card, metadata, and structure | Get info for "squad" |
-| `download-dataset` | Download dataset files to local cache | Download "imdb" dataset |
-| `stream-dataset` | Stream dataset without full download | Stream "c4" dataset |
+| Tool               | Description                                    | Example                                  |
+| ------------------ | ---------------------------------------------- | ---------------------------------------- |
+| `search-datasets`  | Search for datasets by keywords, tags, or task | Search for "sentiment-analysis" datasets |
+| `dataset-info`     | Get dataset card, metadata, and structure      | Get info for "squad"                     |
+| `download-dataset` | Download dataset files to local cache          | Download "imdb" dataset                  |
+| `stream-dataset`   | Stream dataset without full download           | Stream "c4" dataset                      |
 
 ### Inference Operations
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `run-inference` | Run inference on Hugging Face hosted models | Generate text with "gpt2" |
-| `text-generation` | Generate text completions | Text completion with custom prompt |
-| `text-classification` | Classify text into categories | Sentiment analysis |
-| `feature-extraction` | Extract embeddings from text | Get BERT embeddings |
+| Tool                  | Description                                 | Example                            |
+| --------------------- | ------------------------------------------- | ---------------------------------- |
+| `run-inference`       | Run inference on Hugging Face hosted models | Generate text with "gpt2"          |
+| `text-generation`     | Generate text completions                   | Text completion with custom prompt |
+| `text-classification` | Classify text into categories               | Sentiment analysis                 |
+| `feature-extraction`  | Extract embeddings from text                | Get BERT embeddings                |
 
 ### Repository Operations
 
-| Tool | Description | Example |
-|------|-------------|---------|
+| Tool          | Description                              | Example                  |
+| ------------- | ---------------------------------------- | ------------------------ |
 | `create-repo` | Create a new model or dataset repository | Create "myuser/my-model" |
-| `upload-file` | Upload files to a repository | Upload model checkpoint |
-| `delete-file` | Delete files from a repository | Remove old checkpoint |
-| `repo-info` | Get repository metadata and stats | Get repo info |
+| `upload-file` | Upload files to a repository             | Upload model checkpoint  |
+| `delete-file` | Delete files from a repository           | Remove old checkpoint    |
+| `repo-info`   | Get repository metadata and stats        | Get repo info            |
 
 ## Quick Reference
 
@@ -170,12 +174,12 @@ huggingface-cli delete myuser/my-model --file old_model.bin
 
 ### Environment Variables
 
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `HF_TOKEN` | Authentication token for private repos and inference API | None |
-| `HF_HOME` | Custom cache directory for models and datasets | `~/.cache/huggingface` |
-| `HF_ENDPOINT` | Custom Hub endpoint (for enterprise deployments) | `https://huggingface.co` |
-| `HF_HUB_DISABLE_TELEMETRY` | Disable anonymous telemetry | `0` |
+| Variable                   | Purpose                                                  | Default                  |
+| -------------------------- | -------------------------------------------------------- | ------------------------ |
+| `HF_TOKEN`                 | Authentication token for private repos and inference API | None                     |
+| `HF_HOME`                  | Custom cache directory for models and datasets           | `~/.cache/huggingface`   |
+| `HF_ENDPOINT`              | Custom Hub endpoint (for enterprise deployments)         | `https://huggingface.co` |
+| `HF_HUB_DISABLE_TELEMETRY` | Disable anonymous telemetry                              | `0`                      |
 
 ### Token Setup
 
@@ -208,19 +212,19 @@ rm -rf ~/.cache/huggingface
 
 ### Primary Agents
 
-| Agent | Use Case |
-|-------|----------|
+| Agent             | Use Case                                                |
+| ----------------- | ------------------------------------------------------- |
 | **llm-architect** | Model selection, architecture design, RAG system design |
-| **developer** | Model integration, inference implementation |
-| **analyst** | Dataset exploration, model evaluation |
+| **developer**     | Model integration, inference implementation             |
+| **analyst**       | Dataset exploration, model evaluation                   |
 
 ### Secondary Agents
 
-| Agent | Use Case |
-|-------|----------|
-| **qa** | Model testing, benchmark validation |
+| Agent                    | Use Case                                |
+| ------------------------ | --------------------------------------- |
+| **qa**                   | Model testing, benchmark validation     |
 | **performance-engineer** | Model optimization, inference profiling |
-| **security-architect** | Model security review, bias detection |
+| **security-architect**   | Model security review, bias detection   |
 
 ### Integration Pattern
 
@@ -375,12 +379,14 @@ for model_id in models:
 ### Common Issues
 
 **Issue**: `ImportError: No module named 'huggingface_hub'`
+
 ```bash
 # Solution: Install the package
 pip install huggingface_hub
 ```
 
 **Issue**: `HTTPError: 401 Unauthorized`
+
 ```bash
 # Solution: Set up authentication
 huggingface-cli login
@@ -388,6 +394,7 @@ huggingface-cli login
 ```
 
 **Issue**: `OSError: Disk quota exceeded` when downloading models
+
 ```bash
 # Solution: Clean cache or use custom cache directory
 huggingface-cli scan-cache
@@ -398,6 +405,7 @@ export HF_HOME="/path/to/large/disk/.cache/huggingface"
 ```
 
 **Issue**: Slow downloads
+
 ```bash
 # Solution: Use parallel downloads
 export HF_HUB_DOWNLOAD_THREADS=4
@@ -407,6 +415,7 @@ python -c "from huggingface_hub import snapshot_download; snapshot_download('ber
 ```
 
 **Issue**: `RuntimeError: Model requires too much memory`
+
 ```bash
 # Solution: Use smaller model variant or quantization
 # Try distilled versions: bert-base-uncased → distilbert-base-uncased
@@ -414,6 +423,7 @@ python -c "from huggingface_hub import snapshot_download; snapshot_download('ber
 ```
 
 **Issue**: Rate limiting on Inference API
+
 ```python
 # Solution: Add rate limiting and retries
 from huggingface_hub import InferenceClient

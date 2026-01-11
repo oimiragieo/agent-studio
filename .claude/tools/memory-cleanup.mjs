@@ -5,8 +5,15 @@
  */
 
 import { clearCache as clearGitCache, stopAutoCleanup as stopGitCleanup } from './git-cache.mjs';
-import { invalidateArtifact, cleanExpiredEntries, stopAutoCleanup as stopArtifactCleanup } from './artifact-cache.mjs';
-import { clearCache as clearSkillCache, stopAutoCleanup as stopSkillCleanup } from './skill-cache.mjs';
+import {
+  invalidateArtifact,
+  cleanExpiredEntries,
+  stopAutoCleanup as stopArtifactCleanup,
+} from './artifact-cache.mjs';
+import {
+  clearCache as clearSkillCache,
+  stopAutoCleanup as stopSkillCleanup,
+} from './skill-cache.mjs';
 
 /**
  * Cleanup all caches
@@ -16,7 +23,7 @@ export function cleanupAllCaches() {
   const results = {
     gitCache: 0,
     artifactCache: 0,
-    skillCache: 0
+    skillCache: 0,
   };
 
   try {
@@ -83,7 +90,9 @@ export function setupPeriodicCleanup(intervalMs = 10 * 60 * 1000) {
   const interval = setInterval(() => {
     console.log('[Cleanup] Running periodic memory cleanup...');
     const results = cleanupAllCaches();
-    console.log(`[Cleanup] Cleaned: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`);
+    console.log(
+      `[Cleanup] Cleaned: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`
+    );
   }, intervalMs);
 
   return () => clearInterval(interval);

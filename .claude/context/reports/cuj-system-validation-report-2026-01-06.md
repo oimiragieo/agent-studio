@@ -8,12 +8,12 @@
 
 ## Executive Summary
 
-| Category | Status | Score |
-|----------|--------|-------|
-| CUJ Documents | CONCERNS | 66% |
-| Workflow Files | PASS | 93% |
-| Tool Scripts | PASS | 100% |
-| Cross-References | CONCERNS | 85% |
+| Category                  | Status       | Score   |
+| ------------------------- | ------------ | ------- |
+| CUJ Documents             | CONCERNS     | 66%     |
+| Workflow Files            | PASS         | 93%     |
+| Tool Scripts              | PASS         | 100%    |
+| Cross-References          | CONCERNS     | 85%     |
 | **Overall System Health** | **CONCERNS** | **86%** |
 
 ---
@@ -22,12 +22,12 @@
 
 ### 1.1 Summary
 
-| Metric | Value |
-|--------|-------|
-| Total CUJ Files | 59 (in registry) + 1 summary file |
-| Valid | 20/59 (34%) |
-| Issues | 42 (primarily execution mode declaration) |
-| Warnings | 136 |
+| Metric          | Value                                     |
+| --------------- | ----------------------------------------- |
+| Total CUJ Files | 59 (in registry) + 1 summary file         |
+| Valid           | 20/59 (34%)                               |
+| Issues          | 42 (primarily execution mode declaration) |
+| Warnings        | 136                                       |
 
 ### 1.2 Critical Issues
 
@@ -38,16 +38,17 @@
 **Status**: FAIL - Requires fix
 
 **Recommendation**: Add explicit execution mode declaration to each CUJ using format:
+
 - `**Execution Mode**: skill-only`
 - `**Execution Mode**: workflow (workflow-name.yaml)`
 - `**Execution Mode**: manual-setup`
 
 #### 1.2.2 Broken Internal Links (3 CUJs)
 
-| CUJ | Broken Link | Status |
-|-----|-------------|--------|
-| CUJ-014 | ../../CLAUDE.md#rule-index-system | File exists, anchor unverified |
-| CUJ-056 | ../STATELESS_RECOVERY.md | FILE DOES NOT EXIST |
+| CUJ     | Broken Link                            | Status                         |
+| ------- | -------------------------------------- | ------------------------------ |
+| CUJ-014 | ../../CLAUDE.md#rule-index-system      | File exists, anchor unverified |
+| CUJ-056 | ../STATELESS_RECOVERY.md               | FILE DOES NOT EXIST            |
 | CUJ-057 | ../ENFORCEMENT_EXAMPLES.md#plan-rating | File exists, anchor unverified |
 
 **Status**: FAIL - CUJ-056 has definitively broken link
@@ -64,13 +65,13 @@
 
 ### 2.1 Summary
 
-| Metric | Value |
-|--------|-------|
-| Total Workflows | 14 |
-| Valid YAML Syntax | 14/14 (100%) |
-| Step 0 Present | 13/14 (93%) |
-| Step 0.1 Rating Gate | 13/14 (93%) |
-| Valid Step 0.1 | 12/14 (86%) |
+| Metric               | Value        |
+| -------------------- | ------------ |
+| Total Workflows      | 14           |
+| Valid YAML Syntax    | 14/14 (100%) |
+| Step 0 Present       | 13/14 (93%)  |
+| Step 0.1 Rating Gate | 13/14 (93%)  |
+| Valid Step 0.1       | 12/14 (86%)  |
 
 ### 2.2 Issues
 
@@ -90,6 +91,7 @@
 **Status**: PASS (0 issues found)
 
 All 14 workflows validated:
+
 - ai-system-flow.yaml
 - automated-enterprise-flow.yaml
 - bmad-greenfield-standard.yaml
@@ -111,12 +113,12 @@ All 14 workflows validated:
 
 ### 3.1 Summary
 
-| Tool | Status | Notes |
-|------|--------|-------|
-| run-cuj.mjs | PASS | Uses path.join() correctly |
-| sync-cuj-registry.mjs | PASS | Proper workflow detection |
-| validate-cujs.mjs | PASS | Correct workflow path field |
-| skill-manager/list.cjs | PASS | Has CRLF handling |
+| Tool                   | Status | Notes                       |
+| ---------------------- | ------ | --------------------------- |
+| run-cuj.mjs            | PASS   | Uses path.join() correctly  |
+| sync-cuj-registry.mjs  | PASS   | Proper workflow detection   |
+| validate-cujs.mjs      | PASS   | Correct workflow path field |
+| skill-manager/list.cjs | PASS   | Has CRLF handling           |
 
 ### 3.2 Details
 
@@ -131,11 +133,11 @@ All 14 workflows validated:
 
 ### 4.1 cuj-registry.json Accuracy
 
-| Metric | Value |
-|--------|-------|
-| Registry CUJs | 59 |
-| With Workflow References | 13 |
-| Execution Modes | manual-setup: 2, skill-only: 6, workflow: 51 |
+| Metric                   | Value                                        |
+| ------------------------ | -------------------------------------------- |
+| Registry CUJs            | 59                                           |
+| With Workflow References | 13                                           |
+| Execution Modes          | manual-setup: 2, skill-only: 6, workflow: 51 |
 
 **Status**: PASS - Registry matches actual files
 
@@ -143,21 +145,21 @@ All 14 workflows validated:
 
 All 13 workflow references point to existing workflow files:
 
-| CUJ | Workflow | Exists |
-|-----|----------|--------|
-| CUJ-005 | greenfield-fullstack.yaml | YES |
-| CUJ-011 | quick-flow.yaml | YES |
-| CUJ-012 | greenfield-fullstack.yaml | YES |
-| CUJ-019 | performance-flow.yaml | YES |
-| CUJ-021 | mobile-flow.yaml | YES |
-| CUJ-022 | ai-system-flow.yaml | YES |
-| CUJ-024 | incident-flow.yaml | YES |
-| CUJ-026 | greenfield-fullstack.yaml | YES |
-| CUJ-028 | greenfield-fullstack.yaml | YES |
-| CUJ-029 | greenfield-fullstack.yaml | YES |
-| CUJ-034 | browser-testing-flow.yaml | YES |
-| CUJ-037 | greenfield-fullstack.yaml | YES |
-| CUJ-059 | performance-flow.yaml | YES |
+| CUJ     | Workflow                  | Exists |
+| ------- | ------------------------- | ------ |
+| CUJ-005 | greenfield-fullstack.yaml | YES    |
+| CUJ-011 | quick-flow.yaml           | YES    |
+| CUJ-012 | greenfield-fullstack.yaml | YES    |
+| CUJ-019 | performance-flow.yaml     | YES    |
+| CUJ-021 | mobile-flow.yaml          | YES    |
+| CUJ-022 | ai-system-flow.yaml       | YES    |
+| CUJ-024 | incident-flow.yaml        | YES    |
+| CUJ-026 | greenfield-fullstack.yaml | YES    |
+| CUJ-028 | greenfield-fullstack.yaml | YES    |
+| CUJ-029 | greenfield-fullstack.yaml | YES    |
+| CUJ-034 | browser-testing-flow.yaml | YES    |
+| CUJ-037 | greenfield-fullstack.yaml | YES    |
+| CUJ-059 | performance-flow.yaml     | YES    |
 
 **Status**: PASS
 
@@ -165,13 +167,13 @@ All 13 workflow references point to existing workflow files:
 
 ## 5. Response-Rater Dependencies
 
-| CLI | Status | Priority |
-|-----|--------|----------|
-| Anthropic Claude | AVAILABLE | high |
-| OpenAI Codex | AVAILABLE | medium |
-| GitHub Copilot | AVAILABLE | low |
-| Google Gemini | NOT AVAILABLE | high |
-| Cursor Agent | NOT AVAILABLE | medium |
+| CLI              | Status        | Priority |
+| ---------------- | ------------- | -------- |
+| Anthropic Claude | AVAILABLE     | high     |
+| OpenAI Codex     | AVAILABLE     | medium   |
+| GitHub Copilot   | AVAILABLE     | low      |
+| Google Gemini    | NOT AVAILABLE | high     |
+| Cursor Agent     | NOT AVAILABLE | medium   |
 
 **Status**: PASS (3 of 5 CLIs available - multi-model validation enabled)
 
@@ -207,6 +209,7 @@ All 13 workflow references point to existing workflow files:
 ### Overall Assessment: CONCERNS
 
 **Rationale**:
+
 - Workflow system is healthy (93%+ valid)
 - Tool scripts are functioning correctly (100%)
 - Cross-references are mostly valid (85%)
@@ -214,13 +217,13 @@ All 13 workflow references point to existing workflow files:
 
 ### Health Score Calculation
 
-| Category | Weight | Score | Weighted |
-|----------|--------|-------|----------|
-| Workflow Validation | 30% | 93% | 27.9% |
-| Tool Scripts | 20% | 100% | 20.0% |
-| Cross-References | 20% | 85% | 17.0% |
-| CUJ Documents | 30% | 66% | 19.8% |
-| **Total** | | | **84.7%** |
+| Category            | Weight | Score | Weighted  |
+| ------------------- | ------ | ----- | --------- |
+| Workflow Validation | 30%    | 93%   | 27.9%     |
+| Tool Scripts        | 20%    | 100%  | 20.0%     |
+| Cross-References    | 20%    | 85%   | 17.0%     |
+| CUJ Documents       | 30%    | 66%   | 19.8%     |
+| **Total**           |        |       | **84.7%** |
 
 **Final Score: 85% (CONCERNS)**
 
@@ -232,6 +235,5 @@ All 13 workflow references point to existing workflow files:
 
 ---
 
-*Report generated by QA Agent - Riley Thompson*
-*Validation Framework Version: 1.0*
-
+_Report generated by QA Agent - Riley Thompson_
+_Validation Framework Version: 1.0_

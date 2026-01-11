@@ -1,7 +1,9 @@
 <template_structure>
+
 # UI/UX Specification: {{feature_name}}
 
 ## Metadata
+
 - **Version**: {{version}}
 - **Created**: {{created_date}}
 - **Last Modified**: {{last_modified}}
@@ -10,36 +12,47 @@
 - **Related Documents**: {{related_docs}}
 
 ## Overview
+
 {{overview}}
 
 ## Design Goals
+
 {{design_goals}}
 
 ## User Personas
+
 {{user_personas}}
 
 ## User Flows
+
 {{user_flows}}
 
 ## Wireframes & Mockups
+
 {{wireframes_mockups}}
 
 ## Design System
+
 {{design_system}}
 
 ## Accessibility Requirements
+
 {{accessibility_requirements}}
 
 ## Responsive Design
+
 {{responsive_design}}
 
 ## Interaction Patterns
+
 {{interaction_patterns}}
 
 ## Content Guidelines
+
 {{content_guidelines}}
 
 ## Design Tokens
+
 - **Colors**: {{color_tokens}}
 - **Typography**: {{typography_tokens}}
 - **Spacing**: {{spacing_tokens}}
@@ -48,26 +61,30 @@
 - **Breakpoints**: {{breakpoint_tokens}}
 
 ## Component Library
+
 - **Components Used**: {{components_used}}
 - **Custom Components**: {{custom_components}}
 - **Component Variants**: {{component_variants}}
 - **Component Documentation**: {{component_docs}}
 
 ## Responsive Breakpoints
-| Breakpoint | Width | Use Case |
-|------------|-------|----------|
-| Mobile | {{mobile_width}} | {{mobile_use}} |
-| Tablet | {{tablet_width}} | {{tablet_use}} |
-| Desktop | {{desktop_width}} | {{desktop_use}} |
+
+| Breakpoint    | Width                   | Use Case              |
+| ------------- | ----------------------- | --------------------- |
+| Mobile        | {{mobile_width}}        | {{mobile_use}}        |
+| Tablet        | {{tablet_width}}        | {{tablet_use}}        |
+| Desktop       | {{desktop_width}}       | {{desktop_use}}       |
 | Large Desktop | {{large_desktop_width}} | {{large_desktop_use}} |
 
 ## Animation & Transitions
+
 - **Transitions**: {{transitions}}
 - **Animations**: {{animations}}
 - **Performance**: {{animation_performance}}
 - **Accessibility**: {{animation_accessibility}}
 
 ## Accessibility Audit Checklist
+
 - [ ] WCAG 2.1 AA compliance
 - [ ] Keyboard navigation
 - [ ] Screen reader compatibility
@@ -79,11 +96,13 @@
 - [ ] Skip navigation links
 
 ## Related Documents
+
 - PRD: {{prd_link}}
 - Architecture: {{architecture_link}}
 - Test Plan: {{test_plan_link}}
 
 ---
+
 </template_structure>
 
 <usage_instructions>
@@ -95,4 +114,3 @@
 
 **Related Templates**: This UI spec follows design standards from `.claude/templates/project-constitution.md`.
 </usage_instructions>
-

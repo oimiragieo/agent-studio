@@ -47,7 +47,7 @@ export function spawnCli(command, args, options = {}) {
   return spawn(actualCommand, args, {
     ...options,
     shell: isWindows || options.shell,
-    windowsHide: isWindows // Hide console window on Windows
+    windowsHide: isWindows, // Hide console window on Windows
   });
 }
 
@@ -70,22 +70,22 @@ export function execCli(command, args, options = {}) {
     let stderr = '';
 
     if (proc.stdout) {
-      proc.stdout.on('data', (data) => {
+      proc.stdout.on('data', data => {
         stdout += data.toString();
       });
     }
 
     if (proc.stderr) {
-      proc.stderr.on('data', (data) => {
+      proc.stderr.on('data', data => {
         stderr += data.toString();
       });
     }
 
-    proc.on('error', (error) => {
+    proc.on('error', error => {
       reject(new Error(`Failed to execute ${command}: ${error.message}`));
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       resolve({ stdout, stderr, code });
     });
   });
@@ -103,17 +103,17 @@ export function execCli(command, args, options = {}) {
  * }
  */
 export async function commandExists(command) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const checkCommand = isWindows ? 'where' : 'which';
     // Use spawn directly for system commands (where/which)
     const proc = spawn(checkCommand, [command], {
       shell: true,
       windowsHide: isWindows,
-      stdio: 'pipe'
+      stdio: 'pipe',
     });
 
     proc.on('error', () => resolve(false));
-    proc.on('close', (code) => resolve(code === 0));
+    proc.on('close', code => resolve(code === 0));
   });
 }
 
@@ -122,5 +122,5 @@ export default {
   spawnCli,
   execCli,
   commandExists,
-  isWindows
+  isWindows,
 };

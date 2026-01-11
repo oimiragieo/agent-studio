@@ -39,7 +39,20 @@
       "description": "List of regulations checked",
       "items": {
         "type": "string",
-        "enum": ["GDPR", "HIPAA", "SOC2", "PCI-DSS", "CCPA", "FERPA", "COPPA", "GLBA", "FISMA", "FedRAMP", "ISO27001", "NIST"]
+        "enum": [
+          "GDPR",
+          "HIPAA",
+          "SOC2",
+          "PCI-DSS",
+          "CCPA",
+          "FERPA",
+          "COPPA",
+          "GLBA",
+          "FISMA",
+          "FedRAMP",
+          "ISO27001",
+          "NIST"
+        ]
       }
     },
     "violations_found": {

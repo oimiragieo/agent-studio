@@ -20,6 +20,7 @@ Phase 1 of the Codex Skills Integration Fixes addresses 3 critical issues that w
 **Problem**: The preflight check in `run-cuj.mjs` only validated skills in `.claude/skills/`, causing failures for Codex skills located in `codex-skills/`.
 
 **Solution**:
+
 - Added `findSkillPath()` function to check both locations:
   - `.claude/skills/<skill>/SKILL.md` (Agent Studio)
   - `codex-skills/<skill>/SKILL.md` (Codex CLI)
@@ -28,9 +29,11 @@ Phase 1 of the Codex Skills Integration Fixes addresses 3 critical issues that w
 - Added warnings for Codex CLI skills requiring CLI tools
 
 **Files Modified**:
+
 - `.claude/tools/run-cuj.mjs`
 
 **Success Criteria**:
+
 - ✅ Skills validated in both locations
 - ✅ Error messages indicate skill type
 - ✅ Existing workflows continue to work
@@ -46,6 +49,7 @@ Phase 1 of the Codex Skills Integration Fixes addresses 3 critical issues that w
 **Problem**: `code-review-flow.yaml` line 206 referenced `multi-ai-review-report.schema.json`, but the schema didn't exist, causing step 1.5 validation to fail.
 
 **Solution**:
+
 - Created comprehensive JSON Schema based on `review.js` output structure
 - Defined required fields: `diffMeta`, `providers`, `perProvider`, `synthesis`
 - Defined finding structure with enums for `severity` and `area`
@@ -53,9 +57,11 @@ Phase 1 of the Codex Skills Integration Fixes addresses 3 critical issues that w
 - Documented schema usage in header comments
 
 **Files Created**:
+
 - `.claude/schemas/multi-ai-review-report.schema.json`
 
 **Success Criteria**:
+
 - ✅ Schema validates actual `review.js` output
 - ✅ Schema documented with examples
 - ✅ All required and optional fields covered
@@ -71,6 +77,7 @@ Phase 1 of the Codex Skills Integration Fixes addresses 3 critical issues that w
 **Problem**: `code-review-flow.yaml` step 1.5 has condition `"user_requested_multi_ai_review OR critical_security_changes"`, but workflow_runner.js didn't evaluate conditions, causing step to always run or never run.
 
 **Solution**:
+
 - Added `evaluateCondition()` function with safe pattern matching (NO eval())
 - Supported condition patterns:
   - `providers.includes('provider_name')`
@@ -85,9 +92,11 @@ Phase 1 of the Codex Skills Integration Fixes addresses 3 critical issues that w
 - Fail-open behavior: execute step if condition cannot be parsed
 
 **Files Modified**:
+
 - `.claude/tools/workflow_runner.js`
 
 **Success Criteria**:
+
 - ✅ Conditions parsed correctly
 - ✅ Common patterns supported
 - ✅ Graceful fallback on errors (fail-open)
@@ -117,22 +126,22 @@ Phase 1 of the Codex Skills Integration Fixes addresses 3 critical issues that w
 
 ## Validation Results
 
-| Criterion | Status |
-|-----------|--------|
-| No breaking changes | ✅ PASS |
-| Windows compatible | ✅ PASS |
-| Security best practices | ✅ PASS |
-| Conventional commits | ✅ PASS |
+| Criterion                 | Status  |
+| ------------------------- | ------- |
+| No breaking changes       | ✅ PASS |
+| Windows compatible        | ✅ PASS |
+| Security best practices   | ✅ PASS |
+| Conventional commits      | ✅ PASS |
 | All paths use path.join() | ✅ PASS |
-| No eval() usage | ✅ PASS |
+| No eval() usage           | ✅ PASS |
 
 ## Files Changed Summary
 
-| File | Type | Changes |
-|------|------|---------|
-| `.claude/tools/run-cuj.mjs` | Modified | Added findSkillPath(), updated preflightCheck() |
-| `.claude/tools/workflow_runner.js` | Modified | Added evaluateCondition(), integrated condition checking |
-| `.claude/schemas/multi-ai-review-report.schema.json` | Created | Comprehensive schema for multi-AI review output |
+| File                                                 | Type     | Changes                                                  |
+| ---------------------------------------------------- | -------- | -------------------------------------------------------- |
+| `.claude/tools/run-cuj.mjs`                          | Modified | Added findSkillPath(), updated preflightCheck()          |
+| `.claude/tools/workflow_runner.js`                   | Modified | Added evaluateCondition(), integrated condition checking |
+| `.claude/schemas/multi-ai-review-report.schema.json` | Created  | Comprehensive schema for multi-AI review output          |
 
 ## Next Steps
 

@@ -7,11 +7,13 @@ Common fix patterns for rule violations, organized by violation type.
 ### Violation: Using `any` type
 
 **Problem**:
+
 ```typescript
 const user: any = await getUser();
 ```
 
 **Fix**:
+
 ```typescript
 interface User {
   id: string;
@@ -25,6 +27,7 @@ const user: User = await getUser();
 ### Violation: Missing return type
 
 **Problem**:
+
 ```typescript
 function processData(data) {
   return data.map(item => item.value);
@@ -32,6 +35,7 @@ function processData(data) {
 ```
 
 **Fix**:
+
 ```typescript
 function processData(data: DataItem[]): number[] {
   return data.map(item => item.value);
@@ -41,6 +45,7 @@ function processData(data: DataItem[]): number[] {
 ### Violation: Using `any` in function parameters
 
 **Problem**:
+
 ```typescript
 function handleEvent(event: any) {
   console.log(event.target.value);
@@ -48,6 +53,7 @@ function handleEvent(event: any) {
 ```
 
 **Fix**:
+
 ```typescript
 function handleEvent(event: React.ChangeEvent<HTMLInputElement>) {
   console.log(event.target.value);
@@ -59,6 +65,7 @@ function handleEvent(event: React.ChangeEvent<HTMLInputElement>) {
 ### Violation: Missing 'use client' directive
 
 **Problem**:
+
 ```tsx
 // components/InteractiveButton.tsx
 import { useState } from 'react';
@@ -70,8 +77,9 @@ export function InteractiveButton() {
 ```
 
 **Fix**:
+
 ```tsx
-'use client';  // Add this directive
+'use client'; // Add this directive
 
 import { useState } from 'react';
 
@@ -84,23 +92,25 @@ export function InteractiveButton() {
 ### Violation: Using useEffect for data fetching
 
 **Problem**:
+
 ```tsx
 'use client';
 
 export function UserProfile({ userId }: { userId: string }) {
   const [user, setUser] = useState(null);
-  
+
   useEffect(() => {
     fetch(`/api/users/${userId}`)
       .then(res => res.json())
       .then(setUser);
   }, [userId]);
-  
+
   return <div>{user?.name}</div>;
 }
 ```
 
 **Fix** (Server Component):
+
 ```tsx
 // Remove 'use client', make async
 export async function UserProfile({ userId }: { userId: string }) {
@@ -112,15 +122,17 @@ export async function UserProfile({ userId }: { userId: string }) {
 ### Violation: Not using next/image
 
 **Problem**:
+
 ```tsx
 <img src="/logo.png" alt="Logo" />
 ```
 
 **Fix**:
+
 ```tsx
 import Image from 'next/image';
 
-<Image src="/logo.png" alt="Logo" width={200} height={200} />
+<Image src="/logo.png" alt="Logo" width={200} height={200} />;
 ```
 
 ## Python Fix Patterns
@@ -128,12 +140,14 @@ import Image from 'next/image';
 ### Violation: Missing type hints
 
 **Problem**:
+
 ```python
 def process_data(data):
     return [item.value for item in data]
 ```
 
 **Fix**:
+
 ```python
 from typing import List
 
@@ -144,6 +158,7 @@ def process_data(data: List[DataItem]) -> List[int]:
 ### Violation: Blocking call in async function
 
 **Problem**:
+
 ```python
 async def fetch_user(user_id: str):
     response = requests.get(f"/api/users/{user_id}")  # Blocking!
@@ -151,6 +166,7 @@ async def fetch_user(user_id: str):
 ```
 
 **Fix**:
+
 ```python
 import httpx
 
@@ -163,12 +179,14 @@ async def fetch_user(user_id: str) -> dict:
 ### Violation: Missing error handling
 
 **Problem**:
+
 ```python
 def divide(a, b):
     return a / b
 ```
 
 **Fix**:
+
 ```python
 def divide(a: float, b: float) -> float:
     if b == 0:
@@ -181,6 +199,7 @@ def divide(a: float, b: float) -> float:
 ### Violation: Magic numbers
 
 **Problem**:
+
 ```typescript
 if (items.length > 10) {
   // Show pagination
@@ -188,6 +207,7 @@ if (items.length > 10) {
 ```
 
 **Fix**:
+
 ```typescript
 const MAX_ITEMS_PER_PAGE = 10;
 
@@ -199,12 +219,14 @@ if (items.length > MAX_ITEMS_PER_PAGE) {
 ### Violation: Unclear variable names
 
 **Problem**:
+
 ```typescript
 const d = new Date();
 const u = await getUser();
 ```
 
 **Fix**:
+
 ```typescript
 const currentDate = new Date();
 const currentUser = await getUser();
@@ -213,6 +235,7 @@ const currentUser = await getUser();
 ### Violation: Missing error boundaries
 
 **Problem**:
+
 ```tsx
 export function App() {
   return (
@@ -224,6 +247,7 @@ export function App() {
 ```
 
 **Fix**:
+
 ```tsx
 export function App() {
   return (
@@ -245,8 +269,8 @@ export function App() {
 ## Pattern Matching
 
 When a violation is reported:
+
 1. Extract violation type (TypeScript, React, Python, etc.)
 2. Look up fix pattern in this guide
 3. Adapt pattern to specific code
 4. Provide before/after example
-

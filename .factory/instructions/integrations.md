@@ -7,16 +7,19 @@ Factory Droid integrates with Claude, Cursor, GitHub, Linear, Confluence, and ot
 ### Claude Code Integration
 
 **Artifact Publishing:**
+
 - Droid publishes specifications and artifacts to Claude Projects
 - Claude Code can reference Droid outputs for context
 - Shared artifact history for traceability
 
 **Context Bridging:**
+
 - Sync artifacts from `.factory/docs/` to `.claude/context/artifacts/`
 - Reference Claude Artifacts in Droid sessions
 - Preserve decision history across platforms
 
 **Workflow:**
+
 1. Droid generates specification in `.factory/docs/`
 2. Artifact published to Claude Project
 3. Claude Code uses specification for implementation
@@ -25,16 +28,19 @@ Factory Droid integrates with Claude, Cursor, GitHub, Linear, Confluence, and ot
 ### Cursor IDE Integration
 
 **Plan Integration:**
+
 - Droid specifications can reference Cursor plans
 - Cursor Plan Mode outputs usable in Droid sessions
 - Shared planning context for consistency
 
 **Context Sync:**
+
 - Sync artifacts from `.factory/docs/` to `.cursor/context/`
 - Reference Cursor plans in Droid specifications
 - Cross-platform context preservation
 
 **Workflow:**
+
 1. Cursor generates plan in `.cursor/plans/`
 2. Droid uses plan context for specification
 3. Implementation artifacts synced to both platforms
@@ -45,22 +51,26 @@ Factory Droid integrates with Claude, Cursor, GitHub, Linear, Confluence, and ot
 ### GitHub
 
 **Issue References:**
+
 ```
 Implement feature described in https://github.com/org/repo/issues/123
 ```
 
 Droid automatically:
+
 - Fetches issue description and comments
 - Reads linked PRs and discussions
 - Uses labels and milestones for context
 - References commit history and code changes
 
 **Pull Request Integration:**
+
 - Droid can review PRs and suggest improvements
 - Generate code changes based on PR feedback
 - Sync implementation back to PR branches
 
 **Repository Context:**
+
 - Reads repository structure and conventions
 - Analyzes existing code patterns
 - Uses `.github/` workflows and templates
@@ -68,11 +78,13 @@ Droid automatically:
 ### Git Workflow
 
 **Branch Management:**
+
 - Create feature branches from specifications
 - Commit with descriptive messages
 - Push changes with co-author trailer (if enabled)
 
 **Change Tracking:**
+
 - Review uncommitted changes with `git diff`
 - Validate before committing
 - Generate commit messages from changes
@@ -82,17 +94,20 @@ Droid automatically:
 ### Linear
 
 **Task References:**
+
 ```
 Complete Linear task PROJ-123 with acceptance criteria from Linear
 ```
 
 Droid automatically:
+
 - Fetches task description and acceptance criteria
 - Reads linked issues and dependencies
 - Uses project context and labels
 - References team conventions and standards
 
 **Status Updates:**
+
 - Update task status after completion
 - Add implementation notes and artifacts
 - Link to specifications and code changes
@@ -100,6 +115,7 @@ Droid automatically:
 ### Jira
 
 **Ticket Integration:**
+
 - Reference Jira tickets in prompts
 - Fetch requirements and acceptance criteria
 - Use ticket context for implementation
@@ -110,11 +126,13 @@ Droid automatically:
 ### Confluence
 
 **Document References:**
+
 ```
 Follow the architecture documented in [Confluence page URL]
 ```
 
 Droid automatically:
+
 - Fetches Confluence page content
 - Uses diagrams and specifications
 - References related documentation
@@ -125,12 +143,14 @@ Droid automatically:
 ### Slack
 
 **Notifications:**
+
 - Post-run hooks can notify Slack channels
 - Share execution summaries and results
 - Alert teams to completed work
 
 **Workflow:**
 Configure in `hooks/post-run.yaml`:
+
 ```yaml
 - notify:
     channel: slack
@@ -144,21 +164,25 @@ Configure in `hooks/post-run.yaml`:
 Factory supports MCP servers for extended capabilities:
 
 **Repository MCP:**
+
 - Enhanced code search and analysis
 - Knowledge graph integration
 - Cross-repository context
 
 **Artifact Publisher MCP:**
+
 - Automated artifact publishing
 - Claude Project integration
 - Context synchronization
 
 **GitHub MCP:**
+
 - Issue and PR integration
 - Repository analysis
 - Code review capabilities
 
 **Linear MCP:**
+
 - Task and project integration
 - Project context analysis
 - Status updates and tracking

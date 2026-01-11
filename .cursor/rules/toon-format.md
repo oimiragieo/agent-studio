@@ -64,17 +64,20 @@ This mixed structure should use JSON, not TOON.
 ### Format Examples
 
 **Object:**
+
 ```
 id: 1
 name: Ada
 ```
 
 **Primitive array (inline):**
+
 ```
 tags[2]: reading,gaming
 ```
 
 **Tabular array (uniform objects):**
+
 ```
 items[2]{sku,qty,price}:
   A1,2,9.99
@@ -82,6 +85,7 @@ items[2]{sku,qty,price}:
 ```
 
 **List format (non-uniform):**
+
 ```
 items[3]:
   - 1
@@ -100,7 +104,8 @@ When using Cursor's Composer:
 3. **Reference this rule** - Link to `.cursor/rules/toon-format.md` in prompts
 
 **Example Composer prompt:**
-```
+
+````
 Analyze this user data and identify admin users:
 
 ```toon
@@ -108,8 +113,9 @@ users[3]{id,name,role}:
   1,Alice,admin
   2,Bob,user
   3,Charlie,user
-```
-```
+````
+
+````
 
 ### For Plan Mode
 
@@ -134,7 +140,7 @@ When creating custom agents in `.cursor/subagents/*.mdc`:
 **Example agent instruction:**
 ```markdown
 When processing uniform tabular data, use TOON format instead of JSON for token efficiency. See `.cursor/rules/toon-format.md` for guidelines.
-```
+````
 
 ### For Output (Cursor Generating Code)
 
@@ -145,15 +151,17 @@ When requesting code that generates or consumes TOON:
 3. **Use in code examples** - Show TOON parsing/generation in code
 
 **Example request:**
-```
+
+````
 Generate a function that outputs user data in TOON format:
 
 ```toon
 users[N]{id,name,role}:
   [rows here]
-```
+````
 
 Rules: 2-space indent, [N] matches row count.
+
 ```
 
 ## Integration with Cursor Features
@@ -180,9 +188,11 @@ Rules: 2-space indent, [N] matches row count.
 For large uniform tables, consider tab delimiters:
 
 ```
+
 items[2|]{sku|name|qty}:
-  A1|Widget|2
-  B2|Gadget|1
+A1|Widget|2
+B2|Gadget|1
+
 ```
 
 Tabs (`\t`) can provide additional token savings but may have display issues in some editors.
@@ -192,8 +202,10 @@ Tabs (`\t`) can provide additional token savings but may have display issues in 
 Optional hash prefix for clarity:
 
 ```
+
 tags[#3]: reading,gaming,coding
 items[#2]{sku,qty}: A1,2 B2,1
+
 ```
 
 ## Decision Tree
@@ -220,3 +232,4 @@ items[#2]{sku,qty}: A1,2 B2,1
 - **Link to spec** - Reference TOON spec for edge cases and full syntax
 - **Token counts vary** - Benchmarks use GPT-style tokenizers; actual savings may differ
 - **Not a drop-in replacement** - TOON is for LLM prompts, not general-purpose JSON replacement
+```

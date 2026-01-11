@@ -36,12 +36,14 @@ This makes it suitable for use in CI/CD pipelines.
 ### 1. Agent Consistency
 
 Validates that agents are consistently defined across:
+
 - `config.yaml` (agent_routing section)
 - `.claude/agents/*.md` (agent definition files)
 - `.claude/tools/agent-routing-matrix.json` (routing matrix)
 - `.claude/workflows/*.yaml` (workflow files)
 
 **Checks**:
+
 - All workflow agents exist in config.yaml
 - All routing matrix agents exist in config.yaml
 - All config agents have corresponding .md files
@@ -49,6 +51,7 @@ Validates that agents are consistently defined across:
 - No orphaned agents in config
 
 **Sample Output**:
+
 ```
 Agent Consistency: ✗ FAIL
 
@@ -75,10 +78,12 @@ Statistics:
 Validates that all skills referenced in documentation exist with proper SKILL.md files.
 
 **Checks**:
+
 - All skills referenced in CLAUDE.md exist as directories
 - All skill directories have SKILL.md documentation
 
 **Sample Output**:
+
 ```
 Skill Existence: ✓ PASS
 All checks passed
@@ -91,10 +96,12 @@ All checks passed
 Validates that all schemas referenced in workflows exist in `.claude/schemas/`.
 
 **Checks**:
+
 - All workflow validation schemas exist
 - Reports which workflows are affected by missing schemas
 
 **Sample Output**:
+
 ```
 Schema Existence: ✗ FAIL
 
@@ -120,11 +127,13 @@ Statistics:
 Validates workflow structure and completeness.
 
 **Checks**:
+
 - All workflows have planner at step 0
 - All steps have agents assigned
 - All steps with outputs have validation schemas (unless only reasoning outputs)
 
 **Sample Output**:
+
 ```
 Workflow Completeness: ✗ FAIL
 
@@ -144,11 +153,13 @@ Statistics:
 Validates that orchestrator agents only have delegation tools.
 
 **Checks**:
+
 - Orchestrators (orchestrator, master-orchestrator, model-orchestrator) only have allowed tools: Task, Read, Search, Grep, Glob
 - Orchestrators do NOT have: Edit, Write, Bash (implementation tools)
 - All orchestrators have tool restrictions defined
 
 **Sample Output**:
+
 ```
 Tool Permissions: ✗ FAIL
 
@@ -255,23 +266,28 @@ When using `--format json`, the output is structured for programmatic consumptio
 ### Agent Consistency Issues
 
 **Missing in config.yaml**:
+
 1. Add agent definition to `.claude/config.yaml` under `agent_routing`
 2. Define trigger words, model, complexity, etc.
 
 **Missing .md files**:
+
 1. Create agent definition file in `.claude/agents/<agent-name>.md`
 2. Use existing agent files as templates
 
 **Missing in routing matrix**:
+
 1. Add agent to `.claude/tools/agent-routing-matrix.json`
 2. Define primary, supporting, review, approval roles
 
 **Extra in config**:
+
 1. Either use the agent in workflows/matrix, or remove it from config.yaml
 
 ### Schema Issues
 
 **Missing schemas**:
+
 1. Create schema file in `.claude/schemas/<schema-name>.json`
 2. Use JSON Schema format to define structure
 3. Reference existing schemas as templates
@@ -279,16 +295,19 @@ When using `--format json`, the output is structured for programmatic consumptio
 ### Workflow Issues
 
 **Missing planner**:
+
 1. Add step 0 with agent: planner to workflow
 2. Follow pattern from `quick-flow.yaml` or `greenfield-fullstack.yaml`
 
 **Missing validation**:
+
 1. Add validation section to workflow step
 2. Reference appropriate schema file
 
 ### Tool Permission Issues
 
 **Orchestrator has implementation tools**:
+
 1. Remove Edit, Write, Bash from orchestrator's allowed_tools
 2. Add them to restricted_tools
 3. Ensure only Task, Read, Search, Grep, Glob are allowed
@@ -298,10 +317,12 @@ When using `--format json`, the output is structured for programmatic consumptio
 The validator is written in ES modules and requires Node.js 18+.
 
 **Dependencies**:
+
 - `js-yaml`: For parsing YAML files
 - Node.js built-in modules: fs, path, url
 
 **Testing locally**:
+
 ```bash
 # Test specific validation
 node .claude/tools/validate-configuration.mjs --check agents
@@ -324,6 +345,7 @@ The validator is organized into modular validation functions:
 5. **validateToolPermissions()**: Enforces orchestrator tool restrictions
 
 Each function returns a validation result object with:
+
 - `valid`: boolean
 - `category`: string
 - Issue arrays (e.g., `missingInConfig`, `violations`)
@@ -332,6 +354,7 @@ Each function returns a validation result object with:
 ## Future Enhancements
 
 Potential improvements:
+
 - Validate skill references in agent definitions
 - Check for circular dependencies in agent chains
 - Validate template variable usage in workflows

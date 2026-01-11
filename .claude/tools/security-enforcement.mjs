@@ -60,11 +60,13 @@ export async function checkSecurityTriggers(taskDescription) {
 
     if (categoryKeywords.length > 0) {
       triggeredCategories.add(categoryName);
-      matchedKeywords.push(...categoryKeywords.map(k => ({
-        keyword: k,
-        category: categoryName,
-        priority: categoryConfig.priority
-      })));
+      matchedKeywords.push(
+        ...categoryKeywords.map(k => ({
+          keyword: k,
+          category: categoryName,
+          priority: categoryConfig.priority,
+        }))
+      );
 
       // Track highest priority
       const categoryPriorityIndex = priorityLevels.indexOf(categoryConfig.priority);
@@ -114,7 +116,7 @@ export async function checkSecurityTriggers(taskDescription) {
     notifyAgents,
     maxResponseTimeHours,
     requiredAgents: Array.from(requiredAgents),
-    recommendedAgents: Array.from(recommendedAgents)
+    recommendedAgents: Array.from(recommendedAgents),
   };
 }
 
@@ -159,7 +161,7 @@ export async function getSecurityRequirements(taskDescription) {
   if (!check.triggered) {
     return {
       required: false,
-      recommendations: ['Follow standard security best practices']
+      recommendations: ['Follow standard security best practices'],
     };
   }
 
@@ -172,7 +174,7 @@ export async function getSecurityRequirements(taskDescription) {
     recommendedAgents: check.recommendedAgents,
     maxResponseTimeHours: check.maxResponseTimeHours,
     categories: check.categories,
-    recommendations: []
+    recommendations: [],
   };
 
   // Generate specific recommendations based on categories
@@ -180,9 +182,7 @@ export async function getSecurityRequirements(taskDescription) {
 
   for (const category of check.categories) {
     const categoryConfig = triggers.categories[category];
-    requirements.recommendations.push(
-      `${category}: ${categoryConfig.description}`
-    );
+    requirements.recommendations.push(`${category}: ${categoryConfig.description}`);
   }
 
   // Add escalation-specific recommendations
@@ -217,14 +217,14 @@ export async function validateSecurityApproval(workflowId, securityCheck) {
   if (!securityCheck.triggered) {
     return {
       approved: true,
-      reason: 'No security concerns detected'
+      reason: 'No security concerns detected',
     };
   }
 
   if (!securityCheck.blocking) {
     return {
       approved: true,
-      reason: 'Security review recommended but not blocking'
+      reason: 'Security review recommended but not blocking',
     };
   }
 
@@ -233,7 +233,7 @@ export async function validateSecurityApproval(workflowId, securityCheck) {
   if (hasApproval) {
     return {
       approved: true,
-      reason: 'Security architect approval found'
+      reason: 'Security architect approval found',
     };
   }
 
@@ -243,7 +243,7 @@ export async function validateSecurityApproval(workflowId, securityCheck) {
     requiredAgents: securityCheck.requiredAgents,
     priority: securityCheck.priority,
     maxResponseTime: `${securityCheck.maxResponseTimeHours} hours`,
-    categories: securityCheck.categories
+    categories: securityCheck.categories,
   };
 }
 
@@ -257,7 +257,7 @@ function parseArgs(args) {
     task: null,
     workflowId: null,
     help: false,
-    json: false
+    json: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -327,7 +327,7 @@ async function main() {
 
     const result = {
       check,
-      requirements
+      requirements,
     };
 
     // If workflow ID provided, check approval
@@ -375,5 +375,5 @@ export default {
   checkSecurityTriggers,
   hasSecurityArchitectApproval,
   getSecurityRequirements,
-  validateSecurityApproval
+  validateSecurityApproval,
 };

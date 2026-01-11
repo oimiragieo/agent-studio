@@ -24,7 +24,7 @@ export const HookTypes = {
   PostToolUse: 'PostToolUse',
   UserPromptSubmit: 'UserPromptSubmit',
   Notification: 'Notification',
-  Stop: 'Stop'
+  Stop: 'Stop',
 };
 
 /**
@@ -35,7 +35,7 @@ const HOOK_FILES = {
   [HookTypes.PostToolUse]: 'audit-post-tool.sh',
   [HookTypes.UserPromptSubmit]: 'user-prompt-submit.sh',
   [HookTypes.Notification]: 'notification.sh',
-  [HookTypes.Stop]: 'stop.sh'
+  [HookTypes.Stop]: 'stop.sh',
 };
 
 /**
@@ -43,13 +43,13 @@ const HOOK_FILES = {
  */
 export async function executeHook(hookType, input) {
   const hookFile = HOOK_FILES[hookType];
-  
+
   if (!hookFile) {
     throw new Error(`Unknown hook type: ${hookType}`);
   }
 
   const hookPath = join(HOOKS_DIR, hookFile);
-  
+
   if (!existsSync(hookPath)) {
     // Hook not found - allow by default for optional hooks
     if (hookType === HookTypes.Notification || hookType === HookTypes.Stop) {
@@ -63,7 +63,7 @@ export async function executeHook(hookType, input) {
     const { stdout, stderr } = await execFileAsync('bash', [hookPath], {
       input: inputJson,
       maxBuffer: 1024 * 1024,
-      timeout: 5000
+      timeout: 5000,
     });
 
     // Parse output
@@ -82,7 +82,7 @@ export async function executeHook(hookType, input) {
   } catch (error) {
     // Log error but don't fail - hooks are defensive
     await logHookError(hookType, input, error);
-    
+
     // For critical hooks, fail closed
     if (hookType === HookTypes.PreToolUse) {
       return { decision: 'block', reason: `Hook execution failed: ${error.message}` };
@@ -99,7 +99,7 @@ export async function executeHook(hookType, input) {
 async function logHookExecution(hookType, input, result) {
   const logDir = join(HOOKS_DIR, '../../context/history/hooks');
   const logFile = join(logDir, `${hookType.toLowerCase()}.log`);
-  
+
   // Create log directory if needed
   const { mkdir } = await import('fs/promises');
   await mkdir(logDir, { recursive: true });
@@ -108,7 +108,7 @@ async function logHookExecution(hookType, input, result) {
     timestamp: new Date().toISOString(),
     hook_type: hookType,
     input: sanitizeInput(input),
-    result: sanitizeResult(result)
+    result: sanitizeResult(result),
   };
 
   const { appendFile } = await import('fs/promises');
@@ -121,7 +121,7 @@ async function logHookExecution(hookType, input, result) {
 async function logHookError(hookType, input, error) {
   const logDir = join(HOOKS_DIR, '../../context/history/hooks');
   const errorLogFile = join(logDir, 'errors.log');
-  
+
   const { mkdir, appendFile } = await import('fs/promises');
   await mkdir(logDir, { recursive: true });
 
@@ -130,7 +130,7 @@ async function logHookError(hookType, input, error) {
     hook_type: hookType,
     input: sanitizeInput(input),
     error: error.message,
-    stack: error.stack
+    stack: error.stack,
   };
 
   await appendFile(errorLogFile, JSON.stringify(logEntry) + '\n', 'utf8');
@@ -141,7 +141,7 @@ async function logHookError(hookType, input, error) {
  */
 function sanitizeInput(input) {
   const sanitized = { ...input };
-  
+
   // Remove sensitive fields
   if (sanitized.tool_input) {
     if (sanitized.tool_input.command) {
@@ -149,7 +149,7 @@ function sanitizeInput(input) {
       sanitized.tool_input.command = sanitized.tool_input.command.substring(0, 200);
     }
   }
-  
+
   return sanitized;
 }
 
@@ -163,6 +163,5 @@ function sanitizeResult(result) {
 
 export default {
   HookTypes,
-  executeHook
+  executeHook,
 };
-

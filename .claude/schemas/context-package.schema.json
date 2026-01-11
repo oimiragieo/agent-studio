@@ -3,7 +3,14 @@
   "type": "object",
   "title": "Context Package",
   "description": "Schema for context package passed between agents during fallback routing",
-  "required": ["package_id", "timestamp", "original_task", "primary_agent", "fallback_agent", "artifacts_available"],
+  "required": [
+    "package_id",
+    "timestamp",
+    "original_task",
+    "primary_agent",
+    "fallback_agent",
+    "artifacts_available"
+  ],
   "properties": {
     "package_id": {
       "type": "string",

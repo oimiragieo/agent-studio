@@ -6,7 +6,7 @@ project_type: fullstack
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -41,12 +41,12 @@ fallback_agents:
 # See .claude/tools/workflow/parallel-executor.mjs for implementation
 parallel_execution:
   enabled: true
-  fail_fast: false  # Continue with other parallel steps even if one fails
-  timeout_per_step: 300000  # 5 minutes per step
+  fail_fast: false # Continue with other parallel steps even if one fails
+  timeout_per_step: 300000 # 5 minutes per step
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - user_requirements
@@ -66,7 +66,7 @@ steps:
       - Create structured improvement plan
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -92,7 +92,7 @@ steps:
       - Never execute an unrated plan - this is a hard requirement
 
   - step: 1
-    name: "Codebase Discovery & Impact Analysis"
+    name: 'Codebase Discovery & Impact Analysis'
     agent: analyst
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -111,7 +111,7 @@ steps:
       and documenting current architecture before proposing changes.
 
   - step: 2
-    name: "Enhancement Requirements"
+    name: 'Enhancement Requirements'
     agent: pm
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -129,7 +129,7 @@ steps:
       feature flags, and phased rollout considerations.
 
   - step: 3
-    name: "Architecture Evolution"
+    name: 'Architecture Evolution'
     agent: architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -148,7 +148,7 @@ steps:
       and compatibility shims where needed.
 
   - step: 4
-    name: "Database Migration Planning"
+    name: 'Database Migration Planning'
     agent: database-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -168,7 +168,7 @@ steps:
       and data backfill procedures for existing records.
 
   - step: 5
-    name: "Test Strategy & Regression Planning"
+    name: 'Test Strategy & Regression Planning'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -187,7 +187,7 @@ steps:
       Include integration tests for migration procedures.
 
   - step: 6
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -208,7 +208,7 @@ steps:
       that can be tested in staging before production.
 
   - step: 7
-    name: "Code Review"
+    name: 'Code Review'
     agent: code-reviewer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -221,7 +221,7 @@ steps:
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/07-code-reviewer.json
-    on_failure: "Return to implementation step with feedback"
+    on_failure: 'Return to implementation step with feedback'
     description: |
       Review brownfield enhancements for quality, security, and codebase impact:
       - Verify backward compatibility maintained
@@ -231,7 +231,7 @@ steps:
       - Ensure minimal disruption to existing functionality
 
   - step: 8
-    name: "Quality Validation"
+    name: 'Quality Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -248,7 +248,7 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/08-qa-final.json
 
   - step: 8.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"

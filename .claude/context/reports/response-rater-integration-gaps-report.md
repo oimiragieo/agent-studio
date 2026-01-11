@@ -77,6 +77,7 @@ The response-rater skill is **documented** in workflows but **not fully implemen
 **Location**: After `executeStep0()` completes (line ~417)
 
 **Changes**:
+
 ```javascript
 // After Step 0 completes
 const step0Result = await executeStep0(runId, selectedWorkflow);
@@ -92,8 +93,8 @@ try {
     await updateRun(runId, {
       current_step: 0,
       metadata: {
-        plan_rating_feedback: planRatingResult.feedback
-      }
+        plan_rating_feedback: planRatingResult.feedback,
+      },
     });
 
     // Re-execute Planner with feedback
@@ -111,7 +112,7 @@ try {
       routing: routingResult,
       step0Result,
       planRatingResult,
-      status: planRatingResult.status
+      status: planRatingResult.status,
     };
   }
 
@@ -122,8 +123,8 @@ try {
     status: 'failed',
     metadata: {
       error: error.message,
-      failed_at_step: 0.1
-    }
+      failed_at_step: 0.1,
+    },
   });
   throw error;
 }
@@ -132,9 +133,14 @@ try {
 ```
 
 **New Functions Needed**:
+
 ```javascript
-async function executePlanRatingStep(runId, workflowPath) { /* ... */ }
-async function executeStep0WithFeedback(runId, workflowPath, feedback) { /* ... */ }
+async function executePlanRatingStep(runId, workflowPath) {
+  /* ... */
+}
+async function executeStep0WithFeedback(runId, workflowPath, feedback) {
+  /* ... */
+}
 ```
 
 ### 2. Workflow Runner
@@ -144,16 +150,13 @@ async function executeStep0WithFeedback(runId, workflowPath, feedback) { /* ... 
 **Location**: In step execution logic (needs analysis - file too large to read)
 
 **Changes**:
+
 ```javascript
 // Add skill-based step detection
 if (stepConfig.skill) {
   console.log(`[Workflow Runner] Executing skill-based step: ${stepConfig.skill}`);
 
-  const skillResult = await executeSkillStep(
-    stepConfig.skill,
-    runId,
-    stepConfig
-  );
+  const skillResult = await executeSkillStep(stepConfig.skill, runId, stepConfig);
 
   // Validate skill output
   if (stepConfig.validation) {
@@ -164,7 +167,7 @@ if (stepConfig.skill) {
     status: 'completed',
     step: stepConfig.step,
     skill: stepConfig.skill,
-    result: skillResult
+    result: skillResult,
   };
 }
 
@@ -178,6 +181,7 @@ if (stepConfig.skill) {
 **Purpose**: Unified skill execution adapter
 
 **Implementation**:
+
 ```javascript
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -234,7 +238,7 @@ async function invokeSkillCLI(skillName, params) {
   try {
     const { stdout, stderr } = await execAsync(command, {
       timeout: (params.timeout || 180) * 1000 * (params.providers || ['claude', 'gemini']).length,
-      maxBuffer: 10 * 1024 * 1024
+      maxBuffer: 10 * 1024 * 1024,
     });
 
     // Parse result
@@ -246,7 +250,9 @@ async function invokeSkillCLI(skillName, params) {
     return result;
   } catch (error) {
     // Clean up temp file
-    try { await unlink(tempInputFile); } catch {}
+    try {
+      await unlink(tempInputFile);
+    } catch {}
     throw new Error(`Skill ${skillName} execution failed: ${error.message}`);
   }
 }
@@ -260,7 +266,7 @@ function buildSkillParams(skillName, stepConfig, inputContent) {
       content: inputContent,
       providers: stepConfig.validation?.providers || ['claude', 'gemini'],
       timeout: stepConfig.validation?.timeout || 180,
-      rubric: stepConfig.validation?.rubric_file
+      rubric: stepConfig.validation?.rubric_file,
     };
   }
 
@@ -294,7 +300,7 @@ async function saveOutputArtifacts(runId, outputs, result) {
     step: 0.1,
     agent: 'orchestrator',
     path: outputPath,
-    validationStatus: 'pending'
+    validationStatus: 'pending',
   });
 }
 
@@ -311,7 +317,7 @@ async function validateSkillOutput(result, validation) {
       message: `Plan rating failed: score ${overallScore} < minimum ${minimumScore}`,
       score: overallScore,
       minimumScore,
-      feedback: extractFeedback(result)
+      feedback: extractFeedback(result),
     });
   }
 }
@@ -322,34 +328,33 @@ async function validateSkillOutput(result, validation) {
 **File**: `.claude/tools/plan-rating-helpers.mjs` (NEW)
 
 **Implementation**:
+
 ```javascript
 /**
  * Calculate overall score from provider results
  */
 export function calculateOverallScore(ratingResult) {
-  const providers = Object.entries(ratingResult.providers || {})
-    .filter(([_, p]) => p.ok && p.parsed?.scores);
+  const providers = Object.entries(ratingResult.providers || {}).filter(
+    ([_, p]) => p.ok && p.parsed?.scores
+  );
 
   if (providers.length === 0) {
     throw new Error('No successful provider responses for plan rating');
   }
 
   // Calculate average score across all providers
-  const allScores = providers.flatMap(([_, p]) =>
-    Object.values(p.parsed.scores)
-  );
+  const allScores = providers.flatMap(([_, p]) => Object.values(p.parsed.scores));
 
-  return Math.round(
-    allScores.reduce((sum, score) => sum + score, 0) / allScores.length
-  );
+  return Math.round(allScores.reduce((sum, score) => sum + score, 0) / allScores.length);
 }
 
 /**
  * Extract actionable feedback from provider results
  */
 export function extractFeedback(ratingResult) {
-  const providers = Object.entries(ratingResult.providers || {})
-    .filter(([_, p]) => p.ok && p.parsed);
+  const providers = Object.entries(ratingResult.providers || {}).filter(
+    ([_, p]) => p.ok && p.parsed
+  );
 
   const feedbackItems = [];
 
@@ -358,9 +363,7 @@ export function extractFeedback(ratingResult) {
       feedbackItems.push(`[${providerName}] ${result.parsed.summary}`);
     }
     if (result.parsed.improvements) {
-      feedbackItems.push(...result.parsed.improvements.map(
-        item => `[${providerName}] ${item}`
-      ));
+      feedbackItems.push(...result.parsed.improvements.map(item => `[${providerName}] ${item}`));
     }
   }
 
@@ -373,6 +376,7 @@ export function extractFeedback(ratingResult) {
 **File**: `.claude/tools/errors.mjs` (NEW or add to existing)
 
 **Implementation**:
+
 ```javascript
 export class ValidationError extends Error {
   constructor({ message, score, minimumScore, feedback }) {
@@ -521,6 +525,7 @@ describe('Response-Rater Integration', () => {
 **Risk**: All providers fail, blocking workflow execution.
 
 **Mitigation**:
+
 - Require only 1+ successful provider (not all)
 - Provide clear auth setup instructions
 - Fall back to manual approval on total failure
@@ -530,6 +535,7 @@ describe('Response-Rater Integration', () => {
 **Risk**: Plan never passes rating, retries forever.
 
 **Mitigation**:
+
 - Hard limit of 3 retry attempts
 - Escalate to human after max retries
 - Provide detailed feedback for improvement
@@ -539,6 +545,7 @@ describe('Response-Rater Integration', () => {
 **Risk**: Plan rating adds 3-10 minutes to workflow.
 
 **Mitigation**:
+
 - Use only 2 providers by default (Claude, Gemini)
 - Run providers in parallel when possible
 - Consider async rating for non-critical workflows

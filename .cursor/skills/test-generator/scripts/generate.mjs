@@ -33,7 +33,7 @@ function parseArgs(args) {
     framework: null,
     output: null,
     coverage: 80,
-    help: false
+    help: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -148,7 +148,7 @@ async function analyzeSourceFile(sourcePath) {
     exports: [],
     imports: [],
     complexity_score: 0,
-    line_count: lines.length
+    line_count: lines.length,
   };
 
   // Extract imports
@@ -196,7 +196,7 @@ async function analyzeSourceFile(sourcePath) {
     const forCount = (content.match(/\bfor\s*\(/g) || []).length;
     const whileCount = (content.match(/\bwhile\s*\(/g) || []).length;
     const switchCount = (content.match(/\bswitch\s*\(/g) || []).length;
-    analysis.complexity_score = ifCount + forCount + whileCount + (switchCount * 2);
+    analysis.complexity_score = ifCount + forCount + whileCount + switchCount * 2;
   }
 
   // Extract functions (Python)
@@ -236,7 +236,7 @@ function generateTestContent(framework, sourcePath, analysis, options = {}) {
     vitest: generateVitestTest,
     cypress: generateCypressTest,
     playwright: generatePlaywrightTest,
-    pytest: generatePytestTest
+    pytest: generatePytestTest,
   };
 
   const generator = generators[framework];
@@ -286,7 +286,7 @@ function generateJestTest(componentName, sourcePath, analysis, options) {
       name: 'renders without crashing',
       type: 'unit',
       coverage_target: 'basic',
-      assertions: 1
+      assertions: 1,
     });
     content += `  it('renders without crashing', () => {\n`;
     content += `    render(<${mainExport} />)\n`;
@@ -298,7 +298,7 @@ function generateJestTest(componentName, sourcePath, analysis, options) {
       name: 'renders with props',
       type: 'unit',
       coverage_target: 'props',
-      assertions: 2
+      assertions: 2,
     });
     content += `  it('renders with props', () => {\n`;
     content += `    const props = { title: 'Test Title' }\n`;
@@ -311,7 +311,7 @@ function generateJestTest(componentName, sourcePath, analysis, options) {
       name: 'handles user interactions',
       type: 'integration',
       coverage_target: 'interactions',
-      assertions: 2
+      assertions: 2,
     });
     content += `  it('handles user interactions', async () => {\n`;
     content += `    render(<${mainExport} />)\n`;
@@ -327,7 +327,7 @@ function generateJestTest(componentName, sourcePath, analysis, options) {
       name: 'handles error state',
       type: 'unit',
       coverage_target: 'error_handling',
-      assertions: 1
+      assertions: 1,
     });
     content += `  it('handles error state', () => {\n`;
     content += `    render(<${mainExport} error="Something went wrong" />)\n`;
@@ -340,7 +340,7 @@ function generateJestTest(componentName, sourcePath, analysis, options) {
         name: `${funcName} - happy path`,
         type: 'unit',
         coverage_target: 'happy_path',
-        assertions: 1
+        assertions: 1,
       });
       content += `  it('${funcName} - happy path', () => {\n`;
       content += `    const result = ${funcName}(/* valid input */)\n`;
@@ -351,7 +351,7 @@ function generateJestTest(componentName, sourcePath, analysis, options) {
         name: `${funcName} - handles edge cases`,
         type: 'unit',
         coverage_target: 'edge_cases',
-        assertions: 2
+        assertions: 2,
       });
       content += `  it('${funcName} - handles edge cases', () => {\n`;
       content += `    expect(() => ${funcName}(null)).not.toThrow()\n`;
@@ -387,7 +387,7 @@ function generateCypressTest(componentName, sourcePath, analysis, options) {
     name: 'page loads successfully',
     type: 'e2e',
     coverage_target: 'page_load',
-    assertions: 1
+    assertions: 1,
   });
   content += `  it('page loads successfully', () => {\n`;
   content += `    cy.url().should('include', '/')\n`;
@@ -399,7 +399,7 @@ function generateCypressTest(componentName, sourcePath, analysis, options) {
     name: 'user can interact with UI',
     type: 'e2e',
     coverage_target: 'user_interaction',
-    assertions: 2
+    assertions: 2,
   });
   content += `  it('user can interact with UI', () => {\n`;
   content += `    cy.get('[data-testid="button"]').click()\n`;
@@ -411,7 +411,7 @@ function generateCypressTest(componentName, sourcePath, analysis, options) {
     name: 'form submission works',
     type: 'e2e',
     coverage_target: 'form_submission',
-    assertions: 2
+    assertions: 2,
   });
   content += `  it('form submission works', () => {\n`;
   content += `    cy.get('[data-testid="input"]').type('test value')\n`;
@@ -437,7 +437,7 @@ function generatePlaywrightTest(componentName, sourcePath, analysis, options) {
     name: 'navigates to page',
     type: 'e2e',
     coverage_target: 'navigation',
-    assertions: 1
+    assertions: 1,
   });
   content += `  test('navigates to page', async ({ page }) => {\n`;
   content += `    await page.goto('/')\n`;
@@ -449,7 +449,7 @@ function generatePlaywrightTest(componentName, sourcePath, analysis, options) {
     name: 'handles user interaction',
     type: 'e2e',
     coverage_target: 'interaction',
-    assertions: 2
+    assertions: 2,
   });
   content += `  test('handles user interaction', async ({ page }) => {\n`;
   content += `    await page.goto('/')\n`;
@@ -462,7 +462,7 @@ function generatePlaywrightTest(componentName, sourcePath, analysis, options) {
     name: 'meets accessibility standards',
     type: 'e2e',
     coverage_target: 'accessibility',
-    assertions: 1
+    assertions: 1,
   });
   content += `  test('meets accessibility standards', async ({ page }) => {\n`;
   content += `    await page.goto('/')\n`;
@@ -480,7 +480,9 @@ function generatePlaywrightTest(componentName, sourcePath, analysis, options) {
  */
 function generatePytestTest(componentName, sourcePath, analysis, options) {
   const testCases = [];
-  const importPath = relative(dirname(sourcePath), sourcePath).replace(/\.py$/, '').replace(/\//g, '.');
+  const importPath = relative(dirname(sourcePath), sourcePath)
+    .replace(/\.py$/, '')
+    .replace(/\//g, '.');
 
   let content = `"""Tests for ${componentName}."""\n`;
   content += `import pytest\n`;
@@ -503,7 +505,7 @@ function generatePytestTest(componentName, sourcePath, analysis, options) {
       name: `test_${funcName}_happy_path`,
       type: 'unit',
       coverage_target: 'happy_path',
-      assertions: 1
+      assertions: 1,
     });
     content += `def test_${funcName}_happy_path(sample_data):\n`;
     content += `    """Test ${funcName} with valid input."""\n`;
@@ -514,7 +516,7 @@ function generatePytestTest(componentName, sourcePath, analysis, options) {
       name: `test_${funcName}_edge_cases`,
       type: 'unit',
       coverage_target: 'edge_cases',
-      assertions: 2
+      assertions: 2,
     });
     content += `def test_${funcName}_edge_cases():\n`;
     content += `    """Test ${funcName} with edge cases."""\n`;
@@ -529,7 +531,7 @@ function generatePytestTest(componentName, sourcePath, analysis, options) {
       name: `test_${className}_initialization`,
       type: 'unit',
       coverage_target: 'initialization',
-      assertions: 1
+      assertions: 1,
     });
     content += `def test_${className}_initialization():\n`;
     content += `    """Test ${className} initialization."""\n`;
@@ -558,7 +560,7 @@ function determineOutputPath(sourcePath, framework, userOutput) {
     vitest: '.test.ts',
     cypress: '.cy.ts',
     playwright: '.spec.ts',
-    pytest: '_test.py'
+    pytest: '_test.py',
   };
 
   const testExt = testExtensions[framework] || '.test.ts';
@@ -580,13 +582,14 @@ function determineOutputPath(sourcePath, framework, userOutput) {
  * Calculate coverage estimates
  */
 function calculateCoverage(analysis, testCases) {
-  const totalElements = analysis.functions.length + analysis.classes.length + analysis.methods.length;
+  const totalElements =
+    analysis.functions.length + analysis.classes.length + analysis.methods.length;
   const testedElements = testCases.length;
 
   if (totalElements === 0) {
     return {
       estimated_line_coverage: 100,
-      estimated_branch_coverage: 100
+      estimated_branch_coverage: 100,
     };
   }
 
@@ -597,7 +600,7 @@ function calculateCoverage(analysis, testCases) {
 
   return {
     estimated_line_coverage: `${lineCoverage}%`,
-    estimated_branch_coverage: `${branchCoverage}%`
+    estimated_branch_coverage: `${branchCoverage}%`,
   };
 }
 
@@ -703,8 +706,8 @@ async function main() {
           test_type: ['cypress', 'playwright'].includes(args.framework) ? 'e2e' : 'unit',
           test_cases_count: testCases.length,
           lines_of_code: testContent.split('\n').length,
-          source_file: sourcePath
-        }
+          source_file: sourcePath,
+        },
       ],
       test_cases_count: testCases.length,
       coverage_target: `${args.coverage}%`,
@@ -713,21 +716,21 @@ async function main() {
         unit_tests: testCases.filter(t => t.type === 'unit').length,
         integration_tests: testCases.filter(t => t.type === 'integration').length,
         e2e_tests: testCases.filter(t => t.type === 'e2e').length,
-        component_tests: testCases.filter(t => t.type === 'component').length
+        component_tests: testCases.filter(t => t.type === 'component').length,
       },
       assertions_generated: testCases.reduce((sum, tc) => sum + tc.assertions, 0),
       mocking_used: testContent.includes('vi.') || testContent.includes('mock'),
       test_patterns_applied: [
         'Arrange-Act-Assert',
-        testCases.some(t => t.type === 'e2e') ? 'Page Object Model' : null
+        testCases.some(t => t.type === 'e2e') ? 'Page Object Model' : null,
       ].filter(Boolean),
       dependencies_detected: analysis.imports,
       edge_cases_covered: [
         'null/undefined inputs',
         'empty values',
-        testCases.some(t => t.coverage_target === 'error_handling') ? 'error conditions' : null
+        testCases.some(t => t.coverage_target === 'error_handling') ? 'error conditions' : null,
       ].filter(Boolean),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Add coverage if available
@@ -751,7 +754,6 @@ async function main() {
 
     const duration = Date.now() - startTime;
     console.log(`Duration: ${duration}ms`);
-
   } catch (error) {
     console.error('\n❌ Test generation failed:', error.message);
     console.error(error.stack);
@@ -767,4 +769,10 @@ if (import.meta.url.startsWith('file:')) {
   }
 }
 
-export { generateJestTest, generateVitestTest, generateCypressTest, generatePlaywrightTest, generatePytestTest };
+export {
+  generateJestTest,
+  generateVitestTest,
+  generateCypressTest,
+  generatePlaywrightTest,
+  generatePytestTest,
+};

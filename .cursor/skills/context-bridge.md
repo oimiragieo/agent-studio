@@ -27,13 +27,13 @@ Use @context-bridge to update Linear
 
 ## Sync Targets
 
-| Target | Location | Format |
-|--------|----------|--------|
-| Claude | `.claude/context/` | JSON artifacts |
-| Cursor | `.cursor/context/` | Plan files |
-| Factory | `.factory/context/` | Spec files |
-| Linear | API | Issue updates |
-| GitHub | API | PR/Issue comments |
+| Target  | Location            | Format            |
+| ------- | ------------------- | ----------------- |
+| Claude  | `.claude/context/`  | JSON artifacts    |
+| Cursor  | `.cursor/context/`  | Plan files        |
+| Factory | `.factory/context/` | Spec files        |
+| Linear  | API                 | Issue updates     |
+| GitHub  | API                 | PR/Issue comments |
 
 ## State Captured
 
@@ -56,11 +56,13 @@ Use @context-bridge to update Linear
 ## Cross-Platform Handoff
 
 **Cursor to Claude:**
+
 ```
 Use @context-bridge to hand off to Claude for architecture review
 ```
 
 **Claude to Factory:**
+
 ```
 Use @context-bridge to sync implementation to Factory for deployment
 ```

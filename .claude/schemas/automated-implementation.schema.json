@@ -5,11 +5,17 @@
   "description": "Schema for automated implementation results from automated-enterprise-flow",
   "required": ["results_id", "results_date", "status", "tasks_completed", "artifacts_generated"],
   "properties": {
-    "results_id": { "type": "string", "description": "Unique identifier for implementation results" },
+    "results_id": {
+      "type": "string",
+      "description": "Unique identifier for implementation results"
+    },
     "results_date": { "type": "string", "format": "date-time" },
     "executor": { "type": "string" },
     "status": { "type": "string", "enum": ["completed", "partial", "failed", "blocked"] },
-    "plan_reference": { "type": "string", "description": "Reference to the plan being implemented" },
+    "plan_reference": {
+      "type": "string",
+      "description": "Reference to the plan being implemented"
+    },
     "tasks_completed": {
       "type": "array",
       "items": {
@@ -34,7 +40,10 @@
         "type": "object",
         "properties": {
           "artifact_path": { "type": "string" },
-          "artifact_type": { "type": "string", "enum": ["code", "config", "documentation", "test", "schema", "other"] },
+          "artifact_type": {
+            "type": "string",
+            "enum": ["code", "config", "documentation", "test", "schema", "other"]
+          },
           "generated_by": { "type": "string" },
           "timestamp": { "type": "string", "format": "date-time" }
         }

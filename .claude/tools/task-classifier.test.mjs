@@ -17,7 +17,7 @@ import {
   classifyTask,
   classifyTasks,
   getComplexityLevel,
-  getAllComplexityLevels
+  getAllComplexityLevels,
 } from './task-classifier.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -196,44 +196,31 @@ describe('classifyTask - Complexity Levels', () => {
 
 describe('classifyTask - Edge Cases', () => {
   test('empty task description throws error', async () => {
-    await assert.rejects(
-      async () => await classifyTask(''),
-      {
-        name: 'Error',
-        message: 'Task description is required and must be a string'
-      }
-    );
+    await assert.rejects(async () => await classifyTask(''), {
+      name: 'Error',
+      message: 'Task description is required and must be a string',
+    });
   });
 
   test('null task description throws error', async () => {
-    await assert.rejects(
-      async () => await classifyTask(null),
-      {
-        name: 'Error',
-        message: 'Task description is required and must be a string'
-      }
-    );
-
+    await assert.rejects(async () => await classifyTask(null), {
+      name: 'Error',
+      message: 'Task description is required and must be a string',
+    });
   });
 
   test('undefined task description throws error', async () => {
-    await assert.rejects(
-      async () => await classifyTask(undefined),
-      {
-        name: 'Error',
-        message: 'Task description is required and must be a string'
-      }
-    );
+    await assert.rejects(async () => await classifyTask(undefined), {
+      name: 'Error',
+      message: 'Task description is required and must be a string',
+    });
   });
 
   test('non-string task description throws error', async () => {
-    await assert.rejects(
-      async () => await classifyTask(123),
-      {
-        name: 'Error',
-        message: 'Task description is required and must be a string'
-      }
-    );
+    await assert.rejects(async () => await classifyTask(123), {
+      name: 'Error',
+      message: 'Task description is required and must be a string',
+    });
   });
 
   test('very long task description handled', async () => {
@@ -260,7 +247,9 @@ describe('classifyTask - Edge Cases', () => {
   });
 
   test('task with line breaks', async () => {
-    const result = await classifyTask('Fix bug in login\nAlso update password validation\nAnd add tests');
+    const result = await classifyTask(
+      'Fix bug in login\nAlso update password validation\nAnd add tests'
+    );
 
     assert.ok(result.complexity);
     assert.ok(result.gates);
@@ -277,7 +266,7 @@ describe('classifyTask - Edge Cases', () => {
     // This test verifies the fallback works when glob is not available
     // The module already has a fallback, so this should work
     const result = await classifyTask('Fix bug in login', {
-      files: 'src/auth/login.ts'
+      files: 'src/auth/login.ts',
     });
 
     assert.ok(result.complexity);
@@ -292,7 +281,7 @@ describe('classifyTask - Edge Cases', () => {
 describe('classifyTask - File Patterns', () => {
   test('single file pattern - trivial task', async () => {
     const result = await classifyTask('Fix typo in README', {
-      files: 'README.md'
+      files: 'README.md',
     });
 
     assert.strictEqual(result.complexity, 'trivial');
@@ -302,7 +291,7 @@ describe('classifyTask - File Patterns', () => {
 
   test('single file pattern - simple task', async () => {
     const result = await classifyTask('Fix bug in login form', {
-      files: 'src/components/LoginForm.tsx'
+      files: 'src/components/LoginForm.tsx',
     });
 
     // When file doesn't exist, complexity is based purely on keywords
@@ -313,7 +302,7 @@ describe('classifyTask - File Patterns', () => {
 
   test('multiple files (2-5) - moderate complexity', async () => {
     const result = await classifyTask('Update authentication flow', {
-      files: ['src/auth/login.ts', 'src/auth/signup.ts', 'src/auth/utils.ts']
+      files: ['src/auth/login.ts', 'src/auth/signup.ts', 'src/auth/utils.ts'],
     });
 
     // Should be at least moderate
@@ -330,8 +319,8 @@ describe('classifyTask - File Patterns', () => {
         'src/auth/logout.ts',
         'src/auth/reset.ts',
         'src/auth/verify.ts',
-        'src/auth/utils.ts'
-      ]
+        'src/auth/utils.ts',
+      ],
     });
 
     // Should be at least complex
@@ -342,7 +331,7 @@ describe('classifyTask - File Patterns', () => {
 
   test('wildcard pattern - estimated complexity', async () => {
     const result = await classifyTask('Update all components', {
-      files: 'src/components/*.tsx'
+      files: 'src/components/*.tsx',
     });
 
     // Wildcard patterns are estimated, should be moderate or higher
@@ -351,7 +340,7 @@ describe('classifyTask - File Patterns', () => {
 
   test('recursive wildcard pattern - cross-module', async () => {
     const result = await classifyTask('Refactor all API files', {
-      files: 'src/api/**/*.ts'
+      files: 'src/api/**/*.ts',
     });
 
     // Recursive patterns indicate cross-module, should be complex or critical
@@ -361,7 +350,7 @@ describe('classifyTask - File Patterns', () => {
 
   test('glob pattern with braces - multiple paths', async () => {
     const result = await classifyTask('Update imports', {
-      files: 'src/{components,pages,api}/**/*.ts'
+      files: 'src/{components,pages,api}/**/*.ts',
     });
 
     // Multiple paths indicate cross-module
@@ -374,8 +363,8 @@ describe('classifyTask - File Patterns', () => {
         'src/components/types.ts',
         'src/pages/types.ts',
         'src/api/types.ts',
-        'src/utils/types.ts'
-      ]
+        'src/utils/types.ts',
+      ],
     });
 
     // Multiple directories should trigger cross-module detection
@@ -386,7 +375,7 @@ describe('classifyTask - File Patterns', () => {
 
   test('file scope hint: single file', async () => {
     const result = await classifyTask('Fix bug in this single file', {
-      files: ['file1.ts', 'file2.ts'] // Multiple files provided
+      files: ['file1.ts', 'file2.ts'], // Multiple files provided
     });
 
     // File count (2) may override "single file" hint, resulting in moderate
@@ -410,7 +399,7 @@ describe('classifyTasks - Batch Processing', () => {
     const tasks = [
       { task: 'Fix typo in README' },
       { task: 'Add user authentication feature' },
-      { task: 'Database schema migration' }
+      { task: 'Database schema migration' },
     ];
 
     const results = await classifyTasks(tasks);
@@ -426,7 +415,7 @@ describe('classifyTasks - Batch Processing', () => {
       { task: 'Update documentation' },
       { task: 'Fix bug in form validation', files: 'src/form.ts' },
       { task: 'Refactor all API endpoints', files: 'src/api/**/*.ts' },
-      { task: 'Breaking change to authentication system' }
+      { task: 'Breaking change to authentication system' },
     ];
 
     const results = await classifyTasks(tasks);
@@ -447,7 +436,7 @@ describe('classifyTasks - Batch Processing', () => {
   test('preserves task information in results', async () => {
     const tasks = [
       { task: 'Task 1: Fix typo' },
-      { task: 'Task 2: Add feature', files: 'src/feature.ts' }
+      { task: 'Task 2: Add feature', files: 'src/feature.ts' },
     ];
 
     const results = await classifyTasks(tasks);
@@ -463,10 +452,7 @@ describe('classifyTasks - Batch Processing', () => {
   });
 
   test('passes options to individual classifications', async () => {
-    const tasks = [
-      { task: 'Fix bug in login' },
-      { task: 'Add new feature' }
-    ];
+    const tasks = [{ task: 'Fix bug in login' }, { task: 'Add new feature' }];
 
     const results = await classifyTasks(tasks, { verbose: true });
 
@@ -482,7 +468,7 @@ describe('classifyTasks - Batch Processing', () => {
 describe('classifyTask - Verbose Mode', () => {
   test('verbose mode includes detailed analysis', async () => {
     const result = await classifyTask('Add user authentication feature', {
-      verbose: true
+      verbose: true,
     });
 
     assert.ok(result.details);
@@ -497,7 +483,7 @@ describe('classifyTask - Verbose Mode', () => {
   test('verbose mode includes file patterns', async () => {
     const result = await classifyTask('Fix bug', {
       files: 'src/**/*.ts',
-      verbose: true
+      verbose: true,
     });
 
     assert.ok(result.details.filePatterns);
@@ -506,7 +492,7 @@ describe('classifyTask - Verbose Mode', () => {
 
   test('non-verbose mode excludes details', async () => {
     const result = await classifyTask('Fix typo in README', {
-      verbose: false
+      verbose: false,
     });
 
     assert.strictEqual(result.details, undefined);
@@ -578,7 +564,7 @@ describe('classifyTask - Reasoning', () => {
 
   test('reasoning includes file count when provided', async () => {
     const result = await classifyTask('Fix bug', {
-      files: ['file1.ts', 'file2.ts']
+      files: ['file1.ts', 'file2.ts'],
     });
 
     // File count may not appear if files don't exist
@@ -587,13 +573,10 @@ describe('classifyTask - Reasoning', () => {
 
   test('reasoning includes cross-module detection', async () => {
     const result = await classifyTask('Update all API endpoints', {
-      files: 'src/api/**/*.ts'
+      files: 'src/api/**/*.ts',
     });
 
-    assert.ok(
-      result.reasoning.includes('Cross-module') ||
-      result.reasoning.includes('file')
-    );
+    assert.ok(result.reasoning.includes('Cross-module') || result.reasoning.includes('file'));
   });
 
   test('reasoning has default when no indicators match', async () => {
@@ -657,7 +640,7 @@ describe('Gate Requirements', () => {
 describe('Real-World Scenarios', () => {
   test('scenario: hotfix for production bug', async () => {
     const result = await classifyTask('Hotfix for production login bug', {
-      files: 'src/auth/login.ts'
+      files: 'src/auth/login.ts',
     });
 
     // Should be simple (single file, fix)
@@ -671,8 +654,8 @@ describe('Real-World Scenarios', () => {
         'src/components/NotificationBell.tsx',
         'src/components/NotificationList.tsx',
         'src/hooks/useNotifications.ts',
-        'src/api/notifications.ts'
-      ]
+        'src/api/notifications.ts',
+      ],
     });
 
     // Should be at least moderate
@@ -682,7 +665,7 @@ describe('Real-World Scenarios', () => {
 
   test('scenario: refactoring for tech debt', async () => {
     const result = await classifyTask('Refactor legacy code to use modern React hooks', {
-      files: 'src/components/**/*.tsx'
+      files: 'src/components/**/*.tsx',
     });
 
     // Should be complex (cross-module, refactor)
@@ -740,9 +723,11 @@ describe('Performance', () => {
   });
 
   test('batch processing is efficient', async () => {
-    const tasks = Array(50).fill(null).map((_, i) => ({
-      task: `Task ${i}: Fix bug in component ${i}`
-    }));
+    const tasks = Array(50)
+      .fill(null)
+      .map((_, i) => ({
+        task: `Task ${i}: Fix bug in component ${i}`,
+      }));
 
     const start = Date.now();
     await classifyTasks(tasks);
@@ -753,4 +738,6 @@ describe('Performance', () => {
   });
 });
 
-console.log('\n✅ All tests defined. Run with: node --test .claude/tools/task-classifier.test.mjs\n');
+console.log(
+  '\n✅ All tests defined. Run with: node --test .claude/tools/task-classifier.test.mjs\n'
+);

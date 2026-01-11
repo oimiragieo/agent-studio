@@ -31,7 +31,7 @@ async function loadCache() {
       const cache = JSON.parse(cacheData);
       skillCache.clear();
       skillMetadataCache.clear();
-      
+
       for (const [key, value] of Object.entries(cache.skills || {})) {
         skillCache.set(key, value);
       }
@@ -53,7 +53,7 @@ async function saveCache() {
     const cacheData = {
       skills: Object.fromEntries(skillCache),
       metadata: Object.fromEntries(skillMetadataCache),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     await writeFile(CACHE_FILE, JSON.stringify(cacheData, null, 2), 'utf8');
   } catch (error) {
@@ -100,7 +100,7 @@ export async function loadSkillMetadata(skillName) {
         bestPractices: frontmatter.best_practices,
         errorHandling: frontmatter.error_handling,
         streaming: frontmatter.streaming,
-        templates: frontmatter.templates
+        templates: frontmatter.templates,
       };
 
       skillMetadataCache.set(skillName, metadata);
@@ -122,23 +122,22 @@ export async function loadSkillInstructions(skillName, useCache = true) {
   if (useCache && skillCache.has(skillName)) {
     return skillCache.get(skillName);
   }
-  
+
   const skillPath = join(__dirname, `../${skillName}/SKILL.md`);
-  
+
   try {
     const content = await readFile(skillPath, 'utf8');
     // Extract content after YAML frontmatter
     const frontmatterEnd = content.indexOf('---', 3);
-    const instructions = frontmatterEnd !== -1
-      ? content.substring(frontmatterEnd + 3).trim()
-      : content;
-    
+    const instructions =
+      frontmatterEnd !== -1 ? content.substring(frontmatterEnd + 3).trim() : content;
+
     // Cache the instructions
     if (useCache) {
       skillCache.set(skillName, instructions);
       await saveCache();
     }
-    
+
     return instructions;
   } catch (error) {
     throw new Error(`Failed to load skill instructions for ${skillName}: ${error.message}`);
@@ -151,7 +150,7 @@ export async function loadSkillInstructions(skillName, useCache = true) {
 export async function getAllSkillNames() {
   const skillsDir = join(__dirname, '../');
   const entries = await readdir(skillsDir, { withFileTypes: true });
-  
+
   return entries
     .filter(entry => entry.isDirectory() && entry.name !== 'sdk')
     .map(entry => entry.name);
@@ -163,27 +162,27 @@ export async function getAllSkillNames() {
 export async function autoSelectSkills(query, maxResults = 5) {
   const allSkills = await getAllSkillNames();
   const scores = [];
-  
+
   // Load metadata for all skills
   const skillMetadata = await Promise.all(
-    allSkills.map(async (skillName) => {
+    allSkills.map(async skillName => {
       const metadata = await loadSkillMetadata(skillName);
       return { name: skillName, metadata };
     })
   );
-  
+
   // Score skills based on query
   const queryLower = query.toLowerCase();
   const queryWords = queryLower.split(/\s+/);
-  
+
   for (const { name, metadata } of skillMetadata) {
     let score = 0;
-    
+
     // Check name match
     if (name.toLowerCase().includes(queryLower)) {
       score += 10;
     }
-    
+
     // Check description match
     const description = (metadata.description || '').toLowerCase();
     for (const word of queryWords) {
@@ -191,7 +190,7 @@ export async function autoSelectSkills(query, maxResults = 5) {
         score += 5;
       }
     }
-    
+
     // Check allowed-tools match
     const allowedTools = (metadata['allowed-tools'] || '').toLowerCase();
     for (const word of queryWords) {
@@ -199,10 +198,10 @@ export async function autoSelectSkills(query, maxResults = 5) {
         score += 3;
       }
     }
-    
+
     scores.push({ name, score, metadata });
   }
-  
+
   // Sort by score and return top results
   scores.sort((a, b) => b.score - a.score);
   return scores.slice(0, maxResults).map(s => s.name);
@@ -230,7 +229,7 @@ export function getCacheStats() {
   return {
     skillsCached: skillCache.size,
     metadataCached: skillMetadataCache.size,
-    cacheFile: CACHE_FILE
+    cacheFile: CACHE_FILE,
   };
 }
 
@@ -240,6 +239,5 @@ export default {
   getAllSkillNames,
   autoSelectSkills,
   clearCache,
-  getCacheStats
+  getCacheStats,
 };
-

@@ -9,11 +9,13 @@ Successfully implemented validation for the new `context:fork` and `model` field
 ### 1. Skill Manager Validator (`.claude/skills/skill-manager/scripts/validate.cjs`)
 
 **Line 22-40**: Updated `ALLOWED_FRONTMATTER_KEYS` to include:
+
 - `context:fork` - Phase 2.1.2: Allow skill forking (boolean)
 - `model` - Phase 2.1.2: Preferred model (haiku/sonnet/opus)
 - Additional common fields: `executable`, `test_suite`, `category`, `compatible_versions`, `min_required_version`
 
 **Line 92**: Fixed YAML key regex to support colons in key names:
+
 - Changed from: `/^([a-z-]+):\s*(.*)$/i`
 - Changed to: `/^([a-z_:-]+):\s*(.*)$/i`
 - This allows parsing of compound keys like `context:fork`
@@ -26,7 +28,9 @@ Successfully implemented validation for the new `context:fork` and `model` field
 // Validate context:fork field (Phase 2.1.2)
 if (parsed['context:fork'] !== undefined) {
   if (typeof parsed['context:fork'] !== 'boolean') {
-    errors.push(`Skill ${name}: context:fork must be boolean, got ${typeof parsed['context:fork']}`);
+    errors.push(
+      `Skill ${name}: context:fork must be boolean, got ${typeof parsed['context:fork']}`
+    );
   }
 }
 
@@ -34,7 +38,9 @@ if (parsed['context:fork'] !== undefined) {
 if (parsed.model !== undefined) {
   const validModels = ['haiku', 'sonnet', 'opus'];
   if (!validModels.includes(parsed.model)) {
-    errors.push(`Skill ${name}: model must be one of: ${validModels.join(', ')}, got '${parsed.model}'`);
+    errors.push(
+      `Skill ${name}: model must be one of: ${validModels.join(', ')}, got '${parsed.model}'`
+    );
   }
 }
 ```
@@ -42,7 +48,9 @@ if (parsed.model !== undefined) {
 ## Validation Results
 
 ### Skills with `context:fork: true` (22 skills)
+
 All skills with `context:fork` field now validate successfully:
+
 - ✓ api-contract-generator
 - ✓ chrome-devtools
 - ✓ cloud-run
@@ -52,7 +60,9 @@ All skills with `context:fork` field now validate successfully:
 - ✓ (and 16 more)
 
 ### Skills with `model` field (12 skills)
+
 All skills with `model` field now validate successfully:
+
 - ✓ api-contract-generator (sonnet)
 - ✓ code-style-validator
 - ✓ commit-validator
@@ -62,6 +72,7 @@ All skills with `model` field now validate successfully:
 - ✓ (and 6 more)
 
 ### Type Validation Tests
+
 - ✓ Valid models accepted: haiku, sonnet, opus
 - ✓ Invalid models rejected: invalid-model, gpt-4, etc.
 - ✓ Boolean validation for context:fork field
@@ -69,6 +80,7 @@ All skills with `model` field now validate successfully:
 ## Pre-Existing Issues
 
 The validation suite still reports errors for:
+
 - 53 skills missing `version` field
 - 3 skills missing `allowed-tools` field
 

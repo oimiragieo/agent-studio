@@ -16,53 +16,53 @@ This test suite validates **5 major components** of the Phase 2 skill automation
 
 ### 📦 Skill Injector Tests (4 tests)
 
-| Test | Purpose |
-|------|---------|
-| `skill-injector-load-matrix` | Load skill-integration-matrix.json successfully |
-| `skill-injector-get-skills` | Get required skills for each agent type |
-| `skill-injector-detect-triggers` | Detect triggered skills from task descriptions |
-| `skill-injector-generate-prompt` | Generate proper injection prompt |
+| Test                             | Purpose                                         |
+| -------------------------------- | ----------------------------------------------- |
+| `skill-injector-load-matrix`     | Load skill-integration-matrix.json successfully |
+| `skill-injector-get-skills`      | Get required skills for each agent type         |
+| `skill-injector-detect-triggers` | Detect triggered skills from task descriptions  |
+| `skill-injector-generate-prompt` | Generate proper injection prompt                |
 
 ### 🎯 Skill Context Optimizer Tests (5 tests)
 
-| Test | Purpose |
-|------|---------|
-| `optimizer-load-summaries` | Load skill-summaries.json |
-| `optimizer-minimal-level` | Optimize context at MINIMAL level (20-50 tokens/skill) |
+| Test                        | Purpose                                                    |
+| --------------------------- | ---------------------------------------------------------- |
+| `optimizer-load-summaries`  | Load skill-summaries.json                                  |
+| `optimizer-minimal-level`   | Optimize context at MINIMAL level (20-50 tokens/skill)     |
 | `optimizer-essential-level` | Optimize context at ESSENTIAL level (100-200 tokens/skill) |
-| `optimizer-standard-level` | Optimize context at STANDARD level (300-500 tokens/skill) |
-| `optimizer-full-level` | Optimize context at FULL level (800-1500 tokens/skill) |
+| `optimizer-standard-level`  | Optimize context at STANDARD level (300-500 tokens/skill)  |
+| `optimizer-full-level`      | Optimize context at FULL level (800-1500 tokens/skill)     |
 
 ### ⚙️ Executable Skill Tests (5 tests)
 
-| Test | Purpose |
-|------|---------|
-| `skill-scaffolder-exists` | Verify scaffolder executable exists and is importable |
-| `skill-rule-auditor-exists` | Verify rule-auditor executable exists |
-| `skill-repo-rag-exists` | Verify repo-rag executable exists |
-| `skill-test-generator-exists` | Verify test-generator executable exists |
-| `skill-diagram-generator-exists` | Verify diagram-generator executable exists |
+| Test                             | Purpose                                               |
+| -------------------------------- | ----------------------------------------------------- |
+| `skill-scaffolder-exists`        | Verify scaffolder executable exists and is importable |
+| `skill-rule-auditor-exists`      | Verify rule-auditor executable exists                 |
+| `skill-repo-rag-exists`          | Verify repo-rag executable exists                     |
+| `skill-test-generator-exists`    | Verify test-generator executable exists               |
+| `skill-diagram-generator-exists` | Verify diagram-generator executable exists            |
 
 ### 📋 Schema Validation Tests (2 tests)
 
-| Test | Purpose |
-|------|---------|
-| `schema-validation-scaffolder` | Validate scaffolder output against schema |
+| Test                             | Purpose                                     |
+| -------------------------------- | ------------------------------------------- |
+| `schema-validation-scaffolder`   | Validate scaffolder output against schema   |
 | `schema-validation-rule-auditor` | Validate rule-auditor output against schema |
 
 ### 🪝 Hook Integration Tests (2 tests)
 
-| Test | Purpose |
-|------|---------|
-| `hook-file-exists` | Verify hook file exists and is valid JavaScript |
+| Test                    | Purpose                                              |
+| ----------------------- | ---------------------------------------------------- |
+| `hook-file-exists`      | Verify hook file exists and is valid JavaScript      |
 | `hook-integration-flow` | Verify hook has correct structure (shebang, imports) |
 
 ### 🔄 End-to-End Integration Tests (2 tests)
 
-| Test | Purpose |
-|------|---------|
+| Test                           | Purpose                                      |
+| ------------------------------ | -------------------------------------------- |
 | `e2e-injection-with-optimizer` | Test full pipeline: injection → optimization |
-| `e2e-missing-skill-handling` | Test graceful handling of missing skills |
+| `e2e-missing-skill-handling`   | Test graceful handling of missing skills     |
 
 **Total: 20 tests**
 
@@ -148,10 +148,10 @@ Total Tests:  20
 
 ## Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| `0` | All tests passed |
-| `1` | One or more tests failed |
+| Code | Meaning                  |
+| ---- | ------------------------ |
+| `0`  | All tests passed         |
+| `1`  | One or more tests failed |
 
 ## JSON Output Format
 
@@ -183,6 +183,7 @@ Total Tests:  20
 Before running tests:
 
 1. **Generate Skill Summaries** (required for optimizer tests):
+
    ```bash
    node .claude/tools/skill-context-optimizer.mjs --generate-summaries
    ```
@@ -205,6 +206,7 @@ Before running tests:
 ### Error: "skill-summaries.json not found"
 
 **Solution**: Generate summaries first:
+
 ```bash
 node .claude/tools/skill-context-optimizer.mjs --generate-summaries
 ```
@@ -212,6 +214,7 @@ node .claude/tools/skill-context-optimizer.mjs --generate-summaries
 ### Error: "Failed to import scaffolder"
 
 **Solution**: Verify skill executable exists and has correct syntax:
+
 ```bash
 node .claude/skills/scaffolder/scripts/scaffold.mjs --help
 ```

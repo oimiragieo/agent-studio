@@ -3,13 +3,7 @@
   "trigger": "beforeRun",
   "conditions": {
     "tools": ["terminal"],
-    "commandPatterns": [
-      "rm -rf",
-      "sudo rm",
-      "format",
-      "dd",
-      "mkfs"
-    ]
+    "commandPatterns": ["rm -rf", "sudo rm", "format", "dd", "mkfs"]
   },
   "actions": [
     {
@@ -23,4 +17,3 @@
     }
   ]
 }
-

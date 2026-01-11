@@ -3,7 +3,14 @@
   "type": "object",
   "title": "Run Record",
   "description": "Canonical run record - single source of truth for workflow execution state",
-  "required": ["run_id", "workflow_id", "selected_workflow", "current_step", "status", "created_at"],
+  "required": [
+    "run_id",
+    "workflow_id",
+    "selected_workflow",
+    "current_step",
+    "status",
+    "created_at"
+  ],
   "properties": {
     "run_id": {
       "type": "string",
@@ -26,7 +33,17 @@
     },
     "status": {
       "type": "string",
-      "enum": ["pending", "in_progress", "awaiting_approval", "handoff_pending", "handed_off", "paused", "completed", "failed", "cancelled"],
+      "enum": [
+        "pending",
+        "in_progress",
+        "awaiting_approval",
+        "handoff_pending",
+        "handed_off",
+        "paused",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
       "description": "Current status of the run"
     },
     "created_at": {
@@ -129,4 +146,3 @@
     }
   }
 }
-

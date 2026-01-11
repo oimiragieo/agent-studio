@@ -5,6 +5,7 @@ Adapted from BMAD-Spec Orchestrator coordination patterns for Cursor's multi-age
 ## Multi-Agent Workflows in Cursor
 
 Cursor 2.0 supports multiple agents working together through:
+
 - Plan Mode artifacts (shared context)
 - Cloud Agents (asynchronous execution)
 - Handoff protocols (context transfer)
@@ -12,22 +13,27 @@ Cursor 2.0 supports multiple agents working together through:
 ## Coordination Patterns
 
 ### 1. Sequential Agent Flow
+
 ```
 Analyst → PM → Architect → Developer → QA
 ```
+
 - Each agent builds on previous output
 - Use Plan Mode to document handoffs
 - Store artifacts for context sharing
 
 ### 2. Parallel Agent Execution
+
 - Use Cloud Agents for independent tasks
 - Sync results via Plan Mode artifacts
 - Merge outputs in final integration step
 
 ### 3. Validation Workflow
+
 ```
 Primary Agent → Validator Agent → Final Agent
 ```
+
 - QA validates Developer output
 - Architect validates PM requirements
 - Cross-agent quality checks
@@ -45,6 +51,7 @@ When transferring work between agents:
 ## Conflict Resolution
 
 ### When Agents Disagree
+
 1. Document both perspectives
 2. Reference project constitution or standards
 3. Escalate to user if technical conflict
@@ -52,6 +59,7 @@ When transferring work between agents:
 5. Use PM for product/requirement decisions
 
 ### Quality Gate Decisions
+
 - QA agent has final authority on quality gates
 - Architect has final authority on technical decisions
 - PM has final authority on product decisions
@@ -68,17 +76,19 @@ When transferring work between agents:
 ## Integration with Cursor Features
 
 ### Plan Mode
+
 - Store workflow plans in `.cursor/plans/`
 - Reference plans in agent prompts
 - Update plans as work progresses
 
 ### Cloud Agents
+
 - Offload long-running tasks to Cloud Agents
 - Monitor progress via integrations (Slack, Linear, GitHub)
 - Sync results back to local Cursor session
 
 ### Composer
+
 - Use Composer for iterative, multi-step edits
 - Escalate complex reasoning to Claude agents
 - Combine Composer speed with Claude depth
-

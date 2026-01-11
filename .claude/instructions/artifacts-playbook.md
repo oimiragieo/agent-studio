@@ -10,17 +10,19 @@ Artifacts Playbook - Standardizes how we create, review, and publish artifacts a
 - Data analysis notebooks requiring iteration.
 
 ## Workflow
+
 1. Generate a Plan Mode summary (Cursor) or Claude plan artifact.
 2. Produce implementation output inside the Artifact window; keep chat responses concise.
 3. Tag the artifact with feature ID and owner.
 4. Publish via `artifact-publisher` skill; share to Cursor Cloud Agents for continued execution [5].
 
 ## Review Checklist
+
 - ✅ Linked to Jira/Linear ticket.
 - ✅ Includes test coverage notes.
 - ✅ Contains rollback strategy when relevant.
-</protocol_steps>
-</instructions>
+  </protocol_steps>
+  </instructions>
 
 <examples>
 <usage_example>

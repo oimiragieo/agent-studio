@@ -7,24 +7,28 @@ This guide documents cross-platform utilities and best practices for ensuring co
 ## Utilities Created
 
 ### 1. cross-platform-cli.mjs - CLI Command Wrapper
+
 - Automatic .cmd extension on Windows for npm scripts
 - Promise-based command execution
 - Command availability detection
 - Platform-aware shell mode
 
 ### 2. line-endings.mjs - Line Ending Normalization
+
 - Normalize to LF/CRLF/System
 - Automatic conversion on read/write
 - Line ending detection
 - Format conversion utilities
 
 ### 3. file-permissions.mjs - Permission Handling
+
 - Make files executable (Unix)
 - Set Unix permissions with no-op on Windows
 - Extension-based executable detection (Windows)
 - Permission string formatting
 
 ### 4. test-cross-platform.mjs - Test Suite
+
 - 14 comprehensive tests
 - Platform-aware test skipping
 - CLI, line endings, permissions, and path tests
@@ -62,6 +66,7 @@ makeExecutable('./script.sh'); // Unix: chmod 755, Windows: no-op
 ## Testing
 
 Run the test suite:
+
 ```bash
 node .claude/tools/test-cross-platform.mjs
 ```

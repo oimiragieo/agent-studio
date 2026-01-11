@@ -1,6 +1,7 @@
 # Xian Smart Contracts
 
 ## Introduction
+
 Xian is a modern blockchain platform that enables developers to write smart contracts in native Python. Unlike other blockchain platforms that require specialized languages or transpilation, Xian supports direct Python coding, making it accessible to the millions of Python developers worldwide.
 
 ## What Xian Can Be Used For
@@ -24,13 +25,12 @@ Xian is a modern blockchain platform that enables developers to write smart cont
 
 To start developing on Xian:
 
-1. Set up a development environment with Python 3.12+ (3.13+ preferred if Xian supports it)
-2. 
-   1. Clone [xian-contracting](https://github.com/xian-network/xian-contracting)
-   2. Install Xian Contracting `cd xian-contracting && pip install -e ./`
-3. Create your first smart contract using the provided [templates](https://github.com/xian-network/xian-contracts)
-4. Test your contract using the testing framework
-5. Deploy to the Xian network
+1.  Set up a development environment with Python 3.12+ (3.13+ preferred if Xian supports it)
+2.  1.  Clone [xian-contracting](https://github.com/xian-network/xian-contracting)
+    2.  Install Xian Contracting `cd xian-contracting && pip install -e ./`
+3.  Create your first smart contract using the provided [templates](https://github.com/xian-network/xian-contracts)
+4.  Test your contract using the testing framework
+5.  Deploy to the Xian network
 
 ## Learn More
 

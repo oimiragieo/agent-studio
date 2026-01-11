@@ -9,7 +9,10 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import assert from 'node:assert';
 import { getMemoryUsage, canSpawnSubagent } from './memory-monitor.mjs';
-import { setupMemoryPressureHandling, getCurrentPressureLevel } from './memory-pressure-handler.mjs';
+import {
+  setupMemoryPressureHandling,
+  getCurrentPressureLevel,
+} from './memory-pressure-handler.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,36 +22,37 @@ const __dirname = path.dirname(__filename);
  */
 async function testLongRunningCUJ() {
   console.log('\n[Test 1] Long-running CUJ with memory monitoring...');
-  
+
   const initialMemory = getMemoryUsage();
   console.log(`Initial memory: ${initialMemory.heapUsedMB.toFixed(2)}MB`);
-  
+
   // Run a simple CUJ simulation
   return new Promise((resolve, reject) => {
-    const child = spawn('node', [
-      '--max-old-space-size=4096',
-      path.join(__dirname, 'run-cuj.mjs'),
-      '--simulate',
-      'CUJ-013'
-    ], {
-      stdio: 'pipe',
-      cwd: path.join(__dirname, '../..')
-    });
-    
+    const child = spawn(
+      'node',
+      ['--max-old-space-size=4096', path.join(__dirname, 'run-cuj.mjs'), '--simulate', 'CUJ-013'],
+      {
+        stdio: 'pipe',
+        cwd: path.join(__dirname, '../..'),
+      }
+    );
+
     let output = '';
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       output += data.toString();
     });
-    
-    child.stderr.on('data', (data) => {
+
+    child.stderr.on('data', data => {
       output += data.toString();
     });
-    
-    child.on('exit', (code) => {
+
+    child.on('exit', code => {
       const finalMemory = getMemoryUsage();
       console.log(`Final memory: ${finalMemory.heapUsedMB.toFixed(2)}MB`);
-      console.log(`Memory delta: ${(finalMemory.heapUsedMB - initialMemory.heapUsedMB).toFixed(2)}MB`);
-      
+      console.log(
+        `Memory delta: ${(finalMemory.heapUsedMB - initialMemory.heapUsedMB).toFixed(2)}MB`
+      );
+
       if (code === 0) {
         console.log('✅ Test 1 passed: CUJ executed without memory errors');
         resolve();
@@ -66,13 +70,15 @@ async function testLongRunningCUJ() {
  */
 async function testCacheEviction() {
   console.log('\n[Test 2] Cache eviction during workflow execution...');
-  
+
   // This test would require filling caches beyond limits
   // For now, we'll just verify cleanup works
   const { cleanupAllCaches } = await import('./memory-cleanup.mjs');
   const results = cleanupAllCaches();
-  
-  console.log(`Cleanup results: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`);
+
+  console.log(
+    `Cleanup results: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`
+  );
   console.log('✅ Test 2 passed: Cache cleanup works');
 }
 
@@ -81,33 +87,33 @@ async function testCacheEviction() {
  */
 async function testLargeArtifactHandling() {
   console.log('\n[Test 3] Large artifact handling...');
-  
+
   const { parseLargeJSON, shouldUseStreaming } = await import('./streaming-json-parser.mjs');
   const testDir = path.join(__dirname, '../context/test');
   const testFile = path.join(testDir, 'large-artifact.json');
-  
+
   // Create a 2MB JSON file
   const largeData = {
     items: Array.from({ length: 10000 }, (_, i) => ({
       id: i,
-      data: 'x'.repeat(200) // 200 chars per item = ~2MB total
-    }))
+      data: 'x'.repeat(200), // 200 chars per item = ~2MB total
+    })),
   };
-  
+
   const fs = await import('fs');
   if (!fs.existsSync(testDir)) {
     fs.mkdirSync(testDir, { recursive: true });
   }
   fs.writeFileSync(testFile, JSON.stringify(largeData));
-  
+
   // Test streaming detection
   const shouldStream = shouldUseStreaming(testFile, 1);
   assert.strictEqual(shouldStream, true, 'Should detect large file for streaming');
-  
+
   // Test parsing
   const parsed = await parseLargeJSON(testFile);
   assert.strictEqual(parsed.items.length, 10000, 'Should parse all items');
-  
+
   fs.unlinkSync(testFile);
   console.log('✅ Test 3 passed: Large artifact handling works');
 }
@@ -117,15 +123,15 @@ async function testLargeArtifactHandling() {
  */
 async function testCleanupDuringExecution() {
   console.log('\n[Test 4] Cleanup during execution...');
-  
+
   const { setupPeriodicCleanup } = await import('./memory-cleanup.mjs');
-  
+
   let cleanupCalled = false;
   const stopCleanup = setupPeriodicCleanup(100); // Every 100ms for testing
-  
+
   // Wait for cleanup to run
   await new Promise(resolve => setTimeout(resolve, 150));
-  
+
   stopCleanup();
   console.log('✅ Test 4 passed: Periodic cleanup works');
 }
@@ -136,7 +142,8 @@ async function testCleanupDuringExecution() {
 async function testCheckpointResume() {
   console.log('\n[Test 5] Checkpoint/resume with memory management...');
 
-  const { saveCheckpoint, loadCheckpoint, deleteCheckpoint } = await import('./workflow-checkpoint.mjs');
+  const { saveCheckpoint, loadCheckpoint, deleteCheckpoint } =
+    await import('./workflow-checkpoint.mjs');
 
   const workflowId = 'test-integration-123';
   const step = 3;
@@ -164,8 +171,12 @@ async function testMemoryPressureDetection() {
   assert.ok(pressure.usage >= 0 && pressure.usage <= 1);
   assert.ok(pressure.stats.heapUsedMB >= 0);
 
-  console.log(`  Current pressure: ${pressure.level} (${pressure.stats.heapUsagePercent.toFixed(1)}%)`);
-  console.log(`  Heap: ${pressure.stats.heapUsedMB.toFixed(2)}MB / ${pressure.stats.heapLimitMB.toFixed(2)}MB`);
+  console.log(
+    `  Current pressure: ${pressure.level} (${pressure.stats.heapUsagePercent.toFixed(1)}%)`
+  );
+  console.log(
+    `  Heap: ${pressure.stats.heapUsedMB.toFixed(2)}MB / ${pressure.stats.heapLimitMB.toFixed(2)}MB`
+  );
   console.log('✅ Test 6 passed: Memory pressure detection works');
 }
 
@@ -179,15 +190,18 @@ async function testPressureCallback() {
   let detectedLevel = null;
 
   // Use very low threshold to trigger immediately
-  const stopMonitoring = setupMemoryPressureHandling((level, usage, stats) => {
-    callbackCalled = true;
-    detectedLevel = level;
-    console.log(`  Callback triggered: ${level} at ${stats.heapUsagePercent.toFixed(1)}%`);
-  }, {
-    highThreshold: 0.01, // 1% - will trigger
-    criticalThreshold: 0.99,
-    checkIntervalMs: 50
-  });
+  const stopMonitoring = setupMemoryPressureHandling(
+    (level, usage, stats) => {
+      callbackCalled = true;
+      detectedLevel = level;
+      console.log(`  Callback triggered: ${level} at ${stats.heapUsagePercent.toFixed(1)}%`);
+    },
+    {
+      highThreshold: 0.01, // 1% - will trigger
+      criticalThreshold: 0.99,
+      checkIntervalMs: 50,
+    }
+  );
 
   // Wait for callback
   await new Promise(resolve => setTimeout(resolve, 100));
@@ -223,14 +237,14 @@ async function testSpawnLimiting() {
 async function testExitCode42() {
   console.log('\n[Test 9] Exit code 42 handling (P3)...');
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const testScript = 'process.exit(42);';
     const child = spawn('node', ['-e', testScript], {
       stdio: 'pipe',
-      shell: true
+      shell: true,
     });
 
-    child.on('exit', (code) => {
+    child.on('exit', code => {
       assert.strictEqual(code, 42, 'Should exit with code 42');
       console.log(`  Exit code: ${code} (expected: 42)`);
       console.log('✅ Test 9 passed: Exit code 42 works correctly');

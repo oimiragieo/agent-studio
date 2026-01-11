@@ -96,7 +96,7 @@ contract TokenContract {
     string public constant TOKEN_NAME = "MyToken";
     uint256 private _totalSupply;
     mapping(address => uint256) public balances;
-    
+
     function transfer(address to, uint256 amount) external returns (bool) {
         // Implementation
     }
@@ -175,11 +175,11 @@ import {MyContract} from "../src/MyContract.sol";
 
 contract MyContractTest is Test {
     MyContract public contract;
-    
+
     function setUp() public {
         contract = new MyContract();
     }
-    
+
     function testTransfer(uint256 amount) public {
         // Fuzz test
         vm.assume(amount > 0 && amount <= 1000);
@@ -275,21 +275,21 @@ def transfer(amount: int, to: str):
     """Transfer tokens to another address."""
     sender = ctx.caller
     balance = Variable.get(sender, 0)
-    
+
     assert balance >= amount, "Insufficient balance"
-    
+
     Variable.set(sender, balance - amount)
     Variable.set(to, Variable.get(to, 0) + amount)
-    
+
     ctx.emit('Transfer', sender=sender, to=to, amount=amount)
 ```
 
 ## Migration Notes
 
 This master file consolidates rules from:
+
 - `solidity-foundry-cursorrules-prompt-file`
 - `solidity-hardhat-cursorrules-prompt-file`
 - `xian-smart-contracts-cursor-rules-prompt-file`
 
 **Old rule files can be archived** - this master file is the single source of truth for Solidity smart contract development.
-

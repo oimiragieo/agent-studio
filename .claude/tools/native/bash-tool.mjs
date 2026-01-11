@@ -25,7 +25,7 @@ async function validateCommand(command) {
     const input = JSON.stringify({
       tool_name: 'Bash',
       tool_input: { command },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     const { execFile } = await import('child_process');
@@ -34,7 +34,7 @@ async function validateCommand(command) {
 
     const result = await execFileAsync('bash', [SECURITY_HOOK], {
       input,
-      maxBuffer: 1024 * 1024
+      maxBuffer: 1024 * 1024,
     });
 
     const decision = JSON.parse(result.stdout);
@@ -61,7 +61,7 @@ export async function* executeBashCommand(input, context = {}) {
     command,
     workingDirectory = process.cwd(),
     timeout = 30000,
-    captureOutput = true
+    captureOutput = true,
   } = input;
 
   // Yield start event
@@ -69,7 +69,7 @@ export async function* executeBashCommand(input, context = {}) {
     type: 'tool_call_start',
     tool_name: 'bash',
     tool_call_id: toolCallId,
-    input: { command, workingDirectory }
+    input: { command, workingDirectory },
   };
 
   try {
@@ -77,7 +77,7 @@ export async function* executeBashCommand(input, context = {}) {
     yield {
       type: 'tool_call_progress',
       tool_call_id: toolCallId,
-      progress: { stage: 'validating', message: 'Validating command through security hook...' }
+      progress: { stage: 'validating', message: 'Validating command through security hook...' },
     };
 
     // Validate command through security hook
@@ -86,7 +86,7 @@ export async function* executeBashCommand(input, context = {}) {
       yield {
         type: 'tool_call_error',
         tool_call_id: toolCallId,
-        error: { message: `Command blocked: ${validation.reason}`, code: 'BLOCKED' }
+        error: { message: `Command blocked: ${validation.reason}`, code: 'BLOCKED' },
       };
       return;
     }
@@ -95,7 +95,7 @@ export async function* executeBashCommand(input, context = {}) {
     yield {
       type: 'tool_call_progress',
       tool_call_id: toolCallId,
-      progress: { stage: 'executing', message: `Executing command: ${command}` }
+      progress: { stage: 'executing', message: `Executing command: ${command}` },
     };
 
     // Execute command with timeout
@@ -104,7 +104,7 @@ export async function* executeBashCommand(input, context = {}) {
       cwd: workingDirectory,
       timeout,
       maxBuffer: 10 * 1024 * 1024, // 10MB
-      env: { ...process.env, ...context.env }
+      env: { ...process.env, ...context.env },
     };
 
     const { stdout, stderr } = await execAsync(command, options);
@@ -121,8 +121,8 @@ export async function* executeBashCommand(input, context = {}) {
         exitCode: 0,
         command,
         workingDirectory,
-        executionTime
-      }
+        executionTime,
+      },
     };
   } catch (error) {
     // Yield error
@@ -133,7 +133,7 @@ export async function* executeBashCommand(input, context = {}) {
         message: error.message,
         code: error.code || 'EXECUTION_ERROR',
         stdout: error.stdout || '',
-        stderr: error.stderr || ''
+        stderr: error.stderr || '',
       },
       output: {
         success: false,
@@ -143,8 +143,8 @@ export async function* executeBashCommand(input, context = {}) {
         command,
         workingDirectory,
         error: error.message,
-        executionTime: Date.now()
-      }
+        executionTime: Date.now(),
+      },
     };
   }
 }
@@ -160,66 +160,65 @@ export const bashTool = {
     properties: {
       command: {
         type: 'string',
-        description: 'Bash command to execute'
+        description: 'Bash command to execute',
       },
       workingDirectory: {
         type: 'string',
         description: 'Working directory for command execution',
-        default: process.cwd()
+        default: process.cwd(),
       },
       timeout: {
         type: 'number',
         description: 'Timeout in milliseconds',
-        default: 30000
+        default: 30000,
       },
       captureOutput: {
         type: 'boolean',
         description: 'Whether to capture stdout/stderr',
-        default: true
-      }
+        default: true,
+      },
     },
-    required: ['command']
+    required: ['command'],
   },
   outputSchema: {
     type: 'object',
     properties: {
       success: {
         type: 'boolean',
-        description: 'Whether the command executed successfully'
+        description: 'Whether the command executed successfully',
       },
       stdout: {
         type: 'string',
-        description: 'Standard output from the command'
+        description: 'Standard output from the command',
       },
       stderr: {
         type: 'string',
-        description: 'Standard error from the command'
+        description: 'Standard error from the command',
       },
       exitCode: {
         type: 'number',
-        description: 'Exit code from the command'
+        description: 'Exit code from the command',
       },
       command: {
         type: 'string',
-        description: 'The command that was executed'
+        description: 'The command that was executed',
       },
       workingDirectory: {
         type: 'string',
-        description: 'Working directory where command was executed'
+        description: 'Working directory where command was executed',
       },
       executionTime: {
         type: 'number',
-        description: 'Execution time in milliseconds'
+        description: 'Execution time in milliseconds',
       },
       error: {
         type: 'string',
-        description: 'Error message if execution failed'
-      }
+        description: 'Error message if execution failed',
+      },
     },
-    required: ['success', 'exitCode', 'command']
+    required: ['success', 'exitCode', 'command'],
   },
-  execute: executeBashCommand
+  execute: executeBashCommand,
 };
 
 export default bashTool;
-

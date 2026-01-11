@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Orchestrator Entry - Unified entry point for all runtimes
- * 
+ *
  * Handles heavy orchestration: run creation, routing, step execution
  * Detects runtime (Claude Code, CLI, Cursor) and routes appropriately
- * 
+ *
  * Usage:
  *   node orchestrator-entry.mjs --prompt "<user request>" [--run-id <id>]
  *   node orchestrator-entry.mjs --queue (reads from prompt queue)
@@ -14,7 +14,13 @@ import { readFile, writeFile, mkdir, readdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
-import { createRun, readRun, updateRun, registerArtifact, getRunDirectoryStructure } from './run-manager.mjs';
+import {
+  createRun,
+  readRun,
+  updateRun,
+  registerArtifact,
+  getRunDirectoryStructure,
+} from './run-manager.mjs';
 import { routeWorkflow } from './workflow-router.mjs';
 import { updateRunSummary } from './dashboard-generator.mjs';
 import { detectAllSkills } from './skill-trigger-detector.mjs';
@@ -36,22 +42,22 @@ const RUNTIME_CAPABILITIES = {
     readContext: 'required',
     invokeSubagents: 'required',
     persistState: 'required',
-    clearContext: 'api_signal'
+    clearContext: 'api_signal',
   },
   cli_wrapper: {
     spawnWindow: 'required',
     readContext: 'optional',
     invokeSubagents: 'required',
     persistState: 'required',
-    clearContext: 'exit_code'
+    clearContext: 'exit_code',
   },
   cursor: {
     spawnWindow: 'required',
     readContext: 'optional',
     invokeSubagents: 'optional',
     persistState: 'required',
-    clearContext: 'not_supported'
-  }
+    clearContext: 'not_supported',
+  },
 };
 
 /**
@@ -62,12 +68,12 @@ function detectRuntime() {
   if (process.env.CLAUDE_CODE_SESSION_ID || process.env.CLAUDE_CODE) {
     return 'claude_code';
   }
-  
+
   // Check for Cursor environment
   if (process.env.CURSOR_SESSION_ID || process.env.CURSOR) {
     return 'cursor';
   }
-  
+
   // Default to CLI wrapper
   return 'cli_wrapper';
 }
@@ -78,22 +84,22 @@ function detectRuntime() {
 async function readPromptQueue() {
   const queueDir = join(__dirname, '..', 'context', 'queue');
   const queueFile = join(queueDir, 'incoming-prompt.json');
-  
+
   if (!existsSync(queueFile)) {
     return null;
   }
-  
+
   try {
     const content = await readFile(queueFile, 'utf-8');
     const prompt = JSON.parse(content);
-    
+
     // Move to processed (optional - could append timestamp)
     const processedFile = join(queueDir, `processed-${Date.now()}.json`);
     await writeFile(processedFile, content, 'utf-8');
-    
+
     // Clear queue file
     await writeFile(queueFile, '{}', 'utf-8');
-    
+
     return prompt;
   } catch (error) {
     console.error(`Error reading prompt queue: ${error.message}`);
@@ -132,12 +138,16 @@ async function detectAndLogSkills(agentType, taskDescription, runId) {
 
     await writeFile(
       skillArtifactPath,
-      JSON.stringify({
-        agent: agentType,
-        task: taskDescription,
-        detection_timestamp: new Date().toISOString(),
-        ...skillsInfo
-      }, null, 2),
+      JSON.stringify(
+        {
+          agent: agentType,
+          task: taskDescription,
+          detection_timestamp: new Date().toISOString(),
+          ...skillsInfo,
+        },
+        null,
+        2
+      ),
       'utf-8'
     );
 
@@ -148,7 +158,7 @@ async function detectAndLogSkills(agentType, taskDescription, runId) {
       agent: 'orchestrator',
       path: skillArtifactPath,
       dependencies: [],
-      validationStatus: 'pass'
+      validationStatus: 'pass',
     });
 
     return skillsInfo;
@@ -161,7 +171,7 @@ async function detectAndLogSkills(agentType, taskDescription, runId) {
       recommended: [],
       all: [],
       matchedTriggers: [],
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -180,7 +190,7 @@ async function executeStep0(runId, workflowPath) {
   try {
     const { stdout, stderr } = await execAsync(command, {
       cwd: join(__dirname, '../..'),
-      maxBuffer: 10 * 1024 * 1024 // 10MB
+      maxBuffer: 10 * 1024 * 1024, // 10MB
     });
 
     if (stderr) {
@@ -190,7 +200,7 @@ async function executeStep0(runId, workflowPath) {
     return {
       success: true,
       output: stdout,
-      runId
+      runId,
     };
   } catch (error) {
     console.error(`Error executing step 0: ${error.message}`);
@@ -207,11 +217,11 @@ async function executeStep0(runId, workflowPath) {
 export function detectCUJReference(userPrompt) {
   // Regex patterns for CUJ references
   const patterns = [
-    /\/cuj-(\d{3})/i,           // /cuj-001
-    /\bcuj-(\d{3})\b/i,          // CUJ-001 (standalone)
-    /run\s+cuj-(\d{3})/i,        // run cuj-001
-    /execute\s+cuj-(\d{3})/i,    // execute cuj-001
-    /test\s+cuj-(\d{3})/i        // test cuj-001
+    /\/cuj-(\d{3})/i, // /cuj-001
+    /\bcuj-(\d{3})\b/i, // CUJ-001 (standalone)
+    /run\s+cuj-(\d{3})/i, // run cuj-001
+    /execute\s+cuj-(\d{3})/i, // execute cuj-001
+    /test\s+cuj-(\d{3})/i, // test cuj-001
   ];
 
   for (const pattern of patterns) {
@@ -241,7 +251,7 @@ export async function resolveCUJExecutionMode(cujId) {
         executionMode: 'not_found',
         workflowPath: null,
         primarySkill: null,
-        error: 'CUJ-INDEX.md not found'
+        error: 'CUJ-INDEX.md not found',
       };
     }
 
@@ -257,7 +267,7 @@ export async function resolveCUJExecutionMode(cujId) {
         executionMode: 'mapping_not_found',
         workflowPath: null,
         primarySkill: null,
-        error: 'Run CUJ Mapping table not found'
+        error: 'Run CUJ Mapping table not found',
       };
     }
 
@@ -270,17 +280,24 @@ export async function resolveCUJExecutionMode(cujId) {
     const dataRows = rows.slice(2);
 
     for (const row of dataRows) {
-      const cells = row.split('|').map(cell => cell.trim()).filter(cell => cell);
+      const cells = row
+        .split('|')
+        .map(cell => cell.trim())
+        .filter(cell => cell);
 
       // Handle malformed rows gracefully
       if (cells.length < 4) {
-        console.warn(`[CUJ Resolver] Skipping malformed row (expected 4+ columns, got ${cells.length}): ${row}`);
+        console.warn(
+          `[CUJ Resolver] Skipping malformed row (expected 4+ columns, got ${cells.length}): ${row}`
+        );
         continue;
       }
 
       // Validate required fields
       if (!cells[0] || !cells[1]) {
-        console.warn(`[CUJ Resolver] Skipping row with missing required fields (CUJ ID or execution mode): ${row}`);
+        console.warn(
+          `[CUJ Resolver] Skipping row with missing required fields (CUJ ID or execution mode): ${row}`
+        );
         continue;
       }
 
@@ -292,13 +309,15 @@ export async function resolveCUJExecutionMode(cujId) {
         // Validate execution mode
         const validModes = ['workflow', 'skill-only', 'manual', 'manual-setup'];
         if (!validModes.includes(executionMode)) {
-          console.warn(`[CUJ Resolver] Invalid execution mode '${executionMode}' for ${cujId}. Expected one of: ${validModes.join(', ')}`);
+          console.warn(
+            `[CUJ Resolver] Invalid execution mode '${executionMode}' for ${cujId}. Expected one of: ${validModes.join(', ')}`
+          );
         }
 
         return {
           executionMode,
           workflowPath,
-          primarySkill
+          primarySkill,
         };
       }
     }
@@ -309,16 +328,15 @@ export async function resolveCUJExecutionMode(cujId) {
       executionMode: 'not_mapped',
       workflowPath: null,
       primarySkill: null,
-      error: `${cujId} not found in mapping table`
+      error: `${cujId} not found in mapping table`,
     };
-
   } catch (error) {
     console.error(`[CUJ Resolver] Error reading CUJ-INDEX.md: ${error.message}`);
     return {
       executionMode: 'error',
       workflowPath: null,
       primarySkill: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -340,7 +358,7 @@ export async function processUserPrompt(userPrompt, options = {}) {
   console.log(`[Orchestrator Entry] Creating run: ${runId}`);
   const runRecord = await createRun(runId, {
     userRequest: userPrompt,
-    sessionId: process.env.CLAUDE_CODE_SESSION_ID || process.env.CURSOR_SESSION_ID || null
+    sessionId: process.env.CLAUDE_CODE_SESSION_ID || process.env.CURSOR_SESSION_ID || null,
   });
 
   // Step 2: Check for CUJ reference
@@ -363,11 +381,13 @@ export async function processUserPrompt(userPrompt, options = {}) {
         cuj_id: cujId,
         confidence: 1.0,
         intent: `Execute ${cujId}`,
-        complexity: 'medium'
+        complexity: 'medium',
       };
     } else if (cujMapping.executionMode === 'skill-only' && cujMapping.primarySkill) {
       // Skill-only CUJ execution - direct skill invocation without workflow
-      console.log(`[Orchestrator Entry] Executing skill-only CUJ: ${cujId} via ${cujMapping.primarySkill} skill`);
+      console.log(
+        `[Orchestrator Entry] Executing skill-only CUJ: ${cujId} via ${cujMapping.primarySkill} skill`
+      );
 
       try {
         // Import and execute the skill directly
@@ -388,7 +408,7 @@ export async function processUserPrompt(userPrompt, options = {}) {
           confidence: 1.0,
           intent: `Execute ${cujId} via ${cujMapping.primarySkill} skill (direct invocation)`,
           complexity: 'low',
-          skill_execution_mode: 'direct'
+          skill_execution_mode: 'direct',
         };
 
         // Save routing decision
@@ -398,14 +418,10 @@ export async function processUserPrompt(userPrompt, options = {}) {
           agent: 'router',
           path: join(getRunDirectoryStructure(runId).artifacts_dir, 'route_decision.json'),
           dependencies: [],
-          validationStatus: 'pass'
+          validationStatus: 'pass',
         };
 
-        await writeFile(
-          routingArtifact.path,
-          JSON.stringify(routingResult, null, 2),
-          'utf-8'
-        );
+        await writeFile(routingArtifact.path, JSON.stringify(routingResult, null, 2), 'utf-8');
 
         await registerArtifact(runId, routingArtifact);
 
@@ -419,8 +435,8 @@ export async function processUserPrompt(userPrompt, options = {}) {
             routing_method: 'skill_only',
             intent: routingResult.intent,
             complexity: routingResult.complexity,
-            cuj_id: cujId
-          }
+            cuj_id: cujId,
+          },
         });
 
         // For skill-only CUJs, return early with skill invocation instructions
@@ -437,23 +453,24 @@ export async function processUserPrompt(userPrompt, options = {}) {
           primarySkill: cujMapping.primarySkill,
           skillInvocationCommand: `Skill: ${cujMapping.primarySkill}`,
           message: `CUJ ${cujId} is skill-only. Invoke with: Skill: ${cujMapping.primarySkill}`,
-          runRecord: await readRun(runId)
+          runRecord: await readRun(runId),
         };
-
       } catch (error) {
         console.error(`[Orchestrator Entry] Skill-only execution failed: ${error.message}`);
         await updateRun(runId, {
           status: 'failed',
           metadata: {
             error: error.message,
-            failed_at_stage: 'skill_only_preparation'
-          }
+            failed_at_stage: 'skill_only_preparation',
+          },
         });
         throw error;
       }
     } else {
       // CUJ mapping error or not found - fall back to semantic routing
-      console.warn(`[Orchestrator Entry] CUJ mapping failed: ${cujMapping.error}. Falling back to semantic routing.`);
+      console.warn(
+        `[Orchestrator Entry] CUJ mapping failed: ${cujMapping.error}. Falling back to semantic routing.`
+      );
 
       try {
         routingResult = await routeWorkflow(userPrompt);
@@ -465,8 +482,8 @@ export async function processUserPrompt(userPrompt, options = {}) {
         await updateRun(runId, {
           status: 'failed',
           metadata: {
-            error: error.message
-          }
+            error: error.message,
+          },
         });
         throw error;
       }
@@ -482,8 +499,8 @@ export async function processUserPrompt(userPrompt, options = {}) {
       await updateRun(runId, {
         status: 'failed',
         metadata: {
-          error: error.message
-        }
+          error: error.message,
+        },
       });
       throw error;
     }
@@ -497,7 +514,7 @@ export async function processUserPrompt(userPrompt, options = {}) {
   }
 
   const selectedWorkflow = routingResult.selected_workflow || routingResult.workflow_selection;
-  
+
   // Save routing decision as artifact (if not already saved by skill-only path)
   if (!isSkillOnly) {
     const routingArtifact = {
@@ -506,14 +523,10 @@ export async function processUserPrompt(userPrompt, options = {}) {
       agent: 'router',
       path: join(getRunDirectoryStructure(runId).artifacts_dir, 'route_decision.json'),
       dependencies: [],
-      validationStatus: 'pass'
+      validationStatus: 'pass',
     };
 
-    await writeFile(
-      routingArtifact.path,
-      JSON.stringify(routingResult, null, 2),
-      'utf-8'
-    );
+    await writeFile(routingArtifact.path, JSON.stringify(routingResult, null, 2), 'utf-8');
 
     await registerArtifact(runId, routingArtifact);
   }
@@ -526,8 +539,8 @@ export async function processUserPrompt(userPrompt, options = {}) {
         routing_confidence: routingResult.confidence,
         routing_method: routingResult.routing_method || routingResult.method,
         intent: routingResult.intent,
-        complexity: routingResult.complexity
-      }
+        complexity: routingResult.complexity,
+      },
     });
   }
 
@@ -549,7 +562,7 @@ export async function processUserPrompt(userPrompt, options = {}) {
       primarySkill: routingResult.primary_skill,
       skillInvocationCommand: `Skill: ${routingResult.primary_skill}`,
       message: `Skill-only execution prepared. Invoke with: Skill: ${routingResult.primary_skill}`,
-      runRecord: await readRun(runId)
+      runRecord: await readRun(runId),
     };
   }
 
@@ -564,7 +577,7 @@ export async function processUserPrompt(userPrompt, options = {}) {
       runId,
       routing: routingResult,
       step0Result: stepResult,
-      runRecord: await readRun(runId)
+      runRecord: await readRun(runId),
     };
   } catch (error) {
     console.error(`[Orchestrator Entry] Step 0 execution failed: ${error.message}`);
@@ -572,13 +585,12 @@ export async function processUserPrompt(userPrompt, options = {}) {
       status: 'failed',
       metadata: {
         error: error.message,
-        failed_at_step: 0
-      }
+        failed_at_step: 0,
+      },
     });
     throw error;
   }
 }
-
 
 /**
  * CLI interface
@@ -588,14 +600,14 @@ async function main() {
   const promptIndex = args.indexOf('--prompt');
   const queueFlag = args.includes('--queue');
   const runIdIndex = args.indexOf('--run-id');
-  
+
   let userPrompt = null;
   let runId = null;
-  
+
   if (runIdIndex !== -1 && runIdIndex + 1 < args.length) {
     runId = args[runIdIndex + 1];
   }
-  
+
   if (queueFlag) {
     // Read from queue
     const promptData = await readPromptQueue();
@@ -613,7 +625,7 @@ async function main() {
     console.error('  node orchestrator-entry.mjs --queue [--run-id <id>]');
     process.exit(1);
   }
-  
+
   try {
     const result = await processUserPrompt(userPrompt, { runId });
     console.log(JSON.stringify(result, null, 2));
@@ -631,6 +643,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 export default {
   processUserPrompt,
-  detectRuntime
+  detectRuntime,
 };
-

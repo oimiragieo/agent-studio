@@ -16,12 +16,12 @@ const execAsync = promisify(exec);
 const EXECUTION_DIR = join(tmpdir(), 'claude-code-execution');
 const SUPPORTED_LANGUAGES = {
   python: { extension: 'py', command: 'python3' },
-  'python3': { extension: 'py', command: 'python3' },
+  python3: { extension: 'py', command: 'python3' },
   node: { extension: 'js', command: 'node' },
   javascript: { extension: 'js', command: 'node' },
   typescript: { extension: 'ts', command: 'ts-node' },
   bash: { extension: 'sh', command: 'bash' },
-  shell: { extension: 'sh', command: 'bash' }
+  shell: { extension: 'sh', command: 'bash' },
 };
 
 /**
@@ -62,7 +62,7 @@ export async function* executeCode(input, context = {}) {
     language = 'python',
     timeout = 10000,
     memoryLimit = 128 * 1024 * 1024, // 128MB
-    workingDirectory
+    workingDirectory,
   } = input;
 
   // Yield start event
@@ -70,7 +70,7 @@ export async function* executeCode(input, context = {}) {
     type: 'tool_call_start',
     tool_name: 'code_execution',
     tool_call_id: toolCallId,
-    input: { language, code_length: code.length }
+    input: { language, code_length: code.length },
   };
 
   let codeFile = null;
@@ -80,7 +80,7 @@ export async function* executeCode(input, context = {}) {
       yield {
         type: 'tool_call_error',
         tool_call_id: toolCallId,
-        error: { message: `Unsupported language: ${language}`, code: 'UNSUPPORTED_LANGUAGE' }
+        error: { message: `Unsupported language: ${language}`, code: 'UNSUPPORTED_LANGUAGE' },
       };
       return;
     }
@@ -89,7 +89,10 @@ export async function* executeCode(input, context = {}) {
     yield {
       type: 'tool_call_progress',
       tool_call_id: toolCallId,
-      progress: { stage: 'creating_environment', message: 'Creating isolated execution environment...' }
+      progress: {
+        stage: 'creating_environment',
+        message: 'Creating isolated execution environment...',
+      },
     };
 
     // Create isolated environment
@@ -100,7 +103,7 @@ export async function* executeCode(input, context = {}) {
     yield {
       type: 'tool_call_progress',
       tool_call_id: toolCallId,
-      progress: { stage: 'writing_code', message: 'Writing code to file...' }
+      progress: { stage: 'writing_code', message: 'Writing code to file...' },
     };
 
     // Write code to file
@@ -110,7 +113,7 @@ export async function* executeCode(input, context = {}) {
     yield {
       type: 'tool_call_progress',
       tool_call_id: toolCallId,
-      progress: { stage: 'executing', message: `Executing ${language} code...` }
+      progress: { stage: 'executing', message: `Executing ${language} code...` },
     };
 
     // Execute with resource limits
@@ -119,7 +122,7 @@ export async function* executeCode(input, context = {}) {
       cwd: workingDirectory || envPath,
       timeout,
       maxBuffer: memoryLimit,
-      env: { ...process.env, ...context.env }
+      env: { ...process.env, ...context.env },
     };
 
     const startTime = Date.now();
@@ -137,8 +140,8 @@ export async function* executeCode(input, context = {}) {
         language,
         executionTime,
         memoryUsed: 0, // Would need process monitoring for accurate measurement
-        exitCode: 0
-      }
+        exitCode: 0,
+      },
     };
   } catch (error) {
     // Yield error
@@ -148,7 +151,7 @@ export async function* executeCode(input, context = {}) {
       error: {
         message: error.message,
         code: error.code || 'EXECUTION_ERROR',
-        stderr: error.stderr || ''
+        stderr: error.stderr || '',
       },
       output: {
         success: false,
@@ -156,8 +159,8 @@ export async function* executeCode(input, context = {}) {
         error: error.stderr || error.message,
         language,
         executionTime: Date.now(),
-        exitCode: error.code || 1
-      }
+        exitCode: error.code || 1,
+      },
     };
   } finally {
     // Cleanup (no yield needed for cleanup)
@@ -178,67 +181,66 @@ export const codeExecutionTool = {
     properties: {
       code: {
         type: 'string',
-        description: 'Code to execute'
+        description: 'Code to execute',
       },
       language: {
         type: 'string',
         enum: Object.keys(SUPPORTED_LANGUAGES),
         description: 'Programming language',
-        default: 'python'
+        default: 'python',
       },
       timeout: {
         type: 'number',
         description: 'Timeout in milliseconds',
-        default: 10000
+        default: 10000,
       },
       memoryLimit: {
         type: 'number',
         description: 'Memory limit in bytes',
-        default: 128 * 1024 * 1024
+        default: 128 * 1024 * 1024,
       },
       workingDirectory: {
         type: 'string',
-        description: 'Working directory for execution'
-      }
+        description: 'Working directory for execution',
+      },
     },
-    required: ['code', 'language']
+    required: ['code', 'language'],
   },
   outputSchema: {
     type: 'object',
     properties: {
       success: {
         type: 'boolean',
-        description: 'Whether code executed successfully'
+        description: 'Whether code executed successfully',
       },
       output: {
         type: 'string',
-        description: 'Standard output from code execution'
+        description: 'Standard output from code execution',
       },
       error: {
         type: ['string', 'null'],
-        description: 'Error output or null if no errors'
+        description: 'Error output or null if no errors',
       },
       language: {
         type: 'string',
-        description: 'Programming language used'
+        description: 'Programming language used',
       },
       executionTime: {
         type: 'number',
-        description: 'Execution time in milliseconds'
+        description: 'Execution time in milliseconds',
       },
       memoryUsed: {
         type: 'number',
-        description: 'Memory used in bytes (0 if not measured)'
+        description: 'Memory used in bytes (0 if not measured)',
       },
       exitCode: {
         type: 'number',
-        description: 'Exit code from execution'
-      }
+        description: 'Exit code from execution',
+      },
     },
-    required: ['success', 'language', 'executionTime', 'exitCode']
+    required: ['success', 'language', 'executionTime', 'exitCode'],
   },
-  execute: executeCode
+  execute: executeCode,
 };
 
 export default codeExecutionTool;
-

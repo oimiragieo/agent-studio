@@ -34,7 +34,7 @@ const REQUIRED_SECTIONS = [
   'success criteria',
   'agent sequence',
   'skills used',
-  'expected artifacts'
+  'expected artifacts',
 ];
 
 // Optional sections
@@ -43,7 +43,7 @@ const OPTIONAL_SECTIONS = [
   'dependencies',
   'validation steps',
   'troubleshooting',
-  'related cujs'
+  'related cujs',
 ];
 
 /**
@@ -64,7 +64,7 @@ async function parseCujFile(filePath) {
     workflows: [],
     artifacts: [],
     errors: [],
-    warnings: []
+    warnings: [],
   };
 
   let currentSection = null;
@@ -84,7 +84,7 @@ async function parseCujFile(filePath) {
       currentSection = trimmed.substring(3).trim().toLowerCase();
       cuj.sections[currentSection] = {
         lineNumber: i + 1,
-        content: []
+        content: [],
       };
       continue;
     }
@@ -100,7 +100,7 @@ async function parseCujFile(filePath) {
       cuj.links.push({
         text: match[1],
         url: match[2],
-        lineNumber: i + 1
+        lineNumber: i + 1,
       });
     }
 
@@ -110,7 +110,7 @@ async function parseCujFile(filePath) {
       if (skillMatch) {
         cuj.skills.push({
           name: skillMatch[1],
-          lineNumber: i + 1
+          lineNumber: i + 1,
         });
       }
     }
@@ -120,7 +120,7 @@ async function parseCujFile(filePath) {
     if (workflowMatch) {
       cuj.workflows.push({
         name: workflowMatch[1],
-        lineNumber: i + 1
+        lineNumber: i + 1,
       });
     }
 
@@ -130,7 +130,7 @@ async function parseCujFile(filePath) {
       if (artifactMatch) {
         cuj.artifacts.push({
           name: artifactMatch[1],
-          lineNumber: i + 1
+          lineNumber: i + 1,
         });
       }
     }
@@ -153,7 +153,7 @@ function validateRequiredSections(cuj) {
         type: 'missing_section',
         severity: 'error',
         section: requiredSection,
-        message: `Missing required section: ## ${requiredSection}`
+        message: `Missing required section: ## ${requiredSection}`,
       });
     } else if (cuj.sections[requiredSection].content.filter(c => c).length === 0) {
       errors.push({
@@ -161,7 +161,7 @@ function validateRequiredSections(cuj) {
         severity: 'warning',
         section: requiredSection,
         lineNumber: cuj.sections[requiredSection].lineNumber,
-        message: `Section is empty: ## ${requiredSection}`
+        message: `Section is empty: ## ${requiredSection}`,
       });
     }
   }
@@ -193,7 +193,7 @@ async function validateLinks(cuj) {
         severity: 'error',
         link: link.url,
         lineNumber: link.lineNumber,
-        message: `Broken link: ${link.url} (file not found)`
+        message: `Broken link: ${link.url} (file not found)`,
       });
     }
   }
@@ -213,14 +213,12 @@ async function validateSkills(cuj) {
   let availableSkills = [];
   try {
     const skillDirs = await readdir(SKILLS_DIR, { withFileTypes: true });
-    availableSkills = skillDirs
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name);
+    availableSkills = skillDirs.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
   } catch (error) {
     errors.push({
       type: 'skills_directory_error',
       severity: 'warning',
-      message: `Could not read skills directory: ${error.message}`
+      message: `Could not read skills directory: ${error.message}`,
     });
     return errors;
   }
@@ -232,7 +230,7 @@ async function validateSkills(cuj) {
         severity: 'warning',
         skill: skill.name,
         lineNumber: skill.lineNumber,
-        message: `Skill not found: ${skill.name}`
+        message: `Skill not found: ${skill.name}`,
       });
     }
   }
@@ -257,7 +255,7 @@ async function validateWorkflows(cuj) {
         severity: 'error',
         workflow: workflow.name,
         lineNumber: workflow.lineNumber,
-        message: `Workflow not found: ${workflow.name}`
+        message: `Workflow not found: ${workflow.name}`,
       });
     }
   }
@@ -275,7 +273,7 @@ export async function validateCujFile(filePath) {
     file: filePath,
     valid: true,
     errors: [],
-    warnings: []
+    warnings: [],
   };
 
   try {
@@ -303,13 +301,12 @@ export async function validateCujFile(filePath) {
 
     result.valid = result.errors.length === 0;
     result.title = cuj.title;
-
   } catch (error) {
     result.valid = false;
     result.errors.push({
       type: 'parse_error',
       severity: 'error',
-      message: `Failed to parse CUJ file: ${error.message}`
+      message: `Failed to parse CUJ file: ${error.message}`,
     });
   }
 
@@ -326,7 +323,7 @@ export async function validateAllCujs() {
     passed: 0,
     failed: 0,
     files: [],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   try {
@@ -346,7 +343,6 @@ export async function validateAllCujs() {
         results.failed++;
       }
     }
-
   } catch (error) {
     results.error = error.message;
   }
@@ -408,12 +404,12 @@ Exit codes:
     process.exit(0);
   }
 
-  const getArg = (name) => {
+  const getArg = name => {
     const index = args.indexOf(`--${name}`);
     return index !== -1 && args[index + 1] ? args[index + 1] : null;
   };
 
-  const hasFlag = (name) => args.includes(`--${name}`);
+  const hasFlag = name => args.includes(`--${name}`);
 
   try {
     const cujId = getArg('cuj');
@@ -427,7 +423,7 @@ Exit codes:
         total: 1,
         passed: result.valid ? 1 : 0,
         failed: result.valid ? 0 : 1,
-        files: [result]
+        files: [result],
       };
     } else {
       // Validate all CUJs
@@ -474,7 +470,6 @@ Exit codes:
     }
 
     process.exit(results.failed === 0 ? 0 : 1);
-
   } catch (error) {
     console.error('Fatal error:', error.message);
     process.exit(1);
@@ -482,8 +477,9 @@ Exit codes:
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main().catch(error => {
     console.error('Fatal error:', error);
@@ -493,5 +489,5 @@ if (isMainModule) {
 
 export default {
   validateCujFile,
-  validateAllCujs
+  validateAllCujs,
 };

@@ -18,29 +18,32 @@ Comprehensive guide to evaluating agent performance, rule compliance, and workfl
 **Best for**: Exact matches, structured outputs, rule compliance
 
 **Characteristics**:
+
 - Fast and reliable
 - No API costs
 - Deterministic results
 - Best for structured data
 
 **Examples**:
+
 - JSON schema validation
 - Rule violation detection
 - Test pass/fail counts
 - File creation verification
 
 **Implementation**:
+
 ```python
 def code_based_grade(output, expected):
     score = 0.0
     max_score = 0.0
-    
+
     # Check required files
     if "files_created" in expected:
         max_score += 1.0
         if set(expected["files_created"]).issubset(set(output.get("files_created", []))):
             score += 1.0
-    
+
     return score / max_score if max_score > 0 else 0.0
 ```
 
@@ -49,22 +52,25 @@ def code_based_grade(output, expected):
 **Best for**: Subjective quality, complex analysis, free-form outputs
 
 **Characteristics**:
+
 - Handles complex evaluation
 - Can evaluate subjective quality
 - More flexible than code-based
 - Requires API calls
 
 **Examples**:
+
 - Code quality assessment
 - Architecture evaluation
 - Documentation quality
 - User experience evaluation
 
 **Implementation**:
+
 ```python
 def model_based_grade(output, criteria):
     prompt = f"""Evaluate the following output against these criteria:
-    
+
 Criteria:
 {criteria}
 
@@ -85,12 +91,14 @@ Provide score (0-1) and feedback.
 **Best for**: Final validation, critical decisions, complex scenarios
 
 **Characteristics**:
+
 - Most capable evaluation method
 - Handles edge cases
 - Final authority
 - Time-consuming
 
 **Examples**:
+
 - Production readiness assessment
 - Security review
 - Architecture approval
@@ -121,12 +129,14 @@ Provide score (0-1) and feedback.
 **Purpose**: Evaluate how well agents perform their tasks
 
 **Process**:
+
 1. Load evaluation dataset
 2. Run agent on each task
 3. Grade outputs (code-based + model-based)
 4. Generate performance report
 
 **Usage**:
+
 ```bash
 python .claude/evaluation/agent-eval.py \
   --agent developer \
@@ -135,6 +145,7 @@ python .claude/evaluation/agent-eval.py \
 ```
 
 **Metrics**:
+
 - Average score
 - Task completion rate
 - Code-based grade
@@ -146,12 +157,14 @@ python .claude/evaluation/agent-eval.py \
 **Purpose**: Test code against loaded rules
 
 **Process**:
+
 1. Load rule files
 2. Scan code files
 3. Detect violations
 4. Calculate compliance rate
 
 **Usage**:
+
 ```bash
 python .claude/evaluation/rule-compliance-eval.py \
   --files "src/**/*.ts" "src/**/*.tsx" \
@@ -160,6 +173,7 @@ python .claude/evaluation/rule-compliance-eval.py \
 ```
 
 **Metrics**:
+
 - Compliance rate
 - Violation count
 - Warning count
@@ -171,12 +185,14 @@ python .claude/evaluation/rule-compliance-eval.py \
 **Purpose**: Validate workflow execution and outputs
 
 **Process**:
+
 1. Execute workflow on test scenarios
 2. Validate step outputs
 3. Check artifact completeness
 4. Measure execution time
 
 **Usage**:
+
 ```bash
 python .claude/evaluation/workflow-eval.py \
   --workflow greenfield-fullstack \
@@ -185,6 +201,7 @@ python .claude/evaluation/workflow-eval.py \
 ```
 
 **Metrics**:
+
 - Step success rate
 - Artifact completeness
 - Execution time
@@ -254,6 +271,7 @@ Format: `.claude/evaluation/datasets/workflow-scenarios.jsonl`
 Base configuration: `.claude/evaluation/promptfooconfig.yaml`
 
 Specialized configurations available:
+
 - `.claude/evaluation/promptfoo_configs/rag_config.yaml` - RAG evaluation
 - `.claude/evaluation/promptfoo_configs/classification_config.yaml` - Classification evaluation
 - `.claude/evaluation/promptfoo_configs/text_to_sql_config.yaml` - SQL generation evaluation
@@ -261,6 +279,7 @@ Specialized configurations available:
 ### RAG Evaluation Configuration
 
 The RAG config includes:
+
 - Custom Python providers for retrieval methods
 - Retrieval metrics (Precision, Recall, F1, MRR)
 - End-to-end evaluation with LLM-as-judge
@@ -367,11 +386,13 @@ jobs:
 Based on Claude Cookbooks patterns, these metrics evaluate retrieval-augmented generation systems:
 
 #### Precision
+
 Proportion of retrieved items that are actually relevant.
 
 **Formula**: `Precision = True Positives / Total Retrieved`
 
 **Interpretation**:
+
 - High precision (0.8-1.0): System retrieves mostly relevant items
 - Low precision (<0.5): Many irrelevant items retrieved
 - Measures efficiency and accuracy of retrieval
@@ -379,11 +400,13 @@ Proportion of retrieved items that are actually relevant.
 **Usage**: Use when you want to minimize false positives (irrelevant results)
 
 #### Recall
+
 Completeness of retrieval system - how many relevant items were found.
 
 **Formula**: `Recall = True Positives / Total Correct`
 
 **Interpretation**:
+
 - High recall (0.8-1.0): System finds most relevant items
 - Low recall (<0.5): Missing important information
 - Measures coverage and completeness
@@ -391,11 +414,13 @@ Completeness of retrieval system - how many relevant items were found.
 **Usage**: Use when you want to ensure all relevant information is retrieved
 
 #### F1 Score
+
 Harmonic mean of precision and recall, providing balanced measure.
 
 **Formula**: `F1 = 2 × (Precision × Recall) / (Precision + Recall)`
 
 **Interpretation**:
+
 - F1 = 1.0: Perfect precision and recall
 - F1 = 0.0: Worst performance
 - Balances precision and recall trade-offs
@@ -403,11 +428,13 @@ Harmonic mean of precision and recall, providing balanced measure.
 **Usage**: Use as single metric when both precision and recall matter
 
 #### Mean Reciprocal Rank (MRR)
+
 Measures ranking quality - how well relevant items are ranked.
 
 **Formula**: `MRR = 1 / rank of first correct item`
 
 **Interpretation**:
+
 - MRR = 1.0: Correct item always ranked first
 - MRR = 0.5: Correct item typically ranked second
 - MRR = 0.0: Correct item never found or ranked very low
@@ -419,9 +446,11 @@ Measures ranking quality - how well relevant items are ranked.
 ### End-to-End Metrics
 
 #### Accuracy (LLM-as-Judge)
+
 Overall correctness of generated answers using LLM evaluation.
 
 **Method**: LLM compares generated answer to correct answer, considering:
+
 - Substance and meaning (not exact wording)
 - Completeness of information
 - Absence of contradictions
@@ -484,4 +513,3 @@ Overall correctness of generated answers using LLM evaluation.
 
 - [Promptfoo Documentation](https://promptfoo.dev/docs/)
 - [Claude Cookbooks - Building Evals](https://github.com/anthropics/anthropic-cookbook/tree/main/misc/building_evals.ipynb)
-

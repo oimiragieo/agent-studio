@@ -68,7 +68,7 @@ async function validateVersion() {
         valid: false,
         current: 'missing',
         expected: EXPECTED_INDEX_VERSION,
-        message: 'Version field missing in rule-index.json'
+        message: 'Version field missing in rule-index.json',
       };
     }
 
@@ -77,7 +77,7 @@ async function validateVersion() {
         valid: false,
         current: currentVersion,
         expected: EXPECTED_INDEX_VERSION,
-        message: `Version mismatch (run 'pnpm index-rules' to update)`
+        message: `Version mismatch (run 'pnpm index-rules' to update)`,
       };
     }
 
@@ -85,16 +85,15 @@ async function validateVersion() {
       valid: true,
       current: currentVersion,
       expected: EXPECTED_INDEX_VERSION,
-      message: 'Version matches expected version'
+      message: 'Version matches expected version',
     };
-
   } catch (error) {
     if (error.code === 'ENOENT') {
       return {
         valid: false,
         current: 'file-not-found',
         expected: EXPECTED_INDEX_VERSION,
-        message: 'Rule index file not found'
+        message: 'Rule index file not found',
       };
     }
     throw error;
@@ -143,17 +142,17 @@ async function validateRuleIndexPaths(fix = false, skipVersionCheck = false) {
     // Read rule index
     const indexContent = await fs.readFile(RULE_INDEX_PATH, 'utf-8');
     const ruleIndex = JSON.parse(indexContent);
-    
+
     if (!ruleIndex.rules || !Array.isArray(ruleIndex.rules)) {
       console.error('❌ Error: rule-index.json does not have a "rules" array');
       process.exit(1);
     }
-    
+
     const brokenPaths = [];
     const validPaths = [];
-    
+
     console.log(`Found ${ruleIndex.rules.length} rules in index\n`);
-    
+
     // Validate each rule's path
     for (const rule of ruleIndex.rules) {
       if (!rule.path) {
@@ -161,10 +160,10 @@ async function validateRuleIndexPaths(fix = false, skipVersionCheck = false) {
         brokenPaths.push({ rule, reason: 'Missing path field' });
         continue;
       }
-      
+
       const resolvedPath = resolvePath(rule.path);
       const exists = existsSync(resolvedPath);
-      
+
       if (exists) {
         validPaths.push(rule);
       } else {
@@ -174,14 +173,14 @@ async function validateRuleIndexPaths(fix = false, skipVersionCheck = false) {
         console.error(`   Rule: ${rule.name || rule.id || 'unknown'}\n`);
       }
     }
-    
+
     // Report results
     console.log(`\n${'='.repeat(60)}`);
     console.log(`Summary:`);
     console.log(`  ✅ Valid paths: ${validPaths.length}/${ruleIndex.rules.length}`);
     console.log(`  ❌ Broken paths: ${brokenPaths.length}/${ruleIndex.rules.length}`);
     console.log(`${'='.repeat(60)}\n`);
-    
+
     if (brokenPaths.length > 0) {
       console.log('Broken paths:');
       brokenPaths.forEach(({ rule, reason, path: brokenPath }) => {
@@ -191,18 +190,17 @@ async function validateRuleIndexPaths(fix = false, skipVersionCheck = false) {
         }
       });
       console.log('');
-      
+
       if (fix) {
         console.log('💡 --fix flag provided, but automatic fixing is not implemented.');
         console.log('   Please manually update rule-index.json with correct paths.\n');
       }
-      
+
       process.exit(1);
     } else {
       console.log('✅ All rule index paths are valid!\n');
       process.exit(0);
     }
-    
   } catch (error) {
     if (error.code === 'ENOENT') {
       console.error(`❌ Error: Rule index file not found at ${RULE_INDEX_PATH}`);
@@ -243,15 +241,16 @@ const skipVersionCheck = args.includes('--skip-version');
 
 // If only checking version
 if (checkVersionOnly) {
-  validateVersion().then((result) => {
-    const exitCode = displayVersionCheck(result, true);
-    process.exit(exitCode);
-  }).catch((error) => {
-    console.error(`❌ Error during version check: ${error.message}`);
-    process.exit(2);
-  });
+  validateVersion()
+    .then(result => {
+      const exitCode = displayVersionCheck(result, true);
+      process.exit(exitCode);
+    })
+    .catch(error => {
+      console.error(`❌ Error during version check: ${error.message}`);
+      process.exit(2);
+    });
 } else {
   // Full validation (paths + version)
   validateRuleIndexPaths(fix, skipVersionCheck);
 }
-

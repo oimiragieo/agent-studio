@@ -38,7 +38,10 @@ export class ProviderHealthMonitor {
     }
 
     try {
-      const lines = fs.readFileSync(healthFile, 'utf-8').split('\n').filter(l => l.trim());
+      const lines = fs
+        .readFileSync(healthFile, 'utf-8')
+        .split('\n')
+        .filter(l => l.trim());
 
       // Load last 1000 entries for each provider
       const recentEntries = lines.slice(-1000);
@@ -72,7 +75,7 @@ export class ProviderHealthMonitor {
         last_success: null,
         last_failure: null,
         latencies: [],
-        recent_errors: []
+        recent_errors: [],
       });
     }
 
@@ -87,7 +90,7 @@ export class ProviderHealthMonitor {
       if (entry.error) {
         data.recent_errors.push({
           timestamp: entry.timestamp,
-          error: entry.error
+          error: entry.error,
         });
         // Keep only last 10 errors
         if (data.recent_errors.length > 10) {
@@ -121,7 +124,7 @@ export class ProviderHealthMonitor {
       success,
       latency_ms,
       error: error ? error.substring(0, 200) : null, // Limit error length
-      metadata
+      metadata,
     };
 
     // Update in-memory data
@@ -160,7 +163,7 @@ export class ProviderHealthMonitor {
       return {
         provider,
         available: false,
-        reason: 'No data available'
+        reason: 'No data available',
       };
     }
 
@@ -186,7 +189,7 @@ export class ProviderHealthMonitor {
       latency_p99: p99,
       last_success: data.last_success,
       last_failure: data.last_failure,
-      recent_errors: data.recent_errors
+      recent_errors: data.recent_errors,
     };
   }
 
@@ -229,14 +232,14 @@ export class ProviderHealthMonitor {
         healthy_providers: 0,
         total_providers: 0,
         overall_success_rate: 0,
-        overall_avg_latency_ms: 0
+        overall_avg_latency_ms: 0,
       };
     }
 
     const healthyProviders = providers.filter(p => p.success_rate > 0.95).length;
     const totalCalls = providers.reduce((sum, p) => sum + p.total_calls, 0);
     const totalSuccessful = providers.reduce((sum, p) => sum + p.successful_calls, 0);
-    const totalLatency = providers.reduce((sum, p) => sum + (p.avg_latency_ms * p.total_calls), 0);
+    const totalLatency = providers.reduce((sum, p) => sum + p.avg_latency_ms * p.total_calls, 0);
 
     const overallSuccessRate = totalCalls > 0 ? totalSuccessful / totalCalls : 0;
     const overallAvgLatency = totalCalls > 0 ? totalLatency / totalCalls : 0;
@@ -255,7 +258,7 @@ export class ProviderHealthMonitor {
       total_providers: providers.length,
       overall_success_rate: overallSuccessRate,
       overall_avg_latency_ms: Math.round(overallAvgLatency),
-      providers: allHealth
+      providers: allHealth,
     };
   }
 
@@ -272,7 +275,7 @@ export class ProviderHealthMonitor {
         success_rate: health.success_rate,
         avg_latency_ms: health.avg_latency_ms,
         total_calls: health.total_calls,
-        score: health.success_rate * (1 - Math.min(health.avg_latency_ms / 10000, 1)) // Composite score
+        score: health.success_rate * (1 - Math.min(health.avg_latency_ms / 10000, 1)), // Composite score
       }))
       .sort((a, b) => b.score - a.score);
   }
@@ -357,7 +360,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const error = args[4] || null;
 
     if (!provider || typeof success !== 'boolean' || isNaN(latency)) {
-      console.error('Usage: node provider-health.mjs record <provider> <success:true|false> <latency_ms> [error]');
+      console.error(
+        'Usage: node provider-health.mjs record <provider> <success:true|false> <latency_ms> [error]'
+      );
       process.exit(1);
     }
 

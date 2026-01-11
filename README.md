@@ -85,12 +85,12 @@ pnpm install
 
 ## Agents (34 Specialized Roles)
 
-| Category | Agents |
-|----------|--------|
-| **Core Development** | orchestrator, model-orchestrator, analyst, pm, architect, database-architect, developer, qa, ux-expert |
-| **Enterprise** | security-architect, devops, technical-writer |
-| **Code Quality** | code-reviewer, code-simplifier, refactoring-specialist, performance-engineer |
-| **Specialized** | llm-architect, api-designer, legacy-modernizer, mobile-developer, accessibility-expert, compliance-auditor, incident-responder |
+| Category                | Agents                                                                                                                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Core Development**    | orchestrator, model-orchestrator, analyst, pm, architect, database-architect, developer, qa, ux-expert                                                                               |
+| **Enterprise**          | security-architect, devops, technical-writer                                                                                                                                         |
+| **Code Quality**        | code-reviewer, code-simplifier, refactoring-specialist, performance-engineer                                                                                                         |
+| **Specialized**         | llm-architect, api-designer, legacy-modernizer, mobile-developer, accessibility-expert, compliance-auditor, incident-responder                                                       |
 | **Extended (Phase 1+)** | planner, impact-analyzer, cloud-integrator, react-component-developer, router, gcp-cloud-agent, ai-council, codex-validator, cursor-validator, gemini-validator, master-orchestrator |
 
 See `.claude/agents/` for detailed agent documentation.
@@ -99,17 +99,17 @@ See `.claude/agents/` for detailed agent documentation.
 
 Skills provide 90%+ context savings vs MCP servers. Invoke with natural language or the Skill tool.
 
-| Category | Skills |
-|----------|--------|
-| **Core** | repo-rag, artifact-publisher, context-bridge, rule-auditor, rule-selector, scaffolder |
-| **Memory** | memory-manager, memory |
-| **Documents** | excel-generator, powerpoint-generator, pdf-generator |
-| **Analysis** | evaluator, classifier, summarizer, text-to-sql |
-| **Tools** | tool-search, mcp-converter, skill-manager |
-| **Code Gen** | claude-md-generator, plan-generator, diagram-generator, test-generator, api-contract-generator, dependency-analyzer, doc-generator |
-| **Validation** | code-style-validator, commit-validator, response-rater |
-| **Recovery** | recovery, conflict-resolution, optional-artifact-handler |
-| **Enforcement** | migrating-rules, explaining-rules, fixing-rule-violations |
+| Category        | Skills                                                                                                                             |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Core**        | repo-rag, artifact-publisher, context-bridge, rule-auditor, rule-selector, scaffolder                                              |
+| **Memory**      | memory-manager, memory                                                                                                             |
+| **Documents**   | excel-generator, powerpoint-generator, pdf-generator                                                                               |
+| **Analysis**    | evaluator, classifier, summarizer, text-to-sql                                                                                     |
+| **Tools**       | tool-search, mcp-converter, skill-manager                                                                                          |
+| **Code Gen**    | claude-md-generator, plan-generator, diagram-generator, test-generator, api-contract-generator, dependency-analyzer, doc-generator |
+| **Validation**  | code-style-validator, commit-validator, response-rater                                                                             |
+| **Recovery**    | recovery, conflict-resolution, optional-artifact-handler                                                                           |
+| **Enforcement** | migrating-rules, explaining-rules, fixing-rule-violations                                                                          |
 
 See `.claude/skills/` for detailed skill documentation.
 
@@ -122,6 +122,7 @@ See `.claude/skills/` for detailed skill documentation.
 Codex skills are specialized skills that invoke external AI CLI tools (Claude Code, Gemini CLI, OpenAI Codex, Cursor Agent, GitHub Copilot) for multi-model validation and consensus.
 
 **Two Types of Skills**:
+
 - **Agent Studio Skills** (`.claude/skills/`): Native Claude Code skills (108 total)
 - **Codex Skills** (`codex-skills/`): CLI-based multi-AI tools (2 total: multi-ai-code-review, response-rater)
 
@@ -129,10 +130,10 @@ See `.claude/docs/SKILLS_TAXONOMY.md` for detailed comparison and decision crite
 
 ### Available Codex Skills
 
-| Skill | Purpose | Providers | Use Case |
-|-------|---------|-----------|----------|
+| Skill                    | Purpose              | Providers                              | Use Case                                   |
+| ------------------------ | -------------------- | -------------------------------------- | ------------------------------------------ |
 | **multi-ai-code-review** | Multi-AI code review | Claude, Gemini, Codex, Cursor, Copilot | High-stakes code changes, production fixes |
-| **response-rater** | Multi-AI plan rating | Claude, Gemini, Codex | Critical plans requiring consensus |
+| **response-rater**       | Multi-AI plan rating | Claude, Gemini, Codex                  | Critical plans requiring consensus         |
 
 ### Key Features (Phase 2.1.2)
 
@@ -147,15 +148,18 @@ See `.claude/docs/SKILLS_TAXONOMY.md` for detailed comparison and decision crite
 ### Performance
 
 **Before Optimization** (Sequential):
+
 - 3 providers × 15s each = 45s total
 
 **After Optimization** (Parallel):
+
 - 3 providers in parallel = ~15s total
 - **66% reduction** in execution time
 
 ### When to Use Codex Skills
 
 **Use Codex Skills (multi-model) for**:
+
 - Security-critical changes (auth, encryption, data protection)
 - Production incident fixes
 - Legacy modernization plans
@@ -163,6 +167,7 @@ See `.claude/docs/SKILLS_TAXONOMY.md` for detailed comparison and decision crite
 - High-stakes architectural decisions
 
 **Use Agent Studio Skills (single-model) for**:
+
 - Routine code reviews
 - Standard feature development
 - Documentation updates
@@ -178,14 +183,14 @@ Codex skills integrate seamlessly with the workflow system:
 ```yaml
 # Example workflow step
 - step: 1.5
-  name: "Multi-AI Code Review"
+  name: 'Multi-AI Code Review'
   agent: qa
   skill: multi-ai-code-review
   inputs:
     - code_changes (from step 1)
   outputs:
     - multi-ai-review-report.json
-  condition: "user_requested_multi_ai_review OR critical_security_changes"
+  condition: 'user_requested_multi_ai_review OR critical_security_changes'
 ```
 
 See `.claude/workflows/code-review-flow.yaml` for complete example.
@@ -194,6 +199,7 @@ See `.claude/workflows/code-review-flow.yaml` for complete example.
 
 14 workflow definitions for complex multi-agent orchestration:
 
+- **PR Creation Flow**: Complete pull request workflow with quality gates (DevOps → Security → QA → Technical Writer)
 - **Quick Flow**: Bug fixes, hotfixes, small features (Planner → Developer → QA)
 - **Full Stack Flow**: New features, greenfield projects (Planner → Analyst → PM → UX → Architect → Developer → QA)
 - **Code Quality Flow**: Code review, refactoring, optimization
@@ -273,11 +279,11 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 
 ## Slash Commands
 
-| Category | Commands |
-|----------|----------|
-| **Core** | `/review`, `/fix-issue <n>`, `/quick-ship`, `/run-workflow`, `/validate-gates` |
-| **Skill** | `/select-rules`, `/audit`, `/scaffold`, `/rate-plan` |
-| **Workflow** | `/code-quality`, `/performance`, `/ai-system`, `/mobile`, `/incident`, `/legacy-modernize` |
+| Category        | Commands                                                                                                   |
+| --------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Core**        | `/review`, `/fix-issue <n>`, `/quick-ship`, `/run-workflow`, `/validate-gates`                             |
+| **Skill**       | `/select-rules`, `/audit`, `/scaffold`, `/rate-plan`                                                       |
+| **Workflow**    | `/code-quality`, `/performance`, `/ai-system`, `/mobile`, `/incident`, `/legacy-modernize`                 |
 | **Enforcement** | `/check-security`, `/enforce-security`, `/approve-security`, `/validate-plan-rating`, `/validate-signoffs` |
 
 ## Security
@@ -313,10 +319,10 @@ Native hooks provide security validation and audit logging:
 
 ## New Features in Phase 2.1.2
 
-| Feature | Purpose | Documentation |
-|---------|---------|---------------|
-| **Codex Skills Integration** | Multi-AI validation via CLI tools | `.claude/docs/SKILLS_TAXONOMY.md` |
-| **Comprehensive CUJ Fixes** | 15 integration fixes for Codex skills | `.claude/docs/PHASE1_CODEX_FIXES_SUMMARY.md` |
+| Feature                      | Purpose                               | Documentation                                |
+| ---------------------------- | ------------------------------------- | -------------------------------------------- |
+| **Codex Skills Integration** | Multi-AI validation via CLI tools     | `.claude/docs/SKILLS_TAXONOMY.md`            |
+| **Comprehensive CUJ Fixes**  | 15 integration fixes for Codex skills | `.claude/docs/PHASE1_CODEX_FIXES_SUMMARY.md` |
 
 ## Validation (Optional)
 
@@ -342,9 +348,11 @@ pnpm test:codex-integration  # Run integration tests
 ## Requirements
 
 **Required**:
+
 - Claude Code, Cursor IDE, or Factory Droid
 
 **Optional** (for validation and enforcement):
+
 - Node.js 18+
 - pnpm (for dependency management)
 - Dependencies: `ajv`, `js-yaml` (installed via `pnpm install`)

@@ -16,6 +16,7 @@ Factory's Droid platform layers specialized agents across CLI, IDE, and web inte
 Role-aligned droids matching the Claude/Cursor agents:
 
 **Core Development:**
+
 - **analyst** 📊: Market research, requirements gathering, competitive analysis
 - **pm** 📋: Product requirements, epic definition, business validation
 - **architect** 🏗️: System design, technology selection, security planning
@@ -25,20 +26,24 @@ Role-aligned droids matching the Claude/Cursor agents:
 - **ux-expert** 🎨: User experience design, accessibility, interface specification
 
 **Enterprise:**
+
 - **security-architect** 🔒: Security and compliance architecture
 - **devops** ⚙️: Infrastructure, CI/CD, deployment automation
 - **technical-writer** 📝: Documentation and API references
 
 **Coordination:**
+
 - **orchestrator** 🎯: Task routing and multi-agent coordination
 - **model-orchestrator** 🔀: Multi-model routing (Gemini, Cursor, etc.)
 
 **Code Quality:**
+
 - **code-reviewer** 👁️: Systematic code review, PR analysis
 - **refactoring-specialist** 🔧: Code transformation, tech debt reduction
 - **performance-engineer** ⚡: Performance optimization, profiling
 
 **Specialized:**
+
 - **llm-architect** 🤖: AI/LLM system design, RAG, prompt engineering
 - **api-designer** 🔌: REST/GraphQL/gRPC API design
 - **legacy-modernizer** 🏚️: Legacy system modernization
@@ -50,6 +55,7 @@ Role-aligned droids matching the Claude/Cursor agents:
 ### Context Layer Instructions
 
 Instructions that mirror Factory's knowledge graph approach:
+
 - **Context router**: Intelligently combines repo context, product docs, and runtime telemetry
 - **Context layering**: Multiple knowledge sources for better decision-making
 - **Integration patterns**: GitHub, Linear, Confluence, Slack connectivity
@@ -63,18 +69,19 @@ Instructions that mirror Factory's knowledge graph approach:
 
 6 cross-platform skills synced with Claude and Cursor, plus 2 Factory-specific utilities:
 
-| Skill | Invocation | Purpose |
-|-------|------------|---------|
-| `rule-auditor` | Task tool | Validate code against loaded rules |
-| `rule-selector` | Task tool | Auto-detect stack, configure rules |
-| `scaffolder` | Task tool | Generate rule-compliant boilerplate |
-| `repo-rag` | Task tool | Semantic codebase search |
-| `artifact-publisher` | Task tool | Publish to project feed |
-| `context-bridge` | Task tool | Sync with Claude/Cursor |
-| `context-router` | Task tool | Intelligent context prioritization |
-| `incident-response` | Task tool | Automated incident response |
+| Skill                | Invocation | Purpose                             |
+| -------------------- | ---------- | ----------------------------------- |
+| `rule-auditor`       | Task tool  | Validate code against loaded rules  |
+| `rule-selector`      | Task tool  | Auto-detect stack, configure rules  |
+| `scaffolder`         | Task tool  | Generate rule-compliant boilerplate |
+| `repo-rag`           | Task tool  | Semantic codebase search            |
+| `artifact-publisher` | Task tool  | Publish to project feed             |
+| `context-bridge`     | Task tool  | Sync with Claude/Cursor             |
+| `context-router`     | Task tool  | Intelligent context prioritization  |
+| `incident-response`  | Task tool  | Automated incident response         |
 
 **Example Usage:**
+
 ```
 Run Task tool with skill rule-selector to configure rules
 Run Task tool with skill scaffolder to create a UserProfile component
@@ -85,6 +92,7 @@ Run Task tool with skill context-bridge to sync to Claude
 ### Instruction Guides
 
 Comprehensive guides in `instructions/`:
+
 - **cli.md**: How to talk to a droid, effective prompts, common workflows
 - **specification-mode.md**: Turn plain-English specs into production-ready code
 - **auto-run.md**: Configurable autonomy levels for efficient execution
@@ -122,6 +130,7 @@ Comprehensive guides in `instructions/`:
 ### Specification Mode
 
 For complex features requiring planning:
+
 1. Press `Shift+Tab` to activate Specification Mode
 2. Describe feature in 4-6 sentences
 3. Review generated specification and implementation plan
@@ -130,6 +139,7 @@ For complex features requiring planning:
 ### Auto-Run Mode
 
 Choose autonomy level based on risk tolerance:
+
 - **Auto (Low)**: File edits and read-only commands
 - **Auto (Medium)**: Reversible workspace changes
 - **Auto (High)**: All commands except safety blocks
@@ -139,6 +149,7 @@ Cycle through modes with `Shift+Tab` (or `Ctrl+T` on Windows).
 ### Context Routing
 
 Intelligently combines context sources:
+
 1. Repository code (primary)
 2. Cursor plans (`.cursor/plans/latest.md`)
 3. Claude artifacts (`.claude/context/artifacts/*`)
@@ -195,6 +206,7 @@ Run the Task tool with subagent architect to design the authentication system.
 ### Configure Hooks
 
 Edit hook files in `.factory/hooks/`:
+
 - `pre-run.yaml`: Pre-execution validation
 - `post-run.yaml`: Post-execution publishing
 
@@ -212,21 +224,25 @@ Edit hook files in `.factory/hooks/`:
 ## Troubleshooting
 
 ### Custom Droids not available
+
 - Verify Custom Droids enabled: `/settings` → `enableCustomDroids: true`
 - Restart droid after enabling
 - Check droid files in `.factory/droids/` or `~/.factory/droids/`
 
 ### Context not syncing
+
 - Verify directories exist (`.cursor/context/`, `.claude/context/artifacts/`)
 - Check hook configurations in `hooks/`
 - Review file permissions
 
 ### Too many prompts in Auto-Run
+
 - Check autonomy level in status banner
 - Verify commands aren't in denylist (`/settings`)
 - Add safe commands to allowlist
 
 ### Hooks not executing
+
 - Verify hook files are valid YAML
 - Check trigger names match Factory format
 - Review Factory logs for hook errors

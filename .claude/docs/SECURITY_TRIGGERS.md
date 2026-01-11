@@ -57,6 +57,7 @@ Detailed documentation for the security trigger enforcement system.
 ## Bypassing Security Blocks
 
 Only orchestrator can override security blocks:
+
 1. Requires documented justification
 2. Requires security-architect approval
 3. Requires compliance-auditor sign-off for critical priority
@@ -71,11 +72,13 @@ Only orchestrator can override security blocks:
 ## Validation Commands
 
 **Check security triggers**:
+
 ```bash
 node .claude/tools/enforcement-gate.mjs validate-security --task "<description>" [--agents <agent1,agent2>]
 ```
 
 **Validate all gates (includes security)**:
+
 ```bash
 node .claude/tools/enforcement-gate.mjs validate-all \
   --run-id <id> \

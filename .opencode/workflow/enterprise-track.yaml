@@ -15,7 +15,7 @@ project_type: fullstack
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       - user_requirements
@@ -36,7 +36,7 @@ steps:
       - Create structured development plan
 
   - step: 1
-    name: "Project Discovery & Stakeholder Analysis"
+    name: 'Project Discovery & Stakeholder Analysis'
     agent: analyst
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -54,7 +54,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/01-analyst.json
 
   - step: 2
-    name: "Product Requirements & Compliance Mapping"
+    name: 'Product Requirements & Compliance Mapping'
     agent: pm
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -70,7 +70,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/02-pm.json
 
   - step: 3
-    name: "Security Architecture Review"
+    name: 'Security Architecture Review'
     agent: security-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -88,7 +88,7 @@ steps:
       Must validate SOC2, HIPAA, GDPR requirements as applicable.
 
   - step: 4
-    name: "System Architecture"
+    name: 'System Architecture'
     agent: architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -106,7 +106,7 @@ steps:
       from the security architecture review.
 
   - step: 5
-    name: "Database Architecture & Data Governance"
+    name: 'Database Architecture & Data Governance'
     agent: database-architect
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -126,7 +126,7 @@ steps:
       audit logging, and PII handling requirements.
 
   - step: 6
-    name: "Infrastructure & DevOps Planning"
+    name: 'Infrastructure & DevOps Planning'
     agent: devops
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -145,7 +145,7 @@ steps:
       and multi-environment deployment strategy.
 
   - step: 7
-    name: "Test Planning & Security Testing"
+    name: 'Test Planning & Security Testing'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -165,7 +165,7 @@ steps:
       and compliance validation tests.
 
   - step: 8
-    name: "Implementation"
+    name: 'Implementation'
     agent: developer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -184,7 +184,7 @@ steps:
       gate: .opencode/context/history/gates/{{workflow_id}}/08-developer.json
 
   - step: 9
-    name: "Enterprise Documentation"
+    name: 'Enterprise Documentation'
     agent: technical-writer
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
@@ -206,7 +206,7 @@ steps:
       compliance attestations, and audit trail documentation.
 
   - step: 10
-    name: "Quality Assurance & Security Validation"
+    name: 'Quality Assurance & Security Validation'
     agent: qa
     inputs:
       - plan-{{workflow_id}}.json (from step 0)

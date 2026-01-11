@@ -108,10 +108,10 @@ During test development, fixed a bug in `task-classifier.mjs`:
 
 ```javascript
 // Before (line 569)
-resolvedFiles: fileAnalysis.resolvedFiles.slice(0, 20)
+resolvedFiles: fileAnalysis.resolvedFiles.slice(0, 20);
 
 // After
-resolvedFiles: (fileAnalysis.resolvedFiles || []).slice(0, 20)
+resolvedFiles: (fileAnalysis.resolvedFiles || []).slice(0, 20);
 ```
 
 This prevents `TypeError: Cannot read properties of undefined` when `resolvedFiles` is undefined.

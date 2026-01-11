@@ -31,46 +31,46 @@ const PROJECT_ROOT = resolve(__dirname, '../../../..');
 
 // Diagram type mappings
 const DIAGRAM_TYPES = {
-  'architecture': {
+  architecture: {
     mermaidType: 'graph TB',
     description: 'System architecture and component relationships',
-    defaultTitle: 'Architecture Diagram'
+    defaultTitle: 'Architecture Diagram',
   },
-  'sequence': {
+  sequence: {
     mermaidType: 'sequenceDiagram',
     description: 'Process flows and interactions',
-    defaultTitle: 'Sequence Diagram'
+    defaultTitle: 'Sequence Diagram',
   },
-  'class': {
+  class: {
     mermaidType: 'classDiagram',
     description: 'Class structure and relationships',
-    defaultTitle: 'Class Diagram'
+    defaultTitle: 'Class Diagram',
   },
-  'er': {
+  er: {
     mermaidType: 'erDiagram',
     description: 'Entity-relationship database schema',
-    defaultTitle: 'Entity Relationship Diagram'
+    defaultTitle: 'Entity Relationship Diagram',
   },
-  'erd': {
+  erd: {
     mermaidType: 'erDiagram',
     description: 'Entity-relationship database schema',
-    defaultTitle: 'Entity Relationship Diagram'
+    defaultTitle: 'Entity Relationship Diagram',
   },
-  'flowchart': {
+  flowchart: {
     mermaidType: 'flowchart TD',
     description: 'Decision flows and processes',
-    defaultTitle: 'Flowchart'
+    defaultTitle: 'Flowchart',
   },
-  'flow': {
+  flow: {
     mermaidType: 'flowchart TD',
     description: 'Decision flows and processes',
-    defaultTitle: 'Flowchart'
+    defaultTitle: 'Flowchart',
   },
-  'state': {
+  state: {
     mermaidType: 'stateDiagram-v2',
     description: 'State transitions',
-    defaultTitle: 'State Diagram'
-  }
+    defaultTitle: 'State Diagram',
+  },
 };
 
 /**
@@ -83,7 +83,7 @@ function parseArgs(args) {
     output: null,
     title: null,
     render: false,
-    format: 'json'
+    format: 'json',
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -151,7 +151,9 @@ function validateArgs(args) {
     throw new Error('Missing required argument: --type');
   }
   if (!DIAGRAM_TYPES[args.type]) {
-    throw new Error(`Invalid diagram type: ${args.type}. Valid types: ${Object.keys(DIAGRAM_TYPES).join(', ')}`);
+    throw new Error(
+      `Invalid diagram type: ${args.type}. Valid types: ${Object.keys(DIAGRAM_TYPES).join(', ')}`
+    );
   }
   if (!args.input) {
     throw new Error('Missing required argument: --input');
@@ -194,7 +196,7 @@ async function readSourceFiles(dirPath) {
             path: fullPath,
             relativePath: fullPath.replace(PROJECT_ROOT, '').replace(/^[\\/]/, ''),
             content,
-            extension: ext
+            extension: ext,
           });
         }
       }
@@ -216,7 +218,8 @@ function parseClassStructure(files) {
 
     if (['.ts', '.tsx', '.js', '.jsx'].includes(extension)) {
       // TypeScript/JavaScript class parsing
-      const classRegex = /(?:export\s+)?class\s+(\w+)(?:\s+extends\s+(\w+))?(?:\s+implements\s+([\w,\s]+))?\s*{/g;
+      const classRegex =
+        /(?:export\s+)?class\s+(\w+)(?:\s+extends\s+(\w+))?(?:\s+implements\s+([\w,\s]+))?\s*{/g;
       let match;
 
       while ((match = classRegex.exec(content)) !== null) {
@@ -255,7 +258,7 @@ function parseClassStructure(files) {
           implements: implementsList,
           methods,
           properties,
-          file: file.relativePath
+          file: file.relativePath,
         });
       }
     } else if (extension === '.py') {
@@ -273,7 +276,7 @@ function parseClassStructure(files) {
           implements: bases.slice(1),
           methods: [],
           properties: [],
-          file: file.relativePath
+          file: file.relativePath,
         });
       }
     }
@@ -317,7 +320,7 @@ function parseERSchema(content) {
           name: columnName,
           type: columnType,
           isPrimaryKey: isPK,
-          isForeignKey: isFK
+          isForeignKey: isFK,
         });
       }
 
@@ -329,7 +332,7 @@ function parseERSchema(content) {
           from: tableName,
           to: fkMatch[2],
           fromColumn: fkMatch[1],
-          toColumn: fkMatch[3]
+          toColumn: fkMatch[3],
         });
       }
     });
@@ -337,7 +340,7 @@ function parseERSchema(content) {
     entities.push({
       name: tableName,
       attributes,
-      relationships
+      relationships,
     });
   }
 
@@ -388,9 +391,9 @@ function generateArchitectureDiagram(description, title) {
     nodes: Array.from(nodes).map(id => ({
       id,
       label: id.replace(/_/g, ' '),
-      type: 'component'
+      type: 'component',
     })),
-    edges
+    edges,
   };
 }
 
@@ -424,7 +427,7 @@ function generateSequenceDiagram(description, title) {
       interactions.push({
         from: words[i],
         to: words[i + 1],
-        message: 'request'
+        message: 'request',
       });
     }
   }
@@ -446,7 +449,7 @@ function generateSequenceDiagram(description, title) {
   return {
     mermaid,
     nodes: Array.from(participants).map(id => ({ id, label: id, type: 'participant' })),
-    edges: interactions.map(i => ({ from: i.from, to: i.to, label: i.message }))
+    edges: interactions.map(i => ({ from: i.from, to: i.to, label: i.message })),
   };
 }
 
@@ -489,7 +492,7 @@ function generateClassDiagram(classes) {
       if (c.extends) edges.push({ from: c.extends, to: c.name, label: 'extends' });
       c.implements.forEach(i => edges.push({ from: i, to: c.name, label: 'implements' }));
       return edges;
-    })
+    }),
   };
 }
 
@@ -503,7 +506,7 @@ function generateERDiagram(entities) {
     mermaid += `    ${entity.name} {\n`;
 
     entity.attributes.forEach(attr => {
-      const constraint = attr.isPrimaryKey ? 'PK' : (attr.isForeignKey ? 'FK' : '');
+      const constraint = attr.isPrimaryKey ? 'PK' : attr.isForeignKey ? 'FK' : '';
       mermaid += `        ${attr.type} ${attr.name} ${constraint}\n`;
     });
 
@@ -519,7 +522,7 @@ function generateERDiagram(entities) {
   return {
     mermaid,
     nodes: entities.map(e => ({ id: e.name, label: e.name, type: 'entity' })),
-    edges: relationships.map(r => ({ from: r.from, to: r.to, label: 'has' }))
+    edges: relationships.map(r => ({ from: r.from, to: r.to, label: 'has' })),
   };
 }
 
@@ -532,7 +535,10 @@ function generateFlowchart(description, title) {
   let nodeId = 0;
 
   // Parse decision points and actions
-  const lines = description.split(/\n|;|,/).map(l => l.trim()).filter(Boolean);
+  const lines = description
+    .split(/\n|;|,/)
+    .map(l => l.trim())
+    .filter(Boolean);
 
   lines.forEach((line, idx) => {
     const id = `node${nodeId++}`;
@@ -559,9 +565,12 @@ function generateFlowchart(description, title) {
   let mermaid = 'flowchart TD\n';
 
   nodes.forEach(node => {
-    const shape = node.shape === 'diamond' ? `{${node.label}}` :
-                  node.shape === 'rounded' ? `([${node.label}])` :
-                  `[${node.label}]`;
+    const shape =
+      node.shape === 'diamond'
+        ? `{${node.label}}`
+        : node.shape === 'rounded'
+          ? `([${node.label}])`
+          : `[${node.label}]`;
     mermaid += `    ${node.id}${shape}\n`;
   });
 
@@ -572,7 +581,7 @@ function generateFlowchart(description, title) {
   return {
     mermaid,
     nodes: nodes.map(n => ({ id: n.id, label: n.label, type: n.type })),
-    edges
+    edges,
   };
 }
 
@@ -620,7 +629,7 @@ function generateStateDiagram(description, title) {
   return {
     mermaid,
     nodes: Array.from(states).map(id => ({ id, label: id.replace(/_/g, ' '), type: 'state' })),
-    edges: transitions
+    edges: transitions,
   };
 }
 
@@ -646,12 +655,14 @@ async function generateDiagram(args) {
       sourceFiles = await readSourceFiles(inputPath);
     } else if (stats.isFile()) {
       const content = await readFile(inputPath, 'utf-8');
-      sourceFiles = [{
-        path: inputPath,
-        relativePath: inputPath.replace(PROJECT_ROOT, '').replace(/^[\\/]/, ''),
-        content,
-        extension: extname(inputPath)
-      }];
+      sourceFiles = [
+        {
+          path: inputPath,
+          relativePath: inputPath.replace(PROJECT_ROOT, '').replace(/^[\\/]/, ''),
+          content,
+          extension: extname(inputPath),
+        },
+      ];
     }
 
     // Generate based on file content
@@ -685,9 +696,9 @@ async function generateDiagram(args) {
       title,
       node_count: result.nodes.length,
       edge_count: result.edges.length,
-      complexity_score: calculateComplexity(result.nodes.length, result.edges.length)
+      complexity_score: calculateComplexity(result.nodes.length, result.edges.length),
     },
-    duration
+    duration,
   };
 }
 
@@ -769,7 +780,9 @@ async function renderDiagram(mermaidFile) {
     await execAsync(`npx -y @mermaid-js/mermaid-cli -i "${mermaidFile}" -o "${svgFile}"`);
     return svgFile;
   } catch (error) {
-    console.warn('Warning: Failed to render SVG. Install @mermaid-js/mermaid-cli for rendering support.');
+    console.warn(
+      'Warning: Failed to render SVG. Install @mermaid-js/mermaid-cli for rendering support.'
+    );
     return null;
   }
 }
@@ -814,7 +827,7 @@ async function main() {
         type: n.type,
         relationships: diagram.edges
           .filter(e => e.from === n.id || e.to === n.id)
-          .map(e => e.from === n.id ? e.to : e.from)
+          .map(e => (e.from === n.id ? e.to : e.from)),
       })),
       relationships_mapped: diagram.edges.length,
       source_files_analyzed: sourceFiles,
@@ -822,14 +835,16 @@ async function main() {
         title: metadata.title,
         complexity_score: metadata.complexity_score,
         node_count: metadata.node_count,
-        edge_count: metadata.edge_count
+        edge_count: metadata.edge_count,
       },
-      rendered_output: svgPath ? {
-        svg_path: svgPath.replace(PROJECT_ROOT, '').replace(/^[\\/]/, '')
-      } : undefined,
+      rendered_output: svgPath
+        ? {
+            svg_path: svgPath.replace(PROJECT_ROOT, '').replace(/^[\\/]/, ''),
+          }
+        : undefined,
       mermaid_version: '10.0+',
       validation_passed: true,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Validate output
@@ -856,7 +871,6 @@ async function main() {
       }
       console.log(`\n## Mermaid Syntax\n\n\`\`\`mermaid\n${diagram.mermaid}\`\`\`\n`);
     }
-
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);
@@ -877,5 +891,5 @@ export {
   generateClassDiagram,
   generateERDiagram,
   generateFlowchart,
-  generateStateDiagram
+  generateStateDiagram,
 };

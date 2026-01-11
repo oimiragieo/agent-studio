@@ -25,13 +25,14 @@ validation:
 import { Suspense } from 'react'
 
 export default function {{Name}}() {
-  return (
-    <Suspense fallback={<{{Name}}Skeleton />}>
-      <{{Name}}Content />
-    </Suspense>
-  )
+return (
+<Suspense fallback={<{{Name}}Skeleton />}>
+<{{Name}}Content />
+</Suspense>
+)
 }
-```
+
+````
 </template>
 
 <template name="api-route">
@@ -46,7 +47,8 @@ export async function {{Method}}(request: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
-```
+````
+
 </template>
 
 # Next.js 15 + React 19 + TypeScript + Tailwind CSS Master Rules
@@ -65,6 +67,7 @@ export async function {{Method}}(request: NextRequest) {
 ## Project Structure
 
 ### Directory Organization
+
 - Use the **App Router** directory structure (`app/` directory)
 - Place route-specific components in `app/` directory
 - Place shared components in `components/` directory
@@ -74,6 +77,7 @@ export async function {{Method}}(request: NextRequest) {
 - Structure components logically: exports, subcomponents, helpers, types
 
 ### File Naming
+
 - Use PascalCase for component files: `UserProfile.tsx`
 - Use camelCase for utility files: `formatDate.ts`
 - Use kebab-case for directories: `user-profile/`
@@ -82,6 +86,7 @@ export async function {{Method}}(request: NextRequest) {
 ## TypeScript Rules
 
 ### Type System
+
 - **Prefer interfaces over types** for object definitions
 - Use `type` for unions, intersections, and mapped types
 - **Avoid `any`**, prefer `unknown` for unknown types
@@ -92,6 +97,7 @@ export async function {{Method}}(request: NextRequest) {
 - **Avoid enums**; use const maps instead
 
 ### Naming Conventions
+
 - Use **PascalCase** for type names and interfaces
 - Use **camelCase** for variables and functions
 - Use **UPPER_CASE** for constants
@@ -100,12 +106,14 @@ export async function {{Method}}(request: NextRequest) {
 - Prefix event handlers with 'handle' (e.g., `handleClick`, `handleSubmit`)
 
 ### Code Organization
+
 - Keep type definitions close to where they're used
 - Export types and interfaces from dedicated type files when shared
 - Use barrel exports (`index.ts`) for organizing exports
 - Place shared types in a `types` directory
 
 ### Functions
+
 - Use explicit return types for public functions
 - Use arrow functions for callbacks and methods
 - Implement proper error handling with custom error types
@@ -113,6 +121,7 @@ export async function {{Method}}(request: NextRequest) {
 - Prefer `async/await` over Promises
 
 ### Best Practices
+
 - Enable strict mode in `tsconfig.json`
 - Use `readonly` for immutable properties
 - Leverage discriminated unions for type safety
@@ -123,6 +132,7 @@ export async function {{Method}}(request: NextRequest) {
 ## React Rules
 
 ### Component Architecture
+
 - **Use functional components** over class components
 - **Favor React Server Components (RSC)** where possible
 - **Minimize 'use client' directives**
@@ -137,6 +147,7 @@ export async function {{Method}}(request: NextRequest) {
 - Implement proper error boundaries
 
 ### React 19 Specific Features
+
 - Use `use` hook for consuming Promises and Context directly in components
 - Leverage new `useFormStatus` hook for form state management
 - Use `useActionState` for form actions and state management
@@ -153,6 +164,7 @@ export async function {{Method}}(request: NextRequest) {
 - Use `useSyncExternalStore` for subscribing to external stores
 
 ### Hooks
+
 - Follow the Rules of Hooks
 - Use custom hooks for reusable logic
 - Keep hooks focused and simple
@@ -162,6 +174,7 @@ export async function {{Method}}(request: NextRequest) {
 - **Minimize use of 'useEffect' and 'setState'**
 
 ### State Management
+
 - Use `useState` for local component state
 - Implement `useReducer` for complex state logic
 - Use Context API for shared state (sparingly)
@@ -173,6 +186,7 @@ export async function {{Method}}(request: NextRequest) {
 - Implement proper loading states
 
 ### Performance
+
 - Implement proper memoization (`useMemo`, `useCallback`)
 - Use `React.memo` for expensive components
 - Avoid unnecessary re-renders
@@ -184,6 +198,7 @@ export async function {{Method}}(request: NextRequest) {
 ## Next.js 15 Rules
 
 ### App Router
+
 - Use the **App Router** conventions (not Pages Router)
 - Implement proper loading and error states for routes
 - Use dynamic routes appropriately
@@ -191,6 +206,7 @@ export async function {{Method}}(request: NextRequest) {
 - Use route groups for organization without affecting URL structure
 
 ### Server Components (Default)
+
 - Use Server Components by default
 - Fetch data directly in Server Components
 - Use Server Actions for mutations
@@ -198,6 +214,7 @@ export async function {{Method}}(request: NextRequest) {
 - Handle loading and error states appropriately
 
 ### Data Fetching
+
 - Use Server Components for data fetching when possible
 - Implement proper error handling for data fetching
 - Use appropriate caching strategies (`cache`, `revalidate`)
@@ -205,6 +222,7 @@ export async function {{Method}}(request: NextRequest) {
 - Use `fetch` with proper caching options
 
 ### Routing
+
 - Use the App Router conventions
 - Implement proper loading and error states for routes
 - Use dynamic routes appropriately
@@ -212,6 +230,7 @@ export async function {{Method}}(request: NextRequest) {
 - Use route handlers for API endpoints
 
 ### Forms and Validation
+
 - **Use Zod for form validation**
 - Implement proper server-side validation
 - Handle form errors appropriately
@@ -219,6 +238,7 @@ export async function {{Method}}(request: NextRequest) {
 - Use Server Actions for form submissions
 
 ### Performance Optimization
+
 - Optimize images: Use WebP format, size data, lazy loading
 - Use dynamic loading for non-critical components
 - Implement proper caching strategies
@@ -229,6 +249,7 @@ export async function {{Method}}(request: NextRequest) {
 ## Tailwind CSS Rules
 
 ### Setup
+
 - Use proper Tailwind configuration
 - Configure theme extension properly
 - Set up proper purge/content configuration
@@ -237,6 +258,7 @@ export async function {{Method}}(request: NextRequest) {
 - Set up proper color palette
 
 ### Styling Approach
+
 - **Use utility classes over custom CSS**
 - Group related utilities with `@apply` when needed
 - Use proper responsive design utilities
@@ -245,6 +267,7 @@ export async function {{Method}}(request: NextRequest) {
 - Keep component styles consistent
 
 ### Layout
+
 - Use Flexbox and Grid utilities effectively
 - Implement proper spacing system
 - Use container queries when needed
@@ -253,6 +276,7 @@ export async function {{Method}}(request: NextRequest) {
 - Implement proper alignment utilities
 
 ### Responsive Design
+
 - **Use mobile-first approach**
 - Leverage Tailwind's responsive prefixes (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
 - Use `container` class for responsive containers
@@ -261,6 +285,7 @@ export async function {{Method}}(request: NextRequest) {
 - Use proper responsive spacing
 
 ### Components
+
 - **Use shadcn/ui components when available**
 - Extend components properly
 - Keep component variants consistent
@@ -269,6 +294,7 @@ export async function {{Method}}(request: NextRequest) {
 - Keep accessibility in mind
 
 ### Best Practices
+
 - Use `@apply` directive sparingly; prefer utility classes directly in HTML/JSX
 - Create custom components with `@layer components` for repeated patterns
 - Use Tailwind's built-in design tokens for spacing, colors, and typography
@@ -282,6 +308,7 @@ export async function {{Method}}(request: NextRequest) {
 ## Code Quality
 
 ### General Principles
+
 - Write concise, readable TypeScript code
 - Use functional and declarative programming patterns
 - Follow **DRY (Don't Repeat Yourself)** principle
@@ -292,6 +319,7 @@ export async function {{Method}}(request: NextRequest) {
 - Handle edge cases and include assertions to catch errors early
 
 ### Error Handling
+
 - Create custom error types for domain-specific errors
 - Use Result types for operations that can fail
 - Implement proper error boundaries
@@ -302,6 +330,7 @@ export async function {{Method}}(request: NextRequest) {
 - Log errors appropriately
 
 ### Testing
+
 - Write unit tests for components
 - Implement integration tests for complex flows
 - Use React Testing Library
@@ -311,6 +340,7 @@ export async function {{Method}}(request: NextRequest) {
 - Achieve high test coverage with meaningful assertions
 
 ### Accessibility
+
 - Use semantic HTML elements
 - Implement proper ARIA attributes
 - Ensure keyboard navigation
@@ -322,6 +352,7 @@ export async function {{Method}}(request: NextRequest) {
 ## Performance Best Practices
 
 ### Optimization Strategies
+
 - Minimize use of `useEffect` and `setState`
 - Favor Server Components (RSC) where possible
 - Use dynamic loading for non-critical components
@@ -333,6 +364,7 @@ export async function {{Method}}(request: NextRequest) {
 - Monitor bundle size
 
 ### Web Vitals
+
 - Optimize for Largest Contentful Paint (LCP)
 - Minimize Cumulative Layout Shift (CLS)
 - Optimize First Input Delay (FID)
@@ -341,6 +373,7 @@ export async function {{Method}}(request: NextRequest) {
 ## Security
 
 ### Best Practices
+
 - Always consider security implications when writing code
 - Implement proper authentication and authorization
 - Validate and sanitize user inputs
@@ -381,6 +414,7 @@ export async function {{Method}}(request: NextRequest) {
 ## Migration Notes
 
 This master file consolidates rules from:
+
 - `typescript-nextjs-react-tailwind-supabase-cursorrules`
 - `nextjs15-react19-vercelai-tailwind-cursorrules-prompt-file`
 - `nextjs-react-typescript-cursorrules-prompt-file`
@@ -392,4 +426,3 @@ This master file consolidates rules from:
 - And related Next.js/React/TypeScript/Tailwind variants
 
 **Old rule files can be archived** - this master file is the single source of truth.
-

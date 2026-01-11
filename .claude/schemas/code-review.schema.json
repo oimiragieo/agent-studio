@@ -60,7 +60,16 @@
         "properties": {
           "category": {
             "type": "string",
-            "enum": ["security", "performance", "code_quality", "maintainability", "design_pattern", "test_coverage", "documentation", "critical"],
+            "enum": [
+              "security",
+              "performance",
+              "code_quality",
+              "maintainability",
+              "design_pattern",
+              "test_coverage",
+              "documentation",
+              "critical"
+            ],
             "description": "Category of the finding"
           },
           "severity": {
@@ -156,4 +165,3 @@
     }
   }
 }
-

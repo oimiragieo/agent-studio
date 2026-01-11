@@ -75,7 +75,7 @@ function parseFrontmatter(content) {
     frontmatter,
     content: content.substring(match[0].length),
     hasValidFrontmatter: true,
-    frontmatterText: match[0]
+    frontmatterText: match[0],
   };
 }
 
@@ -117,7 +117,7 @@ function validateFrontmatter(frontmatter, filePath) {
   return {
     valid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -148,9 +148,11 @@ function fixFrontmatter(content, parsed) {
       insertIndex = i + 1;
 
       // Skip continuation lines
-      while (insertIndex < frontmatterLines.length - 1 &&
-             frontmatterLines[insertIndex].trim() &&
-             !frontmatterLines[insertIndex].includes(':')) {
+      while (
+        insertIndex < frontmatterLines.length - 1 &&
+        frontmatterLines[insertIndex].trim() &&
+        !frontmatterLines[insertIndex].includes(':')
+      ) {
         insertIndex++;
       }
       break;
@@ -228,7 +230,7 @@ async function validateMdcFiles() {
       file,
       valid: validation.valid,
       errors: validation.errors,
-      warnings: validation.warnings
+      warnings: validation.warnings,
     });
   }
 
@@ -265,7 +267,7 @@ async function validateMdcFiles() {
     totalFiles: mdcFiles.length,
     totalErrors,
     totalWarnings,
-    filesFixed
+    filesFixed,
   };
 }
 

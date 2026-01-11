@@ -42,13 +42,13 @@ All agents MUST validate stateless behavior by adhering to these principles:
 
 ### Core Validation Requirements
 
-| Rule | Description | Enforcement |
-|------|-------------|-------------|
-| **File Read Logging** | All file reads must be logged with timestamps | MANDATORY |
-| **No History Dependency** | Agents must not depend on conversation history | HARD BLOCK |
-| **Context Recovery** | Agents must gracefully recover from context loss | MANDATORY |
-| **State Persistence** | All state must be saved to file system | MANDATORY |
-| **Modification Time Checks** | Verify file modification times before use | RECOMMENDED |
+| Rule                         | Description                                      | Enforcement |
+| ---------------------------- | ------------------------------------------------ | ----------- |
+| **File Read Logging**        | All file reads must be logged with timestamps    | MANDATORY   |
+| **No History Dependency**    | Agents must not depend on conversation history   | HARD BLOCK  |
+| **Context Recovery**         | Agents must gracefully recover from context loss | MANDATORY   |
+| **State Persistence**        | All state must be saved to file system           | MANDATORY   |
+| **Modification Time Checks** | Verify file modification times before use        | RECOMMENDED |
 
 ### Stateless Validation Checklist
 
@@ -94,12 +94,12 @@ async function statelessFileRead(filePath, reasoningFilePath) {
       file_read: {
         path: filePath,
         modification_time: stats.mtime.toISOString(),
-        source: "file_system",
-        size: stats.size
+        source: 'file_system',
+        size: stats.size,
       },
       validation_passed: true,
-      conversation_history_referenced: false
-    }
+      conversation_history_referenced: false,
+    },
   };
 
   // Append to reasoning file
@@ -213,7 +213,7 @@ ls -lt .claude/context/artifacts/*-manifest.json
 const recoveryResult = await invokeSkill('recovery', {
   workflowId: '<workflow_id>',
   step: '<current_step>',
-  agent: '<agent_name>'
+  agent: '<agent_name>',
 });
 ```
 
@@ -231,21 +231,21 @@ const recoveryResult = await invokeSkill('recovery', {
 
 **NEVER use these phrases** (they indicate conversation history dependency):
 
-| Category | Prohibited Phrases |
-|----------|-------------------|
+| Category                  | Prohibited Phrases                                                |
+| ------------------------- | ----------------------------------------------------------------- |
 | **Discussion References** | "As we discussed", "We talked about", "Based on our conversation" |
-| **Message References** | "Earlier you said", "In the previous message", "You mentioned" |
-| **Prior Context** | "As mentioned before", "Like I said earlier", "Remember when" |
-| **Temporal References** | "A few messages ago", "Earlier in this chat", "Previously" |
+| **Message References**    | "Earlier you said", "In the previous message", "You mentioned"    |
+| **Prior Context**         | "As mentioned before", "Like I said earlier", "Remember when"     |
+| **Temporal References**   | "A few messages ago", "Earlier in this chat", "Previously"        |
 
 ### Correct Alternatives
 
-| Instead of | Use |
-|------------|-----|
-| "As we discussed" | "According to the plan document" |
-| "Earlier you said" | "The artifact shows" |
-| "Based on our conversation" | "Based on the file" |
-| "You mentioned" | "The specification indicates" |
+| Instead of                  | Use                              |
+| --------------------------- | -------------------------------- |
+| "As we discussed"           | "According to the plan document" |
+| "Earlier you said"          | "The artifact shows"             |
+| "Based on our conversation" | "Based on the file"              |
+| "You mentioned"             | "The specification indicates"    |
 
 ---
 
@@ -284,7 +284,7 @@ async function longRunningTask(taskId) {
       taskId,
       completedSteps: [...completedSteps, step],
       remainingSteps: steps.filter(s => !completedSteps.includes(s)),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }
@@ -430,12 +430,12 @@ jobs:
 
 ### Common Issues
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| "File not found" error | Agent expecting file from conversation | Read file from disk instead |
-| Inconsistent state | Agent relying on memory | Load state from file system |
-| Lost progress | No checkpointing | Use checkpoint pattern |
-| Duplicate work | Not checking existing state | Check file system before execution |
+| Issue                  | Cause                                  | Solution                           |
+| ---------------------- | -------------------------------------- | ---------------------------------- |
+| "File not found" error | Agent expecting file from conversation | Read file from disk instead        |
+| Inconsistent state     | Agent relying on memory                | Load state from file system        |
+| Lost progress          | No checkpointing                       | Use checkpoint pattern             |
+| Duplicate work         | Not checking existing state            | Check file system before execution |
 
 ### Debugging Steps
 
@@ -448,9 +448,9 @@ jobs:
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-06 | Initial release - stateless recovery documentation |
+| Version | Date       | Changes                                            |
+| ------- | ---------- | -------------------------------------------------- |
+| 1.0.0   | 2025-01-06 | Initial release - stateless recovery documentation |
 
 ---
 

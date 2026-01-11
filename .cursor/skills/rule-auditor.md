@@ -33,6 +33,7 @@ Use @rule-auditor to audit against nextjs rules
 **Rules Applied**: nextjs.mdc, typescript.mdc
 
 ### Summary
+
 - Pass: 12 rules
 - Warn: 3 rules
 - Fail: 2 rules
@@ -40,6 +41,7 @@ Use @rule-auditor to audit against nextjs rules
 ### Violations
 
 #### FAIL: Avoid using `any`
+
 - **File**: src/components/UserAuth.tsx:45
 - **Issue**: `const user: any = await getUser()`
 - **Rule**: typescript.mdc > Type System

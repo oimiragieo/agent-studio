@@ -21,6 +21,7 @@ Migrating Rules - Helps migrate code when rules are updated or when switching be
 ### Step 1: Identify Migration Context
 
 Determine what needs migration:
+
 - **Rule version update**: Same framework, updated rules
 - **Framework migration**: Different framework (e.g., Pages Router → App Router)
 - **Standard update**: Coding standards changed
@@ -29,11 +30,13 @@ Determine what needs migration:
 ### Step 2: Load Rule Index
 
 Load the rule index to find relevant rules:
+
 - @.claude/context/rule-index.json
 
 ### Step 3: Identify Source and Target Rules
 
 Find the rules involved in migration:
+
 - **Source rule**: Current rule being used
 - **Target rule**: New rule to migrate to
 - **Both rules**: If migrating between frameworks
@@ -41,6 +44,7 @@ Find the rules involved in migration:
 ### Step 4: Load Rule Files
 
 Load both source and target rule files:
+
 - Read source rule file
 - Read target rule file
 - Compare differences
@@ -48,6 +52,7 @@ Load both source and target rule files:
 ### Step 5: Analyze Differences
 
 Compare rules to identify:
+
 - **Removed patterns**: What's no longer allowed
 - **New patterns**: What's now required
 - **Changed patterns**: What's been modified
@@ -58,20 +63,22 @@ See [reference/migration-patterns.md](reference/migration-patterns.md) for commo
 ### Step 6: Generate Migration Plan
 
 Create step-by-step migration plan:
+
 - **Inventory**: List all files affected
 - **Priority**: Order of migration (critical first)
 - **Steps**: Specific code changes needed
 - **Verification**: How to verify migration success
-</execution_process>
+  </execution_process>
 
 <best_practices>
+
 1. **Be Comprehensive**: Identify all affected code
 2. **Prioritize**: Critical changes first
 3. **Show Examples**: Before/after code for each change
 4. **Step-by-Step**: Break complex migrations into clear steps
 5. **Verify**: Include verification steps
-</best_practices>
-</instructions>
+   </best_practices>
+   </instructions>
 
 <examples>
 <formatting_example>
@@ -95,6 +102,7 @@ Structure migration plan clearly:
 ### Breaking Changes
 
 #### [Change 1]
+
 **Impact**: [high/medium/low]
 **Description**: [what changed]
 
@@ -109,6 +117,7 @@ Structure migration plan clearly:
 \`\`\`
 
 **Migration Steps**:
+
 1. [Step 1]
 2. [Step 2]
 3. [Step 3]
@@ -118,6 +127,7 @@ Structure migration plan clearly:
 ### New Requirements
 
 #### [Requirement 1]
+
 **Description**: [new requirement]
 
 **Action Required**:
@@ -133,6 +143,7 @@ Structure migration plan clearly:
 ### Deprecated Patterns
 
 #### [Pattern 1]
+
 **Status**: Deprecated
 **Replacement**: [new pattern]
 
@@ -158,6 +169,7 @@ Structure migration plan clearly:
 
 [How to verify migration is complete and correct]
 ```
+
 </formatting_example>
 </examples>
 
@@ -166,21 +178,25 @@ Structure migration plan clearly:
 **Common Migration Scenarios**:
 
 **Next.js 14 → 15**:
+
 - App Router changes
 - React 19 features
 - Server Component patterns
 
 **Pages Router → App Router**:
+
 - Route structure changes
 - Data fetching patterns
 - Layout changes
 
 **TypeScript Strict Mode**:
+
 - Type safety improvements
 - `any` → proper types
 - Null checking
 
 **Python 3.10 → 3.12**:
+
 - Type hint improvements
 - Pattern matching
 - Performance optimizations
@@ -188,4 +204,3 @@ Structure migration plan clearly:
 For each scenario, see migration-patterns.md for detailed patterns.
 </code_example>
 </examples>
-

@@ -36,14 +36,14 @@ agent_routing:
     context_files:
       - .claude/rules-master/TECH_STACK_NEXTJS.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
-  
+    context_strategy: 'lazy_load'
+
   qa:
     context_files:
       - .claude/rules-master/TOOL_CYPRESS_MASTER.md
       - .claude/rules-master/TOOL_PLAYWRIGHT_MASTER.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
-    context_strategy: "lazy_load"
+    context_strategy: 'lazy_load'
 ```
 
 ### Master Rules Files
@@ -75,14 +75,15 @@ To add context files for a custom agent:
 4. Set `context_strategy: "lazy_load"`
 
 Example:
+
 ```yaml
 my-custom-agent:
   trigger_words:
-    - "custom task"
+    - 'custom task'
   context_files:
     - .claude/rules-master/PROTOCOL_ENGINEERING.md
     - .claude/rules/my-custom-rules.md
-  context_strategy: "lazy_load"
+  context_strategy: 'lazy_load'
 ```
 
 ### Monitoring Context Usage
@@ -110,6 +111,7 @@ node .claude/tools/context-monitor.mjs stats developer
 ### Step 1: Copy the Folder Structure
 
 **Option A: Copy Entire `.claude/` Folder + `CLAUDE.md`**
+
 ```bash
 # From production-dropin directory
 cp -r production-dropin/.claude /path/to/your/project/.claude
@@ -117,6 +119,7 @@ cp production-dropin/.claude/CLAUDE.md /path/to/your/project/CLAUDE.md
 ```
 
 **Option B: On Windows (PowerShell)**
+
 ```powershell
 # From production-dropin directory
 Copy-Item -Path "C:\dev\projects\LLM-RULES\production-dropin\.claude" -Destination "C:\path\to\your\project\.claude" -Recurse
@@ -124,6 +127,7 @@ Copy-Item -Path "C:\dev\projects\LLM-RULES\production-dropin\.claude\CLAUDE.md" 
 ```
 
 **Option C: Manual Copy**
+
 1. Copy the `production-dropin/.claude/` folder (note: it's already named `.claude`)
 2. Copy `production-dropin/.claude/CLAUDE.md` to your project root as `CLAUDE.md`
 3. Place `.claude/` in your project root directory
@@ -132,6 +136,7 @@ Copy-Item -Path "C:\dev\projects\LLM-RULES\production-dropin\.claude\CLAUDE.md" 
 ### Step 2: Verify Structure
 
 Your project root should look like this:
+
 ```
 your-project/
 ├── CLAUDE.md                  # ← Root rules (MUST be in project root)
@@ -160,7 +165,8 @@ your-project/
 └── [your source code]
 ```
 
-**IMPORTANT:** 
+**IMPORTANT:**
+
 - `CLAUDE.md` goes in the **project root**, NOT inside `.claude/`
 - `.claude/` goes in your **project root** (same level as `package.json`, `src/`, etc.)
 - Claude Code reads `CLAUDE.md` files hierarchically (root → subdirectories)
@@ -234,7 +240,7 @@ Add to your Claude Code configuration file (location varies by platform):
 
 **Troubleshooting**:
 
-- **Hooks not executing**: 
+- **Hooks not executing**:
   - Verify hooks directory path in preferences
   - Check that hook scripts exist and are executable
   - Ensure bash is available in PATH
@@ -257,6 +263,7 @@ Add to your Claude Code configuration file (location varies by platform):
 **What Each Hook Does in Detail**:
 
 **security-pre-tool.sh**:
+
 - Reads JSON input from stdin with tool name and input
 - For Bash tool, extracts command and validates against dangerous patterns
 - Blocks file system destruction, remote code execution, SQL injection, etc.
@@ -264,6 +271,7 @@ Add to your Claude Code configuration file (location varies by platform):
 - Returns JSON decision to Claude Code
 
 **audit-post-tool.sh**:
+
 - Reads JSON input with tool execution details
 - Formats log entry with timestamp, tool name, and summary
 - Appends to audit log file
@@ -274,7 +282,7 @@ For detailed hook documentation and customization, see `.claude/hooks/README.md`
 
 ### Step 4: Verify It Worked
 
-1. **Check CLAUDE.md is loaded**: 
+1. **Check CLAUDE.md is loaded**:
    - Claude Code reads `CLAUDE.md` from project root
    - Check right-side navigator for hierarchy
 2. **Check agents are available**:
@@ -322,6 +330,7 @@ production-dropin/
 ```
 
 **Important Notes:**
+
 - `.claude/` goes in your **project root** (same level as `package.json`, `src/`, etc.)
 - `CLAUDE.md` goes in **project root**, NOT inside `.claude/`
 - Claude Code reads `CLAUDE.md` hierarchically (root → subdirectories)
@@ -334,11 +343,13 @@ Claude Code has unique capabilities that set it apart from other platforms:
 ### 1. Hierarchical CLAUDE.md System
 
 Claude Code reads `CLAUDE.md` files recursively:
+
 - **Root `CLAUDE.md`**: Universal rules for entire project
 - **Subdirectory `CLAUDE.md`**: Specific rules for that area
 - **Nearest wins**: Closest `CLAUDE.md` to current working directory takes precedence
 
 **How to Use:**
+
 ```
 your-project/
 ├── CLAUDE.md              # Universal rules
@@ -360,18 +371,17 @@ Hooks execute at specific lifecycle events:
   - Validates plans exist for multi-file changes
   - Checks dependencies and conflicts
   - Enforces security boundaries
-  
 - **`PostToolUse`**: After tool execution
   - Publishes artifacts to Claude Projects
   - Collects lint/test logs
   - Syncs with Cursor/Droid sessions
-  
 - **`UserPromptSubmit`**: On user prompt
   - Normalizes prompts (role, tone, goal)
   - Tags for project analytics
   - Routes to appropriate subagent
 
 **Hook Configuration:**
+
 - Hooks are YAML files in `.claude/hooks/`
 - Enable in Preferences → Claude Code → Hooks
 - Point to `.claude/hooks` directory
@@ -384,6 +394,7 @@ Repeatable workflows stored in `.claude/commands/`:
 - **`/fix-issue`**: Issue resolution workflow
 
 **Create Custom Commands:**
+
 1. Create `.md` file in `.claude/commands/`
 2. Define workflow steps
 3. Use `$ARGUMENTS` for parameters
@@ -392,6 +403,7 @@ Repeatable workflows stored in `.claude/commands/`:
 ### 4. Agents (Isolated Context Windows)
 
 Agents have:
+
 - **Isolated context**: Each agent has its own context window
 - **Tool permissions**: Defined in YAML frontmatter
 - **Specialized prompts**: Located in `.claude/agents/[agent].md`
@@ -400,6 +412,7 @@ Agents have:
 **Available Agents (12 Total):**
 
 **Core Development Agents:**
+
 - Analyst - Market research and business analysis
 - Architect - System architecture and technical design
 - Database Architect - Database design and optimization
@@ -409,19 +422,22 @@ Agents have:
 - UX Expert - Interface design and user experience
 
 **Enterprise Agents:**
+
 - DevOps - Infrastructure, CI/CD, and deployments
 - Security Architect - Security design and threat modeling
 - Technical Writer - Documentation and knowledge management
 
 **Routing Agents:**
+
 - Model Orchestrator - Multi-model routing (Claude, Gemini, Cursor, OpenCode)
 - Orchestrator - Task routing and multi-agent coordination
 
 ### 5. Extended Thinking (1M+ Tokens)
 
-**Extended Thinking** is Claude Code's capability for long-form reasoning with extended context windows (1M+ tokens). 
+**Extended Thinking** is Claude Code's capability for long-form reasoning with extended context windows (1M+ tokens).
 
 **Agents Configured for Extended Thinking:**
+
 - **Architect**: Complex architectural decisions, technology evaluations
 - **QA**: Critical quality gate decisions, complex test strategy design
 - **Security Architect**: Threat modeling, compliance evaluation, security trade-offs
@@ -429,6 +445,7 @@ Agents have:
 - **Orchestrator**: Complex routing decisions, workflow selection, conflict resolution
 
 **When Extended Thinking Activates:**
+
 - Complex architectural problems requiring deep analysis
 - Multi-technology stack evaluations
 - Security vulnerability assessments
@@ -436,6 +453,7 @@ Agents have:
 - Conflict resolution between requirements and constraints
 
 **How It Works:**
+
 - Agent explicitly invokes extended thinking mode
 - Reasoning process is deeper and more thorough
 - Outputs are more comprehensive and well-justified
@@ -450,11 +468,13 @@ MCP servers configured in `.claude/.mcp.json`:
 Anthropic's advanced tool use features (released November 24, 2025) dramatically reduce MCP tool token usage:
 
 **Tool Search Tool**:
+
 - Reduces MCP tool tokens by 85% (80k → 12k tokens)
 - Tools load on-demand instead of upfront
 - Improves tool selection accuracy (79.5% → 88.1%)
 
 **Configuration**:
+
 ```json
 {
   "betaFeatures": ["advanced-tool-use-2025-11-20"],
@@ -472,11 +492,13 @@ Anthropic's advanced tool use features (released November 24, 2025) dramatically
 ```
 
 **When to Enable**:
+
 - MCP tool count > 20 tools
 - MCP tools consume >30% of context
 - Want improved tool selection accuracy
 
 See `.claude/docs/ADVANCED_TOOL_USE.md` for comprehensive guide on Tool Search Tool, Programmatic Tool Calling, and Tool Use Examples.
+
 - **Repository RAG**: Codebase search and knowledge retrieval
 - **Artifact Publisher**: Push artifacts to Claude Projects
 - **Context Bridge**: Sync across Claude, Cursor, Droid
@@ -488,6 +510,7 @@ See `.claude/docs/ADVANCED_TOOL_USE.md` for comprehensive guide on Tool Search T
 Claude Code's **Artifacts** provide live, interactive previews of code, docs, and UI prototypes. This is one of Claude Code's most powerful features.
 
 **Artifact Capabilities:**
+
 - **Live previews**: Code, docs, UI prototypes render side-by-side with chat
 - **Iterative editing**: Edit artifacts directly - changes sync back to codebase
 - **Handoff capability**: Share artifacts with collaborators via Claude Projects
@@ -495,6 +518,7 @@ Claude Code's **Artifacts** provide live, interactive previews of code, docs, an
 - **Multi-format**: Supports HTML, Markdown, Mermaid diagrams, code previews
 
 **How to Use:**
+
 1. **Request artifact**: "Create an architecture diagram as an artifact"
 2. **Agent generates**: Artifact renders in artifact pane (right side)
 3. **Edit directly**: Click artifact to edit inline
@@ -503,12 +527,14 @@ Claude Code's **Artifacts** provide live, interactive previews of code, docs, an
 6. **Share**: Collaborators can view and edit artifacts
 
 **Artifact Workflow:**
+
 ```
-Agent generates → Artifact renders → Edit inline → 
+Agent generates → Artifact renders → Edit inline →
 Changes sync → Publish to Projects → Share with team
 ```
 
 **Best Practices:**
+
 - Use artifacts for UI/UX deliverables (visual preview)
 - Use artifacts for architecture diagrams (Mermaid)
 - Use artifacts for documentation (Markdown with live preview)
@@ -531,15 +557,17 @@ Each agent in `.claude/agents/[agent].md` contains:
 
 **Method 1: Trigger Words**
 Agent routing configured in `config.yaml`:
+
 ```yaml
 analyst:
   trigger_words:
-    - "market research"
-    - "competitive analysis"
-    - "project brief"
+    - 'market research'
+    - 'competitive analysis'
+    - 'project brief'
 ```
 
 **Method 2: Explicit Invocation**
+
 ```
 Use the Analyst agent to create a project brief for [feature]
 ```
@@ -569,6 +597,7 @@ Defined in `.claude/workflows/greenfield-fullstack.yaml`:
 6. **QA**: Creates test plan and validates
 
 **How to Start:**
+
 ```
 Start greenfield fullstack workflow for [project description]
 ```
@@ -582,6 +611,7 @@ Similar to greenfield but optimized for existing codebases.
 ## JSON Schemas for Validation
 
 Schemas in `.claude/schemas/` validate agent outputs:
+
 - `project_brief.schema.json`
 - `product_requirements.schema.json`
 - `system_architecture.schema.json`
@@ -594,6 +624,7 @@ Schemas in `.claude/schemas/` validate agent outputs:
 - `route_decision.schema.json`
 
 **Validation Process:**
+
 1. Agent generates JSON output
 2. Validated against schema
 3. Auto-fixed if validation fails
@@ -604,6 +635,7 @@ Schemas in `.claude/schemas/` validate agent outputs:
 ### Q: Will Claude Code auto-discover everything?
 
 **A:** Yes! After copying `.claude/` and `CLAUDE.md` to your project root:
+
 - ✅ `CLAUDE.md` automatically loaded (hierarchical)
 - ✅ Agents auto-discover from `.claude/agents/[agent].md`
 - ✅ Rules auto-load from `.claude/rules/` (hierarchical)
@@ -614,11 +646,13 @@ Schemas in `.claude/schemas/` validate agent outputs:
 ### Q: Do I need to configure anything?
 
 **A:** Initial setup requires:
+
 1. Enable hooks in Preferences → Claude Code → Hooks
 2. Point to `.claude/hooks` directory
 3. (Optional) Register MCP servers from `.claude/.mcp.json`
 
 You can also customize:
+
 - Edit agent prompts in `.claude/agents/[agent].md`
 - Adjust agent routing in `.claude/config.yaml`
 - Modify tool permissions in `.claude/settings.json`
@@ -628,6 +662,7 @@ You can also customize:
 ### Q: How do hooks work?
 
 **A:** Hooks are shell commands that execute at lifecycle events:
+
 - **PreToolUse**: Before Claude uses any tool
 - **PostToolUse**: After tool execution
 - **UserPromptSubmit**: When user submits prompt
@@ -638,15 +673,15 @@ Hooks defined in YAML format in `.claude/hooks/`. Enable in Preferences.
 
 **A:** Key differences:
 
-| Feature | Claude Code | Cursor |
-|---------|-------------|--------|
-| Agent Structure | Flat files with YAML frontmatter (`.claude/agents/[agent].md`) | Flat files (`.mdc` files) |
-| Hooks Format | YAML files | JSON files |
-| Rules Location | `CLAUDE.md` + `.claude/rules/` | `.cursorrules` + `.cursor/rules/` |
-| Commands | `.claude/commands/*.md` | Built-in slash commands |
-| Skills | MCP skills (YAML) | MCP via settings.json |
-| Artifacts | Native Artifacts system | Plan Mode artifacts |
-| Extended Thinking | ✅ Available (1M+ tokens) | ❌ Not available |
+| Feature           | Claude Code                                                    | Cursor                            |
+| ----------------- | -------------------------------------------------------------- | --------------------------------- |
+| Agent Structure   | Flat files with YAML frontmatter (`.claude/agents/[agent].md`) | Flat files (`.mdc` files)         |
+| Hooks Format      | YAML files                                                     | JSON files                        |
+| Rules Location    | `CLAUDE.md` + `.claude/rules/`                                 | `.cursorrules` + `.cursor/rules/` |
+| Commands          | `.claude/commands/*.md`                                        | Built-in slash commands           |
+| Skills            | MCP skills (YAML)                                              | MCP via settings.json             |
+| Artifacts         | Native Artifacts system                                        | Plan Mode artifacts               |
+| Extended Thinking | ✅ Available (1M+ tokens)                                      | ❌ Not available                  |
 
 ### Q: Can I use this in a monorepo?
 
@@ -671,6 +706,7 @@ Each directory can have its own `CLAUDE.md` that extends root rules.
 ### Q: How do agents work with hooks?
 
 **A:** Agents automatically respect hooks:
+
 - `PreToolUse` hook validates before agent uses tools
 - `PostToolUse` hook publishes agent artifacts
 - `UserPromptSubmit` routes to appropriate agent
@@ -719,15 +755,16 @@ Hooks apply to all agents unless specifically excluded.
 
 Claude Code uses **Artifacts** where Cursor uses **Plan Mode**:
 
-| Feature | Claude Code (Artifacts) | Cursor (Plan Mode) |
-|---------|------------------------|-------------------|
-| Purpose | Live preview & iterative editing | Structured planning before execution |
-| Format | Interactive preview (HTML, MD, diagrams) | Markdown plan with file paths & diffs |
-| Editing | Edit artifact directly | Edit plan inline before approval |
-| Storage | Claude Projects (shareable) | `.cursor/plans/` (local) |
-| Use Case | UI previews, documentation, diagrams | Multi-file change planning |
+| Feature  | Claude Code (Artifacts)                  | Cursor (Plan Mode)                    |
+| -------- | ---------------------------------------- | ------------------------------------- |
+| Purpose  | Live preview & iterative editing         | Structured planning before execution  |
+| Format   | Interactive preview (HTML, MD, diagrams) | Markdown plan with file paths & diffs |
+| Editing  | Edit artifact directly                   | Edit plan inline before approval      |
+| Storage  | Claude Projects (shareable)              | `.cursor/plans/` (local)              |
+| Use Case | UI previews, documentation, diagrams     | Multi-file change planning            |
 
 **Best Practice:** Use both!
+
 - **Claude Artifacts**: For deliverables (UI specs, architecture diagrams, docs)
 - **Cursor Plan Mode**: For execution planning (file changes, dependencies, tests)
 - **Sync them**: Reference artifact in Plan Mode, or publish plan as artifact
@@ -746,6 +783,7 @@ Claude Code uses **Artifacts** where Cursor uses **Plan Mode**:
 10. ✅ Review `instructions/` directory for detailed guides
 
 **Important Files in `.claude/`:**
+
 - `CLAUDE.md` - Root rules (must be in project root)
 - `README.md` - Overview and activation
 - `config.yaml` - Agent routing configuration
@@ -756,4 +794,3 @@ Claude Code uses **Artifacts** where Cursor uses **Plan Mode**:
 - `workflows/` - 9 workflow definitions
 
 Remember: **Claude Code's hierarchical system and Artifacts make it ideal for complex projects!** 🚀
-

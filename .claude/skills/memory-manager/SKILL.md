@@ -29,6 +29,7 @@ Memory Manager - Provides dual persistence (CLAUDE.md + Memory Tool) for redunda
 ## Dual Persistence Strategy
 
 ### CLAUDE.md Files (Primary - Version-Controlled)
+
 - Hierarchical context loading (root → subdirectories)
 - Version-controlled in git
 - Project-specific, structured knowledge
@@ -36,6 +37,7 @@ Memory Manager - Provides dual persistence (CLAUDE.md + Memory Tool) for redunda
 - Best for: Static rules, project structure, coding standards
 
 ### Memory Tool (Secondary - Dynamic Learning)
+
 - Cross-conversation pattern persistence
 - Dynamic knowledge accumulation
 - Session-specific learnings
@@ -54,6 +56,7 @@ Memory Manager - Provides dual persistence (CLAUDE.md + Memory Tool) for redunda
 ### Storing Learned Patterns
 
 **When to Store in Memory**:
+
 - User preferences discovered during interaction
 - Task-specific insights and solutions
 - Patterns learned from codebase analysis
@@ -61,6 +64,7 @@ Memory Manager - Provides dual persistence (CLAUDE.md + Memory Tool) for redunda
 - Common mistakes to avoid
 
 **How to Store**:
+
 ```
 Use memory tool to store: "User prefers TypeScript over JavaScript for new features"
 ```
@@ -68,12 +72,14 @@ Use memory tool to store: "User prefers TypeScript over JavaScript for new featu
 ### Reading from Memory
 
 **When to Read from Memory**:
+
 - Starting a new task (check for relevant patterns)
 - Encountering similar problems (look for previous solutions)
 - User preferences (check for known preferences)
 - Workflow patterns (check for optimized approaches)
 
 **How to Read**:
+
 ```
 Use memory tool to read: "What patterns do we have for authentication implementation?"
 ```
@@ -81,12 +87,14 @@ Use memory tool to read: "What patterns do we have for authentication implementa
 ### Syncing to CLAUDE.md
 
 **When to Sync**:
+
 - Pattern is project-wide and should be version-controlled
 - Rule discovered that applies to all future work
 - Standard that should be part of project documentation
 - Important decision that affects project structure
 
 **How to Sync**:
+
 1. Read pattern from memory tool
 2. Determine if it should be in CLAUDE.md
 3. Add to appropriate CLAUDE.md file (root or phase-specific)
@@ -128,6 +136,7 @@ Memory files are stored in the run directory structure:
 Based on Claude Cookbooks patterns, always validate memory file paths:
 
 **Required Validation:**
+
 - Path must start with `/memories` prefix
 - Reject paths with `..` (directory traversal attacks)
 - Verify resolved path is within memory_root directory
@@ -135,6 +144,7 @@ Based on Claude Cookbooks patterns, always validate memory file paths:
 
 **Implementation:**
 See `.claude/skills/memory-manager/memory_tool_handler.py` for production-ready handler with:
+
 - Path validation and sanitization
 - Directory traversal protection
 - Comprehensive error handling
@@ -142,26 +152,28 @@ See `.claude/skills/memory-manager/memory_tool_handler.py` for production-ready 
 - File operation security (view, create, str_replace, insert, delete, rename)
 
 **Example Validation:**
+
 ```python
 def _validate_path(self, path: str) -> Path:
     """Validate and resolve memory paths to prevent directory traversal attacks."""
     if not path.startswith("/memories"):
         raise ValueError("Path must start with /memories")
-    
+
     # Remove /memories prefix and resolve
     relative_path = path[len("/memories"):].lstrip("/")
     full_path = (self.memory_root / relative_path).resolve()
-    
+
     # Verify path is still within memory_root
     try:
         full_path.relative_to(self.memory_root.resolve())
     except ValueError:
         raise ValueError("Path would escape /memories directory")
-    
+
     return full_path
 ```
 
 **Using the Handler:**
+
 ```python
 from .claude.skills.memory_manager.memory_tool_handler import MemoryToolHandler
 
@@ -172,6 +184,7 @@ result = handler.execute(command="view", path="/memories/patterns/auth.md")
 ### Memory Poisoning Prevention
 
 **Prevent malicious memory content**:
+
 - Validate memory content before storing
 - Sanitize user input in memory files
 - Review memory files periodically
@@ -182,6 +195,7 @@ result = handler.execute(command="view", path="/memories/patterns/auth.md")
 ### Security Features
 
 **Production-Ready Handler Includes:**
+
 - ✅ Path validation with directory traversal protection
 - ✅ File extension validation
 - ✅ Root directory protection (cannot delete `/memories`)
@@ -194,6 +208,7 @@ result = handler.execute(command="view", path="/memories/patterns/auth.md")
 ### All Agents Use Both
 
 Every agent should:
+
 1. **Load CLAUDE.md files** automatically (via Claude Code)
 2. **Use memory tool** for learned patterns
 3. **Store insights** in memory tool
@@ -211,6 +226,7 @@ Every agent should:
 ### Automatic Sync
 
 The memory sync utility (`memory-sync.mjs`) can:
+
 - Sync important patterns from memory to CLAUDE.md
 - Merge memory insights into project documentation
 - Archive old memory files
@@ -219,6 +235,7 @@ The memory sync utility (`memory-sync.mjs`) can:
 ### Manual Sync
 
 Agents can manually sync:
+
 1. Identify pattern in memory that should be in CLAUDE.md
 2. Read pattern from memory tool
 3. Add to appropriate CLAUDE.md file
@@ -297,4 +314,3 @@ Agent syncs:
 - Verify CLAUDE.md file is writable
 - Check that pattern is appropriate for CLAUDE.md
 - Ensure proper formatting when adding to CLAUDE.md
-

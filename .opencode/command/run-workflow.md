@@ -31,6 +31,7 @@ Use this command to validate the output of a workflow step against its defined s
 ## Implementation Details
 
 This command:
+
 1. Parses the YAML workflow definition
 2. Locates the specified step
 3. Identifies the expected output artifact, schema, and gate path

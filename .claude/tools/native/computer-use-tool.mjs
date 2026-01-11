@@ -3,7 +3,7 @@
  * Computer Use Tool - Native Agent SDK Implementation
  * UI automation, screenshot capture, and accessibility support
  * Based on: https://docs.claude.com/en/docs/agents-and-tools/tool-use/computer-use-tool.md
- * 
+ *
  * Note: Full implementation requires browser automation libraries (Puppeteer/Playwright)
  * This is a simplified version that provides the interface
  */
@@ -17,16 +17,11 @@ const SCREENSHOT_DIR = '.claude/screenshots';
  * Take a screenshot (placeholder - requires browser automation)
  */
 export async function takeScreenshot(input, context = {}) {
-  const {
-    url = null,
-    selector = null,
-    full_page = false,
-    wait_for = null
-  } = input;
+  const { url = null, selector = null, full_page = false, wait_for = null } = input;
 
   // In production, this would use Puppeteer or Playwright
   // For now, return a placeholder structure
-  
+
   const screenshotId = `screenshot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const screenshotPath = join(SCREENSHOT_DIR, `${screenshotId}.png`);
 
@@ -45,7 +40,7 @@ export async function takeScreenshot(input, context = {}) {
     screenshot_path: screenshotPath,
     url,
     timestamp: new Date().toISOString(),
-    note: 'Screenshot functionality requires browser automation library (Puppeteer/Playwright)'
+    note: 'Screenshot functionality requires browser automation library (Puppeteer/Playwright)',
   };
 }
 
@@ -53,12 +48,7 @@ export async function takeScreenshot(input, context = {}) {
  * Click on an element
  */
 export async function clickElement(input, context = {}) {
-  const {
-    selector,
-    x = null,
-    y = null,
-    wait_for_selector = null
-  } = input;
+  const { selector, x = null, y = null, wait_for_selector = null } = input;
 
   // Placeholder: In production, use browser automation
   return {
@@ -67,7 +57,7 @@ export async function clickElement(input, context = {}) {
     selector,
     coordinates: x && y ? { x, y } : null,
     timestamp: new Date().toISOString(),
-    note: 'Click functionality requires browser automation library'
+    note: 'Click functionality requires browser automation library',
   };
 }
 
@@ -75,11 +65,7 @@ export async function clickElement(input, context = {}) {
  * Type text into an element
  */
 export async function typeText(input, context = {}) {
-  const {
-    selector,
-    text,
-    clear_first = false
-  } = input;
+  const { selector, text, clear_first = false } = input;
 
   // Placeholder: In production, use browser automation
   return {
@@ -88,7 +74,7 @@ export async function typeText(input, context = {}) {
     selector,
     text_length: text.length,
     timestamp: new Date().toISOString(),
-    note: 'Type functionality requires browser automation library'
+    note: 'Type functionality requires browser automation library',
   };
 }
 
@@ -96,12 +82,7 @@ export async function typeText(input, context = {}) {
  * Get page content and structure
  */
 export async function getPageContent(input, context = {}) {
-  const {
-    url,
-    extract_text = true,
-    extract_links = true,
-    extract_images = false
-  } = input;
+  const { url, extract_text = true, extract_links = true, extract_images = false } = input;
 
   // Placeholder: In production, fetch and parse HTML
   return {
@@ -110,10 +91,10 @@ export async function getPageContent(input, context = {}) {
     content: {
       text: extract_text ? 'Page text content would be extracted here' : null,
       links: extract_links ? [] : null,
-      images: extract_images ? [] : null
+      images: extract_images ? [] : null,
     },
     timestamp: new Date().toISOString(),
-    note: 'Page content extraction requires HTML parsing library'
+    note: 'Page content extraction requires HTML parsing library',
   };
 }
 
@@ -121,10 +102,7 @@ export async function getPageContent(input, context = {}) {
  * Navigate to URL
  */
 export async function navigateToUrl(input, context = {}) {
-  const {
-    url,
-    wait_until = 'load'
-  } = input;
+  const { url, wait_until = 'load' } = input;
 
   // Placeholder: In production, use browser automation
   return {
@@ -132,7 +110,7 @@ export async function navigateToUrl(input, context = {}) {
     action: 'navigate',
     url,
     timestamp: new Date().toISOString(),
-    note: 'Navigation requires browser automation library'
+    note: 'Navigation requires browser automation library',
   };
 }
 
@@ -141,14 +119,15 @@ export async function navigateToUrl(input, context = {}) {
  */
 export const computerUseTool = {
   name: 'computer_use',
-  description: 'UI automation, screenshot capture, and accessibility support (requires browser automation)',
+  description:
+    'UI automation, screenshot capture, and accessibility support (requires browser automation)',
   inputSchema: {
     type: 'object',
     properties: {
       action: {
         type: 'string',
         enum: ['screenshot', 'click', 'type', 'navigate', 'get_content'],
-        description: 'Action to perform'
+        description: 'Action to perform',
       },
       // Screenshot
       url: { type: 'string', description: 'URL to capture or navigate to' },
@@ -167,49 +146,53 @@ export const computerUseTool = {
       extract_links: { type: 'boolean', default: true, description: 'Extract links' },
       extract_images: { type: 'boolean', default: false, description: 'Extract images' },
       // Navigate
-      wait_until: { type: 'string', enum: ['load', 'domcontentloaded', 'networkidle'], default: 'load' }
+      wait_until: {
+        type: 'string',
+        enum: ['load', 'domcontentloaded', 'networkidle'],
+        default: 'load',
+      },
     },
-    required: ['action']
+    required: ['action'],
   },
   outputSchema: {
     type: 'object',
     properties: {
       success: {
         type: 'boolean',
-        description: 'Whether the action succeeded'
+        description: 'Whether the action succeeded',
       },
       screenshot_id: {
         type: 'string',
-        description: 'Screenshot ID (for screenshot action)'
+        description: 'Screenshot ID (for screenshot action)',
       },
       screenshot_path: {
         type: 'string',
-        description: 'Path to screenshot file (for screenshot action)'
+        description: 'Path to screenshot file (for screenshot action)',
       },
       action: {
         type: 'string',
         enum: ['screenshot', 'click', 'type', 'navigate', 'get_content'],
-        description: 'Action that was performed'
+        description: 'Action that was performed',
       },
       selector: {
         type: 'string',
-        description: 'CSS selector used'
+        description: 'CSS selector used',
       },
       coordinates: {
         type: ['object', 'null'],
         description: 'Click coordinates {x, y} if applicable',
         properties: {
           x: { type: 'number' },
-          y: { type: 'number' }
-        }
+          y: { type: 'number' },
+        },
       },
       text_length: {
         type: 'number',
-        description: 'Length of text typed (for type action)'
+        description: 'Length of text typed (for type action)',
       },
       url: {
         type: 'string',
-        description: 'URL navigated to or captured'
+        description: 'URL navigated to or captured',
       },
       content: {
         type: 'object',
@@ -217,19 +200,19 @@ export const computerUseTool = {
         properties: {
           text: { type: ['string', 'null'] },
           links: { type: ['array', 'null'], items: { type: 'string' } },
-          images: { type: ['array', 'null'], items: { type: 'string' } }
-        }
+          images: { type: ['array', 'null'], items: { type: 'string' } },
+        },
       },
       timestamp: {
         type: 'string',
-        description: 'ISO timestamp of action'
+        description: 'ISO timestamp of action',
       },
       note: {
         type: 'string',
-        description: 'Additional notes about the action'
-      }
+        description: 'Additional notes about the action',
+      },
     },
-    required: ['success', 'action', 'timestamp']
+    required: ['success', 'action', 'timestamp'],
   },
   execute: async (input, context) => {
     const { action, ...params } = input;
@@ -248,8 +231,7 @@ export const computerUseTool = {
       default:
         throw new Error(`Unknown action: ${action}`);
     }
-  }
+  },
 };
 
 export default computerUseTool;
-

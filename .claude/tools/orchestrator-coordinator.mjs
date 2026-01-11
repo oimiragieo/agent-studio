@@ -5,18 +5,22 @@
  * Handles hierarchical plans, data flow, and fallback agents
  */
 
-import { 
-  getMasterPlan, 
-  getPhasePlan, 
+import {
+  getMasterPlan,
+  getPhasePlan,
   updatePhasePlanStatus,
   updateMasterPlanStatus,
   getPhasePlanSize,
   optimizePhasePlanSize,
   addArtifactToTask,
   addScratchpadEntry,
-  getNextTask
+  getNextTask,
 } from './plan-manager.mjs';
-import { createContextPacket, injectContext, extractConstraintsFromArchitecture } from './context-injector.mjs';
+import {
+  createContextPacket,
+  injectContext,
+  extractConstraintsFromArchitecture,
+} from './context-injector.mjs';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
@@ -36,7 +40,7 @@ const FALLBACK_AGENT_MAP = {
   'incident-responder': 'devops',
   'model-orchestrator': 'architect',
   'gcp-cloud-agent': 'devops',
-  'ai-council': 'planner'
+  'ai-council': 'planner',
 };
 
 /**
@@ -46,11 +50,11 @@ const FALLBACK_AGENT_MAP = {
  */
 async function loadDelegationTemplate(agentName) {
   const templatePath = join('.claude/templates/delegation', `${agentName}.md`);
-  
+
   if (existsSync(templatePath)) {
     return await readFile(templatePath, 'utf-8');
   }
-  
+
   // Fallback to generic template
   return `# Task: {description}
 
@@ -72,7 +76,7 @@ Complete the task as specified.
 export async function executePlan(planId) {
   const masterPlan = await getMasterPlan(planId);
   const completedResults = [];
-  
+
   // Execute phases in order
   for (const phase of masterPlan.phases) {
     if (phase.status === 'pending' || phase.status === 'in_progress') {
@@ -80,56 +84,56 @@ export async function executePlan(planId) {
       await updateMasterPlanStatus(planId, {
         phaseStatus: {
           phaseId: phase.phaseId,
-          status: 'in_progress'
+          status: 'in_progress',
         },
         overallStatus: {
-          currentPhase: phase.phaseId
-        }
+          currentPhase: phase.phaseId,
+        },
       });
-      
+
       const phasePlan = await getPhasePlan(`${planId}-${phase.phaseId}`);
-      
+
       // Execute tasks in current phase
       for (const task of phasePlan.tasks) {
         if (task.status === 'pending' && dependenciesMet(task, phasePlan.tasks, completedResults)) {
           // Get results from dependent tasks (may be from previous phases)
-          const dependentResults = completedResults.filter(r => 
+          const dependentResults = completedResults.filter(r =>
             task.dependencies?.includes(r.taskId)
           );
-          
+
           // Delegate with context injection
           const delegation = await delegateTask(task, dependentResults, phasePlan);
-          
+
           // Execute task (with fallback handling)
           let result = await executeTaskWithFallback(delegation, task);
-          
+
           // Capture artifacts
           result.artifacts = await extractArtifacts(result);
-          
+
           // Add artifacts to task
           if (result.artifacts && result.artifacts.length > 0) {
             for (const artifact of result.artifacts) {
               await addArtifactToTask(`${planId}-${phase.phaseId}`, task.taskId, artifact);
             }
           }
-          
+
           // Store for next iteration
           completedResults.push({
             taskId: task.taskId,
             phaseId: phase.phaseId,
             status: result.status,
             artifacts: result.artifacts,
-            result: result
+            result: result,
           });
-          
+
           await updatePhasePlanStatus(`${planId}-${phase.phaseId}`, {
             taskStatus: {
               taskId: task.taskId,
               status: result.status,
-              result: result
-            }
+              result: result,
+            },
           });
-          
+
           // Check phase plan size - optimize if needed
           const phasePlanSize = await getPhasePlanSize(`${planId}-${phase.phaseId}`);
           if (phasePlanSize > 20000) {
@@ -137,25 +141,25 @@ export async function executePlan(planId) {
           }
         }
       }
-      
+
       // Update phase status in master plan
       await updateMasterPlanStatus(planId, {
         phaseStatus: {
           phaseId: phase.phaseId,
-          status: 'completed'
+          status: 'completed',
         },
         overallStatus: {
-          completedPhases: masterPlan.phases.filter(p => p.status === 'completed').length + 1
-        }
+          completedPhases: masterPlan.phases.filter(p => p.status === 'completed').length + 1,
+        },
       });
     }
   }
-  
+
   return {
     planId,
     completedPhases: masterPlan.phases.filter(p => p.status === 'completed').length,
     totalPhases: masterPlan.phases.length,
-    results: completedResults
+    results: completedResults,
   };
 }
 
@@ -169,42 +173,43 @@ export async function executePlan(planId) {
  */
 export async function delegateTask(task, previousTaskResults = [], phasePlan = null, runId = null) {
   const template = await loadDelegationTemplate(task.assignedAgent);
-  
+
   // Extract constraints from architecture if available
   const constraints = [];
   if (task.constraints && Array.isArray(task.constraints)) {
     constraints.push(...task.constraints);
   }
-  
+
   // Try to extract from architecture document if referenced
   if (task.architecturePath && existsSync(task.architecturePath)) {
     const archConstraints = extractConstraintsFromArchitecture(task.architecturePath);
     constraints.push(...archConstraints);
   }
-  
+
   // Build references from previous task artifacts
-  const references = previousTaskResults.flatMap(r => 
+  const references = previousTaskResults.flatMap(r =>
     (r.artifacts || []).map(a => a.path || a.name)
   );
-  
+
   // Add task-specific file references
   if (task.files && Array.isArray(task.files)) {
     references.push(...task.files);
   }
-  
+
   // Create strict context packet
   const contextPacket = createContextPacket({
     goal: task.description,
     constraints,
     references,
-    definitionOfDone: task.testRequirements?.expectedResults || 
-                      task.definitionOfDone || 
-                      `Task ${task.taskId} completed successfully with all artifacts generated`,
+    definitionOfDone:
+      task.testRequirements?.expectedResults ||
+      task.definitionOfDone ||
+      `Task ${task.taskId} completed successfully with all artifacts generated`,
     runId,
     step: task.step || null,
-    agent: task.assignedAgent
+    agent: task.assignedAgent,
   });
-  
+
   // Inject context into template
   const basePrompt = template
     .replace(/{description}/g, task.description)
@@ -214,15 +219,15 @@ export async function delegateTask(task, previousTaskResults = [], phasePlan = n
     .replace(/{output paths}/g, 'To be determined')
     .replace(/{test output}/g, 'To be determined')
     .replace(/{docs}/g, 'To be determined');
-  
+
   const prompt = injectContext(basePrompt, contextPacket);
-  
+
   return {
     agent: task.assignedAgent,
     prompt,
     taskId: task.taskId,
     fallbackAgent: FALLBACK_AGENT_MAP[task.assignedAgent] || null,
-    contextPacket // Include for debugging/auditing
+    contextPacket, // Include for debugging/auditing
   };
 }
 
@@ -239,33 +244,35 @@ async function executeTaskWithFallback(delegation, task) {
     const result = {
       status: 'completed',
       summary: `Task ${task.taskId} completed by ${delegation.agent}`,
-      artifacts: []
+      artifacts: [],
     };
-    
+
     return result;
   } catch (error) {
     if (delegation.fallbackAgent) {
-      console.warn(`Primary agent ${delegation.agent} failed, using fallback ${delegation.fallbackAgent}`);
-      
+      console.warn(
+        `Primary agent ${delegation.agent} failed, using fallback ${delegation.fallbackAgent}`
+      );
+
       // Record failure in scratchpad
       await addScratchpadEntry(task.phaseId || 'unknown', {
         taskId: task.taskId,
         failureReason: error.message,
-        avoidApproach: `Using ${delegation.agent} for this task type`
+        avoidApproach: `Using ${delegation.agent} for this task type`,
       });
-      
+
       // Retry with fallback
       delegation.agent = delegation.fallbackAgent;
       return await executeTaskWithFallback(delegation, task);
     }
-    
+
     // Record failure
     await addScratchpadEntry(task.phaseId || 'unknown', {
       taskId: task.taskId,
       failureReason: error.message,
-      avoidApproach: `Using ${delegation.agent} for this task type`
+      avoidApproach: `Using ${delegation.agent} for this task type`,
     });
-    
+
     throw error;
   }
 }
@@ -277,25 +284,25 @@ async function executeTaskWithFallback(delegation, task) {
  */
 async function extractArtifacts(taskResult) {
   const artifacts = [];
-  
+
   if (taskResult.files) {
     for (const file of taskResult.files) {
       artifacts.push({
         path: file,
         description: `Generated file: ${file}`,
-        type: 'file'
+        type: 'file',
       });
     }
   }
-  
+
   if (taskResult.testResults) {
     artifacts.push({
       path: taskResult.testResults.path || 'test-results.json',
       description: 'Test execution results',
-      type: 'test_result'
+      type: 'test_result',
     });
   }
-  
+
   return artifacts;
 }
 
@@ -310,17 +317,16 @@ function dependenciesMet(task, allTasks, completedResults) {
   if (!task.dependencies || task.dependencies.length === 0) {
     return true;
   }
-  
+
   return task.dependencies.every(depId => {
     // Check in current phase tasks
     const depTask = allTasks.find(t => t.taskId === depId);
     if (depTask && depTask.status === 'completed') {
       return true;
     }
-    
+
     // Check in completed results (may be from previous phases)
     const depResult = completedResults.find(r => r.taskId === depId);
     return depResult && depResult.status === 'completed';
   });
 }
-

@@ -39,12 +39,14 @@ This is an **Agent Studio-compatible wrapper** for the Codex CLI skill located i
 ### Invocation Methods
 
 **Natural Language**:
+
 ```
 Run multi-AI code review on these changes
 Review this PR with Claude and Gemini
 ```
 
 **Direct Skill Invocation**:
+
 ```javascript
 // Via Agent Studio Skill tool
 {
@@ -58,6 +60,7 @@ Review this PR with Claude and Gemini
 ```
 
 **Direct CLI (Codex pattern)**:
+
 ```bash
 node codex-skills/multi-ai-code-review/scripts/review.js --providers claude,gemini --range origin/main...HEAD
 ```
@@ -65,9 +68,11 @@ node codex-skills/multi-ai-code-review/scripts/review.js --providers claude,gemi
 ## Parameters
 
 ### Required
+
 - None (defaults to unstaged diff with claude,gemini)
 
 ### Optional
+
 - `providers` (Array|String): AI providers to use (default: `["claude", "gemini"]`)
 - `output` (String): Output format - `"json"` or `"markdown"` (default: `"json"`)
 - `staged` (Boolean): Review staged changes instead of unstaged (default: `false`)
@@ -87,6 +92,7 @@ node codex-skills/multi-ai-code-review/scripts/review.js --providers claude,gemi
 All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`.
 
 **Success Response**:
+
 ```json
 {
   "success": true,
@@ -128,6 +134,7 @@ All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`
 ```
 
 **Error Response**:
+
 ```json
 {
   "success": false,
@@ -139,15 +146,18 @@ All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`
 ## Authentication
 
 ### Session-First (Default)
+
 1. Try CLI using logged-in session (API keys hidden)
 2. If fails and env keys exist, retry with env keys
 
 ### Environment Variables
+
 - Claude: `ANTHROPIC_API_KEY` (optional if logged in)
 - Gemini: `GEMINI_API_KEY` or `GOOGLE_API_KEY` (optional if logged in)
 - Copilot: Uses its own CLI auth flow
 
 ### Override to Env-First
+
 ```javascript
 {
   "skill": "multi-ai-code-review",
@@ -156,12 +166,15 @@ All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`
   }
 }
 ```
+
 </execution_process>
 
 <usage_patterns>
+
 ## Common Use Cases
 
 ### PR Review (Standard)
+
 ```javascript
 {
   "skill": "multi-ai-code-review",
@@ -174,6 +187,7 @@ All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`
 ```
 
 ### Security Audit (High Stakes)
+
 ```javascript
 {
   "skill": "multi-ai-code-review",
@@ -186,6 +200,7 @@ All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`
 ```
 
 ### CI Pipeline (Automated)
+
 ```javascript
 {
   "skill": "multi-ai-code-review",
@@ -198,6 +213,7 @@ All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`
 ```
 
 ### Quick Staged Review
+
 ```javascript
 {
   "skill": "multi-ai-code-review",
@@ -207,6 +223,7 @@ All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`
   }
 }
 ```
+
 </usage_patterns>
 </instructions>
 
@@ -217,12 +234,12 @@ All JSON output conforms to `.claude/schemas/multi-ai-review-report.schema.json`
 ```javascript
 // Via Skill tool in Agent Studio
 const result = await invoke({
-  skill: "multi-ai-code-review",
+  skill: 'multi-ai-code-review',
   params: {
-    providers: ["claude", "gemini"],
-    range: "origin/main...HEAD",
-    output: "json"
-  }
+    providers: ['claude', 'gemini'],
+    range: 'origin/main...HEAD',
+    output: 'json',
+  },
 });
 
 console.log(result.data.synthesis.parsed.summary);
@@ -249,6 +266,7 @@ node codex-skills/multi-ai-code-review/scripts/review.js --range origin/main...H
 # CI mode
 node codex-skills/multi-ai-code-review/scripts/review.js --ci --range origin/main...HEAD --providers claude,gemini > ai-review.json
 ```
+
 </code_example>
 </examples>
 
@@ -278,6 +296,7 @@ Structured JSON Output
 ### Codex CLI Location
 
 The underlying Codex CLI skill is located at:
+
 - **Script**: `codex-skills/multi-ai-code-review/scripts/review.js`
 - **Documentation**: `codex-skills/multi-ai-code-review/SKILL.md`
 
@@ -314,8 +333,8 @@ agent: code-reviewer
 tools:
   - multi-ai-code-review
 params:
-  providers: ["claude", "gemini"]
-  range: "origin/main...HEAD"
+  providers: ['claude', 'gemini']
+  range: 'origin/main...HEAD'
 ```
 
 ## Security
@@ -325,12 +344,14 @@ params:
 This skill implements defense-in-depth for credential protection following OWASP A02:2021 guidelines.
 
 **Automatic Sanitization**:
+
 - All error messages are automatically sanitized to prevent API key leakage
 - Stack traces and stderr output are filtered before logging
 - Environment variable values are redacted in error contexts
 - CI/CD pipeline logs are protected from credential exposure
 
 **Sanitized Patterns**:
+
 - Anthropic API keys (`sk-ant-...`)
 - OpenAI API keys (`sk-...`)
 - Google/Gemini API keys (`AIza...`)
@@ -341,6 +362,7 @@ This skill implements defense-in-depth for credential protection following OWASP
 - Long alphanumeric tokens (40+ characters)
 
 **Best Practices**:
+
 1. **Use session-first authentication** - Avoids storing API keys in environment
 2. **Never commit API keys** - Use environment variables or secret managers
 3. **Rotate keys regularly** - Especially after suspected exposure
@@ -348,6 +370,7 @@ This skill implements defense-in-depth for credential protection following OWASP
 5. **Use CI secrets** - Store keys in CI/CD secret management, not in code
 
 **Implementation**:
+
 ```javascript
 // Error handling in review.js automatically sanitizes
 const { sanitize } = require('../../shared/sanitize-secrets.js');
@@ -355,6 +378,7 @@ console.error(sanitize(error.message)); // Safe to log
 ```
 
 **Security Audit**:
+
 - Run `node .claude/tools/test-sanitization.mjs` to verify sanitization patterns
 - All 15 test cases must pass before deployment
 

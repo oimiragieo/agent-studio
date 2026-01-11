@@ -34,6 +34,7 @@ ProjectDocs/
 ## Technical Standards
 
 ### Code Quality & Style
+
 - Maximum file size of 150 lines; refactor into smaller modules if exceeded
 - Functional, declarative programming approach (avoid OOP and classes)
 - Semantic variable naming with auxiliary verbs (e.g., `isLoading`, `hasError`)
@@ -42,6 +43,7 @@ ProjectDocs/
 - Regular code reviews and refactoring sessions
 
 ### Stack & Framework Conventions
+
 - Next.js 15+ with App Router and React Server Components (RSC)
 - Zustand for state management in client components
 - Shadcn UI management using `npx shadcn@latest add`
@@ -50,6 +52,7 @@ ProjectDocs/
 - Progressive Web App (PWA) structure
 
 ### Project Structure
+
 ```
 ├── app/
 │   ├── (auth)/           # Auth-related routes/pages
@@ -96,7 +99,9 @@ ProjectDocs/
    - Reference specific context files when working with the Agent
 
 ### Build Notes Structure
+
 Each build note should include:
+
 1. **Task Objective**: Brief summary of goals
 2. **Current State Assessment**: Description of current project state
 3. **Future State Goal**: Description of desired outcome
@@ -108,6 +113,7 @@ Each build note should include:
 ## Development Standards
 
 ### Error Handling & Validation
+
 - Handle errors at function start with guard clauses
 - Use if-return patterns to reduce nesting
 - Implement Zod for schema validation
@@ -115,12 +121,14 @@ Each build note should include:
 - Implement proper error logging and user-friendly messages
 
 ### State Management & Data Fetching
+
 - Prefer React Server Components for data fetching
 - Use Supabase for real-time data
 - Implement preload patterns
 - Use Vercel KV for chat history and rate limiting
 
 ### Testing & Quality Assurance
+
 - Unit tests for utilities and hooks
 - Integration tests for complex components
 - End-to-end tests for critical flows
@@ -138,6 +146,7 @@ Each build note should include:
 ## Customization
 
 The `.cursorrules` file can be customized to match your project's specific needs:
+
 - Modify the project structure to match your workflow
 - Adjust coding standards and conventions
 - Update documentation requirements

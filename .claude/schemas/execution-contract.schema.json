@@ -1,0 +1,420 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.com/schemas/execution-contract.schema.json",
+  "title": "CUJ Execution Contract Schema",
+  "description": "Schema for defining CUJ execution requirements, preflight checks, and side effects. Used for validation and runtime execution planning.",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["workflow", "skill-only", "manual-setup"],
+      "description": "Execution mode determining how the CUJ is executed. 'workflow' uses YAML workflow files with multi-agent orchestration. 'skill-only' directly invokes a skill without orchestration overhead. 'manual-setup' requires manual user actions."
+    },
+    "workflow": {
+      "type": ["string", "null"],
+      "pattern": "^\\.claude/workflows/[a-z0-9-]+\\.yaml$",
+      "description": "Path to workflow YAML file relative to project root. Required when mode is 'workflow', must be null for other modes. Pattern enforces canonical workflow path format."
+    },
+    "primary_skill": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Primary skill invoked for 'skill-only' mode. Must match a skill name from .claude/skills/. Null for 'workflow' and 'manual-setup' modes."
+    },
+    "required_skills": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "description": "Skill name (legacy format)"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$",
+                "description": "Skill name"
+              },
+              "location": {
+                "type": "string",
+                "enum": ["agent-studio", "codex", "both"],
+                "description": "Skill location: 'agent-studio' (.claude/skills/), 'codex' (codex-skills/), or 'both' (collision)"
+              }
+            },
+            "required": ["name"],
+            "additionalProperties": false,
+            "description": "Skill with explicit location metadata"
+          }
+        ]
+      },
+      "uniqueItems": true,
+      "description": "List of skills required for successful execution. Can be simple strings (legacy) or objects with location metadata. All listed skills must be available on the target platform. Used for platform compatibility validation."
+    },
+    "required_agents": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "uniqueItems": true,
+      "description": "List of agents required for workflow execution. Used for agent availability validation and fallback planning."
+    },
+    "required_clis": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "claude",
+          "cursor",
+          "gemini",
+          "codex",
+          "factory",
+          "opencode",
+          "node",
+          "pnpm",
+          "npm",
+          "git"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "CLI tools required for execution. 'claude' for Claude Code CLI, 'cursor' for Cursor, 'gemini' for Google Gemini CLI, 'codex' for OpenAI Codex CLI, 'factory' for Factory Droid, 'opencode' for OpenCode CLI."
+    },
+    "required_schemas": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+\\.schema\\.json$"
+      },
+      "uniqueItems": true,
+      "description": "JSON schemas required for artifact validation. Must exist in .claude/schemas/ directory."
+    },
+    "side_effects": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "file_write",
+          "file_delete",
+          "git_commit",
+          "git_push",
+          "git_branch",
+          "network_request",
+          "database_write",
+          "cache_invalidation",
+          "external_api_call",
+          "state_mutation",
+          "artifact_creation",
+          "artifact_update",
+          "checkpoint_creation",
+          "notification"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Side effects that may occur during execution. Used for risk assessment, rollback planning, and user confirmation prompts."
+    },
+    "preflight_checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/preflight_check"
+      },
+      "description": "Ordered list of preflight checks to run before execution. All checks must pass for execution to proceed."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 3600,
+      "default": 600,
+      "description": "Maximum execution time in seconds. Default 600 (10 minutes). Range: 10 seconds to 3600 seconds (1 hour)."
+    },
+    "retry_policy": {
+      "type": "object",
+      "properties": {
+        "max_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "default": 3,
+          "description": "Maximum number of retry attempts on failure."
+        },
+        "backoff_strategy": {
+          "type": "string",
+          "enum": ["linear", "exponential", "fixed"],
+          "default": "exponential",
+          "description": "Backoff strategy between retries."
+        },
+        "initial_delay_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000,
+          "default": 1000,
+          "description": "Initial delay in milliseconds before first retry."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Retry policy for transient failures."
+    },
+    "rollback_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether automatic rollback is enabled on failure. When true, side effects are reverted on execution failure."
+    },
+    "requires_confirmation": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether user confirmation is required before execution. Set to true for destructive or high-risk operations."
+    },
+    "parallel_execution": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this CUJ can be executed in parallel with other CUJs. Set to false for CUJs with shared state or conflicting side effects."
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^CUJ-[0-9]{3}$"
+      },
+      "uniqueItems": true,
+      "description": "List of CUJ IDs that must be completed before this CUJ can execute. Used for dependency ordering in multi-CUJ workflows."
+    },
+    "artifact_paths": {
+      "type": "object",
+      "properties": {
+        "plan": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/plans/<plan_id>\\.json$",
+          "description": "Path template for plan artifact. Placeholders: <run_id>, <plan_id>"
+        },
+        "plan_rating": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/plans/<plan_id>-rating\\.json$",
+          "description": "Path template for plan rating artifact. Placeholders: <run_id>, <plan_id>"
+        },
+        "plan_markdown": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/plans/<plan_id>\\.md$",
+          "description": "Path template for plan markdown artifact. Placeholders: <run_id>, <plan_id>"
+        },
+        "manifest": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/artifacts/dev-manifest\\.json$",
+          "description": "Path template for development manifest. Placeholder: <run_id>"
+        },
+        "reasoning": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/reasoning/<agent>\\.json$",
+          "description": "Path template for agent reasoning files. Placeholders: <run_id>, <agent>"
+        },
+        "gate": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/gates/<step>-<agent>\\.json$",
+          "description": "Path template for validation gate results. Placeholders: <run_id>, <step>, <agent>"
+        },
+        "checkpoint": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/checkpoint\\.json$",
+          "description": "Path template for execution checkpoint. Placeholder: <run_id>"
+        },
+        "error_log": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/errors\\.log$",
+          "description": "Path template for error log. Placeholder: <run_id>"
+        },
+        "recovery_state": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/recovery-state\\.json$",
+          "description": "Path template for recovery state. Placeholder: <run_id>"
+        },
+        "browser_session": {
+          "type": "string",
+          "pattern": "^\\.claude/context/runs/<run_id>/browser-session\\.json$",
+          "description": "Path template for browser testing session data. Placeholder: <run_id>"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Standardized artifact path templates using <placeholder> format. All paths use .claude/context/runs/<run_id>/ structure for run isolation."
+    }
+  },
+  "required": ["mode"],
+  "additionalProperties": false,
+  "definitions": {
+    "preflight_check": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "workflow_exists",
+            "agent_exists",
+            "skill_exists",
+            "schema_exists",
+            "file_exists",
+            "directory_exists",
+            "cli_available",
+            "environment_variable",
+            "git_clean",
+            "git_branch",
+            "node_version",
+            "dependency_installed",
+            "port_available",
+            "disk_space",
+            "memory_available",
+            "network_connectivity",
+            "platform_compatible",
+            "artifact_exists",
+            "run_state_valid",
+            "custom"
+          ],
+          "description": "Type of preflight check to perform."
+        },
+        "target": {
+          "type": "string",
+          "description": "Target of the check (e.g., file path, CLI name, environment variable name). Interpretation depends on check type."
+        },
+        "expected": {
+          "type": ["string", "number", "boolean", "null"],
+          "description": "Expected value for comparison checks. For existence checks, this is typically null or omitted."
+        },
+        "blocking": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether check failure blocks execution. Non-blocking checks log warnings but allow execution to proceed."
+        },
+        "error_message": {
+          "type": "string",
+          "description": "Custom error message to display when check fails. Should include remediation steps."
+        },
+        "remediation": {
+          "type": "string",
+          "description": "Suggested remediation steps if check fails. Displayed to user for manual resolution."
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "mode": { "const": "workflow" } }
+      },
+      "then": {
+        "properties": {
+          "workflow": { "type": "string" }
+        },
+        "required": ["workflow"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "mode": { "const": "skill-only" } }
+      },
+      "then": {
+        "properties": {
+          "primary_skill": { "type": "string" }
+        },
+        "required": ["primary_skill"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "mode": { "const": "manual-setup" } }
+      },
+      "then": {
+        "properties": {
+          "workflow": { "const": null },
+          "primary_skill": { "const": null }
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "required_skills": ["scaffolder", "diagram-generator", "response-rater"],
+      "required_agents": ["planner", "analyst", "pm", "architect", "developer"],
+      "required_clis": ["claude", "node", "pnpm"],
+      "side_effects": ["file_write", "artifact_creation", "checkpoint_creation"],
+      "preflight_checks": [
+        {
+          "type": "workflow_exists",
+          "target": ".claude/workflows/greenfield-fullstack.yaml",
+          "blocking": true,
+          "error_message": "Workflow file not found",
+          "remediation": "Ensure .claude/workflows/greenfield-fullstack.yaml exists"
+        },
+        {
+          "type": "agent_exists",
+          "target": "planner",
+          "blocking": true
+        },
+        {
+          "type": "git_clean",
+          "blocking": false,
+          "error_message": "Git working directory has uncommitted changes"
+        }
+      ],
+      "timeout_seconds": 1800,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_strategy": "exponential",
+        "initial_delay_ms": 1000
+      },
+      "rollback_enabled": true,
+      "requires_confirmation": false,
+      "parallel_execution": false,
+      "artifact_paths": {
+        "plan": ".claude/context/runs/<run_id>/plans/<plan_id>.json",
+        "plan_rating": ".claude/context/runs/<run_id>/plans/<plan_id>-rating.json",
+        "plan_markdown": ".claude/context/runs/<run_id>/plans/<plan_id>.md",
+        "manifest": ".claude/context/runs/<run_id>/artifacts/dev-manifest.json",
+        "reasoning": ".claude/context/runs/<run_id>/reasoning/<agent>.json",
+        "gate": ".claude/context/runs/<run_id>/gates/<step>-<agent>.json",
+        "checkpoint": ".claude/context/runs/<run_id>/checkpoint.json",
+        "error_log": ".claude/context/runs/<run_id>/errors.log",
+        "recovery_state": ".claude/context/runs/<run_id>/recovery-state.json"
+      }
+    },
+    {
+      "mode": "skill-only",
+      "workflow": null,
+      "primary_skill": "rule-selector",
+      "required_skills": ["rule-selector"],
+      "required_clis": ["claude"],
+      "side_effects": ["file_write", "state_mutation"],
+      "preflight_checks": [
+        {
+          "type": "skill_exists",
+          "target": "rule-selector",
+          "blocking": true
+        },
+        {
+          "type": "file_exists",
+          "target": ".claude/context/rule-index.json",
+          "blocking": true,
+          "error_message": "Rule index not found",
+          "remediation": "Run 'pnpm index-rules' to generate rule index"
+        }
+      ],
+      "timeout_seconds": 60,
+      "rollback_enabled": false,
+      "requires_confirmation": false,
+      "parallel_execution": true
+    },
+    {
+      "mode": "manual-setup",
+      "workflow": null,
+      "primary_skill": null,
+      "required_clis": [],
+      "side_effects": ["file_write"],
+      "preflight_checks": [],
+      "timeout_seconds": 3600,
+      "rollback_enabled": false,
+      "requires_confirmation": true,
+      "parallel_execution": false
+    }
+  ]
+}

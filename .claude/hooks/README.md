@@ -27,16 +27,17 @@ Hooks run in this order AFTER tool execution completes:
 
 **Optimization**: Hook matchers now use specific tool patterns instead of wildcards
 
-| Hook | Matcher | Execution Time | Runs On |
-|------|---------|----------------|---------|
-| security-pre-tool.sh | Bash\|Write\|Edit | <5ms | Only risky tools |
-| file-path-validator.js | * | <10ms | All tools (needed) |
-| orchestrator-enforcement | Read\|Write\|Edit\|Bash\|Grep\|Glob | <10ms | Orchestrator tools |
-| skill-injection-hook.js | Task | ~224ms | Subagent spawning |
-| audit-post-tool.sh | * | <5ms | All tools (audit) |
-| post-session-cleanup.js | Write\|Edit | <10ms | File operations |
+| Hook                     | Matcher                             | Execution Time | Runs On            |
+| ------------------------ | ----------------------------------- | -------------- | ------------------ |
+| security-pre-tool.sh     | Bash\|Write\|Edit                   | <5ms           | Only risky tools   |
+| file-path-validator.js   | \*                                  | <10ms          | All tools (needed) |
+| orchestrator-enforcement | Read\|Write\|Edit\|Bash\|Grep\|Glob | <10ms          | Orchestrator tools |
+| skill-injection-hook.js  | Task                                | ~224ms         | Subagent spawning  |
+| audit-post-tool.sh       | \*                                  | <5ms           | All tools (audit)  |
+| post-session-cleanup.js  | Write\|Edit                         | <10ms          | File operations    |
 
 **Total Overhead**:
+
 - Without optimization: ~250ms per ANY tool call
 - With optimization: ~15ms for most tools, ~250ms only for Task tool
 - **Efficiency Gain**: ~50-60% reduction in hook overhead
@@ -52,6 +53,7 @@ Hooks run in this order AFTER tool execution completes:
 Prevents orchestrators from using implementation tools directly, forcing them to delegate via Task tool.
 
 **Blocked Tools for Orchestrators**:
+
 - `Write` → must delegate to developer
 - `Edit` → must delegate to developer
 - `Bash` with rm/git commands → must delegate to developer
@@ -61,6 +63,7 @@ Prevents orchestrators from using implementation tools directly, forcing them to
 - `Glob` → must delegate to analyst
 
 **Benefits**:
+
 - Prevents orchestrators from doing work directly
 - Enforces the "orchestrators manage, not implement" rule
 - Clear violation messages with correct delegation patterns
@@ -70,6 +73,7 @@ Prevents orchestrators from using implementation tools directly, forcing them to
 **Testing**: Run `node .claude/hooks/test-orchestrator-enforcement-hook.mjs`
 
 **Configuration**:
+
 ```json
 {
   "hooks": {
@@ -90,6 +94,7 @@ Prevents orchestrators from using implementation tools directly, forcing them to
 ```
 
 **Violation Example**:
+
 ```
 Orchestrator attempts: Write tool
 Hook blocks with:
@@ -110,6 +115,7 @@ Hook blocks with:
 When an orchestrator spawns a subagent using the Task tool, this hook intercepts the call and enhances the prompt with required and triggered skills from skill-integration-matrix.json.
 
 **Benefits**:
+
 - Zero orchestrator overhead (no manual skill management)
 - Guaranteed consistency (always uses latest skill matrix)
 - 90%+ context savings (only loads relevant skills)
@@ -121,6 +127,7 @@ When an orchestrator spawns a subagent using the Task tool, this hook intercepts
 **Testing**: Run `node .claude/hooks/test-skill-injection-hook.js`
 
 **Configuration**:
+
 ```json
 {
   "hooks": {
@@ -137,14 +144,18 @@ When an orchestrator spawns a subagent using the Task tool, this hook intercepts
 ```
 
 ### security-pre-tool.sh (PreToolUse)
+
 Validates tool usage before execution:
+
 - Blocks dangerous bash commands (`rm -rf`, `sudo rm`, `mkfs`, `dd`, etc.)
 - Prevents force push to main/master branches
 - Protects `.env` files and credential files from editing
 - Blocks potentially malicious curl/wget piped to bash
 
 ### audit-post-tool.sh (PostToolUse)
+
 Logs tool executions for audit trail:
+
 - Records timestamp, tool name, and summary
 - Stores logs in `~/.claude/audit/tool-usage.log`
 - Auto-rotates logs to prevent disk bloat
@@ -184,6 +195,7 @@ Add to your Claude Code configuration:
 ## Hook Input/Output Format
 
 ### Input (via stdin)
+
 ```json
 {
   "tool_name": "Bash",
@@ -195,6 +207,7 @@ Add to your Claude Code configuration:
 ```
 
 ### Output (PreToolUse only)
+
 ```json
 {"decision": "allow"}
 // or
@@ -219,12 +232,15 @@ cat ~/.claude/audit/tool-usage.log
 ## Customization
 
 ### Adding Blocked Patterns
+
 Edit `security-pre-tool.sh` and add patterns to `DANGEROUS_PATTERNS` array.
 
 ### Protecting Additional Files
+
 Add patterns to the file protection section in `security-pre-tool.sh`.
 
 ### Custom Audit Format
+
 Modify the logging format in `audit-post-tool.sh`.
 
 ## Python Hook Examples
@@ -236,23 +252,29 @@ Based on Claude Cookbooks Chief of Staff agent patterns, comprehensive Python ho
 Tracks all file writes and edits for audit trail. Full implementation and configuration details in [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md#pattern-1-report-tracker-posttooluse).
 
 **Key Features:**
+
 - Tracks file creation and modification
 - Maintains history with timestamps
 - Calculates word counts
 - Keeps last 50 entries
 
 **Configuration:**
+
 ```json
 {
   "hooks": {
     "PostToolUse": [
       {
         "matcher": "Write",
-        "hooks": [{"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/report-tracker.py"}]
+        "hooks": [
+          { "type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/report-tracker.py" }
+        ]
       },
       {
         "matcher": "Edit",
-        "hooks": [{"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/report-tracker.py"}]
+        "hooks": [
+          { "type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/report-tracker.py" }
+        ]
       }
     ]
   }
@@ -264,19 +286,26 @@ Tracks all file writes and edits for audit trail. Full implementation and config
 Logs when Python scripts are executed via Bash tool. Full implementation in [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md#pattern-2-script-usage-logger-posttooluse).
 
 **Key Features:**
+
 - Detects Python script execution
 - Logs command and description
 - Tracks success/failure
 - Keeps last 100 entries
 
 **Configuration:**
+
 ```json
 {
   "hooks": {
     "PostToolUse": [
       {
         "matcher": "Bash",
-        "hooks": [{"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/script-usage-logger.py"}]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/script-usage-logger.py"
+          }
+        ]
       }
     ]
   }
@@ -288,18 +317,25 @@ Logs when Python scripts are executed via Bash tool. Full implementation in [HOO
 Validates tool usage before execution. Full implementation in [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md#pattern-3-security-validation-pretooluse).
 
 **Key Features:**
+
 - Blocks dangerous bash commands
 - Prevents editing sensitive files
 - Returns allow/block decisions
 
 **Configuration:**
+
 ```json
 {
   "hooks": {
     "PreToolUse": [
       {
         "matcher": "*",
-        "hooks": [{"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/security-validator.py"}]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/security-validator.py"
+          }
+        ]
       }
     ]
   }
@@ -311,6 +347,7 @@ Validates tool usage before execution. Full implementation in [HOOK_PATTERNS.md]
 Sends notifications for important events. Full implementation in [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md#pattern-4-notification-hook-posttooluse).
 
 **Key Features:**
+
 - Detects important operations
 - Sends notifications (Slack, email, etc.)
 - Configurable importance patterns
@@ -318,6 +355,7 @@ Sends notifications for important events. Full implementation in [HOOK_PATTERNS.
 ## Advanced Patterns
 
 See [HOOK_PATTERNS.md](../docs/HOOK_PATTERNS.md) for comprehensive hook patterns including:
+
 - Audit trail tracking
 - Script usage logging
 - Security validation
@@ -340,6 +378,7 @@ options = ClaudeAgentOptions(
 ## Security Note
 
 These hooks provide a defense-in-depth layer but should not be relied upon as the only security measure. Always:
+
 - Review generated code before execution
 - Use proper access controls on your system
 - Keep sensitive files outside the project directory

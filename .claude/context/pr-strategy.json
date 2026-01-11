@@ -25,10 +25,7 @@
       "pr_number": 2,
       "title": "feat: Add cuj-doctor CLI diagnostic tool",
       "description": "Introduces the cuj-doctor CLI tool for comprehensive CUJ ecosystem health checks. This tool diagnoses registry sync issues, missing files, schema validation problems, and workflow references. Includes package.json updates for new npm scripts.",
-      "files": [
-        ".claude/tools/cuj-doctor.mjs",
-        "package.json"
-      ],
+      "files": [".claude/tools/cuj-doctor.mjs", "package.json"],
       "depends_on": [1],
       "estimated_reviewability": "easy",
       "estimated_review_time": "20-30 minutes",
@@ -273,10 +270,7 @@
       "pnpm validate:cujs",
       "pnpm validate:index"
     ],
-    "optional_checks": [
-      "pnpm validate:cujs:e2e",
-      "pnpm cuj:doctor"
-    ]
+    "optional_checks": ["pnpm validate:cujs:e2e", "pnpm cuj:doctor"]
   },
   "merge_strategy": "squash-and-merge",
   "branch_naming_convention": "fix/pr-1-validation-normalization, feat/pr-2-cuj-doctor, docs/pr-3-new-cujs, feat/pr-4-plan-rating-gate, feat/pr-5-new-skills, docs/pr-6-workflow-guide"

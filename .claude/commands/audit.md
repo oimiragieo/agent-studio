@@ -43,6 +43,7 @@ Invokes the **rule-auditor** skill to:
 **Rules Applied**: nextjs.mdc, typescript.mdc, react.mdc
 
 ### Summary
+
 - **Pass**: 12 rules
 - **Warn**: 3 rules
 - **Fail**: 2 rules
@@ -50,12 +51,14 @@ Invokes the **rule-auditor** skill to:
 ### Violations
 
 #### FAIL: Avoid using `any`
+
 - **File**: src/components/UserAuth.tsx:45
 - **Issue**: `const user: any = await getUser()`
 - **Rule**: typescript.mdc > Type System
 - **Fix**: Define proper User interface
 
 #### WARN: Minimize use of 'useEffect'
+
 - **File**: src/components/UserAuth.tsx:23
 - **Issue**: useEffect for data fetching
 - **Suggestion**: Consider Server Component with async/await

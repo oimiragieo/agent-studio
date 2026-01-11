@@ -19,25 +19,29 @@ rules-master/
 ## Usage
 
 **Lazy Loading**: Master rules are loaded on-demand via:
+
 1. **Agent activation** - Configured in `.claude/config.yaml` with `context_files`
 2. **@filename references** - Reference in CLAUDE.md with `@.claude/rules-master/FILENAME.md`
 
 **Example in CLAUDE.md**:
+
 ```markdown
 ## Master Rules
 
 Reference master rules with @filename for lazy loading:
+
 - @.claude/rules-master/PROTOCOL_ENGINEERING.md
 - @.claude/rules-master/TECH_STACK_NEXTJS.md
 ```
 
 **Example in config.yaml**:
+
 ```yaml
 developer:
   context_files:
     - .claude/rules-master/TECH_STACK_NEXTJS.md
     - .claude/rules-master/PROTOCOL_ENGINEERING.md
-  context_strategy: "lazy_load"
+  context_strategy: 'lazy_load'
 ```
 
 ## Benefits

@@ -72,7 +72,7 @@ export function validateParallelGroups(steps) {
                 group: groupId,
                 step: step.step,
                 dependsOn: dependsOnStep,
-                message: `Step ${step.step} depends on step ${dependsOnStep}, but both are in parallel group ${groupId}. They cannot execute in parallel.`
+                message: `Step ${step.step} depends on step ${dependsOnStep}, but both are in parallel group ${groupId}. They cannot execute in parallel.`,
               });
             }
           }
@@ -84,7 +84,7 @@ export function validateParallelGroups(steps) {
     if (groupSteps.length === 1) {
       warnings.push({
         group: groupId,
-        message: `Parallel group ${groupId} contains only one step (${groupSteps[0].step}). Consider removing parallel_group.`
+        message: `Parallel group ${groupId} contains only one step (${groupSteps[0].step}). Consider removing parallel_group.`,
       });
     }
   }
@@ -92,7 +92,7 @@ export function validateParallelGroups(steps) {
   return {
     valid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -115,19 +115,19 @@ async function executeStepWithTimeout(step, context, stepExecutor, timeout = 300
         controller.signal.addEventListener('abort', () => {
           reject(new Error(`Step ${step.step} timed out after ${timeout}ms`));
         });
-      })
+      }),
     ]);
 
     return {
       step: step.step,
       status: 'success',
-      result
+      result,
     };
   } catch (error) {
     return {
       step: step.step,
       status: 'error',
-      error: error.message
+      error: error.message,
     };
   } finally {
     clearTimeout(timeoutId);
@@ -153,7 +153,7 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
     timeout = 300000,
     failFast = false,
     onStepComplete = () => {},
-    onGroupComplete = () => {}
+    onGroupComplete = () => {},
   } = options;
 
   if (!stepExecutor || typeof stepExecutor !== 'function') {
@@ -185,8 +185,8 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
     timing: {
       startTime: Date.now(),
       endTime: null,
-      parallelSavings: 0
-    }
+      parallelSavings: 0,
+    },
   };
 
   // Sort groups by their first step number for proper ordering
@@ -219,7 +219,9 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
       onStepComplete(result);
     } else {
       // Multiple steps - execute in parallel
-      console.log(`[ParallelExecutor] Executing parallel group ${groupId}: steps ${groupSteps.map(s => s.step).join(', ')}`);
+      console.log(
+        `[ParallelExecutor] Executing parallel group ${groupId}: steps ${groupSteps.map(s => s.step).join(', ')}`
+      );
 
       const parallelPromises = groupSteps.map(step =>
         executeStepWithTimeout(step, context, stepExecutor, timeout)
@@ -239,7 +241,7 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
           result = {
             step: groupSteps[i].step,
             status: 'error',
-            error: settledResult.reason?.message || 'Unknown error'
+            error: settledResult.reason?.message || 'Unknown error',
           };
         }
 
@@ -258,7 +260,8 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
       const groupDuration = groupEndTime - groupStartTime;
 
       // Estimate sequential time (sum of individual step estimates)
-      const estimatedSequentialTime = groupSteps.length * (groupDuration / Math.max(1, groupSteps.length));
+      const estimatedSequentialTime =
+        groupSteps.length * (groupDuration / Math.max(1, groupSteps.length));
       const savings = estimatedSequentialTime - groupDuration;
       results.timing.parallelSavings += Math.max(0, savings);
 
@@ -266,14 +269,14 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
         groupId,
         steps: groupSteps.map(s => s.step),
         success: groupSuccess,
-        duration: groupDuration
+        duration: groupDuration,
       });
 
       onGroupComplete({
         groupId,
         steps: groupSteps.map(s => s.step),
         success: groupSuccess,
-        duration: groupDuration
+        duration: groupDuration,
       });
 
       if (!groupSuccess && failFast) {
@@ -300,8 +303,8 @@ async function executeSequentially(steps, context, stepExecutor, timeout, onStep
       startTime: Date.now(),
       endTime: null,
       parallelSavings: 0,
-      mode: 'sequential'
-    }
+      mode: 'sequential',
+    },
   };
 
   for (const step of steps) {
@@ -335,7 +338,7 @@ export function checkParallelSupport(workflow) {
     return {
       supported: false,
       parallelGroups: [],
-      reason: 'No steps array found in workflow'
+      reason: 'No steps array found in workflow',
     };
   }
 
@@ -356,7 +359,7 @@ export function checkParallelSupport(workflow) {
     if (steps.length > 1) {
       parallelGroups.push({
         groupId,
-        steps
+        steps,
       });
     }
   }
@@ -364,9 +367,10 @@ export function checkParallelSupport(workflow) {
   return {
     supported: parallelGroups.length > 0,
     parallelGroups,
-    reason: parallelGroups.length > 0
-      ? `Found ${parallelGroups.length} parallel group(s)`
-      : 'No parallel groups defined'
+    reason:
+      parallelGroups.length > 0
+        ? `Found ${parallelGroups.length} parallel group(s)`
+        : 'No parallel groups defined',
   };
 }
 
@@ -383,9 +387,9 @@ export function getParallelStats(results) {
     parallelSteps,
     sequentialSteps: totalSteps - parallelSteps,
     parallelGroups: parallelGroups.length,
-    successRate: totalSteps > 0 ? (results.success.length / totalSteps * 100).toFixed(1) : 0,
+    successRate: totalSteps > 0 ? ((results.success.length / totalSteps) * 100).toFixed(1) : 0,
     parallelSavingsMs: results.timing.parallelSavings,
-    totalDurationMs: results.timing.totalDuration
+    totalDurationMs: results.timing.totalDuration,
   };
 }
 
@@ -394,5 +398,5 @@ export default {
   validateParallelGroups,
   executeWorkflowSteps,
   checkParallelSupport,
-  getParallelStats
+  getParallelStats,
 };

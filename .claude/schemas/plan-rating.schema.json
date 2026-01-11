@@ -191,16 +191,10 @@
             "format": "date-time"
           },
           "feedback": {
-            "oneOf": [
-              { "type": "string" },
-              { "type": "array", "items": { "type": "string" } }
-            ]
+            "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
           },
           "rated_by": {
-            "oneOf": [
-              { "type": "string" },
-              { "type": "array", "items": { "type": "string" } }
-            ]
+            "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
           }
         }
       }
@@ -238,7 +232,13 @@
         "properties": {
           "dimension": {
             "type": "string",
-            "enum": ["completeness", "feasibility", "risk_mitigation", "agent_coverage", "integration"]
+            "enum": [
+              "completeness",
+              "feasibility",
+              "risk_mitigation",
+              "agent_coverage",
+              "integration"
+            ]
           },
           "suggestion": {
             "type": "string",

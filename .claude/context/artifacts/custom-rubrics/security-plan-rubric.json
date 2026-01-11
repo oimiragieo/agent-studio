@@ -17,7 +17,7 @@
     },
     {
       "name": "feasibility",
-      "weight": 0.10,
+      "weight": 0.1,
       "description": "Security controls are realistic and achievable with available tools and resources",
       "scoring": {
         "1-3": "Unrealistic security controls or unproven security technologies",
@@ -28,7 +28,7 @@
     },
     {
       "name": "risk_mitigation",
-      "weight": 0.30,
+      "weight": 0.3,
       "description": "All security risks identified with comprehensive mitigation strategies, fallback plans, and incident response procedures",
       "scoring": {
         "1-3": "No security risk consideration or mitigation strategies",
@@ -50,7 +50,7 @@
     },
     {
       "name": "compliance",
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Plan meets all compliance requirements (GDPR, HIPAA, SOC2, PCI-DSS, etc.) with audit trail and documentation",
       "scoring": {
         "1-3": "No compliance consideration or missing critical compliance requirements",

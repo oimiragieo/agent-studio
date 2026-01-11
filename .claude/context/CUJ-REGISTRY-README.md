@@ -20,6 +20,7 @@ The CUJ Registry (`cuj-registry.json`) is a comprehensive, machine-readable cata
 ## Schema
 
 The registry conforms to the JSON schema at:
+
 ```
 .claude/schemas/cuj-registry.schema.json
 ```
@@ -62,23 +63,23 @@ The registry conforms to the JSON schema at:
 
 Each CUJ entry contains:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique identifier (e.g., `CUJ-001`) |
-| `name` | string | Human-readable name |
-| `description` | string | Brief description of the user goal |
-| `category` | string | Category (Onboarding, Development, etc.) |
-| `execution_mode` | enum | `workflow`, `skill-only`, `delegated-skill`, `manual-setup` |
-| `workflow` | string\|null | Path to workflow YAML file (if applicable) |
-| `agents` | array | List of agents used |
-| `skills` | array | List of skills used |
-| `primary_skill` | string\|null | Primary skill (for skill-only CUJs) |
-| `schemas` | array | Validation schemas used |
-| `triggers` | array | User triggers (commands, phrases) |
-| `platform_compatibility` | object | Compatibility flags (claude, cursor, factory) |
-| `expected_outputs` | array | Expected artifacts and results |
-| `estimated_duration` | string | Estimated execution time |
-| `file_path` | string | Path to CUJ documentation file |
+| Field                    | Type         | Description                                                 |
+| ------------------------ | ------------ | ----------------------------------------------------------- |
+| `id`                     | string       | Unique identifier (e.g., `CUJ-001`)                         |
+| `name`                   | string       | Human-readable name                                         |
+| `description`            | string       | Brief description of the user goal                          |
+| `category`               | string       | Category (Onboarding, Development, etc.)                    |
+| `execution_mode`         | enum         | `workflow`, `skill-only`, `delegated-skill`, `manual-setup` |
+| `workflow`               | string\|null | Path to workflow YAML file (if applicable)                  |
+| `agents`                 | array        | List of agents used                                         |
+| `skills`                 | array        | List of skills used                                         |
+| `primary_skill`          | string\|null | Primary skill (for skill-only CUJs)                         |
+| `schemas`                | array        | Validation schemas used                                     |
+| `triggers`               | array        | User triggers (commands, phrases)                           |
+| `platform_compatibility` | object       | Compatibility flags (claude, cursor, factory)               |
+| `expected_outputs`       | array        | Expected artifacts and results                              |
+| `estimated_duration`     | string       | Estimated execution time                                    |
+| `file_path`              | string       | Path to CUJ documentation file                              |
 
 ## Execution Modes
 
@@ -87,6 +88,7 @@ Each CUJ entry contains:
 Multi-step workflows with agent coordination.
 
 **Example**: CUJ-005 (Greenfield Project Planning)
+
 - Uses `.claude/workflows/greenfield-fullstack.yaml`
 - Coordinates multiple agents (Planner, Analyst, PM, Architect, etc.)
 - Duration: 2-10 minutes
@@ -96,6 +98,7 @@ Multi-step workflows with agent coordination.
 Direct skill invocation without workflow coordination.
 
 **Example**: CUJ-002 (Rule Configuration)
+
 - Invokes `rule-selector` skill directly
 - No workflow file needed
 - Duration: 2-60 seconds
@@ -105,6 +108,7 @@ Direct skill invocation without workflow coordination.
 Skill invocation coordinated by an agent.
 
 **Example**: Custom skills that require agent delegation
+
 - Agent spawns and manages skill execution
 - Duration: 2-60 seconds
 
@@ -113,6 +117,7 @@ Skill invocation coordinated by an agent.
 Requires manual user steps (installation, configuration).
 
 **Example**: CUJ-001 (First-Time Installation)
+
 - User manually copies files and runs setup
 - Duration: varies
 
@@ -139,6 +144,7 @@ pnpm sync-cuj-registry
 ```
 
 Or directly:
+
 ```bash
 node .claude/tools/sync-cuj-registry.mjs
 ```
@@ -150,6 +156,7 @@ pnpm sync-cuj-registry:validate
 ```
 
 Or:
+
 ```bash
 node .claude/tools/sync-cuj-registry.mjs --validate-only
 ```
@@ -195,16 +202,14 @@ developmentCUJs.forEach(cuj => {
 ### Find CUJs by Skill
 
 ```javascript
-const scaffolderCUJs = registry.cujs.filter(cuj =>
-  cuj.skills.includes('scaffolder')
-);
+const scaffolderCUJs = registry.cujs.filter(cuj => cuj.skills.includes('scaffolder'));
 ```
 
 ### Find CUJs by Platform
 
 ```javascript
-const claudeOnlyCUJs = registry.cujs.filter(cuj =>
-  cuj.platform_compatibility.claude && !cuj.platform_compatibility.cursor
+const claudeOnlyCUJs = registry.cujs.filter(
+  cuj => cuj.platform_compatibility.claude && !cuj.platform_compatibility.cursor
 );
 ```
 
@@ -224,6 +229,7 @@ pnpm sync-cuj-registry
 ```
 
 **Example Output**:
+
 ```
 📊 Registry Statistics
 
@@ -271,6 +277,7 @@ node .claude/tools/sync-cuj-registry.mjs --validate-only
 ```
 
 **Validation Checks**:
+
 - ✅ Schema compliance
 - ✅ Field type validation
 - ✅ Required field presence
@@ -282,6 +289,7 @@ node .claude/tools/sync-cuj-registry.mjs --validate-only
 ### When to Sync
 
 Sync the registry whenever:
+
 - New CUJs are added
 - Existing CUJs are modified
 - Execution modes change
@@ -291,6 +299,7 @@ Sync the registry whenever:
 ### Automated Syncing
 
 Add to CI/CD pipeline:
+
 ```yaml
 - name: Sync CUJ Registry
   run: pnpm sync-cuj-registry
@@ -302,18 +311,21 @@ Add to CI/CD pipeline:
 ### Troubleshooting
 
 **Issue**: Registry not found
+
 ```bash
 # Regenerate the registry
 pnpm sync-cuj-registry
 ```
 
 **Issue**: Validation errors
+
 ```bash
 # Check error details
 node .claude/tools/sync-cuj-registry.mjs --validate-only
 ```
 
 **Issue**: Missing CUJ metadata
+
 - Check CUJ markdown file has proper formatting
 - Ensure `## Agents Used` and `## Skills Used` sections exist
 - Verify `**Execution Mode**: \`mode\`` is present
@@ -321,18 +333,22 @@ node .claude/tools/sync-cuj-registry.mjs --validate-only
 ## Benefits
 
 ### 1. **Performance**
+
 - Fast CUJ lookups (O(1) by ID, O(n) by filter)
 - No need to parse 52+ markdown files on every request
 
 ### 2. **Consistency**
+
 - Single source of truth for CUJ metadata
 - Schema validation ensures data integrity
 
 ### 3. **Discoverability**
+
 - Query CUJs by any metadata field
 - Build tools and dashboards on top of registry
 
 ### 4. **Maintainability**
+
 - Automated sync from markdown files
 - Validation catches errors early
 

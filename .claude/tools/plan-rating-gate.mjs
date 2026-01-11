@@ -41,7 +41,14 @@ const DEFAULT_PROVIDERS = 'claude,gemini';
 // Paths
 const CONTEXT_DIR = join(__dirname, '..', 'context');
 const RUNS_DIR = join(CONTEXT_DIR, 'runs');
-const RESPONSE_RATER_SCRIPT = join(__dirname, '..', 'skills', 'response-rater', 'scripts', 'rate.cjs');
+const RESPONSE_RATER_SCRIPT = join(
+  __dirname,
+  '..',
+  'skills',
+  'response-rater',
+  'scripts',
+  'rate.cjs'
+);
 
 /**
  * Load JSON file safely with error handling
@@ -87,7 +94,7 @@ function findPlanFile(runId, workflowId) {
     join(CONTEXT_DIR, 'artifacts', 'plan.json'),
     // Markdown variants
     join(RUNS_DIR, runId, 'artifacts', `plan-${workflowId}.md`),
-    join(CONTEXT_DIR, 'artifacts', `plan-${workflowId}.md`)
+    join(CONTEXT_DIR, 'artifacts', `plan-${workflowId}.md`),
   ];
 
   for (const path of possiblePaths) {
@@ -123,7 +130,7 @@ async function invokeResponseRater(planPath, options = {}) {
   const {
     providers = DEFAULT_PROVIDERS,
     template = 'response-review', // Use response-review, plan is text content
-    timeoutMs = RATING_TIMEOUT_MS
+    timeoutMs = RATING_TIMEOUT_MS,
   } = options;
 
   return new Promise((resolve, reject) => {
@@ -135,9 +142,12 @@ async function invokeResponseRater(planPath, options = {}) {
 
     const args = [
       RESPONSE_RATER_SCRIPT,
-      '--response-file', planPath,
-      '--providers', providers,
-      '--template', template
+      '--response-file',
+      planPath,
+      '--providers',
+      providers,
+      '--template',
+      template,
     ];
 
     console.log(`[Plan Rating] Invoking response-rater with providers: ${providers}`);
@@ -146,25 +156,25 @@ async function invokeResponseRater(planPath, options = {}) {
     const child = spawn('node', args, {
       cwd: join(__dirname, '../..'),
       timeout: timeoutMs,
-      shell: process.platform === 'win32'
+      shell: process.platform === 'win32',
     });
 
     let stdout = '';
     let stderr = '';
 
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       stdout += data.toString();
     });
 
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    child.on('error', (error) => {
+    child.on('error', error => {
       reject(new Error(`Failed to spawn response-rater: ${error.message}`));
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       if (code !== 0) {
         // Check if any provider succeeded
         try {
@@ -175,7 +185,9 @@ async function invokeResponseRater(planPath, options = {}) {
               .map(([name]) => name);
 
             if (successfulProviders.length > 0) {
-              console.log(`[Plan Rating] ${successfulProviders.length} provider(s) succeeded: ${successfulProviders.join(', ')}`);
+              console.log(
+                `[Plan Rating] ${successfulProviders.length} provider(s) succeeded: ${successfulProviders.join(', ')}`
+              );
               resolve(result);
               return;
             }
@@ -191,7 +203,11 @@ async function invokeResponseRater(planPath, options = {}) {
         const result = JSON.parse(stdout);
         resolve(result);
       } catch (parseError) {
-        reject(new Error(`Failed to parse response-rater output: ${parseError.message}\nOutput: ${stdout}`));
+        reject(
+          new Error(
+            `Failed to parse response-rater output: ${parseError.message}\nOutput: ${stdout}`
+          )
+        );
       }
     });
   });
@@ -211,7 +227,7 @@ function parseRatingResult(raterResult) {
     improvements: [],
     provider_results: {},
     providers_used: [],
-    providers_failed: []
+    providers_failed: [],
   };
 
   if (!raterResult.providers) {
@@ -275,9 +291,8 @@ function parseRatingResult(raterResult) {
 
   // Average component scores
   for (const [component, values] of Object.entries(result.component_scores)) {
-    result.component_scores[component] = Math.round(
-      (values.reduce((a, b) => a + b, 0) / values.length) * 10
-    ) / 10;
+    result.component_scores[component] =
+      Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 10) / 10;
   }
 
   return result;
@@ -296,7 +311,7 @@ function generatePlannerFeedback(rating, minimumScore) {
     gap: minimumScore - rating.overall_score,
     weak_areas: [],
     improvements_required: rating.improvements.slice(0, 5), // Top 5 improvements
-    provider_feedback: rating.feedback
+    provider_feedback: rating.feedback,
   };
 
   // Identify weak areas (components below 7)
@@ -305,7 +320,7 @@ function generatePlannerFeedback(rating, minimumScore) {
       feedback.weak_areas.push({
         component,
         score,
-        suggestion: `Improve ${component.replace(/_/g, ' ')} to at least 7/10`
+        suggestion: `Improve ${component.replace(/_/g, ' ')} to at least 7/10`,
       });
     }
   }
@@ -334,7 +349,7 @@ export async function executePlanRatingGate(runId, planPath = null, options = {}
     providers = DEFAULT_PROVIDERS,
     taskType = 'IMPLEMENTATION',
     complexity = 'moderate',
-    maxAttempts = MAX_RATING_ATTEMPTS
+    maxAttempts = MAX_RATING_ATTEMPTS,
   } = options;
 
   const result = {
@@ -347,7 +362,7 @@ export async function executePlanRatingGate(runId, planPath = null, options = {}
     rating_path: null,
     attempt: 0,
     feedback: null,
-    details: {}
+    details: {},
   };
 
   console.log(`\n[Plan Rating Gate] Starting for run: ${runId}`);
@@ -363,9 +378,9 @@ export async function executePlanRatingGate(runId, planPath = null, options = {}
           searched_locations: [
             `runs/${runId}/artifacts/plan-${workflowId}.json`,
             `runs/${runId}/artifacts/plan.json`,
-            `artifacts/plan-${workflowId}.json`
+            `artifacts/plan-${workflowId}.json`,
           ],
-          suggestion: 'Ensure Step 0 (Planning) has completed and created a plan artifact'
+          suggestion: 'Ensure Step 0 (Planning) has completed and created a plan artifact',
         };
         console.error(`[Plan Rating Gate] Plan file not found for run ${runId}`);
         return result;
@@ -392,7 +407,9 @@ export async function executePlanRatingGate(runId, planPath = null, options = {}
         console.log(`[Plan Rating Gate] Existing rating passes (>= ${minimumScore})`);
         return result;
       } else {
-        console.log(`[Plan Rating Gate] Existing rating too low (${existingRating.overall_score} < ${minimumScore})`);
+        console.log(
+          `[Plan Rating Gate] Existing rating too low (${existingRating.overall_score} < ${minimumScore})`
+        );
         result.details.previous_rating = existingRating;
       }
     }
@@ -403,7 +420,7 @@ export async function executePlanRatingGate(runId, planPath = null, options = {}
 
     const raterResult = await invokeResponseRater(planPath, {
       providers,
-      template: 'response-review'
+      template: 'response-review',
     });
 
     // Parse rating result
@@ -422,12 +439,18 @@ export async function executePlanRatingGate(runId, planPath = null, options = {}
     // Check if rating meets minimum
     if (rating.overall_score >= minimumScore) {
       result.success = true;
-      console.log(`[Plan Rating Gate] Plan rating PASSED (${rating.overall_score} >= ${minimumScore})`);
+      console.log(
+        `[Plan Rating Gate] Plan rating PASSED (${rating.overall_score} >= ${minimumScore})`
+      );
     } else {
       result.success = false;
       result.feedback = generatePlannerFeedback(rating, minimumScore);
-      console.log(`[Plan Rating Gate] Plan rating FAILED (${rating.overall_score} < ${minimumScore})`);
-      console.log(`[Plan Rating Gate] Weak areas: ${result.feedback.weak_areas.map(w => w.component).join(', ')}`);
+      console.log(
+        `[Plan Rating Gate] Plan rating FAILED (${rating.overall_score} < ${minimumScore})`
+      );
+      console.log(
+        `[Plan Rating Gate] Weak areas: ${result.feedback.weak_areas.map(w => w.component).join(', ')}`
+      );
     }
 
     // Save rating to canonical location
@@ -445,7 +468,7 @@ export async function executePlanRatingGate(runId, planPath = null, options = {}
       feedback: rating.feedback,
       improvements: rating.improvements,
       rated_at: new Date().toISOString(),
-      rated_by: 'response-rater'
+      rated_by: 'response-rater',
     };
 
     // Ensure directory exists
@@ -461,11 +484,10 @@ export async function executePlanRatingGate(runId, planPath = null, options = {}
     await recordPlanRating(runId, result.plan_id, ratingRecord);
 
     return result;
-
   } catch (error) {
     result.feedback = {
       error: error.message,
-      suggestion: 'Check response-rater skill configuration and provider authentication'
+      suggestion: 'Check response-rater skill configuration and provider authentication',
     };
     console.error(`[Plan Rating Gate] Error: ${error.message}`);
     return result;
@@ -492,7 +514,7 @@ function parseArgs(args) {
     workflowId: null,
     minimumScore: DEFAULT_MINIMUM_SCORE,
     providers: DEFAULT_PROVIDERS,
-    help: false
+    help: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -572,20 +594,26 @@ async function main() {
     const result = await executePlanRatingGate(args.runId, args.planPath, {
       workflowId: args.workflowId,
       minimumScore: args.minimumScore,
-      providers: args.providers
+      providers: args.providers,
     });
 
     console.log('\n' + '='.repeat(60));
     console.log('PLAN RATING GATE RESULT');
     console.log('='.repeat(60));
-    console.log(JSON.stringify({
-      success: result.success,
-      score: result.score,
-      minimum_required: result.minimum_required,
-      plan_id: result.plan_id,
-      rating_path: result.rating_path,
-      feedback: result.feedback
-    }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          success: result.success,
+          score: result.score,
+          minimum_required: result.minimum_required,
+          plan_id: result.plan_id,
+          rating_path: result.rating_path,
+          feedback: result.feedback,
+        },
+        null,
+        2
+      )
+    );
     console.log('='.repeat(60));
 
     process.exit(result.success ? 0 : 1);
@@ -596,8 +624,9 @@ async function main() {
 }
 
 // Run if called directly
-const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-                     import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
+const isMainModule =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`;
 if (isMainModule) {
   main().catch(console.error);
 }
@@ -607,5 +636,5 @@ export default {
   checkPlanRating,
   invokeResponseRater,
   parseRatingResult,
-  generatePlannerFeedback
+  generatePlannerFeedback,
 };

@@ -3,7 +3,13 @@
   "type": "object",
   "title": "Post-Mortem Report",
   "description": "Schema for post-mortem report artifacts generated after incident resolution",
-  "required": ["postmortem_id", "postmortem_date", "incident_summary", "root_cause_analysis", "prevention_measures"],
+  "required": [
+    "postmortem_id",
+    "postmortem_date",
+    "incident_summary",
+    "root_cause_analysis",
+    "prevention_measures"
+  ],
   "properties": {
     "postmortem_id": {
       "type": "string",
@@ -79,7 +85,14 @@
           },
           "category": {
             "type": "string",
-            "enum": ["detection", "response", "diagnosis", "mitigation", "resolution", "communication"]
+            "enum": [
+              "detection",
+              "response",
+              "diagnosis",
+              "mitigation",
+              "resolution",
+              "communication"
+            ]
           }
         }
       }

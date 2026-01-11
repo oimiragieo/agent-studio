@@ -21,6 +21,7 @@ streaming: supported
 This skill provides browser automation capabilities using Puppeteer, a Node.js library for controlling headless Chrome/Chromium browsers. It enables page navigation, element interaction, form filling, screenshot capture, and JavaScript execution.
 
 **Context Savings**: ~97% reduction
+
 - **MCP Mode**: ~15,000 tokens always loaded
 - **Skill Mode**: ~500 tokens metadata + on-demand loading
 
@@ -36,15 +37,15 @@ This skill provides browser automation capabilities using Puppeteer, a Node.js l
 
 ## Quick Reference
 
-| Tool | Purpose | Key Parameters |
-|------|---------|----------------|
-| `puppeteer_navigate` | Navigate to URL | `url`, `launchOptions`, `allowDangerous` |
-| `puppeteer_screenshot` | Capture page/element | `name`, `selector`, `width`, `height`, `encoded` |
-| `puppeteer_click` | Click element | `selector` |
-| `puppeteer_fill` | Fill input field | `selector`, `value` |
-| `puppeteer_select` | Select dropdown option | `selector`, `value` |
-| `puppeteer_hover` | Hover over element | `selector` |
-| `puppeteer_evaluate` | Execute JavaScript | `script` |
+| Tool                   | Purpose                | Key Parameters                                   |
+| ---------------------- | ---------------------- | ------------------------------------------------ |
+| `puppeteer_navigate`   | Navigate to URL        | `url`, `launchOptions`, `allowDangerous`         |
+| `puppeteer_screenshot` | Capture page/element   | `name`, `selector`, `width`, `height`, `encoded` |
+| `puppeteer_click`      | Click element          | `selector`                                       |
+| `puppeteer_fill`       | Fill input field       | `selector`, `value`                              |
+| `puppeteer_select`     | Select dropdown option | `selector`, `value`                              |
+| `puppeteer_hover`      | Hover over element     | `selector`                                       |
+| `puppeteer_evaluate`   | Execute JavaScript     | `script`                                         |
 
 ```bash
 # List available tools
@@ -68,13 +69,14 @@ python executor.py --tool puppeteer_fill --args '{"selector": "#email", "value":
 
 Navigate to a URL and optionally configure browser launch options.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `url` | string | Yes | URL to navigate to |
-| `launchOptions` | object | No | Puppeteer LaunchOptions. Browser restarts if changed. Example: `{ headless: true, args: ['--no-sandbox'] }` |
-| `allowDangerous` | boolean | No | Allow dangerous LaunchOptions like `--no-sandbox`. Default: `false` |
+| Parameter        | Type    | Required | Description                                                                                                 |
+| ---------------- | ------- | -------- | ----------------------------------------------------------------------------------------------------------- |
+| `url`            | string  | Yes      | URL to navigate to                                                                                          |
+| `launchOptions`  | object  | No       | Puppeteer LaunchOptions. Browser restarts if changed. Example: `{ headless: true, args: ['--no-sandbox'] }` |
+| `allowDangerous` | boolean | No       | Allow dangerous LaunchOptions like `--no-sandbox`. Default: `false`                                         |
 
 **Example:**
+
 ```bash
 # Basic navigation
 python executor.py --tool puppeteer_navigate --args '{"url": "https://example.com"}'
@@ -94,6 +96,7 @@ python executor.py --tool puppeteer_navigate --args '{
 ```
 
 **Notes:**
+
 - Changing `launchOptions` triggers browser restart
 - `allowDangerous` must be `true` to use security-reducing flags like `--no-sandbox`
 - Default `launchOptions` is `null` (uses Puppeteer defaults)
@@ -104,15 +107,16 @@ python executor.py --tool puppeteer_navigate --args '{
 
 Take a screenshot of the current page or a specific element.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `name` | string | Yes | Name for the screenshot file |
-| `selector` | string | No | CSS selector for specific element to capture |
-| `width` | number | No | Viewport width in pixels (default: 800) |
-| `height` | number | No | Viewport height in pixels (default: 600) |
-| `encoded` | boolean | No | Return base64-encoded data URI instead of binary (default: false) |
+| Parameter  | Type    | Required | Description                                                       |
+| ---------- | ------- | -------- | ----------------------------------------------------------------- |
+| `name`     | string  | Yes      | Name for the screenshot file                                      |
+| `selector` | string  | No       | CSS selector for specific element to capture                      |
+| `width`    | number  | No       | Viewport width in pixels (default: 800)                           |
+| `height`   | number  | No       | Viewport height in pixels (default: 600)                          |
+| `encoded`  | boolean | No       | Return base64-encoded data URI instead of binary (default: false) |
 
 **Example:**
+
 ```bash
 # Full page screenshot
 python executor.py --tool puppeteer_screenshot --args '{"name": "homepage"}'
@@ -138,6 +142,7 @@ python executor.py --tool puppeteer_screenshot --args '{
 ```
 
 **Notes:**
+
 - Without `selector`, captures entire viewport
 - `encoded: true` returns text (base64 data URI) instead of binary image
 - Default viewport is 800x600px
@@ -148,11 +153,12 @@ python executor.py --tool puppeteer_screenshot --args '{
 
 Click an element on the page.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `selector` | string | Yes | CSS selector for element to click |
+| Parameter  | Type   | Required | Description                       |
+| ---------- | ------ | -------- | --------------------------------- |
+| `selector` | string | Yes      | CSS selector for element to click |
 
 **Example:**
+
 ```bash
 # Click a button
 python executor.py --tool puppeteer_click --args '{"selector": "#submit-button"}'
@@ -168,12 +174,13 @@ python executor.py --tool puppeteer_click --args '{"selector": ".btn-primary"}'
 
 Fill out an input field with text.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `selector` | string | Yes | CSS selector for input field |
-| `value` | string | Yes | Text value to enter |
+| Parameter  | Type   | Required | Description                  |
+| ---------- | ------ | -------- | ---------------------------- |
+| `selector` | string | Yes      | CSS selector for input field |
+| `value`    | string | Yes      | Text value to enter          |
 
 **Example:**
+
 ```bash
 # Fill email field
 python executor.py --tool puppeteer_fill --args '{
@@ -195,6 +202,7 @@ python executor.py --tool puppeteer_fill --args '{
 ```
 
 **Notes:**
+
 - Works with `<input>` and `<textarea>` elements
 - Clears existing value before filling
 - Triggers input events (suitable for validation testing)
@@ -203,12 +211,13 @@ python executor.py --tool puppeteer_fill --args '{
 
 Select an option from a dropdown (`<select>` element).
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `selector` | string | Yes | CSS selector for select element |
-| `value` | string | Yes | Value attribute of option to select |
+| Parameter  | Type   | Required | Description                         |
+| ---------- | ------ | -------- | ----------------------------------- |
+| `selector` | string | Yes      | CSS selector for select element     |
+| `value`    | string | Yes      | Value attribute of option to select |
 
 **Example:**
+
 ```bash
 # Select country
 python executor.py --tool puppeteer_select --args '{
@@ -224,6 +233,7 @@ python executor.py --tool puppeteer_select --args '{
 ```
 
 **Notes:**
+
 - Works only with `<select>` elements
 - Matches the `value` attribute of `<option>` elements, not visible text
 - Triggers change events
@@ -232,11 +242,12 @@ python executor.py --tool puppeteer_select --args '{
 
 Hover over an element to trigger hover states.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `selector` | string | Yes | CSS selector for element to hover |
+| Parameter  | Type   | Required | Description                       |
+| ---------- | ------ | -------- | --------------------------------- |
+| `selector` | string | Yes      | CSS selector for element to hover |
 
 **Example:**
+
 ```bash
 # Hover over navigation menu
 python executor.py --tool puppeteer_hover --args '{"selector": ".nav-dropdown"}'
@@ -249,6 +260,7 @@ python executor.py --tool puppeteer_hover --args '{"selector": "#user-menu"}'
 ```
 
 **Notes:**
+
 - Useful for testing hover states and dropdown menus
 - Does not click the element
 - Can be combined with screenshot to verify hover effects
@@ -259,11 +271,12 @@ python executor.py --tool puppeteer_hover --args '{"selector": "#user-menu"}'
 
 Execute arbitrary JavaScript code in the browser console context.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `script` | string | Yes | JavaScript code to execute |
+| Parameter | Type   | Required | Description                |
+| --------- | ------ | -------- | -------------------------- |
+| `script`  | string | Yes      | JavaScript code to execute |
 
 **Example:**
+
 ```bash
 # Get page title
 python executor.py --tool puppeteer_evaluate --args '{"script": "document.title"}'
@@ -290,6 +303,7 @@ python executor.py --tool puppeteer_evaluate --args '{
 ```
 
 **Notes:**
+
 - Runs in page context, not Node.js context
 - Has access to DOM, window, and page-level JavaScript
 - Return values are serialized to JSON
@@ -421,6 +435,7 @@ python executor.py --tool puppeteer_screenshot --args '{"name": "mobile-menu-ope
 ## Configuration
 
 MCP server configuration stored in `config.json`:
+
 - **Command**: `npx`
 - **Args**: `["-y", "@modelcontextprotocol/server-puppeteer"]`
 
@@ -467,23 +482,25 @@ python executor.py --tool puppeteer_navigate --args '{
 
 **Common Issues:**
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| "Navigation timeout" | Page took too long to load | Increase timeout in `launchOptions` or check network |
-| "Element not found" | Selector doesn't match any element | Verify selector, check if element is dynamic |
-| "Element not visible" | Element is hidden or off-screen | Scroll to element or wait for visibility |
-| "Cannot set property" | Trying to fill non-input element | Verify selector targets `<input>` or `<textarea>` |
-| "Browser launch failed" | Chrome/Chromium not found | Install Chrome or set `executablePath` in `launchOptions` |
-| "Dangerous option rejected" | Using `--no-sandbox` without flag | Add `"allowDangerous": true` to args |
+| Error                       | Cause                              | Solution                                                  |
+| --------------------------- | ---------------------------------- | --------------------------------------------------------- |
+| "Navigation timeout"        | Page took too long to load         | Increase timeout in `launchOptions` or check network      |
+| "Element not found"         | Selector doesn't match any element | Verify selector, check if element is dynamic              |
+| "Element not visible"       | Element is hidden or off-screen    | Scroll to element or wait for visibility                  |
+| "Cannot set property"       | Trying to fill non-input element   | Verify selector targets `<input>` or `<textarea>`         |
+| "Browser launch failed"     | Chrome/Chromium not found          | Install Chrome or set `executablePath` in `launchOptions` |
+| "Dangerous option rejected" | Using `--no-sandbox` without flag  | Add `"allowDangerous": true` to args                      |
 
 **Recovery Strategies:**
 
 1. **Take screenshot to verify page state**
+
    ```bash
    python executor.py --tool puppeteer_screenshot --args '{"name": "debug"}'
    ```
 
 2. **Use evaluate to check element existence**
+
    ```bash
    python executor.py --tool puppeteer_evaluate --args '{
      "script": "!!document.querySelector(\"#my-element\")"
@@ -491,6 +508,7 @@ python executor.py --tool puppeteer_navigate --args '{
    ```
 
 3. **Add delays with evaluate**
+
    ```bash
    python executor.py --tool puppeteer_evaluate --args '{
      "script": "new Promise(resolve => setTimeout(resolve, 2000))"
@@ -506,27 +524,29 @@ python executor.py --tool puppeteer_navigate --args '{
 
 ## Comparison: Puppeteer vs Chrome DevTools Skill
 
-| Feature | Puppeteer | Chrome DevTools |
-|---------|-----------|-----------------|
-| **Tools** | 7 | 26 |
-| **Navigation** | Basic | Advanced (multi-page, wait conditions) |
-| **Screenshots** | Yes (element/full) | Yes (element/full/format options) |
-| **Performance** | No | Yes (tracing, analysis, insights) |
-| **Network Inspection** | No | Yes (request/response details) |
-| **Console Access** | Via evaluate | Direct (list, filter, retrieve) |
-| **Form Automation** | Yes (fill, select, click) | Yes (fill, fill_form, upload) |
-| **Hover Support** | Yes | Yes |
-| **JavaScript Execution** | Yes (evaluate) | Yes (evaluate_script) |
-| **Device Emulation** | Via launchOptions | Direct (emulate tool) |
-| **Use Case** | Simpler automation, form testing | Advanced debugging, performance, network analysis |
+| Feature                  | Puppeteer                        | Chrome DevTools                                   |
+| ------------------------ | -------------------------------- | ------------------------------------------------- |
+| **Tools**                | 7                                | 26                                                |
+| **Navigation**           | Basic                            | Advanced (multi-page, wait conditions)            |
+| **Screenshots**          | Yes (element/full)               | Yes (element/full/format options)                 |
+| **Performance**          | No                               | Yes (tracing, analysis, insights)                 |
+| **Network Inspection**   | No                               | Yes (request/response details)                    |
+| **Console Access**       | Via evaluate                     | Direct (list, filter, retrieve)                   |
+| **Form Automation**      | Yes (fill, select, click)        | Yes (fill, fill_form, upload)                     |
+| **Hover Support**        | Yes                              | Yes                                               |
+| **JavaScript Execution** | Yes (evaluate)                   | Yes (evaluate_script)                             |
+| **Device Emulation**     | Via launchOptions                | Direct (emulate tool)                             |
+| **Use Case**             | Simpler automation, form testing | Advanced debugging, performance, network analysis |
 
 **When to Choose Puppeteer:**
+
 - Simple form automation workflows
 - Basic screenshot capture
 - Straightforward navigation and clicking
 - Lightweight browser automation
 
 **When to Choose Chrome DevTools:**
+
 - Performance profiling and optimization
 - Network request inspection
 - Console message analysis

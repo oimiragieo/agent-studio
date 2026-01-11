@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
  * Agent Studio Installer Script
- * 
+ *
  * Copies agent bundles (.claude/, .cursor/, .factory/) to target project
  * and validates configuration.
- * 
+ *
  * Usage:
  *   node scripts/install.mjs [target-directory] [--force] [--install-deps] [--skip-validation]
- * 
+ *
  * Options:
  *   --force              Overwrite existing bundles
  *   --install-deps       Run 'pnpm install' after copying bundles
  *   --skip-validation    Skip configuration validation
- * 
+ *
  * If target-directory is not provided, uses current directory.
  */
 
@@ -37,7 +37,7 @@ function parseArgs() {
     installDeps: false,
     skipValidation: false,
   };
-  
+
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--force') {
       parsed.force = true;
@@ -49,7 +49,7 @@ function parseArgs() {
       parsed.targetDir = args[i];
     }
   }
-  
+
   return parsed;
 }
 
@@ -64,22 +64,22 @@ function copyDirectory(src, dest, force = false) {
     if (force && existsSync(dest)) {
       rmSync(dest, { recursive: true, force: true });
     }
-    
+
     mkdirSync(dest, { recursive: true });
-    
+
     const entries = readdirSync(src, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const srcPath = join(src, entry.name);
       const destPath = join(dest, entry.name);
-      
+
       if (entry.isDirectory()) {
         copyDirectory(srcPath, destPath, force);
       } else {
         copyFileSync(srcPath, destPath);
       }
     }
-    
+
     return true;
   } catch (error) {
     console.error(`Error copying ${src} to ${dest}:`, error.message);
@@ -90,7 +90,7 @@ function copyDirectory(src, dest, force = false) {
 function main() {
   const args = parseArgs();
   const targetDir = args.targetDir ? resolve(args.targetDir) : process.cwd();
-  
+
   console.log('Agent Studio Installer');
   console.log('='.repeat(60));
   console.log(`Target directory: ${targetDir}`);
@@ -98,39 +98,39 @@ function main() {
   if (args.installDeps) console.log('Mode: Will install dependencies after copying');
   if (args.skipValidation) console.log('Mode: Will skip validation');
   console.log('');
-  
+
   // Check if target directory exists
   if (!existsSync(targetDir)) {
     console.error(`Error: Target directory does not exist: ${targetDir}`);
     process.exit(1);
   }
-  
+
   // Copy bundles
   console.log('Copying agent bundles...\n');
   let successCount = 0;
   const failures = [];
-  
+
   for (const bundle of bundles) {
     const srcPath = join(rootDir, bundle);
     const destPath = join(targetDir, bundle);
-    
+
     if (!existsSync(srcPath)) {
       console.warn(`+ Bundle not found: ${bundle} (skipping)`);
       continue;
     }
-    
+
     if (existsSync(destPath) && !args.force) {
       console.warn(`+ ${bundle}/ already exists in target directory`);
       console.log(`   Skipping ${bundle}/ (use --force to overwrite)`);
       continue;
     }
-    
+
     if (existsSync(destPath) && args.force) {
       console.log(`* Overwriting existing ${bundle}/...`);
     } else {
       console.log(`* Copying ${bundle}/...`);
     }
-    
+
     if (copyDirectory(srcPath, destPath, args.force)) {
       console.log(`+ ${bundle}/ copied successfully\n`);
       successCount++;
@@ -139,20 +139,20 @@ function main() {
       failures.push(bundle);
     }
   }
-  
+
   if (successCount === 0 && failures.length === 0) {
     console.error('No bundles were copied (all skipped or not found). Exiting.');
     process.exit(1);
   }
-  
+
   if (failures.length > 0) {
     console.warn(`\nWarning: ${failures.length} bundle(s) failed to copy: ${failures.join(', ')}`);
   }
-  
+
   // Copy validation script to target directory
   const validationScriptSrc = join(rootDir, 'scripts', 'validate-config.mjs');
   const validationScriptDest = join(targetDir, 'scripts', 'validate-config.mjs');
-  
+
   if (existsSync(validationScriptSrc)) {
     try {
       mkdirSync(join(targetDir, 'scripts'), { recursive: true });
@@ -162,14 +162,14 @@ function main() {
       console.warn('+ Could not copy validation script:', error.message);
     }
   }
-  
+
   // Install dependencies if requested
   if (args.installDeps) {
     console.log('Installing dependencies...\n');
     try {
-      execSync('pnpm install', { 
+      execSync('pnpm install', {
         stdio: 'inherit',
-        cwd: targetDir 
+        cwd: targetDir,
       });
       console.log('\n+ Dependencies installed successfully');
     } catch (error) {
@@ -177,15 +177,15 @@ function main() {
       console.warn('   Run manually: cd ' + targetDir + ' && pnpm install');
     }
   }
-  
+
   // Run config validation unless skipped
   if (!args.skipValidation) {
     console.log('\nValidating configuration...\n');
     try {
       if (existsSync(validationScriptDest)) {
-        execSync('node scripts/validate-config.mjs', { 
+        execSync('node scripts/validate-config.mjs', {
           stdio: 'inherit',
-          cwd: targetDir 
+          cwd: targetDir,
         });
         console.log('\n+ Configuration validation passed');
       } else {
@@ -199,7 +199,7 @@ function main() {
   } else {
     console.log('\n+ Skipping validation (--skip-validation flag set)');
   }
-  
+
   // Print next steps
   console.log('\n' + '='.repeat(60));
   console.log('Installation Complete!');
@@ -225,4 +225,3 @@ function main() {
 }
 
 main();
-

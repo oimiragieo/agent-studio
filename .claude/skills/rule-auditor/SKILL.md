@@ -52,6 +52,7 @@ node .claude/skills/rule-auditor/scripts/audit.mjs src/ --strict
 ### Output Schema
 
 All output conforms to `.claude/schemas/skill-rule-auditor-output.schema.json` and includes:
+
 - `skill_name`: Always "rule-auditor"
 - `files_audited`: Array of audited files with line counts
 - `rules_applied`: Rules used during audit with violation counts
@@ -72,6 +73,7 @@ node .claude/skills/rule-auditor/scripts/test-audit.mjs
 ```
 
 Tests cover:
+
 - Basic audit functionality
 - Technology detection
 - Dry-run fix mode
@@ -100,6 +102,7 @@ Rule Auditor - Automatically validates code against your project's coding standa
 ### Step 1: Load Rule Index
 
 Load the rule index to discover all available rules dynamically:
+
 - @.claude/context/rule-index.json
 
 The index contains metadata for all 1,081+ rules in `.claude/rules-master/` and `.claude/rules-library/` (formerly archive).
@@ -114,11 +117,12 @@ Query the index's `technology_map` based on target files:
    - Directory structure (`app/` → Next.js App Router)
 
 2. **Query technology_map**:
+
    ```javascript
    // Pseudocode
    const detectedTech = ['nextjs', 'react', 'typescript'];
    const relevantRules = [];
-   
+
    detectedTech.forEach(tech => {
      const rules = index.technology_map[tech] || [];
      relevantRules.push(...rules);
@@ -150,6 +154,7 @@ git diff --name-only HEAD~1
 Parse rule files to extract formalized validation patterns:
 
 1. **Look for `<validation>` block in rule file** (deterministic approach):
+
    ```markdown
    <validation>
    forbidden_patterns:
@@ -163,12 +168,13 @@ Parse rule files to extract formalized validation patterns:
    ```
 
 2. **OR look for `validation` section in rule frontmatter** (legacy support):
+
    ```yaml
    validation:
      forbidden_patterns:
        - pattern: "useEffect\\(.*fetch"
-         message: "Do not use useEffect for data fetching; use Server Components."
-         severity: "error"
+         message: 'Do not use useEffect for data fetching; use Server Components.'
+         severity: 'error'
    ```
 
 3. **Extract forbidden_patterns**:
@@ -187,37 +193,39 @@ Parse rule files to extract formalized validation patterns:
 
 **Pattern Categories to Check:**
 
-| Category | Example Rule | Check Method |
-|----------|--------------|--------------|
-| Naming | "Use camelCase for functions" | Regex scan |
-| Structure | "Place components in `components/` dir" | Path check |
-| Imports | "Use ES modules, not CommonJS" | Pattern match |
-| Types | "Avoid `any`, prefer `unknown`" | AST-level grep |
-| Performance | "Use Server Components by default" | Directive scan |
-| Security | "Never hardcode secrets" | Pattern detection |
-| **Formalized** | `validation.forbidden_patterns` | **Regex/grep (preferred)** |
+| Category       | Example Rule                            | Check Method               |
+| -------------- | --------------------------------------- | -------------------------- |
+| Naming         | "Use camelCase for functions"           | Regex scan                 |
+| Structure      | "Place components in `components/` dir" | Path check                 |
+| Imports        | "Use ES modules, not CommonJS"          | Pattern match              |
+| Types          | "Avoid `any`, prefer `unknown`"         | AST-level grep             |
+| Performance    | "Use Server Components by default"      | Directive scan             |
+| Security       | "Never hardcode secrets"                | Pattern detection          |
+| **Formalized** | `validation.forbidden_patterns`         | **Regex/grep (preferred)** |
 
 **Fix Field in Validation Patterns**:
 
 Each pattern can optionally include a `fix` field for auto-fixing:
+
 ```yaml
 - pattern: "console\\.log\\((.*)\\)"
-  message: "Remove console.log statements"
-  severity: "warning"
-  fix: ""  # Empty string = delete the entire match
+  message: 'Remove console.log statements'
+  severity: 'warning'
+  fix: '' # Empty string = delete the entire match
 
 - pattern: "const (\\w+): any"
   message: "Avoid using 'any' type"
-  severity: "error"
-  fix: "const $1: unknown"  # $1 references first capture group
+  severity: 'error'
+  fix: 'const $1: unknown' # $1 references first capture group
 
 - pattern: "var (\\w+) ="
   message: "Use 'const' or 'let' instead of 'var'"
-  severity: "warning"
-  fix: "const $1 ="  # Replace var with const
+  severity: 'warning'
+  fix: 'const $1 =' # Replace var with const
 ```
 
 **Fix Replacement Syntax**:
+
 - `""` (empty string): Delete the entire matched pattern
 - `"// Removed: $0"`: Replace with comment (where $0 is the full match)
 - `"const $1"`: Use capture groups ($1, $2, etc.) from the pattern
@@ -279,6 +287,7 @@ When `--fix`, `--fix-auto`, or `--fix-dry-run` flags are provided, automatically
    - Useful for CI/CD pipelines or bulk cleanup
 
 **Backup Behavior**:
+
 - Backup file: `<original-file>.bak`
 - Created before first modification to each file
 - Contains original file contents
@@ -286,6 +295,7 @@ When `--fix`, `--fix-auto`, or `--fix-dry-run` flags are provided, automatically
 - Example: `src/App.tsx` → `src/App.tsx.bak`
 
 **Diff Preview Format**:
+
 ```diff
 File: src/components/UserAuth.tsx
 Line 23:
@@ -298,6 +308,7 @@ Line 45:
 ```
 
 **Fix Application Process**:
+
 1. Read target file
 2. Create backup if not in dry-run mode
 3. Apply regex replacement using `fix` pattern
@@ -306,26 +317,30 @@ Line 45:
 6. Log change to fix report
 
 **Limitations**:
+
 - Only fixes violations with `fix` field defined in rule
 - Complex refactorings require manual intervention
 - Multiline fixes may need manual review
 - Some patterns may require AST-level transformation
-</execution_process>
+  </execution_process>
 
 <audit_patterns>
 **Next.js / React Audit**:
+
 - CHECK: 'use client' directive present when using useState, useEffect, useContext
 - CHECK: Server Components for data fetching (no useEffect for fetch)
 - CHECK: Image optimization using next/image
 
 **TypeScript Audit**:
+
 - CHECK: Type safety - No `any` types, interfaces for object shapes
 - CHECK: Naming conventions - PascalCase for Components, camelCase for functions
 
 **Python/FastAPI Audit**:
+
 - CHECK: Async patterns - async def for I/O operations
 - CHECK: Type hints - All function parameters typed
-</audit_patterns>
+  </audit_patterns>
 
 <integration>
 **Pre-Commit Hook**: Run rule audit on modified files before commit
@@ -333,6 +348,7 @@ Line 45:
 </integration>
 
 <best_practices>
+
 1. **Run Early**: Audit during development, not just before commit
 2. **Fix as You Go**: Address violations immediately while context is fresh
 3. **Customize Rules**: Adjust rule severity in manifest.yaml for your team
@@ -343,7 +359,7 @@ Line 45:
 8. **Keep Backups**: Don't delete .bak files until changes are verified
 9. **Review Diffs**: Use `git diff` to review all changes before committing
 10. **Start Small**: Test auto-fix on single files before running on entire codebase
-</best_practices>
+    </best_practices>
 
 ## Quick-Fix Mode
 
@@ -351,17 +367,18 @@ The rule-auditor now supports automatic fixing of violations through three modes
 
 ### Fix Modes
 
-| Mode | Flag | Behavior | Use Case |
-|------|------|----------|----------|
-| **Preview** | `--fix-dry-run` | Show changes without modifying files | Review impact before applying |
-| **Interactive** | `--fix` | Prompt for confirmation on each fix | Careful, selective fixing |
-| **Batch** | `--fix-auto` | Apply all fixes automatically | Bulk cleanup, CI/CD |
+| Mode            | Flag            | Behavior                             | Use Case                      |
+| --------------- | --------------- | ------------------------------------ | ----------------------------- |
+| **Preview**     | `--fix-dry-run` | Show changes without modifying files | Review impact before applying |
+| **Interactive** | `--fix`         | Prompt for confirmation on each fix  | Careful, selective fixing     |
+| **Batch**       | `--fix-auto`    | Apply all fixes automatically        | Bulk cleanup, CI/CD           |
 
 ### Adding Fix Definitions to Rules
 
 To make violations auto-fixable, add a `fix` field to validation patterns in your rule files:
 
 **In `<validation>` block**:
+
 ```markdown
 <validation>
 forbidden_patterns:
@@ -370,27 +387,28 @@ forbidden_patterns:
     severity: "warning"
     fix: ""  # Empty = delete entire match
 
-  - pattern: "const (\\w+): any"
-    message: "Avoid using 'any' type"
-    severity: "error"
-    fix: "const $1: unknown"  # Replace with unknown
+- pattern: "const (\\w+): any"
+  message: "Avoid using 'any' type"
+  severity: "error"
+  fix: "const $1: unknown" # Replace with unknown
 
-  - pattern: "var (\\w+) ="
-    message: "Use 'const' or 'let' instead of 'var'"
-    severity: "warning"
-    fix: "const $1 ="  # Replace var with const
-</validation>
+- pattern: "var (\\w+) ="
+  message: "Use 'const' or 'let' instead of 'var'"
+  severity: "warning"
+  fix: "const $1 =" # Replace var with const
+  </validation>
 ```
 
 **Or in frontmatter**:
+
 ```yaml
 ---
 validation:
   forbidden_patterns:
     - pattern: "console\\.log\\((.*)\\)"
-      message: "Remove console.log statements"
-      severity: "warning"
-      fix: ""
+      message: 'Remove console.log statements'
+      severity: 'warning'
+      fix: ''
 ---
 ```
 
@@ -399,26 +417,29 @@ validation:
 The `fix` field supports several replacement patterns:
 
 1. **Delete Match**: Empty string removes the matched pattern
+
    ```yaml
-   fix: ""
+   fix: ''
    ```
 
 2. **Capture Group Substitution**: Use $1, $2, etc. to reference regex groups
+
    ```yaml
    pattern: "const (\\w+): any"
-   fix: "const $1: unknown"
+   fix: 'const $1: unknown'
    ```
 
 3. **Fixed Replacement**: Replace with literal text
+
    ```yaml
    pattern: "var (\\w+) ="
-   fix: "const $1 ="
+   fix: 'const $1 ='
    ```
 
 4. **Comment Out**: Replace with comment preserving original code
    ```yaml
-   pattern: "debugger;"
-   fix: "// debugger;"
+   pattern: 'debugger;'
+   fix: '// debugger;'
    ```
 
 ### Safety Features
@@ -458,6 +479,7 @@ rm **/*.bak
 ### Creating Effective Fix Patterns
 
 **Good Fix Patterns** (Safe, Deterministic):
+
 - Simple find-replace operations
 - Type annotations (any → unknown)
 - Variable declarations (var → const)
@@ -466,6 +488,7 @@ rm **/*.bak
 - Formatting fixes
 
 **Poor Fix Patterns** (Manual Review Required):
+
 - Complex refactorings
 - Logic changes
 - Multiline transformations
@@ -473,6 +496,7 @@ rm **/*.bak
 - AST-level transformations
 
 **Best Practices for Fix Definitions**:
+
 1. Keep fixes simple and deterministic
 2. Test fix patterns on sample code before deploying
 3. Use capture groups to preserve variable names
@@ -504,6 +528,7 @@ For complex transformations beyond regex replacement, consider using the `refact
 **Scan Date**: {{timestamp}}
 
 ### Summary
+
 - **Pass**: 12 rules
 - **Warn**: 3 rules
 - **Fail**: 2 rules
@@ -511,29 +536,34 @@ For complex transformations beyond regex replacement, consider using the `refact
 ### Violations
 
 #### FAIL: Use Server Components by default
+
 - **File**: src/components/UserAuth.tsx:1
 - **Issue**: Missing 'use client' directive but uses useState
 - **Rule**: nextjs.mdc > Components
 - **Fix**: Add 'use client' at file top, or refactor to Server Component
 
 #### FAIL: Avoid using `any`
+
 - **File**: src/components/UserAuth.tsx:45
 - **Issue**: `const user: any = await getUser()`
 - **Rule**: typescript.mdc > Type System
 - **Fix**: Define proper User interface
 
 #### WARN: Minimize use of 'useEffect'
+
 - **File**: src/components/UserAuth.tsx:23
 - **Issue**: useEffect for data fetching
 - **Rule**: nextjs.mdc > Performance
 - **Suggestion**: Consider Server Component with async/await
 
 ### Passed Rules
+
 - ✅ Use TypeScript strict mode
 - ✅ Use lowercase with dashes for directories
 - ✅ Implement proper error boundaries
-... (12 more)
+  ... (12 more)
 ```
+
 </formatting_example>
 
 <code_example>
@@ -562,6 +592,7 @@ For complex transformations beyond regex replacement, consider using the `refact
   ]
 }
 ```
+
 </code_example>
 
 <code_example>
@@ -570,8 +601,9 @@ For complex transformations beyond regex replacement, consider using the `refact
 ```typescript
 // RULE_VIOLATION: typescript.mdc > Avoid using `any`
 // FIX: Define User interface with proper types
-const user: any = await getUser();  // ❌ FAIL
+const user: any = await getUser(); // ❌ FAIL
 ```
+
 </code_example>
 
 <code_example>
@@ -592,6 +624,7 @@ for file in $modified; do
   fi
 done
 ```
+
 </code_example>
 
 <code_example>
@@ -607,6 +640,7 @@ done
       exit 1
     fi
 ```
+
 </code_example>
 
 <usage_example>
@@ -640,6 +674,7 @@ done
 # Dry-run with JSON output for CI/CD
 /audit src/ --fix-dry-run --format json
 ```
+
 </usage_example>
 
 <usage_example>
@@ -648,11 +683,13 @@ done
 **Example 1: Dry-Run Preview**
 
 Command:
+
 ```bash
 /audit src/components/UserAuth.tsx --fix-dry-run
 ```
 
 Output:
+
 ```diff
 ## Fix Preview (Dry-Run Mode)
 
@@ -690,11 +727,13 @@ No files modified (dry-run mode)
 **Example 2: Interactive Fix Mode**
 
 Command:
+
 ```bash
 /audit src/components/UserAuth.tsx --fix
 ```
 
 Interactive Session:
+
 ```
 Creating backup: src/components/UserAuth.tsx.bak
 
@@ -732,11 +771,13 @@ Run git diff to review changes.
 **Example 3: Batch Auto-Fix**
 
 Command:
+
 ```bash
 /audit src/ --fix-auto
 ```
 
 Output:
+
 ```
 ## Auto-Fix Report
 
@@ -775,6 +816,7 @@ Next steps:
 **Example 4: Before/After Comparison**
 
 **Before** (src/components/UserAuth.tsx):
+
 ```typescript
 import { useState } from 'react';
 
@@ -789,6 +831,7 @@ export default function UserAuth() {
 ```
 
 **After** (with `--fix-auto`):
+
 ```typescript
 import { useState } from 'react';
 
@@ -803,16 +846,19 @@ export default function UserAuth() {
 ```
 
 **Backup** (src/components/UserAuth.tsx.bak):
+
 ```typescript
 // Original file preserved - can restore with:
 // mv src/components/UserAuth.tsx.bak src/components/UserAuth.tsx
 ```
+
 </usage_example>
 
 <usage_example>
 **CI/CD Integration with Auto-Fix**:
 
 **.github/workflows/code-quality.yml**:
+
 ```yaml
 name: Code Quality with Auto-Fix
 
@@ -864,6 +910,7 @@ jobs:
 **Pre-Commit Hook with Auto-Fix**:
 
 **.claude/hooks/pre-commit-autofix.sh**:
+
 ```bash
 #!/bin/bash
 # Auto-fix violations before commit
@@ -888,5 +935,6 @@ done
 
 echo "✓ Auto-fix complete. Review changes with 'git diff --cached'"
 ```
+
 </usage_example>
 </examples>

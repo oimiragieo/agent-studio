@@ -58,7 +58,7 @@ export function emitProgress(event) {
     status: event.status || 'running',
     percentage: Math.min(100, Math.max(0, event.percentage || 0)),
     message: event.message || '',
-    metadata: event.metadata || {}
+    metadata: event.metadata || {},
   };
 
   // Emit to subscribers
@@ -106,7 +106,7 @@ export function subscribeToProgress(callback) {
  * @returns {Function} Unsubscribe function
  */
 export function subscribeToRun(runId, callback) {
-  const wrappedCallback = (event) => {
+  const wrappedCallback = event => {
     if (event.run_id === runId) {
       callback(event);
     }
@@ -130,7 +130,10 @@ export function getProgressHistory(runId = null, limit = null) {
     return [];
   }
 
-  const lines = fs.readFileSync(progressLogFile, 'utf-8').split('\n').filter(l => l.trim());
+  const lines = fs
+    .readFileSync(progressLogFile, 'utf-8')
+    .split('\n')
+    .filter(l => l.trim());
   const events = [];
 
   for (const line of lines) {
@@ -188,7 +191,7 @@ export class ProgressTracker {
       step: 0,
       status: 'pending',
       percentage: 0,
-      message: 'Starting workflow'
+      message: 'Starting workflow',
     });
   }
 
@@ -206,7 +209,7 @@ export class ProgressTracker {
       status: 'running',
       percentage: Math.round(percentage),
       message,
-      metadata
+      metadata,
     });
   }
 
@@ -223,7 +226,7 @@ export class ProgressTracker {
       step: this.currentStep - 1,
       status: 'completed',
       percentage: Math.round(percentage),
-      message
+      message,
     });
   }
 
@@ -239,7 +242,7 @@ export class ProgressTracker {
       status: 'failed',
       percentage: (this.currentStep / this.totalSteps) * 100,
       message,
-      metadata: { error: error ? error.message : null }
+      metadata: { error: error ? error.message : null },
     });
   }
 
@@ -256,7 +259,7 @@ export class ProgressTracker {
       step: this.currentStep - 1,
       status: 'skipped',
       percentage: Math.round(percentage),
-      message
+      message,
     });
   }
 
@@ -270,7 +273,7 @@ export class ProgressTracker {
       step: this.totalSteps,
       status: 'completed',
       percentage: 100,
-      message
+      message,
     });
   }
 }
@@ -309,7 +312,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log(`Watching progress${runId ? ` for run ${runId}` : ''}...`);
     console.log('Press Ctrl+C to stop\n');
 
-    const callback = (event) => {
+    const callback = event => {
       const time = new Date(event.iso_timestamp).toLocaleTimeString();
       const runInfo = event.run_id ? `[${event.run_id}]` : '';
       const stepInfo = event.step !== null ? `Step ${event.step}` : '';

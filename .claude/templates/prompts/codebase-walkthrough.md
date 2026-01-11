@@ -1,6 +1,7 @@
 # Codebase Walkthrough Prompt Template
 
 ## Purpose
+
 Comprehensive codebase understanding and exploration.
 
 ## Template
@@ -40,13 +41,14 @@ Please provide a structured walkthrough that I can use to understand the codebas
 ```
 
 ## Usage
+
 - Initial codebase exploration
 - Onboarding new developers
 - Architecture documentation
 - Refactoring planning
 
 ## Agent
+
 - analyst
 - architect
 - developer
-

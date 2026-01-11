@@ -12,7 +12,15 @@
     },
     "type": {
       "type": "string",
-      "enum": ["plan", "architecture", "specification", "implementation", "test-results", "documentation", "other"],
+      "enum": [
+        "plan",
+        "architecture",
+        "specification",
+        "implementation",
+        "test-results",
+        "documentation",
+        "other"
+      ],
       "description": "Artifact type"
     },
     "title": {
@@ -125,4 +133,3 @@
     }
   }
 }
-

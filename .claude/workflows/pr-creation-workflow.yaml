@@ -1,0 +1,188 @@
+name: pr-creation-workflow
+version: 1.0.0
+description: Comprehensive PR creation with quality gates before push
+trigger_patterns:
+  - 'push PR'
+  - 'create PR'
+  - 'submit PR'
+  - 'push the PR'
+  - 'push PR with comments'
+primary_agent: devops
+
+steps:
+  - id: '01-cleanup'
+    name: 'Repository Cleanup'
+    agent: 'devops'
+    description: 'Clean up temporary files and build artifacts'
+    tasks:
+      - 'Remove all files in .claude/context/tmp/'
+      - 'Remove node_modules/.cache if exists'
+      - 'Remove dist/, build/, out/ directories if exist'
+      - 'Verify .gitignore is respected'
+      - 'List files to be committed'
+    artifacts:
+      - 'cleanup-report.txt'
+    validation:
+      - 'No temporary files in commit'
+      - 'No build artifacts in commit'
+
+  - id: '02-lint'
+    name: 'Lint & Format Code'
+    agent: 'devops'
+    description: 'Run linters and formatters to ensure code quality'
+    tasks:
+      - 'Check if prettier is installed: npx prettier --version'
+      - 'Run prettier --write on all code files: npx prettier --write "**/*.{js,mjs,json,md,yaml,yml}"'
+      - 'Run eslint --fix if .eslintrc exists'
+      - 'Run any other configured linters'
+      - 'Fix auto-fixable linting issues'
+      - 'Report non-fixable issues'
+    artifacts:
+      - 'lint-report.json'
+      - 'prettier-report.txt'
+    validation:
+      - 'All auto-fixable lint errors resolved'
+      - 'All files formatted with prettier'
+      - 'Zero critical lint errors'
+    failure_action: 'Report issues and continue to security review'
+
+  - id: '03-security'
+    name: 'Security Review'
+    agent: 'security-architect'
+    description: 'Review changes for security vulnerabilities'
+    tasks:
+      - 'Review git diff for security issues'
+      - 'Check for hardcoded secrets or credentials'
+      - 'Validate input sanitization in new code'
+      - 'Check authentication/authorization changes'
+      - 'Verify no sensitive data in logs'
+      - 'Check for SQL injection, XSS, CSRF vulnerabilities'
+    artifacts:
+      - 'security-review-report.md'
+    validation:
+      - 'No critical security issues found'
+      - 'All security issues documented and approved'
+    failure_action: 'Block push if critical security issues found'
+
+  - id: '04-fix-issues'
+    name: 'Fix Lint & Security Issues'
+    agent: 'developer'
+    description: 'Fix any issues found by linting or security review'
+    condition: 'if lint or security issues found'
+    tasks:
+      - 'Fix security issues identified in step 03'
+      - 'Fix non-auto-fixable lint issues from step 02'
+      - 'Re-run linters to verify fixes'
+      - 'Request security re-review if needed'
+    artifacts:
+      - 'fix-report.md'
+    validation:
+      - 'All critical issues resolved'
+
+  - id: '05-update-docs'
+    name: 'Update Documentation'
+    agent: 'technical-writer'
+    description: 'Update documentation based on changes'
+    tasks:
+      - 'Generate CHANGELOG entry from git diff'
+      - 'Update README.md if public API changes detected'
+      - 'Update architecture docs if structural changes detected'
+      - 'Update user documentation if features added'
+      - 'Verify all links in docs are valid'
+      - 'Check documentation for clarity and completeness'
+    artifacts:
+      - 'CHANGELOG.md (updated)'
+      - 'README.md (if updated)'
+      - 'docs/ (if updated)'
+      - 'documentation-update-report.md'
+    validation:
+      - 'CHANGELOG entry created'
+      - 'Documentation reflects all changes'
+
+  - id: '06-verify-tests'
+    name: 'Verify All Tests Pass'
+    agent: 'qa'
+    description: 'Run full test suite to ensure no regressions'
+    tasks:
+      - 'Run all unit tests'
+      - 'Run integration tests if available'
+      - 'Run smoke tests'
+      - 'Verify 100% test pass rate'
+      - "Check test coverage hasn't decreased"
+    artifacts:
+      - 'test-results.json'
+      - 'coverage-report.html'
+    validation:
+      - 'All tests passing'
+      - 'No new test failures introduced'
+    failure_action: 'Block push if tests fail'
+
+  - id: '07-create-commits'
+    name: 'Create Commits with Proper Messages'
+    agent: 'devops'
+    description: 'Stage changes and create conventional commits'
+    tasks:
+      - 'Stage all validated changes'
+      - 'Create commits following conventional commit format'
+      - 'Include detailed commit bodies explaining changes'
+      - 'Add Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>'
+      - 'Organize commits logically by feature/fix'
+      - 'Ensure commit messages reference issue numbers'
+    artifacts:
+      - 'commit-summary.txt'
+    validation:
+      - 'All commits follow conventional format'
+      - 'Commit messages are descriptive'
+
+  - id: '08-push-and-pr'
+    name: 'Push Branches & Create PRs'
+    agent: 'devops'
+    description: 'Push to remote and create pull requests'
+    tasks:
+      - 'Push all feature branches to remote'
+      - 'Create PRs on GitHub using gh CLI'
+      - 'Add PR descriptions from commit messages'
+      - 'Add appropriate labels (enhancement, bug, docs, etc.)'
+      - 'Add reviewers if configured'
+      - 'Link PRs to issues if applicable'
+    artifacts:
+      - 'pr-urls.txt'
+      - 'pr-summary-report.md'
+    validation:
+      - 'All branches pushed successfully'
+      - 'All PRs created successfully'
+
+  - id: '09-report'
+    name: 'Generate Final Report'
+    agent: 'devops'
+    description: 'Create comprehensive summary of PR creation'
+    tasks:
+      - 'Generate PR creation summary report'
+      - 'List all PR URLs'
+      - 'Document merge order recommendations'
+      - 'Save report to .claude/context/reports/'
+      - 'Display summary to user'
+    artifacts:
+      - '.claude/context/reports/pr-creation-complete-report.md'
+
+quality_gates:
+  mandatory:
+    - 'No critical security issues'
+    - 'All tests passing'
+    - 'Documentation updated'
+  blocking:
+    - 'Critical security vulnerabilities'
+    - 'Test failures'
+  warnings:
+    - 'Non-critical lint issues'
+    - 'Minor documentation gaps'
+
+rollback_strategy:
+  on_failure: 'Delete pushed branches, restore previous state'
+  cleanup: 'Remove temporary artifacts, restore backups'
+
+success_criteria:
+  - 'All quality gates passed'
+  - 'All PRs created successfully'
+  - 'Zero critical issues remaining'
+  - 'Documentation complete'

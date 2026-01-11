@@ -35,7 +35,7 @@ steps:
         - test-generator
         - claude-md-generator
       validation:
-        mode: blocking  # Blocks if required skills not used
+        mode: blocking # Blocks if required skills not used
         enforce_usage: true
 
   - step: 3
@@ -53,7 +53,7 @@ steps:
         - explaining-rules
         - fixing-rule-violations
       validation:
-        mode: warning  # Warns but doesn't block
+        mode: warning # Warns but doesn't block
         enforce_usage: true
 
   - step: 4

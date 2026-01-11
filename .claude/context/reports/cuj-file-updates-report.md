@@ -21,6 +21,7 @@ All 4 tasks completed successfully:
 **Created**: `.claude/docs/PLAN_RATING_GUIDE.md`
 
 **Content Sections**:
+
 - Overview (purpose, why it matters, response-rater integration, minimum 7/10 requirement)
 - Retry Logic (3-attempt retry flow with escalation)
 - Feedback Loop (JSON feedback format, rubric dimensions, Planner interpretation)
@@ -33,6 +34,7 @@ All 4 tasks completed successfully:
 - References
 
 **Key Features**:
+
 - Comprehensive 3-retry flow documentation
 - Clear escalation path to user after 3 failures
 - Force-proceed option with risk acknowledgment
@@ -46,12 +48,14 @@ All 4 tasks completed successfully:
 **Updated**: `.claude/skills/response-rater/SKILL.md`
 
 **New Sections Added**:
+
 1. **Plan Rating for Orchestration** (overview, usage, rubric dimensions)
 2. **Provider Configuration for Plan Rating** (default providers, selection strategy)
 3. **Timeout and Failure Handling** (timeout config, 4 failure scenarios)
 4. **Workflow Integration for Plan Rating** (Step 0.1 pattern, rating file location, orchestrator responsibilities, retry logic)
 
 **Integration Points**:
+
 - Rubric dimensions: completeness, feasibility, risk_mitigation, agent_coverage, integration (equal weight 20% each)
 - Minimum scores by task type: Emergency 5/10, Standard 7/10, Enterprise 8/10, Critical 9/10
 - Provider configuration: Standard (claude,gemini), Enterprise (claude,gemini,codex), Critical (all 5)
@@ -64,23 +68,24 @@ All 4 tasks completed successfully:
 
 **Updated 13 Workflow Files** with standardized plan rating path:
 
-| Workflow File | Line | Status |
-|---------------|------|--------|
-| ai-system-flow.yaml | 71 | ✅ Updated |
-| brownfield-fullstack.yaml | 68 | ✅ Updated |
-| incident-flow.yaml | 71 | ✅ Updated |
-| greenfield-fullstack.yaml | 74 | ✅ Updated |
-| enterprise-track.yaml | 74 | ✅ Updated |
-| automated-enterprise-flow.yaml | 104 | ✅ Updated |
-| legacy-modernization-flow.yaml | 74 | ✅ Updated |
-| mobile-flow.yaml | 71 | ✅ Updated |
-| performance-flow.yaml | 68 | ✅ Updated |
-| quick-flow.yaml | 62 | ✅ Updated |
-| browser-testing-flow.yaml | 126 | ✅ Updated |
-| ui-perfection-loop.yaml | 102 | ✅ Updated |
-| code-quality-flow.yaml | 143 | ✅ Updated |
+| Workflow File                  | Line | Status     |
+| ------------------------------ | ---- | ---------- |
+| ai-system-flow.yaml            | 71   | ✅ Updated |
+| brownfield-fullstack.yaml      | 68   | ✅ Updated |
+| incident-flow.yaml             | 71   | ✅ Updated |
+| greenfield-fullstack.yaml      | 74   | ✅ Updated |
+| enterprise-track.yaml          | 74   | ✅ Updated |
+| automated-enterprise-flow.yaml | 104  | ✅ Updated |
+| legacy-modernization-flow.yaml | 74   | ✅ Updated |
+| mobile-flow.yaml               | 71   | ✅ Updated |
+| performance-flow.yaml          | 68   | ✅ Updated |
+| quick-flow.yaml                | 62   | ✅ Updated |
+| browser-testing-flow.yaml      | 126  | ✅ Updated |
+| ui-perfection-loop.yaml        | 102  | ✅ Updated |
+| code-quality-flow.yaml         | 143  | ✅ Updated |
 
 **Change Applied**:
+
 ```yaml
 # Before (non-standard path)
 outputs:
@@ -92,6 +97,7 @@ outputs:
 ```
 
 **Benefits**:
+
 - Consistent path format across all workflows
 - Clear run state organization
 - Easier to find rating files
@@ -104,11 +110,14 @@ outputs:
 **Updated**: `.claude/docs/cujs/CUJ-041.md` (line 104)
 
 **Change**:
+
 ```markdown
 # Before (wrong placeholder)
+
 | Plan rating | response-rater skill score | >= 7/10 (recorded in `.claude/context/runs/<run_id>/plans/<run_id>-rating.json`) |
 
 # After (correct placeholder)
+
 | Plan rating | response-rater skill score | >= 7/10 (recorded in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`) |
 ```
 
@@ -123,6 +132,7 @@ outputs:
 All files now use the standardized plan rating path format:
 
 **Path Structure**:
+
 ```
 .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
                      ^^^^^^^       ^^^^^^^^^
@@ -130,11 +140,13 @@ All files now use the standardized plan rating path format:
 ```
 
 **Example**:
+
 ```
 .claude/context/runs/run-001/plans/plan-greenfield-2025-01-06-rating.json
 ```
 
 **Key Components**:
+
 - `<run_id>`: Workflow run identifier (e.g., `run-001`)
 - `<plan_id>`: Unique plan identifier (e.g., `plan-greenfield-2025-01-06`)
 - `-rating.json`: Suffix for rating files
@@ -143,11 +155,11 @@ All files now use the standardized plan rating path format:
 
 ## Files Modified Summary
 
-| Category | Files Modified | Description |
-|----------|----------------|-------------|
+| Category      | Files Modified   | Description                                                                       |
+| ------------- | ---------------- | --------------------------------------------------------------------------------- |
 | Documentation | 1 new, 2 updated | PLAN_RATING_GUIDE.md (new), response-rater SKILL.md (updated), CUJ-041.md (fixed) |
-| Workflows | 13 updated | All workflows now use standardized plan rating path |
-| **Total** | **16 files** | 1 new, 15 updated |
+| Workflows     | 13 updated       | All workflows now use standardized plan rating path                               |
+| **Total**     | **16 files**     | 1 new, 15 updated                                                                 |
 
 ---
 
@@ -156,6 +168,7 @@ All files now use the standardized plan rating path format:
 ### Path Format Validation
 
 All updated files follow the subagent file rules:
+
 - ✅ Use forward slashes (`/`) in paths
 - ✅ Proper `.claude/context/` hierarchy
 - ✅ No root directory violations
@@ -164,6 +177,7 @@ All updated files follow the subagent file rules:
 ### Documentation Cross-References
 
 All documentation is properly cross-referenced:
+
 - PLAN_RATING_GUIDE.md references response-rater SKILL.md
 - response-rater SKILL.md references PLAN_RATING_GUIDE.md
 - Both reference enforcement-gate.mjs and plan-review-matrix.json

@@ -10,6 +10,7 @@ Create a new $1 named $2 following Omega project conventions.
 ## Component Types
 
 ### React Component
+
 Location: `frontend/src/components/$2.jsx`
 
 ```jsx
@@ -27,6 +28,7 @@ export default $2;
 ```
 
 ### API Route
+
 Location: `server/routes/$2.js`
 
 ```javascript
@@ -49,6 +51,7 @@ module.exports = router;
 ```
 
 ### Service
+
 Location: `server/services/$2Service.js`
 
 ```javascript

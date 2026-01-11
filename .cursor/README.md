@@ -18,16 +18,19 @@ This bundle targets Cursor 2.0's multi-agent UI with Composer, Plan Mode, and Cl
 **Copy the `.cursor` folder to your project root:**
 
 **Windows (PowerShell):**
+
 ```powershell
 Copy-Item -Path "C:\dev\projects\LLM-RULES\production-dropin\.cursor" -Destination "C:\path\to\your\project\.cursor" -Recurse
 ```
 
 **Mac/Linux:**
+
 ```bash
 cp -r /path/to/production-dropin/.cursor /path/to/your/project/.cursor
 ```
 
 **Manual:**
+
 1. Copy the `.cursor` folder from `production-dropin/.cursor/`
 2. Paste into your project root
 3. Ensure it's named `.cursor` (with the dot)
@@ -69,6 +72,7 @@ your-project/
 ```
 
 **Important Notes:**
+
 - ✅ `.cursor/` goes in your **project root** (same level as `package.json`, `src/`, etc.)
 - ✅ `.cursorrules` goes in **project root**, NOT inside `.cursor/`
 - ✅ Cursor auto-discovers everything - no manual config needed
@@ -77,7 +81,9 @@ your-project/
 ## Key Features
 
 ### Agents
+
 23 specialized agents optimized for Cursor 2.0:
+
 - **Planning**: Planner (strategic planning and coordination)
 - **Core Development**: Analyst, PM, Architect, Database Architect, Developer, QA, UX Expert
 - **Enterprise**: Security Architect, DevOps, Technical Writer
@@ -88,20 +94,22 @@ your-project/
 **Note**: Planner Agent (persona) works alongside Cursor's Plan Mode (UI feature). Use Planner Agent for strategic, multi-agent coordination planning. Use Plan Mode for implementation-level planning of multi-file changes.
 
 ### Skills (8 Utilities)
+
 6 cross-platform skills synced with Claude and Factory, plus 2 Cursor-specific utilities:
 
-| Skill | Invocation | Purpose |
-|-------|------------|---------|
-| `rule-auditor` | `@rule-auditor` | Validate code against loaded rules |
-| `rule-selector` | `@rule-selector` | Auto-detect stack, configure rules |
-| `scaffolder` | `@scaffolder` | Generate rule-compliant boilerplate |
-| `repo-rag` | `@repo-rag` | Semantic codebase search |
-| `artifact-publisher` | `@artifact-publisher` | Publish to project feed |
-| `context-bridge` | `@context-bridge` | Sync with Claude/Factory |
-| `handoff` | `@handoff` | Cross-agent task handoff |
-| `repo-index` | `@repo-index` | Index codebase for search |
+| Skill                | Invocation            | Purpose                             |
+| -------------------- | --------------------- | ----------------------------------- |
+| `rule-auditor`       | `@rule-auditor`       | Validate code against loaded rules  |
+| `rule-selector`      | `@rule-selector`      | Auto-detect stack, configure rules  |
+| `scaffolder`         | `@scaffolder`         | Generate rule-compliant boilerplate |
+| `repo-rag`           | `@repo-rag`           | Semantic codebase search            |
+| `artifact-publisher` | `@artifact-publisher` | Publish to project feed             |
+| `context-bridge`     | `@context-bridge`     | Sync with Claude/Factory            |
+| `handoff`            | `@handoff`            | Cross-agent task handoff            |
+| `repo-index`         | `@repo-index`         | Index codebase for search           |
 
 **Example Usage:**
+
 ```
 Use @rule-selector to configure rules for this Next.js project
 Use @scaffolder to create a UserProfile component
@@ -110,11 +118,13 @@ Use @context-bridge to sync this plan to Claude
 ```
 
 ### Rules
+
 - Hierarchical rule system with automatic loading based on file patterns
 - 1000+ framework-specific rules in `.cursor/rules/`
 - Stack profiles defined in `manifest.yaml`
 
 ### Workflows
+
 - **Plan Mode**: **Auto-triggers** for multi-file changes (≥2 files) via `preflight-plan.json` hook
   - Press `Shift+Tab` to manually trigger
   - Cursor researches repo, creates structured plan
@@ -125,6 +135,7 @@ Use @context-bridge to sync this plan to Claude
 - **Multi-Agent Coordination**: Handoff protocols and context sharing via Plan Mode artifacts
 
 ### Quality Gates
+
 - Definition of Done checklists
 - Pre-PR verification commands
 - Security boundaries and protected files

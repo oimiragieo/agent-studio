@@ -83,7 +83,13 @@
       "description": "List of outdated packages with version information",
       "items": {
         "type": "object",
-        "required": ["package_name", "current_version", "wanted_version", "latest_version", "update_type"],
+        "required": [
+          "package_name",
+          "current_version",
+          "wanted_version",
+          "latest_version",
+          "update_type"
+        ],
         "properties": {
           "package_name": {
             "type": "string",
@@ -166,7 +172,13 @@
         "properties": {
           "pattern_type": {
             "type": "string",
-            "enum": ["deprecated_api", "outdated_package", "legacy_pattern", "security_risk", "other"],
+            "enum": [
+              "deprecated_api",
+              "outdated_package",
+              "legacy_pattern",
+              "security_risk",
+              "other"
+            ],
             "description": "Type of legacy pattern found"
           },
           "description": {
@@ -325,7 +337,14 @@
           },
           "category": {
             "type": "string",
-            "enum": ["security", "breaking_changes", "legacy_code", "performance", "maintenance", "other"],
+            "enum": [
+              "security",
+              "breaking_changes",
+              "legacy_code",
+              "performance",
+              "maintenance",
+              "other"
+            ],
             "description": "Category of the recommendation"
           },
           "estimated_effort": {
@@ -372,4 +391,3 @@
     }
   }
 }
-

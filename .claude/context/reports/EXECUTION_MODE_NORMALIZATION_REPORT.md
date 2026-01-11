@@ -7,6 +7,7 @@ Normalized execution mode handling across all CUJ validators to align with the s
 ## Problem
 
 CUJ documentation and validators used mixed execution mode values:
+
 - Raw `.yaml` file references (e.g., `greenfield-fullstack.yaml`)
 - `automated-workflow`
 - `delegated-skill`
@@ -18,6 +19,7 @@ This caused validation inconsistencies and made it difficult to determine the ex
 ## Schema-Compliant Values
 
 According to `.claude/schemas/cuj-registry.schema.json`, the official `execution_mode` enum values are:
+
 - `"workflow"` - Multi-agent workflow execution
 - `"skill-only"` - Direct skill invocation without workflow
 - `"delegated-skill"` - Skill invoked by an agent (maps to `skill-only`)
@@ -34,13 +36,13 @@ function normalizeExecutionMode(mode) {
   if (!mode) return null;
 
   const modeMap = {
-    'workflow': 'workflow',
+    workflow: 'workflow',
     'automated-workflow': 'workflow',
     'delegated-skill': 'skill-only',
     'skill-only': 'skill-only',
-    'skill': 'skill-only',
+    skill: 'skill-only',
     'manual-setup': 'manual-setup',
-    'manual': 'manual-setup'
+    manual: 'manual-setup',
   };
 
   // Handle raw .yaml references as 'workflow'
@@ -53,6 +55,7 @@ function normalizeExecutionMode(mode) {
 ```
 
 **Normalization Rules**:
+
 - `automated-workflow` → `workflow`
 - `delegated-skill` → `skill-only`
 - `skill` → `skill-only`
@@ -62,15 +65,18 @@ function normalizeExecutionMode(mode) {
 ### 2. Separated Workflow File from Execution Mode
 
 **Before**: Mixed execution mode and workflow file path
+
 ```
 Execution Mode: greenfield-fullstack.yaml
 ```
 
 **After**: Separate fields for clarity
+
 - `execution_mode`: `"workflow"` (normalized)
 - `workflow_file`: `"greenfield-fullstack.yaml"` (extracted separately)
 
 This separation allows:
+
 1. Consistent execution mode checks (`if (mode === 'workflow')`)
 2. Workflow file validation (`if (workflowFile) { validateWorkflow(workflowFile) }`)
 3. Schema compliance without losing workflow file references
@@ -80,18 +86,21 @@ This separation allows:
 Modified three validation scripts:
 
 #### A. `scripts/validate-cujs.mjs`
+
 - Added `normalizeExecutionMode()` function
 - Updated `extractExecutionMode()` to normalize values
 - Separated workflow file extraction from mode normalization
 - Normalized both CUJ-declared modes and CUJ-INDEX.md mapping modes before comparison
 
 #### B. `scripts/validate-cuj-dry-run.mjs`
+
 - Added `normalizeExecutionMode()` function
 - Updated `extractExecutionMode()` to normalize values
 - Separated workflow file extraction from mode normalization
 - Updated `checkExecutionModeContradiction()` to use normalized modes
 
 #### C. `.claude/tools/validate-cuj.mjs`
+
 - Added `normalizeExecutionMode()` function
 - Updated `extractExecutionMode()` to normalize values
 - Separated workflow file extraction from mode normalization
@@ -100,6 +109,7 @@ Modified three validation scripts:
 ### 4. Backward Compatibility
 
 The validators still support legacy formats:
+
 - `**Execution Mode**: greenfield-fullstack.yaml` → Normalizes to `workflow`, extracts `greenfield-fullstack.yaml` as workflow file
 - `Workflow Reference: skill-only` → Normalizes to `skill-only`
 - `automated-workflow` → Normalizes to `workflow`
@@ -118,6 +128,7 @@ The `CUJ-INDEX.md` file contains a mapping table with the "Execution Mode" colum
 **Recommendation**: Keep the table as-is for now, since validators now normalize the values automatically. The mixed values in the table are handled by the normalization function.
 
 Alternatively, update the table to use only schema-compliant values:
+
 - Replace `greenfield-fullstack.yaml` with `workflow` (keep workflow file in separate column)
 - Standardize all `delegated-skill` to `skill-only`
 - Standardize all `manual` to `manual-setup`
@@ -142,6 +153,7 @@ Alternatively, update the table to use only schema-compliant values:
 ## Testing
 
 All validators now:
+
 - ✅ Accept raw `.yaml` references and normalize to `workflow`
 - ✅ Accept legacy formats (`automated-workflow`, `delegated-skill`, `manual`)
 - ✅ Normalize to schema-compliant values before validation
@@ -152,19 +164,23 @@ All validators now:
 ## Next Steps
 
 **Optional - Update CUJ-INDEX.md** (not required, normalization handles this):
+
 - Update "Execution Mode" column to use only schema-compliant values
 - Keep workflow file references in "Workflow File Path" column
 
 **Optional - Update Individual CUJ Files** (not required, validators accept both formats):
+
 - Replace `**Execution Mode**: greenfield-fullstack.yaml` with `**Execution Mode**: workflow` and add `**Workflow File**: greenfield-fullstack.yaml`
 - Standardize all execution modes to schema-compliant values
 
 **Benefits of Not Updating**:
+
 - Backward compatibility preserved
 - Less disruptive to existing CUJ files
 - Validators handle normalization automatically
 
 **Benefits of Updating**:
+
 - Schema compliance at source
 - Clearer separation of concerns
 - Easier to audit execution modes

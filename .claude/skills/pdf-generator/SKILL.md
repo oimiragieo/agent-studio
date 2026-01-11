@@ -33,6 +33,7 @@ PDF Generator - Creates formatted PDF documents with text, tables, and images us
 ### Basic PDF Generation
 
 **When to Use**:
+
 - Formal reports
 - Documentation
 - Technical specifications
@@ -40,6 +41,7 @@ PDF Generator - Creates formatted PDF documents with text, tables, and images us
 - Legal documents
 
 **How to Invoke**:
+
 ```
 "Generate a PDF report summarizing the project"
 "Create a technical documentation PDF"
@@ -47,6 +49,7 @@ PDF Generator - Creates formatted PDF documents with text, tables, and images us
 ```
 
 **What It Does**:
+
 - Uses Claude's built-in `pdf` skill (skill_id: `pdf`)
 - Creates PDF documents with formatting
 - Includes tables, images, and structured content
@@ -55,18 +58,21 @@ PDF Generator - Creates formatted PDF documents with text, tables, and images us
 ### Advanced Features
 
 **Document Structure**:
+
 - Title page
 - Table of contents
 - Sections and subsections
 - Appendices
 
 **Content Types**:
+
 - Text with formatting
 - Tables and data
 - Images and graphics
 - Charts and diagrams
 
 **Formatting**:
+
 - Professional styling
 - Consistent formatting
 - Brand guidelines
@@ -77,12 +83,14 @@ PDF Generator - Creates formatted PDF documents with text, tables, and images us
 ### Document Structure
 
 **Recommended Approach**:
+
 - **Clear organization**: Logical sections and flow
 - **Structured content**: Use headings and subheadings
 - **Visual elements**: Tables, charts, images
 - **Professional polish**: Consistent formatting
 
 **For Complex Documents**:
+
 1. **Plan structure**: Outline before generation
 2. **Use templates**: Consistent formatting
 3. **Include metadata**: Title, author, date
@@ -100,6 +108,7 @@ PDF Generator - Creates formatted PDF documents with text, tables, and images us
 ### With Other Document Generators
 
 PDF can combine content from:
+
 - Excel data and charts
 - PowerPoint slides
 - Text documents
@@ -108,6 +117,7 @@ PDF can combine content from:
 ### With Artifact Publisher
 
 PDF files can be published as artifacts:
+
 - Save to `.claude/context/runs/{run-id}/artifacts/` (use `path-resolver.mjs` to resolve paths)
 - Register in artifact registry via `run-manager.mjs`
 - Reference in workflow outputs
@@ -115,6 +125,7 @@ PDF files can be published as artifacts:
 ### With Workflows
 
 PDF generation integrates with workflows:
+
 - Documentation workflows
 - Reporting workflows
 - Publication workflows
@@ -167,6 +178,7 @@ PDF Generator:
 ### API Usage
 
 Uses Claude's beta Skills API:
+
 ```python
 response = client.beta.messages.create(
     model="claude-sonnet-4-5",
@@ -178,6 +190,7 @@ response = client.beta.messages.create(
 ### File Download
 
 Files are returned as `file_id`:
+
 ```python
 file_id = response.content[0].file_id
 file_content = client.beta.files.content(file_id)
@@ -193,4 +206,3 @@ file_content = client.beta.files.content(file_id)
 
 - [Document Generation Guide](../docs/DOCUMENT_GENERATION.md) - Comprehensive guide
 - [Skills Cookbook](https://github.com/anthropics/anthropic-cookbook/tree/main/skills) - Reference implementation
-

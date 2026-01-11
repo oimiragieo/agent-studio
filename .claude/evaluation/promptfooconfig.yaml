@@ -2,7 +2,7 @@
 # Base configuration for evaluating agent performance and rule compliance
 # Enhanced with Claude Cookbooks patterns
 
-description: "LLM-RULES Agent and Rule Compliance Evaluation"
+description: 'LLM-RULES Agent and Rule Compliance Evaluation'
 
 # Providers (Claude models)
 providers:
@@ -24,13 +24,13 @@ prompts:
 # Tests (evaluation scenarios)
 tests:
   - vars:
-      task: "Implement a user authentication API endpoint"
-      expected_files: ["api/auth/route.ts", "api/auth/route.test.ts"]
+      task: 'Implement a user authentication API endpoint'
+      expected_files: ['api/auth/route.ts', 'api/auth/route.test.ts']
     assert:
       - type: contains
-        value: "route.ts"
+        value: 'route.ts'
       - type: contains
-        value: "test"
+        value: 'test'
       - type: javascript
         value: |
           const output = context.vars.output;
@@ -48,7 +48,7 @@ grading:
       const output = context.vars.output;
       if (output.validation === "pass") return 1.0;
       return 0.0;
-  
+
   # Model-based grading for quality assessment
   - type: model
     provider: claude-sonnet-4-5
@@ -58,7 +58,7 @@ grading:
       - Error handling
       - Security best practices
       - Test coverage
-      
+
       Output: {code}
 
 # Specialized configurations available:

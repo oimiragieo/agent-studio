@@ -2,14 +2,8 @@
   "$schema": "https://json.schemastore.org/opencode-settings",
   "version": "2.0",
   "tool_permissions": {
-    "always_allow": [
-      "Read",
-      "Search"
-    ],
-    "require_confirmation": [
-      "Edit",
-      "Bash"
-    ],
+    "always_allow": ["Read", "Search"],
+    "require_confirmation": ["Edit", "Bash"],
     "always_deny": [
       "Bash(rm -rf *)",
       "Bash(format *)",
@@ -31,19 +25,8 @@
       "npm run lint",
       "npm run typecheck"
     ],
-    "require_confirmation": [
-      "git commit",
-      "git push",
-      "npm install",
-      "npm uninstall"
-    ],
-    "blocked_patterns": [
-      "rm -rf",
-      "sudo *",
-      "format *",
-      "dd *",
-      "mkfs *"
-    ]
+    "require_confirmation": ["git commit", "git push", "npm install", "npm uninstall"],
+    "blocked_patterns": ["rm -rf", "sudo *", "format *", "dd *", "mkfs *"]
   },
   "session": {
     "auto_save": true,

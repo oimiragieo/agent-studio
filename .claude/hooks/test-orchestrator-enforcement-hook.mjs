@@ -12,7 +12,12 @@
  * - Using Glob tool
  */
 
-import { PreToolUse, PostToolUse, resetReadCounter, getReadCount } from './orchestrator-enforcement-hook.mjs';
+import {
+  PreToolUse,
+  PostToolUse,
+  resetReadCounter,
+  getReadCount,
+} from './orchestrator-enforcement-hook.mjs';
 
 // Test utilities
 let testsPassed = 0;
@@ -49,10 +54,13 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Write',
       parameters: { file_path: 'test.txt', content: 'test' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'block', 'Write tool blocked for orchestrator');
-    assert(result.message.includes('ORCHESTRATOR VIOLATION'), 'Write block message contains violation warning');
+    assert(
+      result.message.includes('ORCHESTRATOR VIOLATION'),
+      'Write block message contains violation warning'
+    );
   }
 
   // Test 2: Allow Write tool for developer
@@ -60,7 +68,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Write',
       parameters: { file_path: 'test.txt', content: 'test' },
-      agentName: 'developer'
+      agentName: 'developer',
     });
     assertEquals(result.decision, 'allow', 'Write tool allowed for developer');
   }
@@ -70,7 +78,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Edit',
       parameters: { file_path: 'test.txt', old_string: 'a', new_string: 'b' },
-      agentName: 'master-orchestrator'
+      agentName: 'master-orchestrator',
     });
     assertEquals(result.decision, 'block', 'Edit tool blocked for master-orchestrator');
   }
@@ -80,7 +88,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Bash',
       parameters: { command: 'rm -rf .claude/archive/' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'block', 'Bash with rm -rf blocked for orchestrator');
     assert(result.message.includes('rm -rf'), 'Block message mentions rm -rf');
@@ -91,7 +99,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Bash',
       parameters: { command: 'git add .' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'block', 'Bash with git add blocked for orchestrator');
   }
@@ -101,7 +109,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Bash',
       parameters: { command: 'pwd' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'allow', 'Bash with safe command (pwd) allowed for orchestrator');
   }
@@ -111,7 +119,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Grep',
       parameters: { pattern: 'test' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'block', 'Grep tool blocked for orchestrator');
   }
@@ -121,7 +129,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Glob',
       parameters: { pattern: '**/*.md' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'block', 'Glob tool blocked for orchestrator');
   }
@@ -132,7 +140,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Read',
       parameters: { file_path: 'file1.txt' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'allow', 'First Read allowed for orchestrator');
     assertEquals(getReadCount('orchestrator'), 1, 'Read count is 1 after first Read');
@@ -143,7 +151,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Read',
       parameters: { file_path: 'file2.txt' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'allow', 'Second Read allowed for orchestrator');
     assertEquals(getReadCount('orchestrator'), 2, 'Read count is 2 after second Read');
@@ -154,7 +162,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Read',
       parameters: { file_path: 'file3.txt' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'block', 'Third Read blocked for orchestrator (2-FILE RULE)');
     assert(result.message.includes('2-FILE RULE'), 'Block message mentions 2-FILE RULE');
@@ -164,7 +172,7 @@ async function runTests() {
   {
     await PostToolUse({
       tool: 'Task',
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(getReadCount('orchestrator'), 0, 'Read counter reset to 0 after Task tool');
   }
@@ -174,7 +182,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Task',
       parameters: { subagent_type: 'developer' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'allow', 'Task tool allowed for orchestrator');
   }
@@ -184,7 +192,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Search',
       parameters: { query: 'test' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'allow', 'Search tool allowed for orchestrator');
   }
@@ -194,7 +202,7 @@ async function runTests() {
     const result = await PreToolUse({
       tool: 'Bash',
       parameters: { command: 'node .claude/tools/enforcement-gate.mjs validate-all' },
-      agentName: 'orchestrator'
+      agentName: 'orchestrator',
     });
     assertEquals(result.decision, 'block', 'Validation script execution blocked for orchestrator');
   }
@@ -217,7 +225,7 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch((error) => {
+runTests().catch(error => {
   console.error('❌ Test suite error:', error);
   process.exit(1);
 });

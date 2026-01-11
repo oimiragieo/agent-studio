@@ -207,10 +207,11 @@ function validateAgentConsistency() {
     }
   }
 
-  const valid = missingInConfig.length === 0 &&
-                missingFiles.length === 0 &&
-                missingInMatrix.length === 0 &&
-                extraInConfig.length === 0;
+  const valid =
+    missingInConfig.length === 0 &&
+    missingFiles.length === 0 &&
+    missingInMatrix.length === 0 &&
+    extraInConfig.length === 0;
 
   return {
     valid,
@@ -224,7 +225,7 @@ function validateAgentConsistency() {
       totalFiles: agentFiles.length,
       totalInMatrix: agentsInMatrix.length,
       totalInWorkflows: agentsInWorkflows.length,
-    }
+    },
   };
 }
 
@@ -299,7 +300,7 @@ function validateSkillExistence() {
     stats: {
       totalReferenced: referencedSkills.length,
       totalSkills: skillDirs.length,
-    }
+    },
   };
 }
 
@@ -369,7 +370,7 @@ function validateSchemaExistence() {
     stats: {
       totalSchemas: schemas.length,
       totalMissing: missingSchemas.length,
-    }
+    },
   };
 }
 
@@ -429,9 +430,10 @@ function validateWorkflowCompleteness() {
     }
   }
 
-  const valid = incompleteWorkflows.length === 0 &&
-                stepsWithoutAgents.length === 0 &&
-                stepsWithoutSchemas.length === 0;
+  const valid =
+    incompleteWorkflows.length === 0 &&
+    stepsWithoutAgents.length === 0 &&
+    stepsWithoutSchemas.length === 0;
 
   return {
     valid,
@@ -441,8 +443,9 @@ function validateWorkflowCompleteness() {
     stepsWithoutSchemas,
     stats: {
       totalWorkflows: workflowFiles.length,
-      totalIssues: incompleteWorkflows.length + stepsWithoutAgents.length + stepsWithoutSchemas.length,
-    }
+      totalIssues:
+        incompleteWorkflows.length + stepsWithoutAgents.length + stepsWithoutSchemas.length,
+    },
   };
 }
 
@@ -496,8 +499,8 @@ function validateToolPermissions() {
 
     for (const tool of criticalTools) {
       const isRestricted = restrictedTools.some(r => r.includes(tool));
-      const isAllowed = restrictions.allowed_tools &&
-                       restrictions.allowed_tools.some(t => t.includes(tool));
+      const isAllowed =
+        restrictions.allowed_tools && restrictions.allowed_tools.some(t => t.includes(tool));
 
       if (!isRestricted || isAllowed) {
         violations.push({
@@ -519,7 +522,7 @@ function validateToolPermissions() {
     stats: {
       totalAgents: ORCHESTRATOR_AGENTS.length,
       totalViolations: violations.length,
-    }
+    },
   };
 }
 
@@ -529,9 +532,9 @@ function validateToolPermissions() {
 function formatTable(result) {
   const { valid, category } = result;
 
-  const status = valid ?
-    `${COLORS.green}✓ PASS${COLORS.reset}` :
-    `${COLORS.red}✗ FAIL${COLORS.reset}`;
+  const status = valid
+    ? `${COLORS.green}✓ PASS${COLORS.reset}`
+    : `${COLORS.red}✗ FAIL${COLORS.reset}`;
 
   console.log(`\n${COLORS.bold}${category}${COLORS.reset}: ${status}`);
   console.log('─'.repeat(80));
@@ -548,9 +551,10 @@ function formatTable(result) {
 
   // Display issues
   const issueFields = Object.keys(result).filter(
-    k => !['valid', 'category', 'stats'].includes(k) &&
-         Array.isArray(result[k]) &&
-         result[k].length > 0
+    k =>
+      !['valid', 'category', 'stats'].includes(k) &&
+      Array.isArray(result[k]) &&
+      result[k].length > 0
   );
 
   for (const field of issueFields) {
@@ -565,7 +569,7 @@ function formatTable(result) {
       items.forEach(item => {
         const itemStr = JSON.stringify(item, null, 2)
           .split('\n')
-          .map((line, i) => i === 0 ? `  - ${line}` : `    ${line}`)
+          .map((line, i) => (i === 0 ? `  - ${line}` : `    ${line}`))
           .join('\n');
         console.log(itemStr);
       });

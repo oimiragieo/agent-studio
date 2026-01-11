@@ -42,7 +42,12 @@
     },
     "summary": {
       "type": "object",
-      "required": ["total_features_tested", "bugs_found_count", "performance_issues_count", "documentation_discrepancies_count"],
+      "required": [
+        "total_features_tested",
+        "bugs_found_count",
+        "performance_issues_count",
+        "documentation_discrepancies_count"
+      ],
       "properties": {
         "total_features_tested": {
           "type": "integer",
@@ -231,7 +236,14 @@
               },
               "category": {
                 "type": "string",
-                "enum": ["accessibility", "visual_design", "interaction", "layout", "responsive", "other"],
+                "enum": [
+                  "accessibility",
+                  "visual_design",
+                  "interaction",
+                  "layout",
+                  "responsive",
+                  "other"
+                ],
                 "description": "Category of the improvement"
               },
               "estimated_effort": {
@@ -263,7 +275,16 @@
               },
               "category": {
                 "type": "string",
-                "enum": ["code_splitting", "image_optimization", "lazy_loading", "caching", "api_optimization", "bundle_size", "render_optimization", "other"],
+                "enum": [
+                  "code_splitting",
+                  "image_optimization",
+                  "lazy_loading",
+                  "caching",
+                  "api_optimization",
+                  "bundle_size",
+                  "render_optimization",
+                  "other"
+                ],
                 "description": "Category of the optimization"
               },
               "estimated_improvement": {
@@ -297,7 +318,15 @@
           },
           "category": {
             "type": "string",
-            "enum": ["bug_fix", "performance", "ui_ux", "documentation", "accessibility", "security", "other"],
+            "enum": [
+              "bug_fix",
+              "performance",
+              "ui_ux",
+              "documentation",
+              "accessibility",
+              "security",
+              "other"
+            ],
             "description": "Category of the recommendation"
           },
           "estimated_effort": {
@@ -388,4 +417,3 @@
     }
   }
 }
-

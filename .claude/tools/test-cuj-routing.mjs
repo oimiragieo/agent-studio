@@ -19,7 +19,7 @@ const testPrompts = [
   'Test CUJ-027 for recovery',
   'Please implement the feature',
   'cuj-050 test',
-  'run cuj-001 please'
+  'run cuj-001 please',
 ];
 
 testPrompts.forEach(prompt => {

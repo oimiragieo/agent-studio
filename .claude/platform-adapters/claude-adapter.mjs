@@ -1,7 +1,7 @@
 /**
  * Claude Code Platform Adapter
  * Native adapter for Claude Code platform with full workflow support
- * 
+ *
  * @module platform-adapters/claude-adapter
  * @version 1.0.0
  */
@@ -16,10 +16,10 @@ export class ClaudeAdapter extends BasePlatformAdapter {
       subagents: true,
       plan_mode: true,
       task_tool: true,
-      skills: true
+      skills: true,
     };
   }
-  
+
   /**
    * Translate step to Claude format (native, no translation needed)
    * @param {Object} step - Workflow step
@@ -29,10 +29,10 @@ export class ClaudeAdapter extends BasePlatformAdapter {
     return {
       ...step,
       _platform: 'claude',
-      _native: true
+      _native: true,
     };
   }
-  
+
   /**
    * Translate workflow to Claude format (native, minimal translation)
    * @param {Object} workflow - Full workflow definition
@@ -43,10 +43,10 @@ export class ClaudeAdapter extends BasePlatformAdapter {
       ...workflow,
       _platform: 'claude',
       _translated: false,
-      steps: workflow.steps.map(s => this.translateStep(s))
+      steps: workflow.steps.map(s => this.translateStep(s)),
     };
   }
-  
+
   /**
    * Get Claude-native agent invocation using Task tool
    * @param {string} agent - Agent name
@@ -59,11 +59,11 @@ export class ClaudeAdapter extends BasePlatformAdapter {
       params: {
         subagent_type: agent,
         prompt: context.prompt,
-        description: context.description
-      }
+        description: context.description,
+      },
     };
   }
-  
+
   /**
    * Get skill invocation for Claude
    * @param {string} skill - Skill name
@@ -75,10 +75,10 @@ export class ClaudeAdapter extends BasePlatformAdapter {
       type: 'skill',
       name: skill,
       params: params,
-      _native: true
+      _native: true,
     };
   }
-  
+
   /**
    * Get validation gate invocation
    * @param {Object} gate - Gate configuration
@@ -90,10 +90,12 @@ export class ClaudeAdapter extends BasePlatformAdapter {
       args: [
         '.claude/tools/enforcement-gate.mjs',
         'validate-all',
-        '--workflow', gate.workflow,
-        '--step', gate.step.toString()
+        '--workflow',
+        gate.workflow,
+        '--step',
+        gate.step.toString(),
       ],
-      _native: true
+      _native: true,
     };
   }
 }

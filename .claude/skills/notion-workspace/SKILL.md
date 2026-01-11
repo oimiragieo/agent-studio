@@ -11,6 +11,7 @@ allowed-tools: bash, read, webfetch
 This skill provides access to Notion API operations using progressive disclosure for optimal context usage.
 
 **Context Savings**: ~90% reduction
+
 - **Direct API Mode**: Loading all API documentation and examples
 - **Skill Mode**: ~300 tokens metadata + on-demand tool loading
 
@@ -23,13 +24,13 @@ This skill provides access to Notion API operations using progressive disclosure
 
 The skill provides tools across 5 categories:
 
-| Toolset | Description |
-|---------|-------------|
-| `pages` | Page creation, updates, retrieval |
-| `databases` | Database queries, creation, row management |
-| `blocks` | Block content and hierarchy management |
-| `search` | Workspace search across pages and databases |
-| `users` | User management and information |
+| Toolset     | Description                                 |
+| ----------- | ------------------------------------------- |
+| `pages`     | Page creation, updates, retrieval           |
+| `databases` | Database queries, creation, row management  |
+| `blocks`    | Block content and hierarchy management      |
+| `search`    | Workspace search across pages and databases |
+| `users`     | User management and information             |
 
 ## Quick Reference
 
@@ -54,19 +55,21 @@ python executor.py --tool list-users --args '{}'
 
 ### Pages
 
-| Tool | Description | Confirmation Required |
-|------|-------------|----------------------|
-| `get-page` | Retrieve page content and properties | No |
-| `create-page` | Create a new page | Yes |
-| `update-page` | Update page properties and content | Yes |
-| `archive-page` | Archive or delete a page | Yes |
+| Tool           | Description                          | Confirmation Required |
+| -------------- | ------------------------------------ | --------------------- |
+| `get-page`     | Retrieve page content and properties | No                    |
+| `create-page`  | Create a new page                    | Yes                   |
+| `update-page`  | Update page properties and content   | Yes                   |
+| `archive-page` | Archive or delete a page             | Yes                   |
 
 **get-page**:
+
 ```bash
 python executor.py --tool get-page --args '{"page_id": "abc123def456"}'
 ```
 
 **create-page**:
+
 ```bash
 python executor.py --tool create-page --args '{
   "parent": {"page_id": "parent_page_id"},
@@ -77,6 +80,7 @@ python executor.py --tool create-page --args '{
 ```
 
 **update-page**:
+
 ```bash
 python executor.py --tool update-page --args '{
   "page_id": "abc123",
@@ -87,21 +91,23 @@ python executor.py --tool update-page --args '{
 ```
 
 **archive-page**:
+
 ```bash
 python executor.py --tool archive-page --args '{"page_id": "abc123", "archived": true}'
 ```
 
 ### Databases
 
-| Tool | Description | Confirmation Required |
-|------|-------------|----------------------|
-| `list-databases` | List accessible databases | No |
-| `query-database` | Query database with filters and sorts | No |
-| `create-database` | Create a new database | Yes |
-| `add-row` | Add a row to a database | Yes |
-| `update-database` | Update database properties | Yes |
+| Tool              | Description                           | Confirmation Required |
+| ----------------- | ------------------------------------- | --------------------- |
+| `list-databases`  | List accessible databases             | No                    |
+| `query-database`  | Query database with filters and sorts | No                    |
+| `create-database` | Create a new database                 | Yes                   |
+| `add-row`         | Add a row to a database               | Yes                   |
+| `update-database` | Update database properties            | Yes                   |
 
 **query-database**:
+
 ```bash
 python executor.py --tool query-database --args '{
   "database_id": "db123",
@@ -114,6 +120,7 @@ python executor.py --tool query-database --args '{
 ```
 
 **add-row**:
+
 ```bash
 python executor.py --tool add-row --args '{
   "database_id": "db123",
@@ -126,6 +133,7 @@ python executor.py --tool add-row --args '{
 ```
 
 **create-database**:
+
 ```bash
 python executor.py --tool create-database --args '{
   "parent": {"page_id": "parent123"},
@@ -140,20 +148,22 @@ python executor.py --tool create-database --args '{
 
 ### Blocks
 
-| Tool | Description | Confirmation Required |
-|------|-------------|----------------------|
-| `get-block` | Get block content | No |
-| `get-children` | Get child blocks of a page or block | No |
-| `append-blocks` | Append blocks to a page | Yes |
-| `update-block` | Update block content | Yes |
-| `delete-block` | Delete a block | Yes |
+| Tool            | Description                         | Confirmation Required |
+| --------------- | ----------------------------------- | --------------------- |
+| `get-block`     | Get block content                   | No                    |
+| `get-children`  | Get child blocks of a page or block | No                    |
+| `append-blocks` | Append blocks to a page             | Yes                   |
+| `update-block`  | Update block content                | Yes                   |
+| `delete-block`  | Delete a block                      | Yes                   |
 
 **get-children**:
+
 ```bash
 python executor.py --tool get-children --args '{"block_id": "page_or_block_id"}'
 ```
 
 **append-blocks**:
+
 ```bash
 python executor.py --tool append-blocks --args '{
   "block_id": "page123",
@@ -166,11 +176,12 @@ python executor.py --tool append-blocks --args '{
 
 ### Search
 
-| Tool | Description | Confirmation Required |
-|------|-------------|----------------------|
-| `search` | Search pages and databases by title | No |
+| Tool     | Description                         | Confirmation Required |
+| -------- | ----------------------------------- | --------------------- |
+| `search` | Search pages and databases by title | No                    |
 
 **search**:
+
 ```bash
 python executor.py --tool search --args '{
   "query": "project plan",
@@ -181,18 +192,20 @@ python executor.py --tool search --args '{
 
 ### Users
 
-| Tool | Description | Confirmation Required |
-|------|-------------|----------------------|
-| `list-users` | List all users in the workspace | No |
-| `get-user` | Get user details by ID | No |
-| `get-me` | Get current bot user information | No |
+| Tool         | Description                      | Confirmation Required |
+| ------------ | -------------------------------- | --------------------- |
+| `list-users` | List all users in the workspace  | No                    |
+| `get-user`   | Get user details by ID           | No                    |
+| `get-me`     | Get current bot user information | No                    |
 
 **list-users**:
+
 ```bash
 python executor.py --tool list-users --args '{}'
 ```
 
 **get-user**:
+
 ```bash
 python executor.py --tool get-user --args '{"user_id": "user123"}'
 ```
@@ -201,10 +214,10 @@ python executor.py --tool get-user --args '{"user_id": "user123"}'
 
 ### Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NOTION_API_KEY` | Yes | Notion integration token (starts with `secret_`) |
-| `NOTION_VERSION` | No | API version (default: 2022-06-28) |
+| Variable         | Required | Description                                      |
+| ---------------- | -------- | ------------------------------------------------ |
+| `NOTION_API_KEY` | Yes      | Notion integration token (starts with `secret_`) |
+| `NOTION_VERSION` | No       | API version (default: 2022-06-28)                |
 
 ### Getting a Notion API Key
 
@@ -229,10 +242,12 @@ NOTION_TOOLSETS=databases python executor.py --list
 ## Agent Integration
 
 **Primary Agents**:
+
 - `pm` - Project management, task tracking
 - `technical-writer` - Documentation management
 
 **Secondary Agents**:
+
 - `analyst` - Research, note-taking
 - `developer` - Technical documentation
 - `orchestrator` - Workflow coordination
@@ -240,17 +255,20 @@ NOTION_TOOLSETS=databases python executor.py --list
 ## Security
 
 **API Key Protection**:
+
 - Never expose `NOTION_API_KEY` in logs or output
 - Store API key securely using environment variables
 - Use integration-level permissions to limit access
 
 **Confirmation Required**:
+
 - All page mutations (create, update, archive)
 - All database mutations (create, add rows, update)
 - All block mutations (append, update, delete)
 
 **Read-Only Mode**:
 Set `NOTION_READ_ONLY=1` to disable all mutation operations:
+
 ```bash
 NOTION_READ_ONLY=1 python executor.py --tool create-page --args '{...}'
 # Error: Operation not allowed in read-only mode
@@ -333,6 +351,7 @@ python executor.py --tool search --args '{
 ## Error Handling
 
 If tool execution fails:
+
 1. Verify `NOTION_API_KEY` is set and valid
 2. Ensure integration has access to the page/database
 3. Check API version compatibility (`NOTION_VERSION`)
@@ -340,6 +359,7 @@ If tool execution fails:
 5. Verify page/database IDs are correct (32-character hex strings without hyphens)
 
 **Common Errors**:
+
 - `object_not_found`: Page/database not shared with integration
 - `validation_error`: Invalid request parameters
 - `unauthorized`: Invalid API key or insufficient permissions
@@ -348,6 +368,7 @@ If tool execution fails:
 ## Rate Limits
 
 Notion API has rate limits:
+
 - **Rate limit**: ~3 requests per second
 - **Burst limit**: Up to 10 requests in a short burst
 - **Best practice**: Add delays between batch operations

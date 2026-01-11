@@ -2,12 +2,12 @@ name: Code Review Workflow
 description: Comprehensive code review with systematic analysis and multi-AI validation support
 type: code-review
 project_type: review
-publish_policy: auto-on-pass  # Automatically publish artifacts after validation passes
+publish_policy: auto-on-pass # Automatically publish artifacts after validation passes
 
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -26,32 +26,32 @@ fallback_agents:
 # The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 trigger_keywords:
-  - "code review"
-  - "/review"
-  - "review code"
-  - "review this"
-  - "PR review"
-  - "pull request review"
+  - 'code review'
+  - '/review'
+  - 'review code'
+  - 'review this'
+  - 'PR review'
+  - 'pull request review'
 
 # Workflow-Level Context Inputs
 workflow_inputs:
   required:
-    - target_files  # List of files/directories to review (e.g., ["src/", "lib/", "app/components/"])
+    - target_files # List of files/directories to review (e.g., ["src/", "lib/", "app/components/"])
   optional:
-    - coding_standards  # Coding standards to apply (e.g., "PEP 8", "Airbnb JavaScript Style Guide")
-    - review_depth  # Depth of review: "shallow" | "standard" | "deep"
-    - security_focus  # Boolean: prioritize security analysis
+    - coding_standards # Coding standards to apply (e.g., "PEP 8", "Airbnb JavaScript Style Guide")
+    - review_depth # Depth of review: "shallow" | "standard" | "deep"
+    - security_focus # Boolean: prioritize security analysis
 
 steps:
   - step: 0
-    name: "Planning Phase"
+    name: 'Planning Phase'
     agent: planner
     inputs:
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to review
-      - coding_standards  # (optional) Coding standards to apply
-      - review_depth  # (optional) Depth of review
-      - security_focus  # (optional) Prioritize security analysis
+      - target_files # List of files/directories to review
+      - coding_standards # (optional) Coding standards to apply
+      - review_depth # (optional) Depth of review
+      - security_focus # (optional) Prioritize security analysis
     outputs:
       - plan-{{workflow_id}}.md
       - plan-{{workflow_id}}.json
@@ -64,15 +64,15 @@ steps:
       recommended:
         - classifier
       triggered:
-        - pattern: "security|auth|compliance"
+        - pattern: 'security|auth|compliance'
           skills: [sequential-thinking]
           priority: required
           skill_params:
-            focus_areas: ["security", "compliance"]
+            focus_areas: ['security', 'compliance']
       outputs:
         plan-generator:
-          primary: "plan-{{workflow_id}}.json"
-          schema: ".claude/schemas/plan.schema.json"
+          primary: 'plan-{{workflow_id}}.json'
+          schema: '.claude/schemas/plan.schema.json'
           required_for_completion: true
       validation:
         mode: blocking
@@ -89,7 +89,7 @@ steps:
       - **Publishing**: After validation, use `artifact-publisher` skill to publish plan artifacts to project feed
 
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -115,16 +115,16 @@ steps:
       - Never execute an unrated plan - this is a hard requirement
 
   - step: 1
-    name: "Code Analysis"
+    name: 'Code Analysis'
     agent: code-reviewer
     inputs:
       # Artifact inputs (from previous steps)
       - plan-{{workflow_id}}.json (from step 0)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to review
-      - coding_standards  # (optional) Coding standards to apply
-      - review_depth  # (optional) Depth of review
-      - security_focus  # (optional) Prioritize security analysis
+      - target_files # List of files/directories to review
+      - coding_standards # (optional) Coding standards to apply
+      - review_depth # (optional) Depth of review
+      - security_focus # (optional) Prioritize security analysis
     outputs:
       - code-review-report-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-code-reviewer.json
@@ -138,22 +138,22 @@ steps:
         - fixing-rule-violations
         - dependency-analyzer
       triggered:
-        - pattern: "security|auth|password|credential"
+        - pattern: 'security|auth|password|credential'
           skills: [rule-auditor]
           priority: required
           skill_params:
-            rule_categories: ["security", "authentication"]
-        - pattern: "performance|optimize|slow"
+            rule_categories: ['security', 'authentication']
+        - pattern: 'performance|optimize|slow'
           skills: [dependency-analyzer]
           priority: recommended
       outputs:
         rule-auditor:
-          primary: "code-review-report-{{workflow_id}}.json"
-          secondary: ["violations-{{workflow_id}}.json"]
-          schema: ".claude/schemas/code-review.schema.json"
+          primary: 'code-review-report-{{workflow_id}}.json'
+          secondary: ['violations-{{workflow_id}}.json']
+          schema: '.claude/schemas/code-review.schema.json'
           required_for_completion: true
         code-style-validator:
-          primary: "style-report-{{workflow_id}}.json"
+          primary: 'style-report-{{workflow_id}}.json'
           required_for_completion: false
       validation:
         mode: blocking
@@ -172,16 +172,16 @@ steps:
       - Rule compliance validation
 
   - step: 1.5
-    name: "Multi-AI Code Review (Optional)"
+    name: 'Multi-AI Code Review (Optional)'
     agent: code-reviewer
     skill: multi-ai-code-review
-    condition: "user_requested_multi_ai_review OR critical_security_changes"
+    condition: 'user_requested_multi_ai_review OR critical_security_changes'
     inputs:
       # Artifact inputs (from previous steps)
       - plan-{{workflow_id}}.json (from step 0)
       - code-review-report-{{workflow_id}}.json (from step 1)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories to review
+      - target_files # List of files/directories to review
     outputs:
       - multi-ai-review-report-{{workflow_id}}.json
       - multi-ai-review-synthesis-{{workflow_id}}.md (optional)
@@ -191,7 +191,7 @@ steps:
       # CLI validation before execution (Cursor Recommendation #1)
       skip_cli_validation: false
       # Schema validation mode (Cursor Recommendation #3)
-      validation_mode: blocking  # fail fast on invalid schema
+      validation_mode: blocking # fail fast on invalid schema
       # Provider configuration with fallback (Cursor Recommendation #4)
       # Provider priority defined in .claude/config.yaml codex_skills.provider_priority
     # Phase 2A: Skill requirements for this step
@@ -202,17 +202,17 @@ steps:
       triggered: []
       outputs:
         multi-ai-code-review:
-          primary: "multi-ai-review-report-{{workflow_id}}.json"
-          secondary: ["multi-ai-review-synthesis-{{workflow_id}}.md"]
-          schema: ".claude/schemas/multi-ai-review-report.schema.json"
+          primary: 'multi-ai-review-report-{{workflow_id}}.json'
+          secondary: ['multi-ai-review-synthesis-{{workflow_id}}.md']
+          schema: '.claude/schemas/multi-ai-review-report.schema.json'
           required_for_completion: true
       validation:
-        mode: blocking  # NEW: fail fast on invalid outputs (Cursor Recommendation #3)
+        mode: blocking # NEW: fail fast on invalid outputs (Cursor Recommendation #3)
         min_compliance: 100
         on_failure: block
     validation:
       schema: .claude/schemas/multi-ai-review-report.schema.json
-      mode: blocking  # NEW: Schema validation blocking mode (Cursor Recommendation #3)
+      mode: blocking # NEW: Schema validation blocking mode (Cursor Recommendation #3)
       gate: .claude/context/history/gates/{{workflow_id}}/01.5-code-reviewer.json
     description: |
       Multi-provider code review using Claude, Gemini, and optionally Codex:
@@ -228,7 +228,7 @@ steps:
       - Automatically triggered when security triggers indicate critical changes
 
   - step: 2
-    name: "Review Report Generation"
+    name: 'Review Report Generation'
     agent: code-reviewer
     inputs:
       # Artifact inputs (from previous steps)
@@ -236,7 +236,7 @@ steps:
       - code-review-report-{{workflow_id}}.json (from step 1)
       - multi-ai-review-report-{{workflow_id}}.json (optional, from step 1.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories reviewed
+      - target_files # List of files/directories reviewed
     outputs:
       - review-summary-{{workflow_id}}.json
       - issue-list-{{workflow_id}}.json
@@ -253,7 +253,7 @@ steps:
       - List prioritized issues with file locations
 
   - step: 3
-    name: "Fix Suggestions"
+    name: 'Fix Suggestions'
     agent: developer
     inputs:
       # Artifact inputs (from previous steps)
@@ -262,7 +262,7 @@ steps:
       - issue-list-{{workflow_id}}.json (from step 2)
       - code-review-report-{{workflow_id}}.json (from step 1)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories reviewed
+      - target_files # List of files/directories reviewed
     outputs:
       - fix-suggestions-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-developer.json
@@ -275,15 +275,15 @@ steps:
         - scaffolder
         - code-style-validator
       triggered:
-        - pattern: "security|vulnerability|exploit"
+        - pattern: 'security|vulnerability|exploit'
           skills: [fixing-rule-violations, repo-rag]
           priority: required
           skill_params:
-            focus_areas: ["security"]
+            focus_areas: ['security']
       outputs:
         fixing-rule-violations:
-          primary: "fix-suggestions-{{workflow_id}}.json"
-          schema: ".claude/schemas/fix-suggestions.schema.json"
+          primary: 'fix-suggestions-{{workflow_id}}.json'
+          schema: '.claude/schemas/fix-suggestions.schema.json'
           required_for_completion: true
       validation:
         mode: blocking
@@ -302,9 +302,9 @@ steps:
       - Provide security fix examples where applicable
 
   - step: 3.5
-    name: "Security Review (Conditional)"
+    name: 'Security Review (Conditional)'
     agent: security-architect
-    condition: "security_focus == true OR critical_security_issues_found"
+    condition: 'security_focus == true OR critical_security_issues_found'
     inputs:
       # Artifact inputs (from previous steps)
       - plan-{{workflow_id}}.json (from step 0)
@@ -312,7 +312,7 @@ steps:
       - review-summary-{{workflow_id}}.json (from step 2)
       - multi-ai-review-report-{{workflow_id}}.json (optional, from step 1.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories reviewed
+      - target_files # List of files/directories reviewed
     outputs:
       - security-review-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03.5-security-architect.json
@@ -330,7 +330,7 @@ steps:
       - Security best practices compliance
 
   - step: 4
-    name: "Quality Validation"
+    name: 'Quality Validation'
     agent: qa
     inputs:
       # Artifact inputs (from previous steps)
@@ -340,7 +340,7 @@ steps:
       - fix-suggestions-{{workflow_id}}.json (from step 3)
       - security-review-{{workflow_id}}.json (optional, from step 3.5)
       # Workflow-level context inputs (provided at workflow start, not artifact files)
-      - target_files  # List of files/directories reviewed
+      - target_files # List of files/directories reviewed
     outputs:
       - quality-validation-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-qa.json
@@ -353,16 +353,16 @@ steps:
         - response-rater
         - summarizer
       triggered:
-        - pattern: "coverage|metrics|quality gate"
+        - pattern: 'coverage|metrics|quality gate'
           skills: [evaluator]
           priority: required
-        - pattern: "report|summary|findings"
+        - pattern: 'report|summary|findings'
           skills: [summarizer]
           priority: recommended
       outputs:
         evaluator:
-          primary: "quality-validation-{{workflow_id}}.json"
-          schema: ".claude/schemas/quality-validation.schema.json"
+          primary: 'quality-validation-{{workflow_id}}.json'
+          schema: '.claude/schemas/quality-validation.schema.json'
           required_for_completion: true
       validation:
         mode: blocking
@@ -381,7 +381,7 @@ steps:
       - **Publishing**: After validation, use `artifact-publisher` skill to publish final review artifacts
 
   - step: 4.5
-    name: "Publish Artifacts"
+    name: 'Publish Artifacts'
     agent: orchestrator
     skill: artifact-publisher
     condition: "validation_status == 'pass'"

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Checkpoint Manager - Automatic step boundary artifacts for long-running tasks
- * 
+ *
  * Creates checkpoints at step boundaries to enable recovery from interruption
  * Checkpoints are automatic artifacts created after each workflow step
- * 
+ *
  * Usage:
  *   node .claude/tools/checkpoint-manager.mjs create --run-id <id> --step <number>
  *   node .claude/tools/checkpoint-manager.mjs restore --run-id <id> --checkpoint-id <id>
@@ -15,7 +15,12 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
 import { createHash } from 'crypto';
-import { readRun, readArtifactRegistry, getRunDirectoryStructure, registerArtifact } from './run-manager.mjs';
+import {
+  readRun,
+  readArtifactRegistry,
+  getRunDirectoryStructure,
+  registerArtifact,
+} from './run-manager.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -39,17 +44,17 @@ function _validateChecksum(checkpoint) {
   if (!checkpoint.metadata?.checksum) {
     return { valid: false, error: 'Checkpoint missing checksum' };
   }
-  
+
   // Recompute checksum from checkpoint data (excluding metadata.checksum)
   const { metadata, ...checkpointData } = checkpoint;
   const { checksum, ...metadataWithoutChecksum } = metadata || {};
   const dataToCheck = { ...checkpointData, metadata: metadataWithoutChecksum };
   const computedChecksum = _computeChecksum(dataToCheck);
-  
+
   if (computedChecksum !== checksum) {
     return { valid: false, error: 'Checksum mismatch - checkpoint may be corrupted' };
   }
-  
+
   return { valid: true };
 }
 
@@ -60,26 +65,28 @@ function _validateChecksum(checkpoint) {
  */
 async function _pruneOldCheckpoints(runId) {
   const checkpoints = await listCheckpoints(runId);
-  
+
   if (checkpoints.length <= 5) {
     return 0; // No pruning needed
   }
-  
+
   // Sort by timestamp (newest first) and keep last 5
   const sorted = checkpoints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   const toKeep = sorted.slice(0, 5);
   const toDelete = sorted.slice(5);
-  
+
   let deletedCount = 0;
   for (const checkpoint of toDelete) {
     try {
       await unlink(checkpoint.path);
       deletedCount++;
     } catch (error) {
-      console.warn(`Warning: Failed to delete checkpoint ${checkpoint.checkpoint_id}: ${error.message}`);
+      console.warn(
+        `Warning: Failed to delete checkpoint ${checkpoint.checkpoint_id}: ${error.message}`
+      );
     }
   }
-  
+
   return deletedCount;
 }
 
@@ -94,16 +101,16 @@ export async function createCheckpoint(runId, step, stepState = {}) {
   const runRecord = await readRun(runId);
   const artifactRegistry = await readArtifactRegistry(runId);
   const runDirs = getRunDirectoryStructure(runId);
-  
+
   // Ensure checkpoints directory exists
   const checkpointsDir = join(runDirs.run_dir, 'checkpoints');
   if (!existsSync(checkpointsDir)) {
     await mkdir(checkpointsDir, { recursive: true });
   }
-  
+
   const checkpointId = `checkpoint-step-${step}-${Date.now()}`;
   const checkpointPath = join(checkpointsDir, `${checkpointId}.json`);
-  
+
   // Create checkpoint data (without checksum first)
   const checkpointData = {
     checkpoint_id: checkpointId,
@@ -122,16 +129,16 @@ export async function createCheckpoint(runId, step, stepState = {}) {
       ).length,
       failed_validations: Object.values(artifactRegistry.artifacts || {}).filter(
         a => a.metadata?.validation_status === 'fail'
-      ).length
+      ).length,
     },
     recovery_instructions: [
       `Resume workflow from step ${step + 1}`,
       `Load artifact registry from ${runDirs.artifact_registry}`,
       `Read run record from ${runDirs.run_json}`,
-      `Verify all artifacts from step ${step} are present`
-    ]
+      `Verify all artifacts from step ${step} are present`,
+    ],
   };
-  
+
   // Compute checksum and add to metadata
   const checksum = _computeChecksum(checkpointData);
   const checkpoint = {
@@ -139,13 +146,13 @@ export async function createCheckpoint(runId, step, stepState = {}) {
     metadata: {
       checksum: checksum,
       created_by: 'checkpoint-manager',
-      version: '1.0'
-    }
+      version: '1.0',
+    },
   };
-  
+
   // Save checkpoint
   await writeFile(checkpointPath, JSON.stringify(checkpoint, null, 2), 'utf-8');
-  
+
   // Register checkpoint as artifact
   await registerArtifact(runId, {
     name: `${checkpointId}.json`,
@@ -155,15 +162,15 @@ export async function createCheckpoint(runId, step, stepState = {}) {
     dependencies: [],
     type: 'checkpoint',
     validationStatus: 'pass',
-    size: JSON.stringify(checkpoint).length
+    size: JSON.stringify(checkpoint).length,
   });
-  
+
   // Prune old checkpoints (keep last 5)
   const deletedCount = await _pruneOldCheckpoints(runId);
   if (deletedCount > 0) {
     console.log(`   ℹ️  Pruned ${deletedCount} old checkpoint(s), keeping last 5`);
   }
-  
+
   return checkpoint;
 }
 
@@ -177,37 +184,37 @@ export async function restoreFromCheckpoint(runId, checkpointId) {
   const runDirs = getRunDirectoryStructure(runId);
   const checkpointsDir = join(runDirs.run_dir, 'checkpoints');
   const checkpointPath = join(checkpointsDir, `${checkpointId}.json`);
-  
+
   if (!existsSync(checkpointPath)) {
     throw new Error(`Checkpoint not found: ${checkpointId}`);
   }
-  
+
   const checkpointContent = await readFile(checkpointPath, 'utf-8');
   const checkpoint = JSON.parse(checkpointContent);
-  
+
   // Validate checksum before restoration
   const checksumValidation = _validateChecksum(checkpoint);
   if (!checksumValidation.valid) {
     throw new Error(`Checkpoint integrity check failed: ${checksumValidation.error}`);
   }
-  
+
   // Restore run record
   const { updateRun } = await import('./run-manager.mjs');
   await updateRun(runId, {
     current_step: checkpoint.step,
     status: 'in_progress',
-    ...checkpoint.run_record
+    ...checkpoint.run_record,
   });
-  
+
   // Restore artifact registry
   const registryPath = getRunDirectoryStructure(runId).artifact_registry;
   await writeFile(registryPath, JSON.stringify(checkpoint.artifact_registry, null, 2), 'utf-8');
-  
+
   return {
     checkpoint: checkpoint,
     restored_step: checkpoint.step,
     artifacts_restored: checkpoint.artifacts_at_checkpoint.length,
-    recovery_instructions: checkpoint.recovery_instructions
+    recovery_instructions: checkpoint.recovery_instructions,
   };
 }
 
@@ -219,15 +226,15 @@ export async function restoreFromCheckpoint(runId, checkpointId) {
 export async function listCheckpoints(runId) {
   const runDirs = getRunDirectoryStructure(runId);
   const checkpointsDir = join(runDirs.run_dir, 'checkpoints');
-  
+
   if (!existsSync(checkpointsDir)) {
     return [];
   }
-  
+
   const { readdir } = await import('fs/promises');
   const files = await readdir(checkpointsDir);
   const checkpoints = [];
-  
+
   for (const file of files) {
     if (file.endsWith('.json')) {
       const checkpointPath = join(checkpointsDir, file);
@@ -237,11 +244,11 @@ export async function listCheckpoints(runId) {
         checkpoint_id: checkpoint.checkpoint_id,
         step: checkpoint.step,
         timestamp: checkpoint.timestamp,
-        path: checkpointPath
+        path: checkpointPath,
       });
     }
   }
-  
+
   return checkpoints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 }
 
@@ -249,43 +256,45 @@ export async function listCheckpoints(runId) {
 async function main() {
   const args = process.argv.slice(2);
   const command = args[0];
-  
+
   if (command === 'create') {
     const runIdIndex = args.indexOf('--run-id');
     const stepIndex = args.indexOf('--step');
-    
+
     if (runIdIndex === -1 || stepIndex === -1) {
       console.error('Usage: node checkpoint-manager.mjs create --run-id <id> --step <number>');
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const step = parseInt(args[stepIndex + 1], 10);
-    
+
     const checkpoint = await createCheckpoint(runId, step);
     console.log(JSON.stringify(checkpoint, null, 2));
   } else if (command === 'restore') {
     const runIdIndex = args.indexOf('--run-id');
     const checkpointIndex = args.indexOf('--checkpoint-id');
-    
+
     if (runIdIndex === -1 || checkpointIndex === -1) {
-      console.error('Usage: node checkpoint-manager.mjs restore --run-id <id> --checkpoint-id <id>');
+      console.error(
+        'Usage: node checkpoint-manager.mjs restore --run-id <id> --checkpoint-id <id>'
+      );
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const checkpointId = args[checkpointIndex + 1];
-    
+
     const restored = await restoreFromCheckpoint(runId, checkpointId);
     console.log(JSON.stringify(restored, null, 2));
   } else if (command === 'list') {
     const runIdIndex = args.indexOf('--run-id');
-    
+
     if (runIdIndex === -1) {
       console.error('Usage: node checkpoint-manager.mjs list --run-id <id>');
       process.exit(1);
     }
-    
+
     const runId = args[runIdIndex + 1];
     const checkpoints = await listCheckpoints(runId);
     console.log(JSON.stringify(checkpoints, null, 2));
@@ -303,6 +312,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 export default {
   createCheckpoint,
   restoreFromCheckpoint,
-  listCheckpoints
+  listCheckpoints,
 };
-

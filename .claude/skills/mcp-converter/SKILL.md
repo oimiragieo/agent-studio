@@ -31,6 +31,7 @@ MCP-to-Skill Converter - Transforms MCP servers into Claude Skills using progres
 ## The Problem
 
 MCP servers load all tool definitions into context at startup:
+
 - 20+ tools = 30-50k tokens consumed immediately
 - Context fills before Claude does any work
 - Hard to scale beyond ~100 tools
@@ -39,6 +40,7 @@ MCP servers load all tool definitions into context at startup:
 ## The Solution
 
 Convert MCP servers to Skills with progressive disclosure:
+
 - **Startup**: ~100 tokens (metadata only)
 - **When used**: ~5k tokens (full instructions)
 - **Executing**: 0 tokens (runs externally)
@@ -57,12 +59,14 @@ Convert MCP servers to Skills with progressive disclosure:
 ### On-Demand Conversion
 
 **When to Use**:
+
 - You have an MCP server with 10+ tools
 - Context space is critical
 - Most tools aren't used in every conversation
 - You want maximum context efficiency
 
 **How to Invoke**:
+
 ```
 "Convert the github MCP server to a Skill"
 "Convert all MCP servers with more than 10 tools"
@@ -70,6 +74,7 @@ Convert MCP servers to Skills with progressive disclosure:
 ```
 
 **What It Does**:
+
 - Reads MCP server configuration
 - Introspects server to discover tools
 - Generates Skill structure
@@ -78,12 +83,14 @@ Convert MCP servers to Skills with progressive disclosure:
 ### Automatic Detection
 
 **When Enabled**:
+
 - Monitor `.claude/.mcp.json` for changes
 - Detect new MCP servers
 - Analyze tool count and token usage
 - Auto-convert based on rules
 
 **Configuration**:
+
 ```yaml
 auto_convert:
   enabled: true
@@ -91,8 +98,8 @@ auto_convert:
     tool_count: 10
     estimated_tokens: 5000
   exceptions:
-    - github  # Keep as MCP
-    - memory  # Keep as MCP
+    - github # Keep as MCP
+    - memory # Keep as MCP
 ```
 
 ## Skill Structure
@@ -109,12 +116,14 @@ skill-name/
 ### SKILL.md (Progressive Disclosure)
 
 **Metadata Only** (~100 tokens):
+
 - Skill name and description
 - Tool categories
 - When to use guidance
 - Quick reference
 
 **Full Instructions** (~5k tokens, loaded when used):
+
 - Complete tool documentation
 - Usage examples
 - Error handling
@@ -123,6 +132,7 @@ skill-name/
 ### executor.py
 
 Handles MCP tool calls dynamically:
+
 - Connects to MCP server
 - Executes tool calls
 - Returns results
@@ -133,6 +143,7 @@ Handles MCP tool calls dynamically:
 ### With Tool Search
 
 Skills work alongside Tool Search:
+
 - **Tool Search**: Semantic discovery of tools
 - **Skills**: On-demand tool loading with minimal context
 - **Combined**: Optimal context usage for large tool libraries
@@ -140,6 +151,7 @@ Skills work alongside Tool Search:
 ### With Skill Builder
 
 Uses Skill Builder plugin for:
+
 - Validation of generated Skills
 - Template-based generation
 - Testing and verification
@@ -148,6 +160,7 @@ Uses Skill Builder plugin for:
 ### With Marketplace
 
 Integrates with superpowers-marketplace:
+
 - Install marketplace plugins
 - Auto-detect MCP servers in plugins
 - Convert plugin MCP servers to Skills
@@ -158,12 +171,14 @@ Integrates with superpowers-marketplace:
 ### When to Convert
 
 **Convert to Skill When**:
+
 - MCP server has 10+ tools
 - Most tools unused in each conversation
 - Context space is critical
 - Tools are independent
 
 **Keep as MCP When**:
+
 - 1-5 tools (minimal context impact)
 - Complex OAuth flows required
 - Persistent connections needed
@@ -172,6 +187,7 @@ Integrates with superpowers-marketplace:
 ### Critical Tools to Keep as MCP
 
 Keep these as MCP (always loaded):
+
 - Core file operations: `read_file`, `write_file`, `search_code`
 - Essential integrations: `create_pull_request`, `get_issue`
 - Frequently used: `take_screenshot`, `navigate_page`
@@ -179,6 +195,7 @@ Keep these as MCP (always loaded):
 ### Hybrid Approach
 
 **Best Strategy**: Use both MCP and Skills
+
 - **MCP**: Core tools (1-5 tools, always loaded)
 - **Skills**: Extended toolset (10+ tools, on-demand)
 - **Tool Search**: Discovery and semantic matching
@@ -224,12 +241,14 @@ auto_convert:
 ## Error Handling
 
 **Common Issues**:
+
 - MCP server not responding: Check configuration and environment variables
 - Tool introspection fails: Verify MCP server is accessible
 - Skill generation errors: Check templates and validation
 - Installation fails: Verify Skills directory permissions
 
 **Recovery**:
+
 - Retry with verbose logging
 - Validate MCP configuration
 - Check Skill Builder integration
@@ -238,12 +257,14 @@ auto_convert:
 ## Context Savings
 
 **Before (MCP)**:
+
 ```
 20 tools = 30k tokens always loaded
 Context available: 170k / 200k = 85%
 ```
 
 **After (Skills)**:
+
 ```
 20 skills = 2k tokens metadata
 When 1 skill active: 7k tokens
@@ -276,6 +297,7 @@ The skill uses `mcp-catalog.yaml` to identify popular MCP servers for conversion
 - **Validation**: All converted skills validated before installation
 
 **Catalog Features**:
+
 - 25+ popular MCP servers pre-configured
 - Tool count and token estimates
 - Conversion priority levels
@@ -283,6 +305,7 @@ The skill uses `mcp-catalog.yaml` to identify popular MCP servers for conversion
 - Keep-as-MCP exceptions (github, filesystem, memory)
 
 **Batch Conversion Process**:
+
 1. Load `mcp-catalog.yaml` to get server list
 2. Filter by conversion criteria (tool count, tokens, priority)
 3. Convert servers in parallel (max 3 concurrent)
@@ -295,18 +318,21 @@ The skill uses `mcp-catalog.yaml` to identify popular MCP servers for conversion
 **Using the MCP Catalog**:
 
 The catalog (`mcp-catalog.yaml`) provides:
+
 - **Server Metadata**: Name, description, tool count, token estimates
 - **Conversion Rules**: Auto-convert thresholds and exceptions
 - **Batch Settings**: Concurrent conversion limits and timeouts
 - **Statistics**: Total servers, conversion recommendations
 
 **Catalog Integration**:
+
 - Catalog automatically loaded when skill is invoked
 - Servers filtered by conversion criteria
 - Exceptions (keep-as-MCP) respected
 - Priority-based conversion order
 
 **Example Catalog Entry**:
+
 ```yaml
 - name: postgres
   description: PostgreSQL database operations
@@ -324,4 +350,3 @@ The catalog (`mcp-catalog.yaml`) provides:
 - **tool-search**: Semantic tool discovery
 - **marketplace-manager**: Plugin installation and management
 - **memory-manager**: Context persistence
-

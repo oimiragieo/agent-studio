@@ -7,25 +7,25 @@ allowed-tools: bash
 
 # Response Rater
 
-Use this skill to get *independent* critiques of an assistant response by calling external AI CLIs in headless mode and aggregating the results.
+Use this skill to get _independent_ critiques of an assistant response by calling external AI CLIs in headless mode and aggregating the results.
 
 ## Supported Providers
 
-| Provider | CLI Command | Auth | Default Model |
-|----------|-------------|------|---------------|
-| **Claude Code** | `claude` | Session or `ANTHROPIC_API_KEY` | (CLI default) |
-| **Gemini CLI** | `gemini` | Session or `GEMINI_API_KEY`/`GOOGLE_API_KEY` | gemini-3-pro-preview |
-| **OpenAI Codex** | `codex` | `OPENAI_API_KEY` or `CODEX_API_KEY` | gpt-5.1-codex-max |
-| **Cursor Agent** | `cursor-agent` (via WSL on Windows) | Session or `CURSOR_API_KEY` | auto |
-| **GitHub Copilot** | `copilot` | GitHub auth (`gh auth login`) | claude-sonnet-4.5 |
+| Provider           | CLI Command                         | Auth                                         | Default Model        |
+| ------------------ | ----------------------------------- | -------------------------------------------- | -------------------- |
+| **Claude Code**    | `claude`                            | Session or `ANTHROPIC_API_KEY`               | (CLI default)        |
+| **Gemini CLI**     | `gemini`                            | Session or `GEMINI_API_KEY`/`GOOGLE_API_KEY` | gemini-3-pro-preview |
+| **OpenAI Codex**   | `codex`                             | `OPENAI_API_KEY` or `CODEX_API_KEY`          | gpt-5.1-codex-max    |
+| **Cursor Agent**   | `cursor-agent` (via WSL on Windows) | Session or `CURSOR_API_KEY`                  | auto                 |
+| **GitHub Copilot** | `copilot`                           | GitHub auth (`gh auth login`)                | claude-sonnet-4.5    |
 
 ## Quick Start
 
-1) Save the response you want reviewed to a file (or pipe it via stdin).
+1. Save the response you want reviewed to a file (or pipe it via stdin).
 
-2) Ensure you have at least one provider authenticated (see table above).
+2. Ensure you have at least one provider authenticated (see table above).
 
-3) Run:
+3. Run:
 
 ```bash
 node .claude/skills/response-rater/scripts/rate.cjs --response-file <path> --providers claude,gemini
@@ -68,6 +68,7 @@ node .claude/skills/response-rater/scripts/rate.cjs \
 ### Available Models by Provider
 
 **Gemini CLI:**
+
 - `gemini-3-pro-preview` (default, latest flagship)
 - `gemini-3-flash-preview` (fast, latest)
 - `gemini-2.5-pro` (stable pro)
@@ -75,17 +76,20 @@ node .claude/skills/response-rater/scripts/rate.cjs \
 - `gemini-2.5-flash-lite` (lightweight)
 
 **OpenAI Codex:**
+
 - `gpt-5.1-codex-max` (default, flagship)
 - `gpt-5.1-codex` (standard)
 - `gpt-5.1-codex-mini` (faster/cheaper)
 
 **Cursor Agent:**
+
 - `auto` (default, smart selection)
 - `gpt-5.1-high`, `gpt-5.1-codex-high`
 - `opus-4.5`, `sonnet-4.5`
 - `gemini-3-pro`
 
 **GitHub Copilot:**
+
 - `claude-sonnet-4.5` (default)
 - `claude-opus-4.5`, `claude-haiku-4.5`, `claude-sonnet-4`
 - `gpt-5.1-codex-max`, `gpt-5.1-codex`, `gpt-5.1-codex-mini`
@@ -129,26 +133,31 @@ node .claude/skills/response-rater/scripts/rate.cjs \
 ## Direct Headless Commands (No Script)
 
 **Claude Code:**
+
 ```powershell
 Get-Content response.txt | claude -p --output-format json --permission-mode bypassPermissions
 ```
 
 **Gemini CLI:**
+
 ```powershell
 Get-Content response.txt | gemini --output-format json --model gemini-3-pro-preview
 ```
 
 **OpenAI Codex:**
+
 ```bash
 codex exec --json --color never --model gpt-5.1-codex-max --skip-git-repo-check "Your prompt"
 ```
 
 **Cursor Agent (via WSL on Windows):**
+
 ```bash
 wsl bash -lc "cursor-agent -p 'Your prompt' --output-format json --model auto"
 ```
 
 **GitHub Copilot:**
+
 ```bash
 copilot -p --silent --no-color --model claude-sonnet-4.5 "Your prompt"
 ```
@@ -230,6 +239,7 @@ npm install -g @github/copilot
 ## Skill Invocation
 
 **Natural language** (recommended):
+
 ```
 "Rate this response against the rubric"
 "Have another AI critique this answer"
@@ -238,6 +248,7 @@ npm install -g @github/copilot
 ```
 
 **Direct CLI**:
+
 ```bash
 node .claude/skills/response-rater/scripts/rate.cjs --response-file response.txt --providers claude,gemini,codex,cursor,copilot
 ```
@@ -282,6 +293,7 @@ The response-rater skill is **mandatory** for orchestrators to validate plan qua
 **When to Use**: After Planner creates a plan, before workflow execution starts
 
 **Workflow Pattern**:
+
 1. Planner creates `plan-{{workflow_id}}.json`
 2. Orchestrator invokes response-rater skill with plan content
 3. Response-rater evaluates plan using rubric
@@ -289,6 +301,7 @@ The response-rater skill is **mandatory** for orchestrators to validate plan qua
 5. If score < 7/10: Return to Planner with feedback (max 3 attempts)
 
 **Command**:
+
 ```bash
 node .claude/skills/response-rater/scripts/rate.cjs \
   --response-file .claude/context/artifacts/plan-{{workflow_id}}.json \
@@ -300,13 +313,13 @@ node .claude/skills/response-rater/scripts/rate.cjs \
 
 Plans are evaluated on 5 key dimensions (equal weight):
 
-| Dimension | Weight | Description |
-|-----------|--------|-------------|
-| **completeness** | 20% | All required information present, no gaps |
-| **feasibility** | 20% | Plan is realistic and achievable |
-| **risk_mitigation** | 20% | Risks identified and mitigation strategies defined |
-| **agent_coverage** | 20% | Appropriate agents assigned to each task |
-| **integration** | 20% | Plan integrates properly with existing systems |
+| Dimension           | Weight | Description                                        |
+| ------------------- | ------ | -------------------------------------------------- |
+| **completeness**    | 20%    | All required information present, no gaps          |
+| **feasibility**     | 20%    | Plan is realistic and achievable                   |
+| **risk_mitigation** | 20%    | Risks identified and mitigation strategies defined |
+| **agent_coverage**  | 20%    | Appropriate agents assigned to each task           |
+| **integration**     | 20%    | Plan integrates properly with existing systems     |
 
 **Overall Score**: Average of all 5 dimensions
 
@@ -338,12 +351,12 @@ Response-rater returns structured JSON with:
 
 ### Minimum Scores by Task Type
 
-| Task Type | Minimum Score | Example |
-|-----------|---------------|---------|
-| Emergency | 5/10 | Production outages, critical hotfixes |
-| Standard | 7/10 | Regular features, bug fixes (default) |
-| Enterprise | 8/10 | Enterprise integrations, migrations |
-| Critical | 9/10 | Security, compliance, data protection |
+| Task Type  | Minimum Score | Example                               |
+| ---------- | ------------- | ------------------------------------- |
+| Emergency  | 5/10          | Production outages, critical hotfixes |
+| Standard   | 7/10          | Regular features, bug fixes (default) |
+| Enterprise | 8/10          | Enterprise integrations, migrations   |
+| Critical   | 9/10          | Security, compliance, data protection |
 
 ---
 
@@ -371,11 +384,11 @@ Response-rater returns structured JSON with:
 
 ### Provider Selection Strategy
 
-| Scenario | Providers | Rationale |
-|----------|-----------|-----------|
-| Standard plans | claude,gemini | Fast, reliable, good consensus |
-| Enterprise plans | claude,gemini,codex | Additional perspective for complex plans |
-| Critical plans | All 5 | Maximum validation for mission-critical work |
+| Scenario         | Providers           | Rationale                                    |
+| ---------------- | ------------------- | -------------------------------------------- |
+| Standard plans   | claude,gemini       | Fast, reliable, good consensus               |
+| Enterprise plans | claude,gemini,codex | Additional perspective for complex plans     |
+| Critical plans   | All 5               | Maximum validation for mission-critical work |
 
 ---
 
@@ -440,7 +453,7 @@ All workflows include a plan rating gate after planning:
 ```yaml
 steps:
   - step: 0.1
-    name: "Plan Rating Gate"
+    name: 'Plan Rating Gate'
     agent: orchestrator
     type: validation
     skill: response-rater
@@ -516,9 +529,9 @@ Timeouts are configured in `.claude/config/response-rater.yaml`:
 
 ```yaml
 timeouts:
-  per_provider: 180    # Per-provider timeout
-  total_max: 600       # Max total time
-  connection: 30       # Connection timeout
+  per_provider: 180 # Per-provider timeout
+  total_max: 600 # Max total time
+  connection: 30 # Connection timeout
 ```
 
 ### Example Timeout Scenario
@@ -537,11 +550,12 @@ Warning: "2 of 3 providers timed out"
 ```yaml
 fallback:
   on_all_fail: use_cached_or_manual_review
-  cache_ttl: 3600  # Use cache if < 1 hour old
+  cache_ttl: 3600 # Use cache if < 1 hour old
   manual_review_enabled: true
 ```
 
 When all providers fail:
+
 1. Check rating cache for identical plan hash
 2. If valid cache exists, return cached rating with `source: cache` flag
 3. If no cache, return `{ status: "manual_review_required" }`
@@ -551,18 +565,19 @@ When all providers fail:
 
 Response-rater automatically selects providers based on workflow criticality:
 
-| Workflow Type | Tier | Providers | Rationale |
-|---------------|------|-----------|-----------|
-| incident-flow | standard | claude, gemini | Fast response for emergencies |
-| quick-flow | standard | claude, gemini | Quick validation for minor changes |
-| enterprise-track | enterprise | claude, gemini, codex | Enhanced validation for enterprise |
+| Workflow Type             | Tier       | Providers             | Rationale                          |
+| ------------------------- | ---------- | --------------------- | ---------------------------------- |
+| incident-flow             | standard   | claude, gemini        | Fast response for emergencies      |
+| quick-flow                | standard   | claude, gemini        | Quick validation for minor changes |
+| enterprise-track          | enterprise | claude, gemini, codex | Enhanced validation for enterprise |
 | automated-enterprise-flow | enterprise | claude, gemini, codex | Enterprise compliance requirements |
-| legacy-modernization-flow | enterprise | claude, gemini, codex | Complex migration validation |
-| ai-system-flow | critical | all 5 providers | Maximum validation for AI systems |
-| security-flow | critical | all 5 providers | Critical security validation |
-| compliance-flow | critical | all 5 providers | Regulatory compliance requirements |
+| legacy-modernization-flow | enterprise | claude, gemini, codex | Complex migration validation       |
+| ai-system-flow            | critical   | all 5 providers       | Maximum validation for AI systems  |
+| security-flow             | critical   | all 5 providers       | Critical security validation       |
+| compliance-flow           | critical   | all 5 providers       | Regulatory compliance requirements |
 
 **Provider selection tool**:
+
 ```bash
 node .claude/tools/response-rater-provider-selector.mjs --workflow <name>
 ```
@@ -576,12 +591,14 @@ node .claude/tools/response-rater-provider-selector.mjs --workflow <name>
 This skill implements defense-in-depth for credential protection following OWASP A02:2021 guidelines.
 
 **Automatic Sanitization**:
+
 - All error messages are automatically sanitized to prevent API key leakage
 - Stack traces and stderr output are filtered before logging
 - Environment variable values are redacted in error contexts
 - Provider authentication failures never expose actual credentials
 
 **Sanitized Patterns**:
+
 - Anthropic API keys (`sk-ant-...`)
 - OpenAI API keys (`sk-...`)
 - Google/Gemini API keys (`AIza...`)
@@ -592,6 +609,7 @@ This skill implements defense-in-depth for credential protection following OWASP
 - Long alphanumeric tokens (40+ characters)
 
 **Best Practices**:
+
 1. **Use session-first authentication** - Avoids storing API keys in environment
 2. **Never commit API keys** - Use environment variables or secret managers
 3. **Rotate keys regularly** - Especially after suspected exposure
@@ -599,6 +617,7 @@ This skill implements defense-in-depth for credential protection following OWASP
 5. **Use CI secrets** - Store keys in CI/CD secret management, not in code
 
 **Implementation**:
+
 ```javascript
 // Error handling in rate.js automatically sanitizes
 const { sanitize } = require('../../shared/sanitize-secrets.js');
@@ -606,6 +625,7 @@ console.error(`fatal: ${sanitize(error.message)}`); // Safe to log
 ```
 
 **Security Audit**:
+
 - Run `node .claude/tools/test-sanitization.mjs` to verify sanitization patterns
 - All 15 test cases must pass before deployment
 

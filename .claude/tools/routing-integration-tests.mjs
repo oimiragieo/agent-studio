@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Comprehensive Integration Test Suite for Task Routing System
- * 
+ *
  * Tests end-to-end routing for all 26 task types, cross-cutting triggers,
  * security boundaries, edge cases, and performance.
- * 
+ *
  * Usage:
  *   node .claude/tools/routing-integration-tests.mjs
  */
@@ -26,7 +26,7 @@ const COLORS = {
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
-  dim: '\x1b[2m'
+  dim: '\x1b[2m',
 };
 
 const results = {
@@ -36,7 +36,7 @@ const results = {
   skipped: 0,
   startTime: Date.now(),
   categories: {},
-  failures: []
+  failures: [],
 };
 
 // Test utilities
@@ -48,7 +48,7 @@ function formatDuration(ms) {
 async function test(category, name, fn) {
   results.total++;
   results.categories[category] = results.categories[category] || { passed: 0, failed: 0 };
-  
+
   try {
     await fn();
     results.passed++;
@@ -74,11 +74,13 @@ function assertEqual(actual, expected, message) {
 }
 
 function assertIncludes(array, item, message) {
-  if (!array.includes(item)) throw new Error(`${message}: ${item} not found in [${array.join(', ')}]`);
+  if (!array.includes(item))
+    throw new Error(`${message}: ${item} not found in [${array.join(', ')}]`);
 }
 
 function assertOneOf(value, options, message) {
-  if (!options.includes(value)) throw new Error(`${message}: ${value} not in [${options.join(', ')}]`);
+  if (!options.includes(value))
+    throw new Error(`${message}: ${value} not in [${options.join(', ')}]`);
 }
 
 // 1. TASK TYPE ROUTING TESTS
@@ -86,39 +88,127 @@ async function testTaskTypeRouting() {
   console.log(`\n${COLORS.cyan}=== TASK TYPE ROUTING TESTS ===${COLORS.reset}\n`);
 
   const taskTypeTests = [
-    { type: 'UI_UX', task: 'Create a new button component with hover effects', expectedPrimary: 'ux-expert' },
+    {
+      type: 'UI_UX',
+      task: 'Create a new button component with hover effects',
+      expectedPrimary: 'ux-expert',
+    },
     { type: 'UI_UX', task: 'Redesign the dashboard UI layout', expectedPrimary: 'ux-expert' },
-    { type: 'MOBILE', task: 'Build iOS push notification feature', expectedPrimary: 'mobile-developer' },
-    { type: 'MOBILE', task: 'Add React Native screen for settings', expectedPrimary: 'mobile-developer' },
-    { type: 'DATABASE', task: 'Create database schema for orders table', expectedPrimary: 'database-architect' },
-    { type: 'DATABASE', task: 'Optimize SQL query performance', expectedPrimary: 'database-architect' },
-    { type: 'IMPLEMENTATION', task: 'Implement feature for exporting data', expectedPrimary: 'developer' },
-    { type: 'IMPLEMENTATION', task: 'Build the user registration feature', expectedPrimary: 'developer' },
-    { type: 'ARCHITECTURE', task: 'Design system architecture for new microservice', expectedPrimary: 'architect' },
-    { type: 'ARCHITECTURE', task: 'Create scalable technology stack proposal', expectedPrimary: 'architect' },
+    {
+      type: 'MOBILE',
+      task: 'Build iOS push notification feature',
+      expectedPrimary: 'mobile-developer',
+    },
+    {
+      type: 'MOBILE',
+      task: 'Add React Native screen for settings',
+      expectedPrimary: 'mobile-developer',
+    },
+    {
+      type: 'DATABASE',
+      task: 'Create database schema for orders table',
+      expectedPrimary: 'database-architect',
+    },
+    {
+      type: 'DATABASE',
+      task: 'Optimize SQL query performance',
+      expectedPrimary: 'database-architect',
+    },
+    {
+      type: 'IMPLEMENTATION',
+      task: 'Implement feature for exporting data',
+      expectedPrimary: 'developer',
+    },
+    {
+      type: 'IMPLEMENTATION',
+      task: 'Build the user registration feature',
+      expectedPrimary: 'developer',
+    },
+    {
+      type: 'ARCHITECTURE',
+      task: 'Design system architecture for new microservice',
+      expectedPrimary: 'architect',
+    },
+    {
+      type: 'ARCHITECTURE',
+      task: 'Create scalable technology stack proposal',
+      expectedPrimary: 'architect',
+    },
     { type: 'API', task: 'Design REST API endpoints for users', expectedPrimary: 'api-designer' },
     { type: 'API', task: 'Create GraphQL schema for products', expectedPrimary: 'api-designer' },
-    { type: 'SECURITY', task: 'Security audit of authentication system', expectedPrimary: 'security-architect' },
-    { type: 'SECURITY', task: 'Implement OAuth 2.0 for login', expectedPrimary: 'security-architect' },
-    { type: 'PERFORMANCE', task: 'Optimize slow page load times', expectedPrimary: 'performance-engineer' },
-    { type: 'PERFORMANCE', task: 'Profile and fix memory leaks', expectedPrimary: 'performance-engineer' },
-    { type: 'REFACTORING', task: 'Refactor legacy authentication code', expectedPrimary: 'refactoring-specialist' },
-    { type: 'LEGACY', task: 'Modernize legacy PHP codebase to Node.js', expectedPrimary: 'legacy-modernizer' },
-    { type: 'AI_LLM', task: 'Build RAG system with Claude embeddings', expectedPrimary: 'llm-architect' },
-    { type: 'INCIDENT', task: 'Respond to production database outage', expectedPrimary: 'incident-responder' },
-    { type: 'INFRASTRUCTURE', task: 'Set up Kubernetes deployment pipeline', expectedPrimary: 'devops' },
-    { type: 'COMPLIANCE', task: 'Ensure GDPR compliance for user data', expectedPrimary: 'compliance-auditor' },
-    { type: 'DOCUMENTATION', task: 'Write API documentation for endpoints', expectedPrimary: 'technical-writer' },
-    { type: 'RESEARCH', task: 'Research feasibility of blockchain integration', expectedPrimary: 'analyst' },
+    {
+      type: 'SECURITY',
+      task: 'Security audit of authentication system',
+      expectedPrimary: 'security-architect',
+    },
+    {
+      type: 'SECURITY',
+      task: 'Implement OAuth 2.0 for login',
+      expectedPrimary: 'security-architect',
+    },
+    {
+      type: 'PERFORMANCE',
+      task: 'Optimize slow page load times',
+      expectedPrimary: 'performance-engineer',
+    },
+    {
+      type: 'PERFORMANCE',
+      task: 'Profile and fix memory leaks',
+      expectedPrimary: 'performance-engineer',
+    },
+    {
+      type: 'REFACTORING',
+      task: 'Refactor legacy authentication code',
+      expectedPrimary: 'refactoring-specialist',
+    },
+    {
+      type: 'LEGACY',
+      task: 'Modernize legacy PHP codebase to Node.js',
+      expectedPrimary: 'legacy-modernizer',
+    },
+    {
+      type: 'AI_LLM',
+      task: 'Build RAG system with Claude embeddings',
+      expectedPrimary: 'llm-architect',
+    },
+    {
+      type: 'INCIDENT',
+      task: 'Respond to production database outage',
+      expectedPrimary: 'incident-responder',
+    },
+    {
+      type: 'INFRASTRUCTURE',
+      task: 'Set up Kubernetes deployment pipeline',
+      expectedPrimary: 'devops',
+    },
+    {
+      type: 'COMPLIANCE',
+      task: 'Ensure GDPR compliance for user data',
+      expectedPrimary: 'compliance-auditor',
+    },
+    {
+      type: 'DOCUMENTATION',
+      task: 'Write API documentation for endpoints',
+      expectedPrimary: 'technical-writer',
+    },
+    {
+      type: 'RESEARCH',
+      task: 'Research feasibility of blockchain integration',
+      expectedPrimary: 'analyst',
+    },
     { type: 'PRODUCT', task: 'Create PRD for new checkout flow', expectedPrimary: 'pm' },
   ];
 
   for (const testCase of taskTypeTests) {
-    await test('Task Type Routing', `${testCase.type}: "${testCase.task.substring(0, 40)}..."`, async () => {
-      const typeAnalysis = analyzeTaskType(testCase.task);
-      assertEqual(typeAnalysis.taskType, testCase.type, 'Task type mismatch');
-      assertEqual(typeAnalysis.primaryAgent, testCase.expectedPrimary, 'Primary agent mismatch');
-    });
+    await test(
+      'Task Type Routing',
+      `${testCase.type}: "${testCase.task.substring(0, 40)}..."`,
+      async () => {
+        const typeAnalysis = analyzeTaskType(testCase.task);
+        assertEqual(typeAnalysis.taskType, testCase.type, 'Task type mismatch');
+        assertEqual(typeAnalysis.primaryAgent, testCase.expectedPrimary, 'Primary agent mismatch');
+      }
+    );
   }
 }
 
@@ -135,7 +225,10 @@ async function testCrossCuttingTriggers() {
     { task: 'Create schema migration for users table', expectedAgents: ['database-architect'] },
     { task: 'Review pull request for authentication', expectedAgents: ['code-reviewer'] },
     { task: 'Fix production outage in payment service', expectedAgents: ['incident-responder'] },
-    { task: 'Fix security vulnerability in OAuth with GDPR compliance', expectedAgents: ['security-architect', 'compliance-auditor'] },
+    {
+      task: 'Fix security vulnerability in OAuth with GDPR compliance',
+      expectedAgents: ['security-architect', 'compliance-auditor'],
+    },
   ];
 
   for (const testCase of crossCuttingTests) {
@@ -189,7 +282,10 @@ async function testEdgeCases() {
       await selectAgents('');
       throw new Error('Should have thrown');
     } catch (error) {
-      assert(error.message.includes('Task') || error.message.includes('description'), 'Wrong error message');
+      assert(
+        error.message.includes('Task') || error.message.includes('description'),
+        'Wrong error message'
+      );
     }
   });
 
@@ -221,7 +317,11 @@ async function testEdgeCases() {
 
   await test('Edge Cases', 'Ambiguous task defaults to developer', async () => {
     const result = await selectAgents('Do something vague');
-    assertOneOf(result.primary, ['developer', 'analyst'], 'Ambiguous should default to developer or analyst');
+    assertOneOf(
+      result.primary,
+      ['developer', 'analyst'],
+      'Ambiguous should default to developer or analyst'
+    );
   });
 
   await test('Edge Cases', 'Multi-type task picks dominant type', async () => {
@@ -240,7 +340,12 @@ async function testSecurityBoundaries() {
       await classifyTask('Fix bug', { files: '../../../etc/passwd' });
       throw new Error('Should have blocked path traversal');
     } catch (error) {
-      assert(error.message.includes('traversal') || error.message.includes('allowed') || error.message.includes('..'), 'Should block path traversal');
+      assert(
+        error.message.includes('traversal') ||
+          error.message.includes('allowed') ||
+          error.message.includes('..'),
+        'Should block path traversal'
+      );
     }
   });
 
@@ -249,7 +354,10 @@ async function testSecurityBoundaries() {
       await classifyTask('Fix bug', { files: '/etc/passwd' });
       throw new Error('Should have blocked');
     } catch (error) {
-      assert(error.message.includes('Absolute') || error.message.includes('absolute'), 'Should block absolute paths');
+      assert(
+        error.message.includes('Absolute') || error.message.includes('absolute'),
+        'Should block absolute paths'
+      );
     }
   });
 
@@ -258,7 +366,10 @@ async function testSecurityBoundaries() {
       await classifyTask('Fix bug', { files: 'src/file.ts\x00.txt' });
       throw new Error('Should have blocked');
     } catch (error) {
-      assert(error.message.includes('Null') || error.message.includes('null'), 'Should block null bytes');
+      assert(
+        error.message.includes('Null') || error.message.includes('null'),
+        'Should block null bytes'
+      );
     }
   });
 
@@ -267,7 +378,10 @@ async function testSecurityBoundaries() {
       await classifyTask('Fix bug', { files: 'src; rm -rf /' });
       throw new Error('Should have blocked');
     } catch (error) {
-      assert(error.message.includes('metacharacter') || error.message.includes('Shell'), 'Should block shell chars');
+      assert(
+        error.message.includes('metacharacter') || error.message.includes('Shell'),
+        'Should block shell chars'
+      );
     }
   });
 
@@ -277,7 +391,10 @@ async function testSecurityBoundaries() {
       await classifyTask(veryLongTask);
       throw new Error('Should have blocked');
     } catch (error) {
-      assert(error.message.includes('length') || error.message.includes('exceeds'), 'Should enforce length limit');
+      assert(
+        error.message.includes('length') || error.message.includes('exceeds'),
+        'Should enforce length limit'
+      );
     }
   });
 
@@ -287,13 +404,20 @@ async function testSecurityBoundaries() {
       await classifyTask('Fix bug', { files: manyPatterns });
       throw new Error('Should have blocked');
     } catch (error) {
-      assert(error.message.includes('pattern') || error.message.includes('exceeds'), 'Should enforce pattern limit');
+      assert(
+        error.message.includes('pattern') || error.message.includes('exceeds'),
+        'Should enforce pattern limit'
+      );
     }
   });
 
   await test('Security', 'Security keywords enforce minimum complexity', async () => {
     const result = await classifyTask('Fix simple authentication bug');
-    assertOneOf(result.complexity, ['complex', 'critical'], 'Security tasks should be at least complex');
+    assertOneOf(
+      result.complexity,
+      ['complex', 'critical'],
+      'Security tasks should be at least complex'
+    );
   });
 }
 
@@ -318,9 +442,9 @@ async function testPerformance() {
 
   await test('Performance', 'Batch routing 10 tasks < 500ms', async () => {
     const start = Date.now();
-    const tasks = Array(10).fill(null).map((_, i) => 
-      selectAgents('Task ' + i + ': implement feature')
-    );
+    const tasks = Array(10)
+      .fill(null)
+      .map((_, i) => selectAgents('Task ' + i + ': implement feature'));
     await Promise.all(tasks);
     const duration = Date.now() - start;
     assert(duration < 500, 'Batch routing took ' + duration + 'ms, expected < 500ms');
@@ -333,7 +457,10 @@ async function testPerformance() {
     }
     const finalMemory = process.memoryUsage().heapUsed;
     const memoryIncrease = (finalMemory - initialMemory) / (1024 * 1024);
-    assert(memoryIncrease < 50, 'Memory increased by ' + memoryIncrease.toFixed(2) + 'MB, expected < 50MB');
+    assert(
+      memoryIncrease < 50,
+      'Memory increased by ' + memoryIncrease.toFixed(2) + 'MB, expected < 50MB'
+    );
   });
 }
 
@@ -360,11 +487,26 @@ async function testRoutingCoverage() {
 
   await test('Coverage', 'All agents appear in at least one chain', async () => {
     const expectedAgents = [
-      'analyst', 'pm', 'architect', 'database-architect', 'developer', 
-      'qa', 'ux-expert', 'security-architect', 'devops', 'technical-writer', 
-      'code-reviewer', 'refactoring-specialist', 'performance-engineer', 
-      'llm-architect', 'api-designer', 'legacy-modernizer', 'mobile-developer', 
-      'accessibility-expert', 'compliance-auditor', 'incident-responder'
+      'analyst',
+      'pm',
+      'architect',
+      'database-architect',
+      'developer',
+      'qa',
+      'ux-expert',
+      'security-architect',
+      'devops',
+      'technical-writer',
+      'code-reviewer',
+      'refactoring-specialist',
+      'performance-engineer',
+      'llm-architect',
+      'api-designer',
+      'legacy-modernizer',
+      'mobile-developer',
+      'accessibility-expert',
+      'compliance-auditor',
+      'incident-responder',
     ];
     let covered = 0;
     for (const agent of expectedAgents) {
@@ -429,9 +571,20 @@ async function testExecutionHints() {
 
 // MAIN TEST RUNNER
 async function runTests() {
-  console.log('\n' + COLORS.blue + '======================================================================' + COLORS.reset);
-  console.log(COLORS.blue + '     TASK ROUTING SYSTEM - COMPREHENSIVE INTEGRATION TESTS' + COLORS.reset);
-  console.log(COLORS.blue + '======================================================================' + COLORS.reset);
+  console.log(
+    '\n' +
+      COLORS.blue +
+      '======================================================================' +
+      COLORS.reset
+  );
+  console.log(
+    COLORS.blue + '     TASK ROUTING SYSTEM - COMPREHENSIVE INTEGRATION TESTS' + COLORS.reset
+  );
+  console.log(
+    COLORS.blue +
+      '======================================================================' +
+      COLORS.reset
+  );
 
   try {
     await testTaskTypeRouting();
@@ -450,32 +603,57 @@ async function runTests() {
   }
 
   const totalDuration = Date.now() - results.startTime;
-  
-  console.log('\n' + COLORS.blue + '======================================================================' + COLORS.reset);
+
+  console.log(
+    '\n' +
+      COLORS.blue +
+      '======================================================================' +
+      COLORS.reset
+  );
   console.log(COLORS.cyan + 'TEST SUMMARY' + COLORS.reset);
-  console.log(COLORS.blue + '======================================================================' + COLORS.reset);
-  
+  console.log(
+    COLORS.blue +
+      '======================================================================' +
+      COLORS.reset
+  );
+
   console.log('\nTotal Tests:  ' + results.total);
   console.log(COLORS.green + 'Passed:       ' + results.passed + COLORS.reset);
   console.log(COLORS.red + 'Failed:       ' + results.failed + COLORS.reset);
   console.log('Duration:     ' + formatDuration(totalDuration));
-  
+
   console.log('\n' + COLORS.cyan + 'BY CATEGORY:' + COLORS.reset);
   for (const [category, stats] of Object.entries(results.categories)) {
     const status = stats.failed === 0 ? COLORS.green : COLORS.red;
-    console.log('  ' + category + ': ' + status + stats.passed + '/' + (stats.passed + stats.failed) + COLORS.reset);
+    console.log(
+      '  ' +
+        category +
+        ': ' +
+        status +
+        stats.passed +
+        '/' +
+        (stats.passed + stats.failed) +
+        COLORS.reset
+    );
   }
 
   if (results.failures.length > 0) {
     console.log('\n' + COLORS.red + 'FAILURES:' + COLORS.reset);
     for (const failure of results.failures) {
-      console.log('  ' + COLORS.dim + '[' + failure.category + ']' + COLORS.reset + ' ' + failure.name);
+      console.log(
+        '  ' + COLORS.dim + '[' + failure.category + ']' + COLORS.reset + ' ' + failure.name
+      );
       console.log('    ' + COLORS.red + failure.error + COLORS.reset);
     }
   }
 
-  console.log('\n' + COLORS.blue + '======================================================================' + COLORS.reset);
-  
+  console.log(
+    '\n' +
+      COLORS.blue +
+      '======================================================================' +
+      COLORS.reset
+  );
+
   if (results.failed === 0) {
     console.log(COLORS.green + 'ALL TESTS PASSED' + COLORS.reset);
     process.exit(0);

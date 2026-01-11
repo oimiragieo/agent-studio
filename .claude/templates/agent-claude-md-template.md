@@ -1,6 +1,7 @@
 # CLAUDE.md - [Your Agent Name] Context
 
 ## Agent Overview
+
 - **Name**: [Your Agent Name]
 - **Purpose**: [Brief description of agent's purpose]
 - **Domain**: [Domain/industry]
@@ -9,24 +10,30 @@
 ## Key Information
 
 ### [Section 1: Core Context]
+
 [Add your agent's core context here. Examples:]
+
 - Company/Organization details
 - Project information
 - Domain-specific knowledge
 - Current state/situation
 
 ### [Section 2: Available Resources]
+
 [Document what resources the agent has access to:]
 
 #### Data Files
+
 - `data/file1.csv`: [Description]
 - `data/file2.json`: [Description]
 
 #### Scripts
+
 - `scripts/script1.py`: [Description and usage]
 - `scripts/script2.py`: [Description and usage]
 
 **Usage Example:**
+
 ```bash
 python scripts/script1.py <arg1> <arg2>
 ```
@@ -34,6 +41,7 @@ python scripts/script1.py <arg1> <arg2>
 **Output:** [Description of output format]
 
 ### [Section 3: Subagents]
+
 [If using subagents, document them here:]
 
 - **subagent-name**: [Description of subagent's role]
@@ -41,6 +49,7 @@ python scripts/script1.py <arg1> <arg2>
   - Capabilities: [What this subagent can do]
 
 ### [Section 4: Current Priorities]
+
 [Document current priorities or tasks:]
 
 1. **Priority 1**: [Description]
@@ -48,6 +57,7 @@ python scripts/script1.py <arg1> <arg2>
 3. **Priority 3**: [Description]
 
 ### [Section 5: Constraints/Rules]
+
 [Document any constraints or rules:]
 
 - [Rule 1]
@@ -67,6 +77,7 @@ python scripts/script1.py <arg1> <arg2>
 ### Output Styles
 
 Available output styles (use with `output_style` parameter):
+
 - **executive**: [Description]
 - **technical**: [Description]
 - **detailed**: [Description]
@@ -74,6 +85,7 @@ Available output styles (use with `output_style` parameter):
 ### Plan Mode
 
 For complex tasks, use plan mode to get a plan before execution:
+
 ```python
 result, messages = await send_query(
     "Complex task description",
@@ -84,10 +96,12 @@ result, messages = await send_query(
 ## Examples
 
 ### Example 1: [Task Name]
+
 **Query**: "[Example query]"
 **Expected Behavior**: [What the agent should do]
 
 ### Example 2: [Task Name]
+
 **Query**: "[Example query]"
 **Expected Behavior**: [What the agent should do]
 
@@ -98,6 +112,7 @@ result, messages = await send_query(
 ---
 
 **Remember**: This agent has access to:
+
 - Financial data in the `data/` directory
 - Python scripts in the `scripts/` directory
 - Subagents for specialized analysis

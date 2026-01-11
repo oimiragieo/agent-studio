@@ -17,7 +17,7 @@ export async function initializeLoop(loopType, context = {}) {
     total_items: 0,
     items: [],
     started_at: new Date().toISOString(),
-    context: context
+    context: context,
   };
 
   // Load items based on loop type
@@ -57,7 +57,7 @@ export function advanceLoop(loopState) {
     has_more: loopState.current_index < loopState.total_items,
     current_index: loopState.current_index,
     total_items: loopState.total_items,
-    current_item: getCurrentItem(loopState)
+    current_item: getCurrentItem(loopState),
   };
 }
 
@@ -131,7 +131,11 @@ async function loadArtifact(artifactPath) {
  * Save loop state to session
  */
 export async function saveLoopState(sessionId, loopType, loopState) {
-  const statePath = join(process.cwd(), '.claude/context/sessions', `${sessionId}-${loopType}.json`);
+  const statePath = join(
+    process.cwd(),
+    '.claude/context/sessions',
+    `${sessionId}-${loopType}.json`
+  );
   await writeFile(statePath, JSON.stringify(loopState, null, 2), 'utf8');
 }
 
@@ -139,7 +143,11 @@ export async function saveLoopState(sessionId, loopType, loopState) {
  * Load loop state from session
  */
 export async function loadLoopState(sessionId, loopType) {
-  const statePath = join(process.cwd(), '.claude/context/sessions', `${sessionId}-${loopType}.json`);
+  const statePath = join(
+    process.cwd(),
+    '.claude/context/sessions',
+    `${sessionId}-${loopType}.json`
+  );
   try {
     const content = await readFile(statePath, 'utf8');
     return JSON.parse(content);
@@ -155,6 +163,5 @@ export default {
   hasMoreIterations,
   resetLoop,
   saveLoopState,
-  loadLoopState
+  loadLoopState,
 };
-

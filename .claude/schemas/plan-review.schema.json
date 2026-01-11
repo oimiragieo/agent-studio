@@ -51,13 +51,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "review_domain",
-          "reviewer_agent",
-          "score",
-          "verdict",
-          "review_complete"
-        ],
+        "required": ["review_domain", "reviewer_agent", "score", "verdict", "review_complete"],
         "properties": {
           "review_domain": {
             "type": "string",

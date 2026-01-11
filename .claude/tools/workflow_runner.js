@@ -28,10 +28,22 @@ import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { parseLargeJSON, shouldUseStreaming } from './streaming-json-parser.mjs';
 import { evaluateDecision } from './workflow/decision-handler.mjs';
-import { initializeLoop, advanceLoop, hasMoreIterations, getCurrentItem } from './workflow/loop-handler.mjs';
+import {
+  initializeLoop,
+  advanceLoop,
+  hasMoreIterations,
+  getCurrentItem,
+} from './workflow/loop-handler.mjs';
 import { checkContextThreshold, recordContextUsage } from './context-monitor.mjs';
 import { getRequiredTemplates } from './template-registry.mjs';
-import { createRun, updateRun, readRun, registerArtifact, readArtifactRegistry, getRunDirectoryStructure } from './run-manager.mjs';
+import {
+  createRun,
+  updateRun,
+  readRun,
+  registerArtifact,
+  readArtifactRegistry,
+  getRunDirectoryStructure,
+} from './run-manager.mjs';
 import { resolveArtifactPath, resolveGatePath, resolveReasoningPath } from './path-resolver.mjs';
 import { enforceArtifactContract } from './artifact-validator.mjs';
 import { updateRunSummary } from './dashboard-generator.mjs';
@@ -74,7 +86,7 @@ async function loadJSONFile(filePath) {
   if (!existsSync(filePath)) {
     throw new Error(`File not found: ${filePath}`);
   }
-  
+
   if (shouldUseStreaming(filePath, 1)) {
     return await parseLargeJSON(filePath);
   } else {
@@ -85,9 +97,9 @@ async function loadJSONFile(filePath) {
 /**
  * Resolve workflow path from project root
  * Handles relative paths from config.yaml (e.g., .claude/workflows/...)
- * 
+ *
  * PATH RESOLUTION STRATEGY:
- * 
+ *
  * The workflow runner uses a multi-strategy approach to find workflow files:
  * 1. Absolute paths: If path starts with '/' (Unix) or 'C:' (Windows), use as-is
  * 2. Project root: Resolve from project root (parent of .claude directory)
@@ -96,22 +108,25 @@ async function loadJSONFile(filePath) {
  * 3. Current working directory: Fallback if project root resolution fails
  *    - Useful when called from subdirectories
  * 4. Script location: Final fallback relative to script's directory
- * 
+ *
  * EXPECTED WORKING DIRECTORY:
  * - Best practice: Run from project root directory
  * - Command: `node .claude/tools/workflow_runner.js --workflow .claude/workflows/<name>.yaml --step 0`
  * - The runner will automatically resolve paths relative to project root
- * 
+ *
  * EXAMPLES:
  * - From project root: `node .claude/tools/workflow_runner.js --workflow .claude/workflows/quick-flow.yaml --step 0`
  * - From any directory: Works due to fallback strategies, but project root is recommended
  */
 function resolveWorkflowPath(relativePath) {
   // If path is already absolute, return as-is
-  if (relativePath.startsWith('/') || (process.platform === 'win32' && /^[A-Z]:/.test(relativePath))) {
+  if (
+    relativePath.startsWith('/') ||
+    (process.platform === 'win32' && /^[A-Z]:/.test(relativePath))
+  ) {
     return relativePath;
   }
-  
+
   // Strategy 1: Resolve from project root (parent of .claude directory)
   // workflow_runner.js is in .claude/tools/, so go up two levels
   const projectRoot = resolve(__dirname, '../..');
@@ -119,19 +134,19 @@ function resolveWorkflowPath(relativePath) {
   if (existsSync(projectRootPath)) {
     return projectRootPath;
   }
-  
+
   // Strategy 2: Resolve from current working directory
   const cwdPath = resolve(process.cwd(), relativePath);
   if (existsSync(cwdPath)) {
     return cwdPath;
   }
-  
+
   // Strategy 3: Resolve from script location
   const scriptPath = resolve(__dirname, relativePath);
   if (existsSync(scriptPath)) {
     return scriptPath;
   }
-  
+
   // If none found, return project root path (will fail with clear error later)
   return projectRootPath;
 }
@@ -142,29 +157,32 @@ function resolveWorkflowPath(relativePath) {
  */
 function resolveSchemaPath(relativePath) {
   // If path is already absolute, return as-is
-  if (relativePath.startsWith('/') || (process.platform === 'win32' && /^[A-Z]:/.test(relativePath))) {
+  if (
+    relativePath.startsWith('/') ||
+    (process.platform === 'win32' && /^[A-Z]:/.test(relativePath))
+  ) {
     return relativePath;
   }
-  
+
   // Strategy 1: Resolve from project root (parent of .claude directory)
   const projectRoot = resolve(__dirname, '../..');
   const projectRootPath = resolve(projectRoot, relativePath);
   if (existsSync(projectRootPath)) {
     return projectRootPath;
   }
-  
+
   // Strategy 2: Resolve from current working directory
   const cwdPath = resolve(process.cwd(), relativePath);
   if (existsSync(cwdPath)) {
     return cwdPath;
   }
-  
+
   // Strategy 3: Resolve from script location
   const scriptPath = resolve(__dirname, relativePath);
   if (existsSync(scriptPath)) {
     return scriptPath;
   }
-  
+
   // If none found, return project root path (will fail with clear error later)
   return projectRootPath;
 }
@@ -209,7 +227,7 @@ async function ensureArtifactRegistry(runId, workflowName, isDryRun = false) {
       await createRun({
         run_id: runId,
         workflow: workflowName,
-        status: 'initializing'
+        status: 'initializing',
       });
       console.log(`📁 Initialized run directory and artifact registry for ${runId}`);
     } catch (error) {
@@ -232,7 +250,7 @@ async function ensureArtifactRegistry(runId, workflowName, isDryRun = false) {
       initialized: true,
       run_id: runId,
       artifact_count: artifactCount,
-      registry_path: runDirs.registry_path
+      registry_path: runDirs.registry_path,
     };
   } catch (error) {
     if (isDryRun) {
@@ -247,7 +265,7 @@ async function ensureArtifactRegistry(runId, workflowName, isDryRun = false) {
       await createRun({
         run_id: runId,
         workflow: workflowName,
-        status: 'initializing'
+        status: 'initializing',
       });
       console.log(`📁 Re-initialized artifact registry for ${runId}`);
       return { initialized: true, run_id: runId, artifact_count: 0, reinitialized: true };
@@ -284,7 +302,7 @@ async function validateRequiredArtifacts(runId, stepNumber, requiredArtifacts = 
       if (!artifact) {
         missing.push({
           name: artifactName,
-          error: 'Artifact not found in registry'
+          error: 'Artifact not found in registry',
         });
         continue;
       }
@@ -294,7 +312,7 @@ async function validateRequiredArtifacts(runId, stepNumber, requiredArtifacts = 
         failed.push({
           name: artifactName,
           step: artifact.step,
-          error: 'Artifact validation failed'
+          error: 'Artifact validation failed',
         });
       } else if (artifact.validationStatus === 'pending') {
         // Pending is allowed for now - agent may still be working
@@ -305,14 +323,14 @@ async function validateRequiredArtifacts(runId, stepNumber, requiredArtifacts = 
     return {
       valid: missing.length === 0 && failed.length === 0,
       missing,
-      failed
+      failed,
     };
   } catch (error) {
     return {
       valid: false,
       missing: requiredArtifacts.map(name => ({ name, error: 'Registry read failed' })),
       failed: [],
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -333,8 +351,8 @@ function getStepSkillRequirements(step) {
     triggered: stepSkills.triggered || [],
     validation: {
       mode: stepSkills.validation?.mode || 'warning', // 'blocking' or 'warning'
-      enforce_usage: stepSkills.validation?.enforce_usage !== false // Default true
-    }
+      enforce_usage: stepSkills.validation?.enforce_usage !== false, // Default true
+    },
   };
 }
 
@@ -354,14 +372,14 @@ async function validateSkillAvailability(skills) {
       missing.push({
         skill: skillName,
         path: skillPath,
-        message: `SKILL.md not found for required skill: ${skillName}`
+        message: `SKILL.md not found for required skill: ${skillName}`,
       });
     }
   }
 
   return {
     valid: missing.length === 0,
-    missing
+    missing,
   };
 }
 
@@ -374,7 +392,13 @@ async function validateSkillAvailability(skills) {
  * @param {boolean} isDryRun - Whether in dry-run mode
  * @returns {Promise<void>}
  */
-async function recordSkillValidation(workflowId, stepNumber, skillValidation, gatePath, isDryRun = false) {
+async function recordSkillValidation(
+  workflowId,
+  stepNumber,
+  skillValidation,
+  gatePath,
+  isDryRun = false
+) {
   if (isDryRun) {
     console.log(`🔍 DRY-RUN: Would record skill validation in gate file: ${gatePath}`);
     return;
@@ -396,14 +420,16 @@ async function recordSkillValidation(workflowId, stepNumber, skillValidation, ga
       used_skills: skillValidation.used,
       violations: skillValidation.violations,
       recommendation: skillValidation.recommendation,
-      validated_at: new Date().toISOString()
+      validated_at: new Date().toISOString(),
     };
 
     // Update overall validity if skill validation failed
     if (!skillValidation.compliant) {
       gateData.valid = false;
       gateData.errors = gateData.errors || [];
-      gateData.errors.push(`Skill compliance failure: ${skillValidation.violations.missingRequired.length} required skill(s) not used`);
+      gateData.errors.push(
+        `Skill compliance failure: ${skillValidation.violations.missingRequired.length} required skill(s) not used`
+      );
     }
 
     writeFileSync(gatePath, JSON.stringify(gateData, null, 2), 'utf-8');
@@ -444,7 +470,11 @@ function parseArgs() {
   // Special handling for --user-requirements (can have hyphen in key)
   if (process.argv.includes('--user-requirements')) {
     const index = process.argv.indexOf('--user-requirements');
-    if (index >= 0 && index + 1 < process.argv.length && !process.argv[index + 1].startsWith('--')) {
+    if (
+      index >= 0 &&
+      index + 1 < process.argv.length &&
+      !process.argv[index + 1].startsWith('--')
+    ) {
       parsed['user-requirements'] = process.argv[index + 1];
     }
   }
@@ -452,7 +482,11 @@ function parseArgs() {
   // Special handling for --run-id (can have hyphen in key)
   if (process.argv.includes('--run-id')) {
     const index = process.argv.indexOf('--run-id');
-    if (index >= 0 && index + 1 < process.argv.length && !process.argv[index + 1].startsWith('--')) {
+    if (
+      index >= 0 &&
+      index + 1 < process.argv.length &&
+      !process.argv[index + 1].startsWith('--')
+    ) {
       parsed['run-id'] = process.argv[index + 1];
     }
   }
@@ -471,14 +505,14 @@ function parseArgs() {
 function normalizeWorkflowKeys(workflow) {
   const normalized = JSON.parse(JSON.stringify(workflow)); // Deep clone
   const deprecationWarnings = [];
-  
+
   // Key mapping: old key -> new key
   const keyMappings = {
-    'customChecks': 'custom_checks',
-    'secondaryOutputs': 'secondary_outputs',
-    'securityChecks': 'security_checks'
+    customChecks: 'custom_checks',
+    secondaryOutputs: 'secondary_outputs',
+    securityChecks: 'security_checks',
   };
-  
+
   // Recursively normalize keys
   function normalizeObject(obj, path = '') {
     if (Array.isArray(obj)) {
@@ -494,9 +528,9 @@ function normalizeWorkflowKeys(workflow) {
           deprecationWarnings.push({
             path: path || 'root',
             oldKey,
-            newKey
+            newKey,
           });
-          
+
           // Map old key to new key
           if (!(newKey in obj)) {
             obj[newKey] = obj[oldKey];
@@ -506,13 +540,13 @@ function normalizeWorkflowKeys(workflow) {
               path: path || 'root',
               oldKey,
               newKey,
-              conflict: true
+              conflict: true,
             });
           }
           delete obj[oldKey];
         }
       }
-      
+
       // Recursively process nested objects
       for (const [key, value] of Object.entries(obj)) {
         if (typeof value === 'object' && value !== null) {
@@ -521,21 +555,23 @@ function normalizeWorkflowKeys(workflow) {
       }
     }
   }
-  
+
   normalizeObject(normalized);
-  
+
   // Log warnings if any
   if (deprecationWarnings.length > 0) {
     console.warn(`⚠️  Workflow YAML uses deprecated keys. Please update to use snake_case:`);
     deprecationWarnings.forEach(w => {
       if (w.conflict) {
-        console.warn(`   ${w.path}: Both '${w.oldKey}' and '${w.newKey}' found. Using '${w.newKey}'.`);
+        console.warn(
+          `   ${w.path}: Both '${w.oldKey}' and '${w.newKey}' found. Using '${w.newKey}'.`
+        );
       } else {
         console.warn(`   ${w.path}: '${w.oldKey}' → '${w.newKey}'`);
       }
     });
   }
-  
+
   return normalized;
 }
 
@@ -566,7 +602,7 @@ function detectUninterpolatedVariables(str) {
  */
 function validateTemplateVariableSyntax(str) {
   if (typeof str !== 'string') return { valid: true, errors: [] };
-  
+
   const errors = [];
   // Check for unclosed variables: {{variable without closing }}
   const unclosedMatches = str.match(/\{\{[^}]*$/g);
@@ -578,10 +614,10 @@ function validateTemplateVariableSyntax(str) {
   if (orphanedCloses) {
     errors.push(`Orphaned closing braces: ${orphanedCloses[0]}`);
   }
-  
+
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -594,33 +630,33 @@ function validateWorkflowIdFormat(workflowId) {
   if (!workflowId || typeof workflowId !== 'string') {
     return { valid: false, error: 'Workflow ID must be a non-empty string' };
   }
-  
+
   // Allow alphanumeric, hyphens, underscores, dots, and colons (for timestamps)
   // Disallow: path separators (/ \), spaces, and other special characters
   const validPattern = /^[a-zA-Z0-9._:-]+$/;
-  
+
   if (!validPattern.test(workflowId)) {
     return {
       valid: false,
-      error: `Invalid workflow_id format: "${workflowId}". Workflow ID must contain only alphanumeric characters, hyphens, underscores, dots, and colons. Path separators (/ \\) and spaces are not allowed.`
+      error: `Invalid workflow_id format: "${workflowId}". Workflow ID must contain only alphanumeric characters, hyphens, underscores, dots, and colons. Path separators (/ \\) and spaces are not allowed.`,
     };
   }
-  
+
   // Additional safety: check for common problematic patterns
   if (workflowId.includes('..')) {
     return {
       valid: false,
-      error: `Invalid workflow_id: "${workflowId}". Workflow ID cannot contain ".." (directory traversal pattern).`
+      error: `Invalid workflow_id: "${workflowId}". Workflow ID cannot contain ".." (directory traversal pattern).`,
     };
   }
-  
+
   if (workflowId.length > 255) {
     return {
       valid: false,
-      error: `Invalid workflow_id: "${workflowId}". Workflow ID must be 255 characters or less.`
+      error: `Invalid workflow_id: "${workflowId}". Workflow ID must be 255 characters or less.`,
     };
   }
-  
+
   return { valid: true };
 }
 
@@ -632,36 +668,36 @@ function parseArtifactReference(input) {
   if (typeof input !== 'string') {
     return null;
   }
-  
+
   // Pattern 1: artifact.json (from step X) or artifact.json (from step X, optional)
   let match = input.match(/^(.+\.json)\s*\(from step (\d+(?:\.\d+)?)(?:,\s*optional)?\)$/);
   if (match) {
     return {
       artifact: match[1].trim(),
       fromStep: match[2],
-      optional: input.includes('optional')
+      optional: input.includes('optional'),
     };
   }
-  
+
   // Pattern 2: artifact.json (optional, from step X)
   match = input.match(/^(.+\.json)\s*\(optional,\s*from step (\d+(?:\.\d+)?)\)$/);
   if (match) {
     return {
       artifact: match[1].trim(),
       fromStep: match[2],
-      optional: true
+      optional: true,
     };
   }
-  
+
   // If no "from step" pattern, it's a direct artifact name
   if (input.endsWith('.json')) {
     return {
       artifact: input.trim(),
       fromStep: null,
-      optional: false
+      optional: false,
     };
   }
-  
+
   return null;
 }
 
@@ -673,11 +709,11 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
   if (!step) {
     return { valid: false, missing: [], errors: [`Step ${stepNumber} not found in workflow`] };
   }
-  
+
   const missing = [];
   const errors = [];
   const artifactsDir = resolve(process.cwd(), '.claude/context/artifacts');
-  
+
   // Check tool file exists if specified (tool-based steps)
   if (step.tool) {
     const toolPath = resolve(process.cwd(), `.claude/tools/${step.tool}.mjs`);
@@ -687,7 +723,7 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
       errors.push(`   This tool is required for step ${stepNumber} execution.`);
     }
   }
-  
+
   // Check agent file exists
   if (step.agent) {
     const agentFile = resolve(process.cwd(), `.claude/agents/${step.agent}.md`);
@@ -700,18 +736,24 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
         for (const templatePath of requiredTemplates) {
           const fullTemplatePath = resolve(process.cwd(), templatePath);
           if (!existsSync(fullTemplatePath)) {
-            errors.push(`Required template file not found for agent ${step.agent}: ${templatePath}`);
+            errors.push(
+              `Required template file not found for agent ${step.agent}: ${templatePath}`
+            );
             errors.push(`   Resolved path: ${fullTemplatePath}`);
-            errors.push(`   This template is referenced in the agent's instructions and should exist.`);
+            errors.push(
+              `   This template is referenced in the agent's instructions and should exist.`
+            );
           }
         }
       } catch (error) {
         // Template registry not available - log warning but don't fail
-        console.warn(`⚠️  Warning: Could not validate templates for agent ${step.agent}: ${error.message}`);
+        console.warn(
+          `⚠️  Warning: Could not validate templates for agent ${step.agent}: ${error.message}`
+        );
       }
     }
   }
-  
+
   // Check schema file exists if specified
   if (step.validation?.schema) {
     const schemaPath = resolveSchemaPath(step.validation.schema);
@@ -720,7 +762,7 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
       errors.push(`   Resolved path: ${schemaPath}`);
     }
   }
-  
+
   // Validate input artifacts from previous steps
   if (step.inputs && Array.isArray(step.inputs)) {
     for (const input of step.inputs) {
@@ -732,7 +774,7 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
           errors.push(`Input '${input}' references step ${ref.fromStep} which does not exist`);
           continue;
         }
-        
+
         // Check if source step has this output
         let outputFound = false;
         if (sourceStep.outputs && Array.isArray(sourceStep.outputs)) {
@@ -743,7 +785,7 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
             } else if (typeof output === 'object' && output.reasoning) {
               continue; // Skip reasoning outputs
             }
-            
+
             if (outputName) {
               // Interpolate template variables
               let interpolatedOutput = outputName;
@@ -754,36 +796,44 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
               if (epicId) {
                 interpolatedOutput = interpolatedOutput.replace(/\{\{epic_id\}\}/g, epicId);
               }
-              
+
               // Interpolate artifact reference
               let interpolatedArtifact = ref.artifact;
-              interpolatedArtifact = interpolatedArtifact.replace(/\{\{workflow_id\}\}/g, workflowId);
+              interpolatedArtifact = interpolatedArtifact.replace(
+                /\{\{workflow_id\}\}/g,
+                workflowId
+              );
               if (storyId) {
                 interpolatedArtifact = interpolatedArtifact.replace(/\{\{story_id\}\}/g, storyId);
               }
               if (epicId) {
                 interpolatedArtifact = interpolatedArtifact.replace(/\{\{epic_id\}\}/g, epicId);
               }
-              
+
               // Check for un-interpolated variables
               const remainingVars = detectUninterpolatedVariables(interpolatedArtifact);
               if (remainingVars.length > 0) {
-                console.warn(`⚠️  Warning: Un-interpolated template variables in artifact reference: ${remainingVars.join(', ')}`);
+                console.warn(
+                  `⚠️  Warning: Un-interpolated template variables in artifact reference: ${remainingVars.join(', ')}`
+                );
               }
-              
+
               // Use exact match or proper basename comparison (fix false positive bug)
               // Extract basename for comparison to avoid substring false positives
               const outputBasename = interpolatedOutput.split('/').pop();
               const artifactBasename = interpolatedArtifact.split('/').pop();
-              
-              if (interpolatedOutput === interpolatedArtifact || outputBasename === artifactBasename) {
+
+              if (
+                interpolatedOutput === interpolatedArtifact ||
+                outputBasename === artifactBasename
+              ) {
                 outputFound = true;
                 break;
               }
             }
           }
         }
-        
+
         if (!outputFound && !ref.optional) {
           // Interpolate artifact name for checking
           let interpolatedArtifact = ref.artifact;
@@ -794,32 +844,34 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
           if (epicId) {
             interpolatedArtifact = interpolatedArtifact.replace(/\{\{epic_id\}\}/g, epicId);
           }
-          
+
           // Check for un-interpolated variables and warn
           const remainingVars = detectUninterpolatedVariables(interpolatedArtifact);
           if (remainingVars.length > 0) {
-            console.warn(`⚠️  Warning: Un-interpolated template variables found: ${remainingVars.join(', ')}`);
+            console.warn(
+              `⚠️  Warning: Un-interpolated template variables found: ${remainingVars.join(', ')}`
+            );
             console.warn(`   This may cause artifact path resolution issues.`);
           }
-          
+
           const artifactPath = resolve(artifactsDir, interpolatedArtifact);
           if (!existsSync(artifactPath)) {
             missing.push({
               artifact: interpolatedArtifact,
               fromStep: ref.fromStep,
               path: artifactPath,
-              message: `Required artifact '${interpolatedArtifact}' from step ${ref.fromStep} not found. Run step ${ref.fromStep} first.`
+              message: `Required artifact '${interpolatedArtifact}' from step ${ref.fromStep} not found. Run step ${ref.fromStep} first.`,
             });
           }
         }
       }
     }
   }
-  
+
   return {
     valid: missing.length === 0 && errors.length === 0,
     missing,
-    errors
+    errors,
   };
 }
 
@@ -835,7 +887,7 @@ function findStepInWorkflow(workflow, stepNumber) {
       }
     }
   }
-  
+
   // Handle phase-based workflows (BMad format)
   if (workflow.phases && Array.isArray(workflow.phases)) {
     for (const phase of workflow.phases) {
@@ -864,7 +916,11 @@ function findStepInWorkflow(workflow, stepNumber) {
         }
       }
       // Check epic_loop and story_loop
-      if (phase.epic_loop && phase.epic_loop.story_loop && Array.isArray(phase.epic_loop.story_loop)) {
+      if (
+        phase.epic_loop &&
+        phase.epic_loop.story_loop &&
+        Array.isArray(phase.epic_loop.story_loop)
+      ) {
         for (const step of phase.epic_loop.story_loop) {
           if (String(step.step) === String(stepNumber)) {
             return step;
@@ -873,7 +929,7 @@ function findStepInWorkflow(workflow, stepNumber) {
       }
     }
   }
-  
+
   return null;
 }
 
@@ -882,17 +938,17 @@ function findStepInWorkflow(workflow, stepNumber) {
  */
 function getStepConfig(workflow, stepNumber) {
   const step = findStepInWorkflow(workflow, stepNumber);
-  
+
   if (!step) {
     return null;
   }
-  
+
   // Extract primary output from outputs array
   // Priority: 1) Regular JSON outputs, 2) First JSON file found, 3) Reasoning JSON as fallback
   let primaryOutput = null;
   let jsonOutputs = [];
   let reasoningOutput = null;
-  
+
   if (step.outputs && Array.isArray(step.outputs)) {
     for (const output of step.outputs) {
       // Handle string outputs (JSON files)
@@ -916,16 +972,16 @@ function getStepConfig(workflow, stepNumber) {
         }
       }
     }
-    
+
     // If multiple JSON outputs, prefer the one that looks like a primary artifact
     // (not reasoning, not intermediate, typically matches step purpose)
     if (jsonOutputs.length > 1) {
       // Filter out reasoning outputs
-      const nonReasoningOutputs = jsonOutputs.filter(out => 
-        !out.toLowerCase().includes('reasoning') && 
-        !out.toLowerCase().includes('intermediate')
+      const nonReasoningOutputs = jsonOutputs.filter(
+        out =>
+          !out.toLowerCase().includes('reasoning') && !out.toLowerCase().includes('intermediate')
       );
-      
+
       if (nonReasoningOutputs.length > 0) {
         primaryOutput = nonReasoningOutputs[0];
       } else {
@@ -933,33 +989,33 @@ function getStepConfig(workflow, stepNumber) {
         primaryOutput = jsonOutputs[0];
       }
     }
-    
+
     // Fallback to reasoning output if no regular output found
     if (!primaryOutput && reasoningOutput) {
       primaryOutput = reasoningOutput;
     }
   }
-  
+
   // Extract schema and gate from validation object
   const schema = step.validation?.schema || null;
   const gate = step.validation?.gate || null;
-  
+
   // Extract secondary outputs configuration
   const secondaryOutputs = step.validation?.secondary_outputs || [];
-  
+
   // Extract custom checks if specified
   const customChecks = step.validation?.custom_checks || [];
-  
+
   // Extract tool field if specified (for tool-based steps)
   const tool = step.tool || null;
-  
+
   return {
     output: primaryOutput,
     schema,
     gate,
     secondaryOutputs,
     customChecks,
-    tool
+    tool,
   };
 }
 
@@ -1352,9 +1408,9 @@ function evaluateCondition(condition, context = {}) {
       MULTI_AI_ENABLED: process.env.MULTI_AI_ENABLED === 'true',
       CI: process.env.CI === 'true',
       NODE_ENV: process.env.NODE_ENV || 'development',
-      ...context.env
+      ...context.env,
     },
-    artifacts: context.artifacts || {}
+    artifacts: context.artifacts || {},
   };
 
   try {
@@ -1369,7 +1425,6 @@ function evaluateCondition(condition, context = {}) {
 
     // Parse and evaluate the expression
     return parseExpression(tokens, safeContext);
-
   } catch (error) {
     // On any error, fail open (execute step)
     console.warn(`⚠️  Warning: Condition evaluation failed: ${error.message}`);
@@ -1388,62 +1443,78 @@ function evaluateCondition(condition, context = {}) {
  * @param {string} workflowId - Workflow ID
  * @returns {Promise<Object>} Validation result with valid flag and errors array
  */
-async function runCustomValidationChecks(checks, artifactData, artifactPath, stepNumber, workflowId) {
+async function runCustomValidationChecks(
+  checks,
+  artifactData,
+  artifactPath,
+  stepNumber,
+  workflowId
+) {
   const errors = [];
-  
+
   for (const check of checks) {
     try {
       switch (check) {
         case 'all_critical_features_preserved':
           // For features-distilled.json, verify all features have required fields
           if (artifactData.features && Array.isArray(artifactData.features)) {
-            const missingFields = artifactData.features.filter(f => 
-              !f.id || !f.name || !f.description || !f.priority
+            const missingFields = artifactData.features.filter(
+              f => !f.id || !f.name || !f.description || !f.priority
             );
             if (missingFields.length > 0) {
-              errors.push(`all_critical_features_preserved: ${missingFields.length} feature(s) missing required fields (id, name, description, priority)`);
+              errors.push(
+                `all_critical_features_preserved: ${missingFields.length} feature(s) missing required fields (id, name, description, priority)`
+              );
             }
           } else {
             errors.push(`all_critical_features_preserved: features array is missing or invalid`);
           }
           break;
-          
+
         case 'acceptance_criteria_included':
           // Verify features have acceptance criteria
           if (artifactData.features && Array.isArray(artifactData.features)) {
-            const missingCriteria = artifactData.features.filter(f => 
-              !f.acceptance_criteria || !Array.isArray(f.acceptance_criteria) || f.acceptance_criteria.length === 0
+            const missingCriteria = artifactData.features.filter(
+              f =>
+                !f.acceptance_criteria ||
+                !Array.isArray(f.acceptance_criteria) ||
+                f.acceptance_criteria.length === 0
             );
             if (missingCriteria.length > 0) {
-              errors.push(`acceptance_criteria_included: ${missingCriteria.length} feature(s) missing acceptance criteria`);
+              errors.push(
+                `acceptance_criteria_included: ${missingCriteria.length} feature(s) missing acceptance criteria`
+              );
             }
           }
           break;
-          
+
         case 'dependencies_mapped':
           // Verify dependencies are properly formatted
           if (artifactData.features && Array.isArray(artifactData.features)) {
             const invalidDeps = artifactData.features.filter(f => {
               if (f.dependencies && Array.isArray(f.dependencies)) {
-                return f.dependencies.some(dep => 
-                  typeof dep !== 'string' || !dep.match(/^feature-[a-zA-Z0-9_-]+$/)
+                return f.dependencies.some(
+                  dep => typeof dep !== 'string' || !dep.match(/^feature-[a-zA-Z0-9_-]+$/)
                 );
               }
               return false;
             });
             if (invalidDeps.length > 0) {
-              errors.push(`dependencies_mapped: ${invalidDeps.length} feature(s) have invalid dependency format`);
+              errors.push(
+                `dependencies_mapped: ${invalidDeps.length} feature(s) have invalid dependency format`
+              );
             }
           }
           break;
-          
+
         case 'no_hardcoded_secrets':
         case 'all_secrets_use_references':
         case 'resource_names_have_suffixes':
         case 'connection_strings_use_placeholders':
           // Infrastructure security checks - use dedicated validation module
           try {
-            const { validateInfrastructureSecurity } = await import('./validation/infrastructure-security.mjs');
+            const { validateInfrastructureSecurity } =
+              await import('./validation/infrastructure-security.mjs');
             const securityResult = validateInfrastructureSecurity(artifactPath);
             if (!securityResult.valid) {
               securityResult.errors.forEach(err => errors.push(`${check}: ${err}`));
@@ -1460,7 +1531,7 @@ async function runCustomValidationChecks(checks, artifactData, artifactPath, ste
             errors.push(`${check}: Security validation error - ${securityError.message}`);
           }
           break;
-          
+
         default:
           console.warn(`⚠️  Warning: Unknown custom check: ${check}`);
       }
@@ -1468,10 +1539,10 @@ async function runCustomValidationChecks(checks, artifactData, artifactPath, ste
       errors.push(`${check}: Validation error - ${checkError.message}`);
     }
   }
-  
+
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1481,7 +1552,7 @@ async function runCustomValidationChecks(checks, artifactData, artifactPath, ste
 /**
  * Check if feature distillation (Step 0.5) should execute
  * Returns true if user_requirements is a file > 15KB
- * 
+ *
  * @param {Object} workflow - Workflow YAML object
  * @param {string} workflowId - Workflow ID
  * @param {string|null} userRequirementsPath - Explicit file path (from argument or env var)
@@ -1489,33 +1560,35 @@ async function runCustomValidationChecks(checks, artifactData, artifactPath, ste
  */
 function shouldDistillFeatures(workflow, workflowId, userRequirementsPath = null) {
   const DISTILL_THRESHOLD_KB = 15;
-  
+
   // Try to find user_requirements input in Step 0
   const step0 = workflow.steps?.find(s => String(s.step) === '0');
   if (!step0 || !step0.inputs) {
     return { shouldExecute: false, reason: 'Step 0 not found or has no inputs' };
   }
-  
+
   // Look for user_requirements in Step 0 inputs
-  const userRequirementsInput = step0.inputs.find(input => 
-    typeof input === 'string' && (input.includes('user_requirements') || input.includes('user-requirements'))
+  const userRequirementsInput = step0.inputs.find(
+    input =>
+      typeof input === 'string' &&
+      (input.includes('user_requirements') || input.includes('user-requirements'))
   );
-  
+
   if (!userRequirementsInput) {
     return { shouldExecute: false, reason: 'user_requirements not found in Step 0 inputs' };
   }
-  
+
   // Priority 1: Explicit argument or parameter
   let filePath = userRequirementsPath;
-  
+
   // Priority 2: Environment variable
   if (!filePath) {
     filePath = process.env.USER_REQUIREMENTS_PATH;
   }
-  
+
   // Priority 3: Workflow context (if available)
   // TODO: Implement when workflow context system is available
-  
+
   // Priority 4: Fallback to hardcoded paths
   if (!filePath) {
     const possiblePaths = [
@@ -1523,9 +1596,9 @@ function shouldDistillFeatures(workflow, workflowId, userRequirementsPath = null
       resolve(__dirname, '../../context/artifacts/user-requirements.md'),
       resolve(process.cwd(), 'user_requirements.md'),
       resolve(process.cwd(), 'user-requirements.md'),
-      resolve(process.cwd(), 'features.md')
+      resolve(process.cwd(), 'features.md'),
     ];
-    
+
     for (const path of possiblePaths) {
       if (existsSync(path)) {
         filePath = path;
@@ -1533,29 +1606,29 @@ function shouldDistillFeatures(workflow, workflowId, userRequirementsPath = null
       }
     }
   }
-  
+
   if (!filePath || !existsSync(filePath)) {
     return { shouldExecute: false, reason: 'File not found' };
   }
-  
+
   try {
     const stats = statSync(filePath);
     const sizeKB = stats.size / 1024;
-    
+
     if (sizeKB > DISTILL_THRESHOLD_KB) {
       return {
         shouldExecute: true,
         filePath: filePath,
         sizeKB: sizeKB.toFixed(2),
-        reason: `File size ${sizeKB.toFixed(2)}KB exceeds ${DISTILL_THRESHOLD_KB}KB threshold`
+        reason: `File size ${sizeKB.toFixed(2)}KB exceeds ${DISTILL_THRESHOLD_KB}KB threshold`,
       };
     }
-    
-    return { 
-      shouldExecute: false, 
+
+    return {
+      shouldExecute: false,
       reason: `File size ${sizeKB.toFixed(2)}KB is below ${DISTILL_THRESHOLD_KB}KB threshold`,
       filePath: filePath,
-      sizeKB: sizeKB.toFixed(2)
+      sizeKB: sizeKB.toFixed(2),
     };
   } catch (error) {
     return { shouldExecute: false, reason: `Error reading file: ${error.message}` };
@@ -1564,7 +1637,7 @@ function shouldDistillFeatures(workflow, workflowId, userRequirementsPath = null
 
 /**
  * Execute Step 0.5 (Feature Distillation) programmatically
- * 
+ *
  * @param {Object} workflow - Workflow YAML object
  * @param {string} workflowId - Workflow ID
  * @param {string} filePath - Path to user requirements markdown file
@@ -1577,7 +1650,7 @@ async function executeStep05(workflow, workflowId, filePath, storyId = null, epi
     console.warn(`⚠️  Step 0.5 not found in workflow`);
     return;
   }
-  
+
   // Validate dependencies
   const dependencyCheck = validateStepDependencies(workflow, '0.5', workflowId, storyId, epicId);
   if (!dependencyCheck.valid) {
@@ -1588,14 +1661,14 @@ async function executeStep05(workflow, workflowId, filePath, storyId = null, epi
     }
     process.exit(1);
   }
-  
+
   console.log(`✅ Step 0.5 (Feature Distillation) dependencies validated`);
   console.log(`   Input file: ${filePath}`);
   console.log(`   Output: features-distilled.json`);
   console.log(`   Agent: ${step05Info.agent}`);
   console.log(`\n   Note: Step 0.5 agent invocation would execute here.`);
   console.log(`   The Analyst agent will read ${filePath} and create features-distilled.json.\n`);
-  
+
   // TODO: Actual agent invocation would happen here
   // For now, we validate dependencies and inform the user
   // In a full implementation, this would:
@@ -1607,14 +1680,14 @@ async function executeStep05(workflow, workflowId, filePath, storyId = null, epi
 
 function getStepInfo(workflow, stepNumber) {
   const step = findStepInWorkflow(workflow, stepNumber);
-  
+
   if (!step) {
     return null;
   }
-  
+
   return {
     name: step.name || null,
-    agent: step.agent || null
+    agent: step.agent || null,
   };
 }
 
@@ -1624,30 +1697,30 @@ function getStepInfo(workflow, stepNumber) {
 async function handleDecision(workflowPath, decisionId, workflowId, context = {}) {
   const workflow = loadWorkflowYAML(workflowPath);
   const decisionConfig = getDecisionConfig(workflow, decisionId);
-  
+
   if (!decisionConfig) {
     console.error(`Error: Decision ${decisionId} not found in workflow.`);
     process.exit(1);
   }
-  
+
   console.log(`\n🔀 Evaluating Decision: ${decisionId}`);
   console.log(`   Type: ${decisionConfig.type}\n`);
-  
+
   try {
     const result = await evaluateDecision(decisionId, {
       decision_type: decisionConfig.type,
       condition: decisionConfig.condition,
       input_artifacts: context.input_artifacts || {},
       user_prompt: context.user_prompt || null,
-      config: context.config || {}
+      config: context.config || {},
     });
-    
+
     console.log(`✅ Decision Result: ${result.result}`);
     console.log(`   Reason: ${result.reason}`);
     if (result.details) {
       console.log(`   Details:`, result.details);
     }
-    
+
     return result;
   } catch (error) {
     console.error(`❌ Error evaluating decision:`, error.message);
@@ -1660,28 +1733,30 @@ async function handleDecision(workflowPath, decisionId, workflowId, context = {}
  */
 async function handleLoop(workflowPath, loopType, workflowId, context = {}) {
   console.log(`\n🔄 Managing Loop: ${loopType}`);
-  
+
   try {
     const loopState = await initializeLoop(loopType, {
       epic_index: context.epic_index || 0,
-      epics_stories_path: context.epics_stories_path || resolve(process.cwd(), '.claude/context/artifacts/epics-stories.json')
+      epics_stories_path:
+        context.epics_stories_path ||
+        resolve(process.cwd(), '.claude/context/artifacts/epics-stories.json'),
     });
-    
+
     console.log(`   Total Items: ${loopState.total_items}`);
     console.log(`   Current Index: ${loopState.current_index}`);
-    
+
     const currentItem = getCurrentItem(loopState);
     if (currentItem) {
       console.log(`   Current Item:`, currentItem);
     }
-    
+
     const hasMore = hasMoreIterations(loopState);
     console.log(`   Has More: ${hasMore}`);
-    
+
     return {
       loop_state: loopState,
       current_item: currentItem,
-      has_more: hasMore
+      has_more: hasMore,
     };
   } catch (error) {
     console.error(`❌ Error managing loop:`, error.message);
@@ -1700,12 +1775,12 @@ function getDecisionConfig(workflow, decisionId) {
         return {
           id: decisionId,
           type: phase.decision.type || null,
-          condition: phase.decision.condition || null
+          condition: phase.decision.condition || null,
         };
       }
     }
   }
-  
+
   return null;
 }
 
@@ -1730,7 +1805,7 @@ async function performDryRun(workflowPath, workflowId) {
     missing_dependencies: [],
     errors: [],
     warnings: [],
-    temp_dir: resolve(process.cwd(), '.claude/context/temp-runs', workflowId)
+    temp_dir: resolve(process.cwd(), '.claude/context/temp-runs', workflowId),
   };
 
   console.log('\n🔍 DRY-RUN VALIDATION');
@@ -1800,7 +1875,7 @@ async function performDryRun(workflowPath, workflowId) {
             report.artifacts_resolved.push({
               step: stepNum,
               artifact: interpolated,
-              path: artifactPath
+              path: artifactPath,
             });
           }
         }
@@ -1814,7 +1889,7 @@ async function performDryRun(workflowPath, workflowId) {
           report.schemas_resolved.push({
             step: stepNum,
             schema: step.validation.schema,
-            path: schemaPath
+            path: schemaPath,
           });
         } else {
           const error = `Schema not found: ${step.validation.schema} (resolved: ${schemaPath})`;
@@ -1832,7 +1907,9 @@ async function performDryRun(workflowPath, workflowId) {
         for (const input of step.inputs) {
           const ref = parseArtifactReference(input);
           if (ref && ref.fromStep) {
-            console.log(`  📥 Input: ${ref.artifact} (from step ${ref.fromStep}${ref.optional ? ', optional' : ''})`);
+            console.log(
+              `  📥 Input: ${ref.artifact} (from step ${ref.fromStep}${ref.optional ? ', optional' : ''})`
+            );
           } else if (typeof input === 'string') {
             console.log(`  📥 Input: ${input}`);
           }
@@ -1842,7 +1919,7 @@ async function performDryRun(workflowPath, workflowId) {
       report.steps_validated.push({
         step: stepNum,
         name: stepName,
-        agent: agentName
+        agent: agentName,
       });
     }
 
@@ -1914,7 +1991,7 @@ function loadCUJDefinition(cujId) {
     success_criteria: [],
     agents: [],
     skills: [],
-    expected_outputs: []
+    expected_outputs: [],
   };
 
   // Extract CUJ name from first heading
@@ -1927,7 +2004,9 @@ function loadCUJDefinition(cujId) {
   const indexContent = readFileSync(cujIndexPath, 'utf-8');
 
   // Find the "Run CUJ Mapping" table (last table in the file with execution modes)
-  const mappingTableMatch = indexContent.match(/\| CUJ ID \| Execution Mode \| Workflow File Path \| Primary Skill \|([\s\S]*?)(?=\n\*\*|$)/);
+  const mappingTableMatch = indexContent.match(
+    /\| CUJ ID \| Execution Mode \| Workflow File Path \| Primary Skill \|([\s\S]*?)(?=\n\*\*|$)/
+  );
 
   if (mappingTableMatch) {
     const tableContent = mappingTableMatch[1];
@@ -1958,7 +2037,9 @@ function loadCUJDefinition(cujId) {
 
   // Fallback to old method if table not found
   if (!cuj.execution_mode) {
-    const workflowMatch = indexContent.match(new RegExp(`${cujId}.*?\\.claude/workflows/([^\\s|]+)`, 's'));
+    const workflowMatch = indexContent.match(
+      new RegExp(`${cujId}.*?\\.claude/workflows/([^\\s|]+)`, 's')
+    );
     if (workflowMatch) {
       cuj.workflow_path = `.claude/workflows/${workflowMatch[1]}`;
       cuj.execution_mode = 'workflow';
@@ -1987,9 +2068,16 @@ function loadCUJDefinition(cujId) {
     if (tableRowMatches) {
       tableRowMatches.forEach(row => {
         // Skip header rows and separator rows
-        if (!row.includes('---') && !row.toLowerCase().includes('criteria') && !row.toLowerCase().includes('status')) {
+        if (
+          !row.includes('---') &&
+          !row.toLowerCase().includes('criteria') &&
+          !row.toLowerCase().includes('status')
+        ) {
           // Extract first column (criteria text)
-          const columns = row.split('|').map(c => c.trim()).filter(c => c);
+          const columns = row
+            .split('|')
+            .map(c => c.trim())
+            .filter(c => c);
           if (columns.length > 0 && columns[0]) {
             // Avoid duplicate entries if checkbox pattern already captured this
             const criteriaText = columns[0].trim();
@@ -2046,10 +2134,10 @@ async function simulateCUJ(cujId) {
     success_criteria_check: {
       total: 0,
       measurable: 0,
-      non_measurable: []
+      non_measurable: [],
     },
     errors: [],
-    warnings: []
+    warnings: [],
   };
 
   try {
@@ -2085,7 +2173,9 @@ async function simulateCUJ(cujId) {
 
         if (!simulation.dry_run_report.valid) {
           simulation.success = false;
-          simulation.errors.push(`Workflow dry-run failed: ${simulation.dry_run_report.errors.length} error(s)`);
+          simulation.errors.push(
+            `Workflow dry-run failed: ${simulation.dry_run_report.errors.length} error(s)`
+          );
         }
       }
     }
@@ -2114,7 +2204,9 @@ async function simulateCUJ(cujId) {
     console.log('='.repeat(60));
     console.log(`CUJ: ${cujId} - ${simulation.cuj_definition.name}`);
     console.log(`Execution Mode: ${simulation.cuj_definition.execution_mode}`);
-    console.log(`Success Criteria: ${simulation.success_criteria_check.measurable}/${simulation.success_criteria_check.total} measurable`);
+    console.log(
+      `Success Criteria: ${simulation.success_criteria_check.measurable}/${simulation.success_criteria_check.total} measurable`
+    );
     console.log(`Errors: ${simulation.errors.length}`);
     console.log(`Warnings: ${simulation.warnings.length}`);
 
@@ -2150,7 +2242,7 @@ async function main() {
   const args = parseArgs();
   const isDryRun = args['dry-run'] || false;
   const cujSimulation = args['cuj-simulation'] || null;
-  
+
   // Handle CUJ simulation mode
   if (cujSimulation) {
     try {
@@ -2164,37 +2256,46 @@ async function main() {
 
   if (!args.workflow) {
     console.error('Error: Missing workflow argument');
-    console.error('Usage: node workflow_runner.js --workflow <yaml-path> [--step <number>|--decision <id>|--loop <type>] [--id <workflow-id>] [--dry-run]');
-    console.error('       node workflow_runner.js --workflow <yaml-path> --dry-run [--id <workflow-id>]');
+    console.error(
+      'Usage: node workflow_runner.js --workflow <yaml-path> [--step <number>|--decision <id>|--loop <type>] [--id <workflow-id>] [--dry-run]'
+    );
+    console.error(
+      '       node workflow_runner.js --workflow <yaml-path> --dry-run [--id <workflow-id>]'
+    );
     console.error('       node workflow_runner.js --cuj-simulation <cuj-id>');
     process.exit(1);
   }
 
   // Resolve workflow path (handles relative paths from config.yaml)
   let workflowPath = args.workflow;
-  if (!workflowPath.startsWith('/') && !(process.platform === 'win32' && /^[A-Z]:/.test(workflowPath))) {
+  if (
+    !workflowPath.startsWith('/') &&
+    !(process.platform === 'win32' && /^[A-Z]:/.test(workflowPath))
+  ) {
     // Relative path - resolve from project root
     workflowPath = resolveWorkflowPath(workflowPath);
   } else {
     workflowPath = resolve(workflowPath);
   }
-  
+
   // Handle resume from checkpoint
   if (args.resume || args['resume-step']) {
     const runId = args['run-id'];
     if (!runId) {
       console.error('❌ Error: --run-id required for resume');
-      console.error('Usage: node workflow_runner.js --workflow <yaml> --resume --run-id <id> [--resume-step <step>]');
+      console.error(
+        'Usage: node workflow_runner.js --workflow <yaml> --resume --run-id <id> [--resume-step <step>]'
+      );
       process.exit(1);
     }
-    
+
     try {
       const checkpoints = await listCheckpoints(runId);
       if (checkpoints.length === 0) {
         console.error(`❌ Error: No checkpoints found for run ${runId}`);
         process.exit(1);
       }
-      
+
       let checkpointToRestore;
       if (args['resume-step']) {
         const targetStep = parseInt(args['resume-step'], 10);
@@ -2209,15 +2310,15 @@ async function main() {
         // Use most recent checkpoint
         checkpointToRestore = checkpoints[0];
       }
-      
+
       console.log(`\n🔄 Restoring from checkpoint: ${checkpointToRestore.checkpoint_id}`);
       console.log(`   Step: ${checkpointToRestore.step}`);
       console.log(`   Timestamp: ${checkpointToRestore.timestamp}\n`);
-      
+
       const restored = await restoreFromCheckpoint(runId, checkpointToRestore.checkpoint_id);
       console.log(`✅ Restored ${restored.artifacts_restored} artifact(s) from checkpoint`);
       console.log(`   Resume from step ${restored.restored_step + 1}\n`);
-      
+
       // Update args to continue from restored step
       args.step = String(restored.restored_step + 1);
       args.id = runId; // Use run-id as workflow-id for continuation
@@ -2226,23 +2327,23 @@ async function main() {
       process.exit(1);
     }
   }
-  
+
   // Auto-generate workflow ID if not provided
   const workflowId = args.id || args['run-id'] || generateWorkflowId();
-  
+
   // Always validate format
   const idValidation = validateWorkflowIdFormat(workflowId);
   if (!idValidation.valid) {
     console.error(`❌ Error: ${idValidation.error}`);
     process.exit(1);
   }
-  
+
   // Log generated ID for user reference
   if (!args.id && !args['run-id']) {
     console.log(`📋 Generated workflow ID: ${workflowId}`);
     console.log(`   Use --id ${workflowId} to reference this workflow in future steps\n`);
   }
-  
+
   if (!existsSync(workflowPath)) {
     console.error(`❌ Error: Workflow file not found at ${workflowPath}`);
     console.error(`   Original path: ${args.workflow}`);
@@ -2271,7 +2372,7 @@ async function main() {
   if (args.decision) {
     let inputArtifacts = {};
     let config = {};
-    
+
     if (args.artifacts) {
       try {
         inputArtifacts = JSON.parse(args.artifacts);
@@ -2280,7 +2381,7 @@ async function main() {
         process.exit(1);
       }
     }
-    
+
     if (args.config) {
       try {
         config = JSON.parse(args.config);
@@ -2289,11 +2390,11 @@ async function main() {
         process.exit(1);
       }
     }
-    
+
     handleDecision(workflowPath, args.decision, workflowId, {
       input_artifacts: inputArtifacts,
       user_prompt: args.prompt || null,
-      config: config
+      config: config,
     });
     return;
   }
@@ -2302,7 +2403,7 @@ async function main() {
   if (args.loop) {
     handleLoop(workflowPath, args.loop, workflowId, {
       epic_index: args.epic_index ? parseInt(args.epic_index) : 0,
-      epics_stories_path: args.epics_path || null
+      epics_stories_path: args.epics_path || null,
     });
     return;
   }
@@ -2322,13 +2423,17 @@ async function main() {
   // Handle step validation (original functionality)
   if (!args.step) {
     console.error('Error: Must specify --step, --decision, or --loop');
-    console.error('Usage: node workflow_runner.js --workflow <yaml-path> [--step <number>|--decision <id>|--loop <type>] [--id <workflow-id>] [--story-id <id>] [--epic-id <id>]');
-    console.error('       node workflow_runner.js --workflow <yaml-path> --dry-run [--id <workflow-id>]');
+    console.error(
+      'Usage: node workflow_runner.js --workflow <yaml-path> [--step <number>|--decision <id>|--loop <type>] [--id <workflow-id>] [--story-id <id>] [--epic-id <id>]'
+    );
+    console.error(
+      '       node workflow_runner.js --workflow <yaml-path> --dry-run [--id <workflow-id>]'
+    );
     process.exit(1);
   }
 
   const workflow = loadWorkflowYAML(workflowPath);
-  
+
   // Pre-execution validation
   try {
     const { validateWorkflow } = await import('./validation/workflow-validator.mjs');
@@ -2353,29 +2458,31 @@ async function main() {
     console.warn(`⚠️  Warning: Could not run pre-execution validation: ${validationError.message}`);
     console.warn('   Continuing with workflow execution...\n');
   }
-  
+
   const storyId = args['story-id'] || null;
   const epicId = args['epic-id'] || null;
-  
+
   // Check if Step 0.5 (Feature Distillation) should execute before Step 0
   // This happens when user_requirements is a markdown file > 15KB
   if (args.step === '0' || args.step === 0) {
     const userRequirementsPath = args['user-requirements'] || process.env.USER_REQUIREMENTS_PATH;
     const shouldDistill = shouldDistillFeatures(workflow, workflowId, userRequirementsPath);
-    
+
     if (shouldDistill.shouldExecute) {
       console.log(`\n📄 Large markdown detected (${shouldDistill.sizeKB}KB > 15KB)`);
       console.log(`   File: ${shouldDistill.filePath}`);
       console.log(`   Executing Step 0.5 (Feature Distillation) first...\n`);
-      
+
       // Execute Step 0.5
       await executeStep05(workflow, workflowId, shouldDistill.filePath, storyId, epicId);
-      
+
       // Continue with Step 0, which will use features-distilled.json
-      console.log(`\n✅ Step 0.5 completed. Proceeding with Step 0 (Planning) using features-distilled.json...\n`);
+      console.log(
+        `\n✅ Step 0.5 completed. Proceeding with Step 0 (Planning) using features-distilled.json...\n`
+      );
     }
   }
-  
+
   // ========================================================================
   // PLAN RATING GATE (Step 0.1)
   // Enforces "never execute an unrated plan" rule from CLAUDE.md
@@ -2397,7 +2504,9 @@ async function main() {
 
       if (existingRating.valid && existingRating.rated) {
         console.log(`\n✅ Plan Rating Gate: PASSED (existing rating)`);
-        console.log(`   Score: ${existingRating.score}/10 (minimum: ${existingRating.minimumRequired})`);
+        console.log(
+          `   Score: ${existingRating.score}/10 (minimum: ${existingRating.minimumRequired})`
+        );
       } else if (!existingRating.rated) {
         // No rating exists - execute the plan rating gate
         console.log(`\n⚠️  No plan rating found. Invoking response-rater skill...`);
@@ -2405,7 +2514,7 @@ async function main() {
         const ratingResult = await executePlanRatingGate(runId, null, {
           workflowId,
           minimumScore: 7,
-          providers: 'claude,gemini'
+          providers: 'claude,gemini',
         });
 
         if (ratingResult.success) {
@@ -2424,7 +2533,10 @@ async function main() {
                 console.error(`     - ${area.component}: ${area.score}/10 - ${area.suggestion}`);
               });
             }
-            if (ratingResult.feedback.improvements_required && ratingResult.feedback.improvements_required.length > 0) {
+            if (
+              ratingResult.feedback.improvements_required &&
+              ratingResult.feedback.improvements_required.length > 0
+            ) {
               console.error(`\n   Required improvements:`);
               ratingResult.feedback.improvements_required.forEach((imp, i) => {
                 console.error(`     ${i + 1}. ${imp}`);
@@ -2433,14 +2545,18 @@ async function main() {
           }
 
           console.error(`\n   Action Required: Return plan to Planner for revision.`);
-          console.error(`   Command: node workflow_runner.js --workflow ${args.workflow} --step 0 --id ${workflowId}`);
+          console.error(
+            `   Command: node workflow_runner.js --workflow ${args.workflow} --step 0 --id ${workflowId}`
+          );
           console.error(`${'='.repeat(60)}\n`);
           process.exit(1);
         }
       } else {
         // Rating exists but doesn't pass
         console.error(`\n❌ Plan Rating Gate: FAILED (existing rating below threshold)`);
-        console.error(`   Score: ${existingRating.score}/10 (minimum required: ${existingRating.minimumRequired})`);
+        console.error(
+          `   Score: ${existingRating.score}/10 (minimum required: ${existingRating.minimumRequired})`
+        );
         console.error(`\n   Action Required: Return plan to Planner for revision.`);
         process.exit(1);
       }
@@ -2457,14 +2573,16 @@ async function main() {
     // Warn if run-id is missing for steps that should have rating
     console.warn(`\n⚠️  Warning: --run-id not provided for Step ${stepNumber}`);
     console.warn(`   Plan rating gate requires --run-id to validate plans.`);
-    console.warn(`   Usage: node workflow_runner.js --workflow <yaml> --step ${stepNumber} --run-id <id>\n`);
+    console.warn(
+      `   Usage: node workflow_runner.js --workflow <yaml> --step ${stepNumber} --run-id <id>\n`
+    );
   }
 
   // Validate step dependencies before proceeding
   // Context monitoring: Check context usage before step execution
   const stepInfo = getStepInfo(workflow, args.step);
   const agentName = stepInfo?.agent || 'unknown';
-  
+
   // Record actual context usage (if available from Claude API or session state)
   try {
     // Try to get actual context usage from session state or Claude API
@@ -2475,12 +2593,12 @@ async function main() {
       inputTokens: estimatedUsage.inputTokens || 0,
       outputTokens: estimatedUsage.outputTokens || 0,
       systemPrompt: estimatedUsage.systemPrompt || 0,
-      messages: estimatedUsage.messages || 0
+      messages: estimatedUsage.messages || 0,
     };
-    
+
     // Record usage
     recordContextUsage(agentName, contextUsage);
-    
+
     // Check threshold
     const contextCheck = checkContextThreshold(agentName, contextUsage);
     if (contextCheck.thresholdReached) {
@@ -2507,33 +2625,46 @@ function estimateContextUsage(workflow, step, workflowId) {
   const AGENT_PROMPT_BASE = 3000; // Agent-specific prompt tokens
   const ARTIFACT_READ_BASE = 100; // Per artifact read
   const MESSAGE_BASE = 200; // Per message
-  
+
   // Count artifacts loaded
   const stepInfo = getStepInfo(workflow, step);
   const artifactsCount = (stepInfo?.inputs || []).length;
-  
+
   // Estimate based on step number (accumulates over time)
   const stepMultiplier = step * 0.1; // 10% growth per step
-  
+
   const estimated = {
     systemPrompt: SYSTEM_PROMPT_BASE + AGENT_PROMPT_BASE,
     messages: MESSAGE_BASE * (step + 1),
     artifacts: ARTIFACT_READ_BASE * artifactsCount,
-    total: 0
+    total: 0,
   };
-  
+
   estimated.total = estimated.systemPrompt + estimated.messages + estimated.artifacts;
   estimated.total = Math.floor(estimated.total * (1 + stepMultiplier));
 
   return estimated;
 }
 
-async function executeWorkflowStepValidation(workflow, args, workflowId, storyId, epicId, isDryRun) {
+async function executeWorkflowStepValidation(
+  workflow,
+  args,
+  workflowId,
+  storyId,
+  epicId,
+  isDryRun
+) {
   // Validate step dependencies before proceeding
-  const dependencyCheck = validateStepDependencies(workflow, args.step, workflowId, storyId, epicId);
+  const dependencyCheck = validateStepDependencies(
+    workflow,
+    args.step,
+    workflowId,
+    storyId,
+    epicId
+  );
   if (!dependencyCheck.valid) {
     console.error(`\n❌ Step ${args.step} Dependency Validation Failed\n`);
-    
+
     if (dependencyCheck.errors.length > 0) {
       console.error('Errors:');
       dependencyCheck.errors.forEach(error => {
@@ -2544,30 +2675,36 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
       console.error('  - Check schema file paths are correct');
       console.error('  - Ensure workflow YAML syntax is valid');
     }
-    
+
     if (dependencyCheck.missing.length > 0) {
       console.error('\nMissing Required Artifacts:');
       dependencyCheck.missing.forEach(missing => {
         console.error(`  - ${missing.message}`);
         console.error(`    Expected at: ${missing.path}`);
-        console.error(`    Suggestion: Run step ${missing.fromStep} first to generate this artifact`);
-        console.error(`    Command: node .claude/tools/workflow_runner.js --workflow ${args.workflow} --step ${missing.fromStep} --id ${workflowId}`);
+        console.error(
+          `    Suggestion: Run step ${missing.fromStep} first to generate this artifact`
+        );
+        console.error(
+          `    Command: node .claude/tools/workflow_runner.js --workflow ${args.workflow} --step ${missing.fromStep} --id ${workflowId}`
+        );
       });
     }
-    
+
     process.exit(1);
   }
-  
+
   const config = getStepConfig(workflow, args.step);
-  
+
   if (!config) {
     console.error(`Error: Step ${args.step} not found in workflow.`);
     process.exit(1);
   }
-  
+
   // Gate and output are required, schema is optional
   if (!config.gate || !config.output) {
-    console.error('Error: Missing required validation configuration (gate or output) for this step.');
+    console.error(
+      'Error: Missing required validation configuration (gate or output) for this step.'
+    );
     console.error(`   Step ${args.step} must have at least 'gate' and 'output' defined.`);
     console.error(`   Schema is optional but recommended for structured artifacts.`);
     console.log('Found config:', config);
@@ -2578,12 +2715,14 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
   let artifactsDir;
   let gateDir;
   let runId = args['run-id'] || null;
-  
+
   // NEW: Check memory BEFORE loading artifacts
   const preLoadMemCheck = canSpawnSubagent(1000); // Need 1GB for artifacts + context
   if (!preLoadMemCheck.canSpawn) {
     console.warn('[Workflow] Insufficient memory before artifact loading');
-    console.warn(`[Memory] RSS: ${preLoadMemCheck.currentUsageMB.toFixed(2)}MB, Free: ${preLoadMemCheck.freeMB.toFixed(2)}MB`);
+    console.warn(
+      `[Memory] RSS: ${preLoadMemCheck.currentUsageMB.toFixed(2)}MB, Free: ${preLoadMemCheck.freeMB.toFixed(2)}MB`
+    );
 
     // Aggressive cleanup
     const { cleanupAllCaches } = await import('./memory-cleanup.mjs');
@@ -2615,7 +2754,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         process.exit(1);
       }
     }
-    
+
     const runDirs = getRunDirectoryStructure(runId);
     artifactsDir = runDirs.artifacts_dir;
     gateDir = runDirs.gates_dir;
@@ -2624,10 +2763,10 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     artifactsDir = resolve(process.cwd(), '.claude/context/artifacts');
     gateDir = resolve(process.cwd(), '.claude/context/history/gates', workflowId);
   }
-  
+
   // Interpolate template variables in output artifact name
   // Handle {{workflow_id}}, {{story_id}}, {{epic_id}}, etc.
-  
+
   // Validate template variable syntax first
   const templateSyntaxCheck = validateTemplateVariableSyntax(config.output);
   if (!templateSyntaxCheck.valid) {
@@ -2635,7 +2774,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     templateSyntaxCheck.errors.forEach(err => console.error(`  - ${err}`));
     process.exit(1);
   }
-  
+
   let interpolatedOutput = config.output;
   if (interpolatedOutput) {
     // Check if workflow_id is required but missing (should never happen with auto-generation, but keep as safety check)
@@ -2646,7 +2785,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
       console.error(`   Output artifact: ${interpolatedOutput}`);
       process.exit(1);
     }
-    
+
     interpolatedOutput = interpolatedOutput.replace(/\{\{workflow_id\}\}/g, workflowId);
     if (storyId) {
       interpolatedOutput = interpolatedOutput.replace(/\{\{story_id\}\}/g, storyId);
@@ -2654,23 +2793,27 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     if (epicId) {
       interpolatedOutput = interpolatedOutput.replace(/\{\{epic_id\}\}/g, epicId);
     }
-    
+
     // Check for un-interpolated variables after interpolation
     const remainingVars = detectUninterpolatedVariables(interpolatedOutput);
     if (remainingVars.length > 0) {
       // Check if any remaining variables are required (workflow_id is always required if present)
       const hasRequiredUnresolved = remainingVars.some(v => v === '{{workflow_id}}');
       if (hasRequiredUnresolved) {
-        console.error(`❌ Error: Required template variable {{workflow_id}} could not be resolved.`);
+        console.error(
+          `❌ Error: Required template variable {{workflow_id}} could not be resolved.`
+        );
         console.error(`   Please provide a workflow ID using --id <workflow-id>`);
         process.exit(1);
       }
       // Warn for optional variables
-      console.warn(`⚠️  Warning: Un-interpolated template variables found: ${remainingVars.join(', ')}`);
+      console.warn(
+        `⚠️  Warning: Un-interpolated template variables found: ${remainingVars.join(', ')}`
+      );
       console.warn(`   This may cause artifact path resolution issues.`);
     }
   }
-  
+
   // Use path resolver if run-id provided, otherwise legacy paths
   let inputPath;
   if (runId) {
@@ -2678,10 +2821,10 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
   } else {
     inputPath = resolve(artifactsDir, interpolatedOutput);
   }
-  
+
   // Schema is optional - use same path resolution strategy as workflow files
   const schemaPath = config.schema ? resolveSchemaPath(config.schema) : null;
-  
+
   // Validate schema file exists if specified
   if (config.schema && schemaPath && !existsSync(schemaPath)) {
     console.error(`\n❌ Error: Schema file not found: ${config.schema}`);
@@ -2697,11 +2840,11 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     console.error(`\n   Please ensure the schema file exists at the specified path.`);
     process.exit(1);
   }
-  
+
   // Determine gate path - use run directory if run-id provided
   let gatePath;
   let gatePathRaw;
-  
+
   if (runId) {
     // Use run directory gate path
     gatePath = resolveGatePath(runId, args.step);
@@ -2714,7 +2857,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
       gateTemplateCheck.errors.forEach(err => console.error(`  - ${err}`));
       process.exit(1);
     }
-    
+
     gatePathRaw = config.gate;
     gatePathRaw = gatePathRaw.replace(/\{\{workflow_id\}\}/g, workflowId);
     if (storyId) {
@@ -2723,18 +2866,20 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     if (epicId) {
       gatePathRaw = gatePathRaw.replace(/\{\{epic_id\}\}/g, epicId);
     }
-    
+
     // Check for un-interpolated variables
     const gateRemainingVars = detectUninterpolatedVariables(gatePathRaw);
     if (gateRemainingVars.length > 0) {
-      console.warn(`⚠️  Warning: Un-interpolated template variables in gate path: ${gateRemainingVars.join(', ')}`);
+      console.warn(
+        `⚠️  Warning: Un-interpolated template variables in gate path: ${gateRemainingVars.join(', ')}`
+      );
     }
-    
+
     gatePath = resolve(process.cwd(), gatePathRaw);
     gateDir = dirname(gatePath);
   }
   const gateScript = resolve(__dirname, 'gates', 'gate.mjs');
-  
+
   // Validate gate script exists
   if (!existsSync(gateScript)) {
     console.error(`❌ Error: Gate script not found at ${gateScript}`);
@@ -2801,17 +2946,19 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     const conditionContext = {
       config: {
         user_requested_multi_ai_review: process.env.MULTI_AI_REVIEW === 'true',
-        critical_security_changes: previousStepOutput.overall_risk === 'high' || previousStepOutput.overall_risk === 'critical',
+        critical_security_changes:
+          previousStepOutput.overall_risk === 'high' ||
+          previousStepOutput.overall_risk === 'critical',
         security_focus: previousStepOutput.security_focus === true,
-        critical_security_issues_found: previousStepOutput.critical_issues_count > 0
+        critical_security_issues_found: previousStepOutput.critical_issues_count > 0,
       },
       env: {
         MULTI_AI_ENABLED: process.env.MULTI_AI_ENABLED === 'true',
-        CI: process.env.CI === 'true'
+        CI: process.env.CI === 'true',
       },
       providers: (process.env.MULTI_AI_PROVIDERS || 'claude,gemini').split(','),
       step: { output: previousStepOutput },
-      artifacts: previousStepOutput
+      artifacts: previousStepOutput,
     };
 
     const shouldExecute = evaluateCondition(stepCondition, conditionContext);
@@ -2828,7 +2975,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         timestamp: new Date().toISOString(),
         step: args.step,
         condition: stepCondition,
-        evaluated_context: conditionContext
+        evaluated_context: conditionContext,
       };
 
       if (!isDryRun) {
@@ -2858,7 +3005,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           const workflowName = basename(workflowPath, '.yaml');
           const taskDescription = config.description || stepName;
           const planId = args['plan-id'] || 'plan';
-          
+
           const gateResult = await validateExecutionGate({
             runId,
             workflowName,
@@ -2869,10 +3016,10 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             options: {
               agentType: agentName,
               taskType: config.taskType,
-              complexity: config.complexity
-            }
+              complexity: config.complexity,
+            },
           });
-          
+
           if (!gateResult.allowed) {
             console.error(`\n❌ BLOCKED: Enforcement gate validation failed for Step ${args.step}`);
             console.error(`   Summary: ${gateResult.summary}`);
@@ -2900,10 +3047,12 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           }
         } catch (gateError) {
           console.error(`\n❌ Error: Enforcement gate validation failed: ${gateError.message}`);
-          console.error(`   Continuing with step execution (gate validation is non-blocking on errors)`);
+          console.error(
+            `   Continuing with step execution (gate validation is non-blocking on errors)`
+          );
         }
       }
-      
+
       console.log(`\n🤖 Executing Agent for Step ${args.step}: ${stepName}`);
       console.log(`   👤 Agent:  ${agentName}`);
       console.log(`   📋 Step:   ${stepName}\n`);
@@ -2918,7 +3067,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         // Inject skill requirements into agent instruction
         const taskDescription = step.description || step.name || `Step ${args.step}`;
         const skillInjection = await injectSkillsForAgent(agentName, taskDescription, {
-          includeRecommended: false // Only required and triggered skills
+          includeRecommended: false, // Only required and triggered skills
         });
 
         if (skillInjection.success) {
@@ -2938,7 +3087,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         // PRE-EXECUTION: Validate skill availability
         const allRequiredSkills = [
           ...skillRequirements.required,
-          ...skillInjection.requiredSkills
+          ...skillInjection.requiredSkills,
         ].filter((skill, index, self) => self.indexOf(skill) === index); // Unique
 
         if (allRequiredSkills.length > 0) {
@@ -2955,7 +3104,9 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
               console.error(`\n❌ BLOCKED: Cannot proceed without required skills`);
               process.exit(1);
             } else {
-              console.warn(`\n⚠️  WARNING: Proceeding despite missing skills (validation mode: ${skillRequirements.validation.mode})`);
+              console.warn(
+                `\n⚠️  WARNING: Proceeding despite missing skills (validation mode: ${skillRequirements.validation.mode})`
+              );
             }
           } else {
             console.log(`   ✅ All required skills available`);
@@ -2970,7 +3121,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           injections.push({
             type: 'skill_requirements',
             content: skillInjection.skillPrompt,
-            priority: 'high'
+            priority: 'high',
           });
         }
 
@@ -2978,14 +3129,16 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         const memCheck = canSpawnSubagent(800); // Need 800MB for subagent
         if (!memCheck.canSpawn) {
           console.warn('[Workflow] Insufficient memory for subagent - saving checkpoint');
-          console.warn(`[Memory] Current: ${memCheck.currentUsageMB.toFixed(2)}MB, Free: ${memCheck.freeMB.toFixed(2)}MB`);
+          console.warn(
+            `[Memory] Current: ${memCheck.currentUsageMB.toFixed(2)}MB, Free: ${memCheck.freeMB.toFixed(2)}MB`
+          );
 
           // Save checkpoint with current state
           const checkpointPath = await saveCheckpoint(runId, args.step, {
             reason: 'memory_pressure',
             step: args.step,
             agent: agentName,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
 
           console.log(`[Checkpoint] Saved to ${checkpointPath}`);
@@ -3002,114 +3155,127 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           runId: runId,
           step: parseInt(args.step),
           injections: injections,
-          workflowStep: config
+          workflowStep: config,
         });
-      
-      // Handle approval requirement
-      if (executionResult.status === 'awaiting_approval') {
-        console.log(`\n⏸️  Execution paused - awaiting user approval`);
-        console.log(`   Please review and approve to continue.\n`);
-        await updateRunSummary(runId);
-        process.exit(0);
-      }
-      
-      // Handle execution failure
-      if (executionResult.status === 'failed') {
-        console.error(`\n❌ Agent execution failed for step ${args.step}`);
-        if (executionResult.error) {
-          console.error(`   Error: ${executionResult.error}`);
+
+        // Handle approval requirement
+        if (executionResult.status === 'awaiting_approval') {
+          console.log(`\n⏸️  Execution paused - awaiting user approval`);
+          console.log(`   Please review and approve to continue.\n`);
+          await updateRunSummary(runId);
+          process.exit(0);
         }
-        if (executionResult.stderr) {
-          console.error(`   Stderr: ${executionResult.stderr}`);
+
+        // Handle execution failure
+        if (executionResult.status === 'failed') {
+          console.error(`\n❌ Agent execution failed for step ${args.step}`);
+          if (executionResult.error) {
+            console.error(`   Error: ${executionResult.error}`);
+          }
+          if (executionResult.stderr) {
+            console.error(`   Stderr: ${executionResult.stderr}`);
+          }
+          process.exit(1);
         }
-        process.exit(1);
-      }
-      
-      // Log execution success
-      console.log(`✅ Agent execution completed`);
-      console.log(`   Duration: ${executionResult.duration_ms}ms`);
-      console.log(`   Artifacts: ${executionResult.artifacts_written.length}`);
-      if (executionResult.token_usage) {
-        console.log(`   Token usage: ${executionResult.token_usage.used}/${executionResult.token_usage.limit} (${executionResult.token_usage.confidence} confidence)`);
-      }
-      console.log('');
 
-      // POST-EXECUTION: Validate skill usage
-      if (skillRequirements.validation.enforce_usage && allRequiredSkills.length > 0) {
-        console.log(`\n🔍 Validating skill usage...`);
+        // Log execution success
+        console.log(`✅ Agent execution completed`);
+        console.log(`   Duration: ${executionResult.duration_ms}ms`);
+        console.log(`   Artifacts: ${executionResult.artifacts_written.length}`);
+        if (executionResult.token_usage) {
+          console.log(
+            `   Token usage: ${executionResult.token_usage.used}/${executionResult.token_usage.limit} (${executionResult.token_usage.confidence} confidence)`
+          );
+        }
+        console.log('');
 
-        // Get execution log from result (if available)
-        const executionLog = executionResult.log || executionResult.output || '';
+        // POST-EXECUTION: Validate skill usage
+        if (skillRequirements.validation.enforce_usage && allRequiredSkills.length > 0) {
+          console.log(`\n🔍 Validating skill usage...`);
 
-        if (!executionLog) {
-          console.warn(`   ⚠️  No execution log available for skill validation`);
-        } else {
-          try {
-            // Validate skill usage against requirements
-            const skillValidation = await validateSkillUsage(
-              agentName,
-              taskDescription,
-              executionLog
-            );
+          // Get execution log from result (if available)
+          const executionLog = executionResult.log || executionResult.output || '';
 
-            // Display validation results
-            console.log(`   Compliance Score: ${skillValidation.complianceScore}%`);
-            console.log(`   Expected: ${skillValidation.expected.join(', ') || 'none'}`);
-            console.log(`   Used: ${skillValidation.used.join(', ') || 'none'}`);
+          if (!executionLog) {
+            console.warn(`   ⚠️  No execution log available for skill validation`);
+          } else {
+            try {
+              // Validate skill usage against requirements
+              const skillValidation = await validateSkillUsage(
+                agentName,
+                taskDescription,
+                executionLog
+              );
 
-            if (skillValidation.compliant) {
-              console.log(`   ✅ All required skills used`);
-            } else {
-              console.error(`\n❌ Skill compliance check failed:`);
+              // Display validation results
+              console.log(`   Compliance Score: ${skillValidation.complianceScore}%`);
+              console.log(`   Expected: ${skillValidation.expected.join(', ') || 'none'}`);
+              console.log(`   Used: ${skillValidation.used.join(', ') || 'none'}`);
 
-              if (skillValidation.violations.missingRequired.length > 0) {
-                console.error(`   Missing required skills: ${skillValidation.violations.missingRequired.join(', ')}`);
-              }
-
-              if (skillValidation.violations.missingTriggered.length > 0) {
-                console.warn(`   ⚠️  Missing triggered skills: ${skillValidation.violations.missingTriggered.join(', ')}`);
-              }
-
-              // Generate and display violation report
-              const violationReport = generateViolationReport(skillValidation);
-              console.log(`\n${violationReport}`);
-
-              // Enforce blocking if configured
-              if (skillRequirements.validation.mode === 'blocking') {
-                console.error(`\n❌ BLOCKED: Skill compliance failure blocks step execution`);
-
-                // Record skill validation in gate file before exiting
-                await recordSkillValidation(workflowId, args.step, skillValidation, gatePath, isDryRun);
-
-                throw new SkillComplianceError(skillValidation);
+              if (skillValidation.compliant) {
+                console.log(`   ✅ All required skills used`);
               } else {
-                console.warn(`\n⚠️  WARNING: Skill compliance failure (validation mode: ${skillRequirements.validation.mode})`);
+                console.error(`\n❌ Skill compliance check failed:`);
+
+                if (skillValidation.violations.missingRequired.length > 0) {
+                  console.error(
+                    `   Missing required skills: ${skillValidation.violations.missingRequired.join(', ')}`
+                  );
+                }
+
+                if (skillValidation.violations.missingTriggered.length > 0) {
+                  console.warn(
+                    `   ⚠️  Missing triggered skills: ${skillValidation.violations.missingTriggered.join(', ')}`
+                  );
+                }
+
+                // Generate and display violation report
+                const violationReport = generateViolationReport(skillValidation);
+                console.log(`\n${violationReport}`);
+
+                // Enforce blocking if configured
+                if (skillRequirements.validation.mode === 'blocking') {
+                  console.error(`\n❌ BLOCKED: Skill compliance failure blocks step execution`);
+
+                  // Record skill validation in gate file before exiting
+                  await recordSkillValidation(
+                    workflowId,
+                    args.step,
+                    skillValidation,
+                    gatePath,
+                    isDryRun
+                  );
+
+                  throw new SkillComplianceError(skillValidation);
+                } else {
+                  console.warn(
+                    `\n⚠️  WARNING: Skill compliance failure (validation mode: ${skillRequirements.validation.mode})`
+                  );
+                }
               }
+
+              // Store skill validation result for gate file recording
+              executionResult.skillValidation = skillValidation;
+            } catch (validationError) {
+              console.error(`\n❌ Skill validation error: ${validationError.message}`);
+
+              if (validationError instanceof SkillComplianceError) {
+                throw validationError; // Re-throw to block execution
+              }
+
+              // Non-blocking validation errors
+              console.warn(`   ⚠️  Continuing despite validation error`);
             }
-
-            // Store skill validation result for gate file recording
-            executionResult.skillValidation = skillValidation;
-          } catch (validationError) {
-            console.error(`\n❌ Skill validation error: ${validationError.message}`);
-
-            if (validationError instanceof SkillComplianceError) {
-              throw validationError; // Re-throw to block execution
-            }
-
-            // Non-blocking validation errors
-            console.warn(`   ⚠️  Continuing despite validation error`);
           }
         }
-      }
 
-      // Update run status (skip in dry-run)
-      if (!isDryRun) {
-        await updateRun(runId, {
-          current_step: parseInt(args.step),
-          status: 'in_progress'
-        });
-      }
-      
+        // Update run status (skip in dry-run)
+        if (!isDryRun) {
+          await updateRun(runId, {
+            current_step: parseInt(args.step),
+            status: 'in_progress',
+          });
+        }
       } catch (error) {
         console.error(`\n❌ Error executing agent: ${error.message}`);
         console.error(`   Step: ${args.step} (${stepName})`);
@@ -3124,13 +3290,17 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
   if (config.tool) {
     console.log(`   🔧 Tool:   ${config.tool} (tool-based step)`);
   }
-  console.log(`   📂 Input:  ${interpolatedOutput}${interpolatedOutput !== config.output ? ` (from ${config.output})` : ''}`);
+  console.log(
+    `   📂 Input:  ${interpolatedOutput}${interpolatedOutput !== config.output ? ` (from ${config.output})` : ''}`
+  );
   console.log(`   📋 Schema: ${config.schema || '(none - flexible validation)'}`);
   console.log(`   🛡️  Gate:   ${gatePathRaw}\n`);
 
   if (!existsSync(inputPath)) {
     console.error(`❌ Error: Input artifact not found: ${inputPath}`);
-    console.error(`   Step ${args.step} (${stepName}) executed by ${agentName} should have created '${interpolatedOutput}'.`);
+    console.error(
+      `   Step ${args.step} (${stepName}) executed by ${agentName} should have created '${interpolatedOutput}'.`
+    );
     console.error(`   Original output definition: '${config.output}'`);
     console.error(`   Please ensure the agent completed successfully before running validation.`);
     console.error(`\n💡 Suggestions:`);
@@ -3147,21 +3317,23 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
   if (schemaPath && existsSync(schemaPath)) {
     command += ` --schema "${schemaPath}"`;
   }
-  
+
   // Retry logic for validation
   const maxRetries = 3;
   let retryCount = 0;
   let validationSuccess = false;
   let lastError = null;
-  
+
   while (retryCount < maxRetries && !validationSuccess) {
     try {
       if (retryCount > 0) {
         const backoffSeconds = Math.pow(2, retryCount - 1);
-        console.log(`\n⏳ Retrying validation (attempt ${retryCount + 1}/${maxRetries}) after ${backoffSeconds}s backoff...`);
+        console.log(
+          `\n⏳ Retrying validation (attempt ${retryCount + 1}/${maxRetries}) after ${backoffSeconds}s backoff...`
+        );
         await new Promise(resolve => setTimeout(resolve, backoffSeconds * 1000));
       }
-      
+
       if (isDryRun) {
         console.log(`\n🔍 DRY-RUN: Would run validation command:`);
         console.log(`   ${command}`);
@@ -3178,15 +3350,16 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     } catch (error) {
       lastError = error;
       retryCount++;
-      
+
       // Check if error is transient (network, file system, etc.)
-      const isTransientError = error.message.includes('ENOENT') || 
-                              error.message.includes('EACCES') ||
-                              error.message.includes('network') ||
-                              error.message.includes('timeout') ||
-                              error.code === 'ENOENT' ||
-                              error.code === 'EACCES';
-      
+      const isTransientError =
+        error.message.includes('ENOENT') ||
+        error.message.includes('EACCES') ||
+        error.message.includes('network') ||
+        error.message.includes('timeout') ||
+        error.code === 'ENOENT' ||
+        error.code === 'EACCES';
+
       if (retryCount >= maxRetries || !isTransientError) {
         // Non-transient error or max retries reached
         console.error(`\n❌ Validation failed after ${retryCount} attempt(s)`);
@@ -3195,18 +3368,17 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         }
         throw error;
       }
-      
+
       console.warn(`⚠️  Validation attempt ${retryCount} failed: ${error.message}`);
       console.warn('   Retrying with exponential backoff...');
     }
   }
-  
+
   if (!validationSuccess) {
     throw lastError || new Error('Validation failed after all retries');
   }
-  
+
   try {
-    
     // Check gate file validation status
     try {
       if (existsSync(gatePath)) {
@@ -3253,9 +3425,13 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
 
     // Run custom validation checks if configured
     // All keys normalized to snake_case at load time - use only snake_case below
-    if (config.custom_checks && Array.isArray(config.custom_checks) && config.custom_checks.length > 0) {
+    if (
+      config.custom_checks &&
+      Array.isArray(config.custom_checks) &&
+      config.custom_checks.length > 0
+    ) {
       console.log(`\n🔍 Running ${config.custom_checks.length} custom validation check(s)...`);
-      
+
       try {
         const artifactData = await loadJSONFile(inputPath);
         const customValidationResult = await runCustomValidationChecks(
@@ -3265,7 +3441,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           args.step,
           workflowId
         );
-        
+
         if (customValidationResult.valid) {
           console.log(`✅ Custom validation checks: PASSED`);
         } else {
@@ -3273,7 +3449,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           customValidationResult.errors.forEach((error, index) => {
             console.error(`   ${index + 1}. ${error}`);
           });
-          
+
           // Update gate file with custom validation errors
           if (existsSync(gatePath)) {
             try {
@@ -3281,7 +3457,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
               gateData.custom_validation = {
                 valid: false,
                 errors: customValidationResult.errors,
-                checks_run: config.custom_checks
+                checks_run: config.custom_checks,
               };
               if (!isDryRun) {
                 writeFileSync(gatePath, JSON.stringify(gateData, null, 2), 'utf-8');
@@ -3289,10 +3465,12 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
                 console.log(`🔍 DRY-RUN: Would write gate file: ${gatePath}`);
               }
             } catch (updateError) {
-              console.warn(`⚠️  Warning: Could not update gate file with custom validation results: ${updateError.message}`);
+              console.warn(
+                `⚠️  Warning: Could not update gate file with custom validation results: ${updateError.message}`
+              );
             }
           }
-          
+
           process.exit(1);
         }
       } catch (customError) {
@@ -3300,18 +3478,22 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         process.exit(1);
       }
     }
-    
+
     // Validate secondary outputs if configured
     // All keys normalized to snake_case at load time - use only snake_case below
-    if (config.secondary_outputs && Array.isArray(config.secondary_outputs) && config.secondary_outputs.length > 0) {
+    if (
+      config.secondary_outputs &&
+      Array.isArray(config.secondary_outputs) &&
+      config.secondary_outputs.length > 0
+    ) {
       console.log(`\n🔍 Validating ${config.secondary_outputs.length} secondary output(s)...`);
-      
+
       let allSecondaryValid = true;
       for (const secondary of config.secondary_outputs) {
         const artifactName = secondary.artifact;
         const secondarySchema = secondary.schema;
         const validationTiming = secondary.validation_timing || 'post-generation';
-        
+
         // Interpolate template variables in artifact name
         let interpolatedArtifact = artifactName;
         interpolatedArtifact = interpolatedArtifact.replace(/\{\{workflow_id\}\}/g, workflowId);
@@ -3321,21 +3503,23 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         if (epicId) {
           interpolatedArtifact = interpolatedArtifact.replace(/\{\{epic_id\}\}/g, epicId);
         }
-        
+
         const secondaryArtifactPath = resolve(artifactsDir, interpolatedArtifact);
-        
+
         // Check if artifact exists
         if (!existsSync(secondaryArtifactPath)) {
           console.error(`\n❌ Secondary output artifact not found: ${interpolatedArtifact}`);
           console.error(`   Expected at: ${secondaryArtifactPath}`);
-          console.error(`   This artifact should be created by ${agentName} during step execution.`);
+          console.error(
+            `   This artifact should be created by ${agentName} during step execution.`
+          );
           allSecondaryValid = false;
           continue;
         }
-        
+
         // Resolve schema path
         const secondarySchemaPath = secondarySchema ? resolveSchemaPath(secondarySchema) : null;
-        
+
         // Validate schema exists if specified
         if (secondarySchema && secondarySchemaPath && !existsSync(secondarySchemaPath)) {
           console.error(`\n❌ Secondary output schema file not found: ${secondarySchema}`);
@@ -3343,7 +3527,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           allSecondaryValid = false;
           continue;
         }
-        
+
         // Create gate path for secondary output (use same directory as primary gate)
         const primaryGateBasename = gatePathRaw.split('/').pop().replace('.json', '');
         const secondaryGateBasename = `${primaryGateBasename}-${interpolatedArtifact.replace('.json', '').replace(/\{\{workflow_id\}\}/g, workflowId)}`;
@@ -3356,19 +3540,21 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             try {
               mkdirSync(secondaryGateDir, { recursive: true });
             } catch (error) {
-              console.error(`❌ Error: Failed to create secondary gate directory: ${secondaryGateDir}`);
+              console.error(
+                `❌ Error: Failed to create secondary gate directory: ${secondaryGateDir}`
+              );
               allSecondaryValid = false;
               continue;
             }
           }
         }
-        
+
         // Validate secondary output
         let secondaryCommand = `node "${gateScript}" --input "${secondaryArtifactPath}" --gate "${secondaryGatePath}" --autofix 1`;
         if (secondarySchemaPath && existsSync(secondarySchemaPath)) {
           secondaryCommand += ` --schema "${secondarySchemaPath}"`;
         }
-        
+
         try {
           execSync(secondaryCommand, { stdio: 'inherit' });
           console.log(`   ✅ Secondary output validated: ${interpolatedArtifact}`);
@@ -3378,18 +3564,18 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           allSecondaryValid = false;
         }
       }
-      
+
       if (!allSecondaryValid) {
         console.error(`\n⛔ Step ${args.step} Secondary Output Validation Failed.`);
         console.error(`   Please check the errors above and fix the secondary artifacts.`);
         process.exit(1);
       }
-      
+
       console.log(`\n✨ All Secondary Outputs Validated Successfully!`);
     }
-    
+
     console.log('\n✨ Step Validation Complete! You may proceed to the next step.');
-    
+
     // Register artifacts and update run.json if run-id provided
     if (runId) {
       try {
@@ -3399,7 +3585,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           const gateData = await loadJSONFile(gatePath);
           validationStatus = gateData.valid ? 'pass' : 'fail';
         }
-        
+
         // Register primary artifact (skip in dry-run)
         if (!isDryRun) {
           await registerArtifact(runId, {
@@ -3408,24 +3594,27 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             agent: agentName,
             path: inputPath,
             dependencies: [], // TODO: Extract from step inputs
-            validationStatus: validationStatus
+            validationStatus: validationStatus,
           });
         } else {
           console.log(`🔍 DRY-RUN: Would register artifact: ${interpolatedOutput}`);
         }
-        
+
         // Register secondary artifacts if any
         if (config.secondary_outputs && Array.isArray(config.secondary_outputs)) {
           for (const secondaryOutput of config.secondary_outputs) {
             let secondaryInterpolated = secondaryOutput;
-            secondaryInterpolated = secondaryInterpolated.replace(/\{\{workflow_id\}\}/g, workflowId);
+            secondaryInterpolated = secondaryInterpolated.replace(
+              /\{\{workflow_id\}\}/g,
+              workflowId
+            );
             if (storyId) {
               secondaryInterpolated = secondaryInterpolated.replace(/\{\{story_id\}\}/g, storyId);
             }
             if (epicId) {
               secondaryInterpolated = secondaryInterpolated.replace(/\{\{epic_id\}\}/g, epicId);
             }
-            
+
             const secondaryPath = resolveArtifactPath(runId, secondaryInterpolated);
             if (existsSync(secondaryPath) || isDryRun) {
               if (!isDryRun) {
@@ -3435,22 +3624,24 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
                   agent: agentName,
                   path: secondaryPath,
                   dependencies: [interpolatedOutput],
-                  validationStatus: validationStatus
+                  validationStatus: validationStatus,
                 });
               } else {
-                console.log(`🔍 DRY-RUN: Would register secondary artifact: ${secondaryInterpolated}`);
+                console.log(
+                  `🔍 DRY-RUN: Would register secondary artifact: ${secondaryInterpolated}`
+                );
               }
             }
           }
         }
-        
+
         // Enforce artifact contract (fail fast if contract not met) - skip in dry-run
         if (!isDryRun) {
           try {
             await enforceArtifactContract(runId, parseInt(args.step), {
               requireSchema: true,
               requireGate: true,
-              requireReasoning: false // Reasoning is optional for now
+              requireReasoning: false, // Reasoning is optional for now
             });
             console.log(`\n✅ Artifact contract validated for step ${args.step}`);
           } catch (contractError) {
@@ -3459,7 +3650,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             // Don't fail the step, but log the violation
             // In strict mode, this would cause step to fail
           }
-          
+
           // Check publishing status for publishable artifacts
           try {
             const { readArtifactRegistry } = await import('./run-manager.mjs');
@@ -3467,11 +3658,13 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             const stepArtifacts = Object.values(registry.artifacts || {}).filter(
               a => a.step === parseInt(args.step)
             );
-            
+
             for (const artifact of stepArtifacts) {
               const metadata = artifact.metadata || {};
               if (metadata.publishable === true && metadata.published !== true) {
-                console.warn(`\n⚠️  Warning: Artifact "${artifact.name}" is marked as publishable but not published`);
+                console.warn(
+                  `\n⚠️  Warning: Artifact "${artifact.name}" is marked as publishable but not published`
+                );
                 console.warn(`   Publish status: ${metadata.publish_status || 'pending'}`);
                 if (metadata.publish_error) {
                   console.warn(`   Last error: ${metadata.publish_error}`);
@@ -3481,41 +3674,43 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             }
           } catch (publishCheckError) {
             // Publishing check failed - not critical, continue
-            console.warn(`⚠️  Warning: Could not check publishing status: ${publishCheckError.message}`);
+            console.warn(
+              `⚠️  Warning: Could not check publishing status: ${publishCheckError.message}`
+            );
           }
         } else {
           console.log(`🔍 DRY-RUN: Would validate artifact contract for step ${args.step}`);
           console.log(`🔍 DRY-RUN: Would check publishing status for publishable artifacts`);
         }
-        
+
         // Update run.json with step completion (skip in dry-run)
         if (!isDryRun) {
           await updateRun(runId, {
             current_step: parseInt(args.step),
-            status: 'in_progress'
+            status: 'in_progress',
           });
-          
+
           // Update dashboard
           try {
             await updateRunSummary(runId);
           } catch (dashboardError) {
             console.warn(`⚠️  Warning: Could not update dashboard: ${dashboardError.message}`);
           }
-          
+
           // Create checkpoint after successful step execution
           try {
             const checkpoint = await createCheckpoint(runId, parseInt(args.step), {
               step_name: stepName,
               agent: agentName,
               artifacts: [interpolatedOutput],
-              validation_status: validationStatus
+              validation_status: validationStatus,
             });
             console.log(`\n💾 Checkpoint created: ${checkpoint.checkpoint_id}`);
           } catch (checkpointError) {
             console.warn(`⚠️  Warning: Could not create checkpoint: ${checkpointError.message}`);
             // Continue - checkpoint creation is not critical
           }
-          
+
           console.log(`\n📝 Artifacts registered in run ${runId}`);
         } else {
           console.log(`\n🔍 DRY-RUN: Would register artifacts in run ${runId}`);
@@ -3525,7 +3720,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         // Continue - artifact registration is not critical for step execution
       }
     }
-    
+
     // Context monitoring: Record context usage after step execution
     try {
       // Record step completion (actual usage would come from agent execution tracking)
@@ -3536,9 +3731,9 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         systemPrompt: 0,
         systemTools: 0,
         mcpTools: 0,
-        messages: 0
+        messages: 0,
       });
-      
+
       // Check threshold again after recording
       const postCheck = checkContextThreshold(agentName, { total: 0 });
       if (postCheck.thresholdReached) {
@@ -3555,7 +3750,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     console.error(`   Agent: ${agentName}`);
     console.error(`   Artifact: ${interpolatedOutput}`);
     console.error(`   Gate file: ${gatePathRaw}`);
-    
+
     // Try to read gate file for detailed error information
     try {
       if (existsSync(gatePath)) {
@@ -3571,7 +3766,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     } catch (gateError) {
       // Gate file read failed - continue with basic error message
     }
-    
+
     console.error(`\n   💡 Suggestions:`);
     console.error(`   - Fix the errors in the artifact file`);
     console.error(`   - Re-run validation after fixes`);
@@ -3585,7 +3780,9 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
       logMemoryUsage('Before cleanup');
 
       const results = cleanupAllCaches();
-      console.log(`[Memory] Cleanup complete: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`);
+      console.log(
+        `[Memory] Cleanup complete: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`
+      );
 
       // Force GC if available
       if (global.gc) {
@@ -3612,5 +3809,5 @@ export {
   parseExpression,
   parseOr,
   parseAnd,
-  parsePrimary
+  parsePrimary,
 };

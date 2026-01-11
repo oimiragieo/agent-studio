@@ -30,10 +30,10 @@ const testCases = [
       tool: 'Task',
       input: {
         subagent_type: 'developer',
-        prompt: 'Create a new UserProfile component'
-      }
+        prompt: 'Create a new UserProfile component',
+      },
     },
-    expectedBehavior: 'Should inject required skills for developer agent'
+    expectedBehavior: 'Should inject required skills for developer agent',
   },
   {
     name: 'Task tool with orchestrator subagent',
@@ -41,10 +41,10 @@ const testCases = [
       tool: 'Task',
       input: {
         subagent_type: 'orchestrator',
-        prompt: 'Coordinate the feature development workflow'
-      }
+        prompt: 'Coordinate the feature development workflow',
+      },
     },
-    expectedBehavior: 'Should inject required skills for orchestrator agent'
+    expectedBehavior: 'Should inject required skills for orchestrator agent',
   },
   {
     name: 'Task tool with unknown subagent',
@@ -52,50 +52,50 @@ const testCases = [
       tool: 'Task',
       input: {
         subagent_type: 'nonexistent-agent',
-        prompt: 'Do something'
-      }
+        prompt: 'Do something',
+      },
     },
-    expectedBehavior: 'Should gracefully handle unknown agent and pass through'
+    expectedBehavior: 'Should gracefully handle unknown agent and pass through',
   },
   {
     name: 'Non-Task tool (Read)',
     input: {
       tool: 'Read',
       input: {
-        file_path: '/some/file.txt'
-      }
+        file_path: '/some/file.txt',
+      },
     },
-    expectedBehavior: 'Should pass through unchanged (not a Task tool)'
+    expectedBehavior: 'Should pass through unchanged (not a Task tool)',
   },
   {
     name: 'Malformed JSON',
     input: '{ invalid json',
-    expectedBehavior: 'Should handle parse error and pass through'
+    expectedBehavior: 'Should handle parse error and pass through',
   },
   {
     name: 'Empty input',
     input: '',
-    expectedBehavior: 'Should handle empty input gracefully'
+    expectedBehavior: 'Should handle empty input gracefully',
   },
   {
     name: 'Task tool missing subagent_type',
     input: {
       tool: 'Task',
       input: {
-        prompt: 'Do something'
-      }
+        prompt: 'Do something',
+      },
     },
-    expectedBehavior: 'Should warn and pass through unchanged'
+    expectedBehavior: 'Should warn and pass through unchanged',
   },
   {
     name: 'Task tool missing prompt',
     input: {
       tool: 'Task',
       input: {
-        subagent_type: 'developer'
-      }
+        subagent_type: 'developer',
+      },
     },
-    expectedBehavior: 'Should warn and pass through unchanged'
+    expectedBehavior: 'Should warn and pass through unchanged',
   },
   {
     name: 'Task tool with code review trigger',
@@ -103,11 +103,11 @@ const testCases = [
       tool: 'Task',
       input: {
         subagent_type: 'developer',
-        prompt: 'Review the authentication code for security issues'
-      }
+        prompt: 'Review the authentication code for security issues',
+      },
     },
-    expectedBehavior: 'Should inject required + triggered skills (code review triggers)'
-  }
+    expectedBehavior: 'Should inject required + triggered skills (code review triggers)',
+  },
 ];
 
 /**
@@ -116,26 +116,26 @@ const testCases = [
  * @returns {Promise<Object>} Test result
  */
 async function runTest(testCase) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const hookPath = join(__dirname, 'skill-injection-hook.js');
     const startTime = Date.now();
 
     const proc = spawn('node', [hookPath], {
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
 
     let stdout = '';
     let stderr = '';
 
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on('data', data => {
       stdout += data.toString();
     });
 
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       const endTime = Date.now();
       const executionTime = endTime - startTime;
 
@@ -154,14 +154,13 @@ async function runTest(testCase) {
         stdout,
         stderr,
         output,
-        success: code === 0
+        success: code === 0,
       });
     });
 
     // Write input to stdin
-    const inputStr = typeof testCase.input === 'string'
-      ? testCase.input
-      : JSON.stringify(testCase.input, null, 2);
+    const inputStr =
+      typeof testCase.input === 'string' ? testCase.input : JSON.stringify(testCase.input, null, 2);
 
     proc.stdin.write(inputStr);
     proc.stdin.end();
@@ -250,16 +249,18 @@ async function main() {
   // Detailed results
   if (failed > 0) {
     console.log('Failed tests:');
-    results.filter(r => !r.success).forEach(r => {
-      console.log(`  - ${r.name} (exit code: ${r.exitCode})`);
-    });
+    results
+      .filter(r => !r.success)
+      .forEach(r => {
+        console.log(`  - ${r.name} (exit code: ${r.exitCode})`);
+      });
   }
 
   process.exit(failed > 0 ? 1 : 0);
 }
 
 // Run tests
-main().catch((error) => {
+main().catch(error => {
   console.error('Fatal error:', error.message);
   console.error(error.stack);
   process.exit(1);

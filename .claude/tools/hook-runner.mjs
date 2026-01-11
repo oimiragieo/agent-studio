@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Cross-Platform Hook Runner
- * 
+ *
  * Executes hooks in a cross-platform way (Node.js/PowerShell)
  * Replaces Bash/jq dependencies for Windows compatibility
- * 
+ *
  * Usage:
  *   node .claude/tools/hook-runner.mjs --hook <hook-name> [--args <json>]
  */
@@ -45,7 +45,7 @@ function getPlatform() {
 export async function executeHook(hookName, args = {}) {
   const platform = getPlatform();
   const hookPath = join(HOOKS_DIR, `${hookName}.mjs`);
-  
+
   // Check if hook exists
   if (!existsSync(hookPath)) {
     // Try platform-specific hook
@@ -53,14 +53,14 @@ export async function executeHook(hookName, args = {}) {
     if (existsSync(platformHookPath)) {
       return await executePlatformHook(platformHookPath, args, platform);
     }
-    
+
     throw new Error(`Hook not found: ${hookName}`);
   }
-  
+
   // Execute Node.js hook (cross-platform)
   try {
     const hookModule = await import(`file://${hookPath}`);
-    
+
     if (typeof hookModule.default === 'function') {
       return await hookModule.default(args);
     } else if (typeof hookModule.execute === 'function') {
@@ -82,19 +82,19 @@ async function executePlatformHook(hookPath, args, platform) {
     const psScript = await readFile(hookPath, 'utf-8');
     const psArgs = JSON.stringify(args);
     const command = `powershell -ExecutionPolicy Bypass -Command "${psScript.replace(/\$args/g, psArgs)}"`;
-    
+
     try {
       const { stdout, stderr } = await execAsync(command);
       return {
         success: true,
         output: stdout,
-        error: stderr || null
+        error: stderr || null,
       };
     } catch (error) {
       return {
         success: false,
         error: error.message,
-        output: error.stdout || null
+        output: error.stdout || null,
       };
     }
   } else {
@@ -115,10 +115,10 @@ export async function listHooks() {
   if (!existsSync(HOOKS_DIR)) {
     return [];
   }
-  
+
   const { readdir } = await import('fs/promises');
   const files = await readdir(HOOKS_DIR);
-  
+
   return files
     .filter(file => file.endsWith('.mjs') || file.endsWith('.ps1'))
     .map(file => file.replace(/\.(mjs|ps1)$/, ''));
@@ -129,22 +129,22 @@ async function main() {
   const args = process.argv.slice(2);
   const hookIndex = args.indexOf('--hook');
   const argsIndex = args.indexOf('--args');
-  
+
   if (hookIndex === -1) {
     console.error('Usage: node hook-runner.mjs --hook <hook-name> [--args <json>]');
     console.error('       node hook-runner.mjs --list');
     process.exit(1);
   }
-  
+
   if (args[hookIndex + 1] === '--list' || args.includes('--list')) {
     const hooks = await listHooks();
     console.log(JSON.stringify(hooks, null, 2));
     return;
   }
-  
+
   const hookName = args[hookIndex + 1];
   let hookArgs = {};
-  
+
   if (argsIndex !== -1 && argsIndex < args.length - 1) {
     try {
       hookArgs = JSON.parse(args[argsIndex + 1]);
@@ -153,7 +153,7 @@ async function main() {
       process.exit(1);
     }
   }
-  
+
   try {
     const result = await executeHook(hookName, hookArgs);
     console.log(JSON.stringify(result, null, 2));
@@ -170,6 +170,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 export default {
   executeHook,
-  listHooks
+  listHooks,
 };
-

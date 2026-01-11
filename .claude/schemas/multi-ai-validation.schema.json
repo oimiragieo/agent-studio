@@ -3,13 +3,22 @@
   "type": "object",
   "title": "Multi-AI Validation Report",
   "description": "Schema for multi-AI validation results from automated-enterprise-flow",
-  "required": ["validation_id", "validation_date", "validators_used", "consensus_status", "consensus_issues"],
+  "required": [
+    "validation_id",
+    "validation_date",
+    "validators_used",
+    "consensus_status",
+    "consensus_issues"
+  ],
   "properties": {
     "validation_id": { "type": "string", "description": "Unique identifier for validation" },
     "validation_date": { "type": "string", "format": "date-time" },
     "validators_used": {
       "type": "array",
-      "items": { "type": "string", "enum": ["cursor", "gemini", "codex", "claude", "gpt4", "other"] }
+      "items": {
+        "type": "string",
+        "enum": ["cursor", "gemini", "codex", "claude", "gpt4", "other"]
+      }
     },
     "consensus_status": {
       "type": "string",
@@ -67,8 +76,21 @@
         "properties": {
           "issue": { "type": "string" },
           "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
-          "category": { "type": "string", "enum": ["security", "performance", "code_quality", "design", "testing", "documentation"] },
-          "agreement_count": { "type": "integer", "description": "Number of validators that identified this issue" },
+          "category": {
+            "type": "string",
+            "enum": [
+              "security",
+              "performance",
+              "code_quality",
+              "design",
+              "testing",
+              "documentation"
+            ]
+          },
+          "agreement_count": {
+            "type": "integer",
+            "description": "Number of validators that identified this issue"
+          },
           "validators_agreed": { "type": "array", "items": { "type": "string" } },
           "file": { "type": "string" },
           "line": { "type": "integer" },

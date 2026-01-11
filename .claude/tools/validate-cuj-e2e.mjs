@@ -104,12 +104,12 @@ const validationResults = {
     runnable_cursor: 0,
     runnable_factory: 0,
     manual_only: 0,
-    blocked: 0
+    blocked: 0,
   },
   details: {},
   recommendations: [],
   errors: [],
-  warnings: []
+  warnings: [],
 };
 
 /**
@@ -124,7 +124,7 @@ function execCommand(cmd, description, allowFail = false) {
     const output = execSync(cmd, {
       cwd: ROOT,
       encoding: 'utf-8',
-      stdio: VERBOSE ? 'inherit' : 'pipe'
+      stdio: VERBOSE ? 'inherit' : 'pipe',
     });
 
     if (!VERBOSE && !JSON_OUTPUT) {
@@ -144,7 +144,7 @@ function execCommand(cmd, description, allowFail = false) {
       }
       validationResults.errors.push({
         step: description,
-        error: error.message
+        error: error.message,
       });
       return { success: false, output: error.message };
     }
@@ -167,7 +167,7 @@ function parseCUJIndex() {
   if (!existsSync(indexPath)) {
     validationResults.errors.push({
       step: 'Parse CUJ-INDEX.md',
-      error: 'CUJ-INDEX.md not found'
+      error: 'CUJ-INDEX.md not found',
     });
     return new Map();
   }
@@ -195,7 +195,10 @@ function parseCUJIndex() {
 
     // Parse table rows
     if (inMappingTable && headerPassed && line.startsWith('|')) {
-      const cols = line.split('|').map(c => c.trim()).filter(c => c);
+      const cols = line
+        .split('|')
+        .map(c => c.trim())
+        .filter(c => c);
       if (cols.length >= 4) {
         const cujId = cols[0]; // e.g., "CUJ-001"
         const executionMode = cols[1]; // e.g., "skill-only" or "greenfield-fullstack.yaml"
@@ -206,7 +209,7 @@ function parseCUJIndex() {
           mapping.set(cujId, {
             executionMode,
             workflowPath,
-            primarySkill
+            primarySkill,
           });
         }
       }
@@ -230,7 +233,7 @@ function getCUJFiles() {
   if (!existsSync(cujDir)) {
     validationResults.errors.push({
       step: 'Get CUJ files',
-      error: 'CUJ directory not found: .claude/docs/cujs'
+      error: 'CUJ directory not found: .claude/docs/cujs',
     });
     return [];
   }
@@ -273,20 +276,21 @@ function validateWorkflowDryRun(workflowName) {
   if (!fileExists(workflowPath)) {
     return {
       success: false,
-      error: `Workflow file not found: ${workflowPath}`
+      error: `Workflow file not found: ${workflowPath}`,
     };
   }
 
   try {
-    execSync(
-      `node .claude/tools/workflow_runner.js --workflow ${workflowPath} --dry-run`,
-      { cwd: ROOT, encoding: 'utf-8', stdio: 'pipe' }
-    );
+    execSync(`node .claude/tools/workflow_runner.js --workflow ${workflowPath} --dry-run`, {
+      cwd: ROOT,
+      encoding: 'utf-8',
+      stdio: 'pipe',
+    });
     return { success: true };
   } catch (error) {
     return {
       success: false,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -310,7 +314,11 @@ function getPlatformCompatibility(cujEntry) {
   } else if (executionMode === 'workflow') {
     // Workflow-based CUJs: Check if workflow exists
     if (workflowPath && workflowPath !== 'null') {
-      const workflowName = workflowPath.replace(/`/g, '').replace('.claude/workflows/', '').replace('.yaml', '').trim();
+      const workflowName = workflowPath
+        .replace(/`/g, '')
+        .replace('.claude/workflows/', '')
+        .replace('.yaml', '')
+        .trim();
       if (workflowExists(workflowName)) {
         platforms.push('claude');
       }
@@ -319,7 +327,12 @@ function getPlatformCompatibility(cujEntry) {
 
   // Cursor compatibility (subset of Claude)
   // CUJs that require Claude-only skills are excluded
-  const claudeOnlySkills = ['recovery', 'optional-artifact-handler', 'conflict-resolution', 'api-contract-generator'];
+  const claudeOnlySkills = [
+    'recovery',
+    'optional-artifact-handler',
+    'conflict-resolution',
+    'api-contract-generator',
+  ];
   if (platforms.includes('claude')) {
     if (executionMode === 'skill-only' && claudeOnlySkills.includes(primarySkill)) {
       // Claude-only skill, not compatible with Cursor
@@ -390,10 +403,13 @@ function checkPlanRatingStep(cujId, executionMode, cujContent) {
       const step01Match = cujContent.match(/## Step 0\.1:[\s\S]*?(?=## Step|$)/);
       if (step01Match) {
         const step01Content = step01Match[0];
-        const hasResponseRater = step01Content.toLowerCase().includes('skill: response-rater') ||
-                                 step01Content.toLowerCase().includes('response-rater');
+        const hasResponseRater =
+          step01Content.toLowerCase().includes('skill: response-rater') ||
+          step01Content.toLowerCase().includes('response-rater');
         if (!hasResponseRater) {
-          errors.push(`CUJ ${cujId}: Step 0.1 exists but does not contain "Skill: response-rater" - correct mechanism required`);
+          errors.push(
+            `CUJ ${cujId}: Step 0.1 exists but does not contain "Skill: response-rater" - correct mechanism required`
+          );
         }
       }
     }
@@ -413,7 +429,7 @@ function validateCUJ(cujId, cujEntry) {
     platforms: [],
     execution_mode: executionMode,
     issues: [],
-    warnings: []
+    warnings: [],
   };
 
   // TASK 3: Verify CUJ doc file exists (fix false green for CUJ-056)
@@ -479,7 +495,11 @@ function validateCUJ(cujId, cujEntry) {
       validationResults.summary.blocked++;
     } else {
       // Extract workflow filename from path (e.g., ".claude/workflows/greenfield-fullstack.yaml" -> "greenfield-fullstack")
-      const workflowName = workflowPath.replace(/`/g, '').replace('.claude/workflows/', '').replace('.yaml', '').trim();
+      const workflowName = workflowPath
+        .replace(/`/g, '')
+        .replace('.claude/workflows/', '')
+        .replace('.yaml', '')
+        .trim();
       status.workflow = workflowName;
 
       if (!workflowExists(workflowName)) {
@@ -532,7 +552,7 @@ function generateRecommendations() {
               cujId,
               issue,
               fix: `Create missing skill: .claude/skills/${skillName}/SKILL.md`,
-              guidance: `Run: node -e "const fs = require('fs'); const path = require('path'); const dir = path.join('.claude', 'skills', '${skillName}'); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, 'SKILL.md'), '', { flag: 'a' });"`
+              guidance: `Run: node -e "const fs = require('fs'); const path = require('path'); const dir = path.join('.claude', 'skills', '${skillName}'); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, 'SKILL.md'), '', { flag: 'a' });"`,
             });
           }
         } else if (issue.includes('Workflow not found')) {
@@ -542,7 +562,7 @@ function generateRecommendations() {
               cujId,
               issue,
               fix: `Create missing workflow: .claude/workflows/${workflowName}.yaml`,
-              guidance: `Run: node -e "const fs = require('fs'); const path = require('path'); fs.writeFileSync(path.join('.claude', 'workflows', '${workflowName}.yaml'), '', { flag: 'a' });"`
+              guidance: `Run: node -e "const fs = require('fs'); const path = require('path'); fs.writeFileSync(path.join('.claude', 'workflows', '${workflowName}.yaml'), '', { flag: 'a' });"`,
             });
           }
         } else if (issue.includes('Schema not found')) {
@@ -552,7 +572,7 @@ function generateRecommendations() {
               cujId,
               issue,
               fix: `Create missing schema: .claude/schemas/${schemaName}.schema.json`,
-              guidance: `Run: node -e "const fs = require('fs'); const path = require('path'); fs.writeFileSync(path.join('.claude', 'schemas', '${schemaName}.schema.json'), '', { flag: 'a' });"`
+              guidance: `Run: node -e "const fs = require('fs'); const path = require('path'); fs.writeFileSync(path.join('.claude', 'schemas', '${schemaName}.schema.json'), '', { flag: 'a' });"`,
             });
           }
         } else if (issue.includes('Workflow dry-run failed')) {
@@ -560,7 +580,7 @@ function generateRecommendations() {
             cujId,
             issue,
             fix: `Fix workflow validation errors in ${details.workflow}.yaml`,
-            command: `node .claude/tools/workflow_runner.js --workflow .claude/workflows/${details.workflow}.yaml --dry-run --verbose`
+            command: `node .claude/tools/workflow_runner.js --workflow .claude/workflows/${details.workflow}.yaml --dry-run --verbose`,
           });
         }
       }
@@ -568,13 +588,19 @@ function generateRecommendations() {
   }
 
   // Analyze platform compatibility gaps
-  const claudeOnlyCount = validationResults.summary.runnable_claude - validationResults.summary.runnable_cursor;
+  const claudeOnlyCount =
+    validationResults.summary.runnable_claude - validationResults.summary.runnable_cursor;
   if (claudeOnlyCount > 0) {
     recommendations.push({
       cujId: 'PLATFORM',
       issue: `${claudeOnlyCount} CUJs are Claude-only`,
       fix: 'Port Claude-only skills to Cursor for broader compatibility',
-      skills: ['recovery', 'optional-artifact-handler', 'conflict-resolution', 'api-contract-generator']
+      skills: [
+        'recovery',
+        'optional-artifact-handler',
+        'conflict-resolution',
+        'api-contract-generator',
+      ],
     });
   }
 
@@ -623,7 +649,7 @@ async function validateCUJSystem() {
   if (cujMapping.size === 0) {
     validationResults.errors.push({
       step: 'Parse CUJ-INDEX.md',
-      error: 'No CUJ mappings found in CUJ-INDEX.md'
+      error: 'No CUJ mappings found in CUJ-INDEX.md',
     });
 
     if (!JSON_OUTPUT) {
@@ -644,8 +670,8 @@ async function validateCUJSystem() {
     validatedCount++;
 
     if (VERBOSE && !JSON_OUTPUT) {
-      const statusSymbol = status.status === 'runnable' ? '✓' :
-                          status.status === 'manual' ? '⚠' : '❌';
+      const statusSymbol =
+        status.status === 'runnable' ? '✓' : status.status === 'manual' ? '⚠' : '❌';
       console.log(`  ${statusSymbol} ${cujId}: ${status.status} (${status.execution_mode})`);
     }
   }
@@ -741,11 +767,17 @@ async function main() {
       console.error('❌ Fatal error during validation:', error.message);
       console.error(error.stack);
     } else {
-      console.log(JSON.stringify({
-        error: 'Fatal error',
-        message: error.message,
-        stack: error.stack
-      }, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            error: 'Fatal error',
+            message: error.message,
+            stack: error.stack,
+          },
+          null,
+          2
+        )
+      );
     }
     process.exit(2);
   }

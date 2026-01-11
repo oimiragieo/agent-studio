@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
  * File Path Validator Hook (PreToolUse)
- * 
+ *
  * Layer 1: Hard block malformed paths and root directory violations
- * 
+ *
  * Validates:
  * - Malformed Windows paths (Cdevprojects...)
  * - Windows reserved names (nul, con, prn, aux)
  * - Concatenated path segments
  * - Root directory violations (except allowlist)
  * - Bash file creation redirects (Layer 2)
- * 
+ *
  * Usage: Configured as PreToolUse hook in Claude Code settings
  */
 
@@ -24,11 +24,26 @@ const __dirname = dirname(__filename);
 // Load root allowlist from schema
 const SCHEMA_PATH = resolve(__dirname, '..', 'schemas', 'file-location.schema.json');
 const ROOT_ALLOWLIST = [
-  'package.json', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock',
-  'README.md', 'GETTING_STARTED.md', 'LICENSE', '.gitignore',
-  '.npmrc', '.nvmrc', '.editorconfig', 'tsconfig.json',
-  'eslint.config.js', '.eslintrc.json', 'prettier.config.js', '.prettierrc',
-  'CHANGELOG.md', 'CONTRIBUTING.md', 'CODE_OF_CONDUCT.md', 'SECURITY.md'
+  'package.json',
+  'package-lock.json',
+  'pnpm-lock.yaml',
+  'yarn.lock',
+  'README.md',
+  'GETTING_STARTED.md',
+  'LICENSE',
+  '.gitignore',
+  '.npmrc',
+  '.nvmrc',
+  '.editorconfig',
+  'tsconfig.json',
+  'eslint.config.js',
+  '.eslintrc.json',
+  'prettier.config.js',
+  '.prettierrc',
+  'CHANGELOG.md',
+  'CONTRIBUTING.md',
+  'CODE_OF_CONDUCT.md',
+  'SECURITY.md',
 ];
 
 // Load allowlist from schema if available
@@ -45,16 +60,22 @@ try {
 
 // Malformed path patterns
 const MALFORMED_PATTERNS = [
-  /^C[a-zA-Z][^:\\\/]/,  // Malformed Windows path (missing separator)
-  /^(nul|con|prn|aux)$/i,  // Windows reserved names
-  /^[A-Z][a-z]+[A-Z].*\.md$/,  // Concatenated path segments
-  /[a-z]{4,}[A-Z][a-z].*[a-z]{4,}[A-Z]/,  // Multiple concatenated segments
+  /^C[a-zA-Z][^:\\\/]/, // Malformed Windows path (missing separator)
+  /^(nul|con|prn|aux)$/i, // Windows reserved names
+  /^[A-Z][a-z]+[A-Z].*\.md$/, // Concatenated path segments
+  /[a-z]{4,}[A-Z][a-z].*[a-z]{4,}[A-Z]/, // Multiple concatenated segments
 ];
 
 // Prohibited directories
 const PROHIBITED_DIRS = [
-  'node_modules/', '.git/', 'dist/', 'build/', 'out/',
-  '.next/', '.nuxt/', 'coverage/'
+  'node_modules/',
+  '.git/',
+  'dist/',
+  'build/',
+  'out/',
+  '.next/',
+  '.nuxt/',
+  'coverage/',
 ];
 
 /**
@@ -80,10 +101,14 @@ function getFilename(filePath) {
  */
 function suggestPath(filePath, reason) {
   const filename = getFilename(filePath);
-  
+
   if (reason === 'root_violation') {
     // Suggest .claude/context/reports/ or .claude/context/tasks/ based on filename
-    if (filename.includes('report') || filename.includes('audit') || filename.includes('analysis')) {
+    if (
+      filename.includes('report') ||
+      filename.includes('audit') ||
+      filename.includes('analysis')
+    ) {
       return `.claude/context/reports/${filename}`;
     } else if (filename.includes('task') || filename.includes('todo')) {
       return `.claude/context/tasks/${filename}`;
@@ -91,7 +116,7 @@ function suggestPath(filePath, reason) {
       return `.claude/context/artifacts/${filename}`;
     }
   }
-  
+
   if (reason === 'malformed_path') {
     // Try to reconstruct path
     // Common pattern: CdevprojectsLLM-RULES.claude... → .claude/...
@@ -104,7 +129,7 @@ function suggestPath(filePath, reason) {
     // Default suggestion
     return `.claude/context/artifacts/${filename}`;
   }
-  
+
   return null;
 }
 
@@ -115,10 +140,10 @@ function validateFilePath(filePath) {
   if (!filePath || typeof filePath !== 'string') {
     return { valid: true }; // Skip validation if no path
   }
-  
+
   // Normalize path
   const normalized = filePath.replace(/\\/g, '/').trim();
-  
+
   // Check malformed patterns
   for (const pattern of MALFORMED_PATTERNS) {
     if (pattern.test(normalized)) {
@@ -126,11 +151,11 @@ function validateFilePath(filePath) {
         valid: false,
         reason: 'malformed_path',
         message: `BLOCKED: Malformed file path detected. Path appears to have missing separators or corrupted Windows path format.`,
-        suggested_path: suggestPath(normalized, 'malformed_path')
+        suggested_path: suggestPath(normalized, 'malformed_path'),
       };
     }
   }
-  
+
   // Check root directory violations
   if (isRootPath(normalized)) {
     const filename = getFilename(normalized);
@@ -139,11 +164,11 @@ function validateFilePath(filePath) {
         valid: false,
         reason: 'root_violation',
         message: `BLOCKED: File "${filename}" not allowed in project root. Use appropriate .claude/ subdirectory. See .claude/rules/subagent-file-rules.md for correct locations.`,
-        suggested_path: suggestPath(normalized, 'root_violation')
+        suggested_path: suggestPath(normalized, 'root_violation'),
       };
     }
   }
-  
+
   // Check prohibited directories
   for (const prohibited of PROHIBITED_DIRS) {
     if (normalized.startsWith(prohibited) || normalized.includes(`/${prohibited}`)) {
@@ -151,11 +176,11 @@ function validateFilePath(filePath) {
         valid: false,
         reason: 'prohibited_directory',
         message: `BLOCKED: Cannot write to prohibited directory "${prohibited}". This location is reserved for build outputs or version control.`,
-        suggested_path: `.claude/context/artifacts/${getFilename(normalized)}`
+        suggested_path: `.claude/context/artifacts/${getFilename(normalized)}`,
       };
     }
   }
-  
+
   return { valid: true };
 }
 
@@ -166,14 +191,14 @@ function detectBashFileCreation(command) {
   if (!command || typeof command !== 'string') {
     return null;
   }
-  
+
   // Patterns: echo "..." > file.md, cat <<EOF > file.md
   const patterns = [
     /echo\s+["'].*["']\s*>\s+[^\s&|;]+/,
     /cat\s+<<\s*\w+\s*>\s+[^\s&|;]+/,
     /printf\s+.*\s*>\s+[^\s&|;]+/,
   ];
-  
+
   for (const pattern of patterns) {
     if (pattern.test(command)) {
       // Extract filename
@@ -182,11 +207,11 @@ function detectBashFileCreation(command) {
       return {
         detected: true,
         filename: filename,
-        message: `BLOCKED: File creation via Bash redirects is blocked. Use Write tool instead.`
+        message: `BLOCKED: File creation via Bash redirects is blocked. Use Write tool instead.`,
       };
     }
   }
-  
+
   return null;
 }
 
@@ -200,7 +225,7 @@ async function main() {
     for await (const chunk of process.stdin) {
       input += chunk.toString();
     }
-    
+
     const data = JSON.parse(input);
     const toolName = data.tool_name || '';
     const toolInput = data.tool_input || {};
@@ -215,47 +240,48 @@ async function main() {
     if (toolName === 'Bash') {
       const command = toolInput.command || '';
       const bashFileCreation = detectBashFileCreation(command);
-      
+
       if (bashFileCreation?.detected) {
         const response = {
           decision: 'block',
           reason: bashFileCreation.message,
-          suggested_action: `Use Write tool to create ${bashFileCreation.filename} instead of Bash redirects.`
+          suggested_action: `Use Write tool to create ${bashFileCreation.filename} instead of Bash redirects.`,
         };
         console.log(JSON.stringify(response));
         process.exit(0);
       }
     }
-    
+
     // Layer 1 & 3: Validate file paths for Write/Edit
     if (toolName === 'Write' || toolName === 'Edit') {
       const filePath = toolInput.file_path || toolInput.path || '';
-      
+
       if (filePath) {
         const validation = validateFilePath(filePath);
-        
+
         if (!validation.valid) {
           const response = {
             decision: 'block',
             reason: validation.message,
-            suggested_path: validation.suggested_path
+            suggested_path: validation.suggested_path,
           };
           console.log(JSON.stringify(response));
           process.exit(0);
         }
       }
     }
-    
+
     // Allow by default
     console.log(JSON.stringify({ decision: 'allow' }));
     process.exit(0);
-    
   } catch (error) {
     // On error, allow (fail open) but log warning
-    console.error(JSON.stringify({
-      decision: 'allow',
-      warning: `Path validator error: ${error.message}`
-    }));
+    console.error(
+      JSON.stringify({
+        decision: 'allow',
+        warning: `Path validator error: ${error.message}`,
+      })
+    );
     process.exit(0);
   }
 }

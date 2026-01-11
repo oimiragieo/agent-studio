@@ -50,7 +50,15 @@
           },
           "category": {
             "type": "string",
-            "enum": ["security", "performance", "code_quality", "maintainability", "design_pattern", "test_coverage", "documentation"],
+            "enum": [
+              "security",
+              "performance",
+              "code_quality",
+              "maintainability",
+              "design_pattern",
+              "test_coverage",
+              "documentation"
+            ],
             "description": "Category of the fix"
           },
           "description": {
@@ -81,7 +89,14 @@
             "properties": {
               "type": {
                 "type": "string",
-                "enum": ["code_change", "refactor", "add_feature", "remove_code", "design_pattern", "security_patch"],
+                "enum": [
+                  "code_change",
+                  "refactor",
+                  "add_feature",
+                  "remove_code",
+                  "design_pattern",
+                  "security_patch"
+                ],
                 "description": "Type of fix"
               },
               "description": {

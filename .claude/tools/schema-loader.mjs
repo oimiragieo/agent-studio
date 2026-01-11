@@ -44,7 +44,7 @@ async function getAjv() {
       allErrors: true,
       verbose: true,
       strict: false,
-      loadSchema: loadSchemaByUri  // Enable schema references
+      loadSchema: loadSchemaByUri, // Enable schema references
     });
     return ajvInstance;
   } catch (error) {
@@ -138,7 +138,7 @@ export async function getSchema(schemaPath) {
   schemaCache.set(absolutePath, validate);
   schemaMetaCache.set(absolutePath, {
     mtimeMs: statSync(absolutePath).mtimeMs,
-    loadedAt: Date.now()
+    loadedAt: Date.now(),
   });
 
   return validate;
@@ -202,7 +202,7 @@ export function getCommonSchemas() {
     'test_plan.schema.json',
     'code-review.schema.json',
     'product_requirements.schema.json',
-    'project_brief.schema.json'
+    'project_brief.schema.json',
   ];
 }
 
@@ -232,13 +232,13 @@ export function getCacheStats() {
   let totalAge = 0;
 
   for (const meta of schemaMetaCache.values()) {
-    totalAge += (now - meta.loadedAt);
+    totalAge += now - meta.loadedAt;
   }
 
   return {
     cachedSchemas: schemaCache.size,
     schemas: Array.from(schemaMetaCache.keys()).map(p => p.split('/').pop()),
-    avgAgeMs: schemaCache.size > 0 ? Math.round(totalAge / schemaCache.size) : 0
+    avgAgeMs: schemaCache.size > 0 ? Math.round(totalAge / schemaCache.size) : 0,
   };
 }
 
@@ -254,7 +254,7 @@ export async function validateBatch(items) {
     const result = await validateWithSchema(item.data, item.schemaPath);
     results.push({
       schemaPath: item.schemaPath,
-      ...result
+      ...result,
     });
   }
 
@@ -268,5 +268,5 @@ export default {
   getCommonSchemas,
   clearCache,
   getCacheStats,
-  validateBatch
+  validateBatch,
 };

@@ -13,6 +13,7 @@
 **File**: `.claude/docs/CODEX_SKILLS.md`
 
 **Contents**:
+
 - Canonical locations for Codex skills
 - Skills available table (multi-ai-code-review, response-rater)
 - Skill synchronization procedures
@@ -24,10 +25,10 @@
 
 ### Skills Documented
 
-| Skill | Claude Code Location | Codex CLI Location | Status |
-|-------|---------------------|-------------------|--------|
+| Skill                | Claude Code Location                   | Codex CLI Location                   | Status        |
+| -------------------- | -------------------------------------- | ------------------------------------ | ------------- |
 | multi-ai-code-review | `.claude/skills/multi-ai-code-review/` | `codex-skills/multi-ai-code-review/` | ✅ Both exist |
-| response-rater | `.claude/skills/response-rater/` | `codex-skills/response-rater/` | ✅ Both exist |
+| response-rater       | `.claude/skills/response-rater/`       | `codex-skills/response-rater/`       | ✅ Both exist |
 
 ### Key Clarifications
 
@@ -56,9 +57,11 @@
 
 ```markdown
 # Before
+
 - [Plan Rating Enforcement](../ENFORCEMENT_EXAMPLES.md#plan-rating)
 
 # After
+
 - [Plan Rating Enforcement](../../CLAUDE.md#1-plan-rating-enforcement)
 ```
 
@@ -68,15 +71,15 @@
 
 All other documentation links in CUJs were verified as correct:
 
-| CUJ | Link | Target | Status |
-|-----|------|--------|--------|
-| CUJ-014 | `../../CLAUDE.md#rule-index-system` | `## Rule Index System` (line 368) | ✅ Valid |
-| CUJ-056 | `../STATELESS_RECOVERY.md` | `.claude/docs/STATELESS_RECOVERY.md` | ✅ Valid |
-| CUJ-001 | `../../../GETTING_STARTED.md` | `GETTING_STARTED.md` | ✅ Valid |
-| CUJ-002 | `../../skills/rule-selector/SKILL.md` | `.claude/skills/rule-selector/SKILL.md` | ✅ Valid |
+| CUJ     | Link                                   | Target                                   | Status   |
+| ------- | -------------------------------------- | ---------------------------------------- | -------- |
+| CUJ-014 | `../../CLAUDE.md#rule-index-system`    | `## Rule Index System` (line 368)        | ✅ Valid |
+| CUJ-056 | `../STATELESS_RECOVERY.md`             | `.claude/docs/STATELESS_RECOVERY.md`     | ✅ Valid |
+| CUJ-001 | `../../../GETTING_STARTED.md`          | `GETTING_STARTED.md`                     | ✅ Valid |
+| CUJ-002 | `../../skills/rule-selector/SKILL.md`  | `.claude/skills/rule-selector/SKILL.md`  | ✅ Valid |
 | CUJ-003 | `../../skills/context-bridge/SKILL.md` | `.claude/skills/context-bridge/SKILL.md` | ✅ Valid |
-| CUJ-004 | `../../agents/planner.md` | `.claude/agents/planner.md` | ✅ Valid |
-| CUJ-004 | `../../templates/plan-template.md` | `.claude/templates/plan-template.md` | ✅ Valid |
+| CUJ-004 | `../../agents/planner.md`              | `.claude/agents/planner.md`              | ✅ Valid |
+| CUJ-004 | `../../templates/plan-template.md`     | `.claude/templates/plan-template.md`     | ✅ Valid |
 
 ---
 
@@ -102,6 +105,7 @@ All other documentation links in CUJs were verified as correct:
 ### CUJ Validation (via scripts/validate-cujs.mjs)
 
 **Execution Mode Mismatches**: 10 CUJs have mismatches between CUJ file and CUJ-INDEX.md
+
 - CUJ-006, CUJ-008, CUJ-009, CUJ-014, CUJ-015, CUJ-016, CUJ-018, CUJ-023, CUJ-025, CUJ-028, CUJ-029, CUJ-030, CUJ-034, CUJ-038, CUJ-040
 
 **Note**: These are execution mode mismatches, not broken documentation links. They require separate resolution.
@@ -158,6 +162,7 @@ cat .claude/skills/context-bridge/SKILL.md
 ### Link Validation
 
 All documentation links in CUJs were manually verified by:
+
 1. Extracting links from CUJ files
 2. Verifying target files exist
 3. Verifying anchors exist in target files (for anchor links)
@@ -188,6 +193,6 @@ All documentation links in CUJs were manually verified by:
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-08 | Initial report: Codex skills documentation and link validation |
+| Version | Date       | Changes                                                        |
+| ------- | ---------- | -------------------------------------------------------------- |
+| 1.0.0   | 2026-01-08 | Initial report: Codex skills documentation and link validation |

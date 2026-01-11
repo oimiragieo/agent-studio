@@ -57,9 +57,9 @@ describe('User Login', () => {
   beforeEach(() => {
     cy.intercept('POST', '/api/auth/login', {
       statusCode: 200,
-      body: { token: 'mock-token', user: { id: 1, name: 'Test User' } }
+      body: { token: 'mock-token', user: { id: 1, name: 'Test User' } },
     }).as('loginRequest');
-    
+
     cy.visit('/login');
   });
 
@@ -67,7 +67,7 @@ describe('User Login', () => {
     cy.get('[data-testid="email-input"]').type('user@example.com');
     cy.get('[data-testid="password-input"]').type('password123');
     cy.get('[data-testid="login-button"]').click();
-    
+
     cy.wait('@loginRequest');
     cy.url().should('include', '/dashboard');
     cy.get('[data-testid="user-name"]').should('contain', 'Test User');
@@ -76,13 +76,13 @@ describe('User Login', () => {
   it('should display error message with invalid credentials', () => {
     cy.intercept('POST', '/api/auth/login', {
       statusCode: 401,
-      body: { error: 'Invalid credentials' }
+      body: { error: 'Invalid credentials' },
     }).as('loginError');
-    
+
     cy.get('[data-testid="email-input"]').type('user@example.com');
     cy.get('[data-testid="password-input"]').type('wrong-password');
     cy.get('[data-testid="login-button"]').click();
-    
+
     cy.wait('@loginError');
     cy.get('[data-testid="error-message"]').should('be.visible');
     cy.get('[data-testid="error-message"]').should('contain', 'Invalid credentials');
@@ -115,8 +115,8 @@ describe('API: User Endpoints', () => {
     cy.request({
       method: 'GET',
       url: '/api/users/1',
-      headers: { Authorization: 'Bearer token' }
-    }).then((response) => {
+      headers: { Authorization: 'Bearer token' },
+    }).then(response => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('id');
       expect(response.body).to.have.property('name');
@@ -128,8 +128,8 @@ describe('API: User Endpoints', () => {
     cy.request({
       method: 'GET',
       url: '/api/users/1',
-      failOnStatusCode: false
-    }).then((response) => {
+      failOnStatusCode: false,
+    }).then(response => {
       expect(response.status).to.eq(401);
     });
   });
@@ -226,7 +226,7 @@ Cypress.Commands.add('login', (email: string, password: string) => {
 
 ```typescript
 // Use fixtures for test data
-cy.fixture('user-data').then((userData) => {
+cy.fixture('user-data').then(userData => {
   cy.get('[data-testid="email-input"]').type(userData.email);
 });
 ```
@@ -303,6 +303,7 @@ export default defineConfig({
 ## Migration Notes
 
 This master file consolidates rules from:
+
 - `cypress-e2e-testing-cursorrules-prompt-file`
 - `cypress-api-testing-cursorrules-prompt-file`
 - `cypress-defect-tracking-cursorrules-prompt-file`
@@ -310,4 +311,3 @@ This master file consolidates rules from:
 - `cypress-integration-testing-cursorrules-prompt-file`
 
 **Old rule files can be archived** - this master file is the single source of truth for Cypress testing.
-

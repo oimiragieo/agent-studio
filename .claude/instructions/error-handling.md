@@ -3,18 +3,21 @@
 ## Error Classification
 
 ### Critical Errors (Stop Execution)
+
 - **Missing Core Files**: Required agent prompts, templates, or workflows not found
 - **Invalid Configuration**: Core configuration files are corrupted or missing required fields
 - **Security Violations**: Attempts to access unauthorized resources or execute dangerous operations
 - **Data Corruption**: Session state or artifact corruption that prevents safe continuation
 
 ### Warning Errors (Continue with Caution)
+
 - **Missing Optional Files**: Non-essential templates or tasks are unavailable
 - **Partial Data**: Some context information is missing but workflow can continue
 - **Version Mismatches**: Compatible but non-optimal versions of dependencies
 - **Performance Issues**: Operations are slow but functional
 
 ### Recoverable Errors (Retry/Fix)
+
 - **User Input Errors**: Invalid or incomplete user responses
 - **Template Variable Errors**: Missing or incorrect template placeholder values
 - **Agent Output Errors**: Malformed or incomplete agent responses
@@ -23,6 +26,7 @@
 ## Error Response Procedures
 
 ### For Critical Errors:
+
 1. **Immediate Stop**: Halt all execution immediately
 2. **Clear Error Message**: Explain exactly what went wrong and why it's critical
 3. **Recovery Instructions**: Provide specific steps to fix the issue
@@ -30,6 +34,7 @@
 5. **User Notification**: Inform user of the issue and required actions
 
 ### For Warning Errors:
+
 1. **Continue Operation**: Allow workflow to proceed with limitations
 2. **Log Warning**: Record the issue for later review
 3. **User Notification**: Inform user of the limitation and potential impacts
@@ -37,6 +42,7 @@
 5. **Monitor Progress**: Watch for related issues as workflow continues
 
 ### For Recoverable Errors:
+
 1. **Identify Cause**: Determine the specific reason for the failure
 2. **Suggest Fix**: Provide clear instructions for correction
 3. **Allow Retry**: Enable user to retry after making corrections
@@ -46,10 +52,11 @@
 ## Specific Error Scenarios
 
 ### Agent Activation Failures
+
 ```
 ERROR: Cannot load agent prompt for 'analyst'
 CAUSE: File '.claude/agents/analyst/prompt.md' not found
-RECOVERY: 
+RECOVERY:
 1. Check if the file exists in the correct location
 2. Verify file permissions allow reading
 3. Ensure the agent name is spelled correctly
@@ -57,6 +64,7 @@ RECOVERY:
 ```
 
 ### Template Processing Errors
+
 ```
 ERROR: Missing template variable '{{project_name}}'
 CAUSE: Required variable not provided by user or previous agent
@@ -68,6 +76,7 @@ RECOVERY:
 ```
 
 ### Workflow State Errors
+
 ```
 ERROR: Cannot proceed to step 3, step 2 not completed
 CAUSE: Previous workflow step did not complete successfully
@@ -79,6 +88,7 @@ RECOVERY:
 ```
 
 ### File System Errors
+
 ```
 ERROR: Cannot write to '.claude/context/artifacts/prd.md'
 CAUSE: File system permissions or disk space issues
@@ -92,6 +102,7 @@ RECOVERY:
 ## Error Logging and Reporting
 
 ### Log Entry Format:
+
 ```
 TIMESTAMP: 2024-01-01 12:34:56
 LEVEL: ERROR|WARNING|INFO
@@ -104,6 +115,7 @@ RESOLUTION: How the error was resolved
 ```
 
 ### Error Codes:
+
 - **BMAD_001-099**: Agent-related errors
 - **BMAD_100-199**: Workflow execution errors
 - **BMAD_200-299**: Template processing errors
@@ -114,18 +126,21 @@ RESOLUTION: How the error was resolved
 ## Recovery Strategies
 
 ### State Recovery:
+
 - Maintain regular checkpoints at each workflow step
 - Store partial results in recoverable format
 - Enable resumption from any valid checkpoint
 - Validate state integrity before continuing
 
 ### Data Recovery:
+
 - Backup critical artifacts before modifications
 - Maintain version history for all documents
 - Enable rollback to previous valid state
 - Verify data integrity after recovery
 
 ### User Communication:
+
 - Provide clear, non-technical error explanations
 - Offer specific actionable steps for resolution
 - Indicate estimated time for fixes when possible
@@ -134,18 +149,21 @@ RESOLUTION: How the error was resolved
 ## Prevention Strategies
 
 ### Input Validation:
+
 - Validate all user inputs before processing
 - Check file existence before attempting access
 - Verify template completeness before rendering
 - Confirm agent availability before activation
 
 ### Defensive Programming:
+
 - Assume external resources may be unavailable
 - Implement graceful degradation for non-critical features
 - Use timeouts for potentially long-running operations
 - Provide meaningful defaults where appropriate
 
 ### Testing and Monitoring:
+
 - Test error conditions during development
 - Monitor system health and performance
 - Track error patterns and frequencies

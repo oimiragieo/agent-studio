@@ -12,7 +12,7 @@ const API_BASE_URL = process.env.ANTHROPIC_API_BASE_URL || 'https://api.anthropi
  */
 export async function getOrganization(orgId) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error('ANTHROPIC_API_KEY not configured');
   }
@@ -23,8 +23,8 @@ export async function getOrganization(orgId) {
       headers: {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {
@@ -35,7 +35,7 @@ export async function getOrganization(orgId) {
   } catch (error) {
     return {
       success: false,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -45,7 +45,7 @@ export async function getOrganization(orgId) {
  */
 export async function listOrganizationMembers(orgId) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error('ANTHROPIC_API_KEY not configured');
   }
@@ -56,8 +56,8 @@ export async function listOrganizationMembers(orgId) {
       headers: {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {
@@ -68,12 +68,12 @@ export async function listOrganizationMembers(orgId) {
     return {
       success: true,
       members: data.members || [],
-      total: data.total || 0
+      total: data.total || 0,
     };
   } catch (error) {
     return {
       success: false,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -83,7 +83,7 @@ export async function listOrganizationMembers(orgId) {
  */
 export async function getUser(userId) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error('ANTHROPIC_API_KEY not configured');
   }
@@ -94,8 +94,8 @@ export async function getUser(userId) {
       headers: {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {
@@ -106,7 +106,7 @@ export async function getUser(userId) {
   } catch (error) {
     return {
       success: false,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -116,7 +116,7 @@ export async function getUser(userId) {
  */
 export async function updateUserPermissions(userId, permissions) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error('ANTHROPIC_API_KEY not configured');
   }
@@ -127,9 +127,9 @@ export async function updateUserPermissions(userId, permissions) {
       headers: {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ permissions })
+      body: JSON.stringify({ permissions }),
     });
 
     if (!response.ok) {
@@ -140,7 +140,7 @@ export async function updateUserPermissions(userId, permissions) {
   } catch (error) {
     return {
       success: false,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -150,7 +150,7 @@ export async function updateUserPermissions(userId, permissions) {
  */
 export async function getOrganizationSettings(orgId) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error('ANTHROPIC_API_KEY not configured');
   }
@@ -161,8 +161,8 @@ export async function getOrganizationSettings(orgId) {
       headers: {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {
@@ -173,7 +173,7 @@ export async function getOrganizationSettings(orgId) {
   } catch (error) {
     return {
       success: false,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -183,6 +183,5 @@ export default {
   listOrganizationMembers,
   getUser,
   updateUserPermissions,
-  getOrganizationSettings
+  getOrganizationSettings,
 };
-

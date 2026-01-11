@@ -25,7 +25,7 @@ export async function loadConfig() {
   const configPath = join(__dirname, '../../config.yaml');
   const configContent = await readFile(configPath, 'utf8');
   cachedConfig = yaml.load(configContent);
-  
+
   return cachedConfig;
 }
 
@@ -74,6 +74,5 @@ export default {
   getWorkflowSelection,
   getToolRestrictions,
   getModelConfig,
-  clearCache
+  clearCache,
 };
-

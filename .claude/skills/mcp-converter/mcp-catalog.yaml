@@ -9,9 +9,9 @@ mcp_servers:
     tool_count: 25
     estimated_tokens: 45000
     conversion_priority: high
-    keep_as_mcp: true  # Keep as MCP due to frequent use
-    reason: "Frequently used, keep as MCP for better performance"
-    
+    keep_as_mcp: true # Keep as MCP due to frequent use
+    reason: 'Frequently used, keep as MCP for better performance'
+
   - name: git
     description: Git version control operations
     tool_count: 15
@@ -21,15 +21,15 @@ mcp_servers:
     categories:
       - version-control
       - development
-    
+
   - name: filesystem
     description: File system operations
     tool_count: 12
     estimated_tokens: 18000
     conversion_priority: medium
-    keep_as_mcp: true  # Core tool, keep as MCP
-    reason: "Core file operations, always needed"
-    
+    keep_as_mcp: true # Core tool, keep as MCP
+    reason: 'Core file operations, always needed'
+
   # Database Tools
   - name: sqlite
     description: SQLite database operations
@@ -40,7 +40,7 @@ mcp_servers:
     categories:
       - database
       - data
-    
+
   - name: postgres
     description: PostgreSQL database operations
     tool_count: 20
@@ -50,7 +50,7 @@ mcp_servers:
     categories:
       - database
       - data
-    
+
   # Cloud Services
   - name: aws
     description: AWS cloud services integration
@@ -61,7 +61,7 @@ mcp_servers:
     categories:
       - cloud
       - infrastructure
-    
+
   - name: gcp
     description: Google Cloud Platform services
     tool_count: 45
@@ -71,7 +71,7 @@ mcp_servers:
     categories:
       - cloud
       - infrastructure
-    
+
   - name: azure
     description: Microsoft Azure services
     tool_count: 40
@@ -81,7 +81,7 @@ mcp_servers:
     categories:
       - cloud
       - infrastructure
-    
+
   # Communication & Collaboration
   - name: slack
     description: Slack integration for notifications and messaging
@@ -92,7 +92,7 @@ mcp_servers:
     categories:
       - communication
       - collaboration
-    
+
   - name: discord
     description: Discord bot integration
     tool_count: 15
@@ -101,7 +101,7 @@ mcp_servers:
     keep_as_mcp: false
     categories:
       - communication
-    
+
   # Documentation & Content
   - name: markitdown
     description: Documentation generation and formatting
@@ -112,7 +112,7 @@ mcp_servers:
     categories:
       - documentation
       - content
-    
+
   - name: paper-search
     description: Academic and technical paper research
     tool_count: 8
@@ -122,7 +122,7 @@ mcp_servers:
     categories:
       - research
       - documentation
-    
+
   # Testing & Quality
   - name: playwright
     description: Playwright browser automation
@@ -133,7 +133,7 @@ mcp_servers:
     categories:
       - testing
       - automation
-    
+
   - name: cypress
     description: Cypress end-to-end testing
     tool_count: 25
@@ -143,7 +143,7 @@ mcp_servers:
     categories:
       - testing
       - automation
-    
+
   # Infrastructure
   - name: docker
     description: Docker container management
@@ -154,7 +154,7 @@ mcp_servers:
     categories:
       - infrastructure
       - containers
-    
+
   - name: kubernetes
     description: Kubernetes cluster management
     tool_count: 35
@@ -164,7 +164,7 @@ mcp_servers:
     categories:
       - infrastructure
       - orchestration
-    
+
   - name: terraform
     description: Terraform infrastructure as code
     tool_count: 28
@@ -174,7 +174,7 @@ mcp_servers:
     categories:
       - infrastructure
       - iac
-    
+
   # AI & ML
   - name: openai
     description: OpenAI API integration
@@ -185,7 +185,7 @@ mcp_servers:
     categories:
       - ai
       - ml
-    
+
   - name: anthropic
     description: Anthropic Claude API integration
     tool_count: 12
@@ -195,7 +195,7 @@ mcp_servers:
     categories:
       - ai
       - ml
-    
+
   # Monitoring & Analytics
   - name: datadog
     description: Datadog monitoring and analytics
@@ -206,7 +206,7 @@ mcp_servers:
     categories:
       - monitoring
       - analytics
-    
+
   - name: newrelic
     description: New Relic APM and monitoring
     tool_count: 20
@@ -216,7 +216,7 @@ mcp_servers:
     categories:
       - monitoring
       - analytics
-    
+
   # Security
   - name: vault
     description: HashiCorp Vault secrets management
@@ -227,7 +227,7 @@ mcp_servers:
     categories:
       - security
       - secrets
-    
+
   - name: snyk
     description: Snyk security scanning
     tool_count: 15
@@ -247,16 +247,16 @@ conversion_rules:
       tool_count: 10
       estimated_tokens: 15000
     exceptions:
-      - github  # Keep as MCP
-      - filesystem  # Keep as MCP
-      - memory  # Keep as MCP
-    
+      - github # Keep as MCP
+      - filesystem # Keep as MCP
+      - memory # Keep as MCP
+
   # Batch conversion settings
   batch_conversion:
     enabled: true
     max_concurrent: 3
     timeout_seconds: 300
-    
+
   # Validation settings
   validation:
     enabled: true
@@ -269,7 +269,6 @@ statistics:
   total_servers: 25
   recommended_for_conversion: 22
   keep_as_mcp: 3
-  estimated_context_savings: 85  # Percentage
+  estimated_context_savings: 85 # Percentage
   average_tool_count: 22
   average_tokens_per_server: 35000
-

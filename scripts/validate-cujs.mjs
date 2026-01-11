@@ -39,7 +39,7 @@ const REQUIRED_SECTIONS = [
   '## Skills Used', // OR '## Capabilities/Tools Used'
   '## Expected Outputs',
   '## Success Criteria',
-  '## Example Prompts'
+  '## Example Prompts',
 ];
 
 // Optional sections
@@ -48,7 +48,7 @@ const OPTIONAL_SECTIONS = [
   '## Capabilities/Tools Used', // Alternative to Skills Used
   '## Error Recovery',
   '## Platform Compatibility',
-  '## Test Scenarios'
+  '## Test Scenarios',
 ];
 
 // All valid sections
@@ -131,7 +131,7 @@ function resolvePath(relativePath, fromFile) {
  */
 function extractAgentSlugs(content) {
   const agents = new Set();
-  
+
   // Backticked: `agent-name`
   const backtickMatches = content.match(/`([a-z-]+)`/g) || [];
   backtickMatches.forEach(m => {
@@ -140,7 +140,7 @@ function extractAgentSlugs(content) {
       agents.add(slug);
     }
   });
-  
+
   // List items: - Agent Name or - agent-name
   const listMatches = content.match(/(?:^|\n)[-*]\s+([A-Za-z][A-Za-z\s-]+)/g) || [];
   listMatches.forEach(m => {
@@ -153,7 +153,7 @@ function extractAgentSlugs(content) {
       }
     }
   });
-  
+
   // Arrow chains: Agent1 → Agent2 or Agent1 -> Agent2
   const arrowMatches = content.match(/([A-Za-z][A-Za-z\s-]+)(?:\s*(→|->))/g) || [];
   arrowMatches.forEach(m => {
@@ -166,9 +166,10 @@ function extractAgentSlugs(content) {
       }
     }
   });
-  
+
   // Also extract from arrow chains that span multiple lines
-  const multiLineArrowMatches = content.match(/([A-Za-z][A-Za-z\s-]+)\s*(→|->)\s*([A-Za-z][A-Za-z\s-]+)/g) || [];
+  const multiLineArrowMatches =
+    content.match(/([A-Za-z][A-Za-z\s-]+)\s*(→|->)\s*([A-Za-z][A-Za-z\s-]+)/g) || [];
   multiLineArrowMatches.forEach(m => {
     const parts = m.split(/\s*(→|->)\s*/);
     parts.forEach(part => {
@@ -181,7 +182,7 @@ function extractAgentSlugs(content) {
       }
     });
   });
-  
+
   return Array.from(agents);
 }
 
@@ -199,7 +200,7 @@ function extractLinks(content) {
     links.push({
       text: match[1],
       url: match[2],
-      line: normalizedContent.substring(0, match.index).split('\n').length
+      line: normalizedContent.substring(0, match.index).split('\n').length,
     });
   }
   return links;
@@ -243,7 +244,7 @@ const existenceCache = {
   workflows: new Map(),
   schemas: new Map(),
   rubrics: new Map(),
-  files: new Map()
+  files: new Map(),
 };
 
 /**
@@ -348,7 +349,10 @@ async function getCUJMapping() {
 
       // Parse table rows
       if (inMappingTable && headerPassed && line.startsWith('|')) {
-        const cols = line.split('|').map(c => c.trim()).filter(c => c);
+        const cols = line
+          .split('|')
+          .map(c => c.trim())
+          .filter(c => c);
         if (cols.length >= 4) {
           const cujId = cols[0]; // e.g., "CUJ-001"
           const executionMode = cols[1]; // e.g., "skill-only" or "greenfield-fullstack.yaml"
@@ -359,7 +363,7 @@ async function getCUJMapping() {
             mapping.set(cujId, {
               executionMode,
               workflowPath,
-              primarySkill
+              primarySkill,
             });
           }
         }
@@ -393,13 +397,13 @@ function normalizeExecutionMode(mode) {
   if (!mode) return null;
 
   const modeMap = {
-    'workflow': 'workflow',
+    workflow: 'workflow',
     'automated-workflow': 'workflow',
     'delegated-skill': 'skill-only',
     'skill-only': 'skill-only',
-    'skill': 'skill-only',
+    skill: 'skill-only',
     'manual-setup': 'manual-setup',
-    'manual': 'manual-setup'
+    manual: 'manual-setup',
   };
 
   // Handle raw .yaml references as 'workflow'
@@ -415,11 +419,11 @@ function normalizeExecutionMode(mode) {
  */
 function extractExecutionMode(content) {
   // Look for "**Execution Mode**: `mode`" or "**Execution Mode**: mode"
-  const match = content.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)`?/i);
+  const match = content.match(
+    /\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|skill-only|delegated-skill|manual-setup|manual|automated-workflow|workflow|skill)`?/i
+  );
   return match ? normalizeExecutionMode(match[1]) : null;
 }
-
-
 
 /**
  * Validate agent reference (cached)
@@ -509,10 +513,11 @@ async function validateCUJ(filePath) {
     const sections = extractSections(content);
     const cujId = extractCUJId(fileName);
     const cujMapping = await getCUJMapping();
-    
+
     // Check required sections exist
     // Special handling: Skills Used OR Capabilities/Tools Used (either is acceptable)
-    const hasSkillsOrCapabilities = sections['## Skills Used'] || sections['## Capabilities/Tools Used'];
+    const hasSkillsOrCapabilities =
+      sections['## Skills Used'] || sections['## Capabilities/Tools Used'];
     for (const section of REQUIRED_SECTIONS) {
       if (section === '## Skills Used') {
         // Skip - we check this separately below
@@ -526,14 +531,14 @@ async function validateCUJ(filePath) {
     if (!hasSkillsOrCapabilities) {
       issues.push('Missing required section: "## Skills Used" or "## Capabilities/Tools Used"');
     }
-    
+
     // Check for invalid section names (not in template)
     for (const section of Object.keys(sections)) {
       if (!ALL_SECTIONS.includes(section)) {
         warnings.push(`Non-standard section: ${section}`);
       }
     }
-    
+
     // Check section order (rough check - first occurrence)
     const sectionOrder = [];
     // Normalize line endings
@@ -544,12 +549,12 @@ async function validateCUJ(filePath) {
         sectionOrder.push(line.trim());
       }
     }
-    
+
     // Validate "Example Prompts" section name (not "Example Scenarios")
     if (sections['## Example Scenarios']) {
       issues.push('Section should be "## Example Prompts" not "## Example Scenarios"');
     }
-    
+
     // Validate links (skip in quick mode)
     if (!skipLinkValidation) {
       const links = extractLinks(content);
@@ -572,13 +577,13 @@ async function validateCUJ(filePath) {
         }
       }
     }
-    
+
     // Validate agent references
     // Only validate agents in backticks or against known agent basenames
     if (sections['## Agents Used']) {
       const agentSection = sections['## Agents Used'];
       const agentWhitelist = await getAgentWhitelist();
-      
+
       // Extract agents in backticks (these are explicit agent references)
       const backtickMatches = agentSection.match(/`([a-z-]+)`/g) || [];
       const backtickAgents = new Set();
@@ -588,22 +593,24 @@ async function validateCUJ(filePath) {
           backtickAgents.add(slug);
         }
       });
-      
+
       // Validate only agents in backticks or those that match whitelist
       for (const agentSlug of backtickAgents) {
         if (agentSlug && agentSlug !== 'none' && agentSlug !== 'agents') {
           const exists = await validateAgent(agentSlug);
           if (!exists) {
-            warnings.push(`Agent reference may not exist: ${agentSlug} (check .claude/agents/${agentSlug}.md)`);
+            warnings.push(
+              `Agent reference may not exist: ${agentSlug} (check .claude/agents/${agentSlug}.md)`
+            );
           }
         }
       }
-      
+
       // Only validate agents in backticks or known agent basenames from whitelist
       // Ignore descriptive labels like "Primary Agent", "Coordinating Agent" that aren't actual agent slugs
       // This prevents false warnings for descriptive text that happens to match agent patterns
     }
-    
+
     // Validate skill references (only if Skills Used section exists)
     if (sections['## Skills Used']) {
       const skillSection = sections['## Skills Used'];
@@ -621,24 +628,28 @@ async function validateCUJ(filePath) {
           nonSkillItems.push(trimmed);
         }
       }
-      
+
       if (nonSkillItems.length > 0) {
-        warnings.push(`"Skills Used" section contains non-skill items. Consider moving to "Capabilities/Tools Used": ${nonSkillItems.join(', ')}`);
+        warnings.push(
+          `"Skills Used" section contains non-skill items. Consider moving to "Capabilities/Tools Used": ${nonSkillItems.join(', ')}`
+        );
       }
-      
+
       for (const match of skillMatches) {
         const skillName = match.replace(/`/g, '').trim();
         if (skillName) {
           const exists = await validateSkill(skillName);
           if (!exists) {
-            warnings.push(`Skill may not exist: ${skillName} (consider using "Capabilities/Tools Used" if not a real skill)`);
+            warnings.push(
+              `Skill may not exist: ${skillName} (consider using "Capabilities/Tools Used" if not a real skill)`
+            );
           }
         }
       }
     }
-    
+
     // Note: Capabilities/Tools Used section doesn't need validation - it's free-form
-    
+
     // Validate workflow reference and execution mode
     if (sections['## Workflow']) {
       const workflowSection = sections['## Workflow'];
@@ -650,8 +661,12 @@ async function validateCUJ(filePath) {
       // Check for explicit execution mode reference - prefer "Execution Mode" format
       // Accept: "Execution Mode: name.yaml", "**Execution Mode**: `name.yaml`"
       // Also accept legacy: "Workflow Reference: name.yaml", "**Workflow**: `name.yaml`" (with warning)
-      const executionModeMatch = workflowSection.match(/\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|workflow|skill-only|manual-setup|manual)`?/i);
-      const legacyWorkflowMatch = workflowSection.match(/(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|workflow|skill-only)(?:`)?/i);
+      const executionModeMatch = workflowSection.match(
+        /\*\*Execution Mode\*\*:\s*`?([a-z0-9-]+\.yaml|workflow|skill-only|manual-setup|manual)`?/i
+      );
+      const legacyWorkflowMatch = workflowSection.match(
+        /(?:Workflow Reference|Workflow)[:\s]+(?:`)?([a-z0-9-]+\.yaml|workflow|skill-only)(?:`)?/i
+      );
 
       let workflowRef = null;
       if (executionModeMatch) {
@@ -660,9 +675,13 @@ async function validateCUJ(filePath) {
       } else if (legacyWorkflowMatch) {
         // Legacy format found - warn but don't fail
         workflowRef = legacyWorkflowMatch[1];
-        warnings.push('Workflow section should use "**Execution Mode**: `name.yaml`" format instead of "Workflow Reference"');
+        warnings.push(
+          'Workflow section should use "**Execution Mode**: `name.yaml`" format instead of "Workflow Reference"'
+        );
       } else {
-        issues.push('Workflow section must explicitly declare execution mode (e.g., "**Execution Mode**: `greenfield-fullstack.yaml`") or "**Execution Mode**: `skill-only`"');
+        issues.push(
+          'Workflow section must explicitly declare execution mode (e.g., "**Execution Mode**: `greenfield-fullstack.yaml`") or "**Execution Mode**: `skill-only`"'
+        );
       }
 
       if (workflowRef) {
@@ -673,7 +692,9 @@ async function validateCUJ(filePath) {
         // NEW VALIDATION 1: Execution Mode Validation (workflow, skill-only, manual-setup)
         const validExecutionModes = ['workflow', 'skill-only', 'manual-setup'];
         if (!validExecutionModes.includes(normalizedMode)) {
-          warnings.push(`Execution mode "${workflowRef}" normalized to "${normalizedMode}" which is not a standard execution mode. Expected: workflow, skill-only, or manual-setup`);
+          warnings.push(
+            `Execution mode "${workflowRef}" normalized to "${normalizedMode}" which is not a standard execution mode. Expected: workflow, skill-only, or manual-setup`
+          );
         }
 
         // NEW VALIDATION 2: Workflow File Existence Check
@@ -681,18 +702,24 @@ async function validateCUJ(filePath) {
           const workflowName = workflowFile.replace('.yaml', '');
           const exists = await validateWorkflow(workflowName);
           if (!exists) {
-            issues.push(`Referenced workflow file does not exist: ${workflowFile} (checked .claude/workflows/${workflowName}.yaml)`);
+            issues.push(
+              `Referenced workflow file does not exist: ${workflowFile} (checked .claude/workflows/${workflowName}.yaml)`
+            );
           }
         }
 
         // NEW VALIDATION 3: Skill-only CUJs should NOT have Step 0/0.1 as mandatory - NOW AN ERROR
         if (normalizedMode === 'skill-only' && (hasStep0 || hasStep01)) {
-          issues.push('EXECUTION MODE INCONSISTENCY: Skill-only CUJs MUST NOT have Step 0 (Planning) or Step 0.1 (Plan Rating Gate). Either remove these steps OR change execution mode to "workflow".');
+          issues.push(
+            'EXECUTION MODE INCONSISTENCY: Skill-only CUJs MUST NOT have Step 0 (Planning) or Step 0.1 (Plan Rating Gate). Either remove these steps OR change execution mode to "workflow".'
+          );
         }
 
         // NEW VALIDATION 4: Workflow-based CUJs should have Step 0.1 (Plan Rating Gate)
         if (normalizedMode === 'workflow' && !hasStep01) {
-          warnings.push('Workflow-based CUJs should document Step 0.1 (Plan Rating Gate) to ensure plan quality validation');
+          warnings.push(
+            'Workflow-based CUJs should document Step 0.1 (Plan Rating Gate) to ensure plan quality validation'
+          );
         }
 
         // NEW VALIDATION 2 (enhanced): Execution Mode Match Between CUJ and CUJ-INDEX.md
@@ -702,7 +729,9 @@ async function validateCUJ(filePath) {
 
           // Compare normalized execution modes - NOW AN ERROR, NOT A WARNING
           if (normalizedMode !== mappedMode) {
-            issues.push(`EXECUTION MODE MISMATCH: CUJ declares "${workflowRef}" (normalized: ${normalizedMode}) but CUJ-INDEX.md maps to "${mappingEntry.executionMode}" (normalized: ${mappedMode}). These MUST match.`);
+            issues.push(
+              `EXECUTION MODE MISMATCH: CUJ declares "${workflowRef}" (normalized: ${normalizedMode}) but CUJ-INDEX.md maps to "${mappingEntry.executionMode}" (normalized: ${mappedMode}). These MUST match.`
+            );
           }
 
           // If mapped mode is a workflow, validate it exists
@@ -712,7 +741,9 @@ async function validateCUJ(filePath) {
             const workflowFileName = path.basename(mappingEntry.workflowPath, '.yaml');
             const workflowExists = await validateWorkflow(workflowFileName);
             if (!workflowExists) {
-              warnings.push(`CUJ-INDEX.md references workflow "${mappingEntry.workflowPath}" which does not exist at .claude/workflows/${workflowFileName}.yaml`);
+              warnings.push(
+                `CUJ-INDEX.md references workflow "${mappingEntry.workflowPath}" which does not exist at .claude/workflows/${workflowFileName}.yaml`
+              );
             }
           }
 
@@ -720,7 +751,9 @@ async function validateCUJ(filePath) {
           if (mappingEntry.primarySkill) {
             const skillExists = await validateSkill(mappingEntry.primarySkill);
             if (!skillExists) {
-              warnings.push(`CUJ-INDEX.md references primary skill "${mappingEntry.primarySkill}" which does not exist`);
+              warnings.push(
+                `CUJ-INDEX.md references primary skill "${mappingEntry.primarySkill}" which does not exist`
+              );
             }
           }
         } else if (cujId) {
@@ -729,9 +762,13 @@ async function validateCUJ(filePath) {
 
         // NEW VALIDATION 5: Plan Rating Artifact Path Validation
         if (normalizedMode === 'workflow' && hasStep01) {
-          const planRatingArtifactMatch = workflowSection.match(/\.claude\/context\/runs\/[^/]+\/plans\/[^/]+-rating\.json/);
+          const planRatingArtifactMatch = workflowSection.match(
+            /\.claude\/context\/runs\/[^/]+\/plans\/[^/]+-rating\.json/
+          );
           if (!planRatingArtifactMatch) {
-            warnings.push('Step 0.1 (Plan Rating Gate) should reference plan rating artifact path: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`');
+            warnings.push(
+              'Step 0.1 (Plan Rating Gate) should reference plan rating artifact path: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`'
+            );
           }
         }
 
@@ -751,19 +788,24 @@ async function validateCUJ(filePath) {
           const threshold = parseInt(thresholdMatch[1], 10);
           const validThresholds = [5, 7, 8];
           if (!validThresholds.includes(threshold)) {
-            warnings.push(`Plan rating threshold ${threshold} is non-standard. Expected: 5 (emergency), 7 (standard), or 8 (enterprise)`);
+            warnings.push(
+              `Plan rating threshold ${threshold} is non-standard. Expected: 5 (emergency), 7 (standard), or 8 (enterprise)`
+            );
           }
         }
       }
     } else {
       issues.push('Missing required section: ## Workflow');
     }
-    
+
     // Validate success criteria format
     if (sections['## Success Criteria']) {
       const criteriaSection = sections['## Success Criteria'];
       // Check for checkboxes or tables (both are valid formats)
-      const hasCheckboxes = criteriaSection.includes('- [ ]') || criteriaSection.includes('- [x]') || criteriaSection.includes('- ✅');
+      const hasCheckboxes =
+        criteriaSection.includes('- [ ]') ||
+        criteriaSection.includes('- [x]') ||
+        criteriaSection.includes('- ✅');
       const hasTable = criteriaSection.includes('| Criterion') || criteriaSection.includes('|---');
 
       if (!hasCheckboxes && !hasTable) {
@@ -773,9 +815,11 @@ async function validateCUJ(filePath) {
       // Check for at least one concrete validation artifact reference
       const hasArtifactRef = criteriaSection.match(/(schema|gate|registry|artifact)/i);
       if (!hasArtifactRef) {
-        warnings.push('Success criteria should reference at least one concrete validation artifact (schema, gate, registry, or artifact file)');
+        warnings.push(
+          'Success criteria should reference at least one concrete validation artifact (schema, gate, registry, or artifact file)'
+        );
       }
-      
+
       // Check for encoding artifacts
       if (criteriaSection.includes('␦')) {
         issues.push('Encoding artifact detected (␦) - run fix-encoding.mjs to fix');
@@ -783,37 +827,40 @@ async function validateCUJ(filePath) {
       // Only flag truly bad control chars, exclude \t\r\n (0x09, 0x0D, 0x0A)
       const badControlChars = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/;
       if (badControlChars.test(criteriaSection)) {
-        warnings.push('Control characters detected in success criteria - may indicate encoding issues');
+        warnings.push(
+          'Control characters detected in success criteria - may indicate encoding issues'
+        );
       }
     }
-    
+
     // Check entire content for encoding artifacts
     if (content.includes('␦')) {
       issues.push('Encoding artifact detected (␦) - run fix-encoding.mjs to fix');
     }
-    
+
     // Check for question mark encoding artifacts (replacement characters from encoding errors)
     // Only flag standalone ? that appear in suspicious contexts (not legitimate question marks)
     const suspiciousQuestionMarks = /[^\w\s]\?[^\w\s]/g;
     const questionMarkMatches = content.match(suspiciousQuestionMarks);
     if (questionMarkMatches && questionMarkMatches.length > 5) {
       // Multiple suspicious ? marks likely indicate encoding issues
-      warnings.push(`Multiple suspicious question marks detected (${questionMarkMatches.length}) - may indicate encoding issues. Run fix-encoding.mjs to verify.`);
+      warnings.push(
+        `Multiple suspicious question marks detected (${questionMarkMatches.length}) - may indicate encoding issues. Run fix-encoding.mjs to verify.`
+      );
     }
-    
+
     return {
       file: fileName,
       issues,
       warnings,
-      valid: issues.length === 0
+      valid: issues.length === 0,
     };
-    
   } catch (error) {
     return {
       file: fileName,
       issues: [`Error reading file: ${error.message}`],
       warnings: [],
-      valid: false
+      valid: false,
     };
   }
 }
@@ -840,7 +887,9 @@ async function validateAllCUJs() {
     // Build existence caches upfront for maximum performance
     console.log('📦 Building existence caches...');
     await buildExistenceCaches();
-    console.log(`✅ Caches built: ${existenceCache.agents.size} agents, ${existenceCache.skills.size} skills, ${existenceCache.workflows.size} workflows, ${existenceCache.schemas.size} schemas\n`);
+    console.log(
+      `✅ Caches built: ${existenceCache.agents.size} agents, ${existenceCache.skills.size} skills, ${existenceCache.workflows.size} workflows, ${existenceCache.schemas.size} schemas\n`
+    );
 
     // Parallelize validation - validate all CUJs concurrently
     const sortedFiles = cujFiles.sort();
@@ -889,16 +938,16 @@ async function validateAllCUJs() {
       totalIssues += result.issues.length;
       totalWarnings += result.warnings.length;
     }
-    
+
     // Check for encoding issues across all files
-    const encodingIssues = results.filter(r => 
+    const encodingIssues = results.filter(r =>
       r.issues.some(i => i.includes('Encoding artifact') || i.includes('encoding'))
     );
     if (encodingIssues.length > 0) {
       console.log(`\n⚠️  Encoding issues detected in ${encodingIssues.length} file(s).`);
       console.log(`   Run 'node scripts/fix-encoding.mjs' to normalize encoding.\n`);
     }
-    
+
     // Count new validation metrics
     let executionModeInvalid = 0;
     let workflowFilesMissing = 0;
@@ -914,7 +963,8 @@ async function validateAllCUJs() {
         if (w.includes('skill') && w.includes('does not exist')) skillReferencesMissing++;
         if (w.includes('should document Step 0.1')) planRatingStepMissing++;
         if (w.includes('rubric file does not exist')) rubricFilesMissing++;
-        if (w.includes('Plan rating threshold') && w.includes('non-standard')) planRatingThresholdInvalid++;
+        if (w.includes('Plan rating threshold') && w.includes('non-standard'))
+          planRatingThresholdInvalid++;
       });
       result.issues.forEach(i => {
         if (i.includes('workflow file does not exist')) workflowFilesMissing++;
@@ -968,7 +1018,6 @@ async function validateAllCUJs() {
       console.log('✅ All CUJs are valid!\n');
       process.exit(0);
     }
-
   } catch (error) {
     console.error('❌ Error during validation:', error);
     process.exit(1);
@@ -1038,10 +1087,10 @@ async function runWatchMode() {
   const watcher = chokidar.watch(path.join(CUJ_DIR, 'CUJ-*.md'), {
     ignored: /CUJ-INDEX|CUJ-AUDIT-REPORT|CUJ-EXECUTION-EXAMPLES/,
     persistent: true,
-    ignoreInitial: true
+    ignoreInitial: true,
   });
 
-  watcher.on('change', async (changedPath) => {
+  watcher.on('change', async changedPath => {
     const fileName = path.basename(changedPath);
     console.log(`\n🔄 File changed: ${fileName}`);
 
@@ -1083,4 +1132,3 @@ if (watchMode) {
     process.exit(1);
   });
 }
-

@@ -18,18 +18,21 @@ Empathetic, creative, detail-oriented, and user-obsessed. Every design decision 
 ## Execution Methodology
 
 ### 1. User Research & Analysis
+
 - Review project brief and requirements
 - Identify primary and secondary user personas
 - Map complete user journeys
 - Analyze competitive solutions and proven patterns
 
 ### 2. Information Architecture Design
+
 - Organize content and functionality hierarchically
 - Design navigation patterns
 - Plan responsive behavior across breakpoints
   - sm: 640px, md: 768px, lg: 1024px, xl: 1280px
 
 ### 3. Interaction Design Specification
+
 - Design detailed user flows
 - Specify micro-interactions and animations
 - Plan error states, loading states, edge cases
@@ -37,6 +40,7 @@ Empathetic, creative, detail-oriented, and user-obsessed. Every design decision 
 - Plan focus management for screen readers
 
 ### 4. Visual Design & System Creation
+
 - Develop design system (colors, typography, components)
 - Create high-fidelity mockups with Tailwind CSS/Shadcn UI
 - Specify responsive breakpoints with mobile-first approach
@@ -44,6 +48,7 @@ Empathetic, creative, detail-oriented, and user-obsessed. Every design decision 
 - Minimum 44x44px touch targets on mobile
 
 ### 5. AI Generation & Handoff
+
 - Generate effective AI prompts for v0, Lovable with:
   - Specific component behavior details
   - Design system tokens and styling
@@ -54,12 +59,14 @@ Empathetic, creative, detail-oriented, and user-obsessed. Every design decision 
 ## Design Excellence Standards
 
 ### Modern UI Framework
+
 - Use Tailwind CSS utility classes - avoid inline styles
 - Follow Shadcn UI component guidelines
 - Ensure React/TypeScript components are responsive and accessible
 - Create cohesive design language
 
 ### Accessibility Excellence (WCAG 2.1 AA)
+
 - Keyboard accessibility for all interactive elements
 - Color contrast minimum 4.5:1
 - Proper ARIA labels and semantic HTML
@@ -68,6 +75,7 @@ Empathetic, creative, detail-oriented, and user-obsessed. Every design decision 
 - 44x44px minimum touch targets
 
 ### User Experience Principles
+
 - Eliminate jargon - use clear, human language
 - Provide immediate feedback for all actions
 - Design error states that guide users to solutions
@@ -79,6 +87,7 @@ Empathetic, creative, detail-oriented, and user-obsessed. Every design decision 
 ## Component Patterns
 
 ### Form Design
+
 ```
 - Clear labels above inputs
 - Inline validation with helpful messages
@@ -88,6 +97,7 @@ Empathetic, creative, detail-oriented, and user-obsessed. Every design decision 
 ```
 
 ### Navigation
+
 ```
 - Consistent placement across pages
 - Clear current location indicator
@@ -97,6 +107,7 @@ Empathetic, creative, detail-oriented, and user-obsessed. Every design decision 
 ```
 
 ### Feedback States
+
 ```
 - Loading: Skeleton or spinner with context
 - Empty: Helpful message + action

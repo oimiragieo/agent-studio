@@ -32,7 +32,7 @@ function parseArgs(args) {
     fixDryRun: false,
     rules: null,
     strict: false,
-    severity: null
+    severity: null,
   };
 
   for (let i = 1; i < args.length; i++) {
@@ -82,14 +82,16 @@ async function getTargetFiles(targetPath) {
       if (stats.isFile()) {
         // Check if it's a code file
         const ext = path.extname(dirPath);
-        if (['.ts', '.tsx', '.js', '.jsx', '.py', '.mjs', '.cjs', '.vue', '.svelte'].includes(ext)) {
+        if (
+          ['.ts', '.tsx', '.js', '.jsx', '.py', '.mjs', '.cjs', '.vue', '.svelte'].includes(ext)
+        ) {
           const content = await fs.readFile(dirPath, 'utf-8');
           files.push({
             path: dirPath,
             relativePath: path.relative(ROOT, dirPath),
             content,
             lineCount: content.split('\n').length,
-            extension: ext
+            extension: ext,
           });
         }
         return;
@@ -178,9 +180,11 @@ function queryTechnologyMap(ruleIndex, technologies) {
   });
 
   // Get rule metadata
-  const rules = Array.from(relevantRulePaths).map(rulePath => {
-    return ruleIndex.rules.find(r => r.path === rulePath);
-  }).filter(Boolean);
+  const rules = Array.from(relevantRulePaths)
+    .map(rulePath => {
+      return ruleIndex.rules.find(r => r.path === rulePath);
+    })
+    .filter(Boolean);
 
   // Prioritize master rules
   return rules.sort((a, b) => {
@@ -211,8 +215,10 @@ function extractFrontmatter(content) {
     let value = trimmed.substring(colonIndex + 1).trim();
 
     // Remove quotes
-    if ((value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))) {
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
       value = value.slice(1, -1);
     }
 
@@ -241,7 +247,9 @@ async function extractValidationPatterns(rules) {
         const validationBlock = validationMatch[1];
 
         // Parse forbidden_patterns manually (simple YAML-like parsing)
-        const patternMatches = validationBlock.matchAll(/- pattern:\s*"([^"]+)"\s+message:\s*"([^"]+)"\s+severity:\s*"([^"]+)"(?:\s+fix:\s*"([^"]*)")?/gs);
+        const patternMatches = validationBlock.matchAll(
+          /- pattern:\s*"([^"]+)"\s+message:\s*"([^"]+)"\s+severity:\s*"([^"]+)"(?:\s+fix:\s*"([^"]*)")?/gs
+        );
 
         for (const match of patternMatches) {
           patterns.push({
@@ -249,7 +257,7 @@ async function extractValidationPatterns(rules) {
             pattern: match[1],
             message: match[2],
             severity: match[3],
-            fix: match[4] !== undefined ? match[4] : null
+            fix: match[4] !== undefined ? match[4] : null,
           });
         }
       }
@@ -293,7 +301,7 @@ function runValidation(files, patterns) {
               severity: pattern.severity,
               message: pattern.message,
               code_snippet: line.trim(),
-              fix_instruction: pattern.fix || null
+              fix_instruction: pattern.fix || null,
             });
           });
         });
@@ -351,7 +359,7 @@ async function applyFixes(violations, files, options = {}) {
         line: violation.line,
         fix_type: 'regex_replace',
         before: line,
-        after: fixed
+        after: fixed,
       });
 
       if (!dryRun) {
@@ -379,12 +387,12 @@ function calculateComplianceScore(files, violations) {
   const warningCount = violations.filter(v => v.severity === 'warning').length;
 
   // Weight errors more heavily than warnings
-  const penaltyPoints = (errorCount * 2) + (warningCount * 1);
+  const penaltyPoints = errorCount * 2 + warningCount * 1;
   const violationsPerThousandLines = (penaltyPoints / totalLines) * 1000;
 
   // Score decreases as violations increase
   // 0 violations = 100, 10 violations per 1k lines = 50, 20+ = 0
-  const score = Math.max(0, 100 - (violationsPerThousandLines * 5));
+  const score = Math.max(0, 100 - violationsPerThousandLines * 5);
 
   return Math.round(score * 10) / 10; // Round to 1 decimal
 }
@@ -398,12 +406,12 @@ function formatOutput(files, rules, violations, args, fixResults = []) {
     files_audited: files.map(f => ({
       path: f.relativePath,
       lines_analyzed: f.lineCount,
-      violations_count: violations.filter(v => v.file === f.relativePath).length
+      violations_count: violations.filter(v => v.file === f.relativePath).length,
     })),
     rules_applied: rules.map(r => ({
       rule_path: r.path,
       rule_name: r.name,
-      violations_found: violations.filter(v => v.rule === r.name).length
+      violations_found: violations.filter(v => v.rule === r.name).length,
     })),
     compliance_score: calculateComplianceScore(files, violations),
     violations_found: violations,
@@ -415,9 +423,9 @@ function formatOutput(files, rules, violations, args, fixResults = []) {
       total_violations: violations.length,
       errors: violations.filter(v => v.severity === 'error').length,
       warnings: violations.filter(v => v.severity === 'warning').length,
-      info: violations.filter(v => v.severity === 'info').length
+      info: violations.filter(v => v.severity === 'info').length,
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   if (args.fix || args.fixDryRun) {
@@ -487,7 +495,9 @@ async function main() {
       console.log('## Rule Audit Report\n');
       console.log(`**Files Audited**: ${output.audit_summary.total_files}`);
       console.log(`**Compliance Score**: ${output.compliance_score}/100`);
-      console.log(`**Violations**: ${output.audit_summary.total_violations} (${output.audit_summary.errors} errors, ${output.audit_summary.warnings} warnings)\n`);
+      console.log(
+        `**Violations**: ${output.audit_summary.total_violations} (${output.audit_summary.errors} errors, ${output.audit_summary.warnings} warnings)\n`
+      );
 
       violations.forEach(v => {
         console.log(`### ${v.severity.toUpperCase()}: ${v.message}`);

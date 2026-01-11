@@ -46,6 +46,7 @@ Integrates skills with Anthropic Agent SDK patterns:
 These utilities are used internally by the skill system and skill-manager. They are not invoked directly by users.
 
 **Example (internal use)**:
+
 ```javascript
 import { loadSkillInstructions, autoSelectSkills } from '.claude/skills/sdk/skill-loader.mjs';
 

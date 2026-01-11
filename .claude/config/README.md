@@ -5,9 +5,11 @@ This directory contains configuration files for the comprehensive agent integrat
 ## Phase 1: Configuration Files
 
 ### plan-review-matrix.json
+
 **Purpose**: Defines which agents review which aspects of plans and under what conditions.
 
 **Contents**:
+
 - **9 Review Domains**: technical_feasibility, security_implications, product_alignment, testability, ux_accessibility, performance_impact, database_design, api_contract, compliance_requirements
 - **Reviewer Agents**: Assigns specific agents to each domain (architect, security-architect, pm, qa, etc.)
 - **Workflow Mapping**: Defines mandatory vs optional reviews for each workflow
@@ -15,14 +17,17 @@ This directory contains configuration files for the comprehensive agent integrat
 - **Escalation Rules**: Automatic escalation for blocking reviews, compliance failures, security failures
 
 **Key Features**:
+
 - Weighted scoring across domains (security: 2.0x, compliance: 1.8x, technical: 1.5x)
 - Skip conditions for low-impact changes (documentation-only, UI-only, hotfixes)
 - Parallel review execution with 24-hour timeout
 
 ### signoff-matrix.json
+
 **Purpose**: Defines which agents provide final approval for deliverables.
 
 **Contents**:
+
 - **7 Signoff Types**: quality, security, architecture, product, compliance, accessibility, performance
 - **Signoff Agents**: Maps each signoff to specific agent (qa, security-architect, architect, pm, etc.)
 - **Required Fields**: Schema-validated fields for each signoff type
@@ -30,6 +35,7 @@ This directory contains configuration files for the comprehensive agent integrat
 - **Workflow Requirements**: Per-workflow mapping of required vs optional signoffs
 
 **Key Features**:
+
 - Parallel signoff execution with 48-hour timeout
 - Conditional approval for edge cases (reduced test coverage with PM approval)
 - Blocking conditions for critical security/compliance issues
@@ -40,6 +46,7 @@ This directory contains configuration files for the comprehensive agent integrat
 Located in `.claude/schemas/`:
 
 ### Signoff Schemas
+
 1. **quality-signoff.schema.json** - QA signoff with test results, bug counts, quality metrics
 2. **security-signoff.schema.json** - Security signoff with vulnerability assessment, threat model, security controls
 3. **architecture-signoff.schema.json** - Architecture signoff with design patterns, scalability, technical debt
@@ -49,16 +56,19 @@ Located in `.claude/schemas/`:
 7. **performance-signoff.schema.json** - Performance signoff with SLA compliance, load testing, metrics
 
 ### Review Schema
+
 8. **plan-review.schema.json** - Aggregates reviews from multiple domain experts with weighted scoring
 
 ## Security Triggers (Enhanced)
 
 ### security-triggers-v2.json
+
 Located in `.claude/tools/`:
 
 **Purpose**: Enhanced security trigger detection with 180+ keywords, file patterns, and task types.
 
 **Contents**:
+
 - **8 Keyword Categories**: 184 total keywords
   - authentication (50+ keywords): login, oauth, jwt, mfa, webauthn
   - authorization (30+ keywords): rbac, acl, permissions, roles
@@ -74,6 +84,7 @@ Located in `.claude/tools/`:
 - **Trigger Actions**: Security architect review, compliance check, automated scans
 
 **Key Features**:
+
 - Weighted categories (data_protection: 2.0x, secrets_management: 2.0x)
 - Exemptions for documentation-only, test-only, UI-only changes
 - Fuzzy matching for task types (threshold: 0.8)
@@ -82,6 +93,7 @@ Located in `.claude/tools/`:
 ## Usage
 
 ### Plan Review Flow
+
 1. Planner creates plan → Master Orchestrator triggers review
 2. Plan Review Matrix determines required reviewers based on workflow type
 3. Reviewers execute in parallel (24-hour timeout)
@@ -90,6 +102,7 @@ Located in `.claude/tools/`:
 6. Plan revised and re-reviewed until approved
 
 ### Signoff Flow
+
 1. Developer completes implementation
 2. Signoff Matrix determines required signoffs based on workflow type
 3. Signoff agents execute in parallel (48-hour timeout)
@@ -99,6 +112,7 @@ Located in `.claude/tools/`:
 7. Code Reviewer receives all signoffs for final review
 
 ### Security Trigger Detection
+
 1. User request analyzed for keywords, file patterns, task types
 2. Weighted scoring applied (keyword: 1.0x, file: 1.2x, task: 1.5x)
 3. If score ≥ 3.0, trigger security-architect review
@@ -109,16 +123,19 @@ Located in `.claude/tools/`:
 ## Integration Points
 
 ### Master Orchestrator
+
 - Receives escalations from plan reviews and signoffs
 - Coordinates revision cycles
 - Manages workflow state
 
 ### Workflow Runner
+
 - Validates artifacts against schemas
 - Creates gate files with validation results
 - Enforces retry limits (max 3)
 
 ### Agents
+
 - Read matrices to understand review/signoff requirements
 - Generate artifacts conforming to schemas
 - Escalate blocking issues

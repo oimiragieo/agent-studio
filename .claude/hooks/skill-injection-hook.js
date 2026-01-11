@@ -94,7 +94,7 @@ async function main() {
 
     // 5. Inject skills using skill-injector.mjs
     const injectionResult = await injectSkillsForAgent(subagent_type, prompt, {
-      includeRecommended: false // Only inject required + triggered skills
+      includeRecommended: false, // Only inject required + triggered skills
     });
 
     if (!injectionResult.success) {
@@ -114,8 +114,8 @@ async function main() {
       ...input,
       input: {
         ...input.input,
-        prompt: enhancedPrompt
-      }
+        prompt: enhancedPrompt,
+      },
     };
 
     // 8. Output enhanced JSON to stdout
@@ -140,7 +140,6 @@ async function main() {
     }
 
     process.exit(0);
-
   } catch (error) {
     // Graceful error handling - never block on errors
     log(`Error in skill injection hook: ${error.message}`);
@@ -158,7 +157,7 @@ async function main() {
 }
 
 // Run main function
-main().catch((error) => {
+main().catch(error => {
   log(`Fatal error: ${error.message}`);
   process.exit(0); // Exit 0 to not block execution
 });

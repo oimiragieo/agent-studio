@@ -23,7 +23,7 @@ const REQUIRED_TOOLS = [
   'type_text',
   'get_console_logs',
   'get_network_logs',
-  'performance_profiling'
+  'performance_profiling',
 ];
 
 /**
@@ -32,7 +32,7 @@ const REQUIRED_TOOLS = [
 async function validateDevTools() {
   const issues = [];
   const warnings = [];
-  
+
   try {
     // Check if MCP config exists
     let mcpConfig;
@@ -48,34 +48,34 @@ async function validateDevTools() {
         return { available: false, issues, warnings };
       }
     }
-    
+
     // Check for Chrome DevTools MCP server
     const servers = mcpConfig.servers || mcpConfig.mcpServers || {};
-    const devtoolsServer = servers['chrome-devtools'] || servers['chrome-devtools-mcp'] || servers['devtools'];
-    
+    const devtoolsServer =
+      servers['chrome-devtools'] || servers['chrome-devtools-mcp'] || servers['devtools'];
+
     if (!devtoolsServer) {
       issues.push('Chrome DevTools MCP server not found in MCP configuration');
       return { available: false, issues, warnings };
     }
-    
+
     // Check server configuration
     if (!devtoolsServer.command && !devtoolsServer.url) {
       issues.push('Chrome DevTools MCP server missing command or URL configuration');
     }
-    
+
     // Note: We can't actually test tool availability without running the MCP server
     // This validation checks configuration only
     warnings.push('Tool availability cannot be verified without active MCP connection');
     warnings.push('Ensure Chrome DevTools MCP server is running and tools are accessible');
-    
+
     return {
       available: true,
       issues,
       warnings,
       server: devtoolsServer,
-      required_tools: REQUIRED_TOOLS
+      required_tools: REQUIRED_TOOLS,
     };
-    
   } catch (error) {
     issues.push(`Validation error: ${error.message}`);
     return { available: false, issues, warnings };
@@ -87,7 +87,7 @@ async function validateDevTools() {
  */
 async function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.includes('--help') || args.includes('-h')) {
     console.log('Usage: node .claude/tools/validate-devtools.mjs [--json]');
     console.log('');
@@ -98,9 +98,9 @@ async function main() {
     console.log('  --help    Show this help message');
     process.exit(0);
   }
-  
+
   const result = await validateDevTools();
-  
+
   if (args.includes('--json')) {
     console.log(JSON.stringify(result, null, 2));
     process.exit(result.available ? 0 : 1);
@@ -130,4 +130,3 @@ main().catch(error => {
   console.error('❌ Fatal error:', error);
   process.exit(1);
 });
-

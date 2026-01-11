@@ -31,8 +31,8 @@ async function testSmallFile() {
     items: [1, 2, 3],
     nested: {
       key: 'value',
-      flag: true
-    }
+      flag: true,
+    },
   };
 
   writeFileSync(TEST_FILE_SMALL, JSON.stringify(testData, null, 2));
@@ -66,9 +66,9 @@ async function testLargeFile() {
   const largeData = {
     metadata: {
       size: 'large',
-      items: 10000
+      items: 10000,
     },
-    data: []
+    data: [],
   };
 
   // Create 10,000 items to make file ~5MB
@@ -81,8 +81,8 @@ async function testLargeFile() {
       metadata: {
         created: new Date().toISOString(),
         modified: new Date().toISOString(),
-        version: 1
-      }
+        version: 1,
+      },
     });
   }
 

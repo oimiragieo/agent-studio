@@ -31,12 +31,14 @@ Summarizer - Generates concise summaries of documents, code, conversations, and 
 ### Document Summarization
 
 **When to Use**:
+
 - Long documents need condensation
 - Executive summaries needed
 - Quick content overview
 - Documentation summaries
 
 **How to Invoke**:
+
 ```
 "Summarize the project requirements document"
 "Create an executive summary of the technical spec"
@@ -44,6 +46,7 @@ Summarizer - Generates concise summaries of documents, code, conversations, and 
 ```
 
 **What It Does**:
+
 - Analyzes document content
 - Extracts key points
 - Generates concise summary
@@ -52,12 +55,14 @@ Summarizer - Generates concise summaries of documents, code, conversations, and 
 ### Code Summarization
 
 **When to Use**:
+
 - Large codebases need overview
 - Function documentation
 - Code review summaries
 - Architecture summaries
 
 **How to Invoke**:
+
 ```
 "Summarize the authentication module"
 "Create a summary of the API routes"
@@ -77,6 +82,7 @@ Summarizer - Generates concise summaries of documents, code, conversations, and 
 ### With Technical Writer
 
 Summarizer helps technical writer:
+
 - Create executive summaries
 - Condense documentation
 - Generate overviews
@@ -85,6 +91,7 @@ Summarizer helps technical writer:
 ### With Artifact Publisher
 
 Summaries can be published as artifacts:
+
 - Save to `.claude/context/runs/{run-id}/artifacts/` (use `path-resolver.mjs` to resolve paths)
 - Register in artifact registry via `run-manager.mjs`
 - Reference in workflow outputs
@@ -130,4 +137,3 @@ Summarizer:
 ## Related Documentation
 
 - [Summarization Patterns](../docs/SUMMARIZATION_PATTERNS.md) - Comprehensive guide
-

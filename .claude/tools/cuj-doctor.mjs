@@ -29,7 +29,7 @@ const results = {
   critical: [],
   warnings: [],
   passed: [],
-  stats: {}
+  stats: {},
 };
 
 // Color codes for terminal output
@@ -39,7 +39,7 @@ const colors = {
   yellow: '\x1b[33m',
   green: '\x1b[32m',
   cyan: '\x1b[36m',
-  bold: '\x1b[1m'
+  bold: '\x1b[1m',
 };
 
 /**
@@ -50,8 +50,7 @@ function checkCujCountDrift() {
 
   try {
     // Count CUJ files
-    const cujFiles = fs.readdirSync(CUJS_DIR)
-      .filter(f => f.match(/^CUJ-\d{3}\.md$/));
+    const cujFiles = fs.readdirSync(CUJS_DIR).filter(f => f.match(/^CUJ-\d{3}\.md$/));
     const docCount = cujFiles.length;
 
     // Count registry entries
@@ -69,12 +68,16 @@ function checkCujCountDrift() {
     results.stats.indexCount = indexCount;
 
     if (docCount === registryCount && docCount === indexCount) {
-      results.passed.push(`CUJ counts aligned: ${docCount} docs, ${registryCount} registry, ${indexCount} index`);
+      results.passed.push(
+        `CUJ counts aligned: ${docCount} docs, ${registryCount} registry, ${indexCount} index`
+      );
     } else {
       const drift = [];
-      if (docCount !== registryCount) drift.push(`Docs (${docCount}) ≠ Registry (${registryCount})`);
+      if (docCount !== registryCount)
+        drift.push(`Docs (${docCount}) ≠ Registry (${registryCount})`);
       if (docCount !== indexCount) drift.push(`Docs (${docCount}) ≠ Index (${indexCount})`);
-      if (registryCount !== indexCount) drift.push(`Registry (${registryCount}) ≠ Index (${indexCount})`);
+      if (registryCount !== indexCount)
+        drift.push(`Registry (${registryCount}) ≠ Index (${indexCount})`);
 
       results.critical.push(`CUJ count drift detected: ${drift.join(', ')}`);
     }
@@ -98,7 +101,6 @@ function checkCujCountDrift() {
       const missingIds = missingDocs.map(c => c.id).join(', ');
       results.critical.push(`Missing CUJ docs (in registry but no file): ${missingIds}`);
     }
-
   } catch (error) {
     results.critical.push(`Failed to check CUJ count drift: ${error.message}`);
   }
@@ -112,7 +114,8 @@ function checkMissingWorkflows() {
 
   try {
     const registry = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf-8'));
-    const workflowFiles = fs.readdirSync(WORKFLOWS_DIR)
+    const workflowFiles = fs
+      .readdirSync(WORKFLOWS_DIR)
       .filter(f => f.endsWith('.yaml') || f.endsWith('.yml'))
       .map(f => f.replace(/\.(yaml|yml)$/, ''));
 
@@ -120,7 +123,7 @@ function checkMissingWorkflows() {
 
     for (const cuj of registry.cujs) {
       // Support both singular (workflow) and plural (workflows) for backwards compatibility
-      const workflowList = cuj.workflow ? [cuj.workflow] : (cuj.workflows || []);
+      const workflowList = cuj.workflow ? [cuj.workflow] : cuj.workflows || [];
 
       if (Array.isArray(workflowList)) {
         for (const workflow of workflowList) {
@@ -145,7 +148,6 @@ function checkMissingWorkflows() {
         results.critical.push(`Missing workflow "${workflow}" referenced by: ${cujIds.join(', ')}`);
       }
     }
-
   } catch (error) {
     results.critical.push(`Failed to check workflow references: ${error.message}`);
   }
@@ -159,7 +161,8 @@ function checkMissingSkills() {
 
   try {
     const registry = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf-8'));
-    const skillDirs = fs.readdirSync(SKILLS_DIR, { withFileTypes: true })
+    const skillDirs = fs
+      .readdirSync(SKILLS_DIR, { withFileTypes: true })
       .filter(d => d.isDirectory())
       .map(d => d.name);
 
@@ -203,7 +206,6 @@ function checkMissingSkills() {
         results.warnings.push(`Missing skill "${skill}" referenced by: ${cujIds.join(', ')}`);
       }
     }
-
   } catch (error) {
     results.critical.push(`Failed to check skill references: ${error.message}`);
   }
@@ -216,8 +218,7 @@ function checkBrokenLinks() {
   console.log('\n🔗 Checking for broken links...');
 
   try {
-    const cujFiles = fs.readdirSync(CUJS_DIR)
-      .filter(f => f.match(/^CUJ-\d{3}\.md$/));
+    const cujFiles = fs.readdirSync(CUJS_DIR).filter(f => f.match(/^CUJ-\d{3}\.md$/));
 
     let totalLinks = 0;
     let brokenLinks = 0;
@@ -287,7 +288,6 @@ function checkBrokenLinks() {
     } else {
       linkIssues.forEach(issue => results.warnings.push(issue));
     }
-
   } catch (error) {
     results.critical.push(`Failed to check broken links: ${error.message}`);
   }
@@ -322,7 +322,9 @@ function checkPlatformCompatibility() {
       // Check for non-boolean values
       for (const [platform, supported] of Object.entries(cuj.platform_compatibility)) {
         if (typeof supported !== 'boolean') {
-          platformIssues.push(`${cuj.id}: platform_compatibility.${platform} should be boolean (got ${typeof supported})`);
+          platformIssues.push(
+            `${cuj.id}: platform_compatibility.${platform} should be boolean (got ${typeof supported})`
+          );
         }
       }
     }
@@ -332,7 +334,6 @@ function checkPlatformCompatibility() {
     } else {
       platformIssues.forEach(issue => results.warnings.push(issue));
     }
-
   } catch (error) {
     results.critical.push(`Failed to check platform compatibility: ${error.message}`);
   }
@@ -349,17 +350,35 @@ function checkSuccessCriteria() {
 
     // Keywords that indicate measurability
     const measurableKeywords = [
-      'time', 'seconds', 'minutes', 'hours',
-      'count', 'number', 'total', 'size',
-      'percentage', '%', 'ratio',
-      'score', 'rating',
-      'exists', 'contains', 'includes',
-      'passes', 'fails',
-      'equal', 'greater', 'less', 'than',
-      'valid', 'invalid',
-      'status code', 'response',
-      'deployed', 'running',
-      'coverage'
+      'time',
+      'seconds',
+      'minutes',
+      'hours',
+      'count',
+      'number',
+      'total',
+      'size',
+      'percentage',
+      '%',
+      'ratio',
+      'score',
+      'rating',
+      'exists',
+      'contains',
+      'includes',
+      'passes',
+      'fails',
+      'equal',
+      'greater',
+      'less',
+      'than',
+      'valid',
+      'invalid',
+      'status code',
+      'response',
+      'deployed',
+      'running',
+      'coverage',
     ];
 
     const nonMeasurableIssues = [];
@@ -377,9 +396,7 @@ function checkSuccessCriteria() {
         totalCriteria++;
         const lowerOutput = output.toLowerCase();
 
-        const isMeasurable = measurableKeywords.some(keyword =>
-          lowerOutput.includes(keyword)
-        );
+        const isMeasurable = measurableKeywords.some(keyword => lowerOutput.includes(keyword));
 
         if (isMeasurable) {
           measurableCriteria++;
@@ -391,9 +408,10 @@ function checkSuccessCriteria() {
 
     results.stats.totalCriteria = totalCriteria;
     results.stats.measurableCriteria = measurableCriteria;
-    results.stats.nonMeasurablePercent = totalCriteria > 0
-      ? ((totalCriteria - measurableCriteria) / totalCriteria * 100).toFixed(1)
-      : 0;
+    results.stats.nonMeasurablePercent =
+      totalCriteria > 0
+        ? (((totalCriteria - measurableCriteria) / totalCriteria) * 100).toFixed(1)
+        : 0;
 
     if (nonMeasurableIssues.length === 0) {
       results.passed.push(`All ${totalCriteria} success criteria measurable`);
@@ -403,10 +421,11 @@ function checkSuccessCriteria() {
       topIssues.forEach(issue => results.warnings.push(issue));
 
       if (nonMeasurableIssues.length > 10) {
-        results.warnings.push(`... and ${nonMeasurableIssues.length - 10} more non-measurable criteria`);
+        results.warnings.push(
+          `... and ${nonMeasurableIssues.length - 10} more non-measurable criteria`
+        );
       }
     }
-
   } catch (error) {
     results.critical.push(`Failed to check success criteria: ${error.message}`);
   }
@@ -431,17 +450,23 @@ function checkExecutionModes() {
       }
 
       if (!validModes.includes(cuj.execution_mode)) {
-        modeIssues.push(`${cuj.id}: Invalid execution_mode "${cuj.execution_mode}" (expected: ${validModes.join(', ')})`);
+        modeIssues.push(
+          `${cuj.id}: Invalid execution_mode "${cuj.execution_mode}" (expected: ${validModes.join(', ')})`
+        );
       }
 
       // For workflow mode, check if workflow field is populated
       if (cuj.execution_mode === 'workflow' && !cuj.workflow) {
-        modeIssues.push(`${cuj.id}: Execution mode "workflow" but workflow field is null or missing`);
+        modeIssues.push(
+          `${cuj.id}: Execution mode "workflow" but workflow field is null or missing`
+        );
       }
 
       // For skill-only mode, check if skills are populated
-      if ((cuj.execution_mode === 'skill-only' || cuj.execution_mode === 'delegated-skill')
-          && (!cuj.skills || cuj.skills.length === 0)) {
+      if (
+        (cuj.execution_mode === 'skill-only' || cuj.execution_mode === 'delegated-skill') &&
+        (!cuj.skills || cuj.skills.length === 0)
+      ) {
         modeIssues.push(`${cuj.id}: Execution mode "${cuj.execution_mode}" but no skills defined`);
       }
     }
@@ -451,7 +476,6 @@ function checkExecutionModes() {
     } else {
       modeIssues.forEach(issue => results.warnings.push(issue));
     }
-
   } catch (error) {
     results.critical.push(`Failed to check execution modes: ${error.message}`);
   }
@@ -480,7 +504,9 @@ function printReport(jsonOutput = false) {
 
   // Critical issues
   if (results.critical.length > 0) {
-    console.log(`\n${colors.bold}${colors.red}❌ Critical Issues (${results.critical.length}):${colors.reset}`);
+    console.log(
+      `\n${colors.bold}${colors.red}❌ Critical Issues (${results.critical.length}):${colors.reset}`
+    );
     results.critical.forEach(issue => {
       console.log(`  ${colors.red}• ${issue}${colors.reset}`);
     });
@@ -488,7 +514,9 @@ function printReport(jsonOutput = false) {
 
   // Warnings
   if (results.warnings.length > 0) {
-    console.log(`\n${colors.bold}${colors.yellow}⚠️  Warnings (${results.warnings.length}):${colors.reset}`);
+    console.log(
+      `\n${colors.bold}${colors.yellow}⚠️  Warnings (${results.warnings.length}):${colors.reset}`
+    );
     results.warnings.forEach(warning => {
       console.log(`  ${colors.yellow}• ${warning}${colors.reset}`);
     });
@@ -496,7 +524,9 @@ function printReport(jsonOutput = false) {
 
   // Passed checks
   if (results.passed.length > 0) {
-    console.log(`\n${colors.bold}${colors.green}✅ Passed Checks (${results.passed.length}):${colors.reset}`);
+    console.log(
+      `\n${colors.bold}${colors.green}✅ Passed Checks (${results.passed.length}):${colors.reset}`
+    );
     results.passed.forEach(check => {
       console.log(`  ${colors.green}• ${check}${colors.reset}`);
     });
@@ -509,7 +539,9 @@ function printReport(jsonOutput = false) {
   const statusText = hasCritical ? 'FAILED' : 'PASSED';
 
   console.log(`${colors.bold}${statusColor}Status: ${statusText}${colors.reset}`);
-  console.log(`Critical: ${results.critical.length} | Warnings: ${results.warnings.length} | Passed: ${results.passed.length}`);
+  console.log(
+    `Critical: ${results.critical.length} | Warnings: ${results.warnings.length} | Passed: ${results.passed.length}`
+  );
   console.log('='.repeat(70) + '\n');
 }
 
@@ -541,14 +573,22 @@ function main() {
 }
 
 // Run if executed directly
-const isMain = process.argv[1] && (
-  import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}` ||
-  import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}` ||
-  import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))
-);
+const isMain =
+  process.argv[1] &&
+  (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}` ||
+    import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}` ||
+    import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/')));
 
 if (isMain) {
   main();
 }
 
-export { checkCujCountDrift, checkMissingWorkflows, checkMissingSkills, checkBrokenLinks, checkPlatformCompatibility, checkSuccessCriteria, checkExecutionModes };
+export {
+  checkCujCountDrift,
+  checkMissingWorkflows,
+  checkMissingSkills,
+  checkBrokenLinks,
+  checkPlatformCompatibility,
+  checkSuccessCriteria,
+  checkExecutionModes,
+};

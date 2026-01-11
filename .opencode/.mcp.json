@@ -2,10 +2,7 @@
   "mcpServers": {
     "repo": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-repo"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-repo"],
       "env": {
         "REPO_PATH": "${workspaceFolder}"
       },
@@ -13,10 +10,7 @@
     },
     "artifacts": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-artifacts"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-artifacts"],
       "env": {
         "ARTIFACTS_DIR": "${workspaceFolder}/.opencode/context/artifacts"
       },
@@ -24,10 +18,7 @@
     },
     "github": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-github"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-github"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
       },
@@ -36,10 +27,7 @@
     },
     "linear": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-linear"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-linear"],
       "env": {
         "LINEAR_API_KEY": "${LINEAR_API_KEY}"
       },
@@ -48,10 +36,7 @@
     },
     "slack": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-slack"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
       "env": {
         "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}"
       },
@@ -60,7 +45,7 @@
     },
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y","chrome-devtools-mcp@latest"],
+      "args": ["-y", "chrome-devtools-mcp@latest"],
       "description": "Chrome DevTools Protocol integration for browser automation, debugging, and performance analysis. Allows AI to control and inspect live Chrome instances."
     }
   }

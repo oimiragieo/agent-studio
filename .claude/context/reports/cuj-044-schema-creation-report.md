@@ -17,6 +17,7 @@ Created all 3 missing schemas required by the fallback-routing-flow.yaml workflo
 **Location**: `.claude/schemas/fallback-routing-decision.schema.json`
 
 **Key Properties**:
+
 - `decision_id`: Unique identifier for routing decision
 - `primary_agent`: Agent that failed
 - `failure_type`: Type of failure (non_recoverable, timeout, invalid_output)
@@ -36,6 +37,7 @@ Created all 3 missing schemas required by the fallback-routing-flow.yaml workflo
 **Location**: `.claude/schemas/context-package.schema.json`
 
 **Key Properties**:
+
 - `package_id`: Unique identifier for context package
 - `original_task`: Original task with objectives and requirements
 - `primary_agent`: Agent that failed
@@ -57,6 +59,7 @@ Created all 3 missing schemas required by the fallback-routing-flow.yaml workflo
 **Location**: `.claude/schemas/fallback-validation-report.schema.json`
 
 **Key Properties**:
+
 - `report_id`: Unique identifier for validation report
 - `test_scenario`: Scenario tested (explicit_fallback, capability_matrix, etc.)
 - `overall_status`: Overall validation status
@@ -96,6 +99,7 @@ The fallback-routing-flow.yaml workflow now references all three schemas:
 **Current Status**: ✅ UNBLOCKED (all schemas created)
 
 The CUJ-044 workflow can now execute all steps with proper validation:
+
 1. Step 0: Planning Phase
 2. Step 0.1: Plan Rating Gate
 3. Step 1: Primary Agent Execution (simulated failure)
@@ -137,10 +141,10 @@ ls -la .claude/schemas/fallback*.schema.json .claude/schemas/context-package.sch
 
 ## Files Modified
 
-| File | Action | Size |
-|------|--------|------|
-| `.claude/schemas/fallback-routing-decision.schema.json` | Created | 5.7 KB |
-| `.claude/schemas/context-package.schema.json` | Created | 7.8 KB |
+| File                                                     | Action  | Size    |
+| -------------------------------------------------------- | ------- | ------- |
+| `.claude/schemas/fallback-routing-decision.schema.json`  | Created | 5.7 KB  |
+| `.claude/schemas/context-package.schema.json`            | Created | 7.8 KB  |
 | `.claude/schemas/fallback-validation-report.schema.json` | Created | 11.2 KB |
 
 **Total**: 3 files created, 24.7 KB added
@@ -150,6 +154,7 @@ ls -la .claude/schemas/fallback*.schema.json .claude/schemas/context-package.sch
 All 3 missing schemas for CUJ-044 have been successfully created, following project patterns and JSON Schema Draft 2020-12 format. The fallback-routing-flow.yaml workflow now has complete schema validation coverage, unblocking CUJ-044 (Agent Fallback Chain) for testing and execution.
 
 The schemas support comprehensive validation of:
+
 - Fallback routing decisions with confidence scoring
 - Context preservation with artifact tracking
 - Final validation with test metrics and reporting

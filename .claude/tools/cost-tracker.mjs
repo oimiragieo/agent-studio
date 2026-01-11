@@ -17,14 +17,14 @@ const COST_CONFIG = {
   // Claude 3.5 Sonnet pricing (as of 2024)
   inputTokens: {
     'claude-sonnet-4': 0.003, // $3 per 1M tokens
-    'claude-opus-4': 0.015,   // $15 per 1M tokens
-    'claude-haiku-3': 0.00025 // $0.25 per 1M tokens
+    'claude-opus-4': 0.015, // $15 per 1M tokens
+    'claude-haiku-3': 0.00025, // $0.25 per 1M tokens
   },
   outputTokens: {
     'claude-sonnet-4': 0.015, // $15 per 1M tokens
-    'claude-opus-4': 0.075,  // $75 per 1M tokens
-    'claude-haiku-3': 0.00125 // $1.25 per 1M tokens
-  }
+    'claude-opus-4': 0.075, // $75 per 1M tokens
+    'claude-haiku-3': 0.00125, // $1.25 per 1M tokens
+  },
 };
 
 /**
@@ -33,11 +33,11 @@ const COST_CONFIG = {
 export function recordCost(sessionId, agentName, model, inputTokens, outputTokens, metadata = {}) {
   const history = loadHistory();
   const timestamp = new Date().toISOString();
-  
+
   const inputCost = (inputTokens / 1_000_000) * (COST_CONFIG.inputTokens[model] || 0.003);
   const outputCost = (outputTokens / 1_000_000) * (COST_CONFIG.outputTokens[model] || 0.015);
   const totalCost = inputCost + outputCost;
-  
+
   const record = {
     sessionId,
     timestamp,
@@ -46,25 +46,25 @@ export function recordCost(sessionId, agentName, model, inputTokens, outputToken
     tokens: {
       input: inputTokens,
       output: outputTokens,
-      total: inputTokens + outputTokens
+      total: inputTokens + outputTokens,
     },
     cost: {
       input: inputCost,
       output: outputCost,
-      total: totalCost
+      total: totalCost,
     },
-    metadata
+    metadata,
   };
-  
+
   history.push(record);
-  
+
   // Keep only last 10000 records
   if (history.length > 10000) {
     history.shift();
   }
-  
+
   saveHistory(history);
-  
+
   return record;
 }
 
@@ -75,7 +75,7 @@ export function getCostStats(agentName = null, model = null, days = 30) {
   const history = loadHistory();
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
-  
+
   let filtered = history.filter(record => {
     const recordDate = new Date(record.timestamp);
     const dateMatch = recordDate >= cutoff;
@@ -83,16 +83,16 @@ export function getCostStats(agentName = null, model = null, days = 30) {
     const modelMatch = !model || record.model === model;
     return dateMatch && agentMatch && modelMatch;
   });
-  
+
   if (filtered.length === 0) {
     return null;
   }
-  
+
   const totalCost = filtered.reduce((sum, r) => sum + r.cost.total, 0);
   const totalTokens = filtered.reduce((sum, r) => sum + r.tokens.total, 0);
   const totalInputTokens = filtered.reduce((sum, r) => sum + r.tokens.input, 0);
   const totalOutputTokens = filtered.reduce((sum, r) => sum + r.tokens.output, 0);
-  
+
   const stats = {
     period: `${days} days`,
     totalSessions: filtered.length,
@@ -104,12 +104,12 @@ export function getCostStats(agentName = null, model = null, days = 30) {
       inputTokens: totalInputTokens,
       outputTokens: totalOutputTokens,
       inputCost: filtered.reduce((sum, r) => sum + r.cost.input, 0),
-      outputCost: filtered.reduce((sum, r) => sum + r.cost.output, 0)
+      outputCost: filtered.reduce((sum, r) => sum + r.cost.output, 0),
     },
     byAgent: groupBy(filtered, 'agent', 'cost.total'),
-    byModel: groupBy(filtered, 'model', 'cost.total')
+    byModel: groupBy(filtered, 'model', 'cost.total'),
   };
-  
+
   return stats;
 }
 
@@ -118,43 +118,43 @@ export function getCostStats(agentName = null, model = null, days = 30) {
  */
 export function getCostForecast(days = 30) {
   const stats = getCostStats(null, null, 7); // Last 7 days
-  
+
   if (!stats) {
     return null;
   }
-  
+
   const dailyAverage = stats.totalCost / 7;
   const forecast = {
     currentPeriod: {
       days: 7,
       totalCost: stats.totalCost,
-      dailyAverage: dailyAverage
+      dailyAverage: dailyAverage,
     },
     forecast: {
       days: days,
       estimatedCost: dailyAverage * days,
-      estimatedTokens: (stats.totalTokens / 7) * days
+      estimatedTokens: (stats.totalTokens / 7) * days,
     },
-    recommendations: []
+    recommendations: [],
   };
-  
+
   // Generate recommendations
   if (dailyAverage > 10) {
     forecast.recommendations.push({
       type: 'high_usage',
       message: 'Consider optimizing context usage or using haiku for simpler tasks',
-      potentialSavings: `${(dailyAverage * 0.3).toFixed(2)} per day`
+      potentialSavings: `${(dailyAverage * 0.3).toFixed(2)} per day`,
     });
   }
-  
+
   if (stats.breakdown.outputCost > stats.breakdown.inputCost * 2) {
     forecast.recommendations.push({
       type: 'output_optimization',
       message: 'Output tokens are high. Consider using prefill or shorter responses',
-      potentialSavings: `${(stats.breakdown.outputCost * 0.2).toFixed(2)} per day`
+      potentialSavings: `${(stats.breakdown.outputCost * 0.2).toFixed(2)} per day`,
     });
   }
-  
+
   return forecast;
 }
 
@@ -164,12 +164,12 @@ export function getCostForecast(days = 30) {
 export function generateCostReport(agentName = null, days = 30) {
   const stats = getCostStats(agentName, null, days);
   const forecast = getCostForecast(30);
-  
+
   if (!stats) {
     console.log('No cost data available');
     return;
   }
-  
+
   console.log('\n💰 Cost Tracking Report');
   console.log('='.repeat(60));
   if (agentName) {
@@ -186,7 +186,7 @@ export function generateCostReport(agentName = null, days = 30) {
   console.log(`\nCost Breakdown:`);
   console.log(`  Input: $${stats.breakdown.inputCost.toFixed(4)}`);
   console.log(`  Output: $${stats.breakdown.outputCost.toFixed(4)}`);
-  
+
   if (stats.byAgent && Object.keys(stats.byAgent).length > 0) {
     console.log(`\nCost by Agent:`);
     Object.entries(stats.byAgent)
@@ -195,7 +195,7 @@ export function generateCostReport(agentName = null, days = 30) {
         console.log(`  ${agent}: $${cost.toFixed(4)}`);
       });
   }
-  
+
   if (stats.byModel && Object.keys(stats.byModel).length > 0) {
     console.log(`\nCost by Model:`);
     Object.entries(stats.byModel)
@@ -204,12 +204,12 @@ export function generateCostReport(agentName = null, days = 30) {
         console.log(`  ${model}: $${cost.toFixed(4)}`);
       });
   }
-  
+
   if (forecast) {
     console.log(`\n📊 Forecast (Next 30 Days):`);
     console.log(`  Estimated Cost: $${forecast.forecast.estimatedCost.toFixed(2)}`);
     console.log(`  Estimated Tokens: ${forecast.forecast.estimatedTokens.toLocaleString()}`);
-    
+
     if (forecast.recommendations.length > 0) {
       console.log(`\n💡 Recommendations:`);
       forecast.recommendations.forEach(rec => {
@@ -218,7 +218,7 @@ export function generateCostReport(agentName = null, days = 30) {
       });
     }
   }
-  
+
   console.log('='.repeat(60));
 }
 
@@ -247,7 +247,7 @@ function loadHistory() {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    
+
     if (fs.existsSync(COST_HISTORY_FILE)) {
       const data = fs.readFileSync(COST_HISTORY_FILE, 'utf8');
       return JSON.parse(data);
@@ -255,7 +255,7 @@ function loadHistory() {
   } catch (error) {
     console.error('Error loading cost history:', error);
   }
-  
+
   return [];
 }
 
@@ -268,12 +268,8 @@ function saveHistory(history) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    
-    fs.writeFileSync(
-      COST_HISTORY_FILE,
-      JSON.stringify(history, null, 2),
-      'utf8'
-    );
+
+    fs.writeFileSync(COST_HISTORY_FILE, JSON.stringify(history, null, 2), 'utf8');
   } catch (error) {
     console.error('Error saving cost history:', error);
   }
@@ -284,7 +280,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
   const agentName = process.argv[3];
   const days = parseInt(process.argv[4]) || 30;
-  
+
   if (command === 'report') {
     generateCostReport(agentName, days);
   } else if (command === 'stats') {
@@ -297,4 +293,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('Usage: cost-tracker.mjs [report|stats|forecast] [agent-name] [days]');
   }
 }
-

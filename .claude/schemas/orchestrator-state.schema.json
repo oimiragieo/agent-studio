@@ -3,13 +3,7 @@
   "title": "Orchestrator State Schema",
   "description": "Schema for orchestrator handoff package and session state",
   "type": "object",
-  "required": [
-    "previousSessionId",
-    "newSessionId",
-    "projectName",
-    "createdAt",
-    "projectState"
-  ],
+  "required": ["previousSessionId", "newSessionId", "projectName", "createdAt", "projectState"],
   "properties": {
     "previousSessionId": {
       "type": "string",
@@ -66,11 +60,7 @@
     },
     "projectState": {
       "type": "object",
-      "required": [
-        "currentStep",
-        "completedTasks",
-        "pendingTasks"
-      ],
+      "required": ["currentStep", "completedTasks", "pendingTasks"],
       "properties": {
         "currentStep": {
           "type": "integer",
@@ -99,4 +89,3 @@
     }
   }
 }
-

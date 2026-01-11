@@ -26,13 +26,13 @@ Run Task tool with skill context-bridge to update Linear
 
 ## Sync Targets
 
-| Target | Location | Format |
-|--------|----------|--------|
-| Claude | `.claude/context/` | JSON artifacts |
-| Cursor | `.cursor/context/` | Plan files |
-| Factory | `.factory/context/` | Spec files |
-| Linear | API | Issue updates |
-| GitHub | API | PR/Issue comments |
+| Target  | Location            | Format            |
+| ------- | ------------------- | ----------------- |
+| Claude  | `.claude/context/`  | JSON artifacts    |
+| Cursor  | `.cursor/context/`  | Plan files        |
+| Factory | `.factory/context/` | Spec files        |
+| Linear  | API                 | Issue updates     |
+| GitHub  | API                 | PR/Issue comments |
 
 ## State Captured
 
@@ -57,11 +57,13 @@ Run Task tool with skill context-bridge to update Linear
 ## Cross-Platform Handoff
 
 **Factory to Claude:**
+
 ```
 Run Task tool with skill context-bridge to hand off to Claude for security review
 ```
 
 **Cursor to Factory:**
+
 ```
 Run Task tool with skill context-bridge to import Cursor plan for implementation
 ```

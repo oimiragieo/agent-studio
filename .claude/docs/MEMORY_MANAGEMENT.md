@@ -7,6 +7,7 @@ This guide explains memory management features and best practices for preventing
 **⚠️ CRITICAL UPDATE (2026-01-09)**: Memory management system rebuilt to track **RSS (Resident Set Size)** instead of JavaScript heap only. This fixes a critical bug where monitoring reported 0.2% usage while actual memory was at 100% (4GB), causing crashes.
 
 **Priority Levels**:
+
 - **Priority 0 (P0)**: Critical Crash Prevention - RSS monitoring, pre-spawn/pre-load checks
 - **Priority 1 (P1)**: Safety & Robustness - Safe file loader, aggressive cleanup at 85% RSS
 - **Priority 2 (P2)**: Testing & Monitoring - Stress test updates, emergency fallback
@@ -58,7 +59,7 @@ memory:
     artifact_cache_max_memory_mb: 50
   cleanup:
     enabled: true
-    interval_seconds: 600  # 10 minutes
+    interval_seconds: 600 # 10 minutes
     cleanup_after_step: true
   monitoring:
     enabled: true
@@ -69,7 +70,7 @@ memory:
     max_artifact_size_mb: 10
     max_json_file_size_mb: 100
   gc:
-    expose_gc: true  # Requires --expose-gc flag
+    expose_gc: true # Requires --expose-gc flag
     gc_on_warning: true
 ```
 
@@ -88,6 +89,7 @@ Memory monitoring runs automatically during CUJ execution and provides warnings 
 **Location**: `.claude/tools/memory-monitor.mjs`
 
 **Features**:
+
 - **PRIMARY METRIC: RSS (Resident Set Size)** - Actual process memory usage
 - Tracks heap usage (secondary), RSS (primary), and external memory
 - Warns when **RSS usage** exceeds threshold (default: 3.5GB = 85% of 4GB)
@@ -95,11 +97,13 @@ Memory monitoring runs automatically during CUJ execution and provides warnings 
 - Logs memory usage at start and end of execution
 
 **Key Functions**:
+
 - `canSpawnSubagent(minFreeMB)` - **Now uses RSS** to determine if spawn is safe
 - `getMemoryUsage()` - Returns heap, RSS, and external metrics
 - `getEffectiveMemoryPercent()` - Returns RSS usage as percentage (0-100)
 
 **Breaking Change**: `canSpawnSubagent()` return object now includes:
+
 - `currentUsageMB` = `rssMB` (changed from `heapUsedMB`)
 - `freeMB` = `freeRSSMB` (changed from heap-based calculation)
 - `maxRSSMB` = 4096 (new field)
@@ -112,17 +116,20 @@ Memory monitoring runs automatically during CUJ execution and provides warnings 
 All caches have size limits and automatic eviction:
 
 #### Git Cache
+
 - **Max Entries**: 100
 - **Eviction**: LRU (Least Recently Used)
 - **Location**: `.claude/tools/git-cache.mjs`
 
 #### Artifact Cache
+
 - **Max Entries**: 500
 - **Max Memory**: 50MB
 - **Eviction**: LRU with memory-based pruning
 - **Location**: `.claude/tools/artifact-cache.mjs`
 
 #### Skill Cache
+
 - **Max Entries**: 200
 - **Eviction**: LRU (file-based)
 - **Location**: `.claude/tools/skill-cache.mjs`
@@ -134,6 +141,7 @@ Large files are automatically handled with memory validation and streaming.
 **Safe File Loader** (NEW): `.claude/tools/safe-file-loader.mjs`
 
 **Features**:
+
 - **Pre-load memory validation** - Checks available memory BEFORE loading
 - **Automatic streaming** - Files > 10MB use streaming parser
 - **Memory estimation** - JSON: 3x file size, Text: 1.5x file size
@@ -142,10 +150,12 @@ Large files are automatically handled with memory validation and streaming.
 - **Size limits** - Default max: 50MB per file
 
 **Key Functions**:
+
 - `loadJSONSafely(filePath, options)` - Memory-safe JSON loading
 - `loadTextSafely(filePath, options)` - Memory-safe text loading
 
 **Usage**:
+
 ```javascript
 import { loadJSONSafely, loadTextSafely } from './safe-file-loader.mjs';
 
@@ -153,7 +163,7 @@ import { loadJSONSafely, loadTextSafely } from './safe-file-loader.mjs';
 const data = await loadJSONSafely('./large-file.json', {
   maxSizeMB: 50,
   forceStreaming: false,
-  onProgress: (progress) => console.log(progress)
+  onProgress: progress => console.log(progress),
 });
 
 // Load text with memory validation
@@ -161,17 +171,20 @@ const content = await loadTextSafely('./agent.md', { maxSizeMB: 10 });
 ```
 
 **Integrated into**:
+
 - `agent-executor.mjs` - Agent personas and constraint files
 - Future: All large file operations
 
 **Streaming Parser**: `.claude/tools/streaming-json-parser.mjs`
 
 **Features**:
+
 - Streams files in 64KB chunks
 - Enforces size limits (default: 100MB max)
 - Used automatically by safe file loader for large files
 
 **Legacy Usage** (still supported):
+
 - `artifact-cache.mjs` - Artifact loading
 - `workflow_runner.js` - Gate and plan file loading
 - `run-cuj.mjs` - Registry and analytics loading
@@ -183,6 +196,7 @@ Automatic cache cleanup runs every 10 minutes during CUJ execution.
 **Location**: `.claude/tools/memory-cleanup.mjs`
 
 **Features**:
+
 - Clears all caches (git, artifact, skill)
 - Triggers garbage collection if available
 - Logs cleanup results
@@ -196,6 +210,7 @@ Workflow state can be saved and resumed to break up long-running processes.
 **Location**: `.claude/tools/workflow-checkpoint.mjs`
 
 **Features**:
+
 - Save workflow state at any step
 - Load and resume from checkpoint
 - Includes memory usage snapshot
@@ -209,6 +224,7 @@ Automatic detection and response to memory pressure conditions.
 **Location**: `.claude/tools/memory-pressure-handler.mjs`
 
 **Features**:
+
 - **Monitors RSS** (actual memory) instead of heap only
 - **Lowered thresholds**: 75% high (was 80%), 85% critical (was 90%)
 - 10-second polling interval
@@ -217,6 +233,7 @@ Automatic detection and response to memory pressure conditions.
 - Returns cleanup function to stop monitoring
 
 **Thresholds**:
+
 - **Normal**: < 75% RSS usage - no action needed
 - **High** (75%): Warning logged, callback triggered
 - **Critical** (85%): **Automatic aggressive cleanup** triggered (NEW):
@@ -228,10 +245,12 @@ Automatic detection and response to memory pressure conditions.
 
 **Emergency Fallback** (NEW):
 If cleanup doesn't free enough memory (still > 90% RSS):
+
 - Logs emergency guidance (reduce concurrent subagents, clear registry, restart)
 - Continues anyway (user-configurable to checkpoint/exit instead)
 
 **Usage**:
+
 ```javascript
 import { setupMemoryPressureHandling } from './memory-pressure-handler.mjs';
 
@@ -250,6 +269,7 @@ const cleanup = setupMemoryPressureHandling((level, usage, stats) => {
 ```
 
 **Breaking Change**: Critical pressure no longer exits by default. To restore old behavior (checkpoint + exit):
+
 ```javascript
 const cleanup = setupMemoryPressureHandling((level, usage, stats) => {
   if (level === 'critical') {
@@ -267,6 +287,7 @@ const cleanup = setupMemoryPressureHandling((level, usage, stats) => {
 Workflows automatically handle memory pressure by creating checkpoints and restarting.
 
 **Process**:
+
 1. Memory pressure reaches critical level (90%+ heap usage)
 2. Current workflow state saved to checkpoint
 3. Process exits with code 42 (restart signal)
@@ -274,6 +295,7 @@ Workflows automatically handle memory pressure by creating checkpoints and resta
 5. Execution resumes from saved state
 
 **Exit Code Convention**:
+
 - **0**: Success
 - **1**: Error/failure
 - **42**: Memory pressure restart needed (checkpoint saved)
@@ -281,6 +303,7 @@ Workflows automatically handle memory pressure by creating checkpoints and resta
 **Checkpoint Location**: `.claude/context/runs/<run_id>/checkpoints/`
 
 **Resume Command**:
+
 ```bash
 node .claude/tools/workflow_runner.js --resume --run-id <run_id>
 ```
@@ -290,6 +313,7 @@ node .claude/tools/workflow_runner.js --resume --run-id <run_id>
 CUJ performance analytics now include detailed memory tracking with **RSS metrics**.
 
 **Metrics Tracked**:
+
 - `heapUsedStartMB` - Heap usage at CUJ start
 - `heapUsedEndMB` - Heap usage at CUJ end
 - `heapPeakMB` - Peak heap usage during execution
@@ -304,6 +328,7 @@ CUJ performance analytics now include detailed memory tracking with **RSS metric
 **Location**: `.claude/context/analytics/cuj-performance.json`
 
 **Example Entry**:
+
 ```json
 {
   "cuj_id": "CUJ-005",
@@ -328,6 +353,7 @@ CUJ performance analytics now include detailed memory tracking with **RSS metric
 **Stress Test Results**: `.claude/context/reports/phase7-stress-test-results.json`
 
 Now includes:
+
 - `rss_start_mb`, `rss_peak_mb`, `rss_end_mb`
 - `rss_peak_usage_percent` - Primary pass/fail metric
 - Pass threshold: RSS < 3500MB (85%)
@@ -360,11 +386,13 @@ Memory usage is logged automatically with **RSS as primary metric**:
 **Problem**: Still getting "JavaScript heap out of memory" or process crashes
 
 **Root Cause Analysis**:
+
 - Check if monitoring shows RSS usage (not just heap)
 - If warnings show heap but not RSS: monitoring may be using old code
 - If no warnings before crash: memory spikes too fast for monitoring
 
 **Solutions**:
+
 1. **Verify RSS monitoring is active**: Check logs for "RSS usage" warnings (not "Heap usage")
 2. **Lower pressure thresholds**: Reduce from 85% to 80% in `memory-pressure-handler.mjs`
 3. **Increase heap size**: Update `--max-old-space-size=4096` to `8192` in `package.json` scripts
@@ -377,6 +405,7 @@ Memory usage is logged automatically with **RSS as primary metric**:
 **Problem**: Performance degraded after enabling memory management
 
 **Solutions**:
+
 1. Check cache hit rates - low hit rates may indicate cache limits too low
 2. Increase cache limits if system has available memory
 3. Disable cleanup during execution (set `cleanup.enabled: false`)
@@ -387,11 +416,13 @@ Memory usage is logged automatically with **RSS as primary metric**:
 **Problem**: Frequent RSS memory warnings during execution
 
 **Diagnosis**:
+
 - Check warning frequency: < 5% of execution time is normal
 - Check memory freed per cleanup: Should be ≥ 500MB
 - Check if warnings correlate with specific operations (artifact loading, subagent spawning)
 
 **Solutions**:
+
 1. **Increase warn threshold**: Change from 3500MB to 3700MB in `memory-monitor.mjs`
 2. **Enable GC on warning**: Set `gc.gc_on_warning: true` in config
 3. **Reduce cache sizes**: Lower `artifact_cache_max_memory_mb` to 25MB
@@ -404,6 +435,7 @@ Memory usage is logged automatically with **RSS as primary metric**:
 **Problem**: Errors loading large artifacts
 
 **Solutions**:
+
 1. Increase `file_handling.max_artifact_size_mb`
 2. Increase `file_handling.max_json_file_size_mb`
 3. Check file size before loading
@@ -440,11 +472,13 @@ Memory usage is logged automatically with **RSS as primary metric**:
 **Problem**: Critical memory pressure warnings (85% RSS) appear
 
 **Expected Behavior** (NEW):
+
 - System now continues execution after aggressive cleanup (no exit by default)
 - Cleanup should free ≥ 500MB
 - If cleanup insufficient (still > 90%): Emergency warnings logged but continues
 
 **Action Required**:
+
 1. **Monitor cleanup effectiveness**: Check logs for "Freed: XXX MB"
 2. **If freed < 500MB**: Reduce cache sizes or concurrent subagents
 3. **If emergency warnings appear**: Consider manual intervention:
@@ -455,6 +489,7 @@ Memory usage is logged automatically with **RSS as primary metric**:
 **Problem** (Old behavior): Process exits with code 42 during workflow execution
 
 **Solution** (if you re-enabled checkpoint/exit behavior):
+
 1. This is expected behavior - checkpoint was saved due to memory pressure
 2. Check checkpoint location: `.claude/context/runs/<run_id>/checkpoints/`
 3. Resume from checkpoint: `node .claude/tools/workflow_runner.js --resume --run-id <run_id>`
@@ -464,6 +499,7 @@ Memory usage is logged automatically with **RSS as primary metric**:
 **Problem**: Memory pressure warnings (high level) appear frequently
 
 **Solution**:
+
 1. Check cache sizes - may need tuning
 2. Enable more aggressive cleanup (reduce interval in config.yaml)
 3. Review CUJ for memory-intensive operations
@@ -473,6 +509,7 @@ Memory usage is logged automatically with **RSS as primary metric**:
 **Problem**: Critical memory pressure reached but no checkpoint saved
 
 **Solution**:
+
 1. Ensure workflow has `--run-id` parameter
 2. Check checkpoint directory permissions
 3. Verify checkpoint-manager.mjs is properly integrated
@@ -481,6 +518,7 @@ Memory usage is logged automatically with **RSS as primary metric**:
 ## Related Files (Updated 2026-01-09)
 
 **Core Memory Management**:
+
 - `.claude/tools/memory-monitor.mjs` - **RSS-based monitoring** (P0, updated)
 - `.claude/tools/memory-pressure-handler.mjs` - **RSS-based pressure detection + aggressive cleanup** (P0/P1, updated)
 - `.claude/tools/safe-file-loader.mjs` - **Memory-aware file loading** (P1, NEW)
@@ -490,20 +528,24 @@ Memory usage is logged automatically with **RSS as primary metric**:
 - `.claude/tools/checkpoint-manager.mjs` - Checkpoint persistence (P3)
 
 **Integration Points**:
+
 - `.claude/tools/run-cuj.mjs` - **Pre-spawn validation** (P0, updated)
 - `.claude/tools/workflow_runner.js` - **Pre-load validation** (P0, updated)
 - `.claude/tools/agent-executor.mjs` - **Safe file loader integration** (P1, updated)
 
 **Configuration**:
+
 - `.claude/config.yaml` - Memory configuration settings
 - `package.json` - Node.js heap size flags (--max-old-space-size=4096 --expose-gc)
 
 **Testing**:
+
 - `.claude/tools/test-phase7-stress.mjs` - **RSS-based stress test** (P2, updated)
 - `.claude/tools/test-memory-management.mjs` - Comprehensive test suite (P1+P2+P3)
 - `.claude/tools/test-memory-integration.mjs` - Integration tests
 
 **Documentation**:
+
 - This file (`.claude/docs/MEMORY_MANAGEMENT.md`) - Updated 2026-01-09 with RSS-based guidance
 - Implementation plan: `C:\Users\oimir\.claude\plans\unified-snuggling-penguin.md`
 

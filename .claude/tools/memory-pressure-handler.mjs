@@ -12,9 +12,9 @@
 
 import v8 from 'v8';
 
-const DEFAULT_HIGH_THRESHOLD = 0.75;  // 75% RSS usage (lowered from 80%)
-const DEFAULT_CRITICAL_THRESHOLD = 0.85;  // 85% RSS usage (lowered from 90%)
-const DEFAULT_CHECK_INTERVAL_MS = 10000;  // 10 seconds
+const DEFAULT_HIGH_THRESHOLD = 0.75; // 75% RSS usage (lowered from 80%)
+const DEFAULT_CRITICAL_THRESHOLD = 0.85; // 85% RSS usage (lowered from 90%)
+const DEFAULT_CHECK_INTERVAL_MS = 10000; // 10 seconds
 
 /**
  * Setup memory pressure monitoring
@@ -29,7 +29,7 @@ export function setupMemoryPressureHandling(onPressure, options = {}) {
   const {
     highThreshold = DEFAULT_HIGH_THRESHOLD,
     criticalThreshold = DEFAULT_CRITICAL_THRESHOLD,
-    checkIntervalMs = DEFAULT_CHECK_INTERVAL_MS
+    checkIntervalMs = DEFAULT_CHECK_INTERVAL_MS,
   } = options;
 
   if (typeof onPressure !== 'function') {
@@ -57,14 +57,16 @@ export function setupMemoryPressureHandling(onPressure, options = {}) {
       heapUsedMB: stats.used_heap_size / 1024 / 1024,
       heapLimitMB: stats.heap_size_limit / 1024 / 1024,
       externalMB: memUsage.external / 1024 / 1024,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     if (usage > criticalThreshold) {
       // Critical level (85%+)
       if (lastLevel !== 'critical') {
         console.warn('[Memory Pressure] Critical level reached');
-        console.warn(`  RSS usage: ${memoryStats.rssMB.toFixed(2)}MB / ${memoryStats.rssMaxMB}MB (${memoryStats.rssUsagePercent.toFixed(1)}%)`);
+        console.warn(
+          `  RSS usage: ${memoryStats.rssMB.toFixed(2)}MB / ${memoryStats.rssMaxMB}MB (${memoryStats.rssUsagePercent.toFixed(1)}%)`
+        );
         lastLevel = 'critical';
 
         // Aggressive cleanup (async but don't await to avoid blocking monitoring)
@@ -86,19 +88,29 @@ export function setupMemoryPressureHandling(onPressure, options = {}) {
 
           // 3. Log memory before/after
           const beforeMem = process.memoryUsage();
-          console.log(`[MemoryPressure] Before cleanup: RSS ${(beforeMem.rss / 1024 / 1024).toFixed(2)}MB`);
+          console.log(
+            `[MemoryPressure] Before cleanup: RSS ${(beforeMem.rss / 1024 / 1024).toFixed(2)}MB`
+          );
 
           await new Promise(resolve => setTimeout(resolve, 500));
 
           const afterMem = process.memoryUsage();
-          console.log(`[MemoryPressure] After cleanup: RSS ${(afterMem.rss / 1024 / 1024).toFixed(2)}MB`);
-          console.log(`[MemoryPressure] Freed: ${((beforeMem.rss - afterMem.rss) / 1024 / 1024).toFixed(2)}MB`);
+          console.log(
+            `[MemoryPressure] After cleanup: RSS ${(afterMem.rss / 1024 / 1024).toFixed(2)}MB`
+          );
+          console.log(
+            `[MemoryPressure] Freed: ${((beforeMem.rss - afterMem.rss) / 1024 / 1024).toFixed(2)}MB`
+          );
 
           // 4. Check if cleanup was sufficient
           const maxRSSBytes = 4096 * 1024 * 1024;
           const currentPressure = (afterMem.rss / maxRSSBytes) * 100;
           if (currentPressure > 90) {
-            console.error('[MemoryPressure] EMERGENCY: Cleanup insufficient, pressure still at ' + currentPressure.toFixed(1) + '%');
+            console.error(
+              '[MemoryPressure] EMERGENCY: Cleanup insufficient, pressure still at ' +
+                currentPressure.toFixed(1) +
+                '%'
+            );
             console.error('[MemoryPressure] Consider:');
             console.error('  1. Reduce concurrent subagents');
             console.error('  2. Clear artifact registry');
@@ -121,7 +133,9 @@ export function setupMemoryPressureHandling(onPressure, options = {}) {
       // High level (75%+)
       if (lastLevel !== 'high') {
         console.warn('[Memory Pressure] High level reached');
-        console.warn(`  RSS usage: ${memoryStats.rssMB.toFixed(2)}MB / ${memoryStats.rssMaxMB}MB (${memoryStats.rssUsagePercent.toFixed(1)}%)`);
+        console.warn(
+          `  RSS usage: ${memoryStats.rssMB.toFixed(2)}MB / ${memoryStats.rssMaxMB}MB (${memoryStats.rssUsagePercent.toFixed(1)}%)`
+        );
         lastLevel = 'high';
       }
       onPressure('high', usage, memoryStats);
@@ -157,7 +171,7 @@ export function getCurrentPressureLevel() {
     heapUsedMB: stats.used_heap_size / 1024 / 1024,
     heapLimitMB: stats.heap_size_limit / 1024 / 1024,
     externalMB: memUsage.external / 1024 / 1024,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   let level = 'normal';

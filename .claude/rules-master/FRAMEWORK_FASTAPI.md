@@ -347,7 +347,7 @@ def test_create_user():
 )
 async def create_user(user: UserCreate):
     """Create a new user.
-    
+
     - **email**: User's email address
     - **name**: User's full name
     - **password**: User's password (will be hashed)
@@ -384,6 +384,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ## Migration Notes
 
 This master file consolidates rules from:
+
 - `python-fastapi-best-practices-cursorrules-prompt-f`
 - `python-fastapi-cursorrules-prompt-file`
 - `python-fastapi-scalable-api-cursorrules-prompt-fil`
@@ -391,4 +392,3 @@ This master file consolidates rules from:
 - `cursorrules-file-cursor-ai-python-fastapi-api`
 
 **Old rule files can be archived** - this master file is the single source of truth for FastAPI development.
-

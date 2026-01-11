@@ -7,31 +7,36 @@ allowed-tools: [Bash, Read, WebFetch]
 # arXiv Research Skill
 
 ## Overview
+
 Academic paper search and research on arXiv. 90%+ context savings.
 
 ## Tools (Progressive Disclosure)
 
 ### Search
-| Tool | Description |
-|------|-------------|
-| search | Search papers by query |
-| search-author | Search by author |
-| search-category | Search by category |
+
+| Tool            | Description            |
+| --------------- | ---------------------- |
+| search          | Search papers by query |
+| search-author   | Search by author       |
+| search-category | Search by category     |
 
 ### Paper Details
-| Tool | Description |
-|------|-------------|
-| get-paper | Get paper metadata |
+
+| Tool         | Description        |
+| ------------ | ------------------ |
+| get-paper    | Get paper metadata |
 | get-abstract | Get paper abstract |
-| get-pdf | Download PDF link |
+| get-pdf      | Download PDF link  |
 
 ### Categories
-| Tool | Description |
-|------|-------------|
-| list-categories | List arXiv categories |
-| recent-papers | Recent papers in category |
+
+| Tool            | Description               |
+| --------------- | ------------------------- |
+| list-categories | List arXiv categories     |
+| recent-papers   | Recent papers in category |
 
 ### Common Categories
+
 - cs.AI (Artificial Intelligence)
 - cs.LG (Machine Learning)
 - cs.CL (Computation and Language)
@@ -39,5 +44,6 @@ Academic paper search and research on arXiv. 90%+ context savings.
 - cs.SE (Software Engineering)
 
 ## Agent Integration
+
 - **analyst** (primary): Research analysis
 - **llm-architect** (secondary): AI paper research

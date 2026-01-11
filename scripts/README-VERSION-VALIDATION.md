@@ -13,11 +13,11 @@ The rule index version validation system ensures that the `.claude/context/rule-
 
 ## Exit Codes
 
-| Exit Code | Meaning | Action Required |
-|-----------|---------|-----------------|
-| `0` | All validations passed | None |
-| `1` | Version mismatch (warning) or broken paths found | Run `pnpm index-rules` to regenerate index |
-| `2` | Version file missing (error) | Run `pnpm index-rules` to create index |
+| Exit Code | Meaning                                          | Action Required                            |
+| --------- | ------------------------------------------------ | ------------------------------------------ |
+| `0`       | All validations passed                           | None                                       |
+| `1`       | Version mismatch (warning) or broken paths found | Run `pnpm index-rules` to regenerate index |
+| `2`       | Version file missing (error)                     | Run `pnpm index-rules` to create index     |
 
 ## Usage
 
@@ -34,6 +34,7 @@ node scripts/validate-rule-index-paths.mjs --check-version
 ```
 
 **Output Example (Success)**:
+
 ```
 📋 Rule Index Version Check:
    Current:  1.1.0
@@ -42,6 +43,7 @@ node scripts/validate-rule-index-paths.mjs --check-version
 ```
 
 **Output Example (Mismatch)**:
+
 ```
 📋 Rule Index Version Check:
    Current:  1.0.0
@@ -70,6 +72,7 @@ node scripts/validate-rule-index-paths.mjs
 ```
 
 **Output Example**:
+
 ```
 🔍 Validating rule index paths...
 
@@ -161,6 +164,7 @@ pnpm test:version-validation
 ```
 
 **Test Coverage**:
+
 1. ✅ Version matches expected version
 2. ⚠️ Version mismatch detected
 3. ⚠️ Missing version field
@@ -173,6 +177,7 @@ pnpm test:version-validation
 **Symptom**: Exit code 1 with "VERSION MISMATCH" message
 
 **Solution**:
+
 ```bash
 pnpm index-rules
 ```
@@ -184,6 +189,7 @@ This regenerates the rule index with the current expected version.
 **Symptom**: Exit code 1 with "VERSION FIELD MISSING" message
 
 **Solution**:
+
 ```bash
 pnpm index-rules
 ```
@@ -195,6 +201,7 @@ This regenerates the rule index with proper version metadata.
 **Symptom**: Exit code 2 with "Rule index file not found" message
 
 **Solution**:
+
 ```bash
 pnpm index-rules
 ```
@@ -211,10 +218,10 @@ This creates a new rule index file.
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.1.0 | 2026-01-04 | Added versioning metadata for skills compatibility tracking |
-| 1.0.0 | 2025-12-XX | Initial rule index structure |
+| Version | Date       | Changes                                                     |
+| ------- | ---------- | ----------------------------------------------------------- |
+| 1.1.0   | 2026-01-04 | Added versioning metadata for skills compatibility tracking |
+| 1.0.0   | 2025-12-XX | Initial rule index structure                                |
 
 ## Related Documentation
 

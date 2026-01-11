@@ -36,36 +36,36 @@ const RATER_CLIS = [
     displayName: 'Anthropic Claude',
     command: 'claude --version',
     description: 'Official Anthropic Claude CLI',
-    priority: 'high'
+    priority: 'high',
   },
   {
     name: 'gemini',
     displayName: 'Google Gemini',
     command: 'gemini --version',
     description: 'Google Gemini CLI for AI responses',
-    priority: 'high'
+    priority: 'high',
   },
   {
     name: 'codex',
     displayName: 'OpenAI Codex',
     command: 'codex --version',
     description: 'OpenAI Codex CLI',
-    priority: 'medium'
+    priority: 'medium',
   },
   {
     name: 'cursor-agent',
     displayName: 'Cursor Agent',
     command: 'cursor-agent --version',
     description: 'Cursor AI agent CLI',
-    priority: 'medium'
+    priority: 'medium',
   },
   {
     name: 'copilot',
     displayName: 'GitHub Copilot',
     command: 'copilot --version',
     description: 'GitHub Copilot CLI',
-    priority: 'low'
-  }
+    priority: 'low',
+  },
 ];
 
 // Parse CLI arguments
@@ -130,8 +130,8 @@ async function checkAvailability() {
       total: RATER_CLIS.length,
       available_count: 0,
       unavailable_count: 0,
-      status: 'unknown'
-    }
+      status: 'unknown',
+    },
   };
 
   if (!jsonOutput && !verbose) {
@@ -146,7 +146,7 @@ async function checkAvailability() {
       displayName: cli.displayName,
       description: cli.description,
       priority: cli.priority,
-      available
+      available,
     };
 
     if (available) {
@@ -198,7 +198,9 @@ function outputResults(results) {
     console.log(JSON.stringify(results, null, 2));
   } else {
     console.log('\n' + '='.repeat(80));
-    console.log(`\n📊 Summary: ${results.summary.available_count} of ${results.summary.total} CLIs available`);
+    console.log(
+      `\n📊 Summary: ${results.summary.available_count} of ${results.summary.total} CLIs available`
+    );
 
     if (results.summary.status === 'critical') {
       console.log('\n❌ CRITICAL: No rater CLIs available');
@@ -247,11 +249,17 @@ function outputResults(results) {
     }
   } catch (error) {
     if (jsonOutput) {
-      console.error(JSON.stringify({
-        error: true,
-        message: error.message,
-        stack: error.stack
-      }, null, 2));
+      console.error(
+        JSON.stringify(
+          {
+            error: true,
+            message: error.message,
+            stack: error.stack,
+          },
+          null,
+          2
+        )
+      );
     } else {
       console.error(`\n❌ ERROR: ${error.message}\n`);
       if (verbose) {

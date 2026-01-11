@@ -22,11 +22,11 @@ const requestHistory = [];
 function checkRateLimit() {
   const now = Date.now();
   const recentRequests = requestHistory.filter(t => now - t < RATE_LIMIT_WINDOW);
-  
+
   if (recentRequests.length >= MAX_REQUESTS_PER_WINDOW) {
     throw new Error(`Rate limit exceeded: ${MAX_REQUESTS_PER_WINDOW} requests per minute`);
   }
-  
+
   requestHistory.push(now);
   // Clean old entries
   while (requestHistory.length > 0 && now - requestHistory[0] > RATE_LIMIT_WINDOW) {
@@ -47,11 +47,11 @@ function getCacheKey(url, options = {}) {
 async function getCached(url, options) {
   const cacheKey = getCacheKey(url, options);
   const cached = cache.get(cacheKey);
-  
+
   if (cached && Date.now() - cached.timestamp < (options.cache_ttl || 300000)) {
     return cached.data;
   }
-  
+
   return null;
 }
 
@@ -62,7 +62,7 @@ function setCached(url, options, data) {
   const cacheKey = getCacheKey(url, options);
   cache.set(cacheKey, {
     data,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   });
 }
 
@@ -79,7 +79,7 @@ export async function fetchUrl(input, context = {}) {
     follow_redirects = true,
     max_redirects = 5,
     cache_ttl = 300000, // 5 minutes default
-    use_cache = true
+    use_cache = true,
   } = input;
 
   // Validate URL
@@ -91,7 +91,12 @@ export async function fetchUrl(input, context = {}) {
 
   // Security: Block localhost and private IPs unless explicitly allowed
   const urlObj = new URL(url);
-  if (urlObj.hostname === 'localhost' || urlObj.hostname === '127.0.0.1' || urlObj.hostname.startsWith('192.168.') || urlObj.hostname.startsWith('10.')) {
+  if (
+    urlObj.hostname === 'localhost' ||
+    urlObj.hostname === '127.0.0.1' ||
+    urlObj.hostname.startsWith('192.168.') ||
+    urlObj.hostname.startsWith('10.')
+  ) {
     if (!context.allow_localhost) {
       throw new Error('Access to localhost and private IPs is blocked for security');
     }
@@ -106,7 +111,7 @@ export async function fetchUrl(input, context = {}) {
     if (cached) {
       return {
         ...cached,
-        cached: true
+        cached: true,
       };
     }
   }
@@ -117,9 +122,9 @@ export async function fetchUrl(input, context = {}) {
       method,
       headers: {
         'User-Agent': 'Claude-Agent/1.0',
-        ...headers
+        ...headers,
       },
-      signal: AbortSignal.timeout(timeout)
+      signal: AbortSignal.timeout(timeout),
     };
 
     if (body) {
@@ -130,7 +135,7 @@ export async function fetchUrl(input, context = {}) {
     }
 
     const response = await fetch(url, fetchOptions);
-    
+
     // Handle redirects
     if (follow_redirects && response.status >= 300 && response.status < 400) {
       if (max_redirects <= 0) {
@@ -138,17 +143,20 @@ export async function fetchUrl(input, context = {}) {
       }
       const location = response.headers.get('location');
       if (location) {
-        return fetchUrl({
-          ...input,
-          url: new URL(location, url).href,
-          max_redirects: max_redirects - 1
-        }, context);
+        return fetchUrl(
+          {
+            ...input,
+            url: new URL(location, url).href,
+            max_redirects: max_redirects - 1,
+          },
+          context
+        );
       }
     }
 
     const contentType = response.headers.get('content-type') || '';
     let content;
-    
+
     if (contentType.includes('application/json')) {
       content = await response.json();
     } else if (contentType.includes('text/')) {
@@ -166,7 +174,7 @@ export async function fetchUrl(input, context = {}) {
       content,
       contentType,
       url: response.url,
-      cached: false
+      cached: false,
     };
 
     // Cache successful responses
@@ -180,7 +188,7 @@ export async function fetchUrl(input, context = {}) {
       success: false,
       error: error.message,
       url,
-      cached: false
+      cached: false,
     };
   }
 }
@@ -196,97 +204,90 @@ export const webFetchTool = {
     properties: {
       url: {
         type: 'string',
-        description: 'URL to fetch'
+        description: 'URL to fetch',
       },
       method: {
         type: 'string',
         enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-        default: 'GET'
+        default: 'GET',
       },
       headers: {
         type: 'object',
-        description: 'HTTP headers'
+        description: 'HTTP headers',
       },
       body: {
-        oneOf: [
-          { type: 'string' },
-          { type: 'object' }
-        ],
-        description: 'Request body'
+        oneOf: [{ type: 'string' }, { type: 'object' }],
+        description: 'Request body',
       },
       timeout: {
         type: 'number',
         description: 'Timeout in milliseconds',
-        default: 30000
+        default: 30000,
       },
       follow_redirects: {
         type: 'boolean',
-        default: true
+        default: true,
       },
       max_redirects: {
         type: 'number',
-        default: 5
+        default: 5,
       },
       cache_ttl: {
         type: 'number',
         description: 'Cache TTL in milliseconds',
-        default: 300000
+        default: 300000,
       },
       use_cache: {
         type: 'boolean',
-        default: true
-      }
+        default: true,
+      },
     },
-    required: ['url']
+    required: ['url'],
   },
   outputSchema: {
     type: 'object',
     properties: {
       success: {
         type: 'boolean',
-        description: 'Whether the fetch request succeeded'
+        description: 'Whether the fetch request succeeded',
       },
       status: {
         type: 'number',
-        description: 'HTTP status code'
+        description: 'HTTP status code',
       },
       statusText: {
         type: 'string',
-        description: 'HTTP status text'
+        description: 'HTTP status text',
       },
       headers: {
         type: 'object',
         description: 'HTTP response headers',
-        additionalProperties: { type: 'string' }
+        additionalProperties: { type: 'string' },
       },
       content: {
-        oneOf: [
-          { type: 'string' },
-          { type: 'object' }
-        ],
-        description: 'Response content (parsed JSON or text)'
+        oneOf: [{ type: 'string' }, { type: 'object' }],
+        description: 'Response content (parsed JSON or text)',
       },
       contentType: {
         type: 'string',
-        description: 'Content-Type header value'
+        description: 'Content-Type header value',
       },
       url: {
         type: 'string',
-        description: 'Final URL after redirects'
+        description: 'Final URL after redirects',
       },
       cached: {
         type: 'boolean',
-        description: 'Whether response was served from cache'
+        description: 'Whether response was served from cache',
       },
       error: {
         type: 'string',
-        description: 'Error message if request failed'
-      }
+        description: 'Error message if request failed',
+      },
     },
-    required: ['success', 'url', 'cached']
+    required: ['success', 'url', 'cached'],
   },
-  execute: fetchUrl
+  execute: fetchUrl,
 };
 
 export default webFetchTool;
-

@@ -22,6 +22,7 @@ pnpm cuj:list
 ```
 
 Output:
+
 ```
 | ID      | Name                          | Mode         | Workflow |
 |---------|-------------------------------|--------------|----------|
@@ -91,6 +92,7 @@ pnpm cuj CUJ-005
 ```
 
 Output:
+
 ```
 Running CUJ-005: Greenfield Project Planning
 Workflow: greenfield-fullstack.yaml

@@ -33,6 +33,7 @@ Documentation Generator Skill - Generates comprehensive documentation from code,
 ### Step 1: Identify Documentation Type
 
 Determine documentation type:
+
 - **API Documentation**: Endpoint references
 - **Developer Guide**: Setup and usage
 - **Architecture Docs**: System overview
@@ -41,6 +42,7 @@ Determine documentation type:
 ### Step 2: Extract Information
 
 Gather documentation content:
+
 - Read code and comments
 - Analyze API endpoints
 - Extract examples
@@ -49,6 +51,7 @@ Gather documentation content:
 ### Step 3: Generate Documentation
 
 Create documentation:
+
 - Follow documentation templates
 - Include examples
 - Add troubleshooting
@@ -57,11 +60,12 @@ Create documentation:
 ### Step 4: Validate Documentation
 
 Validate quality:
+
 - Check completeness
 - Verify examples work
 - Ensure clarity
 - Validate links
-</execution_process>
+  </execution_process>
 
 <integration>
 **Integration with Technical Writer Agent**:
@@ -70,37 +74,42 @@ Validate quality:
 - Validates completeness
 
 **Integration with Developer Agent**:
+
 - Generates API documentation
 - Creates inline documentation
 - Updates docs with code changes
-</integration>
+  </integration>
 
 <best_practices>
+
 1. **Extract from Code**: Use code as source of truth
 2. **Include Examples**: Provide working examples
 3. **Keep Updated**: Sync docs with code
 4. **Clear Structure**: Organize logically
 5. **User-Focused**: Write for users, not system
-</best_practices>
-</instructions>
+   </best_practices>
+   </instructions>
 
 <examples>
 <formatting_example>
 **API Documentation**
 
-```markdown
+````markdown
 # Users API
 
 ## Endpoints
 
 ### GET /api/users
+
 List all users with pagination.
 
 **Query Parameters:**
+
 - `page` (number): Page number (default: 1)
 - `limit` (number): Items per page (default: 10)
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -117,12 +126,15 @@ List all users with pagination.
   }
 }
 ```
+````
 
 **Example:**
+
 ```bash
 curl -X GET "http://localhost:3000/api/users?page=1&limit=10"
 ```
-```
+
+````
 </formatting_example>
 
 <formatting_example>
@@ -140,9 +152,10 @@ curl -X GET "http://localhost:3000/api/users?page=1&limit=10"
 ### Installation
 ```bash
 pnpm install
-```
+````
 
 ### Development
+
 ```bash
 pnpm dev
 ```
@@ -154,6 +167,7 @@ pnpm dev
 ## Development Workflow
 
 [Development process]
+
 ```
 </formatting_example>
 </examples>
@@ -163,18 +177,25 @@ pnpm dev
 **Example Commands**:
 
 ```
+
 # Generate API documentation
+
 Generate API documentation for app/api/users
 
 # Generate developer guide
+
 Generate developer guide for this project
 
 # Generate architecture docs
+
 Generate architecture documentation
 
 # Generate OpenAPI spec
+
 Generate OpenAPI specification from API routes
+
 ```
 </usage_example>
 </examples>
 
+```

@@ -49,7 +49,14 @@
   "definitions": {
     "taskTypePattern": {
       "type": "object",
-      "required": ["executions", "insights", "successRate", "avgDuration", "lastUpdated", "agentCombinations"],
+      "required": [
+        "executions",
+        "insights",
+        "successRate",
+        "avgDuration",
+        "lastUpdated",
+        "agentCombinations"
+      ],
       "properties": {
         "executions": {
           "type": "array",
