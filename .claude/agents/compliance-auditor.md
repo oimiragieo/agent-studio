@@ -328,12 +328,12 @@ async function enforceRetention() {
 
 **Primary Template** (Use this exact file path):
 
-- `.claude/templates/compliance-report.md` - Structured compliance report template
+- `@.claude/templates/compliance-report.md` - Structured compliance report template
 
 **Template Loading Instructions**:
 
 1. **Always load the template first** before creating any compliance report
-2. Read the template file from `.claude/templates/compliance-report.md` using the Read tool
+2. Read the template file from `@.claude/templates/compliance-report.md` using the Read tool
 3. Use the template structure as the foundation for your compliance report
 4. Fill in all required sections from the template:
    - Metadata (Report ID, Date, Auditor, Status, Standards Assessed)

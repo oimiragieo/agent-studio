@@ -233,12 +233,12 @@ For complex research tasks, use a structured approach:
 
 <templates>
 **Primary Template** (Use this exact file path):
-- `.claude/templates/project-brief.md` - Structured project brief template
+- `@.claude/templates/project-brief.md` - Structured project brief template
 
 **Template Loading Instructions**:
 
 1. **Always load the template first** before creating any project brief
-2. Read the template file from `.claude/templates/project-brief.md` using the Read tool
+2. Read the template file from `@.claude/templates/project-brief.md` using the Read tool
 3. Use the template structure as the foundation for your project brief
 4. Fill in all required sections from the template
 5. Customize sections based on project needs while maintaining template structure

@@ -172,7 +172,7 @@ The orchestrator must use these shared skill primitives for consistent behavior 
   2. Load plan documents (stateless)
   3. Recover context from artifacts and reasoning files
   4. Resume execution from next step
-- **Reference**: `.claude/skills/recovery/SKILL.md`
+- **Reference**: `@.claude/skills/recovery/SKILL.md`
 
 ### Optional Artifact Handler Skill (`optional-artifact-handler`)
 
@@ -182,7 +182,7 @@ The orchestrator must use these shared skill primitives for consistent behavior 
   2. Apply defaults if missing
   3. Use artifacts if present
   4. Document handling in reasoning file
-- **Reference**: `.claude/skills/optional-artifact-handler/SKILL.md`
+- **Reference**: `@.claude/skills/optional-artifact-handler/SKILL.md`
 
 ### Conflict Resolution Skill (`conflict-resolution`)
 
@@ -192,7 +192,7 @@ The orchestrator must use these shared skill primitives for consistent behavior 
   2. Assess severity (critical, high, medium, low)
   3. Escalate to resolution agent (within timeout)
   4. Document resolution
-- **Reference**: `.claude/skills/conflict-resolution/SKILL.md`
+- **Reference**: `@.claude/skills/conflict-resolution/SKILL.md`
 
 **CRITICAL**: Always use these skills as primitives rather than implementing ad-hoc logic. This ensures consistency across CUJs, agent prompts, and skill definitions.
 
@@ -1131,7 +1131,7 @@ Users can reference CUJs in prompts using these formats:
 When a CUJ reference is detected:
 
 1. **Detection**: `detectCUJReference(userPrompt)` extracts CUJ ID from prompt
-2. **Mapping Lookup**: `resolveCUJExecutionMode(cujId)` reads `.claude/docs/cujs/CUJ-INDEX.md`
+2. **Mapping Lookup**: `resolveCUJExecutionMode(cujId)` reads `@.claude/docs/cujs/CUJ-INDEX.md`
 3. **Execution Mode Resolution**: Determines execution approach:
    - **Workflow Mode**: Uses pre-defined workflow path
    - **Skill Mode**: Uses primary skill for execution
@@ -1141,7 +1141,7 @@ When a CUJ reference is detected:
 
 ### CUJ Mapping Structure
 
-The CUJ mapping is defined in `.claude/docs/cujs/CUJ-INDEX.md` under "Run CUJ Mapping":
+The CUJ mapping is defined in `@.claude/docs/cujs/CUJ-INDEX.md` under "Run CUJ Mapping":
 
 ```markdown
 ## Run CUJ Mapping
@@ -1150,13 +1150,13 @@ The CUJ mapping is defined in `.claude/docs/cujs/CUJ-INDEX.md` under "Run CUJ Ma
 | ------- | -------------- | -------------------------------- | ------------- |
 | CUJ-001 | manual         | -                                | -             |
 | CUJ-002 | skill          | -                                | rule-selector |
-| CUJ-004 | workflow       | .claude/workflows/fullstack.yaml | -             |
+| CUJ-004 | workflow       | @.claude/workflows/fullstack.yaml | -             |
 | CUJ-013 | skill          | -                                | code-reviewer |
 ```
 
 **Execution Modes**:
 
-- `workflow`: Use specified workflow path (e.g., `.claude/workflows/fullstack.yaml`)
+- `workflow`: Use specified workflow path (e.g., `@.claude/workflows/fullstack.yaml`)
 - `skill`: Use primary skill (e.g., `rule-selector`, `scaffolder`)
 - `manual`: No automated execution, use semantic routing
 
@@ -1213,10 +1213,10 @@ This will verify:
 
 To add new CUJ mappings:
 
-1. **Create CUJ Documentation**: Add `.claude/docs/cujs/CUJ-XXX.md` with CUJ details
+1. **Create CUJ Documentation**: Add `@.claude/docs/cujs/CUJ-XXX.md` with CUJ details
 2. **Update CUJ-INDEX.md**: Add row to "Run CUJ Mapping" table:
    ```markdown
-   | CUJ-XXX | workflow | .claude/workflows/custom-flow.yaml | - |
+   | CUJ-XXX | workflow | @.claude/workflows/custom-flow.yaml | - |
    ```
 3. **Test Mapping**: Run `node .claude/tools/test-cuj-routing.mjs` to verify
 4. **Update Quick Reference**: Add to Quick Reference table for user discovery
@@ -2172,23 +2172,23 @@ Write reasoning JSON to `.claude/context/history/reasoning/<workflow>/00-orchest
 
 **Proven Prompt Patterns** (Reference when coordinating agents):
 
-- **Codebase Walkthrough**: `.claude/templates/prompts/codebase-walkthrough.md`
+- **Codebase Walkthrough**: `@.claude/templates/prompts/codebase-walkthrough.md`
   - Use when agents need comprehensive codebase understanding
   - Recommended for: analyst, architect, developer
 
-- **Deep Dive**: `.claude/templates/prompts/deep-dive.md`
+- **Deep Dive**: `@.claude/templates/prompts/deep-dive.md`
   - Use for detailed analysis of specific code areas
   - Recommended for: code-reviewer, architect, developer, performance-engineer
 
-- **Senior Review**: `.claude/templates/prompts/senior-review.md`
+- **Senior Review**: `@.claude/templates/prompts/senior-review.md`
   - Use for comprehensive code reviews
   - Recommended for: code-reviewer, security-architect, performance-engineer
 
-- **UI Perfection Loop**: `.claude/templates/prompts/ui-perfection-loop.md`
+- **UI Perfection Loop**: `@.claude/templates/prompts/ui-perfection-loop.md`
   - Use for iterative UI improvement
   - Recommended for: ux-expert, accessibility-expert, developer
 
-**Prompt Library Registry**: `.claude/templates/prompt-library.yaml`
+**Prompt Library Registry**: `@.claude/templates/prompt-library.yaml`
 
 - Complete registry of all available prompt templates
 - Agent mappings and use case recommendations
@@ -2618,7 +2618,7 @@ node .claude/tools/multi-ai-validator.mjs --target <file-or-dir> --validators cu
 
 **IMPORTANT**: Without `setting_sources=["project"]`, SDK operates in isolation mode.
 
-See `.claude/docs/ORCHESTRATION_PATTERNS.md` for comprehensive guide.
+See `@.claude/docs/ORCHESTRATION_PATTERNS.md` for comprehensive guide.
 
 ## Integration with Workflows
 

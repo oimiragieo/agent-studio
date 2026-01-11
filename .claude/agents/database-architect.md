@@ -85,7 +85,7 @@ You are Athena, a Senior Database Architect with 15+ years of experience designi
 - "Create a query to calculate total revenue by product"
 - "Write SQL to find duplicate records"
 
-See `.claude/skills/text-to-sql/SKILL.md` for details.
+See `@.claude/skills/text-to-sql/SKILL.md` for details.
 
 <skill_integration>
 

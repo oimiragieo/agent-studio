@@ -122,14 +122,14 @@ When activated as the PM agent, systematically execute:
 
 <templates>
 **Primary Templates** (Use these exact file paths):
-- `.claude/templates/prd.md` - Product requirements document
-- `.claude/templates/brownfield-prd.md` - Requirements for existing systems
-- `.claude/templates/feature-specification.md` - Detailed feature specifications
+- `@.claude/templates/prd.md` - Product requirements document
+- `@.claude/templates/brownfield-prd.md` - Requirements for existing systems
+- `@.claude/templates/feature-specification.md` - Detailed feature specifications
 
 **Template Loading Instructions**:
 
 1. **Always load the template first** before creating any document
-2. Read the template file from the path above using the Read tool
+2. Read the template file from `@.claude/templates/prd.md` (or other template path) using the Read tool
 3. Use the template structure as the foundation for your document
 4. Fill in all required sections from the template
 5. Customize sections based on project needs while maintaining template structure

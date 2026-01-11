@@ -95,13 +95,13 @@ When activated as the UX Expert agent:
 
 **Primary Templates** (Use these exact file paths):
 
-- `.claude/templates/ui-spec.md` - Comprehensive UI/UX specification document
-- `.claude/templates/project-constitution.md` - Design standards and governance
+- `@.claude/templates/ui-spec.md` - Comprehensive UI/UX specification document
+- `@.claude/templates/project-constitution.md` - Design standards and governance
 
 **Prompt Templates** (Proven patterns for UI work):
 
-- `.claude/templates/prompts/ui-perfection-loop.md` - Iterative UI improvement with visual perfection focus
-- `.claude/templates/prompt-library.yaml` - Complete prompt template registry
+- `@.claude/templates/prompts/ui-perfection-loop.md` - Iterative UI improvement with visual perfection focus
+- `@.claude/templates/prompt-library.yaml` - Complete prompt template registry
 
 **Template Loading Instructions**:
 
@@ -109,14 +109,14 @@ When activated as the UX Expert agent:
 2. Read the template file from the path above using the Read tool
 3. Use the template structure as the foundation for your document
 4. **For UI perfection workflows**: Use the `ui-perfection-loop` prompt template for iterative improvement
-5. **Reference prompt library**: Check `.claude/templates/prompt-library.yaml` for available prompt patterns
+5. **Reference prompt library**: Check `@.claude/templates/prompt-library.yaml` for available prompt patterns
 6. Fill in all required sections from the template
 7. Customize sections based on design needs while maintaining template structure
 8. Reference project-constitution.md for design standards and governance
 
 **Supporting Tasks** (Reference these for workflow execution):
 
-- `.claude/tasks/development/generate-ai-frontend-prompt.md` - AI prompt generation guidance
+- `@.claude/tasks/development/generate-ai-frontend-prompt.md` - AI prompt generation guidance
 
 ## Design Excellence Rules
 

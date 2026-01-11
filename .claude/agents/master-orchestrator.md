@@ -94,7 +94,7 @@ priority: highest
 
 When significant work is completed (3+ files changed, new tests/docs, bugfix/refactor, or all todos completed), you MUST trigger the PR workflow automatically.
 
-- **Workflow**: `.claude/workflows/pr-creation-workflow.yaml`
+- **Workflow**: `@.claude/workflows/pr-creation-workflow.yaml`
 - **Runner**: Delegate to `devops` to run `node .claude/tools/workflow_runner.js --workflow .claude/workflows/pr-creation-workflow.yaml`
 - **Quality gates**: formatting/lint, docs updated, tests 100% pass, security review complete
 - **Completion rule**: Do not claim “done” until the workflow gates pass (or, if network is restricted, the branch+commits are prepared and you provide the exact `gh pr create` command to run)
@@ -290,7 +290,7 @@ These skills have runnable scripts with verifiable outputs:
 | diagram-generator | `node .claude/skills/diagram-generator/scripts/generate.mjs` | Create architecture diagrams        |
 | repo-rag          | `node .claude/skills/repo-rag/scripts/search.mjs`            | Semantic codebase search            |
 
-**Outputs conform to**: `.claude/schemas/skill-*-output.schema.json`
+**Outputs conform to**: `@.claude/schemas/skill-*-output.schema.json`
 
 ### Skill Trigger Examples
 
@@ -346,7 +346,7 @@ node .claude/tools/skill-validator.mjs --agent developer --log <path> --task "<d
 
 | Issue                  | Cause                             | Fix                                                                  |
 | ---------------------- | --------------------------------- | -------------------------------------------------------------------- |
-| Skills not injected    | Hook not active                   | Check `.claude/hooks/skill-injection-hook.js` registered in settings |
+| Skills not injected    | Hook not active                   | Check `@.claude/hooks/skill-injection-hook.js` registered in settings |
 | Wrong skills triggered | Trigger keywords mismatch         | Update skill_triggers in skill-integration-matrix.json               |
 | Excessive tokens       | Too many skills loaded            | Use skill-context-optimizer with lower level (MINIMAL/ESSENTIAL)     |
 | Missing required skill | Agent config incomplete           | Update required_skills in skill-integration-matrix.json              |
@@ -1190,7 +1190,7 @@ After each agent completes:
 
 **If Verification Fails**:
 
-1. Check if skill-injection-hook is registered in `.claude/settings.json`
+1. Check if skill-injection-hook is registered in `@.claude/settings.json`
 2. Verify skill-integration-matrix.json has correct agent configuration
 3. Check stderr logs for hook errors
 4. Re-run with verbose logging: `VERBOSE=true node ...`
