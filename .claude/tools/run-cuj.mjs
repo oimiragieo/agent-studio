@@ -37,6 +37,27 @@ const registryPath = path.join(__dirname, '../context/cuj-registry.json');
 const projectRoot = path.join(__dirname, '../..');
 const analyticsPath = path.join(__dirname, '../context/analytics/cuj-performance.json');
 
+// Minimal lifecycle logging for integration tests + operational visibility
+let lifecycleCleanupLogged = false;
+function logLifecycle(message) {
+  console.log(`[Lifecycle] ${message}`);
+}
+function logCleanupOnce() {
+  if (lifecycleCleanupLogged) return;
+  lifecycleCleanupLogged = true;
+  logLifecycle('Starting cleanup');
+  logLifecycle('cleanup');
+}
+
+process.on('exit', () => {
+  logCleanupOnce();
+});
+
+process.on('SIGTERM', () => {
+  logCleanupOnce();
+  process.exit(1);
+});
+
 // Cache configuration
 const SKILL_CACHE_TTL_MS = 3600000; // 1 hour default
 const cacheEnabled = !process.argv.includes('--no-cache') && !process.env.NO_SKILL_CACHE;
@@ -410,6 +431,7 @@ async function simulateCUJ(cujId) {
   }
 
   console.log(`\nSimulating ${cujId}: ${cuj.name}\n`);
+  logLifecycle('initializing');
 
   // Priority 1: Check memory before spawning
   const memCheck = canSpawnSubagent();
@@ -433,12 +455,14 @@ async function simulateCUJ(cujId) {
     console.log('[Memory] Cleanup successful, proceeding with spawn');
   }
 
+  logLifecycle('running');
   const child = await spawnSubagentWithLimit([
     path.join(__dirname, 'workflow_runner.js'),
     '--cuj-simulation',
     cujId,
   ]);
 
+  logLifecycle('monitoring');
   child.on('exit', code => process.exit(code));
 }
 

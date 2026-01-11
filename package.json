@@ -5,8 +5,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "format": "prettier --write \"**/*.{js,mjs,json,md,yaml,yml}\"",
-    "format:check": "prettier --check \"**/*.{js,mjs,json,md,yaml,yml}\"",
+    "format": "node scripts/format-tracked.mjs --write",
+    "format:check": "node scripts/format-tracked.mjs --check",
     "validate": "node --max-old-space-size=4096 --expose-gc scripts/validate-config.mjs && node --max-old-space-size=4096 --expose-gc scripts/validate-model-names.mjs",
     "validate:full": "pnpm validate && node --max-old-space-size=4096 --expose-gc scripts/validate-workflow.mjs && node --max-old-space-size=4096 --expose-gc scripts/validate-all-references.mjs && node --max-old-space-size=4096 --expose-gc scripts/validate-cujs.mjs && pnpm validate:index && pnpm index-rules",
     "validate:verbose": "node --max-old-space-size=4096 --expose-gc scripts/validate-config.mjs --verbose && node --max-old-space-size=4096 --expose-gc scripts/validate-model-names.mjs --verbose",

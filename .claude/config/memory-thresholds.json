@@ -1,0 +1,11 @@
+{
+  "warnThreshold": 3000,
+  "blockThreshold": 3500,
+  "unit": "MB",
+  "description": "Central memory thresholds for workflow runner + hooks (RSS-based).",
+  "max_rss_mb": 4096,
+  "warn_rss_mb": 3000,
+  "min_free_mb_spawn_subagent": 800,
+  "min_free_mb_skill_injection": 300,
+  "monitor_interval_ms": 60000
+}

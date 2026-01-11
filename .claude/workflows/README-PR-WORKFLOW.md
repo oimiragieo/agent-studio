@@ -165,7 +165,7 @@ The orchestrator will automatically invoke this workflow via the devops agent wh
 You can manually run the workflow using the workflow runner:
 
 ```bash
-node .claude/tools/workflow_runner.js --workflow .claude/workflows/pr-creation-workflow.yaml
+node .claude/tools/workflow_runner.js --workflow .claude/workflows/pr-creation-workflow.yaml --dry-run
 ```
 
 ### Step-by-Step Execution
@@ -177,6 +177,10 @@ node .claude/tools/workflow_runner.js \
   --workflow .claude/workflows/pr-creation-workflow.yaml \
   --step 03-security
 ```
+
+### Formatting Note (Windows/OOM Safety)
+
+Use `pnpm format` (wired to `scripts/format-tracked.mjs`) to format only git-tracked files; this avoids Node heap OOM from broad filesystem globs on large repos.
 
 ## Agents Involved
 

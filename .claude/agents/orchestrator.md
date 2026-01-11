@@ -2,7 +2,7 @@
 name: orchestrator
 description: Task routing, agent coordination, and workflow management. Use for breaking down complex tasks, routing to specialized agents, synthesizing results, and managing multi-agent collaboration. Automatically invoked for complex multi-step requests.
 tools: Task, Read, Search, Grep
-model: opus
+model: sonnet
 temperature: 0.6
 extended_thinking: true
 priority: highest
@@ -37,6 +37,15 @@ priority: highest
 ```
 
 **THE 2-FILE RULE**: If you've read 2 files and need to read more, STOP. Spawn a subagent with `Explore` or another appropriate type to continue the investigation.
+
+## Mandatory PR Workflow (No Exceptions)
+
+When significant work is completed (3+ files changed, new tests/docs, bugfix/refactor, or all todos completed), you MUST trigger the PR workflow automatically.
+
+- **Workflow**: `.claude/workflows/pr-creation-workflow.yaml`
+- **Runner**: Delegate to `devops` to run `node .claude/tools/workflow_runner.js --workflow .claude/workflows/pr-creation-workflow.yaml`
+- **Quality gates**: formatting/lint, docs updated, tests 100% pass, security review complete
+- **Completion rule**: Do not claim “done” until the workflow gates pass (or, if network is restricted, the branch+commits are prepared and you provide the exact `gh pr create` command to run)
 
 ## CRITICAL CONSTRAINTS - Tools BLOCKED for Orchestrators
 

@@ -301,3 +301,137 @@ If you encounter an error not covered here:
 4. **Check existing issues**:
    - Search project issues on GitHub
    - Check if error is already documented
+
+---
+
+## Hook Errors
+
+### PreToolUse/PostToolUse Hook Errors on Windows
+
+**Error Example**:
+
+```
+PreToolUse hook error: bash .claude/hooks/security-pre-tool.sh
+PostToolUse hook error: bash .claude/hooks/audit-post-tool.sh
+```
+
+**Root Cause**: Bash shell scripts (.sh files) are not natively supported on Windows without WSL or Git Bash.
+
+**What Was Broken**:
+
+1. **security-pre-tool.sh** (PreToolUse):
+   - Used `bash`, `jq`, `cat`, `grep` (Unix-only commands)
+   - Blocked dangerous commands and validated file operations
+   - Failed on Windows because bash is not available in PATH
+
+2. **audit-post-tool.sh** (PostToolUse):
+   - Used `bash`, `jq`, `cat`, `date`, `stat`, `mkdir`, `tail` (Unix-only)
+   - Logged tool executions for security audit trail
+   - Failed on Windows due to missing Unix commands
+
+**How It Was Fixed** (2026-01-10):
+
+✅ **Created Cross-Platform Node.js Versions**:
+
+1. **security-pre-tool.mjs**:
+   - Pure Node.js implementation (no external dependencies)
+   - Uses built-in regex for pattern matching (replaced `grep`)
+   - Uses JSON.parse() for input parsing (replaced `jq`)
+   - Preserves all security validation logic:
+     - Blocks dangerous commands (rm -rf, SQL injection, etc.)
+     - Protects sensitive files (.env, credentials)
+     - Prevents force push to protected branches
+
+2. **audit-post-tool.mjs**:
+   - Pure Node.js implementation
+   - Uses fs/promises for file operations (replaced `mkdir`, `stat`, `tail`)
+   - Uses Date.toISOString() for timestamps (replaced `date`)
+   - Maintains audit logging functionality:
+     - Logs tool executions with timestamps
+     - Auto-trims log file when exceeding 10MB
+     - Extracts summaries based on tool type
+
+✅ **Updated .claude/settings.json**:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/security-pre-tool.mjs" // Changed from .sh
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/audit-post-tool.mjs" // Changed from .sh
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Verification**:
+
+All hooks now work cross-platform:
+
+- ✅ security-pre-tool.mjs - Node.js (cross-platform)
+- ✅ audit-post-tool.mjs - Node.js (cross-platform)
+- ✅ file-path-validator.js - Node.js (already cross-platform)
+- ✅ orchestrator-enforcement-hook.mjs - Node.js ESM (already cross-platform)
+- ✅ skill-injection-hook.js - Node.js (already cross-platform)
+- ✅ post-session-cleanup.js - Node.js (already cross-platform)
+
+**Test Results**:
+
+Before fix:
+
+```
+❌ PreToolUse hook error: bash .claude/hooks/security-pre-tool.sh (exit code 127)
+❌ PostToolUse hook error: bash .claude/hooks/audit-post-tool.sh (exit code 127)
+```
+
+After fix:
+
+```
+✅ All hooks execute successfully on Windows
+✅ No dependency on bash, jq, or Unix commands
+✅ All security and audit functionality preserved
+```
+
+**Benefits**:
+
+1. **Cross-Platform Compatibility**: Hooks work on Windows, macOS, and Linux
+2. **No External Dependencies**: Pure Node.js (no need for jq, bash, etc.)
+3. **Faster Execution**: Node.js startup faster than spawning bash
+4. **Better Error Handling**: Proper async/await and try/catch blocks
+5. **Maintainability**: Single codebase for all platforms
+
+**Deprecated Files**:
+
+The following files are now deprecated (replaced by .mjs versions):
+
+- ❌ .claude/hooks/security-pre-tool.sh (use security-pre-tool.mjs)
+- ❌ .claude/hooks/audit-post-tool.sh (use audit-post-tool.mjs)
+
+**Migration Notes**:
+
+If you have custom hook modifications:
+
+1. Port changes to the new .mjs files
+2. Test hooks run successfully: `node .claude/hooks/security-pre-tool.mjs < test-input.json`
+3. Update .claude/settings.json to use new .mjs files
+4. Remove old .sh files after verification
+
+---

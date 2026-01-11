@@ -44,8 +44,34 @@ const DANGEROUS_BASH_COMMANDS = [
   'pnpm',
 ];
 
-// Track Read tool usage per agent session
+// Track Read tool usage per agent/session (bounded to prevent long-running leaks)
 const readCountTracker = new Map();
+const READ_TRACKER_MAX_KEYS = 1000;
+const READ_TRACKER_TTL_MS = 60 * 60 * 1000; // 1 hour
+let readTrackerOps = 0;
+
+function getReadTrackerKey(context) {
+  return context?.session_id || context?.sessionId || context?.agentName || 'unknown';
+}
+
+function pruneReadTracker() {
+  // Run occasionally (cheap, avoids unbounded growth in long sessions)
+  readTrackerOps += 1;
+  if (readTrackerOps % 100 !== 0) return;
+
+  const now = Date.now();
+  for (const [key, entry] of readCountTracker.entries()) {
+    if (!entry || now - entry.lastUsed > READ_TRACKER_TTL_MS) {
+      readCountTracker.delete(key);
+    }
+  }
+
+  while (readCountTracker.size > READ_TRACKER_MAX_KEYS) {
+    const oldestKey = readCountTracker.keys().next().value;
+    if (oldestKey === undefined) break;
+    readCountTracker.delete(oldestKey);
+  }
+}
 
 /**
  * PreToolUse Hook - Validates tool usage before execution
@@ -63,6 +89,8 @@ export async function PreToolUse(context) {
   if (!ORCHESTRATOR_AGENTS.includes(agentName)) {
     return { decision: 'allow' };
   }
+
+  pruneReadTracker();
 
   // Check if tool is blocked
   if (tool === 'Write') {
@@ -138,11 +166,11 @@ export async function PreToolUse(context) {
   }
 
   if (tool === 'Read') {
-    // Track read count for this agent
-    const currentCount = readCountTracker.get(agentName) || 0;
-    const newCount = currentCount + 1;
-
-    readCountTracker.set(agentName, newCount);
+    // Track read count for this session (avoid agentName-only keys which can be unique per call)
+    const key = getReadTrackerKey({ ...context, agentName });
+    const current = readCountTracker.get(key) || { count: 0, lastUsed: Date.now() };
+    const newCount = (current.count || 0) + 1;
+    readCountTracker.set(key, { count: newCount, lastUsed: Date.now() });
 
     // Block if exceeding 2-file rule
     if (newCount > 2) {
@@ -219,7 +247,8 @@ export async function PostToolUse(context) {
 
   // Reset read counter when orchestrator spawns a subagent
   if (ORCHESTRATOR_AGENTS.includes(agentName) && tool === 'Task') {
-    readCountTracker.set(agentName, 0);
+    const key = getReadTrackerKey({ ...context, agentName });
+    readCountTracker.set(key, { count: 0, lastUsed: Date.now() });
   }
 
   return { decision: 'allow' };
@@ -229,6 +258,7 @@ export async function PostToolUse(context) {
  * Reset read counter (for testing or session start)
  */
 export function resetReadCounter(agentName) {
+  // Backwards-compatible: treat provided value as a key
   readCountTracker.delete(agentName);
 }
 
@@ -236,7 +266,8 @@ export function resetReadCounter(agentName) {
  * Get current read count (for testing)
  */
 export function getReadCount(agentName) {
-  return readCountTracker.get(agentName) || 0;
+  const entry = readCountTracker.get(agentName);
+  return typeof entry === 'number' ? entry : entry?.count || 0;
 }
 
 // Default export for hook registration

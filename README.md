@@ -199,6 +199,33 @@ See `.claude/workflows/code-review-flow.yaml` for complete example.
 
 14 workflow definitions for complex multi-agent orchestration:
 
+### Automatic PR Workflow
+
+**NEW in 2026-01**: Orchestrators now automatically trigger PR workflow after completing significant work:
+
+- **Auto-Triggered When:**
+  - All todos completed
+  - 3+ files modified
+  - Major feature/fix implemented
+  - Test framework created
+
+- **Workflow Steps:**
+  1. Lint & format all code (Prettier/ESLint)
+  2. Update CHANGELOG.md
+  3. Update README.md (if needed)
+  4. Run all tests (ensure 100% pass)
+  5. Security review
+  6. Create PR with comprehensive description
+
+- **Quality Gates** (BLOCKING):
+  - Critical security vulnerabilities → BLOCK
+  - Test failures → BLOCK
+  - Missing documentation → WARN
+
+- **See:** `.claude/workflows/README-PR-WORKFLOW.md` for full documentation
+
+### Available Workflows
+
 - **PR Creation Flow**: Complete pull request workflow with quality gates (DevOps → Security → QA → Technical Writer)
 - **Quick Flow**: Bug fixes, hotfixes, small features (Planner → Developer → QA)
 - **Full Stack Flow**: New features, greenfield projects (Planner → Analyst → PM → UX → Architect → Developer → QA)
@@ -288,12 +315,30 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 
 ## Security
 
-### Security Hooks
+### Security & Enforcement Hooks
 
-Native hooks provide security validation and audit logging:
+7 production hooks provide security validation, audit logging, and orchestrator enforcement:
 
-- **security-pre-tool.sh**: Blocks dangerous commands, validates file access
-- **audit-post-tool.sh**: Logs all tool executions with timestamps
+**PreToolUse Hooks:**
+
+- **security-pre-tool.mjs**: Blocks dangerous commands and sensitive file operations
+- **orchestrator-enforcement-pre-tool.mjs**: Enforces orchestrator delegation rules (2-file Read limit, no Write/Edit/Grep/Glob)
+- **file-path-validator.js**: Validates file paths to prevent SLOP (files in wrong locations)
+
+**PostToolUse Hooks:**
+
+- **orchestrator-audit-post-tool.mjs**: Tracks orchestrator compliance metrics
+- **audit-post-tool.mjs**: Logs tool usage with performance metrics
+- **post-session-cleanup.js**: Automatic session cleanup for temporary files
+
+**Testing & Validation:**
+
+- Comprehensive testing framework with 44 automated tests (100% pass rate)
+- Memory profiling and stress testing (0 memory leaks, p99 <250ms)
+- See `.claude/docs/HOOK_TESTING_FRAMEWORK.md` for testing guide
+- See `.claude/docs/HOOK_RECOVERY_COMPLETE.md` for troubleshooting
+
+**Hook Documentation:** See `.claude/hooks/README.md` for complete hook documentation
 
 ### Protected Operations
 
@@ -319,10 +364,11 @@ Native hooks provide security validation and audit logging:
 
 ## New Features in Phase 2.1.2
 
-| Feature                      | Purpose                               | Documentation                                |
-| ---------------------------- | ------------------------------------- | -------------------------------------------- |
-| **Codex Skills Integration** | Multi-AI validation via CLI tools     | `.claude/docs/SKILLS_TAXONOMY.md`            |
-| **Comprehensive CUJ Fixes**  | 15 integration fixes for Codex skills | `.claude/docs/PHASE1_CODEX_FIXES_SUMMARY.md` |
+| Feature                               | Purpose                                                 | Documentation                                |
+| ------------------------------------- | ------------------------------------------------------- | -------------------------------------------- |
+| **Codex Skills Integration**          | Multi-AI validation via CLI tools                       | `.claude/docs/SKILLS_TAXONOMY.md`            |
+| **Comprehensive CUJ Fixes**           | 15 integration fixes for Codex skills                   | `.claude/docs/PHASE1_CODEX_FIXES_SUMMARY.md` |
+| **Hook Recovery & Testing Framework** | Comprehensive hook testing, bug fixes, auto PR workflow | `.claude/docs/HOOK_RECOVERY_COMPLETE.md`     |
 
 ## Validation (Optional)
 

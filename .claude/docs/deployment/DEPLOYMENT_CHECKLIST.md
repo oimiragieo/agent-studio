@@ -187,28 +187,28 @@ Complete ALL manual tests BEFORE merging:
 
 - [ ] Prompt: "Review all skills and fix issues"
 - [ ] Expected: Orchestrator spawns developer/qa subagents
-- [ ] Actual: ****************\_\_\_****************
+- [ ] Actual: **\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***
 - [ ] Result: ✅ PASS / ❌ FAIL
 
 #### Test 2: Plan Rating
 
 - [ ] Prompt: "Build a new feature with authentication"
 - [ ] Expected: Planner → Rate (≥7/10) → Execute
-- [ ] Actual: ****************\_\_\_****************
+- [ ] Actual: **\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***
 - [ ] Result: ✅ PASS / ❌ FAIL
 
 #### Test 3: 3-File Rule
 
 - [ ] Prompt: "Analyze these 5 files for patterns"
 - [ ] Expected: Spawns analyst subagent
-- [ ] Actual: ****************\_\_\_****************
+- [ ] Actual: **\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***
 - [ ] Result: ✅ PASS / ❌ FAIL
 
 #### Test 4: Self-Correction
 
 - [ ] Prompt: Complex multi-file task
 - [ ] Expected: Stops and delegates
-- [ ] Actual: ****************\_\_\_****************
+- [ ] Actual: **\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***
 - [ ] Result: ✅ PASS / ❌ FAIL
 
 **All tests MUST pass before proceeding.**

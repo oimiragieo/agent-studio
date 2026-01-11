@@ -90,6 +90,15 @@ priority: highest
 3. Spawn the appropriate subagent via Task tool
 4. Let the subagent complete the work
 
+## Mandatory PR Workflow (No Exceptions)
+
+When significant work is completed (3+ files changed, new tests/docs, bugfix/refactor, or all todos completed), you MUST trigger the PR workflow automatically.
+
+- **Workflow**: `.claude/workflows/pr-creation-workflow.yaml`
+- **Runner**: Delegate to `devops` to run `node .claude/tools/workflow_runner.js --workflow .claude/workflows/pr-creation-workflow.yaml`
+- **Quality gates**: formatting/lint, docs updated, tests 100% pass, security review complete
+- **Completion rule**: Do not claim “done” until the workflow gates pass (or, if network is restricted, the branch+commits are prepared and you provide the exact `gh pr create` command to run)
+
 ---
 
 ## Identity

@@ -1,0 +1,193 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Hook Test Results",
+  "description": "Schema for comprehensive hook testing results",
+  "type": "object",
+  "required": ["timestamp", "summary"],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "summary": {
+      "type": "object",
+      "required": ["totalTests", "passed", "failed"],
+      "properties": {
+        "totalTests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "successRate": {
+          "type": "string",
+          "pattern": "^[0-9.]+%$"
+        }
+      }
+    },
+    "isolation": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer"
+        },
+        "passed": {
+          "type": "integer"
+        },
+        "failed": {
+          "type": "integer"
+        },
+        "hookResults": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "passed": {
+                "type": "integer"
+              },
+              "failed": {
+                "type": "integer"
+              },
+              "avgDuration": {
+                "type": "number"
+              },
+              "maxDuration": {
+                "type": "number"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "passed": {
+                      "type": "boolean"
+                    },
+                    "duration": {
+                      "type": "number"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "integration": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer"
+        },
+        "passed": {
+          "type": "integer"
+        },
+        "failed": {
+          "type": "integer"
+        },
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "passed": {
+                "type": "boolean"
+              },
+              "steps": {
+                "type": "array"
+              }
+            }
+          }
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "properties": {
+        "iterations": {
+          "type": "integer"
+        },
+        "hooks": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "hookName": {
+                "type": "string"
+              },
+              "totalGrowth": {
+                "type": "string"
+              },
+              "growthPerCall": {
+                "type": "string"
+              },
+              "memoryLeak": {
+                "type": "boolean"
+              },
+              "warning": {
+                "type": "boolean"
+              },
+              "performance": {
+                "type": "object",
+                "properties": {
+                  "p50": {
+                    "type": "string"
+                  },
+                  "p95": {
+                    "type": "string"
+                  },
+                  "p99": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "stress": {
+      "type": "object",
+      "properties": {
+        "rapid": {
+          "type": "object"
+        },
+        "concurrent": {
+          "type": "object"
+        }
+      }
+    },
+    "safeToEnable": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Hooks that passed all tests and are safe to re-enable"
+    },
+    "requiresReview": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Hooks that failed tests and need review before enabling"
+    }
+  }
+}

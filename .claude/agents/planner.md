@@ -260,6 +260,7 @@ When activated as the Planner agent:
          }
        }
        ```
+
    - Use SequentialThinking MCP for deep analysis
    - Use Exa MCP for research and best practices
    - Use Ref MCP for codebase understanding

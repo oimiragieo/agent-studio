@@ -29,6 +29,58 @@ const CONTEXT_DIR = join(__dirname, '..', 'context');
 const SKILLS_DIR = join(__dirname, '..', 'skills');
 const SKILL_MATRIX_PATH = join(CONTEXT_DIR, 'skill-integration-matrix.json');
 
+// ======================================================================
+// Skill content cache (memory-safe, O(1) size tracking)
+// ======================================================================
+
+const skillContentCache = new Map(); // Map<skillName, { content, sizeMB, lastAccess }>
+let incrementalCacheSizeMB = 0;
+
+const MAX_CACHE_SIZE_MB = 50;
+const MAX_CACHE_ENTRIES = 250;
+
+function estimateEntrySize(content) {
+  const bytes = Buffer.byteLength(content || '', 'utf-8');
+  return bytes / 1024 / 1024;
+}
+
+function estimateCacheSize() {
+  return incrementalCacheSizeMB;
+}
+
+function cleanCache() {
+  if (skillContentCache.size <= MAX_CACHE_ENTRIES && estimateCacheSize() <= MAX_CACHE_SIZE_MB) {
+    return;
+  }
+
+  const entries = Array.from(skillContentCache.entries()).sort(
+    (a, b) => (a[1]?.lastAccess || 0) - (b[1]?.lastAccess || 0)
+  );
+
+  for (const [skillName, entry] of entries) {
+    if (skillContentCache.size <= MAX_CACHE_ENTRIES && estimateCacheSize() <= MAX_CACHE_SIZE_MB) {
+      break;
+    }
+    skillContentCache.delete(skillName);
+    incrementalCacheSizeMB -= entry?.sizeMB || 0;
+  }
+
+  if (incrementalCacheSizeMB < 0) incrementalCacheSizeMB = 0;
+}
+
+export function clearSkillContentCache() {
+  skillContentCache.clear();
+  incrementalCacheSizeMB = 0;
+}
+
+export function getSkillContentCacheStats() {
+  return {
+    size: skillContentCache.size,
+    estimatedSizeMB: estimateCacheSize().toFixed(2),
+    maxSize: MAX_CACHE_ENTRIES,
+  };
+}
+
 /**
  * Load JSON file safely with error handling
  * @param {string} filePath - Path to JSON file
@@ -99,9 +151,21 @@ export async function loadSkillContent(skillName) {
   const skillPath = join(SKILLS_DIR, skillName, 'SKILL.md');
 
   try {
+    const cached = skillContentCache.get(skillName);
+    if (cached?.content) {
+      cached.lastAccess = Date.now();
+      return cached.content;
+    }
+
     // Check if file exists
     await access(skillPath);
     const content = await readFile(skillPath, 'utf-8');
+
+    const sizeMB = estimateEntrySize(content);
+    skillContentCache.set(skillName, { content, sizeMB, lastAccess: Date.now() });
+    incrementalCacheSizeMB += sizeMB;
+
+    cleanCache();
     return content;
   } catch (error) {
     if (error.code === 'ENOENT') {

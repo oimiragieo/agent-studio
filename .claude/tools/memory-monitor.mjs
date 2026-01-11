@@ -4,16 +4,59 @@
  * Tracks memory usage and provides warnings when approaching limits
  */
 
+import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const MEMORY_THRESHOLDS_PATH = join(__dirname, '..', 'config', 'memory-thresholds.json');
+
 const DEFAULT_WARN_THRESHOLD_MB = 3500; // 3.5GB warning threshold
 const DEFAULT_CHECK_INTERVAL_MS = 60000; // 1 minute
+const DEFAULT_MAX_RSS_MB = 4096; // Matches --max-old-space-size=4096
+const DEFAULT_MIN_FREE_MB_SPAWN_SUBAGENT = 800;
+
+let cachedThresholds = null;
+
+export function loadMemoryThresholds() {
+  if (cachedThresholds) return cachedThresholds;
+
+  const defaults = {
+    max_rss_mb: DEFAULT_MAX_RSS_MB,
+    warn_rss_mb: DEFAULT_WARN_THRESHOLD_MB,
+    min_free_mb_spawn_subagent: DEFAULT_MIN_FREE_MB_SPAWN_SUBAGENT,
+    monitor_interval_ms: DEFAULT_CHECK_INTERVAL_MS,
+  };
+
+  try {
+    const raw = readFileSync(MEMORY_THRESHOLDS_PATH, 'utf-8');
+    const parsed = JSON.parse(raw);
+    const merged = { ...defaults, ...parsed };
+    // Back-compat: prefer legacy keys if present
+    if (typeof merged.warnThreshold === 'number' && typeof merged.warn_rss_mb !== 'number') {
+      merged.warn_rss_mb = merged.warnThreshold;
+    }
+    if (typeof merged.warnThreshold === 'number') {
+      merged.warn_rss_mb = merged.warnThreshold;
+    }
+    cachedThresholds = merged;
+    return cachedThresholds;
+  } catch {
+    cachedThresholds = defaults;
+    return cachedThresholds;
+  }
+}
 
 let monitoringInterval = null;
 let warnThresholdMB = DEFAULT_WARN_THRESHOLD_MB;
 
 export function startMonitoring(options = {}) {
+  const thresholds = loadMemoryThresholds();
   const {
-    warnThresholdMB: threshold = DEFAULT_WARN_THRESHOLD_MB,
-    checkIntervalMs = DEFAULT_CHECK_INTERVAL_MS,
+    warnThresholdMB: threshold = thresholds.warn_rss_mb ?? DEFAULT_WARN_THRESHOLD_MB,
+    checkIntervalMs = thresholds.monitor_interval_ms ?? DEFAULT_CHECK_INTERVAL_MS,
     onWarning = null,
   } = options;
 
@@ -74,12 +117,17 @@ export function logMemoryUsage(label = '') {
  * @param {number} minFreeMB - Minimum free memory required (default: 500MB)
  * @returns {Object} { canSpawn: boolean, currentUsageMB: number, freeMB: number, warning?: string }
  */
-export function canSpawnSubagent(minFreeMB = 500) {
+export function canSpawnSubagent(minFreeMB = null) {
+  const thresholds = loadMemoryThresholds();
   const usage = getMemoryUsage();
   // NEW: Use RSS as primary metric
-  const maxRSSMB = 4096; // Match --max-old-space-size=4096
+  const effectiveMinFreeMB =
+    minFreeMB == null
+      ? (thresholds.min_free_mb_spawn_subagent ?? DEFAULT_MIN_FREE_MB_SPAWN_SUBAGENT)
+      : minFreeMB;
+  const maxRSSMB = thresholds.max_rss_mb ?? DEFAULT_MAX_RSS_MB;
   const freeRSSMB = maxRSSMB - usage.rssMB;
-  const canSpawn = freeRSSMB >= minFreeMB;
+  const canSpawn = freeRSSMB >= effectiveMinFreeMB;
 
   const result = {
     canSpawn,
@@ -92,7 +140,7 @@ export function canSpawnSubagent(minFreeMB = 500) {
   };
 
   if (!canSpawn) {
-    result.warning = `Insufficient memory: ${freeRSSMB.toFixed(2)}MB RSS free, need ${minFreeMB}MB`;
+    result.warning = `Insufficient memory: ${freeRSSMB.toFixed(2)}MB RSS free, need ${effectiveMinFreeMB}MB`;
   }
 
   return result;
@@ -103,7 +151,8 @@ export function canSpawnSubagent(minFreeMB = 500) {
  * @returns {number} Percentage of effective memory used (0-100)
  */
 export function getEffectiveMemoryPercent() {
+  const thresholds = loadMemoryThresholds();
   const usage = getMemoryUsage();
-  const maxRSSMB = 4096;
+  const maxRSSMB = thresholds.max_rss_mb ?? DEFAULT_MAX_RSS_MB;
   return (usage.rssMB / maxRSSMB) * 100;
 }

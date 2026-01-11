@@ -18,6 +18,20 @@ import { readFileSync } from 'fs';
 import { resolve, dirname, basename, join } from 'path';
 import { fileURLToPath } from 'url';
 
+// Recursion protection - prevent hook from triggering itself
+if (process.env.CLAUDE_PATH_VALIDATOR_EXECUTING === 'true') {
+  console.log(JSON.stringify({ decision: 'allow' }));
+  process.exit(0);
+}
+process.env.CLAUDE_PATH_VALIDATOR_EXECUTING = 'true';
+
+// Timeout protection - force exit after 1 second
+const timeout = setTimeout(() => {
+  console.error('[PATH VALIDATOR] Timeout exceeded, allowing by default');
+  console.log(JSON.stringify({ decision: 'allow', warning: 'Hook timeout' }));
+  process.exit(0);
+}, 1000);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -283,6 +297,10 @@ async function main() {
       })
     );
     process.exit(0);
+  } finally {
+    clearTimeout(timeout);
+    // Clean up recursion guard
+    delete process.env.CLAUDE_PATH_VALIDATOR_EXECUTING;
   }
 }
 

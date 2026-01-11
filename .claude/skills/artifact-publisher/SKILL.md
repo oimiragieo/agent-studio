@@ -189,6 +189,7 @@ Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they ar
    ```
 
 3. **Auto-on-Complete** (`publish_policy: auto-on-complete`):
+
    ```yaml
    # In workflow YAML or skill frontmatter
    publish_policy: auto-on-complete
@@ -198,6 +199,7 @@ Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they ar
    - Use: When you want to publish all artifacts at workflow end
    - Example: At workflow completion, all artifacts with `publishable: true` are published
    - Implementation:
+
    ```javascript
    // At workflow completion
    if (workflowStatus === 'completed' && publishPolicy === 'auto-on-complete') {

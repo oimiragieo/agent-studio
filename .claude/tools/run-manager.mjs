@@ -16,12 +16,47 @@ import { readFile, writeFile, mkdir, readdir, rename, unlink, stat } from 'fs/pr
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { randomUUID } from 'crypto';
 import { initializeProjectDatabase, updateProjectDatabase } from './project-db.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const RUNS_DIR = join(__dirname, '..', 'context', 'runs');
+
+/**
+ * Generate a collision-resistant run ID suitable for directory names.
+ * @param {string|null} prefix Optional prefix (e.g., "cuj-001")
+ * @returns {Promise<string>}
+ */
+export async function generateRunId(prefix = null) {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const base = randomUUID();
+    const id = prefix ? `${prefix}-${base}` : base;
+    const runDir = join(RUNS_DIR, id);
+    if (!existsSync(runDir)) return id;
+  }
+  // Extremely unlikely fallback
+  return `${Date.now()}-${randomUUID()}`;
+}
+
+/**
+ * Validate a run ID format (no filesystem access required).
+ * @param {string} runId
+ * @returns {Promise<{valid: boolean, error?: string}>}
+ */
+export async function validateRunId(runId) {
+  if (typeof runId !== 'string' || runId.trim() === '') {
+    return { valid: false, error: 'runId must be a non-empty string' };
+  }
+  if (!/^[a-zA-Z0-9-]+$/.test(runId)) {
+    return { valid: false, error: 'runId must contain only letters, digits, and hyphens' };
+  }
+  if (runId.length > 128) {
+    return { valid: false, error: 'runId too long' };
+  }
+  return { valid: true };
+}
 
 // Registry cache with TTL (5 seconds)
 const REGISTRY_CACHE_TTL = 5000; // 5 seconds
@@ -889,8 +924,11 @@ export function getRunDirectoryStructure(runId) {
     run_dir: runDir,
     run_json: getRunJsonPath(runId),
     artifact_registry: getArtifactRegistryPath(runId),
+    registry_path: getArtifactRegistryPath(runId),
     artifacts_dir: join(runDir, 'artifacts'),
     plans_dir: join(runDir, 'plans'),
+    reports_dir: join(runDir, 'reports'),
+    tasks_dir: join(runDir, 'tasks'),
     handoff_json: join(runDir, 'handoff.json'),
     handoff_md: join(runDir, 'handoff.md'),
     handoff_ack_json: join(runDir, 'handoff-ack.json'),

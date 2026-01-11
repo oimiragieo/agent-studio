@@ -41,6 +41,15 @@ This directory contains configuration files for the comprehensive agent integrat
 - Blocking conditions for critical security/compliance issues
 - Max 2 retries with escalation on failure
 
+### memory-thresholds.json
+
+**Purpose**: Centralizes memory thresholds used by tooling and hooks to prevent Node heap OOM and to fail-open under memory pressure.
+
+**Used by**:
+
+- `.claude/tools/memory-monitor.mjs` (monitoring + `canSpawnSubagent()`)
+- `.claude/hooks/skill-injection-hook.js` (skips injection when memory is tight)
+
 ## Phase 2: Schema Files
 
 Located in `.claude/schemas/`:

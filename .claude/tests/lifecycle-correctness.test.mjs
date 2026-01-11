@@ -12,7 +12,7 @@ import { fileURLToPath } from 'url';
 
 const execPromise = promisify(exec);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const runCujPath = path.join(__dirname, '../.claude/tools/run-cuj.mjs');
+const runCujPath = path.join(__dirname, '../tools/run-cuj.mjs');
 
 /**
  * Get process tree for a PID (cross-platform)

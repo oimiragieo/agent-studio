@@ -215,7 +215,7 @@ Follow this systematic development approach:
   - Create supporting files (types, tests, loading states)
 - Review and customize the generated code as needed
 
-1.6. **claude.md Generation** (when creating new modules/folders):
+  1.6. **claude.md Generation** (when creating new modules/folders):
 
 - When creating a new module, feature folder, or major component, generate a claude.md file
 - Invoke the `claude-md-generator` skill: "Generate claude.md for [path]"
@@ -338,7 +338,8 @@ When performing browser-based testing or debugging:
   - Optimize performance and security measures
   - Document implementation decisions and setup instructions
 
-  4.5. **Rule Compliance Validation** (before committing or after major changes):
+    4.5. **Rule Compliance Validation** (before committing or after major changes):
+
   - Invoke the `rule-auditor` skill to validate compliance with loaded rules
   - Use natural language: "Audit [file/path] for rule violations"
   - Or use Skill tool: `Skill: rule-auditor` with file path

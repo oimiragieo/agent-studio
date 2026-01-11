@@ -14,6 +14,21 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
+// Run-scoped artifact paths (best-effort; falls back to legacy if unavailable)
+let artifactPathResolver = null;
+async function loadArtifactPathResolver() {
+  if (artifactPathResolver) return artifactPathResolver;
+  try {
+    const resolverPath = path.join(__dirname, '../../../.claude/tools/artifact-path-resolver.mjs');
+    if (!fs.existsSync(resolverPath)) return null;
+    const resolverUrl = new URL(`file:///${resolverPath.replace(/\\/g, '/')}`);
+    artifactPathResolver = await import(resolverUrl.href);
+    return artifactPathResolver;
+  } catch {
+    return null;
+  }
+}
+
 // Try to load js-yaml for config parsing, fallback to simple parsing if not available
 let yaml;
 try {
@@ -839,6 +854,9 @@ function toStrictJsonReport({ diffMeta, perProvider, synthesisDisabledReason, pe
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) usage(0);
+
+  // Lazy-load artifact-path-resolver (optional; required only for run-scoped outputs)
+  artifactPathResolver = await loadArtifactPathResolver();
 
   if (args.ci) {
     args.synthesize = false;

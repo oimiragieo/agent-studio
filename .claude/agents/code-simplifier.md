@@ -2,7 +2,7 @@
 name: code-simplifier
 description: Code simplification specialist focused on reducing complexity, improving readability, and ensuring code is understandable by developers of all skill levels.
 tools: Read, Search, Grep, Glob, Edit, MCP_search_code
-model: claude-3-5-sonnet-20241022
+model: sonnet
 temperature: 0.3
 extended_thinking: false
 priority: high

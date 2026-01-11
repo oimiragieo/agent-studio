@@ -40,6 +40,7 @@ import {
   createRun,
   updateRun,
   readRun,
+  generateRunId,
   registerArtifact,
   readArtifactRegistry,
   getRunDirectoryStructure,
@@ -185,16 +186,6 @@ function resolveSchemaPath(relativePath) {
 
   // If none found, return project root path (will fail with clear error later)
   return projectRootPath;
-}
-
-/**
- * Generate a unique workflow ID
- * Format: <timestamp>-<random>
- */
-function generateWorkflowId() {
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2, 8);
-  return `${timestamp}-${random}`;
 }
 
 /**
@@ -879,10 +870,19 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
  * Find step in workflow (handles both flat steps array and nested phases)
  */
 function findStepInWorkflow(workflow, stepNumber) {
+  const stepKey = String(stepNumber);
+  const numeric = /^\d+$/.test(stepKey) ? String(parseInt(stepKey, 10)) : null;
+  const padded2 = numeric ? numeric.padStart(2, '0') : null;
+
   // Handle flat steps array
   if (workflow.steps && Array.isArray(workflow.steps)) {
     for (const step of workflow.steps) {
-      if (String(step.step) === String(stepNumber)) {
+      const stepId = step.id != null ? String(step.id) : null;
+      if (
+        String(step.step) === stepKey ||
+        stepId === stepKey ||
+        (padded2 && stepId && stepId.startsWith(`${padded2}-`))
+      ) {
         return step;
       }
     }
@@ -893,7 +893,12 @@ function findStepInWorkflow(workflow, stepNumber) {
     for (const phase of workflow.phases) {
       if (phase.steps && Array.isArray(phase.steps)) {
         for (const step of phase.steps) {
-          if (String(step.step) === String(stepNumber)) {
+          const stepId = step.id != null ? String(step.id) : null;
+          if (
+            String(step.step) === stepKey ||
+            stepId === stepKey ||
+            (padded2 && stepId && stepId.startsWith(`${padded2}-`))
+          ) {
             return step;
           }
         }
@@ -902,14 +907,24 @@ function findStepInWorkflow(workflow, stepNumber) {
       if (phase.decision) {
         if (phase.decision.if_yes && Array.isArray(phase.decision.if_yes)) {
           for (const step of phase.decision.if_yes) {
-            if (String(step.step) === String(stepNumber)) {
+            const stepId = step.id != null ? String(step.id) : null;
+            if (
+              String(step.step) === stepKey ||
+              stepId === stepKey ||
+              (padded2 && stepId && stepId.startsWith(`${padded2}-`))
+            ) {
               return step;
             }
           }
         }
         if (phase.decision.if_no && Array.isArray(phase.decision.if_no)) {
           for (const step of phase.decision.if_no) {
-            if (String(step.step) === String(stepNumber)) {
+            const stepId = step.id != null ? String(step.id) : null;
+            if (
+              String(step.step) === stepKey ||
+              stepId === stepKey ||
+              (padded2 && stepId && stepId.startsWith(`${padded2}-`))
+            ) {
               return step;
             }
           }
@@ -922,7 +937,12 @@ function findStepInWorkflow(workflow, stepNumber) {
         Array.isArray(phase.epic_loop.story_loop)
       ) {
         for (const step of phase.epic_loop.story_loop) {
-          if (String(step.step) === String(stepNumber)) {
+          const stepId = step.id != null ? String(step.id) : null;
+          if (
+            String(step.step) === stepKey ||
+            stepId === stepKey ||
+            (padded2 && stepId && stepId.startsWith(`${padded2}-`))
+          ) {
             return step;
           }
         }
@@ -1835,8 +1855,9 @@ async function performDryRun(workflowPath, workflowId) {
     console.log(`\n📋 Found ${steps.length} step(s) to validate\n`);
 
     // Validate each step
-    for (const step of steps) {
-      const stepNum = step.step;
+    for (let index = 0; index < steps.length; index++) {
+      const step = steps[index];
+      const stepNum = step.step ?? step.id ?? String(index + 1);
       const stepName = step.name || `Step ${stepNum}`;
       const agentName = step.agent;
 
@@ -1857,8 +1878,9 @@ async function performDryRun(workflowPath, workflowId) {
       }
 
       // Validate outputs (artifact paths)
-      if (step.outputs && Array.isArray(step.outputs)) {
-        for (const output of step.outputs) {
+      const outputs = step.outputs ?? step.artifacts;
+      if (outputs && Array.isArray(outputs)) {
+        for (const output of outputs) {
           let artifactName = null;
           if (typeof output === 'string') {
             artifactName = output;
@@ -1968,12 +1990,9 @@ async function performDryRun(workflowPath, workflowId) {
  * @returns {Object} CUJ definition with workflow path and success criteria
  */
 function loadCUJDefinition(cujId) {
+  const cujRegistryPath = resolve(process.cwd(), '.claude/context/cuj-registry.json');
   const cujIndexPath = resolve(process.cwd(), '.claude/docs/cujs/CUJ-INDEX.md');
   const cujFilePath = resolve(process.cwd(), `.claude/docs/cujs/${cujId}.md`);
-
-  if (!existsSync(cujIndexPath)) {
-    throw new Error(`CUJ index not found: ${cujIndexPath}`);
-  }
 
   if (!existsSync(cujFilePath)) {
     throw new Error(`CUJ file not found: ${cujFilePath}`);
@@ -2000,8 +2019,34 @@ function loadCUJDefinition(cujId) {
     cuj.name = nameMatch[1].replace(/^CUJ-\d+:\s*/, '');
   }
 
-  // Extract workflow path from index (use the "Run CUJ Mapping" table at the bottom)
-  const indexContent = readFileSync(cujIndexPath, 'utf-8');
+  // Prefer machine-readable registry for execution mode + workflow path
+  if (existsSync(cujRegistryPath)) {
+    try {
+      const registry = JSON.parse(readFileSync(cujRegistryPath, 'utf-8'));
+      const entry = registry?.cujs?.find(c => c.id === cujId);
+      if (entry) {
+        if (entry.execution_mode === 'skill-only') {
+          cuj.execution_mode = 'skill-only';
+          if (entry.primary_skill) cuj.skills.push(entry.primary_skill);
+          if (Array.isArray(entry.skills)) cuj.skills.push(...entry.skills);
+        } else if (entry.execution_mode === 'manual-setup' || entry.execution_mode === 'manual') {
+          cuj.execution_mode = 'manual';
+        } else if (entry.execution_mode === 'workflow' && entry.workflow) {
+          cuj.execution_mode = 'workflow';
+          cuj.workflow_path = String(entry.workflow).replace(/`/g, '').trim();
+        }
+
+        if (Array.isArray(entry.agents)) {
+          cuj.agents = entry.agents.map(a => String(a).toLowerCase());
+        }
+      }
+    } catch {
+      // ignore and fall back to CUJ-INDEX parsing
+    }
+  }
+
+  // Extract workflow path from index (fallback; supports legacy installs)
+  const indexContent = existsSync(cujIndexPath) ? readFileSync(cujIndexPath, 'utf-8') : '';
 
   // Find the "Run CUJ Mapping" table (last table in the file with execution modes)
   const mappingTableMatch = indexContent.match(
@@ -2041,7 +2086,7 @@ function loadCUJDefinition(cujId) {
       new RegExp(`${cujId}.*?\\.claude/workflows/([^\\s|]+)`, 's')
     );
     if (workflowMatch) {
-      cuj.workflow_path = `.claude/workflows/${workflowMatch[1]}`;
+      cuj.workflow_path = `.claude/workflows/${workflowMatch[1].replace(/`/g, '')}`;
       cuj.execution_mode = 'workflow';
     } else {
       cuj.execution_mode = 'manual';
@@ -2328,8 +2373,11 @@ async function main() {
     }
   }
 
-  // Auto-generate workflow ID if not provided
-  const workflowId = args.id || args['run-id'] || generateWorkflowId();
+  // Auto-generate workflow ID if not provided (collision-resistant)
+  let workflowId = args.id || args['run-id'];
+  if (!workflowId) {
+    workflowId = await generateRunId();
+  }
 
   // Always validate format
   const idValidation = validateWorkflowIdFormat(workflowId);
@@ -2411,7 +2459,6 @@ async function main() {
   // Handle dry-run-only mode (no step specified)
   if (isDryRun && !args.step && !args.decision && !args.loop) {
     try {
-      const workflowId = args.id || generateWorkflowId();
       const result = await performDryRun(workflowPath, workflowId);
       process.exit(result.valid ? 0 : 1);
     } catch (error) {

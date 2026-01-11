@@ -32,7 +32,7 @@ steps:
     description: 'Run linters and formatters to ensure code quality'
     tasks:
       - 'Check if prettier is installed: npx prettier --version'
-      - 'Run prettier --write on all code files: npx prettier --write "**/*.{js,mjs,json,md,yaml,yml}"'
+      - 'Run formatter on git-tracked files (prevents Node OOM): pnpm format'
       - 'Run eslint --fix if .eslintrc exists'
       - 'Run any other configured linters'
       - 'Fix auto-fixable linting issues'
