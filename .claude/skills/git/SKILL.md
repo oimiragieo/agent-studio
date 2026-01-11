@@ -1,6 +1,7 @@
 ---
 name: git
 description: Git repository operations - status, diff, commit, branch, log. Converted from MCP server for 90%+ context savings.
+context:fork: true
 allowed-tools: read, write, bash
 version: 1.0
 best_practices:

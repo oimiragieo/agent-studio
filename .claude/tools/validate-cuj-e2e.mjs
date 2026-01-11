@@ -532,7 +532,7 @@ function generateRecommendations() {
               cujId,
               issue,
               fix: `Create missing skill: .claude/skills/${skillName}/SKILL.md`,
-              command: `mkdir -p .claude/skills/${skillName} && touch .claude/skills/${skillName}/SKILL.md`
+              guidance: `Run: node -e "const fs = require('fs'); const path = require('path'); const dir = path.join('.claude', 'skills', '${skillName}'); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, 'SKILL.md'), '', { flag: 'a' });"`
             });
           }
         } else if (issue.includes('Workflow not found')) {
@@ -542,7 +542,7 @@ function generateRecommendations() {
               cujId,
               issue,
               fix: `Create missing workflow: .claude/workflows/${workflowName}.yaml`,
-              command: `touch .claude/workflows/${workflowName}.yaml`
+              guidance: `Run: node -e "const fs = require('fs'); const path = require('path'); fs.writeFileSync(path.join('.claude', 'workflows', '${workflowName}.yaml'), '', { flag: 'a' });"`
             });
           }
         } else if (issue.includes('Schema not found')) {
@@ -552,7 +552,7 @@ function generateRecommendations() {
               cujId,
               issue,
               fix: `Create missing schema: .claude/schemas/${schemaName}.schema.json`,
-              command: `touch .claude/schemas/${schemaName}.schema.json`
+              guidance: `Run: node -e "const fs = require('fs'); const path = require('path'); fs.writeFileSync(path.join('.claude', 'schemas', '${schemaName}.schema.json'), '', { flag: 'a' });"`
             });
           }
         } else if (issue.includes('Workflow dry-run failed')) {
@@ -590,25 +590,25 @@ async function validateCUJSystem() {
     console.log('='.repeat(60));
   }
 
-  // Step 1: Config validation
+  // Step 1: Config validation (non-critical - warnings only)
   const configResult = execCommand(
     'node scripts/validate-config.mjs',
     'Config validation',
     true // Allow fail - non-critical
   );
 
-  // Step 2: CUJ file validation
+  // Step 2: CUJ file validation (CRITICAL - schema validation)
   const cujResult = execCommand(
     'node scripts/validate-cujs.mjs',
     'CUJ file validation',
-    true // Allow fail - non-critical
+    false // CRITICAL - must pass
   );
 
-  // Step 3: Reference integrity validation
+  // Step 3: Reference integrity validation (CRITICAL - broken links fail build)
   const refResult = execCommand(
     'node scripts/validate-all-references.mjs',
     'Reference integrity validation',
-    true // Allow fail - non-critical
+    false // CRITICAL - must pass
   );
 
   if (!JSON_OUTPUT) {
@@ -703,6 +703,9 @@ function printResults() {
       console.log(`    Fix: ${rec.fix}`);
       if (rec.command) {
         console.log(`    Command: ${rec.command}`);
+      }
+      if (rec.guidance) {
+        console.log(`    Guidance: ${rec.guidance}`);
       }
       if (rec.skills) {
         console.log(`    Skills: ${rec.skills.join(', ')}`);

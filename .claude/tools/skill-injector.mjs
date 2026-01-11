@@ -19,6 +19,7 @@ import { readFile, access } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { loadSkillMetadata } from '../skills/sdk/skill-loader.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -253,6 +254,7 @@ function generateSkillPrompt(agentType, requiredSkills, triggeredSkills, skillCo
  * @param {boolean} options.useOptimizer - Use skill-context-optimizer for context efficiency (default: false)
  * @param {string} options.contextLevel - Optimization level (MINIMAL, ESSENTIAL, STANDARD, FULL)
  * @param {number} options.maxSkillTokens - Maximum token budget for skills (default: 1000)
+ * @param {boolean} options.isSubagent - Whether this is a subagent context (default: true)
  * @returns {Promise<Object>} Injection result
  */
 export async function injectSkillsForAgent(agentType, taskDescription = '', options = {}) {
@@ -261,7 +263,8 @@ export async function injectSkillsForAgent(agentType, taskDescription = '', opti
     includeRecommended = false,
     useOptimizer = false,
     contextLevel = 'ESSENTIAL',
-    maxSkillTokens = 1000
+    maxSkillTokens = 1000,
+    isSubagent = true
   } = options;
 
   try {
@@ -325,8 +328,18 @@ export async function injectSkillsForAgent(agentType, taskDescription = '', opti
         }
       }
     } else {
-      // Legacy: Load full SKILL.md content
+      // Legacy: Load full SKILL.md content with context:fork filtering
       for (const skillName of skillsToLoad) {
+        // Check if skill has context:fork: true (or if this is master context)
+        const metadata = await loadSkillMetadata(skillName);
+
+        // Only inject if context:fork is true OR this is not a subagent context
+        if (isSubagent && !metadata.contextFork) {
+          console.warn(`⏭️  Skipping ${skillName}: context:fork is false (subagent context)`);
+          failedSkills.push(skillName);
+          continue;
+        }
+
         const content = await loadSkillContent(skillName);
 
         if (content) {

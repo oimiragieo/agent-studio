@@ -444,12 +444,27 @@ function validateConfig() {
           if (parsed.name && parsed.name !== name) {
             warnings.push(`Skill ${name}: Frontmatter name "${parsed.name}" doesn't match directory name`);
           }
-          
+
+          // Validate context:fork field (Phase 2.1.2)
+          if (parsed['context:fork'] !== undefined) {
+            if (typeof parsed['context:fork'] !== 'boolean') {
+              errors.push(`Skill ${name}: context:fork must be boolean, got ${typeof parsed['context:fork']}`);
+            }
+          }
+
+          // Validate model field (Phase 2.1.2)
+          if (parsed.model !== undefined) {
+            const validModels = ['haiku', 'sonnet', 'opus'];
+            if (!validModels.includes(parsed.model)) {
+              errors.push(`Skill ${name}: model must be one of: ${validModels.join(', ')}, got '${parsed.model}'`);
+            }
+          }
+
           // Check template references if present
           if (parsed.templates && Array.isArray(parsed.templates)) {
             // Templates are just type names, not file paths, so no validation needed
           }
-          
+
           console.log(`  ✓ Skill validated: ${name}`);
         } catch (yamlError) {
           errors.push(`Skill ${name}: Invalid YAML frontmatter - ${yamlError.message}`);
@@ -468,7 +483,90 @@ function validateConfig() {
       errors.push(`Error reading skill file ${name}: ${error.message}`);
     }
   }
-  
+
+  // 9.5. Validate codex-skills structure
+  console.log('\nValidating codex-skills structure...');
+  const codexSkillsDir = 'codex-skills';
+
+  if (existsSync(resolve(rootDir, codexSkillsDir))) {
+    try {
+      const codexSkillDirs = readdirSync(resolve(rootDir, codexSkillsDir), { withFileTypes: true });
+      for (const dirent of codexSkillDirs) {
+        if (dirent.isDirectory()) {
+          const skillFile = resolve(rootDir, codexSkillsDir, dirent.name, 'SKILL.md');
+          if (existsSync(skillFile)) {
+            const content = readFileSync(skillFile, 'utf-8');
+            const normalizedContent = content.replace(/\r\n/g, '\n');
+
+            if (!normalizedContent.startsWith('---\n')) {
+              errors.push(`Codex Skill ${dirent.name}: Missing YAML frontmatter (must start with ---)`);
+              continue;
+            }
+
+            const frontmatterEnd = normalizedContent.indexOf('\n---\n', 4);
+            if (frontmatterEnd === -1) {
+              errors.push(`Codex Skill ${dirent.name}: Invalid YAML frontmatter (missing closing ---)`);
+              continue;
+            }
+
+            const frontmatter = normalizedContent.substring(4, frontmatterEnd);
+
+            if (yaml) {
+              try {
+                const parsed = yaml.load(frontmatter);
+
+                // Check required fields (same as Agent Studio skills)
+                const requiredFields = ['name', 'description'];
+                for (const field of requiredFields) {
+                  if (!parsed[field]) {
+                    errors.push(`Codex Skill ${dirent.name}: Missing required field: ${field}`);
+                  }
+                }
+
+                // Validate skill name matches directory name
+                if (parsed.name && parsed.name !== dirent.name) {
+                  warnings.push(`Codex Skill ${dirent.name}: Frontmatter name "${parsed.name}" doesn't match directory name`);
+                }
+
+                // Validate model field (Phase 2.1.2)
+                if (parsed.model !== undefined) {
+                  const validModels = ['haiku', 'sonnet', 'opus'];
+                  if (!validModels.includes(parsed.model)) {
+                    errors.push(`Codex Skill ${dirent.name}: model must be one of: ${validModels.join(', ')}, got '${parsed.model}'`);
+                  }
+                }
+
+                // Validate context:fork field (Phase 2.1.2)
+                if (parsed['context:fork'] !== undefined) {
+                  if (typeof parsed['context:fork'] !== 'boolean') {
+                    errors.push(`Codex Skill ${dirent.name}: context:fork must be boolean, got ${typeof parsed['context:fork']}`);
+                  }
+                }
+
+                console.log(`  ✓ Codex Skill validated: ${dirent.name}`);
+              } catch (yamlError) {
+                errors.push(`Codex Skill ${dirent.name}: Invalid YAML frontmatter - ${yamlError.message}`);
+              }
+            } else {
+              // Without yaml parser, do basic checks
+              const requiredFields = ['name:', 'description:'];
+              for (const field of requiredFields) {
+                if (!frontmatter.includes(field)) {
+                  errors.push(`Codex Skill ${dirent.name}: Missing required field: ${field.replace(':', '')}`);
+                }
+              }
+              console.log(`  ⚠️  Codex Skill ${dirent.name}: Basic validation (YAML parser not available)`);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      errors.push(`Error reading codex-skills directory: ${error.message}`);
+    }
+  } else {
+    console.log('  ℹ️  codex-skills directory not found (optional)');
+  }
+
   // 10. Check hook files
   console.log('\nChecking hook files...');
   const hookDir = '.claude/hooks';

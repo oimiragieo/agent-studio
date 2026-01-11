@@ -1,0 +1,3 @@
+{"timestamp":1767977312297,"iso_timestamp":"2026-01-09T16:48:32.297Z","provider":"test-provider","success":true,"latency_ms":100,"error":null,"metadata":{}}
+{"timestamp":1767977312298,"iso_timestamp":"2026-01-09T16:48:32.298Z","provider":"test-provider","success":true,"latency_ms":120,"error":null,"metadata":{}}
+{"timestamp":1767977312298,"iso_timestamp":"2026-01-09T16:48:32.298Z","provider":"test-provider","success":false,"latency_ms":5000,"error":"Timeout","metadata":{}}

@@ -1,6 +1,7 @@
 ---
 name: puppeteer
 description: Browser automation with Puppeteer. Navigate pages, interact with elements, fill forms, take screenshots, and execute JavaScript. Converted from MCP server for 90%+ context savings.
+context:fork: true
 allowed-tools: read, write, bash
 version: 1.0
 best_practices:

@@ -1,6 +1,8 @@
 ---
 name: pdf-generator
 description: Generate formatted PDF documents with text, tables, and images. Use for reports, documentation, and formal documents.
+context:fork: true
+model: sonnet
 allowed-tools: read, write, memory
 version: 1.0
 best_practices:

@@ -1,5 +1,6 @@
 ---
 description: Mobile development for iOS, Android, React Native, and Flutter.
+alwaysApply: false
 globs: ["**/*.swift", "**/*.kt", "**/ios/**", "**/android/**", "App.tsx"]
 ---
 

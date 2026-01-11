@@ -11,6 +11,8 @@
 .claude/context/history/reasoning/**/*.json
 .claude/context/history/gates/**/*.json
 .claude/context/blackboard/*.json
+.claude/context/runs/
+.claude/context/cache/
 
 # Local Settings
 .claude/settings.local.json

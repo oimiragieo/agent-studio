@@ -1,0 +1,331 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "multi-ai-review-report.schema.json",
+  "title": "Multi-AI Code Review Report",
+  "description": "Schema for multi-AI code review output from codex-skills/multi-ai-code-review. Validates the aggregated review report containing per-provider results and optional synthesis.",
+  "type": "object",
+  "required": ["diffMeta", "providers"],
+  "properties": {
+    "diffMeta": {
+      "type": "object",
+      "description": "Metadata about the code diff being reviewed",
+      "required": ["filesChanged", "insertions", "deletions", "totalChanges"],
+      "properties": {
+        "filesChanged": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of files changed in the diff"
+        },
+        "insertions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of lines added"
+        },
+        "deletions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of lines removed"
+        },
+        "totalChanges": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of line changes (insertions + deletions)"
+        },
+        "diffSize": {
+          "type": "string",
+          "enum": ["small", "medium", "large", "xlarge"],
+          "description": "Categorization of diff size"
+        },
+        "diffCharCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total character count of the diff"
+        }
+      }
+    },
+    "providers": {
+      "type": "array",
+      "description": "Summary of providers used for the review",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["provider", "ok"],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": ["claude", "gemini", "copilot"],
+            "description": "Name of the AI provider"
+          },
+          "ok": {
+            "type": "boolean",
+            "description": "Whether the provider successfully completed the review"
+          },
+          "parsedOk": {
+            "type": "boolean",
+            "description": "Whether the provider's output was successfully parsed (strict mode only)"
+          }
+        }
+      }
+    },
+    "perProvider": {
+      "type": "array",
+      "description": "Detailed review results from each provider",
+      "items": {
+        "type": "object",
+        "required": ["provider", "ok"],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": ["claude", "gemini", "copilot"],
+            "description": "Name of the AI provider"
+          },
+          "ok": {
+            "type": "boolean",
+            "description": "Whether the provider successfully completed the review"
+          },
+          "code": {
+            "type": "integer",
+            "description": "Exit code from the provider CLI"
+          },
+          "stderr": {
+            "type": "string",
+            "description": "Error output from the provider (if any)"
+          },
+          "wrapper": {
+            "description": "Raw wrapper object from provider CLI (if any)",
+            "oneOf": [
+              { "type": "object" },
+              { "type": "null" }
+            ]
+          },
+          "parsed": {
+            "description": "Parsed review object from provider",
+            "oneOf": [
+              { "$ref": "#/$defs/reviewObject" },
+              { "type": "null" }
+            ]
+          },
+          "parsedOk": {
+            "type": "boolean",
+            "description": "Whether the provider's output was successfully parsed (strict mode only)"
+          },
+          "review": {
+            "description": "Review object (alias for parsed, used in strict mode)",
+            "oneOf": [
+              { "$ref": "#/$defs/reviewObject" },
+              { "type": "null" }
+            ]
+          },
+          "stdout": {
+            "type": "string",
+            "description": "Raw stdout from the provider CLI"
+          }
+        }
+      }
+    },
+    "synthesis": {
+      "description": "Synthesized review combining all provider results (optional)",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["provider", "ok"],
+          "properties": {
+            "provider": {
+              "type": "string",
+              "description": "Provider used for synthesis"
+            },
+            "ok": {
+              "type": "boolean",
+              "description": "Whether synthesis completed successfully"
+            },
+            "stderr": {
+              "type": "string",
+              "description": "Error output from synthesis (if any)"
+            },
+            "wrapper": {
+              "description": "Raw wrapper object from synthesis (if any)",
+              "oneOf": [
+                { "type": "object" },
+                { "type": "null" }
+              ]
+            },
+            "parsed": {
+              "$ref": "#/$defs/reviewObject",
+              "description": "Synthesized review object"
+            }
+          }
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "Reason synthesis was disabled (strict mode)"
+        }
+      ]
+    },
+    "ok": {
+      "type": "boolean",
+      "description": "Overall success status (strict mode only)"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["strict-json-only"],
+      "description": "Execution mode (strict mode only)"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if execution failed (strict mode only)"
+    }
+  },
+  "$defs": {
+    "reviewObject": {
+      "type": "object",
+      "description": "Structure of a code review from a provider",
+      "properties": {
+        "overall_risk": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Overall risk level of the changes"
+        },
+        "summary": {
+          "type": "string",
+          "description": "High-level summary of the review"
+        },
+        "findings": {
+          "type": "array",
+          "description": "List of specific findings or issues",
+          "items": {
+            "type": "object",
+            "required": ["severity", "area", "issue"],
+            "properties": {
+              "severity": {
+                "type": "string",
+                "enum": ["low", "medium", "high", "critical"],
+                "description": "Severity level of the finding"
+              },
+              "area": {
+                "type": "string",
+                "enum": [
+                  "security",
+                  "performance",
+                  "correctness",
+                  "maintainability",
+                  "best_practices",
+                  "error_handling",
+                  "testing",
+                  "documentation",
+                  "architecture",
+                  "other"
+                ],
+                "description": "Category of the finding"
+              },
+              "file": {
+                "type": "string",
+                "description": "File path where the issue occurs"
+              },
+              "line": {
+                "type": ["integer", "string"],
+                "description": "Line number or range where the issue occurs"
+              },
+              "issue": {
+                "type": "string",
+                "description": "Description of the issue"
+              },
+              "recommendation": {
+                "type": "string",
+                "description": "Recommended fix or improvement"
+              },
+              "code_snippet": {
+                "type": "string",
+                "description": "Relevant code snippet (optional)"
+              }
+            }
+          }
+        },
+        "positive_notes": {
+          "type": "array",
+          "description": "Positive observations about the code",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "description": "General recommendations",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "diffMeta": {
+        "filesChanged": 3,
+        "insertions": 45,
+        "deletions": 12,
+        "totalChanges": 57,
+        "diffSize": "small",
+        "diffCharCount": 2134
+      },
+      "providers": [
+        { "provider": "claude", "ok": true },
+        { "provider": "gemini", "ok": true }
+      ],
+      "perProvider": [
+        {
+          "provider": "claude",
+          "ok": true,
+          "code": 0,
+          "stderr": "",
+          "parsed": {
+            "overall_risk": "low",
+            "summary": "Code changes look good with minor improvements suggested.",
+            "findings": [
+              {
+                "severity": "low",
+                "area": "best_practices",
+                "file": "src/utils.js",
+                "line": "42",
+                "issue": "Consider using const instead of let for immutable variable",
+                "recommendation": "Change let to const on line 42"
+              }
+            ]
+          }
+        },
+        {
+          "provider": "gemini",
+          "ok": true,
+          "code": 0,
+          "stderr": "",
+          "parsed": {
+            "overall_risk": "low",
+            "summary": "Changes are safe with no critical issues.",
+            "findings": []
+          }
+        }
+      ],
+      "synthesis": {
+        "provider": "claude",
+        "ok": true,
+        "stderr": "",
+        "parsed": {
+          "overall_risk": "low",
+          "summary": "Code changes are safe with minor improvements suggested.",
+          "findings": [
+            {
+              "severity": "low",
+              "area": "best_practices",
+              "file": "src/utils.js",
+              "line": "42",
+              "issue": "Consider using const instead of let for immutable variable",
+              "recommendation": "Change let to const on line 42"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

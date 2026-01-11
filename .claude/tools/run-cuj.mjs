@@ -6,22 +6,363 @@
  *   node .claude/tools/run-cuj.mjs --list
  *   node .claude/tools/run-cuj.mjs --simulate CUJ-005
  *   node .claude/tools/run-cuj.mjs --validate CUJ-005
+ *   node .claude/tools/run-cuj.mjs --no-cache CUJ-005   # Disable skill caching
+ *   node .claude/tools/run-cuj.mjs --cache-stats       # Show cache statistics
  */
 
 import fs from 'fs';
 import path from 'path';
-import { spawn } from 'child_process';
+import { spawn, exec } from 'child_process';
 import { fileURLToPath } from 'url';
+import { promisify } from 'util';
+import { getCachedResult, setCachedResult, getCacheStats, pruneExpiredCache } from './skill-cache.mjs';
+import { parseLargeJSON, shouldUseStreaming } from './streaming-json-parser.mjs';
+import { startMonitoring, stopMonitoring, logMemoryUsage, canSpawnSubagent } from './memory-monitor.mjs';
+import { cleanupAllCaches, setupPeriodicCleanup } from './memory-cleanup.mjs';
+import { setupMemoryPressureHandling } from './memory-pressure-handler.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const execPromise = promisify(exec);
 const registryPath = path.join(__dirname, '../context/cuj-registry.json');
+const projectRoot = path.join(__dirname, '../..');
+const analyticsPath = path.join(__dirname, '../context/analytics/cuj-performance.json');
 
-function loadRegistry() {
-  return JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+// Cache configuration
+const SKILL_CACHE_TTL_MS = 3600000; // 1 hour default
+const cacheEnabled = !process.argv.includes('--no-cache') && !process.env.NO_SKILL_CACHE;
+
+// Subagent spawning limits
+const MAX_CONCURRENT_SUBAGENTS = 3;
+let activeSubagents = 0;
+const waitingQueue = [];
+
+async function loadRegistry() {
+  if (shouldUseStreaming(registryPath, 1)) {
+    return await parseLargeJSON(registryPath);
+  } else {
+    return JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+  }
 }
 
-function listCUJs() {
-  const registry = loadRegistry();
+/**
+ * Spawn subagent with concurrency limiting
+ * @param {string[]} args - Arguments to pass to spawn
+ * @param {Object} options - Spawn options
+ * @param {number} options.timeout - Maximum wait time in milliseconds (default: 30s)
+ * @returns {Promise<Object>} Child process object
+ */
+async function spawnSubagentWithLimit(args, options = {}) {
+  const { timeout = 30000 } = options;
+  const startTime = Date.now();
+
+  // Wait for available slot
+  while (activeSubagents >= MAX_CONCURRENT_SUBAGENTS) {
+    if (Date.now() - startTime > timeout) {
+      throw new Error(`Timeout waiting for subagent slot after ${timeout}ms`);
+    }
+    // Wait for 100ms before checking again
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  // Increment counter before spawning
+  activeSubagents++;
+  console.log(`[Spawn] Active subagents: ${activeSubagents}/${MAX_CONCURRENT_SUBAGENTS}`);
+
+  // Spawn child process
+  const child = spawn('node', args, { stdio: 'inherit' });
+
+  // Decrement counter when child exits
+  child.on('exit', (code) => {
+    activeSubagents--;
+    console.log(`[Spawn] Subagent exited (code: ${code}), active: ${activeSubagents}/${MAX_CONCURRENT_SUBAGENTS}`);
+  });
+
+  return child;
+}
+
+/**
+ * Execute a skill with caching support
+ * @param {string} skillName - Name of the skill to execute
+ * @param {Object} params - Skill parameters
+ * @param {Object} options - Execution options
+ * @param {boolean} options.cache - Whether to use caching (default: true)
+ * @param {number} options.ttlMs - Cache TTL in milliseconds
+ * @param {Function} options.executor - Function to execute the skill
+ * @returns {Promise<Object>} Skill execution result
+ */
+async function executeSkillWithCache(skillName, params, options = {}) {
+  const { cache = cacheEnabled, ttlMs = SKILL_CACHE_TTL_MS, executor } = options;
+
+  if (!executor || typeof executor !== 'function') {
+    throw new Error('executor function is required for skill execution');
+  }
+
+  // Check cache first
+  if (cache) {
+    const cached = getCachedResult(skillName, params, ttlMs);
+    if (cached) {
+      console.log(`  [CACHE HIT] ${skillName} (saved ~${(cached._cached_duration_ms || 0)}ms)`);
+      return { ...cached, _from_cache: true };
+    }
+    console.log(`  [CACHE MISS] ${skillName}`);
+  }
+
+  // Execute skill and measure time
+  const startTime = Date.now();
+  const result = await executor(skillName, params);
+  const duration = Date.now() - startTime;
+
+  // Cache successful results
+  if (cache && result && !result.error) {
+    setCachedResult(skillName, params, { ...result, _cached_duration_ms: duration });
+    console.log(`  [CACHED] ${skillName} (${duration}ms)`);
+  }
+
+  return { ...result, _from_cache: false, _duration_ms: duration };
+}
+
+/**
+ * Display cache statistics
+ */
+function showCacheStats() {
+  const stats = getCacheStats();
+  console.log('\n📊 Skill Cache Statistics:\n');
+  console.log(`  Files:        ${stats.files}`);
+  console.log(`  Total Size:   ${stats.totalSizeMB || '0.00'} MB`);
+  console.log(`  Oldest Entry: ${stats.oldest || 'N/A'}`);
+  console.log(`  Newest Entry: ${stats.newest || 'N/A'}`);
+
+  // Prune expired entries
+  const pruned = pruneExpiredCache(SKILL_CACHE_TTL_MS);
+  if (pruned > 0) {
+    console.log(`\n  Pruned ${pruned} expired entries`);
+  }
+
+  console.log('');
+}
+
+/**
+ * Find skill path in both Agent Studio and Codex locations
+ * @param {string} skillName - Name of the skill
+ * @returns {Object|null} - { path, type } or null if not found
+ */
+function findSkillPath(skillName) {
+  const agentStudioPath = path.join(projectRoot, '.claude/skills', skillName, 'SKILL.md');
+  const codexPath = path.join(projectRoot, 'codex-skills', skillName, 'SKILL.md');
+
+  if (fs.existsSync(agentStudioPath)) {
+    return { path: agentStudioPath, type: 'agent-studio' };
+  }
+  if (fs.existsSync(codexPath)) {
+    return { path: codexPath, type: 'codex' };
+  }
+  return null;
+}
+
+/**
+ * Check if a CLI tool is available
+ * @param {string} cli - CLI tool name (e.g., 'claude', 'gemini')
+ * @returns {Promise<Object>} - { available: boolean, version?: string, error?: string }
+ */
+async function checkCliAvailability(cli) {
+  try {
+    // Windows-friendly: use shell: true to handle .cmd shims
+    const result = await execPromise(`${cli} --version`, {
+      timeout: 5000,
+      shell: true,
+      windowsHide: true
+    });
+    return {
+      available: true,
+      version: result.stdout.trim() || result.stderr.trim()
+    };
+  } catch (error) {
+    return {
+      available: false,
+      error: error.code === 'ENOENT'
+        ? `${cli} command not found`
+        : error.message
+    };
+  }
+}
+
+/**
+ * Pre-flight check before CUJ execution
+ * Validates workflow, agents, schemas, artifacts, and skills
+ */
+async function preflightCheck(cuj) {
+  const errors = [];
+  const warnings = [];
+
+  // 1. Verify workflow file exists (if workflow mode)
+  if (cuj.workflow) {
+    let workflowPath;
+    if (cuj.workflow.startsWith('.claude/workflows/')) {
+      workflowPath = path.join(projectRoot, cuj.workflow);
+    } else {
+      workflowPath = path.join(projectRoot, '.claude/workflows', cuj.workflow);
+    }
+
+    if (!fs.existsSync(workflowPath)) {
+      errors.push(`Workflow file not found: ${workflowPath}`);
+    } else {
+      // Parse workflow YAML to check for referenced agents
+      const workflowContent = fs.readFileSync(workflowPath, 'utf-8');
+
+      // Extract agents from workflow (basic YAML parsing)
+      const agentMatches = workflowContent.matchAll(/agent:\s+([a-z-]+)/g);
+      const agents = [...agentMatches].map(m => m[1]);
+
+      // 2. Check all referenced agents exist
+      for (const agent of agents) {
+        const agentPath = path.join(projectRoot, '.claude/agents', `${agent}.md`);
+        if (!fs.existsSync(agentPath)) {
+          errors.push(`Agent not found: ${agent} (referenced in workflow ${cuj.workflow})`);
+        }
+      }
+
+      // 3. Validate all schemas exist (basic YAML parsing)
+      const schemaMatches = workflowContent.matchAll(/schema:\s+([a-z-_.]+\.schema\.json)/g);
+      const schemas = [...schemaMatches].map(m => m[1]);
+
+      for (const schema of schemas) {
+        const schemaPath = path.join(projectRoot, '.claude/schemas', schema);
+        if (!fs.existsSync(schemaPath)) {
+          errors.push(`Schema not found: ${schema} (referenced in workflow ${cuj.workflow})`);
+        }
+      }
+
+      // 4. Check artifact dependencies (basic YAML parsing)
+      const artifactMatches = workflowContent.matchAll(/input:\s+([a-z-_]+\.json)/g);
+      const artifacts = [...artifactMatches].map(m => m[1]);
+
+      for (const artifact of artifacts) {
+        // Artifacts don't exist until runtime, so just warn
+        if (artifact !== 'null' && artifact !== 'none') {
+          warnings.push(`Workflow requires artifact: ${artifact} (ensure it exists or will be created)`);
+        }
+      }
+
+      // 5. Verify skill availability (basic YAML parsing) - check both locations
+      const skillMatches = workflowContent.matchAll(/skill:\s+([a-z-]+)/g);
+      const skills = [...skillMatches].map(m => m[1]);
+
+      for (const skill of skills) {
+        const skillInfo = findSkillPath(skill);
+        if (!skillInfo) {
+          errors.push(`Skill not found: ${skill} (referenced in workflow ${cuj.workflow}). Expected in .claude/skills/ (Agent Studio) or codex-skills/ (Codex CLI).`);
+        } else {
+          // Log skill type for informational purposes
+          if (skillInfo.type === 'codex') {
+            warnings.push(`Skill ${skill} is a Codex CLI skill. Ensure required CLI tools (claude, gemini) are installed.`);
+          }
+        }
+      }
+    }
+  }
+
+  // For skill-only CUJs, verify primary skill exists - check both locations
+  if (cuj.execution_mode === 'skill-only' && cuj.primary_skill) {
+    const skillInfo = findSkillPath(cuj.primary_skill);
+    if (!skillInfo) {
+      errors.push(`Primary skill not found: ${cuj.primary_skill}. Expected in .claude/skills/ (Agent Studio) or codex-skills/ (Codex CLI).`);
+    } else if (skillInfo.type === 'codex') {
+      warnings.push(`Primary skill ${cuj.primary_skill} is a Codex CLI skill. Ensure required CLI tools (claude, gemini) are installed.`);
+    }
+  }
+
+  // Check CLI availability for Codex skills
+  const usesCodexSkills = cuj.skill_type === 'codex' ||
+    cuj.uses_codex_skills ||
+    (cuj.primary_skill && findSkillPath(cuj.primary_skill)?.type === 'codex');
+
+  if (usesCodexSkills) {
+    const claudeCli = await checkCliAvailability('claude');
+    const geminiCli = await checkCliAvailability('gemini');
+
+    if (!claudeCli.available) {
+      warnings.push(`⚠️  Claude CLI not available: ${claudeCli.error}. Multi-AI review may fail.`);
+      warnings.push(`   Install: npm install -g @anthropic-ai/claude-cli`);
+    } else {
+      warnings.push(`✓ Claude CLI available: ${claudeCli.version}`);
+    }
+
+    if (!geminiCli.available) {
+      warnings.push(`⚠️  Gemini CLI not available: ${geminiCli.error}. Multi-AI review may be limited.`);
+      warnings.push(`   Install: npm install -g @google/generative-ai-cli`);
+    } else {
+      warnings.push(`✓ Gemini CLI available: ${geminiCli.version}`);
+    }
+  }
+
+  return { valid: errors.length === 0, errors, warnings };
+}
+
+/**
+ * Load performance metrics from analytics file
+ */
+async function loadPerformanceMetrics() {
+  if (!fs.existsSync(analyticsPath)) {
+    return { runs: [] };
+  }
+  if (shouldUseStreaming(analyticsPath, 1)) {
+    return await parseLargeJSON(analyticsPath);
+  } else {
+    return JSON.parse(fs.readFileSync(analyticsPath, 'utf-8'));
+  }
+}
+
+/**
+ * Save performance metrics to analytics file
+ */
+function savePerformanceMetrics(metrics) {
+  const dir = path.dirname(analyticsPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  fs.writeFileSync(analyticsPath, JSON.stringify(metrics, null, 2));
+}
+
+/**
+ * Record CUJ execution performance with granular Codex skill timing
+ * @param {string} cujId - CUJ identifier
+ * @param {string} status - success/failure
+ * @param {number} duration - Total duration in milliseconds
+ * @param {Array} agents - List of agents used
+ * @param {Array} warnings - Warnings encountered
+ * @param {Object} codexSkillTimings - Detailed timings for Codex skills (optional)
+ */
+async function recordPerformance(cujId, status, duration, agents = [], warnings = [], codexSkillTimings = {}) {
+  const metrics = await loadPerformanceMetrics();
+
+  const runEntry = {
+    cuj_id: cujId,
+    timestamp: new Date().toISOString(),
+    duration_ms: duration,
+    status,
+    agents_used: agents,
+    warnings
+  };
+
+  // Add granular Codex skill timings if available
+  if (Object.keys(codexSkillTimings).length > 0) {
+    runEntry.codex_skills = codexSkillTimings;
+
+    // Calculate aggregated Codex skill timing
+    const codexTotalMs = Object.values(codexSkillTimings).reduce((sum, timing) => {
+      return sum + (timing.duration_ms || 0);
+    }, 0);
+
+    runEntry.codex_total_ms = codexTotalMs;
+    runEntry.agent_studio_ms = duration - codexTotalMs;
+  }
+
+  metrics.runs.push(runEntry);
+  savePerformanceMetrics(metrics);
+}
+
+async function listCUJs() {
+  const registry = await loadRegistry();
   console.log('\nAvailable CUJs:\n');
   console.log('| ID | Name | Mode | Workflow |');
   console.log('|----|------|------|----------|');
@@ -30,8 +371,8 @@ function listCUJs() {
   }
 }
 
-function simulateCUJ(cujId) {
-  const registry = loadRegistry();
+async function simulateCUJ(cujId) {
+  const registry = await loadRegistry();
   const cuj = registry.cujs.find(c => c.id === cujId);
   if (!cuj) {
     console.error(`CUJ ${cujId} not found`);
@@ -40,11 +381,31 @@ function simulateCUJ(cujId) {
 
   console.log(`\nSimulating ${cujId}: ${cuj.name}\n`);
 
-  const child = spawn('node', [
+  // Priority 1: Check memory before spawning
+  const memCheck = canSpawnSubagent();
+  if (!memCheck.canSpawn) {
+    console.warn(`[Memory] ${memCheck.warning}`);
+    console.warn('[Memory] Attempting cleanup and GC before retry...');
+    cleanupAllCaches();
+    if (global.gc) {
+      global.gc();
+    }
+
+    // Re-check after cleanup
+    const recheckMem = canSpawnSubagent();
+    if (!recheckMem.canSpawn) {
+      console.error('[Memory] ERROR: Insufficient memory even after cleanup');
+      console.error(`[Memory] Current: ${recheckMem.currentUsageMB.toFixed(2)}MB, Free: ${recheckMem.freeMB.toFixed(2)}MB`);
+      process.exit(1);
+    }
+    console.log('[Memory] Cleanup successful, proceeding with spawn');
+  }
+
+  const child = await spawnSubagentWithLimit([
     path.join(__dirname, 'workflow_runner.js'),
     '--cuj-simulation',
     cujId
-  ], { stdio: 'inherit' });
+  ]);
 
   child.on('exit', code => process.exit(code));
 }
@@ -62,13 +423,78 @@ function validateCUJ(cujId) {
   child.on('exit', code => process.exit(code));
 }
 
-function runCUJ(cujId) {
-  const registry = loadRegistry();
-  const cuj = registry.cujs.find(c => c.id === cujId);
-  if (!cuj) {
-    console.error(`CUJ ${cujId} not found`);
+async function runCUJ(cujId) {
+  // Start memory monitoring
+  logMemoryUsage('Initial');
+  startMonitoring({
+    warnThresholdMB: 3500,
+    onWarning: (usage) => {
+      console.warn(`[CUJ ${cujId}] Memory warning: ${usage.heapUsedMB.toFixed(2)}MB`);
+    }
+  });
+
+  // Start periodic cleanup (every 10 minutes)
+  const stopCleanup = setupPeriodicCleanup(10 * 60 * 1000);
+
+  // Setup memory pressure handling
+  const stopPressureMonitoring = setupMemoryPressureHandling((level, usage, stats) => {
+    if (level === 'critical') {
+      console.error(`[Memory] CRITICAL: ${stats.heapUsagePercent.toFixed(1)}% heap used - aborting CUJ`);
+      console.error(`[Memory] Heap: ${stats.heapUsedMB.toFixed(2)}MB / ${stats.heapLimitMB.toFixed(2)}MB`);
+      // Cleanup before exit
+      stopMonitoring();
+      if (stopCleanup) stopCleanup();
+      cleanupAllCaches();
+      process.exit(42); // Exit code 42 = memory pressure restart needed
+    } else if (level === 'high') {
+      console.warn(`[Memory] HIGH: ${stats.heapUsagePercent.toFixed(1)}% heap used - cleaning up`);
+      console.warn(`[Memory] Heap: ${stats.heapUsedMB.toFixed(2)}MB / ${stats.heapLimitMB.toFixed(2)}MB`);
+      cleanupAllCaches();
+      if (global.gc) global.gc();
+    }
+  });
+
+  // Initialize variables that may be used in exit handler
+  let preflightResult = { warnings: [], valid: true, errors: [] };
+  let workflowPath = null;
+  let startTime = Date.now();
+
+  try {
+    const registry = await loadRegistry();
+    const cuj = registry.cujs.find(c => c.id === cujId);
+    if (!cuj) {
+      console.error(`CUJ ${cujId} not found`);
+      stopMonitoring();
+      if (stopCleanup) {
+        stopCleanup();
+      }
+      cleanupAllCaches();
+      process.exit(1);
+    }
+
+    // Run pre-flight check
+    console.log(`\n🔍 Pre-flight check for ${cujId}...\n`);
+    preflightResult = await preflightCheck(cuj);
+
+  if (preflightResult.warnings.length > 0) {
+    console.log('⚠️  Warnings:');
+    preflightResult.warnings.forEach(w => console.log(`  - ${w}`));
+    console.log('');
+  }
+
+  if (!preflightResult.valid) {
+    console.error('❌ Pre-flight check failed:\n');
+    preflightResult.errors.forEach(e => console.error(`  - ${e}`));
+    console.error('\nFix these issues before running the CUJ.');
+    stopMonitoring();
+    if (stopCleanup) {
+      stopCleanup();
+    }
+    cleanupAllCaches();
     process.exit(1);
   }
+
+  console.log('✅ Pre-flight check passed\n');
 
   if (!cuj.workflow) {
     console.log(`${cujId} is ${cuj.execution_mode} - no workflow to run`);
@@ -80,7 +506,6 @@ function runCUJ(cujId) {
   console.log(`Workflow: ${cuj.workflow}\n`);
 
   // Normalize workflow path - avoid double .claude/workflows/ prefix
-  let workflowPath;
   if (cuj.workflow.startsWith('.claude/workflows/')) {
     // Already has full path, use as-is
     workflowPath = path.join(__dirname, '..', cuj.workflow.replace('.claude/workflows/', 'workflows/'));
@@ -89,15 +514,131 @@ function runCUJ(cujId) {
     workflowPath = path.join(__dirname, '../workflows', cuj.workflow);
   }
 
-  const child = spawn('node', [
+  // Track execution time
+  startTime = Date.now();
+
+  // Generate unique run ID for this CUJ execution
+  const runId = `${cujId}-${Date.now()}`;
+
+  // NEW: Pre-spawn memory check
+  const memCheck = canSpawnSubagent(800); // Need 800MB for subagent
+  if (!memCheck.canSpawn) {
+    console.warn('[CUJ] Insufficient memory for spawn - running cleanup');
+    console.warn(`[Memory] RSS: ${memCheck.currentUsageMB.toFixed(2)}MB, Free: ${memCheck.freeMB.toFixed(2)}MB`);
+
+    // Aggressive cleanup
+    cleanupAllCaches();
+    if (global.gc) {
+      global.gc();
+      global.gc(); // Double GC for better cleanup
+    }
+
+    // Wait 2 seconds for cleanup to complete
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Re-check after cleanup
+    const recheckMem = canSpawnSubagent(800);
+    if (!recheckMem.canSpawn) {
+      throw new Error(`Cannot spawn subagent: insufficient memory even after cleanup (${recheckMem.freeMB.toFixed(2)}MB free, need 800MB)`);
+    }
+
+    console.log('[Memory] Cleanup successful, proceeding with spawn');
+  }
+
+  const child = await spawnSubagentWithLimit([
     path.join(__dirname, 'workflow_runner.js'),
     '--workflow',
     workflowPath,
+    '--run-id',
+    runId,
     '--id',
-    `${cujId}-${Date.now()}`
-  ], { stdio: 'inherit' });
+    runId  // Keep --id for backward compatibility
+  ]);
 
-  child.on('exit', code => process.exit(code));
+  child.on('exit', async code => {
+    // Stop memory monitoring and cleanup
+    stopMonitoring();
+    if (stopCleanup) {
+      stopCleanup();
+    }
+    if (stopPressureMonitoring) {
+      stopPressureMonitoring();
+    }
+    cleanupAllCaches(); // Final cleanup
+    logMemoryUsage('Final');
+
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+
+    // Record performance metrics
+    const status = code === 0 ? 'success' : 'failure';
+    const warnings = preflightResult.warnings;
+
+    // Extract agents from workflow (basic parsing)
+    let agents = [];
+    if (workflowPath && fs.existsSync(workflowPath)) {
+      const workflowContent = fs.readFileSync(workflowPath, 'utf-8');
+      const agentMatches = workflowContent.matchAll(/agent:\s+([a-z-]+)/g);
+      agents = [...new Set([...agentMatches].map(m => m[1]))]; // Deduplicate
+    }
+
+    // Collect Codex skill timings from CUJ if available
+    const codexSkillTimings = {};
+    const registry = await loadRegistry();
+    const cuj = registry.cujs.find(c => c.id === cujId);
+
+    if (cuj && (cuj.skill_type === 'codex' || cuj.skill_type === 'hybrid')) {
+      // Check for Codex skills in CUJ
+      const codexSkills = (cuj.skills || []).filter(s => {
+        const skillName = typeof s === 'object' ? s.name : s;
+        const skillType = typeof s === 'object' ? s.type : null;
+        return skillType === 'codex' || skillName === 'multi-ai-code-review' || skillName === 'response-rater';
+      });
+
+      // For now, we don't have exact per-skill timing from the workflow runner
+      // But we can at least record which Codex skills were used
+      codexSkills.forEach(skill => {
+        const skillName = typeof skill === 'object' ? skill.name : skill;
+        const providers = typeof skill === 'object' ? skill.requires_cli || [] : [];
+
+        codexSkillTimings[skillName] = {
+          duration_ms: 0, // Placeholder - actual timing would come from skill execution
+          providers: providers,
+          provider_timings: {}, // Placeholder
+          cli_check_ms: 0, // Placeholder
+          parallel_execution: providers.length > 1
+        };
+      });
+    }
+
+    await recordPerformance(cujId, status, duration, agents, warnings, codexSkillTimings);
+
+    // Enhanced console output with timing breakdown
+    console.log(`\n[${cujId}] Execution complete in ${(duration / 1000).toFixed(1)}s`);
+
+    if (Object.keys(codexSkillTimings).length > 0) {
+      console.log(`  Codex skills: ${Object.keys(codexSkillTimings).join(', ')}`);
+      Object.entries(codexSkillTimings).forEach(([skillName, timing]) => {
+        const providers = timing.providers.join(', ');
+        console.log(`    ├─ ${skillName} (providers: ${providers})`);
+      });
+    }
+
+    console.log(`📊 Performance data saved to ${analyticsPath}`);
+
+    process.exit(code);
+  });
+  } finally {
+    // Ensure monitoring and cleanup are stopped even if there's an error
+    stopMonitoring();
+    if (stopCleanup) {
+      stopCleanup();
+    }
+    if (stopPressureMonitoring) {
+      stopPressureMonitoring();
+    }
+    cleanupAllCaches(); // Final cleanup
+  }
 }
 
 // Parse arguments
@@ -121,12 +662,25 @@ Examples:
   process.exit(0);
 }
 
-if (args[0] === '--list') {
-  listCUJs();
-} else if (args[0] === '--simulate') {
-  simulateCUJ(args[1]);
-} else if (args[0] === '--validate') {
-  validateCUJ(args[1]);
-} else {
-  runCUJ(args[0]);
-}
+(async () => {
+  if (args[0] === '--list') {
+    await listCUJs();
+  } else if (args[0] === '--simulate') {
+    await simulateCUJ(args[1]);
+  } else if (args[0] === '--validate') {
+    validateCUJ(args[1]);
+  } else if (args[0] === '--cache-stats') {
+    showCacheStats();
+  } else if (args[0] === '--no-cache') {
+    // --no-cache flag should be followed by CUJ ID
+    if (args[1]) {
+      console.log('🚫 Skill caching disabled for this run\n');
+      await runCUJ(args[1]);
+    } else {
+      console.error('Error: CUJ ID required after --no-cache');
+      process.exit(1);
+    }
+  } else {
+    await runCUJ(args[0]);
+  }
+})();

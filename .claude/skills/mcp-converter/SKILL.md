@@ -1,6 +1,7 @@
 ---
 name: mcp-converter
 description: Converts MCP servers to Claude Skills with 90%+ context savings using progressive disclosure pattern. Supports automatic detection and on-demand conversion.
+context:fork: true
 allowed-tools: read, write, bash, grep, glob
 version: 1.0
 best_practices:

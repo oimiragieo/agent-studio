@@ -1,10 +1,393 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
+/**
+ * Multi-AI Code Review
+ *
+ * Enhanced with:
+ * - Partial Failure Recovery (Cursor Recommendation #11)
+ * - Circuit Breaker Pattern (Cursor Recommendation #14)
+ * - Enhanced Error Context (Cursor Recommendation #10)
+ */
 
-const { spawn } = require("child_process");
+const { spawn, execSync } = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+
+// Try to load js-yaml for config parsing, fallback to simple parsing if not available
+let yaml;
+try {
+  yaml = require("js-yaml");
+} catch (e) {
+  // Fallback: simple YAML parsing not available, will use defaults
+  yaml = null;
+}
+const { withRetry } = require("../../shared/retry-utils.js");
+const { sanitize, sanitizeError } = require("../../shared/sanitize-secrets.js");
+
+// Try to import circuit breaker (ESM module)
+let CircuitBreaker = null;
+let getProviderCircuitBreaker = null;
+try {
+  // Dynamic import for ESM module from CommonJS
+  const circuitBreakerPath = path.join(__dirname, "../../../.claude/tools/circuit-breaker.mjs");
+  if (fs.existsSync(circuitBreakerPath)) {
+    // We'll use a synchronous check and async import later
+    // For now, we'll implement a simple inline circuit breaker for CommonJS compatibility
+  }
+} catch (e) {
+  // Circuit breaker not available
+}
+
+// Simple inline Circuit Breaker for CommonJS compatibility
+class SimpleCircuitBreaker {
+  constructor(options = {}) {
+    this.failureThreshold = options.failureThreshold || 3;
+    this.resetTimeout = options.resetTimeout || 60000;
+    this.states = new Map();
+  }
+
+  canExecute(provider) {
+    const state = this.getState(provider);
+    if (state.state === "open") {
+      if (Date.now() > state.openUntil) {
+        state.state = "half-open";
+        this.states.set(provider, state);
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+
+  recordSuccess(provider) {
+    const state = this.getState(provider);
+    state.failures = 0;
+    state.state = "closed";
+    this.states.set(provider, state);
+  }
+
+  recordFailure(provider) {
+    const state = this.getState(provider);
+    state.failures++;
+    if (state.failures >= this.failureThreshold) {
+      state.state = "open";
+      state.openUntil = Date.now() + this.resetTimeout;
+      console.warn(`[circuit-breaker] ${provider}: Circuit OPEN (${state.failures} failures)`);
+    }
+    this.states.set(provider, state);
+  }
+
+  getState(provider) {
+    if (!this.states.has(provider)) {
+      this.states.set(provider, { failures: 0, state: "closed", openUntil: null });
+    }
+    return this.states.get(provider);
+  }
+}
+
+// Global circuit breaker instance
+const providerCircuitBreaker = new SimpleCircuitBreaker({
+  failureThreshold: 3,
+  resetTimeout: 60000
+});
+
+// CLI command mappings for each provider
+const CLI_COMMANDS = {
+  claude: "claude",
+  gemini: "gemini",
+  codex: "codex",
+  cursor: "cursor-agent",
+  copilot: "copilot"
+};
+
+/**
+ * Load provider configuration from config.yaml
+ * @returns {Object} Provider priority configuration
+ */
+function loadProviderConfig() {
+  const defaults = {
+    primary: "claude",
+    secondary: ["gemini", "codex"],
+    fallback_threshold: 1
+  };
+
+  // If yaml parser not available, use defaults
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      return config?.codex_skills?.provider_priority || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load provider config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Load partial failure configuration from config.yaml (Cursor Recommendation #11)
+ * @returns {Object} Partial failure configuration
+ */
+function loadPartialFailureConfig() {
+  const defaults = {
+    enabled: true,
+    min_success_count: 2,
+    min_success_rate: 0.67
+  };
+
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      return config?.codex_skills?.partial_failure || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load partial failure config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Load circuit breaker configuration from config.yaml (Cursor Recommendation #14)
+ * @returns {Object} Circuit breaker configuration
+ */
+function loadCircuitBreakerConfig() {
+  const defaults = {
+    enabled: true,
+    failure_threshold: 3,
+    reset_timeout_ms: 60000,
+    half_open_max_attempts: 2
+  };
+
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      const cbConfig = config?.codex_skills?.circuit_breaker;
+      if (cbConfig) {
+        // Update global circuit breaker with config values
+        providerCircuitBreaker.failureThreshold = cbConfig.failure_threshold || defaults.failure_threshold;
+        providerCircuitBreaker.resetTimeout = cbConfig.reset_timeout_ms || defaults.reset_timeout_ms;
+      }
+      return cbConfig || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load circuit breaker config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Log error with enhanced context (Cursor Recommendation #10)
+ * @param {Error} error - The error to log
+ * @param {Object} context - Error context
+ */
+function logErrorWithContext(error, context = {}) {
+  const errorDir = path.join(__dirname, "../../../.claude/context/errors");
+
+  try {
+    if (!fs.existsSync(errorDir)) {
+      fs.mkdirSync(errorDir, { recursive: true });
+    }
+
+    const timestamp = Date.now();
+    const provider = context.provider || "unknown";
+    const errorFile = path.join(errorDir, `review-${provider}-${timestamp}.json`);
+
+    const errorData = {
+      timestamp: new Date().toISOString(),
+      operation: "multi_ai_code_review",
+      provider: context.provider,
+      error: {
+        message: sanitize(error.message || String(error)),
+        name: error.name || "Error",
+        code: error.code || null,
+        stack: sanitize(error.stack || "").split("\n").slice(0, 10).join("\n")
+      },
+      context: {
+        diffMeta: context.diffMeta || null,
+        attempt: context.attempt || 1,
+        authMode: context.authMode || null
+      },
+      system: {
+        platform: process.platform,
+        nodeVersion: process.version
+      }
+    };
+
+    fs.writeFileSync(errorFile, JSON.stringify(errorData, null, 2));
+    console.error(`[error-logger] Error logged to: ${errorFile}`);
+  } catch (logError) {
+    console.error(`[error-logger] Failed to log error: ${logError.message}`);
+  }
+}
+
+/**
+ * Validate CLI availability for a provider
+ * Re-validates CLI immediately before invoking Codex skills
+ * @param {string} provider - Provider name
+ * @returns {Promise<{available: boolean, provider: string, version?: string, error?: string}>}
+ */
+async function validateProviderCli(provider) {
+  const cli = CLI_COMMANDS[provider];
+  if (!cli) {
+    // Unknown provider - assume available (will fail at runtime if not)
+    return { available: true, provider, note: "unknown_cli" };
+  }
+
+  return new Promise((resolve) => {
+    try {
+      // Use execSync with short timeout for quick validation
+      const result = execSync(`${cli} --version`, {
+        timeout: 5000,
+        stdio: ["pipe", "pipe", "pipe"],
+        shell: true,
+        encoding: "utf8"
+      });
+      resolve({
+        available: true,
+        provider,
+        version: result.trim().split("\n")[0]
+      });
+    } catch (err) {
+      resolve({
+        available: false,
+        provider,
+        error: sanitize(err.message || String(err))
+      });
+    }
+  });
+}
+
+// JSON Schema validation (Ajv with 2020-12 support or simple fallback)
+let ajv, validate;
+try {
+  const Ajv = require("ajv/dist/2020");  // Use 2020-12 version of Ajv
+  const addFormats = require("ajv-formats");
+
+  // Configure Ajv for JSON Schema 2020-12 support
+  ajv = new Ajv({
+    allErrors: true,
+    verbose: true,
+    strict: false  // Allow keywords from 2020-12 that aren't in draft-07
+  });
+
+  // Add standard formats (date-time, email, uri, etc.)
+  addFormats(ajv);
+
+  // Load schema
+  const schemaPath = path.join(__dirname, "../../../.claude/schemas/multi-ai-review-report.schema.json");
+  if (fs.existsSync(schemaPath)) {
+    const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+
+    // Compile schema with 2020-12 meta-schema support
+    try {
+      validate = ajv.compile(schema);
+      console.error(`[schema] JSON Schema validation enabled (${schema.$schema || 'unknown version'})`);
+    } catch (compileErr) {
+      console.warn(`⚠️  Schema compilation failed: ${compileErr.message}`);
+      console.warn(`    Schema path: ${schemaPath}`);
+      console.warn(`    Schema $schema: ${schema.$schema || 'not specified'}`);
+      validate = null;
+    }
+  } else {
+    console.warn(`⚠️  Schema file not found: ${schemaPath}`);
+  }
+} catch (err) {
+  console.warn(`⚠️  Schema validation unavailable: ${err.message}`);
+  if (err.code === 'MODULE_NOT_FOUND') {
+    if (err.message.includes('ajv-formats')) {
+      console.warn(`    Install ajv-formats: npm install ajv-formats`);
+    } else if (err.message.includes('ajv/dist/2020')) {
+      console.warn(`    Ajv 2020-12 support not available. Using basic validation.`);
+      // Fallback to standard Ajv (draft-07)
+      try {
+        const AjvFallback = require("ajv");
+        ajv = new AjvFallback({ allErrors: true, verbose: true, strict: false });
+        const addFormatsFallback = require("ajv-formats");
+        addFormatsFallback(ajv);
+        const schemaPath = path.join(__dirname, "../../../.claude/schemas/multi-ai-review-report.schema.json");
+        if (fs.existsSync(schemaPath)) {
+          const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+          validate = ajv.compile(schema);
+          console.error(`[schema] JSON Schema validation enabled (draft-07 fallback)`);
+        }
+      } catch {
+        // Complete fallback failure - validation disabled
+      }
+    }
+  }
+}
+
+/**
+ * Validate output against schema
+ * Supports both warning mode (default) and blocking mode
+ * @param {Object} output - The output object to validate
+ * @param {string} mode - Validation mode: 'warning' (default) or 'blocking'
+ * @returns {Object} Validated output with _validation field
+ * @throws {Error} In blocking mode, throws if validation fails
+ */
+function validateOutput(output, mode = "warning") {
+  if (!validate) {
+    // Validation not available - no Ajv or no schema
+    return {
+      ...output,
+      _validation: { valid: false, reason: "validator_unavailable", mode }
+    };
+  }
+
+  const valid = validate(output);
+  if (!valid) {
+    const errors = validate.errors || [];
+    console.warn("⚠️  Output validation failed:");
+    errors.forEach((error, index) => {
+      console.warn(`   ${index + 1}. ${error.instancePath || "/"}: ${error.message}`);
+      if (error.params) {
+        console.warn(`      params: ${JSON.stringify(error.params)}`);
+      }
+    });
+
+    // In blocking mode, throw an error to fail fast
+    if (mode === "blocking") {
+      const errorSummary = errors
+        .slice(0, 5)
+        .map((e) => `${e.instancePath || "/"}: ${e.message}`)
+        .join("; ");
+      throw new Error(`Schema validation failed (blocking mode): ${errorSummary}`);
+    }
+
+    return {
+      ...output,
+      _validation: {
+        valid: false,
+        errors,
+        errorCount: errors.length,
+        mode
+      }
+    };
+  }
+
+  return {
+    ...output,
+    _validation: { valid: true, mode }
+  };
+}
 
 function parseArgs(argv) {
   const args = {
@@ -21,6 +404,8 @@ function parseArgs(argv) {
     strictJsonOnly: false,
     ci: false,
     dryRun: false,
+    validationMode: "warning", // warning | blocking
+    skipCliValidation: false, // skip CLI availability check
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -38,6 +423,8 @@ function parseArgs(argv) {
     else if (t === "--strict-json-only") args.strictJsonOnly = true;
     else if (t === "--ci") args.ci = true;
     else if (t === "--dry-run") args.dryRun = true;
+    else if (t === "--validation-mode") args.validationMode = argv[++i];
+    else if (t === "--skip-cli-validation") args.skipCliValidation = true;
     else if (t === "--help" || t === "-h") args.help = true;
   }
 
@@ -67,6 +454,11 @@ function usage(exitCode = 0) {
       "Synthesis:",
       "  --no-synthesis (skip final dedupe/synthesis step)",
       "  --synthesize-with <provider> (default: first provider)",
+      "",
+      "Validation:",
+      "  --validation-mode warning (default): log validation errors but continue",
+      "  --validation-mode blocking: fail fast if schema validation fails",
+      "  --skip-cli-validation: skip CLI availability check (use when CLIs are known to be available)",
       "",
       "Safety:",
       "  --dry-run (no network calls; prints collected diff stats and exits)",
@@ -225,28 +617,96 @@ function looksLikeAuthFailure(stderrText) {
 async function runClaude(prompt, { timeoutMs, authMode }) {
   const args = ["-p", "--output-format", "json", "--permission-mode", "bypassPermissions"];
   // Prefer stdin to avoid Windows command length limits.
-  for (const attempt of [1, 2]) {
-    const env = providerEnvForAttempt("claude", authMode, attempt);
-    const res = await runCommand("claude", args, prompt, { timeoutMs, env });
-    if (res.ok) return { provider: "claude", ...res };
-    if (attempt === 1 && looksLikeAuthFailure(res.stderr)) continue;
-    return { provider: "claude", ...res };
+
+  const attemptClaude = async () => {
+    for (const attempt of [1, 2]) {
+      const env = providerEnvForAttempt("claude", authMode, attempt);
+      const res = await runCommand("claude", args, prompt, { timeoutMs, env });
+      if (res.ok) return { provider: "claude", ...res };
+      if (attempt === 1 && looksLikeAuthFailure(res.stderr)) continue;
+
+      // If not successful and not an auth failure, throw to trigger retry
+      if (!res.ok) {
+        const error = new Error(res.stderr || "Claude CLI failed");
+        error.code = res.stderr?.includes("TIMEOUT") ? "ETIMEDOUT" : "UNKNOWN";
+        error.stderr = res.stderr;
+        throw error;
+      }
+
+      return { provider: "claude", ...res };
+    }
+    return { provider: "claude", ok: false, stdout: "", stderr: "Unknown error" };
+  };
+
+  try {
+    return await withRetry(attemptClaude, {
+      maxRetries: 3,
+      baseDelayMs: 1000,
+      maxDelayMs: 10000,
+      onRetry: (attempt, error, delay) => {
+        // Sanitize error messages to prevent API key leakage
+        console.error(`⚠️  Claude CLI attempt ${attempt} failed: ${sanitize(error.message)}`);
+        console.error(`   Retrying in ${delay}ms...`);
+      }
+    });
+  } catch (error) {
+    // Return error result instead of throwing
+    // Sanitize all error output to prevent credential exposure
+    return {
+      provider: "claude",
+      ok: false,
+      stdout: "",
+      stderr: sanitize(error.stderr || error.message || String(error))
+    };
   }
-  return { provider: "claude", ok: false, stdout: "", stderr: "Unknown error" };
 }
 
 async function runGemini(prompt, { timeoutMs, authMode }) {
   // gemini can read stdin for large payloads; keep the positional prompt short.
   const args = ["--output-format", "json", "--model", "gemini-2.5-flash", "Review this diff and return ONLY valid JSON per the provided schema."];
   const input = prompt;
-  for (const attempt of [1, 2]) {
-    const env = providerEnvForAttempt("gemini", authMode, attempt);
-    const res = await runCommand("gemini", args, input, { timeoutMs, env });
-    if (res.ok) return { provider: "gemini", ...res };
-    if (attempt === 1 && looksLikeAuthFailure(res.stderr)) continue;
-    return { provider: "gemini", ...res };
+
+  const attemptGemini = async () => {
+    for (const attempt of [1, 2]) {
+      const env = providerEnvForAttempt("gemini", authMode, attempt);
+      const res = await runCommand("gemini", args, input, { timeoutMs, env });
+      if (res.ok) return { provider: "gemini", ...res };
+      if (attempt === 1 && looksLikeAuthFailure(res.stderr)) continue;
+
+      // If not successful and not an auth failure, throw to trigger retry
+      if (!res.ok) {
+        const error = new Error(res.stderr || "Gemini CLI failed");
+        error.code = res.stderr?.includes("TIMEOUT") ? "ETIMEDOUT" : "UNKNOWN";
+        error.stderr = res.stderr;
+        throw error;
+      }
+
+      return { provider: "gemini", ...res };
+    }
+    return { provider: "gemini", ok: false, stdout: "", stderr: "Unknown error" };
+  };
+
+  try {
+    return await withRetry(attemptGemini, {
+      maxRetries: 3,
+      baseDelayMs: 1000,
+      maxDelayMs: 10000,
+      onRetry: (attempt, error, delay) => {
+        // Sanitize error messages to prevent API key leakage
+        console.error(`⚠️  Gemini CLI attempt ${attempt} failed: ${sanitize(error.message)}`);
+        console.error(`   Retrying in ${delay}ms...`);
+      }
+    });
+  } catch (error) {
+    // Return error result instead of throwing
+    // Sanitize all error output to prevent credential exposure
+    return {
+      provider: "gemini",
+      ok: false,
+      stdout: "",
+      stderr: sanitize(error.stderr || error.message || String(error))
+    };
   }
-  return { provider: "gemini", ok: false, stdout: "", stderr: "Unknown error" };
 }
 
 async function runCopilot(prompt, { timeoutMs }) {
@@ -325,7 +785,7 @@ function toMarkdownReport({ synthesized, perProvider }) {
   return lines.join("\n");
 }
 
-function toStrictJsonReport({ diffMeta, perProvider, synthesisDisabledReason }) {
+function toStrictJsonReport({ diffMeta, perProvider, synthesisDisabledReason, performance }) {
   const minimal = perProvider.map((p) => ({
     provider: p.provider,
     ok: p.ok,
@@ -344,6 +804,8 @@ function toStrictJsonReport({ diffMeta, perProvider, synthesisDisabledReason }) 
     diffMeta,
     providers: minimal.map((p) => ({ provider: p.provider, ok: p.ok, parsedOk: p.parsedOk })),
     perProvider: minimal,
+    // Include performance metrics in CI/strict mode output
+    performance: performance || null,
   };
 }
 
@@ -392,13 +854,226 @@ async function main() {
     process.exit(0);
   }
 
-  const perProvider = [];
-  for (const p of providers) {
-    if (p === "claude") perProvider.push(await runClaude(prompt, args));
-    else if (p === "gemini") perProvider.push(await runGemini(prompt, args));
-    else if (p === "copilot") perProvider.push(await runCopilot(prompt, args));
-    else perProvider.push({ provider: p, ok: false, stdout: "", stderr: `Unknown provider: ${p}` });
+  // CLI Availability Re-validation (Cursor Recommendation #1)
+  // Re-validate CLI availability immediately before invoking providers
+  // This prevents cryptic failures when CLIs become unavailable during execution
+  let availableProviders = providers;
+  let cliValidation = null;
+
+  if (!args.skipCliValidation) {
+    console.error("[cli-check] Validating provider CLI availability...");
+    const cliCheckStart = Date.now();
+    const providerChecks = await Promise.all(
+      providers.map((p) => validateProviderCli(p))
+    );
+    const cliCheckDurationMs = Date.now() - cliCheckStart;
+
+    cliValidation = {
+      checks: providerChecks,
+      durationMs: cliCheckDurationMs,
+      timestamp: new Date().toISOString()
+    };
+
+    const unavailable = providerChecks.filter((c) => !c.available);
+    const available = providerChecks.filter((c) => c.available);
+
+    // Log CLI validation results
+    for (const check of providerChecks) {
+      if (check.available) {
+        console.error(`[cli-check] ${check.provider}: available (${check.version || "version unknown"})`);
+      } else {
+        console.error(`[cli-check] ${check.provider}: unavailable (${check.error})`);
+      }
+    }
+
+    // Provider Fallback Logic (Cursor Recommendation #4)
+    // If all providers are unavailable, fail early with clear error
+    if (unavailable.length === providers.length) {
+      const errorMsg = `All providers unavailable: ${unavailable.map((c) => c.provider).join(", ")}`;
+      console.error(`[cli-check] FATAL: ${errorMsg}`);
+
+      if (args.strictJsonOnly || args.ci) {
+        console.log(JSON.stringify({
+          ok: false,
+          mode: "strict-json-only",
+          error: errorMsg,
+          cliValidation
+        }, null, 2));
+        process.exit(2);
+      }
+      throw new Error(errorMsg);
+    }
+
+    // Filter to only available providers for execution
+    if (unavailable.length > 0) {
+      availableProviders = available.map((c) => c.provider);
+      console.error(`[cli-check] Proceeding with available providers: ${availableProviders.join(", ")}`);
+
+      // Load config for fallback threshold
+      const providerConfig = loadProviderConfig();
+      if (availableProviders.length < providerConfig.fallback_threshold) {
+        const errorMsg = `Insufficient providers available (${availableProviders.length} < ${providerConfig.fallback_threshold})`;
+        console.error(`[cli-check] FATAL: ${errorMsg}`);
+
+        if (args.strictJsonOnly || args.ci) {
+          console.log(JSON.stringify({
+            ok: false,
+            mode: "strict-json-only",
+            error: errorMsg,
+            cliValidation
+          }, null, 2));
+          process.exit(2);
+        }
+        throw new Error(errorMsg);
+      }
+    }
+
+    console.error(`[cli-check] CLI validation completed in ${cliCheckDurationMs}ms`);
   }
+
+  // Load configurations (Cursor Recommendations #11, #14)
+  const partialFailureConfig = loadPartialFailureConfig();
+  const circuitBreakerConfig = loadCircuitBreakerConfig();
+
+  // Performance measurement: start timing
+  const providerStartTime = Date.now();
+
+  // Circuit Breaker Check (Cursor Recommendation #14)
+  // Skip providers with open circuit breakers
+  const circuitBreakerResults = [];
+  const providersToExecute = [];
+
+  if (circuitBreakerConfig.enabled) {
+    for (const p of availableProviders) {
+      if (providerCircuitBreaker.canExecute(p)) {
+        providersToExecute.push(p);
+      } else {
+        const cbState = providerCircuitBreaker.getState(p);
+        console.warn(`[circuit-breaker] Skipping ${p}: circuit OPEN (reset at ${new Date(cbState.openUntil).toISOString()})`);
+        circuitBreakerResults.push({
+          provider: p,
+          ok: false,
+          skipped: true,
+          reason: "circuit_breaker_open",
+          circuit_state: cbState.state,
+          open_until: cbState.openUntil
+        });
+      }
+    }
+  } else {
+    providersToExecute.push(...availableProviders);
+  }
+
+  // Parallel execution of provider calls using Promise.allSettled()
+  // This reduces total time from sum(provider_times) to max(provider_times)
+  // Each provider still has independent retry logic (up to 3 attempts)
+  const providerPromises = providersToExecute.map((p) => {
+    const executeProvider = async () => {
+      let result;
+      if (p === "claude") result = await runClaude(prompt, args);
+      else if (p === "gemini") result = await runGemini(prompt, args);
+      else if (p === "copilot") result = await runCopilot(prompt, args);
+      else result = { provider: p, ok: false, stdout: "", stderr: `Unknown provider: ${p}` };
+
+      // Record success/failure in circuit breaker (Cursor Recommendation #14)
+      if (circuitBreakerConfig.enabled) {
+        if (result.ok) {
+          providerCircuitBreaker.recordSuccess(p);
+        } else {
+          providerCircuitBreaker.recordFailure(p);
+          // Log error with context (Cursor Recommendation #10)
+          logErrorWithContext(new Error(result.stderr || "Provider failed"), {
+            provider: p,
+            diffMeta,
+            authMode: args.authMode
+          });
+        }
+      }
+
+      return result;
+    };
+
+    return executeProvider();
+  });
+
+  // Promise.allSettled() ensures ALL providers complete, even if some fail
+  // This is preferred over Promise.all() which would reject on first failure
+  const providerResults = await Promise.allSettled(providerPromises);
+
+  // Map results to consistent format, handling both fulfilled and rejected promises
+  const executedProviders = providerResults.map((result, index) => {
+    if (result.status === "fulfilled") {
+      return result.value;
+    }
+    // Rejected promise - provider threw an unexpected error
+    const error = result.reason;
+    const provider = providersToExecute[index];
+
+    // Log error with context (Cursor Recommendation #10)
+    logErrorWithContext(error, {
+      provider,
+      diffMeta,
+      authMode: args.authMode
+    });
+
+    // Record failure in circuit breaker
+    if (circuitBreakerConfig.enabled) {
+      providerCircuitBreaker.recordFailure(provider);
+    }
+
+    return {
+      provider,
+      ok: false,
+      stdout: "",
+      stderr: error?.message || error?.stderr || String(error),
+      code: error?.code || "REJECTED",
+    };
+  });
+
+  // Combine circuit breaker skipped results with executed results
+  const perProvider = [...circuitBreakerResults, ...executedProviders];
+
+  // Performance measurement: end timing
+  const providerEndTime = Date.now();
+  const providerDurationMs = providerEndTime - providerStartTime;
+  const successCount = perProvider.filter((p) => p.ok).length;
+  const skippedCount = perProvider.filter((p) => p.skipped).length;
+
+  // Partial Failure Recovery (Cursor Recommendation #11)
+  // Determine if we have enough successful providers
+  let partialFailureStatus = null;
+  if (partialFailureConfig.enabled) {
+    const executedCount = perProvider.length - skippedCount;
+    const successRate = executedCount > 0 ? successCount / executedCount : 0;
+    const meetsCount = successCount >= partialFailureConfig.min_success_count;
+    const meetsRate = successRate >= partialFailureConfig.min_success_rate;
+
+    partialFailureStatus = {
+      enabled: true,
+      success_count: successCount,
+      executed_count: executedCount,
+      success_rate: successRate,
+      meets_count_threshold: meetsCount,
+      meets_rate_threshold: meetsRate,
+      partial_success: !meetsCount && !meetsRate ? false : (skippedCount > 0 || successCount < executedCount)
+    };
+
+    if (!meetsCount && !meetsRate && successCount > 0) {
+      console.warn(
+        `[partial-failure] Insufficient providers succeeded: ${successCount}/${executedCount} ` +
+        `(need ${partialFailureConfig.min_success_count} or ${(partialFailureConfig.min_success_rate * 100).toFixed(0)}%)`
+      );
+    } else if (partialFailureStatus.partial_success) {
+      console.error(
+        `[partial-failure] Proceeding with partial success: ${successCount}/${executedCount} providers`
+      );
+    }
+  }
+
+  // Log performance metrics (useful for debugging and optimization tracking)
+  console.error(
+    `[perf] ${availableProviders.length} providers completed in ${providerDurationMs}ms (parallel execution, ${successCount}/${availableProviders.length} succeeded)`
+  );
 
   const parsed = perProvider.map((r) => {
     const extracted = extractModelJson(r.provider, r.stdout);
@@ -418,14 +1093,40 @@ async function main() {
       diffMeta,
       perProvider: parsed,
       synthesisDisabledReason: "skipped_in_strict_mode",
+      performance: {
+        providerDurationMs,
+        synthesisDurationMs: 0,
+        totalDurationMs: providerDurationMs,
+        providersCount: availableProviders.length,
+        requestedProviders: providers.length,
+        successCount,
+        skippedCount,
+        parallelExecution: true,
+        cliValidation: cliValidation || null,
+        // Cursor Recommendation #11 - Partial Failure Recovery
+        partialFailure: partialFailureStatus,
+        // Cursor Recommendation #14 - Circuit Breaker Status
+        circuitBreaker: circuitBreakerConfig.enabled ? {
+          enabled: true,
+          skipped_providers: circuitBreakerResults.length,
+          providers_state: Object.fromEntries(
+            availableProviders.map(p => [p, providerCircuitBreaker.getState(p)])
+          )
+        } : null,
+      },
     });
-    console.log(JSON.stringify(report, null, 2));
-    process.exit(report.ok ? 0 : 2);
+    // Validate output before returning (use blocking mode in CI)
+    const validatedReport = validateOutput(report, args.validationMode);
+    console.log(JSON.stringify(validatedReport, null, 2));
+    process.exit(validatedReport.ok ? 0 : 2);
   }
 
   let synthesized = null;
+  let synthesisDurationMs = 0;
   if (args.synthesize) {
-    const synthProvider = args.synthesizeWith || providers[0];
+    const synthesisStartTime = Date.now();
+    // Use first available provider for synthesis if synthesizeWith is not specified
+    const synthProvider = args.synthesizeWith || availableProviders[0];
     const synthPrompt = [
       "You are synthesizing multiple independent AI code review JSON outputs into a single deduped report.",
       "Prefer the safest interpretation when there is disagreement; keep usability in mind for low/medium issues.",
@@ -440,7 +1141,14 @@ async function main() {
     if (synthProvider === "claude") synthesized = await runClaude(synthPrompt, args);
     else if (synthProvider === "gemini") synthesized = await runGemini(synthPrompt, args);
     else if (synthProvider === "copilot") synthesized = await runCopilot(synthPrompt, args);
+
+    synthesisDurationMs = Date.now() - synthesisStartTime;
+    console.error(`[perf] Synthesis completed in ${synthesisDurationMs}ms`);
   }
+
+  // Calculate total execution time
+  const totalDurationMs = providerDurationMs + synthesisDurationMs;
+  console.error(`[perf] Total multi-AI review: ${totalDurationMs}ms`);
 
   const synthesizedExtracted = synthesized
     ? extractModelJson("synthesis", synthesized.stdout)
@@ -457,25 +1165,50 @@ async function main() {
     return;
   }
 
-  console.log(
-    JSON.stringify(
-      {
-        diffMeta,
-        providers: parsed.map((p) => ({ provider: p.provider, ok: p.ok })),
-        perProvider: parsed,
-        synthesis: synthesized
-          ? {
-              provider: args.synthesizeWith || providers[0],
-              ok: synthesized.ok,
-              stderr: synthesized.stderr,
-              ...synthesizedExtracted,
-            }
-          : null,
-      },
-      null,
-      2,
-    ),
-  );
+  const finalOutput = {
+    diffMeta,
+    providers: parsed.map((p) => ({ provider: p.provider, ok: p.ok })),
+    perProvider: parsed,
+    synthesis: synthesized
+      ? {
+          provider: args.synthesizeWith || availableProviders[0],
+          ok: synthesized.ok,
+          stderr: synthesized.stderr,
+          ...synthesizedExtracted,
+        }
+      : null,
+    // Performance metrics for tracking and optimization
+    performance: {
+      providerDurationMs,
+      synthesisDurationMs,
+      totalDurationMs,
+      providersCount: availableProviders.length,
+      requestedProviders: providers.length,
+      successCount,
+      skippedCount,
+      parallelExecution: true,
+      // Estimated sequential time (for comparison)
+      estimatedSequentialMs: providerDurationMs * availableProviders.length,
+      // Estimated time saved through parallelization
+      estimatedTimeSavedMs: Math.max(0, (providerDurationMs * availableProviders.length) - providerDurationMs),
+      // CLI validation info (Cursor Recommendation #1)
+      cliValidation: cliValidation || null,
+      // Cursor Recommendation #11 - Partial Failure Recovery
+      partialFailure: partialFailureStatus,
+      // Cursor Recommendation #14 - Circuit Breaker Status
+      circuitBreaker: circuitBreakerConfig.enabled ? {
+        enabled: true,
+        skipped_providers: circuitBreakerResults.length,
+        providers_state: Object.fromEntries(
+          availableProviders.map(p => [p, providerCircuitBreaker.getState(p)])
+        )
+      } : null,
+    },
+  };
+
+  // Validate output before returning (Cursor Recommendation #3: support blocking mode)
+  const validatedOutput = validateOutput(finalOutput, args.validationMode);
+  console.log(JSON.stringify(validatedOutput, null, 2));
 }
 
 main().catch((e) => {
@@ -483,12 +1216,13 @@ main().catch((e) => {
   const argv = process.argv.slice(2);
   const strict = argv.includes("--ci") || argv.includes("--strict-json-only");
   if (strict) {
+    // Sanitize error output to prevent credential exposure in CI logs
     console.log(
       JSON.stringify(
         {
           ok: false,
           mode: "strict-json-only",
-          error: e && e.message ? e.message : String(e),
+          error: sanitize(e && e.message ? e.message : String(e)),
         },
         null,
         2,
@@ -496,6 +1230,7 @@ main().catch((e) => {
     );
     process.exit(2);
   }
-  console.error(e && e.stack ? e.stack : String(e));
+  // Sanitize stack traces to prevent credential exposure
+  console.error(sanitize(e && e.stack ? e.stack : String(e)));
   process.exit(1);
 });

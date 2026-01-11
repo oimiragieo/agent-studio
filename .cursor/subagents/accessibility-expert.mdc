@@ -1,5 +1,6 @@
 ---
 description: Web accessibility (WCAG), inclusive design, and assistive technology compatibility.
+alwaysApply: false
 globs: ["**/*.tsx", "**/*.jsx", "**/*.vue", "**/*.svelte", "**/*.html"]
 ---
 

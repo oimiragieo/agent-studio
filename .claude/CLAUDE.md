@@ -91,6 +91,8 @@ When you are acting as an orchestrator (master-orchestrator, orchestrator, or an
 3. **If plan scores >= 7**: Proceed with workflow execution; log rating in reasoning file; include rating in artifact metadata
 4. **Never execute an unrated plan** - this is a hard requirement
 
+**Workflow-Specific Thresholds**: Different workflows have different minimum scores based on risk and complexity. See @.claude/docs/PLAN_RATING_THRESHOLDS.md for detailed threshold documentation.
+
 ### Enforcement Rules
 
 1. **Complex Tasks MUST Spawn Subagents**: If a task requires reading more than 2 files, analyzing code, implementing features, reviewing code, or running validations - you MUST use the Task tool to delegate to a specialized subagent.
@@ -98,6 +100,7 @@ When you are acting as an orchestrator (master-orchestrator, orchestrator, or an
 3. **The 3-File Rule**: If you find yourself about to read a 3rd file, STOP. Spawn a subagent instead.
 4. **The Analysis Rule**: If you find yourself about to analyze code patterns, structure, or logic - STOP. Spawn an analyst, architect, or developer subagent.
 5. **The Implementation Rule**: If you find yourself about to write/edit code - STOP. Spawn a developer subagent.
+6. **File Creation Rule**: NEVER use `echo > file` or `cat > file` in Bash. ALWAYS use Write tool for file creation. Bash file creation redirects are blocked by hooks.
 
 ### How to Properly Delegate
 
@@ -317,11 +320,37 @@ Complete list of specialized agents. See @.claude/agents/ for detailed documenta
 | gemini-validator | Google Gemini validation | sonnet |
 | master-orchestrator | Single entry point for all requests | opus |
 
-## Skills (43 Utilities)
+## Skills (108 Total)
 
 Skills provide 90%+ context savings vs MCP servers. Invoke with natural language (e.g., "Audit this code") or the Skill tool.
 
 **Dual Persistence**: All agents use both CLAUDE.md files AND memory skills for fault tolerance.
+
+**Skills Taxonomy**: This project contains two types of skills:
+- **Agent Studio Skills** (`.claude/skills/`): 108 skills for Claude Code/Agent Studio platform
+- **Codex Skills** (`codex-skills/`): 2 skills for OpenAI Codex CLI and multi-AI validation (multi-ai-code-review, response-rater)
+
+**Note**: The skill-integration-matrix.json maps 34 agents to a subset of 43 core skills that are actively used in workflows. The remaining 65 skills are available for specialized use cases.
+
+### Phase 2.1.2: context:fork Feature
+
+Skills now support a `context:fork` field that enables automatic optimization for subagent contexts:
+
+```yaml
+---
+name: my-skill
+context:fork: true    # Allow forking into subagent contexts
+model: sonnet         # Optimal model (haiku/sonnet/opus)
+---
+```
+
+**Benefits**:
+- **80% token savings**: Forked skills use summaries instead of full documentation
+- **Automatic injection**: skill-injection-hook.js injects only forkable skills into subagents
+- **Zero overhead**: Requires no orchestrator involvement
+- **Performance**: <100ms total hook overhead per tool call
+
+See @.claude/docs/SKILLS_TAXONOMY.md for detailed comparison and usage guidance.
 
 **Agent-Skill Mapping**: @.claude/docs/AGENT_SKILL_MATRIX.md provides comprehensive mapping of all 34 agents to their required and recommended skills.
 
@@ -639,7 +668,7 @@ Make all independent tool calls in parallel. Prioritize calling tools simultaneo
 - `CLAUDE.md`: This file (root instructions)
 
 ### Enforcement System (Phase 1)
-- `.claude/context/skill-integration-matrix.json`: Maps 34 agents to 43 skills with triggers
+- `.claude/context/skill-integration-matrix.json`: Maps 34 agents to 43 core skills with triggers (108 total skills available)
 - `.claude/context/plan-review-matrix.json`: Plan rating scores by task type and complexity
 - `.claude/context/signoff-matrix.json`: Signoff requirements by workflow and step
 - `.claude/context/security-triggers-v2.json`: 12 security categories with 136+ keywords
@@ -651,7 +680,7 @@ Make all independent tool calls in parallel. Prioritize calling tools simultaneo
 
 ### Agent System
 - `.claude/agents/`: 34 agent prompts
-- `.claude/skills/`: 43 utility skills
+- `.claude/skills/`: 108 utility skills (43 core skills mapped in integration matrix)
 - `.claude/workflows/`: 14 workflow definitions
 - `.claude/templates/`: 14 artifact templates
 - `.claude/schemas/`: 93 JSON validation schemas
@@ -694,10 +723,27 @@ See @.claude/docs/SECURITY_TRIGGERS.md for detailed security trigger documentati
 
 See @.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md for detailed setup and validation.
 
+### Phase 2.1.2 Requirements
+
+**Zod 4.0+**: Schema validation now requires Zod 4.0 or later. Update your `package.json`:
+
+```json
+{
+  "devDependencies": {
+    "zod": "^4.0.0"
+  }
+}
+```
+
+**Windows Users**: See "Windows Managed Settings Migration" in GETTING_STARTED.md for breaking changes.
+
 ## New Features
 
 | Feature | Purpose | Documentation |
 |---------|---------|---------------|
+| **Phase 2.1.2: context:fork** | 80% token savings via skill forking | `.claude/docs/SKILLS_TAXONOMY.md` |
+| **Phase 2.1.2: Skill Auto-Injection** | Automatic skill enhancement via hooks | `.claude/hooks/README.md` |
+| **Phase 2.1.2: Hook Execution Order** | Predictable hook sequencing | `.claude/hooks/README.md` |
 | Everlasting Agents | Unlimited project duration via context recycling | `.claude/docs/EVERLASTING_AGENTS.md` |
 | Phase-Based Projects | Projects organized into phases (1-3k lines each) | `.claude/docs/PHASE_BASED_PROJECTS.md` |
 | Dual Persistence | CLAUDE.md + memory skills for redundancy | `.claude/docs/MEMORY_PATTERNS.md` |
@@ -712,6 +758,7 @@ See @.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md for detailed setup and vali
 - **Setup Guide**: @.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md
 - **Workflow Guide**: @.claude/workflows/WORKFLOW-GUIDE.md
 - **Agent-Skill Matrix**: @.claude/docs/AGENT_SKILL_MATRIX.md
+- **Codex Skills Integration**: @.claude/docs/CODEX_SKILLS.md
 - **Enforcement Examples**: @.claude/docs/ENFORCEMENT_EXAMPLES.md
 - **Security Triggers**: @.claude/docs/SECURITY_TRIGGERS.md
 - **Enterprise Guardrails**: @.claude/system/guardrails/ and @.claude/system/permissions/
@@ -775,7 +822,7 @@ Quick navigation to key documentation:
 - **Workflows**: `.claude/workflows/WORKFLOW-GUIDE.md`
 - **Enforcement**: `.claude/context/` (skill matrix, plan review, signoffs, security triggers)
 - **Agents**: `.claude/agents/` (34 agent definitions)
-- **Skills**: `.claude/skills/` (43 skill definitions)
+- **Skills**: `.claude/skills/` (108 skill definitions, 43 core skills in integration matrix)
 - **Rules**: `.claude/rules-master/` (8 master rules) + `.claude/rules-library/` (1,073 library rules)
 - **Templates**: `.claude/templates/` (14 artifact templates)
 - **Schemas**: `.claude/schemas/` (83 validation schemas)
@@ -784,7 +831,7 @@ Quick navigation to key documentation:
 
 **Orchestration Enforcement Foundation** includes:
 
-1. **Agent-Skill Integration**: 34 agents × 43 skills = comprehensive skill mapping with triggers
+1. **Agent-Skill Integration**: 34 agents × 43 core skills = comprehensive skill mapping with triggers (108 total skills available)
 2. **Plan Rating Enforcement**: Mandatory 7/10 minimum score via response-rater before execution
 3. **Signoff Validation**: Workflow step approvals and conditional signoffs
 4. **Security Trigger System**: 12 categories, 136+ keywords, automatic agent routing with blocking

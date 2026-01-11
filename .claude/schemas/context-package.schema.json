@@ -1,0 +1,278 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Context Package",
+  "description": "Schema for context package passed between agents during fallback routing",
+  "required": ["package_id", "timestamp", "original_task", "primary_agent", "fallback_agent", "artifacts_available"],
+  "properties": {
+    "package_id": {
+      "type": "string",
+      "description": "Unique identifier for this context package",
+      "pattern": "^context-pkg-[a-zA-Z0-9_-]+$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when context package was created"
+    },
+    "original_task": {
+      "type": "object",
+      "required": ["description", "objectives"],
+      "description": "Original task that the primary agent was attempting",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the original task"
+        },
+        "objectives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Objectives that need to be achieved",
+          "minItems": 1
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Technical requirements for the task"
+        },
+        "success_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Criteria for successful task completion"
+        },
+        "expected_outputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Expected output artifacts"
+        }
+      }
+    },
+    "primary_agent": {
+      "type": "string",
+      "description": "Agent that failed and triggered fallback"
+    },
+    "fallback_agent": {
+      "type": "string",
+      "description": "Agent receiving this context package"
+    },
+    "fallback_reason": {
+      "type": "string",
+      "description": "Reason why fallback was triggered"
+    },
+    "failure_details": {
+      "type": "object",
+      "description": "Details about the failure from primary agent",
+      "properties": {
+        "failure_type": {
+          "type": "string",
+          "enum": ["non_recoverable", "timeout", "invalid_output", "missing_capability", "error"]
+        },
+        "error_message": {
+          "type": "string"
+        },
+        "error_code": {
+          "type": "string"
+        },
+        "stack_trace": {
+          "type": "string"
+        },
+        "partial_work_completed": {
+          "type": "boolean",
+          "description": "Whether primary agent completed partial work"
+        },
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "artifacts_available": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "type", "status"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path to artifact file"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of artifact (e.g., plan, manifest, report)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["complete", "partial", "error"],
+            "description": "Status of the artifact"
+          },
+          "schema": {
+            "type": "string",
+            "description": "JSON schema path for validation"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Agent that created this artifact"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "description": "List of artifacts available from previous steps"
+    },
+    "agent_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "agent": {
+            "type": "string"
+          },
+          "step": {
+            "type": ["integer", "string"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["completed", "failed", "partial"]
+          },
+          "artifacts_created": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "execution_time_ms": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "description": "History of agents that have worked on this task"
+    },
+    "constraints": {
+      "type": "object",
+      "description": "Technical and business constraints",
+      "properties": {
+        "technical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Technical constraints (e.g., technologies, APIs, patterns)"
+        },
+        "business": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Business constraints (e.g., deadlines, budget, compliance)"
+        },
+        "security": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Security constraints (e.g., authentication, encryption)"
+        },
+        "performance": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Performance constraints (e.g., response time, throughput)"
+        }
+      }
+    },
+    "capabilities_required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Capabilities required to complete the task"
+    },
+    "capabilities_verified": {
+      "type": "object",
+      "description": "Verification that fallback agent has required capabilities",
+      "properties": {
+        "verified": {
+          "type": "boolean",
+          "description": "Whether capabilities have been verified"
+        },
+        "available_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "missing_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verification_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "tools_available": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tools available to fallback agent"
+    },
+    "context_summary": {
+      "type": "string",
+      "description": "High-level summary of the context for quick agent orientation"
+    },
+    "recommended_approach": {
+      "type": "string",
+      "description": "Recommended approach for fallback agent based on failure analysis"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Associated workflow ID"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Associated run ID"
+    },
+    "plan_reference": {
+      "type": "string",
+      "description": "Path to original plan document"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata for context package",
+      "properties": {
+        "priority": {
+          "type": "string",
+          "enum": ["P0", "P1", "P2", "P3"]
+        },
+        "urgency": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "test_mode": {
+          "type": "boolean",
+          "description": "Whether this is a test scenario"
+        },
+        "test_scenario": {
+          "type": "string",
+          "description": "Test scenario identifier if in test mode"
+        }
+      }
+    }
+  }
+}

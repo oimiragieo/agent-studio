@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/cuj-registry.schema.json",
   "version": "1.0.0",
-  "generated": "2026-01-06T08:25:16.936Z",
+  "generated": "2026-01-10T04:21:04.308Z",
   "total_cujs": 60,
   "cujs": [
     {
@@ -41,7 +41,7 @@
       "skills": [
         "rule-selector"
       ],
-      "primary_skill": null,
+      "primary_skill": "rule-selector",
       "schemas": [],
       "triggers": [
         "`/select-rules` command",
@@ -58,7 +58,7 @@
         "Rule configuration report",
         "List of active rules"
       ],
-      "estimated_duration": "2-10 minutes",
+      "estimated_duration": "2-60 seconds",
       "file_path": ".claude/docs/cujs/CUJ-002.md"
     },
     {
@@ -98,14 +98,16 @@
       "description": "Create a comprehensive plan for implementing a new feature.",
       "category": "Planning & Architecture",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "plan-generator",
         "response-rater"
       ],
       "primary_skill": null,
-      "schemas": [],
+      "schemas": [
+        ".claude/schemas/plan.schema.json"
+      ],
       "triggers": [
         "I want to build a user dashboard",
         "Plan feature X",
@@ -174,7 +176,7 @@
       "description": "Review and analyze existing system architecture.",
       "category": "Planning & Architecture",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
         "diagram-generator"
@@ -207,7 +209,7 @@
       "description": "Plan refactoring of legacy code and technical debt.",
       "category": "Planning & Architecture",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
         "plan-generator"
@@ -240,13 +242,15 @@
       "description": "Design database schema for a feature or system.",
       "category": "Planning & Architecture",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "diagram-generator"
       ],
       "primary_skill": null,
-      "schemas": [],
+      "schemas": [
+        ".claude/schemas/database-schema.schema.json"
+      ],
       "triggers": [
         "Design database for user management",
         "Create database schema",
@@ -272,7 +276,7 @@
       "description": "Generate rule-compliant component boilerplate.",
       "category": "Development",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "scaffolder",
@@ -306,7 +310,7 @@
       "description": "Create a new API endpoint with proper structure.",
       "category": "Development",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "scaffolder",
@@ -412,11 +416,12 @@
       "description": "Comprehensive code review with systematic analysis.",
       "category": "Quality Assurance",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-review-flow.yaml",
       "agents": [],
       "skills": [
         "rule-auditor",
-        "response-rater"
+        "response-rater",
+        "multi-ai-code-review"
       ],
       "primary_skill": null,
       "schemas": [
@@ -435,7 +440,8 @@
       "expected_outputs": [
         "Code review report",
         "Issue list with priorities",
-        "Fix suggestions"
+        "Fix suggestions",
+        "Multi-AI review report (optional) - `.claude/context/artifacts/multi-ai-review-report.json`"
       ],
       "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-013.md"
@@ -446,7 +452,7 @@
       "description": "Validate code against project rules and standards.",
       "category": "Quality Assurance",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
         "rule-auditor",
@@ -481,7 +487,7 @@
       "description": "Generate comprehensive test suite for code.",
       "category": "Quality Assurance",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
         "test-generator",
@@ -514,7 +520,7 @@
       "description": "Generate comprehensive API documentation.",
       "category": "Documentation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "doc-generator",
@@ -580,7 +586,7 @@
       "description": "Document system architecture with diagrams.",
       "category": "Documentation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
         "diagram-generator",
@@ -646,7 +652,7 @@
       "description": "Audit system security and identify vulnerabilities.",
       "category": "Specialized Workflows",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
         "rule-auditor",
@@ -739,7 +745,7 @@
       "description": "Safely update project dependencies.",
       "category": "Maintenance & Operations",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
         "dependency-analyzer",
@@ -805,7 +811,7 @@
       "description": "Process a large requirements document (>15KB) without context window overflow.",
       "category": "Advanced Workflows",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "summarizer",
@@ -964,8 +970,10 @@
       "execution_mode": "skill-only",
       "workflow": null,
       "agents": [],
-      "skills": [],
-      "primary_skill": null,
+      "skills": [
+        "multi-ai-code-review"
+      ],
+      "primary_skill": "multi-ai-code-review",
       "schemas": [],
       "triggers": [
         "Validate the implementation",
@@ -988,7 +996,7 @@
     {
       "id": "CUJ-034",
       "name": "Browser-Based UI Testing & Optimization",
-      "description": "Find bugs, test all UI features, compare with documentation, review logs, measure performance, and get optimization recommendations for a web application.\r \r **Persona**: Developer\r \r **Execution Mode**: `browser-testing-flow.yaml`",
+      "description": "Find bugs, test all UI features, compare with documentation, review logs, measure performance, and get optimization recommendations for a web application.\r \r **Persona**: Developer",
       "category": "Quality Assurance",
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/browser-testing-flow.yaml",
@@ -996,12 +1004,13 @@
       "skills": [
         "navigate_page",
         "take_screenshot",
-        "click_element",
-        "type_text",
-        "get_console_logs",
-        "get_network_logs",
-        "performance_profiling",
-        "get_memory_usage"
+        "click",
+        "fill",
+        "list_console_messages",
+        "list_network_requests",
+        "performance_start_trace",
+        "performance_stop_trace",
+        "performance_analyze_insight"
       ],
       "primary_skill": null,
       "schemas": [],
@@ -1030,7 +1039,7 @@
       "description": "Validate the complete planner-first workflow process end-to-end, ensuring plans are created, artifacts flow correctly, and execution follows the plan.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "plan-generator",
@@ -1064,7 +1073,7 @@
       "description": "Test validation gate failures and retry logic to ensure the system handles validation errors gracefully and recovers automatically.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1132,7 +1141,7 @@
       "description": "Test workflows with optional inputs to ensure graceful degradation when optional artifacts are missing and defaults are used appropriately.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "optional-artifact-handler",
@@ -1165,7 +1174,7 @@
       "description": "Test cross-agent validation protocol to ensure agents can validate each other's work, resolve conflicts, and enforce quality gates with multiple validators.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
         "conflict-resolution",
@@ -1202,7 +1211,7 @@
       "description": "Verify the system can recover from scratch without any conversation history, ensuring all agents read from file system state rather than relying on memory or chat history.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
         "recovery",
@@ -1239,7 +1248,7 @@
       "description": "Test deep artifact dependency chains (A→B→C→D→E) to ensure artifacts are properly passed between workflow steps and the artifact registry tracks all dependencies correctly.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1303,7 +1312,7 @@
       "description": "Test mid-workflow interruption and recovery to ensure no work is lost when workflows are interrupted mid-step, and the system can resume from checkpoints.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
         "recovery",
@@ -1339,8 +1348,8 @@
       "name": "Agent Fallback Chain",
       "description": "Test fallback agent routing when primary agents fail, ensuring fallback agents receive correct context, artifacts are preserved, and the system recovers gracefully.",
       "category": "Testing & Validation",
-      "execution_mode": "skill-only",
-      "workflow": null,
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/fallback-routing-flow.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1365,7 +1374,7 @@
         "Fallback routing documentation",
         "Updated plan document"
       ],
-      "estimated_duration": "2-60 seconds",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-044.md"
     },
     {
@@ -1374,7 +1383,7 @@
       "description": "Test recovery when required artifacts are missing, ensuring the system can detect missing artifacts, recreate them when possible, and recover gracefully.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
         "recovery",
@@ -1412,7 +1421,7 @@
       "description": "Test feature distillation process with edge cases: very large documents, malformed markdown, missing critical information, multiple document formats, and validation failures.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1443,7 +1452,7 @@
       "description": "Test conflict detection and resolution when multiple agents produce conflicting outputs, ensuring conflicts are detected, escalated appropriately, and resolved through consensus or authority.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
       "agents": [],
       "skills": [
         "conflict-resolution",
@@ -1478,7 +1487,7 @@
       "description": "Test artifact registry robustness: corruption recovery, concurrent artifact registration, validation failures, missing registry recovery, and registry synchronization.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1510,7 +1519,7 @@
       "description": "Test deep integration between Planner Agent (strategic planning) and Cursor Plan Mode (implementation planning), ensuring seamless handoff, artifact linking, and coordinated execution.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/cursor-plan-mode-integration-flow.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1542,7 +1551,7 @@
       "description": "Test complete workflow resilience: multiple failure points, recovery at each stage, context loss at different points, validation failures throughout, and complete workflow completion after failures.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/enterprise-track.yaml",
       "agents": [],
       "skills": [
         "recovery",
@@ -1577,7 +1586,7 @@
       "description": "Validate that artifact-publisher skill correctly publishes artifacts and integrates with artifact registry.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "artifact-publisher",
@@ -1612,16 +1621,14 @@
       "description": "Test migration from legacy artifact-registry.mjs to run-manager.mjs, ensuring backward compatibility and data integrity.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/legacy-modernization-flow.yaml",
       "agents": [],
       "skills": [
         "plan-generator",
         "response-rater"
       ],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/artifact-registry.schema.json"
-      ],
+      "schemas": [],
       "triggers": [
         "Test registry migration",
         "Validate run-manager migration",
@@ -1648,7 +1655,7 @@
       "description": "Validate that publishing metadata persists correctly across workflow runs and system restarts.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
         "artifact-publisher",
@@ -1682,7 +1689,7 @@
       "description": "Validate that publishing metadata syncs correctly across Claude, Cursor, and other platforms using context-bridge skill.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
         "artifact-publisher",
@@ -1720,7 +1727,7 @@
       "description": "Validate that publishing retry logic works correctly with exponential backoff and tracks all attempts in registry.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
         "artifact-publisher",
@@ -1728,9 +1735,7 @@
         "response-rater"
       ],
       "primary_skill": null,
-      "schemas": [
-        ".claude/schemas/artifact-registry.schema.json"
-      ],
+      "schemas": [],
       "triggers": [
         "Test publishing retry logic",
         "Validate retry with backoff",
@@ -1757,7 +1762,7 @@
       "description": "Test the recovery skill's ability to restore workflow state from file system artifacts after context loss or session interruption.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
         "recovery",
@@ -1793,7 +1798,7 @@
       "description": "Validate that the response-rater skill correctly enforces the minimum 7/10 plan quality score.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "response-rater",
@@ -1826,7 +1831,7 @@
       "description": "Validate that workflows can recover from failures using retry logic, fallback agents, and checkpoint restoration.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/enterprise-track.yaml",
       "agents": [],
       "skills": [],
       "primary_skill": null,
@@ -1889,7 +1894,7 @@
       "description": "Validate that Customer User Journeys (CUJs) work consistently across Claude Code, Cursor, and Factory Droid platforms.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
         "context-bridge",
@@ -1928,7 +1933,7 @@
       "description": "Publish workflow artifacts to the project feed for cross-platform visibility and collaboration.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
       "agents": [],
       "skills": [
         "artifact-publisher",
@@ -1966,7 +1971,7 @@
       "description": "Validate that all skills (currently 43) are correctly integrated with their respective agents and trigger properly in workflows.",
       "category": "Testing & Validation",
       "execution_mode": "workflow",
-      "workflow": null,
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
       "agents": [],
       "skills": [
         "skill-manager",
@@ -2001,47 +2006,38 @@
     {
       "id": "CUJ-063",
       "name": "Error Recovery and Checkpoint Restoration",
-      "description": "Test error recovery mechanisms including checkpoints, fallback routing, state preservation, and recovery documentation.",
-      "category": "Resilience Testing",
+      "description": "Tests the error recovery mechanisms to ensure workflows can recover from failures gracefully.",
+      "category": "Testing & Validation",
       "execution_mode": "workflow",
       "workflow": ".claude/workflows/recovery-test-flow.yaml",
       "agents": [],
       "skills": [
-        "recovery",
         "response-rater",
-        "optional-artifact-handler",
-        "conflict-resolution"
+        "recovery"
       ],
       "primary_skill": null,
       "schemas": [
         ".claude/schemas/checkpoint.schema.json",
-        ".claude/schemas/fallback-agents.schema.json",
-        ".claude/schemas/checkpoint-restoration-report.schema.json",
-        ".claude/schemas/multi-level-fallback-report.schema.json",
-        ".claude/schemas/full-recovery-report.schema.json",
-        ".claude/schemas/recovery-performance-metrics.schema.json",
-        ".claude/schemas/recovery-test-summary.schema.json"
+        ".claude/schemas/fallback-agents.schema.json"
       ],
       "triggers": [
-        "Test error recovery",
-        "Test checkpoint restoration",
-        "Test fallback routing",
-        "Validate recovery mechanisms",
-        "Test resilience",
-        "Recovery testing"
+        "Test error recovery mechanisms",
+        "Validate checkpoint restoration",
+        "Test workflow resilience"
       ],
       "platform_compatibility": {
         "claude": true,
-        "cursor": true,
+        "cursor": false,
         "factory": false
       },
       "expected_outputs": [
-        "Checkpoint files: `.claude/context/runs/{{run_id}}/checkpoints/checkpoint-*.json`",
-        "Recovery reports: `.claude/context/runs/{{run_id}}/reports/*-report.json`",
-        "Performance metrics: `.claude/context/runs/{{run_id}}/reports/recovery-performance-metrics.json`",
-        "Test summary: `.claude/context/reports/error-recovery-implementation-report.md`"
+        "Checkpoint files (`.claude/context/runs/<run_id>/checkpoints/checkpoint-phase-*.json`)",
+        "Restoration validation report",
+        "Fallback routing log",
+        "Recovery documentation (`.claude/context/logs/recovery.log`)",
+        "Recovery playbook"
       ],
-      "estimated_duration": "30-45 minutes",
+      "estimated_duration": "2-10 minutes",
       "file_path": ".claude/docs/cujs/CUJ-063.md"
     }
   ]

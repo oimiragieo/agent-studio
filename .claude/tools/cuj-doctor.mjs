@@ -60,8 +60,9 @@ function checkCujCountDrift() {
 
     // Count index entries
     const indexContent = fs.readFileSync(INDEX_PATH, 'utf-8');
-    const indexMatches = indexContent.match(/\[CUJ-\d{3}\]/g) || [];
-    const indexCount = new Set(indexMatches).size;
+    // Match both [CUJ-001] and [CUJ-001: ...] formats
+    const indexMatches = indexContent.match(/\[CUJ-\d{3}(?::|])/g) || [];
+    const indexCount = new Set(indexMatches.map(m => m.match(/CUJ-\d{3}/)[0])).size;
 
     results.stats.docCount = docCount;
     results.stats.registryCount = registryCount;
@@ -118,9 +119,15 @@ function checkMissingWorkflows() {
     const missingWorkflows = new Map(); // workflow -> [CUJ IDs]
 
     for (const cuj of registry.cujs) {
-      if (cuj.workflows && Array.isArray(cuj.workflows)) {
-        for (const workflow of cuj.workflows) {
-          const workflowName = workflow.replace(/\.(yaml|yml)$/, '');
+      // Support both singular (workflow) and plural (workflows) for backwards compatibility
+      const workflowList = cuj.workflow ? [cuj.workflow] : (cuj.workflows || []);
+
+      if (Array.isArray(workflowList)) {
+        for (const workflow of workflowList) {
+          // Normalize workflow path: strip `.claude/workflows/` prefix if present
+          const normalizedWorkflow = workflow.replace(/^\.claude\/workflows\//, '');
+          const workflowName = normalizedWorkflow.replace(/\.(yaml|yml)$/, '');
+
           if (!workflowFiles.includes(workflowName)) {
             if (!missingWorkflows.has(workflow)) {
               missingWorkflows.set(workflow, []);
@@ -159,13 +166,31 @@ function checkMissingSkills() {
     const missingSkills = new Map(); // skill -> [CUJ IDs]
 
     for (const cuj of registry.cujs) {
-      if (cuj.required_skills && Array.isArray(cuj.required_skills)) {
-        for (const skill of cuj.required_skills) {
-          if (!skillDirs.includes(skill)) {
-            if (!missingSkills.has(skill)) {
-              missingSkills.set(skill, []);
+      // Support both singular (skills) and plural (required_skills) for backwards compatibility
+      const skillList = cuj.skills || cuj.required_skills || [];
+
+      if (Array.isArray(skillList)) {
+        for (const skill of skillList) {
+          // Normalize skill to string name
+          // Skills can be either strings or objects with a 'name' property
+          let skillName;
+
+          if (typeof skill === 'string') {
+            skillName = skill;
+          } else if (typeof skill === 'object' && skill !== null) {
+            // Object-based skill entry: { name, type, location } or similar
+            skillName = skill.name || String(skill);
+          } else {
+            // Unexpected type - convert to string as fallback
+            skillName = String(skill);
+          }
+
+          // Validate the normalized skill name
+          if (skillName && !skillDirs.includes(skillName)) {
+            if (!missingSkills.has(skillName)) {
+              missingSkills.set(skillName, []);
             }
-            missingSkills.get(skill).push(cuj.id);
+            missingSkills.get(skillName).push(cuj.id);
           }
         }
       }
@@ -280,26 +305,25 @@ function checkPlatformCompatibility() {
     const platformIssues = [];
 
     for (const cuj of registry.cujs) {
-      if (!cuj.platforms || !Array.isArray(cuj.platforms)) {
-        platformIssues.push(`${cuj.id}: Missing platforms array`);
+      // Use platform_compatibility (new schema) instead of platforms (old schema)
+      if (!cuj.platform_compatibility || typeof cuj.platform_compatibility !== 'object') {
+        platformIssues.push(`${cuj.id}: Missing platform_compatibility object`);
         continue;
       }
 
-      if (cuj.platforms.length === 0) {
-        platformIssues.push(`${cuj.id}: Empty platforms array`);
-        continue;
+      // Check for required platform keys
+      const requiredKeys = ['claude', 'cursor', 'factory'];
+      for (const key of requiredKeys) {
+        if (!(key in cuj.platform_compatibility)) {
+          platformIssues.push(`${cuj.id}: Missing platform_compatibility.${key}`);
+        }
       }
 
-      // Check for invalid platforms
-      const invalidPlatforms = cuj.platforms.filter(p => !validPlatforms.includes(p));
-      if (invalidPlatforms.length > 0) {
-        platformIssues.push(`${cuj.id}: Invalid platforms: ${invalidPlatforms.join(', ')}`);
-      }
-
-      // Check for duplicate platforms
-      const uniquePlatforms = new Set(cuj.platforms);
-      if (uniquePlatforms.size !== cuj.platforms.length) {
-        platformIssues.push(`${cuj.id}: Duplicate platforms detected`);
+      // Check for non-boolean values
+      for (const [platform, supported] of Object.entries(cuj.platform_compatibility)) {
+        if (typeof supported !== 'boolean') {
+          platformIssues.push(`${cuj.id}: platform_compatibility.${platform} should be boolean (got ${typeof supported})`);
+        }
       }
     }
 
@@ -343,23 +367,24 @@ function checkSuccessCriteria() {
     let measurableCriteria = 0;
 
     for (const cuj of registry.cujs) {
-      if (!cuj.success_criteria || !Array.isArray(cuj.success_criteria)) {
-        nonMeasurableIssues.push(`${cuj.id}: Missing success_criteria array`);
+      // Use expected_outputs (new schema) instead of success_criteria (old schema)
+      if (!cuj.expected_outputs || !Array.isArray(cuj.expected_outputs)) {
+        nonMeasurableIssues.push(`${cuj.id}: Missing expected_outputs array`);
         continue;
       }
 
-      for (const criterion of cuj.success_criteria) {
+      for (const output of cuj.expected_outputs) {
         totalCriteria++;
-        const lowerCriterion = criterion.toLowerCase();
+        const lowerOutput = output.toLowerCase();
 
         const isMeasurable = measurableKeywords.some(keyword =>
-          lowerCriterion.includes(keyword)
+          lowerOutput.includes(keyword)
         );
 
         if (isMeasurable) {
           measurableCriteria++;
         } else {
-          nonMeasurableIssues.push(`${cuj.id}: Non-measurable criterion: "${criterion}"`);
+          nonMeasurableIssues.push(`${cuj.id}: Non-measurable output: "${output}"`);
         }
       }
     }
@@ -395,7 +420,8 @@ function checkExecutionModes() {
 
   try {
     const registry = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf-8'));
-    const validModes = ['automated', 'assisted', 'manual'];
+    // Updated valid modes per actual schema
+    const validModes = ['manual-setup', 'skill-only', 'workflow', 'delegated-skill'];
     const modeIssues = [];
 
     for (const cuj of registry.cujs) {
@@ -408,15 +434,15 @@ function checkExecutionModes() {
         modeIssues.push(`${cuj.id}: Invalid execution_mode "${cuj.execution_mode}" (expected: ${validModes.join(', ')})`);
       }
 
-      // Check mode consistency with automation_level
-      if (cuj.automation_level !== undefined) {
-        const expectedMode = cuj.automation_level >= 80 ? 'automated'
-          : cuj.automation_level >= 50 ? 'assisted'
-          : 'manual';
+      // For workflow mode, check if workflow field is populated
+      if (cuj.execution_mode === 'workflow' && !cuj.workflow) {
+        modeIssues.push(`${cuj.id}: Execution mode "workflow" but workflow field is null or missing`);
+      }
 
-        if (cuj.execution_mode !== expectedMode) {
-          modeIssues.push(`${cuj.id}: Execution mode "${cuj.execution_mode}" inconsistent with automation_level ${cuj.automation_level}% (expected: ${expectedMode})`);
-        }
+      // For skill-only mode, check if skills are populated
+      if ((cuj.execution_mode === 'skill-only' || cuj.execution_mode === 'delegated-skill')
+          && (!cuj.skills || cuj.skills.length === 0)) {
+        modeIssues.push(`${cuj.id}: Execution mode "${cuj.execution_mode}" but no skills defined`);
       }
     }
 

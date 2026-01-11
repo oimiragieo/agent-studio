@@ -2,6 +2,7 @@
 name: Orchestrator
 model: claude-opus-4
 description: Task routing, agent coordination, and workflow management. Use for breaking down complex tasks, routing to specialized agents, synthesizing results, and managing multi-agent collaboration.
+alwaysApply: false
 type: Coordination
 icon: '🎯'
 actions:

@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Artifact Persistence Validation",
+  "description": "Schema for validating Plan Mode artifact persistence across sessions",
+  "required": ["validation_id", "validated_at", "workflow_id", "persistence_status", "artifacts"],
+  "properties": {
+    "validation_id": {
+      "type": "string",
+      "description": "Unique identifier for this validation"
+    },
+    "validated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when validation was performed"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID being validated"
+    },
+    "persistence_status": {
+      "type": "string",
+      "enum": ["persisted", "partial", "failed"],
+      "description": "Overall persistence status"
+    },
+    "artifacts": {
+      "type": "array",
+      "description": "Artifacts being validated for persistence",
+      "items": {
+        "type": "object",
+        "required": ["artifact_type", "expected_path", "exists", "accessible"],
+        "properties": {
+          "artifact_type": {
+            "type": "string",
+            "enum": ["implementation_plan", "strategic_plan_link", "handoff_package", "checkpoint"],
+            "description": "Type of artifact"
+          },
+          "expected_path": {
+            "type": "string",
+            "description": "Expected file path for the artifact"
+          },
+          "exists": {
+            "type": "boolean",
+            "description": "Whether artifact file exists"
+          },
+          "accessible": {
+            "type": "boolean",
+            "description": "Whether artifact is readable/accessible"
+          },
+          "valid_schema": {
+            "type": "boolean",
+            "description": "Whether artifact conforms to its schema"
+          },
+          "linked_to_strategic_plan": {
+            "type": "boolean",
+            "description": "Whether artifact links to strategic plan"
+          },
+          "file_size": {
+            "type": "integer",
+            "description": "File size in bytes",
+            "minimum": 0
+          },
+          "last_modified": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last modified timestamp"
+          },
+          "integrity_check": {
+            "type": "object",
+            "properties": {
+              "passed": {
+                "type": "boolean",
+                "description": "Whether integrity check passed"
+              },
+              "checksum": {
+                "type": "string",
+                "description": "File checksum (if applicable)"
+              }
+            }
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Issues found with this artifact"
+          }
+        }
+      }
+    },
+    "persistence_checks": {
+      "type": "object",
+      "description": "Specific persistence checks",
+      "properties": {
+        "saved_to_cursor_plans": {
+          "type": "object",
+          "required": ["passed"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether artifacts saved to .cursor/plans/"
+            },
+            "details": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string",
+              "description": "Actual location of artifacts"
+            }
+          }
+        },
+        "persists_across_sessions": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether artifacts persist across sessions (simulated)"
+            },
+            "details": {
+              "type": "string"
+            }
+          }
+        },
+        "linked_to_strategic_plan": {
+          "type": "object",
+          "required": ["passed"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether artifacts maintain links to strategic plan"
+            },
+            "details": {
+              "type": "string"
+            }
+          }
+        },
+        "accessible_for_reference": {
+          "type": "object",
+          "required": ["passed"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether artifacts are accessible for future reference"
+            },
+            "details": {
+              "type": "string"
+            }
+          }
+        },
+        "integrity_maintained": {
+          "type": "object",
+          "required": ["passed"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether artifact integrity and completeness are maintained"
+            },
+            "details": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "completeness": {
+      "type": "object",
+      "description": "Completeness metrics",
+      "properties": {
+        "total_artifacts_expected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "artifacts_found": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "artifacts_valid": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completeness_percentage": {
+          "type": "number",
+          "description": "Percentage of artifacts properly persisted (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning", "info"]
+          },
+          "artifact": {
+            "type": "string",
+            "description": "Artifact where issue was found"
+          },
+          "message": {
+            "type": "string",
+            "description": "Issue description"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "How to fix the issue"
+          }
+        }
+      },
+      "description": "List of persistence issues"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommendations for improving artifact persistence"
+    }
+  }
+}

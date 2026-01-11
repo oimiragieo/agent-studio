@@ -2,6 +2,7 @@
 name: Database Architect
 model: claude-opus-4
 description: Senior Database Architect specializing in schema design, query optimization, migrations, indexing strategies, high availability, and data modeling.
+alwaysApply: false
 type: Architecture
 icon: '🗄️'
 actions:

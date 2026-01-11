@@ -1,6 +1,7 @@
 ---
 name: code-analyzer
 description: Static code analysis and complexity metrics
+context:fork: true
 allowed-tools: [Bash, Read, Glob]
 ---
 

@@ -8,6 +8,7 @@ import { readdir, readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import yaml from 'js-yaml';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -65,44 +66,48 @@ loadCache().catch(() => {});
 
 /**
  * Load skill metadata (YAML frontmatter)
+ * @param {string} skillName - Name of the skill
+ * @returns {Promise<Object>} Skill metadata with contextFork, model, etc.
  */
-async function loadSkillMetadata(skillName) {
+export async function loadSkillMetadata(skillName) {
   // Check cache first
   if (skillMetadataCache.has(skillName)) {
     return skillMetadataCache.get(skillName);
   }
-  
+
   const skillPath = join(__dirname, `../${skillName}/SKILL.md`);
-  
+
   try {
     const content = await readFile(skillPath, 'utf8');
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-    
+
     if (frontmatterMatch) {
-      const frontmatter = frontmatterMatch[1];
-      const metadata = {};
-      
-      // Simple YAML parsing (for production, use a proper YAML parser)
-      for (const line of frontmatter.split('\n')) {
-        const match = line.match(/^(\w+):\s*(.+)$/);
-        if (match) {
-          const key = match[1];
-          let value = match[2].trim();
-          
-          // Try to parse as boolean or number
-          if (value === 'true') value = true;
-          else if (value === 'false') value = false;
-          else if (!isNaN(value) && value !== '') value = Number(value);
-          
-          metadata[key] = value;
-        }
-      }
-      
+      const frontmatterText = frontmatterMatch[1];
+
+      // Parse YAML frontmatter using js-yaml
+      const frontmatter = yaml.load(frontmatterText);
+
+      // Extract context:fork field (handle colon in key name)
+      const metadata = {
+        name: frontmatter.name,
+        description: frontmatter.description,
+        contextFork: frontmatter['context:fork'] ?? false,
+        model: frontmatter.model,
+        allowedTools: frontmatter['allowed-tools'] || [],
+        version: frontmatter.version,
+        executable: frontmatter.executable,
+        testSuite: frontmatter.test_suite,
+        bestPractices: frontmatter.best_practices,
+        errorHandling: frontmatter.error_handling,
+        streaming: frontmatter.streaming,
+        templates: frontmatter.templates
+      };
+
       skillMetadataCache.set(skillName, metadata);
       await saveCache();
       return metadata;
     }
-    
+
     return {};
   } catch (error) {
     return {};

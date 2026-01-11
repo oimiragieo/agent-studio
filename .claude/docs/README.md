@@ -2,6 +2,18 @@
 
 Core documentation for deploying and using LLM-RULES. Main reference is `CLAUDE.md` in project root.
 
+## Phase 2.1.2 Highlights
+
+Claude Code 2.1.2 introduces three major enhancements:
+
+1. **context:fork Feature** - Skills can now be automatically forked into subagent contexts (80% token savings)
+2. **Skill Auto-Injection** - skill-injection-hook.js automatically enhances subagent prompts with required skills
+3. **Hook Execution Order** - Predictable hook sequence with <100ms total overhead
+
+**Windows Users**: Managed settings path changed from `C:\ProgramData\ClaudeCode\` to `C:\Program Files\ClaudeCode\`. See GETTING_STARTED.md for migration steps.
+
+**Developers**: Zod 4.0+ now required. Update package.json accordingly.
+
 ## Setup Guides
 
 - **[Claude Code Setup](setup-guides/CLAUDE_SETUP_GUIDE.md)** - Configure LLM-RULES in Claude Code
@@ -22,6 +34,12 @@ Core documentation for deploying and using LLM-RULES. Main reference is `CLAUDE.
 ## Deployment
 
 - **[Deployment Checklist](deployment/DEPLOYMENT_CHECKLIST.md)** - Production deployment checklist
+
+## Upgrade Guides
+
+| Document | Purpose |
+|----------|---------|
+| [Phase 2.1.2 Upgrade](PHASE_2.1.2_UPGRADE.md) | Breaking changes, new features, migration steps |
 
 ## Test Specifications
 

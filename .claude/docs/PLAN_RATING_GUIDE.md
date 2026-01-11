@@ -127,7 +127,7 @@ Response-rater returns structured feedback in this format:
 
 ### Rubric Dimensions
 
-Plans are evaluated on 5 key dimensions:
+Plans are evaluated on 5 key dimensions using the **Standard Plan Rating Rubric** (`.claude/context/artifacts/standard-plan-rubric.json`):
 
 | Dimension | Description | Weight |
 |-----------|-------------|--------|
@@ -137,7 +137,11 @@ Plans are evaluated on 5 key dimensions:
 | **agent_coverage** | Appropriate agents assigned to each task | 20% |
 | **integration** | Plan integrates properly with existing systems | 20% |
 
-**Overall Score Calculation**: Average of all 5 dimensions (equal weight).
+**Overall Score Calculation**: Weighted average of all 5 dimensions (equal weight).
+
+**Rubric Location**: `.claude/context/artifacts/standard-plan-rubric.json`
+
+**Schema Validation**: `.claude/schemas/plan-rubric.schema.json`
 
 ### How Planner Interprets Scores
 
@@ -529,11 +533,114 @@ node .claude/tools/enforcement-gate.mjs validate-plan \
 
 ---
 
+## Custom Rubrics
+
+The Standard Plan Rating Rubric can be customized for specialized workflows or task types.
+
+### Creating Custom Rubrics
+
+**Location**: `.claude/context/artifacts/custom-rubrics/`
+
+**Steps**:
+1. Copy `standard-plan-rubric.json` as a template
+2. Modify dimensions, weights, or scoring criteria
+3. Validate against schema: `node .claude/tools/enforcement-gate.mjs validate-rubric --rubric-file <custom-rubric.json>`
+4. Reference in workflow or rating invocation
+
+**Example Custom Rubric** (`.claude/context/artifacts/custom-rubrics/security-plan-rubric.json`):
+```json
+{
+  "version": "1.0.0",
+  "name": "Security Plan Rating Rubric",
+  "description": "Specialized rubric for security-critical plans",
+  "minimum_score": 9,
+  "dimensions": [
+    {
+      "name": "completeness",
+      "weight": 0.15,
+      "description": "All required information present, no gaps",
+      "scoring": { "..." }
+    },
+    {
+      "name": "feasibility",
+      "weight": 0.15,
+      "description": "Plan is realistic and achievable",
+      "scoring": { "..." }
+    },
+    {
+      "name": "risk_mitigation",
+      "weight": 0.30,
+      "description": "Risks identified and mitigation strategies defined",
+      "scoring": { "..." }
+    },
+    {
+      "name": "security_coverage",
+      "weight": 0.25,
+      "description": "Security requirements fully addressed",
+      "scoring": { "..." }
+    },
+    {
+      "name": "compliance",
+      "weight": 0.15,
+      "description": "Plan meets compliance requirements",
+      "scoring": { "..." }
+    }
+  ],
+  "thresholds": {
+    "emergency": 7,
+    "standard": 9,
+    "enterprise": 9,
+    "critical": 10
+  }
+}
+```
+
+### Using Custom Rubrics
+
+**In Workflows**:
+```yaml
+- step: 0.1
+  name: "Plan Rating Gate"
+  agent: orchestrator
+  type: validation
+  skill: response-rater
+  validation:
+    minimum_score: 9
+    rubric_file: .claude/context/artifacts/custom-rubrics/security-plan-rubric.json
+```
+
+**In CLI**:
+```bash
+node .claude/skills/response-rater/scripts/rate.cjs \
+  --response-file plan.json \
+  --rubric-file .claude/context/artifacts/custom-rubrics/security-plan-rubric.json \
+  --template plan-review
+```
+
+### Custom Rubric Guidelines
+
+1. **Dimension Weights Must Sum to 1.0**: All dimension weights must add up to exactly 1.0
+2. **Scoring Ranges**: Use consistent scoring ranges (e.g., 1-3, 4-6, 7-8, 9-10)
+3. **Clear Descriptions**: Each dimension and scoring range should have clear, actionable descriptions
+4. **Validate Against Schema**: Always validate custom rubrics against `.claude/schemas/plan-rubric.schema.json`
+5. **Document Rationale**: Include metadata explaining why custom rubric is needed
+
+### When to Use Custom Rubrics
+
+- **Security/Compliance Tasks**: Emphasize risk mitigation and security coverage
+- **Performance-Critical Tasks**: Add performance dimension with higher weight
+- **UI/UX Tasks**: Add usability dimension with higher weight
+- **AI/LLM Tasks**: Add model quality and prompt engineering dimensions
+- **Infrastructure Tasks**: Add scalability and reliability dimensions
+
+---
+
 ## References
 
 - **Response-Rater Skill**: `.claude/skills/response-rater/SKILL.md`
 - **Enforcement Gate**: `.claude/tools/enforcement-gate.mjs`
 - **Plan Review Matrix**: `.claude/context/plan-review-matrix.json`
 - **Standard Plan Rubric**: `.claude/context/artifacts/standard-plan-rubric.json`
+- **Plan Rubric Schema**: `.claude/schemas/plan-rubric.schema.json`
 - **Workflow Guide**: `.claude/workflows/WORKFLOW-GUIDE.md`
 - **CLAUDE.md**: `.claude/CLAUDE.md` (Plan Rating Enforcement section)

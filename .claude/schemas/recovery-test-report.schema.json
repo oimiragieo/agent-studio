@@ -1,0 +1,361 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Recovery Test Report",
+  "description": "Schema for comprehensive recovery testing final validation report",
+  "required": ["report_id", "created_at", "workflow_id", "test_status", "test_results"],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "description": "Unique identifier for this test report"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when report was created"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID being tested"
+    },
+    "test_status": {
+      "type": "string",
+      "enum": ["passed", "failed", "partial"],
+      "description": "Overall test status"
+    },
+    "test_results": {
+      "type": "object",
+      "required": ["checkpoint_creation", "checkpoint_restoration", "fallback_routing", "artifact_preservation"],
+      "properties": {
+        "checkpoint_creation": {
+          "type": "object",
+          "required": ["passed", "checkpoints_tested"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether all checkpoint creation tests passed"
+            },
+            "checkpoints_tested": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["phase", "passed", "valid_schema"],
+                "properties": {
+                  "phase": {
+                    "type": "integer",
+                    "description": "Phase number",
+                    "minimum": 1
+                  },
+                  "passed": {
+                    "type": "boolean",
+                    "description": "Whether checkpoint creation passed"
+                  },
+                  "valid_schema": {
+                    "type": "boolean",
+                    "description": "Whether checkpoint conforms to schema"
+                  },
+                  "checkpoint_path": {
+                    "type": "string",
+                    "description": "Path to checkpoint file"
+                  },
+                  "issues": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "total_checkpoints_expected": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "checkpoints_created": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "schema_compliance_rate": {
+              "type": "number",
+              "description": "Percentage of checkpoints that conform to schema (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        },
+        "checkpoint_restoration": {
+          "type": "object",
+          "required": ["passed", "state_accuracy", "artifacts_preserved"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether checkpoint restoration was successful"
+            },
+            "state_accuracy": {
+              "type": "number",
+              "description": "State accuracy percentage (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "artifacts_preserved": {
+              "type": "boolean",
+              "description": "Whether all artifacts were preserved"
+            },
+            "restoration_time_ms": {
+              "type": "integer",
+              "description": "Time taken to restore checkpoint (milliseconds)",
+              "minimum": 0
+            },
+            "data_loss_detected": {
+              "type": "boolean",
+              "description": "Whether any data loss was detected"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fallback_routing": {
+          "type": "object",
+          "required": ["passed", "routing_successful", "context_preserved"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether fallback routing tests passed"
+            },
+            "routing_successful": {
+              "type": "boolean",
+              "description": "Whether routing to fallback agent was successful"
+            },
+            "context_preserved": {
+              "type": "boolean",
+              "description": "Whether task context was preserved"
+            },
+            "context_preservation_percentage": {
+              "type": "number",
+              "description": "Percentage of context preserved (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "fallback_agent_completed_task": {
+              "type": "boolean",
+              "description": "Whether fallback agent completed the task"
+            },
+            "routing_time_ms": {
+              "type": "integer",
+              "description": "Average routing time (milliseconds)",
+              "minimum": 0
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "artifact_preservation": {
+          "type": "object",
+          "required": ["passed", "artifacts_restored_correctly"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether all artifacts were preserved correctly"
+            },
+            "artifacts_restored_correctly": {
+              "type": "boolean",
+              "description": "Whether artifacts were restored from checkpoint"
+            },
+            "validation_gates_passed": {
+              "type": "boolean",
+              "description": "Whether validation gates passed"
+            },
+            "total_artifacts": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "artifacts_preserved": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "preservation_rate": {
+              "type": "number",
+              "description": "Percentage of artifacts preserved (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "recovery_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "event_type": {
+            "type": "string",
+            "enum": ["checkpoint_created", "checkpoint_restored", "fallback_routing", "recovery_successful", "recovery_failed"],
+            "description": "Type of recovery event"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When event occurred"
+          },
+          "details": {
+            "type": "string",
+            "description": "Details about the event"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Whether event was successful"
+          }
+        }
+      },
+      "description": "Log of all recovery events during test"
+    },
+    "recovery_metrics": {
+      "type": "object",
+      "description": "Metrics about recovery performance",
+      "properties": {
+        "checkpoint_creation_time_avg_ms": {
+          "type": "number",
+          "description": "Average checkpoint creation time (milliseconds)",
+          "minimum": 0
+        },
+        "checkpoint_file_size_avg_bytes": {
+          "type": "number",
+          "description": "Average checkpoint file size (bytes)",
+          "minimum": 0
+        },
+        "restoration_time_avg_ms": {
+          "type": "number",
+          "description": "Average restoration time (milliseconds)",
+          "minimum": 0
+        },
+        "state_accuracy_percentage": {
+          "type": "number",
+          "description": "Average state accuracy (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fallback_routing_time_avg_ms": {
+          "type": "number",
+          "description": "Average fallback routing time (milliseconds)",
+          "minimum": 0
+        },
+        "context_preservation_percentage": {
+          "type": "number",
+          "description": "Average context preservation rate (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "overall_recovery_success_rate": {
+          "type": "number",
+          "description": "Overall recovery success rate (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "recovery_playbook_created": {
+      "type": "boolean",
+      "description": "Whether recovery playbook was created"
+    },
+    "recovery_playbook_path": {
+      "type": "string",
+      "description": "Path to recovery playbook"
+    },
+    "test_scenarios_executed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scenario_name": {
+            "type": "string",
+            "description": "Name of test scenario"
+          },
+          "passed": {
+            "type": "boolean",
+            "description": "Whether scenario passed"
+          },
+          "details": {
+            "type": "string",
+            "description": "Details about scenario execution"
+          }
+        }
+      },
+      "description": "List of test scenarios executed"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of issue (checkpoint, restoration, routing, etc.)"
+          },
+          "message": {
+            "type": "string",
+            "description": "Issue description"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "How to fix the issue"
+          }
+        }
+      },
+      "description": "Issues found during recovery testing"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommendations for improving recovery mechanisms"
+    },
+    "conclusion": {
+      "type": "string",
+      "description": "Overall conclusion about recovery system quality"
+    },
+    "compliance": {
+      "type": "object",
+      "description": "Compliance with recovery requirements",
+      "properties": {
+        "checkpoint_creation_time_under_500ms": {
+          "type": "boolean"
+        },
+        "checkpoint_file_size_under_100kb": {
+          "type": "boolean"
+        },
+        "restoration_time_under_2s": {
+          "type": "boolean"
+        },
+        "state_accuracy_100_percent": {
+          "type": "boolean"
+        },
+        "fallback_routing_time_under_100ms": {
+          "type": "boolean"
+        },
+        "context_preservation_100_percent": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

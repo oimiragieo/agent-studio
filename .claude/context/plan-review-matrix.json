@@ -1,168 +1,222 @@
 {
-  "version": "1.0.0",
-  "description": "Plan review matrix defining which agents review plans based on task type and complexity",
+  "version": "2.0.0",
+  "description": "Plan review matrix defining which agents review plans based on task type and complexity, with multi-AI rating fallback configuration",
   "taskTypes": {
     "UI_UX": {
       "required": ["ux-expert", "accessibility-expert"],
       "optional": ["pm", "designer"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "MOBILE": {
       "required": ["mobile-developer", "ux-expert", "qa"],
       "optional": ["performance-engineer", "accessibility-expert"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "DATABASE": {
       "required": ["database-architect", "architect", "security-architect"],
       "optional": ["performance-engineer", "developer"],
       "minimum_score": 8,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini"]
     },
     "IMPLEMENTATION": {
       "required": ["architect", "developer"],
       "optional": ["qa", "code-reviewer"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "BUG_FIX_SIMPLE": {
       "required": ["developer"],
       "optional": ["code-reviewer"],
       "minimum_score": 6,
-      "blocking_threshold": 4
+      "blocking_threshold": 4,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "BUG_FIX_COMPLEX": {
       "required": ["developer", "architect", "qa"],
       "optional": ["security-architect"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "ARCHITECTURE": {
       "required": ["architect", "database-architect", "security-architect"],
       "optional": ["performance-engineer", "devops"],
       "minimum_score": 8,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini"]
     },
     "API_DESIGN": {
       "required": ["api-designer", "architect"],
       "optional": ["security-architect", "developer"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "SECURITY": {
       "required": ["security-architect", "compliance-auditor"],
       "optional": ["code-reviewer", "architect"],
       "minimum_score": 9,
-      "blocking_threshold": 6
+      "blocking_threshold": 6,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini", "copilot"]
     },
     "PERFORMANCE": {
       "required": ["performance-engineer", "architect"],
       "optional": ["developer", "qa"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "CODE_REVIEW": {
       "required": ["code-reviewer"],
       "optional": ["security-architect", "performance-engineer"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "REFACTORING": {
       "required": ["refactoring-specialist", "architect"],
       "optional": ["code-reviewer", "qa"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "LEGACY_MODERNIZATION": {
       "required": ["legacy-modernizer", "architect", "qa"],
       "optional": ["security-architect", "developer"],
       "minimum_score": 8,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini"]
     },
     "AI_LLM_SYSTEM": {
       "required": ["llm-architect", "architect"],
       "optional": ["developer", "qa"],
       "minimum_score": 8,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini"]
     },
     "TESTING": {
       "required": ["qa", "developer"],
       "optional": ["code-reviewer"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "INCIDENT_RESPONSE": {
       "required": ["incident-responder", "devops"],
       "optional": ["security-architect", "developer"],
       "minimum_score": 8,
-      "blocking_threshold": 6
+      "blocking_threshold": 6,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini"]
     },
     "INFRASTRUCTURE": {
       "required": ["devops", "security-architect"],
       "optional": ["architect", "code-reviewer"],
       "minimum_score": 8,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini"]
     },
     "COMPLIANCE_AUDIT": {
       "required": ["compliance-auditor", "security-architect"],
       "optional": ["architect"],
       "minimum_score": 9,
-      "blocking_threshold": 6
+      "blocking_threshold": 6,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini", "copilot"]
     },
     "ACCESSIBILITY": {
       "required": ["accessibility-expert", "ux-expert"],
       "optional": ["qa", "developer"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "DOCUMENTATION": {
       "required": ["technical-writer"],
       "optional": ["developer"],
       "minimum_score": 6,
-      "blocking_threshold": 4
+      "blocking_threshold": 4,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "RESEARCH": {
       "required": ["analyst"],
       "optional": ["pm"],
       "minimum_score": 6,
-      "blocking_threshold": 4
+      "blocking_threshold": 4,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "REQUIREMENTS": {
       "required": ["pm", "analyst"],
       "optional": ["ux-expert", "architect"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "BROWSER_TESTING": {
       "required": ["qa", "developer"],
       "optional": ["ux-expert", "accessibility-expert"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "CLOUD_INTEGRATION": {
       "required": ["cloud-integrator", "devops"],
       "optional": ["security-architect", "developer"],
       "minimum_score": 8,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini"]
     },
     "IMPACT_ANALYSIS": {
       "required": ["impact-analyzer", "architect"],
       "optional": ["qa", "developer"],
       "minimum_score": 8,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "multi",
+      "required_providers": ["claude", "gemini"]
     },
     "SIMPLIFICATION": {
       "required": ["code-simplifier", "refactoring-specialist"],
       "optional": ["code-reviewer", "developer"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     },
     "MODEL_ORCHESTRATION": {
       "required": ["model-orchestrator"],
       "optional": ["planner"],
       "minimum_score": 7,
-      "blocking_threshold": 5
+      "blocking_threshold": 5,
+      "rating_mode": "single",
+      "required_providers": ["claude"]
     }
   },
   "complexityModifiers": {
@@ -184,27 +238,50 @@
     },
     "critical": {
       "score_modifier": 2,
-      "reduce_required_reviewers": 0
+      "reduce_required_reviewers": 0,
+      "force_rating_mode": "multi",
+      "force_minimum_providers": 2
     }
   },
   "workflowModifiers": {
     "quick_flow": {
       "reduce_required_reviewers": 1,
-      "skip_optional": true
+      "skip_optional": true,
+      "allow_single_provider_fallback": true
     },
     "fullstack": {
       "reduce_required_reviewers": 0,
-      "skip_optional": false
+      "skip_optional": false,
+      "allow_single_provider_fallback": true
     },
     "incident": {
       "reduce_required_reviewers": 0,
       "skip_optional": true,
-      "minimum_score_override": 9
+      "minimum_score_override": 9,
+      "force_rating_mode": "multi",
+      "allow_single_provider_fallback": false
     },
     "ai_system": {
       "reduce_required_reviewers": 0,
       "skip_optional": false,
-      "add_reviewers": ["llm-architect"]
+      "add_reviewers": ["llm-architect"],
+      "force_rating_mode": "multi",
+      "allow_single_provider_fallback": true
+    },
+    "security-review": {
+      "force_rating_mode": "multi",
+      "required_providers": ["claude", "gemini", "copilot"],
+      "allow_single_provider_fallback": false
+    },
+    "legacy-modernization": {
+      "force_rating_mode": "multi",
+      "required_providers": ["claude", "gemini"],
+      "allow_single_provider_fallback": true
+    },
+    "compliance-flow": {
+      "force_rating_mode": "multi",
+      "required_providers": ["claude", "gemini", "copilot"],
+      "allow_single_provider_fallback": false
     }
   },
   "scoringRules": {
@@ -216,10 +293,66 @@
     },
     "blocking_behavior": "any_reviewer_below_threshold_blocks"
   },
+  "multiAIRatingConfig": {
+    "enabled": true,
+    "fallback_to_single_model": true,
+    "rating_mode_mappings": {
+      "single": {
+        "min_providers": 1,
+        "preferred_providers": ["claude"],
+        "allow_fallback": true
+      },
+      "multi": {
+        "min_providers": 2,
+        "preferred_providers": ["claude", "gemini"],
+        "allow_fallback": true,
+        "fallback_min_providers": 1
+      },
+      "critical": {
+        "min_providers": 3,
+        "preferred_providers": ["claude", "gemini", "copilot"],
+        "allow_fallback": false,
+        "block_if_unavailable": true
+      }
+    },
+    "fallback_behavior": {
+      "log_warning": true,
+      "use_single_model_response_rater": true,
+      "require_documentation": true,
+      "fallback_justification_required": false
+    },
+    "integration": {
+      "skill": "multi-ai-code-review",
+      "adapter_path": ".claude/skills/multi-ai-code-review/invoke.mjs",
+      "fallback_skill": "response-rater",
+      "timeout_ms": 240000
+    }
+  },
   "metadata": {
     "created": "2026-01-04",
+    "updated": "2026-01-09",
+    "version": "2.0.0",
     "totalTaskTypes": 27,
-    "description": "Defines which agents review plans and scoring rules",
-    "updateFrequency": "as needed"
+    "description": "Defines which agents review plans, scoring rules, and multi-AI rating fallback configuration",
+    "updateFrequency": "as needed",
+    "changelog": [
+      {
+        "version": "2.0.0",
+        "date": "2026-01-09",
+        "changes": [
+          "Added rating_mode field to all task types",
+          "Added required_providers field to all task types",
+          "Added multiAIRatingConfig section with fallback behavior",
+          "Added force_rating_mode to critical complexity modifier",
+          "Added workflow-specific multi-AI requirements",
+          "Added integration section for multi-ai-code-review skill"
+        ]
+      },
+      {
+        "version": "1.0.0",
+        "date": "2026-01-04",
+        "changes": ["Initial release with task types and scoring rules"]
+      }
+    ]
   }
 }

@@ -1,6 +1,7 @@
 ---
 name: memory
 description: Persistent knowledge graph memory system. Store and retrieve entities, relations, and observations across conversations. Use for maintaining user context, preferences, and learned patterns.
+context:fork: true
 allowed-tools: read, write, bash
 version: 1.0
 best_practices:

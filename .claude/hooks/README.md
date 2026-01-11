@@ -2,6 +2,47 @@
 
 This directory contains **native Claude Code hooks** - shell scripts that execute at lifecycle events.
 
+## Hook Execution Order (2.1.2+)
+
+Hooks execute in a predictable sequence during tool execution:
+
+### PreToolUse Hooks (Before Execution)
+
+Hooks run in this order BEFORE any tool executes:
+
+1. **security-pre-tool.sh** (blocks dangerous commands)
+2. **orchestrator-enforcement-hook.mjs** (enforces orchestrator rules)
+3. **skill-injection-hook.js** (injects skills into Task calls)
+
+**Exclusions**: TodoWrite and Task tools are excluded from most PreToolUse hooks to prevent recursion.
+
+### PostToolUse Hooks (After Execution)
+
+Hooks run in this order AFTER tool execution completes:
+
+1. **audit-post-tool.sh** (logs tool execution)
+2. **skill-injection-hook.js** (validates injected skills)
+
+## Hook Performance (Updated 2.1.2)
+
+**Optimization**: Hook matchers now use specific tool patterns instead of wildcards
+
+| Hook | Matcher | Execution Time | Runs On |
+|------|---------|----------------|---------|
+| security-pre-tool.sh | Bash\|Write\|Edit | <5ms | Only risky tools |
+| file-path-validator.js | * | <10ms | All tools (needed) |
+| orchestrator-enforcement | Read\|Write\|Edit\|Bash\|Grep\|Glob | <10ms | Orchestrator tools |
+| skill-injection-hook.js | Task | ~224ms | Subagent spawning |
+| audit-post-tool.sh | * | <5ms | All tools (audit) |
+| post-session-cleanup.js | Write\|Edit | <10ms | File operations |
+
+**Total Overhead**:
+- Without optimization: ~250ms per ANY tool call
+- With optimization: ~15ms for most tools, ~250ms only for Task tool
+- **Efficiency Gain**: ~50-60% reduction in hook overhead
+
+---
+
 ## Available Hooks
 
 ### orchestrator-enforcement-hook.mjs (PreToolUse/PostToolUse) - **Phase 1 Enforcement**

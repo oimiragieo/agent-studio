@@ -32,16 +32,17 @@
     },
     "code-reviewer": {
       "required_skills": ["rule-auditor", "code-style-validator", "explaining-rules"],
-      "recommended_skills": ["fixing-rule-violations", "dependency-analyzer", "commit-validator"],
+      "recommended_skills": ["fixing-rule-violations", "dependency-analyzer", "commit-validator", "multi-ai-code-review"],
       "skill_triggers": {
         "review_code": "rule-auditor",
         "style_review": "code-style-validator",
         "rule_explanation": "explaining-rules",
         "violation_fix": "fixing-rule-violations",
         "dependency_review": "dependency-analyzer",
-        "commit_review": "commit-validator"
+        "commit_review": "commit-validator",
+        "multi_ai_review": "multi-ai-code-review"
       },
-      "description": "Code reviewer validates quality and compliance. Uses rule-auditor for compliance checks, code-style-validator for consistency."
+      "description": "Code reviewer validates quality and compliance. Uses rule-auditor for compliance checks, code-style-validator for consistency. Can use multi-ai-code-review for consensus-based code reviews."
     },
     "qa": {
       "required_skills": ["test-generator", "rule-auditor", "evaluator"],

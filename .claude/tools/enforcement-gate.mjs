@@ -823,7 +823,7 @@ export async function validateExecutionGate(params) {
 
 /**
  * Record a plan rating (used by response-rater skill)
- * 
+ *
  * @param {string} runId - Run identifier
  * @param {string} planId - Plan identifier
  * @param {Object} rating - Rating data
@@ -832,11 +832,11 @@ export async function validateExecutionGate(params) {
 export async function recordPlanRating(runId, planId, rating) {
   const ratingPath = getPlanRatingPath(runId, planId);
   const plansDir = dirname(ratingPath);
-  
+
   if (!existsSync(plansDir)) {
     await mkdir(plansDir, { recursive: true });
   }
-  
+
   const ratingRecord = {
     ...rating,
     plan_id: planId,
@@ -844,8 +844,168 @@ export async function recordPlanRating(runId, planId, rating) {
     rated_at: new Date().toISOString(),
     rated_by: rating.rated_by || 'response-rater'
   };
-  
+
   await writeFile(ratingPath, JSON.stringify(ratingRecord, null, 2), 'utf-8');
+}
+
+/**
+ * Validate file location to prevent SLOP (files in wrong locations)
+ *
+ * @param {string} filePath - Path to validate
+ * @param {string} [fileType] - Optional file type for stricter validation
+ * @param {string} [projectRoot] - Project root directory (defaults to CWD)
+ * @returns {Promise<Object>} Validation result with allowed, blockers, warnings
+ */
+export async function validateFileLocation(filePath, fileType = null, projectRoot = null) {
+  const result = {
+    allowed: false,
+    blockers: [],
+    warnings: [],
+    suggestedPath: null
+  };
+
+  try {
+    // Use provided projectRoot or default to CWD
+    const effectiveRoot = projectRoot || process.cwd();
+
+    // Load schema for authoritative constants
+    const schemaPath = join(__dirname, '..', 'schemas', 'file-location.schema.json');
+    const schema = await loadJson(schemaPath);
+
+    if (!schema) {
+      result.warnings.push('File location schema not found - using fallback validation');
+    }
+
+    // Extract constants from schema (single source of truth)
+    const allowedRootFiles = schema?.definitions?.root_allowlist?.default || [
+      'package.json', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock',
+      'README.md', 'GETTING_STARTED.md', 'LICENSE', '.gitignore',
+      '.npmrc', '.nvmrc', '.editorconfig', 'tsconfig.json',
+      'eslint.config.js', '.eslintrc.json', 'prettier.config.js', '.prettierrc',
+      'CHANGELOG.md', 'CONTRIBUTING.md', 'CODE_OF_CONDUCT.md', 'SECURITY.md'
+    ];
+
+    const prohibitedDirs = schema?.definitions?.prohibited_locations?.default || [
+      'node_modules/', '.git/', 'dist/', 'build/', 'out/',
+      '.next/', '.nuxt/', 'coverage/'
+    ];
+
+    const malformedPatterns = schema?.definitions?.malformed_path_patterns?.default || [
+      { pattern: '^C:[a-zA-Z]', description: 'Windows path missing separator after drive letter' },
+      { pattern: '^[A-Z]:[A-Z]:', description: 'Duplicate drive letters' },
+      { pattern: '[a-z]{4,}[A-Z][a-z].*[a-z]{4,}[A-Z]', description: 'Path segments concatenated without separators' },
+      { pattern: '^[^/\\\\]+[a-z]{3,}\\.claude', description: 'Path to .claude without separator' }
+    ];
+
+    // Normalize path for comparison
+    const normalizedPath = filePath.replace(/\\/g, '/');
+    const normalizedRoot = effectiveRoot.replace(/\\/g, '/');
+    const basename = normalizedPath.split('/').pop();
+
+    // Rule 1: Check for malformed paths
+    for (const { pattern, description } of malformedPatterns) {
+      const regex = new RegExp(pattern);
+      if (regex.test(filePath)) {
+        result.blockers.push(`Malformed path: ${description}`);
+      }
+    }
+
+    // Rule 2: Check for prohibited directories
+    for (const dir of prohibitedDirs) {
+      const dirNormalized = dir.replace(/\/$/, '');
+      if (normalizedPath.includes(`/${dirNormalized}/`) ||
+          normalizedPath.startsWith(`${dirNormalized}/`)) {
+        result.blockers.push(`Cannot write to prohibited directory: ${dir}`);
+      }
+    }
+
+    // Rule 3: Check root directory writes (FIXED LOGIC)
+    // A file is in root if its directory equals the project root
+    const absolutePath = filePath.startsWith('/') || /^[A-Z]:/i.test(filePath)
+      ? normalizedPath
+      : join(normalizedRoot, normalizedPath).replace(/\\/g, '/');
+
+    const fileDir = absolutePath.substring(0, absolutePath.lastIndexOf('/'));
+    const isInProjectRoot = fileDir === normalizedRoot ||
+                            fileDir === normalizedRoot.replace(/\/$/, '');
+
+    if (isInProjectRoot && !allowedRootFiles.includes(basename)) {
+      result.blockers.push(`File "${basename}" not allowed in project root. Use .claude/ hierarchy.`);
+
+      // Suggest correct path based on file type
+      if (basename.match(/-report\.(md|json)$/)) {
+        result.suggestedPath = `.claude/context/reports/${basename}`;
+      } else if (basename.match(/-task\.(md|json)$/)) {
+        result.suggestedPath = `.claude/context/tasks/${basename}`;
+      } else if (basename.match(/^plan-.*\.(md|json)$/)) {
+        result.suggestedPath = `.claude/context/artifacts/${basename}`;
+      } else if (basename.match(/^tmp-/)) {
+        result.suggestedPath = `.claude/context/tmp/${basename}`;
+      }
+    }
+
+    // Rule 4: Check file type locations
+    const fileTypeRules = schema?.definitions?.file_location_rules?.properties || {};
+
+    if (fileType && fileTypeRules[fileType]) {
+      const rule = fileTypeRules[fileType].properties;
+      const requiredPath = rule.required_path?.const;
+      const requiredPaths = rule.required_paths?.default;
+      const patterns = rule.patterns?.default || [];
+
+      if (requiredPath && !normalizedPath.includes(requiredPath)) {
+        result.blockers.push(`${fileType} files must be in ${requiredPath}`);
+        result.suggestedPath = `${requiredPath}${basename}`;
+      } else if (requiredPaths) {
+        const matchesAnyPath = requiredPaths.some(path =>
+          normalizedPath.includes(path.replace('{run_id}', ''))
+        );
+        if (!matchesAnyPath) {
+          result.blockers.push(`${fileType} files must be in one of: ${requiredPaths.join(', ')}`);
+        }
+      }
+
+      // Check pattern match if specified
+      if (patterns.length > 0) {
+        const matchesPattern = patterns.some(pattern => {
+          const regex = new RegExp(pattern.replace('*', '.*'));
+          return regex.test(basename);
+        });
+        if (!matchesPattern) {
+          result.warnings.push(`${fileType} filename should match pattern: ${patterns.join(', ')}`);
+        }
+      }
+    }
+
+    // Auto-detect file type from patterns if not specified
+    if (!fileType) {
+      if (basename.match(/-report\.(md|json)$/)) {
+        if (!normalizedPath.includes('.claude/context/reports/') &&
+            !normalizedPath.includes('.claude/context/artifacts/')) {
+          result.blockers.push('Report files must be in .claude/context/reports/ or .claude/context/artifacts/');
+          result.suggestedPath = `.claude/context/reports/${basename}`;
+        }
+      } else if (basename.match(/-task\.(md|json)$/)) {
+        if (!normalizedPath.includes('.claude/context/tasks/')) {
+          result.blockers.push('Task files must be in .claude/context/tasks/');
+          result.suggestedPath = `.claude/context/tasks/${basename}`;
+        }
+      } else if (basename.match(/^tmp-/)) {
+        if (!normalizedPath.includes('.claude/context/tmp/')) {
+          result.warnings.push('Temporary files should be in .claude/context/tmp/');
+        }
+      }
+    }
+
+    // Determine final result
+    result.allowed = result.blockers.length === 0;
+
+    return result;
+
+  } catch (error) {
+    result.blockers.push(`Error validating file location: ${error.message}`);
+    return result;
+  }
 }
 
 // CLI interface
@@ -987,14 +1147,29 @@ async function main() {
       });
       console.log(JSON.stringify({ success: true, runId, planId, score }));
 
+    } else if (command === 'validate-file-location') {
+      const path = getArg('path');
+      const type = getArg('type');
+      const projectRoot = getArg('project-root');
+
+      if (!path) {
+        console.error('Usage: node enforcement-gate.mjs validate-file-location --path "<path>" [--type <file_type>] [--project-root <root>]');
+        process.exit(1);
+      }
+
+      const result = await validateFileLocation(path, type, projectRoot);
+      console.log(JSON.stringify(result, null, 2));
+      process.exit(result.allowed ? 0 : 1);
+
     } else {
       console.error('Available commands:');
-      console.error('  validate-plan     - Validate plan rating');
-      console.error('  validate-signoffs - Validate signoff requirements');
-      console.error('  validate-security - Validate security trigger requirements');
-      console.error('  validate-skills   - Validate skill usage compliance');
-      console.error('  validate-all      - Run all validations');
-      console.error('  record-rating     - Record a plan rating');
+      console.error('  validate-plan          - Validate plan rating');
+      console.error('  validate-signoffs      - Validate signoff requirements');
+      console.error('  validate-security      - Validate security trigger requirements');
+      console.error('  validate-skills        - Validate skill usage compliance');
+      console.error('  validate-all           - Run all validations');
+      console.error('  validate-file-location - Validate file location (prevent SLOP)');
+      console.error('  record-rating          - Record a plan rating');
       console.error('');
       console.error('Examples:');
       console.error('  # Validate skill usage from log file');
@@ -1005,6 +1180,10 @@ async function main() {
       console.error('');
       console.error('  # Validate all gates including skills');
       console.error('  node enforcement-gate.mjs validate-all --run-id abc123 --workflow fullstack --step 6 --agent developer --log ./step-6.log');
+      console.error('');
+      console.error('  # Validate file location');
+      console.error('  node enforcement-gate.mjs validate-file-location --path ".claude/context/reports/audit.md"');
+      console.error('  node enforcement-gate.mjs validate-file-location --path "report.md" --type report');
       process.exit(1);
     }
   } catch (error) {
@@ -1029,5 +1208,6 @@ export default {
   enforceSecurityTriggers,
   validateSkillUsage,
   validateExecutionGate,
-  recordPlanRating
+  recordPlanRating,
+  validateFileLocation
 };

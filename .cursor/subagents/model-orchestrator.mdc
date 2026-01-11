@@ -2,6 +2,7 @@
 name: Model Orchestrator
 model: claude-sonnet-4
 description: Intelligent multi-model routing agent that analyzes tasks and routes to optimal AI models (Claude, Gemini, Codex, Cursor, OpenCode) based on their strengths.
+alwaysApply: false
 type: Orchestration
 icon: '🔀'
 actions:

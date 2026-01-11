@@ -1,5 +1,6 @@
 ---
 description: Systematic code review focusing on correctness, security, maintainability, and performance.
+alwaysApply: false
 globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.py", "**/*.go"]
 ---
 

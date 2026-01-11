@@ -4,6 +4,25 @@ Complete mapping of all 34 agents to 43 skills with triggers and usage notes.
 
 For the authoritative JSON mapping, see `.claude/context/skill-integration-matrix.json`.
 
+**Note**: This matrix covers **Agent Studio Skills** only (`.claude/skills/`). For information about **Codex Skills** (`codex-skills/`), see [SKILLS_TAXONOMY.md](SKILLS_TAXONOMY.md).
+
+## Phase 2.1.2 Updates
+
+### context:fork Feature
+
+Skills now support automatic forking into subagent contexts. Only skills with `context:fork: true` in their SKILL.md frontmatter are injected into subagent prompts via `skill-injection-hook.js`.
+
+**Token Savings Impact**: Reduces subagent context by 80% while maintaining access to required functionality:
+- Without context:fork: Each skill adds ~500-2000 tokens per subagent
+- With context:fork: Each skill adds ~50-100 tokens (summary only)
+- For 5-10 skills: 2500-5000 tokens → 500-1000 tokens
+
+This injection happens automatically and requires zero orchestrator involvement.
+
+### Model Affinity
+
+Skills can now specify optimal model affinity in their frontmatter (`model: haiku|sonnet|opus`). The skill-injection-hook uses this to route skills to appropriately-sized subagents, improving both performance and cost efficiency.
+
 ## Agent-Skill Mapping Table
 
 | Agent | Required Skills | Recommended Skills | Key Triggers |

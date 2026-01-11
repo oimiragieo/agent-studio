@@ -78,6 +78,247 @@ See `.claude/hooks/README.md` for detailed hook documentation.
 → [Routes to database-architect agent]
 ```
 
+## ⚠️ Claude Code 2.1.2: Windows Managed Settings Migration
+
+**BREAKING CHANGE**: Claude Code 2.1.2 changes the Windows managed settings path.
+
+### Migration Required for Windows Users
+
+If you're using Claude Code on Windows, you must migrate your managed settings:
+
+**Old Path** (deprecated): `C:\ProgramData\ClaudeCode\managed-settings.json`
+**New Path**: `C:\Program Files\ClaudeCode\managed-settings.json`
+
+### Migration Steps
+
+1. **Backup your settings**:
+   ```powershell
+   Copy-Item -Path "C:\ProgramData\ClaudeCode\managed-settings.json" `
+     -Destination "C:\ProgramData\ClaudeCode\managed-settings.json.backup"
+   ```
+
+2. **Copy to new location**:
+   ```powershell
+   Copy-Item -Path "C:\ProgramData\ClaudeCode\managed-settings.json" `
+     -Destination "C:\Program Files\ClaudeCode\managed-settings.json"
+   ```
+
+3. **Update deployment scripts** (if applicable):
+   - Update any CI/CD pipelines referencing the old path
+   - Update any automation scripts using the old path
+   - Update documentation referencing the old path
+
+4. **Verify new path works**:
+   - Restart Claude Code
+   - Check that your settings are applied
+   - Confirm hooks and configurations are active
+
+5. **Clean up** (after verification):
+   ```powershell
+   # Only after confirming new path works
+   Remove-Item -Path "C:\ProgramData\ClaudeCode\managed-settings.json"
+   ```
+
+### Verification
+
+After migration, verify the new path is working:
+```powershell
+# Check that new file exists and has content
+Get-Content "C:\Program Files\ClaudeCode\managed-settings.json" | ConvertFrom-Json
+```
+
+---
+
+## Codex Skills Setup (Optional)
+
+Codex skills enable multi-AI validation by invoking external CLI tools. This is **optional** - Agent Studio skills work without any CLI installation.
+
+### Why Use Codex Skills?
+
+- **Multi-model consensus**: Get validation from Claude + Gemini + Codex simultaneously
+- **Higher confidence**: Critical decisions validated by multiple AI models
+- **Reduced false positives**: Agreement across models indicates genuine issues
+
+### Prerequisites
+
+- Node.js >= 18.x
+- npm or pnpm
+- (Windows) PowerShell or CMD, WSL recommended
+
+### CLI Installation
+
+#### 1. Claude Code CLI (Required)
+
+```bash
+# Install globally
+npm install -g @anthropic-ai/claude-code
+
+# Verify installation
+claude --version
+
+# Authenticate
+claude login
+```
+
+#### 2. Gemini CLI (Required)
+
+```bash
+# Install globally
+npm install -g @anthropic-ai/gemini
+
+# Verify installation
+gemini --version
+
+# Authenticate (requires Google Cloud API key)
+export GEMINI_API_KEY=your-api-key-here
+# or use session-based auth
+gemini login
+```
+
+#### 3. OpenAI Codex (Optional)
+
+```bash
+# Install globally
+npm install -g @openai/codex
+
+# Verify installation
+codex --version
+
+# Authenticate
+export OPENAI_API_KEY=your-api-key-here
+```
+
+#### 4. Cursor Agent (Optional, via WSL on Windows)
+
+```bash
+# Inside WSL
+wsl bash -lc "curl https://cursor.com/install -fsS | bash"
+
+# Verify installation
+cursor-agent --version
+```
+
+#### 5. GitHub Copilot (Optional)
+
+```bash
+# Install globally
+npm install -g @github/copilot
+
+# Authenticate with GitHub
+gh auth login
+
+# Verify installation
+copilot --version
+```
+
+### Windows-Specific Setup
+
+See `.claude/docs/WINDOWS_SETUP.md` for detailed Windows instructions, including:
+- PATH configuration
+- .cmd shim handling
+- WSL setup and usage
+- Troubleshooting common issues
+
+### Verification
+
+Run the integration tests to verify Codex skills work:
+
+```bash
+# Run Codex skills integration tests
+pnpm test:codex-integration
+
+# Run Windows compatibility tests (Windows only)
+pnpm test:windows-compat
+```
+
+### Authentication Modes
+
+Codex skills support two authentication modes:
+
+1. **Session-First** (default): Uses CLI session/subscription, falls back to env keys
+2. **Env-First**: Uses environment keys first, falls back to session
+
+Configure in `.claude/config.yaml`:
+
+```yaml
+codex_skills:
+  auth_mode: session-first  # or "env-first"
+```
+
+### Troubleshooting
+
+**Issue**: `claude: command not found`
+- **Solution**: Ensure CLI installed and in PATH
+- **Windows**: Add `%APPDATA%\npm` to PATH
+
+**Issue**: `spawn claude ENOENT`
+- **Solution**: Codex skills automatically use `shell: true` on Windows
+- **If persists**: Use WSL for best compatibility
+
+**Issue**: CLI installed but still not found
+- **Solution**: Restart terminal or IDE to pick up PATH changes
+
+For more troubleshooting, see:
+- `.claude/docs/WINDOWS_SETUP.md` (Windows-specific)
+- `.claude/docs/SKILLS_TAXONOMY.md` (Skill comparison)
+- `codex-skills/multi-ai-code-review/SKILL.md` (Skill documentation)
+
+---
+
+## New Features in 2.1.2
+
+### Skill Auto-Injection (Phase 2B)
+
+Skills can now be automatically injected into subagent contexts via the `skill-injection-hook.js`. This provides:
+
+- **Zero overhead**: Automatic skill enhancement without orchestrator involvement
+- **Token savings**: 80% context savings through smart skill forking
+- **Consistency**: Always uses the latest skill-integration-matrix.json
+- **Performance**: Less than 100ms overhead
+
+See [Skill Injection](#skill-injection) section below for details.
+
+### context:fork Feature
+
+Skills now support a `context:fork` field that enables smart context optimization:
+
+```yaml
+# In skill frontmatter
+context:fork: true  # Allow forking into subagent contexts
+```
+
+Benefits:
+- Skills can be selectively forked to reduce subagent context bloat
+- Only skills with `context:fork: true` are injected
+- Reduces subagent prompt size by 80% while maintaining functionality
+- Automatic in workflows via skill-injection-hook
+
+### Hook Execution Order
+
+Hooks now execute in a predictable order:
+
+1. **PreToolUse** (before tool execution):
+   - security-pre-tool.sh - Blocks dangerous commands
+   - orchestrator-enforcement-hook.mjs - Enforces orchestrator rules
+   - skill-injection-hook.js - Injects skills into Task calls
+
+2. **PostToolUse** (after tool execution):
+   - audit-post-tool.sh - Logs all tool executions
+   - skill-injection-hook.js - Validates injected skills
+
+**Note**: TodoWrite and Task tools are excluded from most hooks to prevent recursion.
+
+### Additional 2.1.2 Features
+
+- **Large outputs to disk**: Supports writing large outputs directly to disk
+- **Binary file support**: Binary files can now be processed and stored
+- **Zod 4.0 requirement**: Updated schema validation (see UPGRADE_GUIDE_2.1.2.md)
+- **Context compressing**: Automatic state compression for long-running tasks
+
+See `.claude/docs/UPGRADE_GUIDE_2.1.2.md` for complete migration guide.
+
+---
+
 ## Validation (Optional)
 
 Validate your configuration after copying:
@@ -686,6 +927,36 @@ See `.claude/docs/cujs/CUJ-INDEX.md` for the complete index and individual CUJ f
 - Validates against Conventional Commits format
 - Returns pass/fail with suggestions if invalid
 
+## Slash Commands (2.1.2+)
+
+Quick access to frequently-used skills and workflows via slash commands.
+
+### Available Commands
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/rule-auditor` | Audit code against rules | `/rule-auditor src/` |
+| `/rate-plan` | Rate plan quality | `/rate-plan plan.md` |
+| `/generate-tests` | Generate test code | `/generate-tests Button.tsx` |
+| `/generate-docs` | Generate documentation | `/generate-docs api/` |
+| `/validate-security` | Security validation | `/validate-security auth/` |
+
+### Usage
+
+Simply type the command in Claude Code:
+```
+/rule-auditor src/components/
+```
+
+For detailed help on any command:
+```
+/rule-auditor --help
+```
+
+See `.claude/commands/` for all available commands.
+
+---
+
 ## Troubleshooting
 
 ### Workflow Issues
@@ -1076,6 +1347,11 @@ See `.claude/docs/ENTERPRISE_FEATURES.md` for complete enterprise feature docume
 | `/mobile` | Mobile development | `/mobile` |
 | `/incident` | Incident response | `/incident` |
 | `/ui-perfection` | UI perfection loop | `/ui-perfection --component Dashboard.tsx --score 98` |
+| `/rule-auditor` | Audit code against rules | `/rule-auditor src/` |
+| `/rate-plan` | Rate plan quality | `/rate-plan plan.md` |
+| `/generate-tests` | Generate test code | `/generate-tests Button.tsx` |
+| `/generate-docs` | Generate documentation | `/generate-docs api/` |
+| `/validate-security` | Security validation | `/validate-security auth/` |
 
 ### All Hooks
 

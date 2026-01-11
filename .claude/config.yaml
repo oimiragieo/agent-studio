@@ -1222,6 +1222,30 @@ context_editing:
   # Applied to all agents for long-running sessions
   apply_to_all_agents: true
 
+# Memory Management Configuration
+memory:
+  max_heap_size_mb: 4096
+  cache_limits:
+    git_cache_max_entries: 100
+    artifact_cache_max_entries: 500
+    skill_cache_max_entries: 200
+    artifact_cache_max_memory_mb: 50
+  cleanup:
+    enabled: true
+    interval_seconds: 600  # 10 minutes
+    cleanup_after_step: true
+  monitoring:
+    enabled: true
+    warn_threshold_mb: 3500
+    check_interval_seconds: 60
+  file_handling:
+    streaming_threshold_mb: 1
+    max_artifact_size_mb: 10
+    max_json_file_size_mb: 100
+  gc:
+    expose_gc: true  # Requires --expose-gc flag
+    gc_on_warning: true
+
 # Token Monitoring (Orchestrator Handoff)
 token_monitoring:
   enabled: true
@@ -1284,3 +1308,100 @@ mcp_servers:
     env:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+
+# Codex Skills Configuration (Cursor Recommendations #1-4, #10-14)
+# Provider priority for multi-AI code review and response-rater skills
+codex_skills:
+  # Provider Priority Configuration (Cursor Recommendation #4)
+  # Used by multi-ai-code-review and response-rater skills for fallback logic
+  provider_priority:
+    primary: claude          # Primary provider (tried first)
+    secondary:
+      - gemini               # Fallback providers (tried if primary fails)
+      - codex
+    fallback_threshold: 1    # Minimum providers required for success
+  # CLI Validation Configuration (Cursor Recommendation #1)
+  cli_validation:
+    enabled: true            # Re-validate CLI availability before execution
+    timeout_ms: 5000         # Timeout for CLI version check
+    cache_duration_ms: 60000 # Cache CLI availability for 60 seconds
+  # Parallel Execution Configuration (Cursor Recommendation #2)
+  parallel_execution:
+    enabled: true            # Execute providers in parallel by default
+    max_concurrent: 5        # Maximum concurrent provider calls
+  # Schema Validation Configuration (Cursor Recommendation #3)
+  validation:
+    default_mode: warning    # Default validation mode (warning | blocking)
+    ci_mode: blocking        # Validation mode in CI (always blocking)
+  retry_on_fallback: true
+  # Partial Failure Configuration (Cursor Recommendation #11)
+  # Allow multi-provider operations to succeed with partial results
+  partial_failure:
+    enabled: true            # Enable partial failure recovery
+    min_success_count: 2     # Minimum providers that must succeed
+    min_success_rate: 0.67   # 67% of providers must succeed (2 of 3)
+  # Circuit Breaker Configuration (Cursor Recommendation #14)
+  # Prevents repeated calls to failing providers
+  circuit_breaker:
+    enabled: true            # Enable circuit breaker pattern
+    failure_threshold: 3     # Number of failures before opening circuit
+    reset_timeout_ms: 60000  # Time before attempting to close circuit (1 minute)
+    half_open_max_attempts: 2 # Max attempts in half-open state
+    persistent: true         # Persist circuit breaker state to disk
+
+# Workflow Timeout Configuration (Cursor Recommendation #13)
+# Configurable timeouts for long-running workflow steps
+workflow:
+  timeouts:
+    default: 300000          # 5 minutes default
+    by_agent:
+      analyst: 600000        # 10 minutes for analysis
+      architect: 900000      # 15 minutes for architecture
+      developer: 1200000     # 20 minutes for development
+      qa: 600000             # 10 minutes for testing
+      llm-architect: 900000  # 15 minutes for LLM architecture
+      security-architect: 600000  # 10 minutes for security review
+      code-reviewer: 480000  # 8 minutes for code review
+      planner: 600000        # 10 minutes for planning
+  # Retry Configuration (Cursor Recommendation #12)
+  # Validation error recovery with feedback
+  validation_retry:
+    enabled: true            # Enable validation retry with feedback
+    max_retries: 2           # Maximum retry attempts
+    include_feedback: true   # Include validation errors in retry context
+    backoff_base_ms: 1000    # Base delay for exponential backoff
+    backoff_max_ms: 5000     # Maximum delay for backoff
+
+# Multi-AI Rating Configuration (Plan Rating Fallback)
+multi_ai_rating:
+  enabled: true
+  fallback_to_single_model: true
+  required_providers:
+    - claude  # primary
+  optional_providers:
+    - gemini
+    - copilot
+  # Workflows requiring multi-AI rating (minimum 2 providers)
+  workflows_requiring_multi_ai:
+    - security-review.yaml
+    - legacy-modernization.yaml
+    - ai-system-flow.yaml
+    - compliance-flow.yaml
+    - auth-flow.yaml
+    - data-protection-flow.yaml
+  # Fallback behavior when multi-AI unavailable
+  fallback_behavior:
+    use_single_model: true
+    log_warning: true
+    required_minimum_providers: 1  # Allow fallback to single model
+    preferred_providers: ["claude", "gemini"]
+  # Integration with plan-review-matrix.json
+  rating_mode_selection:
+    critical: "multi"      # task_types.critical requires multi-AI
+    enterprise: "multi"    # task_types.enterprise requires multi-AI
+    standard: "single"     # task_types.standard uses single model
+  # CI/CD integration
+  ci_mode:
+    strict_json_only: true
+    fail_on_provider_unavailable: false  # Allow fallback in CI
+    timeout_ms: 240000

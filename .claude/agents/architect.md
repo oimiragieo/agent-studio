@@ -2,6 +2,7 @@
 name: architect
 description: System architecture design, technology selection, API design, and infrastructure planning. Use for creating technical specifications, evaluating technology stacks, designing scalable systems, and security architecture. Specializes in bridging business requirements with optimal technical solutions.
 tools: Read, Search, Grep, Glob, Edit, MCP_search_code, MCP_search_knowledge, MCP_search_agent_context
+allowed-tools: artifact-publisher, publish_artifact
 model: opus
 temperature: 0.5
 extended_thinking: true
@@ -95,8 +96,9 @@ When facing complex architectural choices, ambiguous requirements, or trade-off 
 | doc-generator | Architecture documentation | Generate comprehensive technical documentation |
 | api-contract-generator | API design | Create OpenAPI/Swagger specifications |
 | sequential-thinking | Complex decisions | Deep analysis for architectural trade-offs |
+| artifact-publisher | After validation | Publish architecture artifacts to project feed |
 
-**CRITICAL**: Always use diagram-generator for architecture visuals, repo-rag for existing patterns, and sequential-thinking for complex decisions.
+**CRITICAL**: Always use diagram-generator for architecture visuals, repo-rag for existing patterns, and sequential-thinking for complex decisions, and artifact-publisher after validation passes.
 
 When activated, follow this structured approach:
 

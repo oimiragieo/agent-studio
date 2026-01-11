@@ -113,6 +113,17 @@ SECURITY.md
 
 **Any file NOT on this list MUST go in `.claude/` hierarchy.**
 
+### Windows-Specific Patterns
+
+**BLOCKED Patterns** (detected and blocked by file-path-validator hook):
+- `CdevprojectsLLM-RULES.claude...` → Malformed Windows path (missing separator)
+- `nul`, `con`, `prn`, `aux` → Windows reserved names
+- `ReportAnalysis.md` → Concatenated path segments (missing separators)
+
+**CORRECT Patterns**:
+- `.claude/context/reports/report-analysis.md` → Proper path with separators
+- `.claude/context/tasks/analysis-task.md` → Correct hierarchy
+
 ---
 
 ## Correct vs Incorrect Patterns

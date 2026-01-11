@@ -39,6 +39,14 @@ fallback_agents:
 # The routing system matches user prompts against keywords in config.yaml, not this file.
 # See .claude/config.yaml for the authoritative keyword list used by the routing system.
 
+# Parallel Execution Configuration
+# Steps with the same parallel_group execute concurrently for 67% time savings
+# See .claude/tools/workflow/parallel-executor.mjs for implementation
+parallel_execution:
+  enabled: true
+  fail_fast: false  # Continue with other parallel steps even if one fails
+  timeout_per_step: 300000  # 5 minutes per step
+
 steps:
   - step: 0
     name: "Planning Phase"
@@ -71,7 +79,7 @@ steps:
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
+      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7
@@ -90,6 +98,7 @@ steps:
       - Never execute an unrated plan - this is a hard requirement
 
   - step: 0.5
+    publish_targets: ["project_feed", "cursor"]
     name: "Feature Distillation"
     agent: analyst
     condition: "file_size(user_requirements) > 15KB"
@@ -114,8 +123,11 @@ steps:
       - Output: features-distilled.json passed to Step 0 (Planner) instead of raw markdown
 
   - step: 1
+    publish_targets: ["project_feed", "cursor"]
     name: "Project Discovery"
     agent: analyst
+    parallel: true
+    parallel_group: 1  # Parallel group 1: Discovery + PRD + UX
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - user_requirements
@@ -128,11 +140,14 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
 
   - step: 2
+    publish_targets: ["project_feed", "cursor"]
     name: "Product Requirements"
     agent: pm
+    parallel: true
+    parallel_group: 1  # Parallel group 1: Discovery + PRD + UX
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
-      - project-brief.json (from step 1)
+      - project-brief.json (from step 1, optional)  # Optional since parallel
     outputs:
       - prd.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-pm.json
@@ -141,11 +156,14 @@ steps:
       gate: .claude/context/history/gates/{{workflow_id}}/02-pm.json
 
   - step: 3
+    publish_targets: ["project_feed", "cursor"]
     name: "UX Design"
     agent: ux-expert
+    parallel: true
+    parallel_group: 1  # Parallel group 1: Discovery + PRD + UX
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
-      - prd.json (from step 2)
+      - prd.json (from step 2, optional)  # Optional since parallel
     outputs:
       - ux-spec.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-ux-expert.json
@@ -178,6 +196,7 @@ steps:
       - Only executes if plan includes UI components
 
   - step: 4
+    publish_targets: ["project_feed", "cursor"]
     name: "System Architecture"
     agent: architect
     inputs:

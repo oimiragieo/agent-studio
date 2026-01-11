@@ -23,14 +23,14 @@ const __dirname = dirname(__filename);
 async function findCursorExecutable() {
   const platform = process.platform;
   let cursorPath;
-  
+
   if (platform === 'win32') {
-    // Windows paths
+    // Windows paths - use path.join() for cross-platform compatibility
     const possiblePaths = [
-      process.env.LOCALAPPDATA + '\\Programs\\cursor\\Cursor.exe',
-      process.env.PROGRAMFILES + '\\Cursor\\Cursor.exe',
-      process.env['PROGRAMFILES(X86)'] + '\\Cursor\\Cursor.exe',
-      'C:\\Users\\' + process.env.USERNAME + '\\AppData\\Local\\Programs\\cursor\\Cursor.exe'
+      join(process.env.LOCALAPPDATA, 'Programs', 'cursor', 'Cursor.exe'),
+      join(process.env.PROGRAMFILES, 'Cursor', 'Cursor.exe'),
+      join(process.env['PROGRAMFILES(X86)'], 'Cursor', 'Cursor.exe'),
+      join('C:', 'Users', process.env.USERNAME, 'AppData', 'Local', 'Programs', 'cursor', 'Cursor.exe')
     ];
     
     for (const path of possiblePaths) {

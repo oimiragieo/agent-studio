@@ -1,5 +1,6 @@
 ---
 description: AI/LLM system design, model selection, prompt architecture, RAG pipelines, and AI application patterns.
+alwaysApply: false
 globs: ["**/prompts/**", "**/ai/**", "**/llm/**", "**/*.prompt.*"]
 ---
 

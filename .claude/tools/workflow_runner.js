@@ -26,6 +26,7 @@ import { readFileSync, existsSync, mkdirSync, statSync, writeFileSync, readdirSy
 import { resolve, join, dirname, basename } from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { parseLargeJSON, shouldUseStreaming } from './streaming-json-parser.mjs';
 import { evaluateDecision } from './workflow/decision-handler.mjs';
 import { initializeLoop, advanceLoop, hasMoreIterations, getCurrentItem } from './workflow/loop-handler.mjs';
 import { checkContextThreshold, recordContextUsage } from './context-monitor.mjs';
@@ -37,6 +38,12 @@ import { updateRunSummary } from './dashboard-generator.mjs';
 import { executeAgent } from './agent-executor.mjs';
 import { injectSkillsForAgent } from './skill-injector.mjs';
 import { validateSkillUsage, generateViolationReport } from './skill-validator.mjs';
+import { validateExecutionGate } from './enforcement-gate.mjs';
+import { createCheckpoint, restoreFromCheckpoint, listCheckpoints } from './checkpoint-manager.mjs';
+import { executePlanRatingGate, checkPlanRating } from './plan-rating-gate.mjs';
+import { cleanupAllCaches } from './memory-cleanup.mjs';
+import { logMemoryUsage, canSpawnSubagent } from './memory-monitor.mjs';
+import { saveCheckpoint } from './workflow-checkpoint.mjs';
 
 // Import js-yaml for proper YAML parsing
 let yaml;
@@ -57,6 +64,23 @@ try {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+/**
+ * Load JSON file with streaming support for large files
+ * @param {string} filePath - Path to JSON file
+ * @returns {Promise<Object>} Parsed JSON object
+ */
+async function loadJSONFile(filePath) {
+  if (!existsSync(filePath)) {
+    throw new Error(`File not found: ${filePath}`);
+  }
+  
+  if (shouldUseStreaming(filePath, 1)) {
+    return await parseLargeJSON(filePath);
+  } else {
+    return JSON.parse(readFileSync(filePath, 'utf-8'));
+  }
+}
 
 /**
  * Resolve workflow path from project root
@@ -362,7 +386,7 @@ async function recordSkillValidation(workflowId, stepNumber, skillValidation, ga
       return;
     }
 
-    const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+    const gateData = await loadJSONFile(gatePath);
 
     // Add skill validation section
     gateData.skill_validation = {
@@ -937,6 +961,422 @@ function getStepConfig(workflow, stepNumber) {
     customChecks,
     tool
   };
+}
+
+/**
+ * Safe property access utility - handles undefined/null paths gracefully
+ * @param {Object} obj - The object to traverse
+ * @param {string} path - Dot-separated path (e.g., 'step.output.risk')
+ * @param {*} defaultValue - Value to return if path not found
+ * @returns {*} - The value at the path, or defaultValue if not found
+ */
+function safeGet(obj, path, defaultValue = undefined) {
+  if (obj == null || typeof path !== 'string') {
+    return defaultValue;
+  }
+
+  const keys = path.split('.');
+  let result = obj;
+
+  for (const key of keys) {
+    if (result == null || typeof result !== 'object') {
+      return defaultValue;
+    }
+    result = result[key];
+  }
+
+  return result !== undefined ? result : defaultValue;
+}
+
+/**
+ * Tokenize condition string into tokens for parsing
+ * Handles parentheses, quotes, operators, and function calls
+ * @param {string} condition - The condition string to tokenize
+ * @returns {string[]} - Array of tokens
+ */
+function tokenizeCondition(condition) {
+  const tokens = [];
+  let current = '';
+  let inQuotes = false;
+  let quoteChar = null;
+  let parenDepth = 0; // Track nested parentheses in function calls
+  let inFunctionCall = false;
+
+  for (let i = 0; i < condition.length; i++) {
+    const char = condition[i];
+
+    // Handle quote toggling
+    if ((char === '"' || char === "'") && !inQuotes) {
+      inQuotes = true;
+      quoteChar = char;
+      current += char;
+    } else if (char === quoteChar && inQuotes) {
+      inQuotes = false;
+      quoteChar = null;
+      current += char;
+    } else if (!inQuotes && char === '(') {
+      // Check if this is a function call (current ends with function-like pattern)
+      // Patterns like: .includes(, .startsWith(, .endsWith(, .match(
+      if (/\.[a-zA-Z]+$/.test(current)) {
+        // This is a function call - include the parentheses in the token
+        inFunctionCall = true;
+        parenDepth = 1;
+        current += char;
+      } else {
+        // This is a grouping parenthesis
+        if (current.trim()) {
+          tokens.push(current.trim());
+        }
+        tokens.push(char);
+        current = '';
+      }
+    } else if (!inQuotes && char === ')') {
+      if (inFunctionCall) {
+        current += char;
+        parenDepth--;
+        if (parenDepth === 0) {
+          inFunctionCall = false;
+        }
+      } else {
+        // This is a grouping parenthesis
+        if (current.trim()) {
+          tokens.push(current.trim());
+        }
+        tokens.push(char);
+        current = '';
+      }
+    } else if (!inQuotes && !inFunctionCall && /\s/.test(char)) {
+      // Whitespace separates tokens (outside quotes and function calls)
+      if (current.trim()) {
+        tokens.push(current.trim());
+      }
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+
+  // Push final token
+  if (current.trim()) {
+    tokens.push(current.trim());
+  }
+
+  return tokens;
+}
+
+/**
+ * Evaluate an atomic condition (no operators, no parentheses)
+ * @param {string} condition - The atomic condition to evaluate
+ * @param {Object} safeContext - The evaluation context
+ * @returns {boolean} - The evaluation result
+ */
+function evaluateAtomic(condition, safeContext) {
+  // Pattern: providers.includes('provider_name')
+  if (condition.includes('providers.includes')) {
+    const match = condition.match(/providers\.includes\(['"]([^'"]+)['"]\)/);
+    if (match) {
+      const providers = safeGet(safeContext, 'providers', []);
+      return Array.isArray(providers) && providers.includes(match[1]);
+    }
+  }
+
+  // Pattern: step.output.field === 'value' or step.output.field === true/false
+  if (condition.includes('step.output.')) {
+    // Boolean match
+    const boolMatch = condition.match(/step\.output\.([a-zA-Z_]+)\s*===?\s*(true|false)/);
+    if (boolMatch) {
+      const fieldName = boolMatch[1];
+      const expectedValue = boolMatch[2] === 'true';
+      const actualValue = safeGet(safeContext, `step.output.${fieldName}`);
+      return actualValue === expectedValue;
+    }
+
+    // String match
+    const strMatch = condition.match(/step\.output\.([a-zA-Z_]+)\s*===?\s*['"]([^'"]*)['"]/);
+    if (strMatch) {
+      const fieldName = strMatch[1];
+      const expectedValue = strMatch[2];
+      const actualValue = safeGet(safeContext, `step.output.${fieldName}`);
+      return actualValue === expectedValue;
+    }
+
+    // Inequality match (!==)
+    const neqMatch = condition.match(/step\.output\.([a-zA-Z_]+)\s*!==?\s*['"]([^'"]*)['"]/);
+    if (neqMatch) {
+      const fieldName = neqMatch[1];
+      const expectedValue = neqMatch[2];
+      const actualValue = safeGet(safeContext, `step.output.${fieldName}`);
+      return actualValue !== expectedValue;
+    }
+  }
+
+  // Pattern: config.field === true|false or config.field === 'value' or config.field === number
+  if (condition.includes('config.')) {
+    // Boolean match
+    const boolMatch = condition.match(/config\.([a-zA-Z_]+)\s*===?\s*(true|false)/);
+    if (boolMatch) {
+      const fieldName = boolMatch[1];
+      const expectedValue = boolMatch[2] === 'true';
+      const actualValue = safeGet(safeContext, `config.${fieldName}`);
+      return actualValue === expectedValue;
+    }
+
+    // String match
+    const strMatch = condition.match(/config\.([a-zA-Z_]+)\s*===?\s*['"]([^'"]*)['"]/);
+    if (strMatch) {
+      const fieldName = strMatch[1];
+      const expectedValue = strMatch[2];
+      const actualValue = safeGet(safeContext, `config.${fieldName}`);
+      return actualValue === expectedValue;
+    }
+
+    // Numeric match (including == for loose equality)
+    const numMatch = condition.match(/config\.([a-zA-Z_]+)\s*[!=<>]=?\s*(-?\d+(?:\.\d+)?)/);
+    if (numMatch) {
+      const fieldName = numMatch[1];
+      const expectedValue = parseFloat(numMatch[2]);
+      const actualValue = safeGet(safeContext, `config.${fieldName}`);
+      // Check operator type
+      if (condition.includes('!==') || condition.includes('!=')) {
+        return actualValue !== expectedValue;
+      } else if (condition.includes('>=')) {
+        return actualValue >= expectedValue;
+      } else if (condition.includes('<=')) {
+        return actualValue <= expectedValue;
+      } else if (condition.includes('>')) {
+        return actualValue > expectedValue;
+      } else if (condition.includes('<')) {
+        return actualValue < expectedValue;
+      } else {
+        // == or ===
+        return actualValue === expectedValue || actualValue == expectedValue;
+      }
+    }
+  }
+
+  // Pattern: env.VARIABLE === 'value' or env.VARIABLE === true/false
+  if (condition.includes('env.')) {
+    // Boolean match
+    const boolMatch = condition.match(/env\.([A-Z_]+)\s*===?\s*(true|false)/);
+    if (boolMatch) {
+      const varName = boolMatch[1];
+      const expectedValue = boolMatch[2] === 'true';
+      const actualValue = safeGet(safeContext, `env.${varName}`);
+      return actualValue === expectedValue || actualValue === String(expectedValue);
+    }
+
+    // String match
+    const strMatch = condition.match(/env\.([A-Z_]+)\s*===?\s*['"]([^'"]*)['"]/);
+    if (strMatch) {
+      const varName = strMatch[1];
+      const expectedValue = strMatch[2];
+      const actualValue = safeGet(safeContext, `env.${varName}`);
+      return actualValue === expectedValue;
+    }
+  }
+
+  // Pattern: artifacts.field.subfield === 'value'
+  if (condition.includes('artifacts.')) {
+    const match = condition.match(/artifacts\.([a-zA-Z_.]+)\s*===?\s*['"]([^'"]*)['"]/);
+    if (match) {
+      const fieldPath = match[1];
+      const expectedValue = match[2];
+      const actualValue = safeGet(safeContext, `artifacts.${fieldPath}`);
+      return actualValue === expectedValue;
+    }
+  }
+
+  // Pattern: simple boolean flags (snake_case identifiers)
+  // These are common patterns in code-review-flow.yaml
+  if (/^[a-z][a-z0-9_]*$/i.test(condition)) {
+    // Check in config first
+    const configValue = safeGet(safeContext, `config.${condition}`);
+    if (configValue !== undefined) {
+      return !!configValue;
+    }
+
+    // Check in artifacts
+    const artifactValue = safeGet(safeContext, `artifacts.${condition}`);
+    if (artifactValue !== undefined) {
+      return !!artifactValue;
+    }
+
+    // Check environment variables (uppercase version)
+    const envKey = condition.toUpperCase();
+    const envValue = safeGet(safeContext, `env.${envKey}`);
+    if (envValue !== undefined) {
+      return envValue === 'true' || envValue === true;
+    }
+
+    // Check direct context property
+    const directValue = safeGet(safeContext, condition);
+    if (directValue !== undefined) {
+      return !!directValue;
+    }
+
+    // Not found anywhere - return false (fail closed for booleans)
+    return false;
+  }
+
+  // Unrecognized pattern - log warning and return false (fail closed)
+  console.warn(`⚠️  Warning: Unrecognized atomic condition: "${condition}"`);
+  return false;
+}
+
+/**
+ * Parse primary expression (handles parentheses, NOT, comparisons, and atomic conditions)
+ * @param {string[]} tokens - Mutable array of tokens
+ * @param {Object} safeContext - The evaluation context
+ * @returns {boolean} - The evaluation result
+ */
+function parsePrimary(tokens, safeContext) {
+  if (tokens.length === 0) {
+    return false;
+  }
+
+  const token = tokens[0];
+
+  // Handle opening parenthesis - parse nested expression
+  if (token === '(') {
+    tokens.shift(); // consume '('
+    const result = parseOr(tokens, safeContext);
+    if (tokens.length > 0 && tokens[0] === ')') {
+      tokens.shift(); // consume ')'
+    }
+    return result;
+  }
+
+  // Handle NOT operator
+  if (token === 'NOT' || token === '!') {
+    tokens.shift(); // consume 'NOT' or '!'
+    return !parsePrimary(tokens, safeContext);
+  }
+
+  // Consume the first token
+  tokens.shift();
+
+  // Check if next token is a comparison operator
+  // This handles patterns like: config.enabled === true
+  if (tokens.length >= 2 && /^[!=<>]=?=?$/.test(tokens[0])) {
+    const operator = tokens.shift(); // consume operator (===, ==, !==, !=, etc.)
+    const rightValue = tokens.shift(); // consume right-hand value
+
+    // Reconstruct the full comparison expression for evaluateAtomic
+    const fullCondition = `${token} ${operator} ${rightValue}`;
+    return evaluateAtomic(fullCondition, safeContext);
+  }
+
+  // Single token atomic condition (boolean flag, function call like providers.includes)
+  return evaluateAtomic(token, safeContext);
+}
+
+/**
+ * Parse AND expressions (higher precedence than OR)
+ * @param {string[]} tokens - Mutable array of tokens
+ * @param {Object} safeContext - The evaluation context
+ * @returns {boolean} - The evaluation result
+ */
+function parseAnd(tokens, safeContext) {
+  let left = parsePrimary(tokens, safeContext);
+
+  while (tokens.length > 0 && (tokens[0] === 'AND' || tokens[0] === '&&')) {
+    tokens.shift(); // consume 'AND' or '&&'
+    const right = parsePrimary(tokens, safeContext);
+    left = left && right;
+  }
+
+  return left;
+}
+
+/**
+ * Parse OR expressions (lower precedence than AND)
+ * @param {string[]} tokens - Mutable array of tokens
+ * @param {Object} safeContext - The evaluation context
+ * @returns {boolean} - The evaluation result
+ */
+function parseOr(tokens, safeContext) {
+  let left = parseAnd(tokens, safeContext);
+
+  while (tokens.length > 0 && (tokens[0] === 'OR' || tokens[0] === '||')) {
+    tokens.shift(); // consume 'OR' or '||'
+    const right = parseAnd(tokens, safeContext);
+    left = left || right;
+  }
+
+  return left;
+}
+
+/**
+ * Parse and evaluate a condition expression with proper operator precedence
+ * @param {string[]} tokens - Array of tokens to parse
+ * @param {Object} safeContext - The evaluation context
+ * @returns {boolean} - The evaluation result
+ */
+function parseExpression(tokens, safeContext) {
+  // Create a copy to avoid mutating the original
+  const tokensCopy = [...tokens];
+  return parseOr(tokensCopy, safeContext);
+}
+
+/**
+ * Evaluate step condition expression to determine if step should execute
+ *
+ * Supports:
+ * - Nested expressions with parentheses: (A OR B) AND C
+ * - Operator precedence: AND binds tighter than OR
+ * - NOT operator: NOT condition, !condition
+ * - Safe variable resolution: missing variables return false
+ * - Multiple condition patterns:
+ *   - providers.includes("name")
+ *   - step.output.field === "value"
+ *   - config.field === true/false/"value"
+ *   - env.VARIABLE === "value"
+ *   - artifacts.field === "value"
+ *   - simple_boolean_flag
+ *
+ * @param {string} condition - Condition expression from workflow YAML
+ * @param {Object} context - Context containing artifacts, config, env, providers
+ * @returns {boolean} - true if step should execute, false if should skip
+ */
+function evaluateCondition(condition, context = {}) {
+  if (!condition || typeof condition !== 'string') {
+    return true; // No condition means always execute
+  }
+
+  // Build safe evaluation context with defaults
+  const safeContext = {
+    providers: context.providers || [],
+    step: context.step || {},
+    config: context.config || {},
+    env: {
+      MULTI_AI_ENABLED: process.env.MULTI_AI_ENABLED === 'true',
+      CI: process.env.CI === 'true',
+      NODE_ENV: process.env.NODE_ENV || 'development',
+      ...context.env
+    },
+    artifacts: context.artifacts || {}
+  };
+
+  try {
+    const trimmed = condition.trim();
+
+    // Tokenize the condition
+    const tokens = tokenizeCondition(trimmed);
+
+    if (tokens.length === 0) {
+      return true; // Empty condition means always execute
+    }
+
+    // Parse and evaluate the expression
+    return parseExpression(tokens, safeContext);
+
+  } catch (error) {
+    // On any error, fail open (execute step)
+    console.warn(`⚠️  Warning: Condition evaluation failed: ${error.message}`);
+    console.warn(`   Condition: "${condition}"`);
+    console.warn(`   Defaulting to execute step (fail-open behavior)`);
+    return true;
+  }
 }
 
 /**
@@ -1527,13 +1967,41 @@ function loadCUJDefinition(cujId) {
     }
   }
 
-  // Extract success criteria
+  // Extract success criteria (support both checkbox bullets and tables)
   const criteriaSection = cujContent.match(/## Success Criteria\s*\n([\s\S]*?)(?=\n##|$)/);
   if (criteriaSection) {
-    const criteria = criteriaSection[1].match(/- \[.\]\s+(.+)/g);
-    if (criteria) {
-      cuj.success_criteria = criteria.map(c => c.replace(/- \[.\]\s+/, '').trim());
+    const sectionText = criteriaSection[1];
+    const criteria = [];
+
+    // Pattern 1: Checkbox bullets (existing)
+    const checkboxMatches = sectionText.match(/- \[.\]\s+(.+)/g);
+    if (checkboxMatches) {
+      checkboxMatches.forEach(match => {
+        criteria.push(match.replace(/- \[.\]\s+/, '').trim());
+      });
     }
+
+    // Pattern 2: Table rows (new - for CUJ-063 and others)
+    // Match table rows that aren't headers or separators
+    const tableRowMatches = sectionText.match(/\|([^|]+)\|([^|]+)\|/g);
+    if (tableRowMatches) {
+      tableRowMatches.forEach(row => {
+        // Skip header rows and separator rows
+        if (!row.includes('---') && !row.toLowerCase().includes('criteria') && !row.toLowerCase().includes('status')) {
+          // Extract first column (criteria text)
+          const columns = row.split('|').map(c => c.trim()).filter(c => c);
+          if (columns.length > 0 && columns[0]) {
+            // Avoid duplicate entries if checkbox pattern already captured this
+            const criteriaText = columns[0].trim();
+            if (!criteria.includes(criteriaText)) {
+              criteria.push(criteriaText);
+            }
+          }
+        }
+      });
+    }
+
+    cuj.success_criteria = criteria;
   }
 
   // Extract agents
@@ -1711,8 +2179,56 @@ async function main() {
     workflowPath = resolve(workflowPath);
   }
   
+  // Handle resume from checkpoint
+  if (args.resume || args['resume-step']) {
+    const runId = args['run-id'];
+    if (!runId) {
+      console.error('❌ Error: --run-id required for resume');
+      console.error('Usage: node workflow_runner.js --workflow <yaml> --resume --run-id <id> [--resume-step <step>]');
+      process.exit(1);
+    }
+    
+    try {
+      const checkpoints = await listCheckpoints(runId);
+      if (checkpoints.length === 0) {
+        console.error(`❌ Error: No checkpoints found for run ${runId}`);
+        process.exit(1);
+      }
+      
+      let checkpointToRestore;
+      if (args['resume-step']) {
+        const targetStep = parseInt(args['resume-step'], 10);
+        checkpointToRestore = checkpoints.find(c => c.step === targetStep);
+        if (!checkpointToRestore) {
+          console.error(`❌ Error: No checkpoint found for step ${targetStep}`);
+          console.error(`   Available checkpoints:`);
+          checkpoints.forEach(c => console.error(`     - Step ${c.step}: ${c.checkpoint_id}`));
+          process.exit(1);
+        }
+      } else {
+        // Use most recent checkpoint
+        checkpointToRestore = checkpoints[0];
+      }
+      
+      console.log(`\n🔄 Restoring from checkpoint: ${checkpointToRestore.checkpoint_id}`);
+      console.log(`   Step: ${checkpointToRestore.step}`);
+      console.log(`   Timestamp: ${checkpointToRestore.timestamp}\n`);
+      
+      const restored = await restoreFromCheckpoint(runId, checkpointToRestore.checkpoint_id);
+      console.log(`✅ Restored ${restored.artifacts_restored} artifact(s) from checkpoint`);
+      console.log(`   Resume from step ${restored.restored_step + 1}\n`);
+      
+      // Update args to continue from restored step
+      args.step = String(restored.restored_step + 1);
+      args.id = runId; // Use run-id as workflow-id for continuation
+    } catch (resumeError) {
+      console.error(`❌ Error: Resume failed: ${resumeError.message}`);
+      process.exit(1);
+    }
+  }
+  
   // Auto-generate workflow ID if not provided
-  const workflowId = args.id || generateWorkflowId();
+  const workflowId = args.id || args['run-id'] || generateWorkflowId();
   
   // Always validate format
   const idValidation = validateWorkflowIdFormat(workflowId);
@@ -1722,7 +2238,7 @@ async function main() {
   }
   
   // Log generated ID for user reference
-  if (!args.id) {
+  if (!args.id && !args['run-id']) {
     console.log(`📋 Generated workflow ID: ${workflowId}`);
     console.log(`   Use --id ${workflowId} to reference this workflow in future steps\n`);
   }
@@ -1860,6 +2376,90 @@ async function main() {
     }
   }
   
+  // ========================================================================
+  // PLAN RATING GATE (Step 0.1)
+  // Enforces "never execute an unrated plan" rule from CLAUDE.md
+  // Executes before Step 1 if Step 0 (Planning) has completed
+  // ========================================================================
+  const runId = args['run-id'] || null;
+  const stepNumber = parseInt(args.step, 10);
+
+  // Execute Plan Rating Gate for steps >= 1 (after planning)
+  if (stepNumber >= 1 && runId && !isDryRun) {
+    console.log(`\n${'='.repeat(60)}`);
+    console.log('STEP 0.1: PLAN RATING GATE');
+    console.log('Enforcing: "Never execute an unrated plan" (CLAUDE.md)');
+    console.log(`${'='.repeat(60)}`);
+
+    try {
+      // First check if a rating already exists and passes
+      const existingRating = await checkPlanRating(runId, 'plan');
+
+      if (existingRating.valid && existingRating.rated) {
+        console.log(`\n✅ Plan Rating Gate: PASSED (existing rating)`);
+        console.log(`   Score: ${existingRating.score}/10 (minimum: ${existingRating.minimumRequired})`);
+      } else if (!existingRating.rated) {
+        // No rating exists - execute the plan rating gate
+        console.log(`\n⚠️  No plan rating found. Invoking response-rater skill...`);
+
+        const ratingResult = await executePlanRatingGate(runId, null, {
+          workflowId,
+          minimumScore: 7,
+          providers: 'claude,gemini'
+        });
+
+        if (ratingResult.success) {
+          console.log(`\n✅ Plan Rating Gate: PASSED`);
+          console.log(`   Score: ${ratingResult.score}/10 (minimum: 7)`);
+          console.log(`   Rating saved: ${ratingResult.rating_path}`);
+        } else {
+          console.error(`\n❌ Plan Rating Gate: FAILED`);
+          console.error(`   Score: ${ratingResult.score}/10 (minimum required: 7)`);
+
+          if (ratingResult.feedback) {
+            console.error(`\n   Feedback for Planner:`);
+            if (ratingResult.feedback.weak_areas && ratingResult.feedback.weak_areas.length > 0) {
+              console.error(`   Weak areas:`);
+              ratingResult.feedback.weak_areas.forEach(area => {
+                console.error(`     - ${area.component}: ${area.score}/10 - ${area.suggestion}`);
+              });
+            }
+            if (ratingResult.feedback.improvements_required && ratingResult.feedback.improvements_required.length > 0) {
+              console.error(`\n   Required improvements:`);
+              ratingResult.feedback.improvements_required.forEach((imp, i) => {
+                console.error(`     ${i + 1}. ${imp}`);
+              });
+            }
+          }
+
+          console.error(`\n   Action Required: Return plan to Planner for revision.`);
+          console.error(`   Command: node workflow_runner.js --workflow ${args.workflow} --step 0 --id ${workflowId}`);
+          console.error(`${'='.repeat(60)}\n`);
+          process.exit(1);
+        }
+      } else {
+        // Rating exists but doesn't pass
+        console.error(`\n❌ Plan Rating Gate: FAILED (existing rating below threshold)`);
+        console.error(`   Score: ${existingRating.score}/10 (minimum required: ${existingRating.minimumRequired})`);
+        console.error(`\n   Action Required: Return plan to Planner for revision.`);
+        process.exit(1);
+      }
+    } catch (ratingError) {
+      // Handle gracefully - log warning but allow execution to continue
+      // This prevents breaking existing workflows while rating infrastructure is being set up
+      console.warn(`\n⚠️  Plan Rating Gate: Could not validate (${ratingError.message})`);
+      console.warn(`   Proceeding with execution (non-blocking on errors)`);
+      console.warn(`   To fix: Ensure response-rater skill is properly configured`);
+    }
+
+    console.log(`${'='.repeat(60)}\n`);
+  } else if (stepNumber >= 1 && !runId) {
+    // Warn if run-id is missing for steps that should have rating
+    console.warn(`\n⚠️  Warning: --run-id not provided for Step ${stepNumber}`);
+    console.warn(`   Plan rating gate requires --run-id to validate plans.`);
+    console.warn(`   Usage: node workflow_runner.js --workflow <yaml> --step ${stepNumber} --run-id <id>\n`);
+  }
+
   // Validate step dependencies before proceeding
   // Context monitoring: Check context usage before step execution
   const stepInfo = getStepInfo(workflow, args.step);
@@ -1979,6 +2579,31 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
   let gateDir;
   let runId = args['run-id'] || null;
   
+  // NEW: Check memory BEFORE loading artifacts
+  const preLoadMemCheck = canSpawnSubagent(1000); // Need 1GB for artifacts + context
+  if (!preLoadMemCheck.canSpawn) {
+    console.warn('[Workflow] Insufficient memory before artifact loading');
+    console.warn(`[Memory] RSS: ${preLoadMemCheck.currentUsageMB.toFixed(2)}MB, Free: ${preLoadMemCheck.freeMB.toFixed(2)}MB`);
+
+    // Aggressive cleanup
+    const { cleanupAllCaches } = await import('./memory-cleanup.mjs');
+    cleanupAllCaches();
+    if (global.gc) {
+      global.gc();
+      global.gc();
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    const recheckMem = canSpawnSubagent(1000);
+    if (!recheckMem.canSpawn) {
+      console.error('[Workflow] Cannot proceed: insufficient memory');
+      process.exit(1);
+    }
+
+    console.log('[Workflow] Cleanup successful, loading artifacts');
+  }
+
   // Ensure artifact registry is initialized before step execution
   if (runId) {
     try {
@@ -2153,6 +2778,71 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
   // Declare execution result at higher scope for skill validation
   let executionResult = null;
 
+  // Check if step has a condition that needs to be evaluated
+  const stepCondition = stepInfo?.condition || null;
+
+  if (stepCondition) {
+    console.log(`\n🔍 Evaluating step condition: "${stepCondition}"`);
+
+    // Build context for condition evaluation
+    // Try to load previous step outputs if available
+    let previousStepOutput = {};
+    try {
+      // Load plan artifact if available (common dependency for conditional steps)
+      const planPath = resolveArtifactPath(runId, `plan-${workflowId}.json`);
+      if (existsSync(planPath)) {
+        const planData = await loadJSONFile(planPath);
+        previousStepOutput = planData;
+      }
+    } catch (error) {
+      // Ignore errors loading previous outputs
+    }
+
+    const conditionContext = {
+      config: {
+        user_requested_multi_ai_review: process.env.MULTI_AI_REVIEW === 'true',
+        critical_security_changes: previousStepOutput.overall_risk === 'high' || previousStepOutput.overall_risk === 'critical',
+        security_focus: previousStepOutput.security_focus === true,
+        critical_security_issues_found: previousStepOutput.critical_issues_count > 0
+      },
+      env: {
+        MULTI_AI_ENABLED: process.env.MULTI_AI_ENABLED === 'true',
+        CI: process.env.CI === 'true'
+      },
+      providers: (process.env.MULTI_AI_PROVIDERS || 'claude,gemini').split(','),
+      step: { output: previousStepOutput },
+      artifacts: previousStepOutput
+    };
+
+    const shouldExecute = evaluateCondition(stepCondition, conditionContext);
+
+    if (!shouldExecute) {
+      console.log(`   ⏭️  Condition not met - skipping step ${args.step}`);
+      console.log(`   Step will not execute: ${stepName}\n`);
+
+      // Create a gate file indicating the step was skipped
+      const skipGateResult = {
+        valid: true,
+        skipped: true,
+        reason: `Condition not met: ${stepCondition}`,
+        timestamp: new Date().toISOString(),
+        step: args.step,
+        condition: stepCondition,
+        evaluated_context: conditionContext
+      };
+
+      if (!isDryRun) {
+        writeFileSync(gatePath, JSON.stringify(skipGateResult, null, 2));
+        console.log(`   ✅ Gate file created: ${gatePathRaw} (marked as skipped)`);
+      }
+
+      // Exit successfully - skipped steps are not failures
+      process.exit(0);
+    }
+
+    console.log(`   ✅ Condition met - proceeding with step execution\n`);
+  }
+
   // Execute agent if not a tool-based step and run-id is provided (skip in dry-run)
   if (runId && !config.tool && agentName) {
     if (isDryRun) {
@@ -2161,6 +2851,59 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
       console.log(`   📋 Step:   ${stepName}`);
       console.log(`   ⚠️  Agent execution skipped in dry-run mode\n`);
     } else {
+      // Validate enforcement gates before step execution
+      if (config.validation?.gate) {
+        console.log(`\n🔒 Validating Enforcement Gates for Step ${args.step}...`);
+        try {
+          const workflowName = basename(workflowPath, '.yaml');
+          const taskDescription = config.description || stepName;
+          const planId = args['plan-id'] || 'plan';
+          
+          const gateResult = await validateExecutionGate({
+            runId,
+            workflowName,
+            stepNumber: parseInt(args.step, 10),
+            planId,
+            taskDescription,
+            assignedAgents: [agentName],
+            options: {
+              agentType: agentName,
+              taskType: config.taskType,
+              complexity: config.complexity
+            }
+          });
+          
+          if (!gateResult.allowed) {
+            console.error(`\n❌ BLOCKED: Enforcement gate validation failed for Step ${args.step}`);
+            console.error(`   Summary: ${gateResult.summary}`);
+            if (gateResult.blockers.length > 0) {
+              console.error(`\n   Blockers:`);
+              gateResult.blockers.forEach(blocker => {
+                console.error(`   - ${blocker.type}: ${blocker.message}`);
+              });
+            }
+            if (gateResult.warnings.length > 0) {
+              console.warn(`\n   Warnings:`);
+              gateResult.warnings.forEach(warning => {
+                console.warn(`   - ${warning.type}: ${warning.message}`);
+              });
+            }
+            process.exit(1);
+          } else {
+            console.log(`   ✅ All gates passed`);
+            if (gateResult.warnings.length > 0) {
+              console.warn(`   ⚠️  ${gateResult.warnings.length} warning(s):`);
+              gateResult.warnings.forEach(warning => {
+                console.warn(`      - ${warning.message}`);
+              });
+            }
+          }
+        } catch (gateError) {
+          console.error(`\n❌ Error: Enforcement gate validation failed: ${gateError.message}`);
+          console.error(`   Continuing with step execution (gate validation is non-blocking on errors)`);
+        }
+      }
+      
       console.log(`\n🤖 Executing Agent for Step ${args.step}: ${stepName}`);
       console.log(`   👤 Agent:  ${agentName}`);
       console.log(`   📋 Step:   ${stepName}\n`);
@@ -2229,6 +2972,28 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             content: skillInjection.skillPrompt,
             priority: 'high'
           });
+        }
+
+        // Priority 3: Check memory before spawning subagent
+        const memCheck = canSpawnSubagent(800); // Need 800MB for subagent
+        if (!memCheck.canSpawn) {
+          console.warn('[Workflow] Insufficient memory for subagent - saving checkpoint');
+          console.warn(`[Memory] Current: ${memCheck.currentUsageMB.toFixed(2)}MB, Free: ${memCheck.freeMB.toFixed(2)}MB`);
+
+          // Save checkpoint with current state
+          const checkpointPath = await saveCheckpoint(runId, args.step, {
+            reason: 'memory_pressure',
+            step: args.step,
+            agent: agentName,
+            timestamp: new Date().toISOString()
+          });
+
+          console.log(`[Checkpoint] Saved to ${checkpointPath}`);
+          console.error('[Workflow] Exiting with code 42 - restart needed');
+
+          // Cleanup before exit
+          cleanupAllCaches();
+          process.exit(42); // Exit code 42 = memory pressure restart needed
         }
 
         // Execute agent
@@ -2445,7 +3210,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     // Check gate file validation status
     try {
       if (existsSync(gatePath)) {
-        const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+        const gateData = await loadJSONFile(gatePath);
         if (gateData.valid) {
           console.log(`\n✅ Gate validation status: PASSED`);
           if (gateData.autofix_applied && gateData.fixed_fields_count > 0) {
@@ -2492,7 +3257,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
       console.log(`\n🔍 Running ${config.custom_checks.length} custom validation check(s)...`);
       
       try {
-        const artifactData = JSON.parse(readFileSync(inputPath, 'utf-8'));
+        const artifactData = await loadJSONFile(inputPath);
         const customValidationResult = await runCustomValidationChecks(
           config.custom_checks,
           artifactData,
@@ -2512,7 +3277,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
           // Update gate file with custom validation errors
           if (existsSync(gatePath)) {
             try {
-              const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+              const gateData = await loadJSONFile(gatePath);
               gateData.custom_validation = {
                 valid: false,
                 errors: customValidationResult.errors,
@@ -2631,7 +3396,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
         // Read gate file to get validation status
         let validationStatus = 'pending';
         if (existsSync(gatePath)) {
-          const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+          const gateData = await loadJSONFile(gatePath);
           validationStatus = gateData.valid ? 'pass' : 'fail';
         }
         
@@ -2737,6 +3502,20 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
             console.warn(`⚠️  Warning: Could not update dashboard: ${dashboardError.message}`);
           }
           
+          // Create checkpoint after successful step execution
+          try {
+            const checkpoint = await createCheckpoint(runId, parseInt(args.step), {
+              step_name: stepName,
+              agent: agentName,
+              artifacts: [interpolatedOutput],
+              validation_status: validationStatus
+            });
+            console.log(`\n💾 Checkpoint created: ${checkpoint.checkpoint_id}`);
+          } catch (checkpointError) {
+            console.warn(`⚠️  Warning: Could not create checkpoint: ${checkpointError.message}`);
+            // Continue - checkpoint creation is not critical
+          }
+          
           console.log(`\n📝 Artifacts registered in run ${runId}`);
         } else {
           console.log(`\n🔍 DRY-RUN: Would register artifacts in run ${runId}`);
@@ -2780,7 +3559,7 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     // Try to read gate file for detailed error information
     try {
       if (existsSync(gatePath)) {
-        const gateData = JSON.parse(readFileSync(gatePath, 'utf-8'));
+        const gateData = await loadJSONFile(gatePath);
         if (!gateData.valid && gateData.errors) {
           console.error(`\n   Validation Errors:`);
           gateData.errors.forEach((error, index) => {
@@ -2799,6 +3578,23 @@ async function executeWorkflowStepValidation(workflow, args, workflowId, storyId
     console.error(`   - Check schema file if validation errors are unclear`);
     console.error(`   - Review agent output for any warnings or issues`);
     process.exit(1);
+  } finally {
+    // Priority 1 Critical Fix: Clean up memory after step execution
+    try {
+      console.log('\n[Memory] Cleaning up after step execution...');
+      logMemoryUsage('Before cleanup');
+
+      const results = cleanupAllCaches();
+      console.log(`[Memory] Cleanup complete: git=${results.gitCache}, artifacts=${results.artifactCache}, skills=${results.skillCache}`);
+
+      // Force GC if available
+      if (global.gc) {
+        global.gc();
+        logMemoryUsage('After GC');
+      }
+    } catch (cleanupError) {
+      console.warn(`[Memory] Cleanup warning: ${cleanupError.message}`);
+    }
   }
 }
 
@@ -2806,3 +3602,15 @@ main().catch(error => {
   console.error('Unexpected error:', error);
   process.exit(2);
 });
+
+// Export functions for testing
+export {
+  evaluateCondition,
+  tokenizeCondition,
+  evaluateAtomic,
+  safeGet,
+  parseExpression,
+  parseOr,
+  parseAnd,
+  parsePrimary
+};

@@ -1,10 +1,264 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
+/**
+ * Response Rater - Multi-AI Response Rating
+ *
+ * Enhanced with:
+ * - Partial Failure Recovery (Cursor Recommendation #11)
+ * - Circuit Breaker Pattern (Cursor Recommendation #14)
+ * - Enhanced Error Context (Cursor Recommendation #10)
+ */
 
-const { spawn } = require("child_process");
+const { spawn, execSync } = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+
+// Try to load js-yaml for config parsing, fallback to simple parsing if not available
+let yaml;
+try {
+  yaml = require("js-yaml");
+} catch (e) {
+  // Fallback: simple YAML parsing not available, will use defaults
+  yaml = null;
+}
+const { sanitize, sanitizeError } = require("../../shared/sanitize-secrets.js");
+
+// Simple inline Circuit Breaker for CommonJS compatibility
+class SimpleCircuitBreaker {
+  constructor(options = {}) {
+    this.failureThreshold = options.failureThreshold || 3;
+    this.resetTimeout = options.resetTimeout || 60000;
+    this.states = new Map();
+  }
+
+  canExecute(provider) {
+    const state = this.getState(provider);
+    if (state.state === "open") {
+      if (Date.now() > state.openUntil) {
+        state.state = "half-open";
+        this.states.set(provider, state);
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+
+  recordSuccess(provider) {
+    const state = this.getState(provider);
+    state.failures = 0;
+    state.state = "closed";
+    this.states.set(provider, state);
+  }
+
+  recordFailure(provider) {
+    const state = this.getState(provider);
+    state.failures++;
+    if (state.failures >= this.failureThreshold) {
+      state.state = "open";
+      state.openUntil = Date.now() + this.resetTimeout;
+      console.warn(`[circuit-breaker] ${provider}: Circuit OPEN (${state.failures} failures)`);
+    }
+    this.states.set(provider, state);
+  }
+
+  getState(provider) {
+    if (!this.states.has(provider)) {
+      this.states.set(provider, { failures: 0, state: "closed", openUntil: null });
+    }
+    return this.states.get(provider);
+  }
+}
+
+// Global circuit breaker instance
+const providerCircuitBreaker = new SimpleCircuitBreaker({
+  failureThreshold: 3,
+  resetTimeout: 60000
+});
+
+// CLI command mappings for each provider
+const CLI_COMMANDS = {
+  claude: "claude",
+  gemini: "gemini",
+  codex: "codex",
+  cursor: "cursor-agent",
+  copilot: "copilot"
+};
+
+/**
+ * Load provider configuration from config.yaml
+ * @returns {Object} Provider priority configuration
+ */
+function loadProviderConfig() {
+  const defaults = {
+    primary: "claude",
+    secondary: ["gemini", "codex"],
+    fallback_threshold: 1
+  };
+
+  // If yaml parser not available, use defaults
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      return config?.codex_skills?.provider_priority || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load provider config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Load partial failure configuration from config.yaml (Cursor Recommendation #11)
+ * @returns {Object} Partial failure configuration
+ */
+function loadPartialFailureConfig() {
+  const defaults = {
+    enabled: true,
+    min_success_count: 2,
+    min_success_rate: 0.67
+  };
+
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      return config?.codex_skills?.partial_failure || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load partial failure config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Load circuit breaker configuration from config.yaml (Cursor Recommendation #14)
+ * @returns {Object} Circuit breaker configuration
+ */
+function loadCircuitBreakerConfig() {
+  const defaults = {
+    enabled: true,
+    failure_threshold: 3,
+    reset_timeout_ms: 60000,
+    half_open_max_attempts: 2
+  };
+
+  if (!yaml) {
+    return defaults;
+  }
+
+  const configPath = path.join(__dirname, "../../../.claude/config.yaml");
+  try {
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, "utf8");
+      const config = yaml.load(configContent);
+      const cbConfig = config?.codex_skills?.circuit_breaker;
+      if (cbConfig) {
+        // Update global circuit breaker with config values
+        providerCircuitBreaker.failureThreshold = cbConfig.failure_threshold || defaults.failure_threshold;
+        providerCircuitBreaker.resetTimeout = cbConfig.reset_timeout_ms || defaults.reset_timeout_ms;
+      }
+      return cbConfig || defaults;
+    }
+  } catch (err) {
+    console.warn(`[config] Could not load circuit breaker config: ${err.message}`);
+  }
+  return defaults;
+}
+
+/**
+ * Log error with enhanced context (Cursor Recommendation #10)
+ * @param {Error} error - The error to log
+ * @param {Object} context - Error context
+ */
+function logErrorWithContext(error, context = {}) {
+  const errorDir = path.join(__dirname, "../../../.claude/context/errors");
+
+  try {
+    if (!fs.existsSync(errorDir)) {
+      fs.mkdirSync(errorDir, { recursive: true });
+    }
+
+    const timestamp = Date.now();
+    const provider = context.provider || "unknown";
+    const errorFile = path.join(errorDir, `rate-${provider}-${timestamp}.json`);
+
+    const errorData = {
+      timestamp: new Date().toISOString(),
+      operation: "response_rater",
+      provider: context.provider,
+      template: context.template,
+      error: {
+        message: sanitize(error.message || String(error)),
+        name: error.name || "Error",
+        code: error.code || null,
+        stack: sanitize(error.stack || "").split("\n").slice(0, 10).join("\n")
+      },
+      context: {
+        authMode: context.authMode || null,
+        attempt: context.attempt || 1
+      },
+      system: {
+        platform: process.platform,
+        nodeVersion: process.version
+      }
+    };
+
+    fs.writeFileSync(errorFile, JSON.stringify(errorData, null, 2));
+    console.error(`[error-logger] Error logged to: ${errorFile}`);
+  } catch (logError) {
+    console.error(`[error-logger] Failed to log error: ${logError.message}`);
+  }
+}
+
+/**
+ * Validate CLI availability for a provider
+ * Re-validates CLI immediately before invoking Codex skills
+ * @param {string} provider - Provider name
+ * @returns {Promise<{available: boolean, provider: string, version?: string, error?: string}>}
+ */
+async function validateProviderCli(provider) {
+  const cli = CLI_COMMANDS[provider];
+  if (!cli) {
+    // Unknown provider - assume available (will fail at runtime if not)
+    return { available: true, provider, note: "unknown_cli" };
+  }
+
+  return new Promise((resolve) => {
+    try {
+      // Use execSync with short timeout for quick validation
+      const result = execSync(`${cli} --version`, {
+        timeout: 5000,
+        stdio: ["pipe", "pipe", "pipe"],
+        shell: true,
+        encoding: "utf8"
+      });
+      resolve({
+        available: true,
+        provider,
+        version: result.trim().split("\n")[0]
+      });
+    } catch (err) {
+      resolve({
+        available: false,
+        provider,
+        error: sanitize(err.message || String(err))
+      });
+    }
+  });
+}
 
 function parseArgs(argv) {
   const args = {
@@ -14,6 +268,8 @@ function parseArgs(argv) {
     template: "response-review",
     timeoutMs: 180000,
     dryRun: false,
+    skipCliValidation: false, // skip CLI availability check
+    parallel: true, // parallel provider execution (Cursor Recommendation #2)
   };
   for (let i = 0; i < argv.length; i++) {
     const token = argv[i];
@@ -31,6 +287,8 @@ function parseArgs(argv) {
     else if (token === "--template") args.template = argv[++i];
     else if (token === "--timeout-ms") args.timeoutMs = Number(argv[++i]);
     else if (token === "--dry-run") args.dryRun = true;
+    else if (token === "--skip-cli-validation") args.skipCliValidation = true;
+    else if (token === "--sequential") args.parallel = false; // disable parallel execution
     else if (token === "--help" || token === "-h") args.help = true;
   }
   return args;
@@ -51,6 +309,10 @@ function usage(exitCode = 0) {
       "Timeouts:",
       "  --timeout-ms 180000          # default 180s for each provider call",
       "  --dry-run                   # print computed settings and exit (no network calls)",
+      "",
+      "Execution:",
+      "  --sequential                # run providers sequentially (default: parallel)",
+      "  --skip-cli-validation       # skip CLI availability check before execution",
       "",
       "Auth:",
       "  --auth-mode session-first   # default; try CLI session auth first, then env keys",
@@ -367,13 +629,16 @@ function tryParseJson(text) {
 }
 
 function redactNewlines(text, maxLen = 1200) {
-  const t = String(text || "").replace(/\r?\n/g, "\\n");
+  // Sanitize to remove potential API keys before processing
+  const sanitized = sanitize(String(text || ""));
+  const t = sanitized.replace(/\r?\n/g, "\\n");
   if (t.length <= maxLen) return t;
   return `${t.slice(0, maxLen)}…`;
 }
 
 function truncate(text, maxLen = 8000) {
-  const t = String(text || "");
+  // Sanitize to remove potential API keys before truncation
+  const t = sanitize(String(text || ""));
   if (t.length <= maxLen) return t;
   return `${t.slice(0, maxLen)}…`;
 }
@@ -570,6 +835,7 @@ async function main() {
           timeoutMs: args.timeoutMs,
           responseChars: response.length,
           questionChars: question ? question.length : 0,
+          parallel: args.parallel,
         },
         null,
         2,
@@ -578,25 +844,257 @@ async function main() {
     return;
   }
 
+  // CLI Availability Re-validation (Cursor Recommendation #1)
+  // Re-validate CLI availability immediately before invoking providers
+  let availableProviders = providers;
+  let cliValidation = null;
+
+  if (!args.skipCliValidation) {
+    console.error("[cli-check] Validating provider CLI availability...");
+    const cliCheckStart = Date.now();
+    const providerChecks = await Promise.all(
+      providers.map((p) => validateProviderCli(p))
+    );
+    const cliCheckDurationMs = Date.now() - cliCheckStart;
+
+    cliValidation = {
+      checks: providerChecks,
+      durationMs: cliCheckDurationMs,
+      timestamp: new Date().toISOString()
+    };
+
+    const unavailable = providerChecks.filter((c) => !c.available);
+    const available = providerChecks.filter((c) => c.available);
+
+    // Log CLI validation results
+    for (const check of providerChecks) {
+      if (check.available) {
+        console.error(`[cli-check] ${check.provider}: available (${check.version || "version unknown"})`);
+      } else {
+        console.error(`[cli-check] ${check.provider}: unavailable (${check.error})`);
+      }
+    }
+
+    // Provider Fallback Logic (Cursor Recommendation #4)
+    // If all providers are unavailable, fail early with clear error
+    if (unavailable.length === providers.length) {
+      const errorMsg = `All providers unavailable: ${unavailable.map((c) => c.provider).join(", ")}`;
+      console.error(`[cli-check] FATAL: ${errorMsg}`);
+      console.log(JSON.stringify({
+        ok: false,
+        error: errorMsg,
+        cliValidation
+      }, null, 2));
+      process.exit(2);
+    }
+
+    // Filter to only available providers for execution
+    if (unavailable.length > 0) {
+      availableProviders = available.map((c) => c.provider);
+      console.error(`[cli-check] Proceeding with available providers: ${availableProviders.join(", ")}`);
+
+      // Load config for fallback threshold
+      const providerConfig = loadProviderConfig();
+      if (availableProviders.length < providerConfig.fallback_threshold) {
+        const errorMsg = `Insufficient providers available (${availableProviders.length} < ${providerConfig.fallback_threshold})`;
+        console.error(`[cli-check] FATAL: ${errorMsg}`);
+        console.log(JSON.stringify({
+          ok: false,
+          error: errorMsg,
+          cliValidation
+        }, null, 2));
+        process.exit(2);
+      }
+    }
+
+    console.error(`[cli-check] CLI validation completed in ${cliCheckDurationMs}ms`);
+  }
+
+  // Load configurations (Cursor Recommendations #11, #14)
+  const partialFailureConfig = loadPartialFailureConfig();
+  const circuitBreakerConfig = loadCircuitBreakerConfig();
+
+  // Performance measurement: start timing
+  const providerStartTime = Date.now();
   const results = {};
-  for (const provider of providers) {
-    if (provider === "claude") {
-      results.claude = await runClaude(prompt, {
-        authMode: args.authMode,
-        timeoutMs: args.timeoutMs,
-      });
-    } else if (provider === "gemini") {
-      results.gemini = await runGemini(prompt, args.model, {
-        authMode: args.authMode,
-        timeoutMs: args.timeoutMs,
-      });
-    } else {
-      results[provider] = {
-        skipped: true,
-        reason: `unsupported provider '${provider}' (supported: claude, gemini)`,
+  const circuitBreakerResults = {};
+  let skippedCount = 0;
+
+  // Circuit Breaker Check (Cursor Recommendation #14)
+  // Skip providers with open circuit breakers
+  const providersToExecute = [];
+  if (circuitBreakerConfig.enabled) {
+    for (const p of availableProviders) {
+      if (providerCircuitBreaker.canExecute(p)) {
+        providersToExecute.push(p);
+      } else {
+        const cbState = providerCircuitBreaker.getState(p);
+        console.warn(`[circuit-breaker] Skipping ${p}: circuit OPEN (reset at ${new Date(cbState.openUntil).toISOString()})`);
+        results[p] = {
+          ok: false,
+          skipped: true,
+          reason: "circuit_breaker_open",
+          circuit_state: cbState.state,
+          open_until: cbState.openUntil
+        };
+        circuitBreakerResults[p] = cbState;
+        skippedCount++;
+      }
+    }
+  } else {
+    providersToExecute.push(...availableProviders);
+  }
+
+  // Parallel Provider Execution (Cursor Recommendation #2)
+  // Execute providers in parallel for 66% faster execution (3 providers: 45s sequential -> 15s parallel)
+  if (args.parallel && providersToExecute.length > 1) {
+    console.error(`[perf] Running ${providersToExecute.length} providers in parallel...`);
+
+    // Create promises for each provider
+    const providerPromises = providersToExecute.map((provider) => {
+      const executeProvider = async () => {
+        let result;
+        if (provider === "claude") {
+          result = await runClaude(prompt, {
+            authMode: args.authMode,
+            timeoutMs: args.timeoutMs,
+          });
+        } else if (provider === "gemini") {
+          result = await runGemini(prompt, args.model, {
+            authMode: args.authMode,
+            timeoutMs: args.timeoutMs,
+          });
+        } else {
+          result = {
+            skipped: true,
+            reason: `unsupported provider '${provider}' (supported: claude, gemini)`,
+          };
+        }
+
+        // Record success/failure in circuit breaker (Cursor Recommendation #14)
+        if (circuitBreakerConfig.enabled && !result.skipped) {
+          if (result.ok) {
+            providerCircuitBreaker.recordSuccess(provider);
+          } else {
+            providerCircuitBreaker.recordFailure(provider);
+            // Log error with context (Cursor Recommendation #10)
+            logErrorWithContext(new Error(result.error || "Provider failed"), {
+              provider,
+              template: args.template,
+              authMode: args.authMode
+            });
+          }
+        }
+
+        return { provider, result };
       };
+
+      return executeProvider();
+    });
+
+    // Wait for all providers to complete
+    const providerResults = await Promise.allSettled(providerPromises);
+
+    // Map results to results object
+    for (const result of providerResults) {
+      if (result.status === "fulfilled") {
+        results[result.value.provider] = result.value.result;
+      } else {
+        // Provider promise rejected - should not happen with our error handling
+        const provider = providersToExecute[providerResults.indexOf(result)];
+        const error = result.reason;
+
+        // Log error with context (Cursor Recommendation #10)
+        logErrorWithContext(error, {
+          provider,
+          template: args.template,
+          authMode: args.authMode
+        });
+
+        // Record failure in circuit breaker
+        if (circuitBreakerConfig.enabled) {
+          providerCircuitBreaker.recordFailure(provider);
+        }
+
+        results[provider] = {
+          ok: false,
+          error: sanitize(error?.message || String(error)),
+        };
+      }
+    }
+  } else {
+    // Sequential execution (original behavior, or when parallel is disabled)
+    console.error(`[perf] Running ${providersToExecute.length} providers sequentially...`);
+    for (const provider of providersToExecute) {
+      let result;
+      if (provider === "claude") {
+        result = await runClaude(prompt, {
+          authMode: args.authMode,
+          timeoutMs: args.timeoutMs,
+        });
+      } else if (provider === "gemini") {
+        result = await runGemini(prompt, args.model, {
+          authMode: args.authMode,
+          timeoutMs: args.timeoutMs,
+        });
+      } else {
+        result = {
+          skipped: true,
+          reason: `unsupported provider '${provider}' (supported: claude, gemini)`,
+        };
+      }
+
+      // Record success/failure in circuit breaker
+      if (circuitBreakerConfig.enabled && !result.skipped) {
+        if (result.ok) {
+          providerCircuitBreaker.recordSuccess(provider);
+        } else {
+          providerCircuitBreaker.recordFailure(provider);
+          logErrorWithContext(new Error(result.error || "Provider failed"), {
+            provider,
+            template: args.template,
+            authMode: args.authMode
+          });
+        }
+      }
+
+      results[provider] = result;
     }
   }
+
+  // Performance measurement: end timing
+  const providerEndTime = Date.now();
+  const providerDurationMs = providerEndTime - providerStartTime;
+  const successCount = Object.values(results).filter((r) => r.ok).length;
+
+  // Partial Failure Recovery (Cursor Recommendation #11)
+  let partialFailureStatus = null;
+  if (partialFailureConfig.enabled) {
+    const executedCount = Object.keys(results).length - skippedCount;
+    const successRate = executedCount > 0 ? successCount / executedCount : 0;
+    const meetsCount = successCount >= partialFailureConfig.min_success_count;
+    const meetsRate = successRate >= partialFailureConfig.min_success_rate;
+
+    partialFailureStatus = {
+      enabled: true,
+      success_count: successCount,
+      executed_count: executedCount,
+      success_rate: successRate,
+      meets_count_threshold: meetsCount,
+      meets_rate_threshold: meetsRate,
+      partial_success: !meetsCount && !meetsRate ? false : (skippedCount > 0 || successCount < executedCount)
+    };
+
+    if (partialFailureStatus.partial_success) {
+      console.error(
+        `[partial-failure] Proceeding with partial success: ${successCount}/${executedCount} providers`
+      );
+    }
+  }
+
+  console.error(
+    `[perf] ${availableProviders.length} providers completed in ${providerDurationMs}ms (${args.parallel ? "parallel" : "sequential"} execution, ${successCount}/${availableProviders.length} succeeded)`
+  );
 
   console.log(
     JSON.stringify(
@@ -605,6 +1103,26 @@ async function main() {
         template: args.template,
         authMode: args.authMode,
         providers: results,
+        // Performance metrics (Cursor Recommendation #2)
+        performance: {
+          totalDurationMs: providerDurationMs,
+          providersCount: availableProviders.length,
+          requestedProviders: providers.length,
+          successCount,
+          skippedCount,
+          parallelExecution: args.parallel,
+          cliValidation: cliValidation || null,
+          // Cursor Recommendation #11 - Partial Failure Recovery
+          partialFailure: partialFailureStatus,
+          // Cursor Recommendation #14 - Circuit Breaker Status
+          circuitBreaker: circuitBreakerConfig.enabled ? {
+            enabled: true,
+            skipped_providers: skippedCount,
+            providers_state: Object.fromEntries(
+              availableProviders.map(p => [p, providerCircuitBreaker.getState(p)])
+            )
+          } : null,
+        },
       },
       null,
       2,
@@ -613,6 +1131,7 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.error(`fatal: ${e?.message || e}`);
+  // Sanitize error output to prevent credential exposure
+  console.error(`fatal: ${sanitize(e?.message || String(e))}`);
   process.exit(1);
 });

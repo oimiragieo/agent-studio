@@ -18,33 +18,18 @@ import { stdin, stdout, stderr } from 'process';
 import { injectSkillsForAgent } from '../tools/skill-injector.mjs';
 
 /**
- * Read all data from stdin
+ * Read all data from stdin using async iteration
  * @returns {Promise<string>} Stdin content
  */
 async function readStdin() {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    let timeout;
+  const chunks = [];
 
-    // Set timeout to prevent hanging
-    timeout = setTimeout(() => {
-      reject(new Error('Timeout reading stdin'));
-    }, 5000);
+  // Use async iteration for automatic cleanup
+  for await (const chunk of stdin) {
+    chunks.push(chunk);
+  }
 
-    stdin.on('data', (chunk) => {
-      chunks.push(chunk);
-    });
-
-    stdin.on('end', () => {
-      clearTimeout(timeout);
-      resolve(Buffer.concat(chunks).toString('utf-8'));
-    });
-
-    stdin.on('error', (err) => {
-      clearTimeout(timeout);
-      reject(err);
-    });
-  });
+  return Buffer.concat(chunks).toString('utf-8');
 }
 
 /**

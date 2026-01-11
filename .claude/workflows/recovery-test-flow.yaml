@@ -1,311 +1,370 @@
-name: Recovery Test Workflow
-description: Tests error recovery mechanisms including checkpoints and fallback routing
-version: 1.0.0
-category: testing
-complexity: complex
-estimated_duration: 30-45 minutes
+name: Error Recovery and Checkpoint Restoration Workflow
+description: Comprehensive testing of error recovery mechanisms, checkpoint creation, and workflow resilience
+type: testing
+project_type: validation
+publish_policy: auto-on-pass  # Automatically publish artifacts after validation passes
 
-metadata:
-  workflow_type: testing
-  test_category: resilience
-  checkpoint_enabled: true
-  fallback_enabled: true
-  validation_gates: strict
+# Error Recovery Configuration
+recovery:
+  enabled: true
+  checkpoint_dir: ".claude/context/runs/{{run_id}}/checkpoints"
+  test_mode: true  # Enable test mode for recovery testing
+  checkpoint_phases: [1, 3, 5]  # Create checkpoints at these phase boundaries
+
+retry_config:
+  max_attempts: 3
+  backoff_strategy: exponential
+  initial_delay_ms: 1000
+  retryable_errors: [timeout, network_error, rate_limit]
+
+fallback_agents:
+  planner: [architect, pm]
+  qa: [developer, code-reviewer]
+  technical-writer: [developer, pm]
+  developer: [refactoring-specialist, code-reviewer]
+  orchestrator: [planner]
+
+# NOTE: trigger_keywords here are for documentation only.
+# The actual workflow selection uses keywords from .claude/config.yaml workflow_selection section.
+# See .claude/config.yaml for the authoritative keyword list used by the routing system.
+trigger_keywords:
+  - "test error recovery"
+  - "test checkpoint"
+  - "recovery test"
+  - "checkpoint restoration"
+  - "workflow resilience"
+
+# Workflow-Level Context Inputs
+workflow_inputs:
+  required:
+    - test_scenario  # "checkpoint_creation" | "checkpoint_restoration" | "fallback_routing" | "full_recovery"
+  optional:
+    - failure_step  # Step number to simulate failure (for restoration tests)
+    - checkpoint_phase  # Phase to restore from (1, 3, or 5)
 
 steps:
-  # Step 0: Initialize Test Environment
   - step: 0
-    name: "Initialize Test Environment"
-    agent: orchestrator
-    type: setup
-    description: "Set up test environment with checkpoint and fallback support"
-    inputs: []
-    outputs:
-      - .claude/context/runs/{{run_id}}/test-config.json
-    actions:
-      - Validate fallback configuration exists
-      - Validate checkpoint schema exists
-      - Create test run directory structure
-      - Initialize recovery log
-    validation:
-      schema: test-config.schema.json
-      required_files:
-        - .claude/config/fallback-agents.json
-        - .claude/schemas/checkpoint.schema.json
-        - .claude/tools/fallback-router.mjs
-
-  # Checkpoint after initialization
-  - step: 0.5
-    name: "Checkpoint: Initialization Complete"
-    agent: orchestrator
-    type: checkpoint
-    description: "Create checkpoint after test initialization"
+    name: "Planning Phase"
+    agent: planner
     inputs:
-      - test-config.json (from step 0)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - test_scenario  # Test scenario to execute
+      - failure_step  # (optional) Step to simulate failure
+      - checkpoint_phase  # (optional) Phase to restore from
     outputs:
-      - .claude/context/runs/{{run_id}}/checkpoints/checkpoint-init.json
-    checkpoint_data:
-      phase: "initialization"
-      completed_steps: [0]
-      artifacts_created: ["test-config.json"]
-      validation_status: "pass"
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    # Phase 2A: Skill requirements for this step
+    skill_requirements:
+      required:
+        - plan-generator
+        - sequential-thinking
+      recommended:
+        - diagram-generator
+      triggered:
+        - pattern: "recovery|checkpoint|resilience"
+          skills: [sequential-thinking, diagram-generator]
+          priority: required
+      outputs:
+        plan-generator:
+          primary: "plan-{{workflow_id}}.json"
+          schema: ".claude/schemas/plan.schema.json"
+          required_for_completion: true
+      validation:
+        mode: blocking
+        min_compliance: 100
+        on_failure: block
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Create comprehensive recovery test plan:
+      - Analyze checkpoint scenarios and recovery paths
+      - Identify fallback strategies
+      - Define test success criteria
+      - Create structured recovery test plan
 
-  # Step 1: Test Checkpoint Creation
+  - step: 0.1
+    name: "Plan Rating Gate"
+    agent: orchestrator
+    type: validation
+    skill: response-rater
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+    outputs:
+      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
+    validation:
+      minimum_score: 7
+      rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
+    retry:
+      max_attempts: 3
+      on_failure: escalate_to_human
+    description: |
+      Rate plan quality using response-rater skill.
+      - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+      - Minimum passing score: 7/10
+      - If score < 7: Return to Planner with feedback, request improvements, re-rate
+      - If score >= 7: Proceed with workflow execution
+      - Log rating in reasoning file and artifact metadata
+      - Never execute an unrated plan - this is a hard requirement
+
   - step: 1
-    name: "Test Checkpoint Creation"
+    name: "Checkpoint Creation Test (Phase 1)"
     agent: qa
-    type: validation
-    description: "Validate checkpoint creation mechanism"
+    checkpoint_phase: 1
     inputs:
-      - checkpoint-init.json (from step 0.5)
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/{{run_id}}/reports/checkpoint-creation-report.json
-    actions:
-      - Load checkpoint from step 0.5
-      - Validate against checkpoint.schema.json
-      - Verify all required fields present
-      - Verify artifact paths valid
-      - Check state snapshot accuracy
+      - checkpoint-phase-1-{{workflow_id}}.json
+      - checkpoint-validation-phase-1-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-qa.json
+    # Phase 2A: Skill requirements for this step
+    skill_requirements:
+      required:
+        - recovery
+        - evaluator
+      recommended:
+        - summarizer
+      triggered:
+        - pattern: "checkpoint|recovery|restoration"
+          skills: [recovery]
+          priority: required
+      outputs:
+        recovery:
+          primary: "checkpoint-phase-1-{{workflow_id}}.json"
+          schema: ".claude/schemas/checkpoint.schema.json"
+          required_for_completion: true
+      validation:
+        mode: blocking
+        min_compliance: 100
+        on_failure: block
     validation:
-      schema: checkpoint.schema.json
-      critical: true
+      schema: .claude/schemas/checkpoint.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/01-qa.json
+    description: |
+      Validate checkpoint creation at Phase 1 boundary:
+      - Create checkpoint after planning phase
+      - Verify checkpoint conforms to checkpoint.schema.json
+      - Validate checkpoint includes all required fields
+      - Check checkpoint includes completed steps, artifacts, state snapshot
+      - Save checkpoint to .claude/context/runs/{{run_id}}/checkpoints/
 
-  # Step 2: Test Fallback Routing
   - step: 2
-    name: "Test Fallback Routing"
+    name: "Simulated Work - Phase 2"
     agent: developer
-    type: test
-    description: "Test fallback agent routing on simulated failure"
     inputs:
-      - test-config.json (from step 0)
-      - fallback-agents.json (system config)
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - checkpoint-phase-1-{{workflow_id}}.json (from step 1)
     outputs:
-      - .claude/context/runs/{{run_id}}/reports/fallback-routing-report.json
-    actions:
-      - Create test task for developer agent
-      - Simulate agent failure
-      - Route to fallback using fallback-router.mjs
-      - Verify routing to refactoring-specialist
-      - Verify context preservation
-      - Log fallback event
+      - phase-2-work-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-developer.json
     validation:
-      schema: fallback-routing-report.schema.json
-      critical: true
+      gate: .claude/context/history/gates/{{workflow_id}}/02-developer.json
+    description: |
+      Simulate work for Phase 2:
+      - Create artifacts for Phase 2
+      - Progress workflow state
+      - Prepare for Phase 3 checkpoint
 
-  # Checkpoint after Phase 1 tests
-  - step: 2.5
-    name: "Checkpoint: Phase 1 Complete"
-    agent: orchestrator
-    type: checkpoint
-    description: "Create checkpoint after basic recovery tests"
-    inputs:
-      - checkpoint-creation-report.json (from step 1)
-      - fallback-routing-report.json (from step 2)
-    outputs:
-      - .claude/context/runs/{{run_id}}/checkpoints/checkpoint-phase-1.json
-    checkpoint_data:
-      phase: "basic_recovery_tests"
-      completed_steps: [0, 1, 2]
-      artifacts_created: ["checkpoint-creation-report.json", "fallback-routing-report.json"]
-      validation_status: "pass"
-      test_results:
-        checkpoint_creation: "pass"
-        fallback_routing: "pass"
-
-  # Step 3: Test Checkpoint Restoration
   - step: 3
-    name: "Test Checkpoint Restoration"
+    name: "Checkpoint Creation Test (Phase 3)"
     agent: qa
-    type: validation
-    description: "Test restoring state from checkpoint"
+    checkpoint_phase: 3
     inputs:
-      - checkpoint-phase-1.json (from step 2.5)
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - checkpoint-phase-1-{{workflow_id}}.json (from step 1)
+      - phase-2-work-{{workflow_id}}.json (from step 2)
     outputs:
-      - .claude/context/runs/{{run_id}}/reports/checkpoint-restoration-report.json
-    actions:
-      - Simulate workflow interruption
-      - Restore from checkpoint-phase-1.json
-      - Verify all artifacts restored
-      - Verify state matches checkpoint
-      - Verify completed_steps accurate
-      - Continue workflow from checkpoint
+      - checkpoint-phase-3-{{workflow_id}}.json
+      - checkpoint-validation-phase-3-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-qa.json
     validation:
-      schema: checkpoint-restoration-report.schema.json
-      critical: true
+      schema: .claude/schemas/checkpoint.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/03-qa.json
+    description: |
+      Validate checkpoint creation at Phase 3 boundary:
+      - Create checkpoint after design phase
+      - Verify checkpoint includes all work from Phase 1-3
+      - Validate checkpoint integrity
+      - Check state accuracy
 
-  # Step 4: Test Multi-Level Fallback
   - step: 4
-    name: "Test Multi-Level Fallback"
-    agent: developer
-    type: test
-    description: "Test multiple fallback levels (developer -> refactoring-specialist -> code-simplifier)"
-    inputs:
-      - test-config.json (from step 0)
-      - fallback-agents.json (system config)
-    outputs:
-      - .claude/context/runs/{{run_id}}/reports/multi-level-fallback-report.json
-    actions:
-      - Create test task for developer
-      - Simulate first failure -> route to refactoring-specialist
-      - Simulate second failure -> route to code-simplifier
-      - Verify fallback attempt tracking
-      - Verify max attempts enforced
-      - Verify escalation when fallbacks exhausted
-    validation:
-      schema: multi-level-fallback-report.schema.json
-      critical: true
-
-  # Checkpoint after Phase 2 tests
-  - step: 4.5
-    name: "Checkpoint: Phase 2 Complete"
-    agent: orchestrator
-    type: checkpoint
-    description: "Create checkpoint after advanced recovery tests"
-    inputs:
-      - checkpoint-restoration-report.json (from step 3)
-      - multi-level-fallback-report.json (from step 4)
-    outputs:
-      - .claude/context/runs/{{run_id}}/checkpoints/checkpoint-phase-2.json
-    checkpoint_data:
-      phase: "advanced_recovery_tests"
-      completed_steps: [0, 1, 2, 3, 4]
-      artifacts_created:
-        - "checkpoint-creation-report.json"
-        - "fallback-routing-report.json"
-        - "checkpoint-restoration-report.json"
-        - "multi-level-fallback-report.json"
-      validation_status: "pass"
-      test_results:
-        checkpoint_creation: "pass"
-        fallback_routing: "pass"
-        checkpoint_restoration: "pass"
-        multi_level_fallback: "pass"
-
-  # Step 5: Test Full Recovery Flow
-  - step: 5
-    name: "Test Full Recovery Flow (End-to-End)"
+    name: "Checkpoint Restoration Test"
     agent: qa
-    type: integration_test
-    description: "Test complete recovery scenario from catastrophic failure"
     inputs:
-      - checkpoint-phase-2.json (from step 4.5)
-      - All previous test reports
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - checkpoint-phase-3-{{workflow_id}}.json (from step 3)
+      # Workflow-level context inputs (provided at workflow start, not artifact files)
+      - checkpoint_phase  # (optional) Phase to restore from
     outputs:
-      - .claude/context/runs/{{run_id}}/reports/full-recovery-report.json
-    actions:
-      - Simulate catastrophic failure at arbitrary step
-      - Identify latest valid checkpoint
-      - Restore from checkpoint
-      - Verify all artifacts intact
-      - Verify validation gates re-passed
-      - Complete remaining workflow steps
-      - Verify final state matches expected
+      - restoration-validation-{{workflow_id}}.json
+      - restored-state-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-qa.json
+    # Phase 2A: Skill requirements for this step
+    skill_requirements:
+      required:
+        - recovery
+        - evaluator
+      recommended: []
+      triggered:
+        - pattern: "restore|recovery|checkpoint"
+          skills: [recovery]
+          priority: required
+      outputs:
+        recovery:
+          primary: "restoration-validation-{{workflow_id}}.json"
+          schema: ".claude/schemas/restoration-validation.schema.json"
+          required_for_completion: true
+      validation:
+        mode: blocking
+        min_compliance: 100
+        on_failure: block
     validation:
-      schema: full-recovery-report.schema.json
-      critical: true
+      schema: .claude/schemas/restoration-validation.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/04-qa.json
+    description: |
+      Test checkpoint restoration:
+      - Simulate failure scenario
+      - Restore from saved checkpoint (Phase 3)
+      - Verify state integrity and artifact preservation
+      - Validate completed steps match checkpoint
+      - Verify artifacts restored to correct locations
+      - Check validation gates passed
+      - Ensure no data loss or corruption
 
-  # Step 6: Performance Metrics Collection
+  - step: 5
+    name: "Fallback Agent Routing Test"
+    agent: qa
+    inputs:
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - restoration-validation-{{workflow_id}}.json (from step 4)
+    outputs:
+      - fallback-routing-log-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05-qa.json
+    validation:
+      schema: .claude/schemas/fallback-routing-log.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
+    description: |
+      Test fallback agent routing:
+      - Trigger primary agent failure
+      - Validate fallback routing to appropriate agent
+      - Verify context preservation across routing
+      - Check task context preserved (original description, artifacts, fallback history)
+      - Validate fallback agent completes task successfully
+      - Log all fallback events with timestamps
+
   - step: 6
-    name: "Collect Performance Metrics"
-    agent: performance-engineer
-    type: analysis
-    description: "Collect and analyze recovery performance metrics"
+    name: "Recovery Documentation"
+    agent: technical-writer
     inputs:
-      - All checkpoints from this run
-      - All recovery reports
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - checkpoint-validation-phase-1-{{workflow_id}}.json (from step 1)
+      - checkpoint-validation-phase-3-{{workflow_id}}.json (from step 3)
+      - restoration-validation-{{workflow_id}}.json (from step 4)
+      - fallback-routing-log-{{workflow_id}}.json (from step 5)
     outputs:
-      - .claude/context/runs/{{run_id}}/reports/recovery-performance-metrics.json
-    actions:
-      - Measure checkpoint creation time
-      - Measure checkpoint file sizes
-      - Measure restoration time
-      - Measure fallback routing time
-      - Calculate state accuracy percentage
-      - Generate performance dashboard
+      - recovery-documentation-{{workflow_id}}.md
+      - recovery-playbook-{{workflow_id}}.md
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/06-technical-writer.json
     validation:
-      schema: recovery-performance-metrics.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/06-technical-writer.json
+    description: |
+      Document recovery events and create playbook:
+      - Log all recovery operations
+      - Document checkpoint creation and restoration
+      - Record fallback routing events
+      - Create recovery playbook for future reference
+      - Save to .claude/context/logs/recovery.log
 
-  # Step 7: Final Validation and Report
   - step: 7
-    name: "Generate Recovery Test Report"
+    name: "Final Validation Report"
     agent: qa
-    type: report
-    description: "Generate comprehensive recovery testing report"
     inputs:
-      - All test reports from steps 1-6
-      - Performance metrics
+      # Artifact inputs (from previous steps)
+      - plan-{{workflow_id}}.json (from step 0)
+      - checkpoint-validation-phase-1-{{workflow_id}}.json (from step 1)
+      - checkpoint-validation-phase-3-{{workflow_id}}.json (from step 3)
+      - restoration-validation-{{workflow_id}}.json (from step 4)
+      - fallback-routing-log-{{workflow_id}}.json (from step 5)
+      - recovery-documentation-{{workflow_id}}.md (from step 6)
     outputs:
-      - .claude/context/runs/{{run_id}}/reports/recovery-test-summary.json
-      - .claude/context/reports/error-recovery-implementation-report.md
-    actions:
-      - Aggregate all test results
-      - Calculate pass/fail rates
-      - Identify issues or gaps
-      - Generate recommendations
-      - Create human-readable summary report
+      - recovery-test-report-{{workflow_id}}.json
+      - recovery-metrics-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/07-qa.json
     validation:
-      schema: recovery-test-summary.schema.json
-      critical: true
+      schema: .claude/schemas/recovery-test-report.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/07-qa.json
+    description: |
+      Generate final validation report:
+      - Verify all checkpoint creation tests passed
+      - Validate checkpoint restoration successful
+      - Confirm fallback routing worked correctly
+      - Check all artifacts preserved and validated
+      - Document recovery metrics (timing, accuracy, success rates)
+      - Provide comprehensive recovery test summary
 
-  # Final checkpoint
   - step: 7.5
-    name: "Checkpoint: Testing Complete"
+    name: "Publish Artifacts"
     agent: orchestrator
-    type: checkpoint
-    description: "Final checkpoint after all recovery tests"
+    skill: artifact-publisher
+    condition: "validation_status == 'pass'"
     inputs:
-      - recovery-test-summary.json (from step 7)
-    outputs:
-      - .claude/context/runs/{{run_id}}/checkpoints/checkpoint-final.json
-    checkpoint_data:
-      phase: "testing_complete"
-      completed_steps: [0, 1, 2, 3, 4, 5, 6, 7]
-      artifacts_created: "all"
-      validation_status: "pass"
-      final_report: "recovery-test-summary.json"
+      - artifact-registry.json
+    policy: auto-on-pass
+    retry:
+      max_attempts: 3
+      on_failure: log_and_continue
 
-validation_gates:
-  - step: 1
-    type: schema_validation
-    schema: checkpoint.schema.json
-    on_failure: halt
-  - step: 2
-    type: schema_validation
-    schema: fallback-routing-report.schema.json
-    on_failure: halt
-  - step: 3
-    type: schema_validation
-    schema: checkpoint-restoration-report.schema.json
-    on_failure: halt
-  - step: 4
-    type: schema_validation
-    schema: multi-level-fallback-report.schema.json
-    on_failure: halt
-  - step: 5
-    type: schema_validation
-    schema: full-recovery-report.schema.json
-    on_failure: halt
-  - step: 7
-    type: comprehensive_validation
-    on_failure: halt
-
-recovery_config:
-  checkpoint_frequency: "after_major_phase"
-  checkpoint_retention: 7 # days
-  fallback_enabled: true
-  max_fallback_attempts: 2
-  escalation_strategy: "orchestrator"
-  notify_on_recovery: true
-
-error_handling:
-  checkpoint_creation_failure: "log_and_continue"
-  restoration_failure: "try_previous_checkpoint"
-  fallback_routing_failure: "escalate"
-  validation_failure: "halt"
-
-notes:
-  - All checkpoints automatically created by orchestrator
-  - Fallback routing uses .claude/config/fallback-agents.json
+completion_criteria:
+  - Plan created and rated (score >= 7/10)
+  - Plan rating recorded in run state
+  - Checkpoint created after Phase 1 with schema validation
+  - Checkpoint created after Phase 3 with schema validation
+  - Checkpoint restoration successful with 100% state accuracy
+  - Fallback agent receives task with preserved context
   - Recovery events logged to .claude/context/logs/recovery.log
-  - Performance targets: checkpoint < 500ms, restore < 2s
-  - State accuracy must be 100% for validation to pass
+  - All artifacts restored from checkpoint correctly
+  - Recovery playbook created
+  - Final validation report generated
+
+test_scenarios:
+  checkpoint_creation:
+    description: "Validate checkpoint creation at phase boundaries"
+    phases: [1, 3, 5]
+    validation: "Checkpoints exist and conform to schema"
+
+  checkpoint_restoration:
+    description: "Test restoration from checkpoint"
+    restore_from_phase: 3
+    simulate_failure_at_step: 4
+    validation: "State restored exactly, no data loss"
+
+  fallback_routing:
+    description: "Test fallback agent routing"
+    primary_agent: developer
+    expected_fallback: refactoring-specialist
+    validation: "Task context preserved, routing successful"
+
+  full_recovery:
+    description: "End-to-end recovery flow"
+    checkpoints: [1, 3, 5]
+    failure_step: 6
+    restore_from_phase: 5
+    validation: "Complete recovery, workflow continues successfully"
+
+recovery_metrics:
+  checkpoint_creation_time: "< 500ms"
+  checkpoint_file_size: "< 100KB"
+  restoration_time: "< 2s"
+  state_accuracy: "100%"
+  fallback_routing_time: "< 100ms"
+  context_preservation: "100%"

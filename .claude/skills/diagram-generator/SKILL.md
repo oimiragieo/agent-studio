@@ -1,6 +1,7 @@
 ---
 name: diagram-generator
 description: Generates architecture, database, and system diagrams using Mermaid syntax. Creates visual representations of system architecture, database schemas, component relationships, and data flows.
+model: sonnet
 allowed-tools: read, write, glob, search, codebase_search
 version: 1.0
 best_practices:

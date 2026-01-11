@@ -569,6 +569,48 @@ node .claude/tools/response-rater-provider-selector.mjs --workflow <name>
 
 ---
 
+## Security
+
+### API Key Protection
+
+This skill implements defense-in-depth for credential protection following OWASP A02:2021 guidelines.
+
+**Automatic Sanitization**:
+- All error messages are automatically sanitized to prevent API key leakage
+- Stack traces and stderr output are filtered before logging
+- Environment variable values are redacted in error contexts
+- Provider authentication failures never expose actual credentials
+
+**Sanitized Patterns**:
+- Anthropic API keys (`sk-ant-...`)
+- OpenAI API keys (`sk-...`)
+- Google/Gemini API keys (`AIza...`)
+- GitHub tokens (`ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_`)
+- JWT tokens
+- Authorization headers (Bearer, Basic)
+- Environment variable assignments (`KEY=value`)
+- Long alphanumeric tokens (40+ characters)
+
+**Best Practices**:
+1. **Use session-first authentication** - Avoids storing API keys in environment
+2. **Never commit API keys** - Use environment variables or secret managers
+3. **Rotate keys regularly** - Especially after suspected exposure
+4. **Monitor logs for `[REDACTED]` markers** - Indicates potential key exposure attempt was blocked
+5. **Use CI secrets** - Store keys in CI/CD secret management, not in code
+
+**Implementation**:
+```javascript
+// Error handling in rate.js automatically sanitizes
+const { sanitize } = require('../../shared/sanitize-secrets.js');
+console.error(`fatal: ${sanitize(error.message)}`); // Safe to log
+```
+
+**Security Audit**:
+- Run `node .claude/tools/test-sanitization.mjs` to verify sanitization patterns
+- All 15 test cases must pass before deployment
+
+---
+
 ## References
 
 - **Plan Rating Guide**: `.claude/docs/PLAN_RATING_GUIDE.md` (comprehensive documentation)

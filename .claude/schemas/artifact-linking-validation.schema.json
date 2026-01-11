@@ -1,0 +1,203 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Artifact Linking Validation",
+  "description": "Schema for validating bidirectional artifact linking between strategic and implementation plans",
+  "required": ["validation_id", "validated_at", "workflow_id", "linking_status", "checks"],
+  "properties": {
+    "validation_id": {
+      "type": "string",
+      "description": "Unique identifier for this validation"
+    },
+    "validated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when validation was performed"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Workflow ID being validated"
+    },
+    "linking_status": {
+      "type": "string",
+      "enum": ["valid", "invalid", "partial"],
+      "description": "Overall linking validation status"
+    },
+    "checks": {
+      "type": "object",
+      "required": ["strategic_to_implementation", "implementation_to_strategic", "workflow_id_match"],
+      "properties": {
+        "strategic_to_implementation": {
+          "type": "object",
+          "required": ["passed", "details"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether strategic plan references implementation plan"
+            },
+            "details": {
+              "type": "string",
+              "description": "Details about the check"
+            },
+            "implementation_plan_location": {
+              "type": "string",
+              "description": "Location referenced in strategic plan"
+            }
+          }
+        },
+        "implementation_to_strategic": {
+          "type": "object",
+          "required": ["passed", "details"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether implementation plan references strategic plan ID"
+            },
+            "details": {
+              "type": "string",
+              "description": "Details about the check"
+            },
+            "strategic_plan_id": {
+              "type": "string",
+              "description": "Strategic plan ID referenced in implementation plan"
+            }
+          }
+        },
+        "workflow_id_match": {
+          "type": "object",
+          "required": ["passed", "details"],
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether both plans use the same workflow ID"
+            },
+            "details": {
+              "type": "string",
+              "description": "Details about the check"
+            },
+            "strategic_workflow_id": {
+              "type": "string"
+            },
+            "implementation_workflow_id": {
+              "type": "string"
+            }
+          }
+        },
+        "link_integrity": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether artifact links are valid and accessible"
+            },
+            "details": {
+              "type": "string"
+            },
+            "broken_links": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of broken or invalid links"
+            }
+          }
+        },
+        "plan_mode_artifact_persistence": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "Whether Plan Mode artifacts are persisted correctly"
+            },
+            "details": {
+              "type": "string"
+            },
+            "artifact_location": {
+              "type": "string",
+              "description": "Location of persisted Plan Mode artifacts"
+            }
+          }
+        }
+      }
+    },
+    "artifacts_validated": {
+      "type": "object",
+      "properties": {
+        "strategic_plan": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "exists": {
+              "type": "boolean"
+            },
+            "valid": {
+              "type": "boolean"
+            }
+          }
+        },
+        "implementation_plan": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "exists": {
+              "type": "boolean"
+            },
+            "valid": {
+              "type": "boolean"
+            }
+          }
+        },
+        "handoff_package": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "exists": {
+              "type": "boolean"
+            },
+            "valid": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning", "info"]
+          },
+          "check": {
+            "type": "string",
+            "description": "Which check failed"
+          },
+          "message": {
+            "type": "string",
+            "description": "Issue description"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "How to fix the issue"
+          }
+        }
+      },
+      "description": "List of issues found during validation"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommendations for improving artifact linking"
+    }
+  }
+}
