@@ -23,9 +23,26 @@ process.env.CLAUDE_ORCHESTRATOR_AUDIT_EXECUTING = 'true';
 // Timeout protection - force exit after 2 seconds
 const timeout = setTimeout(() => {
   console.error('[ORCHESTRATOR AUDIT] Timeout exceeded, exiting');
-  delete process.env.CLAUDE_ORCHESTRATOR_AUDIT_EXECUTING;
-  process.exit(0);
+  try {
+    delete process.env.CLAUDE_ORCHESTRATOR_AUDIT_EXECUTING;
+  } finally {
+    process.exit(0);
+  }
 }, 2000);
+
+function safeExit(code = 0) {
+  try {
+    clearTimeout(timeout);
+  } catch {
+    // ignore
+  }
+
+  try {
+    delete process.env.CLAUDE_ORCHESTRATOR_AUDIT_EXECUTING;
+  } finally {
+    process.exit(code);
+  }
+}
 
 const SESSION_STATE_PATH = join(
   __dirname,
@@ -136,7 +153,7 @@ async function main() {
       hookInput = JSON.parse(input);
     } catch (e) {
       // Invalid input, exit silently
-      return;
+      safeExit(0);
     }
 
     const tool = hookInput.tool_name || hookInput.tool;
@@ -145,7 +162,7 @@ async function main() {
 
     // Skip auditing orchestration tools to prevent recursion
     if (tool === 'Task' || tool === 'TodoWrite') {
-      return;
+      safeExit(0);
     }
 
     // Load session state (async) + apply any debounced deltas
@@ -156,7 +173,7 @@ async function main() {
 
     if (!effectiveState || effectiveState.agent_role !== 'orchestrator') {
       // Not an orchestrator session, skip audit
-      return;
+      safeExit(0);
     }
 
     // Log the audit entry
@@ -194,6 +211,5 @@ main()
     console.error('Audit hook error:', error);
   })
   .finally(() => {
-    clearTimeout(timeout);
-    delete process.env.CLAUDE_ORCHESTRATOR_AUDIT_EXECUTING;
+    safeExit(0);
   });
