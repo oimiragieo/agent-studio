@@ -175,6 +175,7 @@ function summarizeToolInput(tool, toolInput) {
 
 let sessionStateCache = null;
 let sessionStateCacheAt = 0;
+let sessionStateCacheHasUncompactedUpdates = false;
 
 async function loadSessionStateFromDisk() {
   try {
@@ -305,6 +306,12 @@ async function appendSessionDelta(delta) {
     const dir = dirname(SESSION_DELTA_PATH);
     await mkdir(dir, { recursive: true });
     await appendFile(SESSION_DELTA_PATH, JSON.stringify(delta) + '\n', 'utf-8');
+
+    if (sessionStateCache) {
+      applySessionDeltas(sessionStateCache, [delta]);
+      sessionStateCacheAt = Date.now();
+      sessionStateCacheHasUncompactedUpdates = true;
+    }
   } catch {
     // ignore (fail-open)
   }
@@ -347,18 +354,14 @@ async function releaseCompactLock() {
 async function compactSessionStateIfNeeded({ force } = { force: false }) {
   const now = Date.now();
 
-  let baseState = await loadSessionStateFromDisk();
-  if (!baseState && sessionStateCache) baseState = sessionStateCache;
+  let baseState =
+    !sessionStateCacheHasUncompactedUpdates &&
+    sessionStateCache &&
+    now - sessionStateCacheAt < STATE_CACHE_TTL_MS
+      ? sessionStateCache
+      : await loadSessionStateFromDisk();
 
-  const diskLastCompact = Number.isFinite(baseState?.last_compact_ms)
-    ? baseState.last_compact_ms
-    : 0;
-  const cacheLastCompact = Number.isFinite(sessionStateCache?.last_compact_ms)
-    ? sessionStateCache.last_compact_ms
-    : 0;
-  if (sessionStateCache && cacheLastCompact > diskLastCompact) {
-    baseState = sessionStateCache;
-  }
+  if (!baseState && sessionStateCache) baseState = sessionStateCache;
 
   if (!baseState) return;
 
@@ -410,6 +413,7 @@ async function compactSessionStateIfNeeded({ force } = { force: false }) {
     await writeSessionState(merged);
     sessionStateCache = merged;
     sessionStateCacheAt = now;
+    sessionStateCacheHasUncompactedUpdates = false;
   } finally {
     try {
       if (existsSync(snapshotPath)) await unlink(snapshotPath);
@@ -492,10 +496,12 @@ async function main() {
 
   // Ensure session state exists on disk for subsequent hook invocations.
   if (!existsSync(SESSION_STATE_PATH)) {
-    state.last_compact_ms = Date.now();
+    const nowMs = Date.now();
+    state.last_compact_ms = nowMs;
     await writeSessionState(state);
-    sessionStateCache = state;
-    sessionStateCacheAt = Date.now();
+    sessionStateCache = structuredClone(state);
+    sessionStateCacheAt = nowMs;
+    sessionStateCacheHasUncompactedUpdates = false;
   }
 
   state.agent_role = 'orchestrator';
