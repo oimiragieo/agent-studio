@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.com/schemas/memory-thresholds.schema.json",
+  "title": "Memory Thresholds Configuration Schema",
+  "description": "Centralized memory threshold configuration for all system components",
+  "type": "object",
+  "required": ["version", "thresholds"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of this configuration"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of this configuration"
+    },
+    "thresholds": {
+      "type": "object",
+      "required": ["skill_injection", "workflow_runner", "shared_cache", "context_monitoring"],
+      "properties": {
+        "skill_injection": {
+          "type": "object",
+          "required": ["max_memory_gb", "warning_threshold_gb", "critical_threshold_gb", "check_interval_ms"],
+          "properties": {
+            "max_memory_gb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Maximum memory limit in GB"
+            },
+            "warning_threshold_gb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Warning threshold in GB"
+            },
+            "critical_threshold_gb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Critical threshold in GB"
+            },
+            "check_interval_ms": {
+              "type": "integer",
+              "minimum": 1000,
+              "description": "Check interval in milliseconds"
+            }
+          }
+        },
+        "workflow_runner": {
+          "type": "object",
+          "required": ["max_memory_gb", "warning_threshold_gb", "critical_threshold_gb", "check_interval_ms"],
+          "properties": {
+            "max_memory_gb": {
+              "type": "number",
+              "minimum": 0
+            },
+            "warning_threshold_gb": {
+              "type": "number",
+              "minimum": 0
+            },
+            "critical_threshold_gb": {
+              "type": "number",
+              "minimum": 0
+            },
+            "check_interval_ms": {
+              "type": "integer",
+              "minimum": 1000
+            }
+          }
+        },
+        "shared_cache": {
+          "type": "object",
+          "required": ["max_size_mb", "warning_threshold_mb", "eviction_threshold_mb", "ttl_seconds"],
+          "properties": {
+            "max_size_mb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Maximum cache size in MB"
+            },
+            "warning_threshold_mb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Warning threshold in MB"
+            },
+            "eviction_threshold_mb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Eviction starts at this threshold"
+            },
+            "ttl_seconds": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Time-to-live for cache entries in seconds"
+            }
+          }
+        },
+        "context_monitoring": {
+          "type": "object",
+          "required": ["max_tokens", "warning_threshold_tokens", "critical_threshold_tokens", "estimation_ratio"],
+          "properties": {
+            "max_tokens": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Maximum context tokens"
+            },
+            "warning_threshold_tokens": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Warning threshold in tokens"
+            },
+            "critical_threshold_tokens": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Critical threshold in tokens"
+            },
+            "estimation_ratio": {
+              "type": "number",
+              "minimum": 1,
+              "description": "Characters per token estimation ratio"
+            }
+          }
+        }
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "updated_by": {
+      "type": "string",
+      "description": "Who/what updated this configuration"
+    }
+  }
+}
