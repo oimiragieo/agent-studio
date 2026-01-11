@@ -39,17 +39,17 @@ const benchmark = await benchmarker.startBenchmark('CUJ-001');
 benchmarker.recordStep(benchmark, 1, {
   action: 'parse_workflow',
   agent: 'planner',
-  workflow: 'greenfield-workflow'
+  workflow: 'greenfield-workflow',
 });
 
 benchmarker.recordStep(benchmark, 2, {
   action: 'validate_schema',
-  agent: 'qa'
+  agent: 'qa',
 });
 
 benchmarker.recordStep(benchmark, 3, {
   action: 'execute_agent',
-  agent: 'developer'
+  agent: 'developer',
 });
 
 // End benchmark and get report
@@ -88,11 +88,13 @@ Creates a new benchmarker instance. Metrics are stored in `.claude/context/perfo
 Start benchmarking a CUJ execution.
 
 **Parameters**:
+
 - `cujId` (string): CUJ identifier (e.g., 'CUJ-001')
 
 **Returns**: `Benchmark` object for tracking
 
 **Example**:
+
 ```javascript
 const benchmark = await benchmarker.startBenchmark('CUJ-001');
 ```
@@ -102,15 +104,17 @@ const benchmark = await benchmarker.startBenchmark('CUJ-001');
 Record completion of a workflow step.
 
 **Parameters**:
+
 - `benchmark` (Benchmark): Active benchmark object
 - `stepNumber` (number): Step number/sequence
 - `stepData` (Object): Additional step metadata (optional)
 
 **Example**:
+
 ```javascript
 benchmarker.recordStep(benchmark, 1, {
   action: 'parse_workflow',
-  agent: 'planner'
+  agent: 'planner',
 });
 ```
 
@@ -119,11 +123,13 @@ benchmarker.recordStep(benchmark, 1, {
 End benchmarking and save metrics.
 
 **Parameters**:
+
 - `benchmark` (Benchmark): Completed benchmark object
 
 **Returns**: `Promise<PerformanceReport>` - Formatted performance report
 
 **Example**:
+
 ```javascript
 const report = await benchmarker.endBenchmark(benchmark);
 ```
@@ -133,11 +139,13 @@ const report = await benchmarker.endBenchmark(benchmark);
 Generate performance report from benchmark data.
 
 **Parameters**:
+
 - `benchmark` (Benchmark): Completed benchmark
 
 **Returns**: `PerformanceReport` object
 
 **Report Structure**:
+
 ```javascript
 {
   cuj_id: "CUJ-001",
@@ -160,6 +168,7 @@ Get aggregated statistics across all benchmarked CUJs.
 **Returns**: `Promise<Object>` - Aggregated statistics
 
 **Statistics Structure**:
+
 ```javascript
 {
   total_cujs: 25,
@@ -184,10 +193,10 @@ Get aggregated statistics across all benchmarked CUJs.
 ```typescript
 interface Benchmark {
   cuj_id: string;
-  start_time: number;           // Unix timestamp
+  start_time: number; // Unix timestamp
   start_memory: NodeJS.MemoryUsage;
   steps: BenchmarkStep[];
-  end_time?: number;            // Unix timestamp
+  end_time?: number; // Unix timestamp
   total_duration_ms?: number;
   end_memory?: NodeJS.MemoryUsage;
 }
@@ -198,10 +207,10 @@ interface Benchmark {
 ```typescript
 interface BenchmarkStep {
   step: number;
-  timestamp: number;            // Unix timestamp
-  duration_ms: number;          // Time from benchmark start
+  timestamp: number; // Unix timestamp
+  duration_ms: number; // Time from benchmark start
   memory: NodeJS.MemoryUsage;
-  [key: string]: any;           // Additional metadata
+  [key: string]: any; // Additional metadata
 }
 ```
 
@@ -210,13 +219,13 @@ interface BenchmarkStep {
 ```typescript
 interface PerformanceReport {
   cuj_id: string;
-  total_time: string;           // Formatted (e.g., "5.42s")
+  total_time: string; // Formatted (e.g., "5.42s")
   steps_count: number;
-  avg_step_time: string;        // Formatted
-  memory_used: string;          // Formatted (e.g., "2.34 MB")
+  avg_step_time: string; // Formatted
+  memory_used: string; // Formatted (e.g., "2.34 MB")
   slowest_step: {
     step: number;
-    duration: string;           // Formatted
+    duration: string; // Formatted
     action?: string;
   };
 }
@@ -248,7 +257,7 @@ for (let i = 0; i < steps.length; i++) {
 
   benchmarker.recordStep(benchmark, i + 1, {
     action: steps[i].action,
-    agent: steps[i].agent
+    agent: steps[i].agent,
   });
 }
 
@@ -270,7 +279,7 @@ async function runTrackedWorkflow(workflowId, cujId) {
     const result = await executeWorkflow(workflowId, {
       onStepComplete: (stepNum, stepData) => {
         benchmarker.recordStep(benchmark, stepNum, stepData);
-      }
+      },
     });
 
     return await benchmarker.endBenchmark(benchmark);
@@ -297,17 +306,17 @@ console.log(`Occurs in ${stats.most_common_slowest_step.percentage} of execution
 
 ```javascript
 // Load metrics file
-const metrics = JSON.parse(
-  await readFile('.claude/context/performance/cuj-metrics.json', 'utf-8')
-);
+const metrics = JSON.parse(await readFile('.claude/context/performance/cuj-metrics.json', 'utf-8'));
 
 // Filter by CUJ
 const cuj001Metrics = metrics.filter(m => m.cuj_id === 'CUJ-001');
 const cuj002Metrics = metrics.filter(m => m.cuj_id === 'CUJ-002');
 
 // Compare average times
-const avg001 = cuj001Metrics.reduce((sum, m) => sum + m.total_duration_ms, 0) / cuj001Metrics.length;
-const avg002 = cuj002Metrics.reduce((sum, m) => sum + m.total_duration_ms, 0) / cuj002Metrics.length;
+const avg001 =
+  cuj001Metrics.reduce((sum, m) => sum + m.total_duration_ms, 0) / cuj001Metrics.length;
+const avg002 =
+  cuj002Metrics.reduce((sum, m) => sum + m.total_duration_ms, 0) / cuj002Metrics.length;
 
 console.log(`CUJ-001 avg: ${(avg001 / 1000).toFixed(2)}s`);
 console.log(`CUJ-002 avg: ${(avg002 / 1000).toFixed(2)}s`);
@@ -352,16 +361,18 @@ The metrics file (`.claude/context/performance/cuj-metrics.json`) stores an arra
 1. **Always End Benchmarks**: Even if workflow execution fails, call `endBenchmark()` to save partial metrics
 
 2. **Include Metadata**: Add relevant metadata to steps for better analysis:
+
    ```javascript
    benchmarker.recordStep(benchmark, 1, {
      action: 'validate_schema',
      agent: 'qa',
      schema: 'workflow.schema.json',
-     validation_errors: 0
+     validation_errors: 0,
    });
    ```
 
 3. **Regular Analysis**: Review aggregated statistics regularly to identify performance trends:
+
    ```bash
    node .claude/tools/performance-benchmarker.mjs stats
    ```
@@ -411,6 +422,6 @@ node .claude/tools/performance-benchmarker.mjs help
 
 ## Version History
 
-| Version | Date       | Changes                          |
-| ------- | ---------- | -------------------------------- |
+| Version | Date       | Changes                            |
+| ------- | ---------- | ---------------------------------- |
 | 1.0.0   | 2025-01-11 | Initial release with core features |

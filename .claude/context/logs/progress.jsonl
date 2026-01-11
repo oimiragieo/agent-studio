@@ -1,2 +1,4 @@
 {"timestamp":1767977312296,"iso_timestamp":"2026-01-09T16:48:32.296Z","run_id":"test-run-001","step":1,"status":"running","percentage":25,"message":"Test step 1","metadata":{}}
 {"timestamp":1767977312296,"iso_timestamp":"2026-01-09T16:48:32.296Z","run_id":"test-run-001","step":2,"status":"completed","percentage":100,"message":"Test complete","metadata":{}}
+{"timestamp":1768159430120,"iso_timestamp":"2026-01-11T19:23:50.120Z","run_id":"test-run-001","step":1,"status":"running","percentage":25,"message":"Test step 1","metadata":{}}
+{"timestamp":1768159430120,"iso_timestamp":"2026-01-11T19:23:50.120Z","run_id":"test-run-001","step":2,"status":"completed","percentage":100,"message":"Test complete","metadata":{}}

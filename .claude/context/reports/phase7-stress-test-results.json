@@ -1,6 +1,6 @@
 {
   "title": "Phase 7 Memory Exhaustion Stress Test Results",
-  "generated": "2026-01-09T22:46:00.066Z",
+  "generated": "2026-01-11T19:26:06.299Z",
   "configuration": {
     "numSubagentCycles": 5,
     "toolUsesPerSubagent": 15,
@@ -18,19 +18,24 @@
     "minFreeMemoryMB": 500
   },
   "results": {
-    "duration_minutes": "2.14",
+    "duration_minutes": "2.13",
     "completion_status": "completed",
     "exit_code": 0
   },
   "memory_metrics": {
-    "heap_start_mb": "6.04",
-    "heap_peak_mb": "10.23",
-    "heap_end_mb": "5.34",
+    "heap_start_mb": "6.05",
+    "heap_peak_mb": "10.31",
+    "heap_end_mb": "5.69",
+    "rss_start_mb": "51.79",
+    "rss_peak_mb": "61.42",
+    "rss_end_mb": "48.22",
     "heap_limit_mb": 4096,
-    "peak_usage_percent": "0.2"
+    "rss_limit_mb": 4096,
+    "heap_peak_usage_percent": "0.3",
+    "rss_peak_usage_percent": "1.5"
   },
   "event_counts": {
-    "gc_count": 6,
+    "gc_count": 0,
     "cleanup_count": 6,
     "spawn_count": 5,
     "concurrent_peak_spawns": 1,
@@ -46,13 +51,13 @@
     "original_subagent_tools": 13,
     "original_background_tasks": 2,
     "original_result": "JavaScript heap out of memory",
-    "test_duration_minutes": "2.14",
+    "test_duration_minutes": "2.13",
     "test_tokens_simulated": 250000,
     "test_subagent_tools": 15,
     "test_background_tasks": 2,
     "test_result": "completed"
   },
   "pass_fail_decision": "PASS",
-  "justification": "Stress test completed successfully. Peak memory: 0.2%",
+  "justification": "Stress test completed successfully. Peak RSS: 1.5% (61.42MB)",
   "recommendations": []
 }

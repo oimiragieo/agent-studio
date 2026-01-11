@@ -27,6 +27,7 @@ Successfully implemented workflow template substitution engine to fix CUJ-044 pl
 **Purpose**: Mustache-style placeholder substitution for workflow YAML files
 
 **Features**:
+
 - Simple placeholder syntax: `{{variable}}`
 - Nested property support: `{{object.property}}`
 - Validation to detect unresolved placeholders
@@ -34,6 +35,7 @@ Successfully implemented workflow template substitution engine to fix CUJ-044 pl
 - Error handling with descriptive messages
 
 **API**:
+
 ```javascript
 import { WorkflowTemplateEngine } from './.claude/tools/workflow-template-engine.mjs';
 
@@ -53,6 +55,7 @@ engine.validate(content); // Throws if unresolved placeholders found
 ```
 
 **CLI Usage**:
+
 ```bash
 node .claude/tools/workflow-template-engine.mjs \
   templates/fallback-routing-template.yaml \
@@ -67,6 +70,7 @@ node .claude/tools/workflow-template-engine.mjs \
 **Purpose**: Reusable template for fallback routing workflows
 
 **Placeholders Documented**:
+
 - `{{primary_agent}}` - Primary agent to attempt task
 - `{{fallback_agent}}` - Fallback agent if primary fails
 - `{{workflow_id}}` - Unique workflow identifier
@@ -80,21 +84,25 @@ node .claude/tools/workflow-template-engine.mjs \
 ### 3. Concrete Workflows (3 files)
 
 #### **developer → qa** (`.claude/workflows/fallback-routing-developer-qa.yaml`)
+
 - Primary agent: `developer`
 - Fallback agent: `qa`
 - Use case: Code implementation fails, QA takes over for validation approach
 
 #### **architect → developer** (`.claude/workflows/fallback-routing-architect-developer.yaml`)
+
 - Primary agent: `architect`
 - Fallback agent: `developer`
 - Use case: Architecture design fails, developer implements alternative approach
 
 #### **security-architect → developer** (`.claude/workflows/fallback-routing-security-architect-developer.yaml`)
+
 - Primary agent: `security-architect`
 - Fallback agent: `developer`
 - Use case: Security design fails, developer implements baseline security
 
 **Validation Results**:
+
 - ✅ All placeholders resolved (no `{{...}}` patterns remaining)
 - ✅ Valid YAML syntax (yaml.load() succeeds)
 - ✅ Agent names correctly substituted in workflow steps
@@ -106,20 +114,22 @@ node .claude/tools/workflow-template-engine.mjs \
 
 **Test Coverage**: 5 test cases, all passing ✅
 
-| Test | Description | Status |
-|------|-------------|--------|
-| **Test 1** | Basic substitution | ✅ PASS |
-| **Test 2** | Multiple placeholders | ✅ PASS |
-| **Test 3** | Nested placeholders | ✅ PASS |
+| Test       | Description                  | Status  |
+| ---------- | ---------------------------- | ------- |
+| **Test 1** | Basic substitution           | ✅ PASS |
+| **Test 2** | Multiple placeholders        | ✅ PASS |
+| **Test 3** | Nested placeholders          | ✅ PASS |
 | **Test 4** | Concrete workflow validation | ✅ PASS |
-| **Test 5** | Validation function | ✅ PASS |
+| **Test 5** | Validation function          | ✅ PASS |
 
 **Test 4 Validates**:
+
 - No unresolved placeholders in concrete workflows
 - YAML syntax validity
 - Correct agent substitution in step 1 and step 4
 
 **Example Test Output**:
+
 ```
 Test 4: Validate concrete workflows
   ✅ PASS: .claude/workflows/fallback-routing-developer-qa.yaml
@@ -135,6 +145,7 @@ Test 4: Validate concrete workflows
 ### Problem Analysis
 
 **Root Cause** (from diagnosis report):
+
 - `fallback-routing-flow.yaml` contains 65+ placeholders
 - No template engine exists to substitute placeholders
 - Workflow executor passes literal `{{workflow_id}}` strings to agents
@@ -143,12 +154,14 @@ Test 4: Validate concrete workflows
 ### Solution Design
 
 **Template Engine Architecture**:
+
 1. **Read template**: Load YAML file with placeholders
 2. **Substitute**: Replace all `{{variable}}` with actual values
 3. **Validate**: Ensure no placeholders remain
 4. **Write**: Save concrete workflow
 
 **Substitution Algorithm**:
+
 ```javascript
 // Simple placeholders: {{variable}}
 for (const [key, value] of Object.entries(context)) {
@@ -169,6 +182,7 @@ result = result.replace(/\{\{(\w+\.\w+)\}\}/g, (match, path) => {
 ### Generation Script
 
 Used inline Node.js script to generate concrete workflows:
+
 ```javascript
 const configs = [
   { primary_agent: 'developer', fallback_agent: 'qa', ... },
@@ -192,26 +206,28 @@ for (const config of configs) {
 ### Placeholder Resolution
 
 **Before**:
+
 ```yaml
 steps:
   - step: 1
-    agent: '{{primary_agent}}'  # ❌ Not substituted
+    agent: '{{primary_agent}}' # ❌ Not substituted
 ```
 
 **After**:
+
 ```yaml
 steps:
   - step: 1
-    agent: 'developer'  # ✅ Correctly substituted
+    agent: 'developer' # ✅ Correctly substituted
 ```
 
 ### Concrete Workflow Validation
 
-| Workflow | Placeholders | YAML Valid | Agents Correct |
-|----------|-------------|------------|----------------|
-| developer-qa | ✅ None | ✅ Yes | ✅ Yes |
-| architect-developer | ✅ None | ✅ Yes | ✅ Yes |
-| security-architect-developer | ✅ None | ✅ Yes | ✅ Yes |
+| Workflow                     | Placeholders | YAML Valid | Agents Correct |
+| ---------------------------- | ------------ | ---------- | -------------- |
+| developer-qa                 | ✅ None      | ✅ Yes     | ✅ Yes         |
+| architect-developer          | ✅ None      | ✅ Yes     | ✅ Yes         |
+| security-architect-developer | ✅ None      | ✅ Yes     | ✅ Yes         |
 
 ### Test Suite Results
 
@@ -231,16 +247,17 @@ Test 5: Validation function ✅ PASS
 
 All files follow `.claude/rules/subagent-file-rules.md`:
 
-| File Type | Location | Compliance |
-|-----------|----------|------------|
-| Template Engine | `.claude/tools/` | ✅ Correct |
-| Master Template | `.claude/workflows/templates/` | ✅ Correct |
-| Concrete Workflows | `.claude/workflows/` | ✅ Correct |
-| Test Suite | `.claude/tools/` | ✅ Correct |
-| Implementation Manifest | `.claude/context/artifacts/` | ✅ Correct |
-| Implementation Report | `.claude/context/reports/` | ✅ Correct |
+| File Type               | Location                       | Compliance |
+| ----------------------- | ------------------------------ | ---------- |
+| Template Engine         | `.claude/tools/`               | ✅ Correct |
+| Master Template         | `.claude/workflows/templates/` | ✅ Correct |
+| Concrete Workflows      | `.claude/workflows/`           | ✅ Correct |
+| Test Suite              | `.claude/tools/`               | ✅ Correct |
+| Implementation Manifest | `.claude/context/artifacts/`   | ✅ Correct |
+| Implementation Report   | `.claude/context/reports/`     | ✅ Correct |
 
 **Windows Path Validation**:
+
 - ✅ All paths use proper separators
 - ✅ No malformed patterns (e.g., `C:dev`)
 - ✅ All files created successfully
@@ -300,12 +317,14 @@ All files follow `.claude/rules/subagent-file-rules.md`:
 ## Impact on CUJ-044
 
 **Before**:
+
 - CUJ-044 fails immediately due to unresolved placeholders
 - Workflow executor passes `{{workflow_id}}` to agents
 - Agents cannot process mustache syntax
 - Workflow execution fails at step 1
 
 **After**:
+
 - Template engine resolves all placeholders before execution
 - Workflow executor receives concrete values (`developer`, `qa`, etc.)
 - Agents process real data successfully
@@ -318,9 +337,11 @@ All files follow `.claude/rules/subagent-file-rules.md`:
 ## Related Issues
 
 **Fixed**:
+
 - CUJ-044: Fallback Routing Flow Validation (placeholder resolution)
 
 **May Affect**:
+
 - CUJ-049: Plan Rating Gate Integration (may have similar placeholder issues)
 - All workflows using placeholders (65+ placeholders in fallback-routing-flow.yaml)
 
@@ -328,14 +349,14 @@ All files follow `.claude/rules/subagent-file-rules.md`:
 
 ## Files Manifest
 
-| # | File Path | Type | Size | Status |
-|---|-----------|------|------|--------|
-| 1 | `.claude/tools/workflow-template-engine.mjs` | Module | 3.2 KB | ✅ Created |
-| 2 | `.claude/workflows/templates/fallback-routing-template.yaml` | Template | 12 KB | ✅ Created |
-| 3 | `.claude/workflows/fallback-routing-developer-qa.yaml` | Workflow | 12 KB | ✅ Created |
-| 4 | `.claude/workflows/fallback-routing-architect-developer.yaml` | Workflow | 12 KB | ✅ Created |
-| 5 | `.claude/workflows/fallback-routing-security-architect-developer.yaml` | Workflow | 12 KB | ✅ Created |
-| 6 | `.claude/tools/test-template-engine.mjs` | Test | 3.5 KB | ✅ Created |
+| #   | File Path                                                              | Type     | Size   | Status     |
+| --- | ---------------------------------------------------------------------- | -------- | ------ | ---------- |
+| 1   | `.claude/tools/workflow-template-engine.mjs`                           | Module   | 3.2 KB | ✅ Created |
+| 2   | `.claude/workflows/templates/fallback-routing-template.yaml`           | Template | 12 KB  | ✅ Created |
+| 3   | `.claude/workflows/fallback-routing-developer-qa.yaml`                 | Workflow | 12 KB  | ✅ Created |
+| 4   | `.claude/workflows/fallback-routing-architect-developer.yaml`          | Workflow | 12 KB  | ✅ Created |
+| 5   | `.claude/workflows/fallback-routing-security-architect-developer.yaml` | Workflow | 12 KB  | ✅ Created |
+| 6   | `.claude/tools/test-template-engine.mjs`                               | Test     | 3.5 KB | ✅ Created |
 
 **Total**: 6 files created, ~55 KB total
 

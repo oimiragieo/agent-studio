@@ -59,7 +59,7 @@ const ENV_VAR_PATTERNS = [
  */
 const ADDITIONAL_PATTERNS = [
   // JWT tokens (three base64 sections separated by dots)
-  { pattern: /eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+/g, replacement: '[REDACTED_JWT]' },
+  { pattern: /eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, replacement: '[REDACTED_JWT]' },
 
   // Authorization headers with Bearer tokens
   {
@@ -146,18 +146,18 @@ function sanitize(input) {
   }
 
   // Apply all sanitization patterns in order of specificity
-  // 1. First, redact specific API key formats
+  // 1. First, redact JWT tokens and authorization headers (must come before long token pattern)
+  for (const { pattern, replacement } of ADDITIONAL_PATTERNS) {
+    text = text.replace(pattern, replacement);
+  }
+
+  // 2. Then, redact specific API key formats
   for (const { pattern, replacement } of API_KEY_PATTERNS) {
     text = text.replace(pattern, replacement);
   }
 
-  // 2. Then, redact environment variable values
+  // 3. Finally, redact environment variable values
   for (const { pattern, replacement } of ENV_VAR_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-
-  // 3. Finally, redact additional sensitive patterns
-  for (const { pattern, replacement } of ADDITIONAL_PATTERNS) {
     text = text.replace(pattern, replacement);
   }
 

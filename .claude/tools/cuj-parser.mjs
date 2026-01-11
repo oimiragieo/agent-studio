@@ -139,8 +139,8 @@ export async function loadCUJMapping() {
         continue;
       }
 
-      // Skip separator line
-      if (inMappingTable && !headerPassed && line.includes('|---')) {
+      // Skip separator line (matches "| --- | ---" or "|---|---")
+      if (inMappingTable && !headerPassed && /\|\s*-+\s*\|/.test(line)) {
         headerPassed = true;
         continue;
       }

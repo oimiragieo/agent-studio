@@ -25,30 +25,32 @@ CUJ-044 fails during workflow execution due to **missing template substitution e
 
 **Placeholder Categories**:
 
-| Category | Placeholders | Count |
-|----------|-------------|-------|
-| **Workflow Context** | `{{workflow_id}}`, `{{workflow_name}}`, `{{run_id}}` | 15 |
-| **Agent Routing** | `{{primary_agent}}`, `{{fallback_agent}}`, `{{current_agent}}` | 20 |
-| **Planning** | `{{plan_id}}`, `{{task_description}}`, `{{plan_score}}` | 12 |
-| **File Paths** | `{{artifact_path}}`, `{{reasoning_path}}`, `{{gate_path}}` | 10 |
-| **Validation** | `{{gate_result}}`, `{{validation_status}}`, `{{retry_count}}` | 8 |
+| Category             | Placeholders                                                   | Count |
+| -------------------- | -------------------------------------------------------------- | ----- |
+| **Workflow Context** | `{{workflow_id}}`, `{{workflow_name}}`, `{{run_id}}`           | 15    |
+| **Agent Routing**    | `{{primary_agent}}`, `{{fallback_agent}}`, `{{current_agent}}` | 20    |
+| **Planning**         | `{{plan_id}}`, `{{task_description}}`, `{{plan_score}}`        | 12    |
+| **File Paths**       | `{{artifact_path}}`, `{{reasoning_path}}`, `{{gate_path}}`     | 10    |
+| **Validation**       | `{{gate_result}}`, `{{validation_status}}`, `{{retry_count}}`  | 8     |
 
 **Example Unsubstituted Placeholders**:
+
 ```yaml
 steps:
-  - step: "0.1"
-    agent: "planner"
-    task: "Create plan for {{task_description}}"
+  - step: '0.1'
+    agent: 'planner'
+    task: 'Create plan for {{task_description}}'
     outputs:
-      - "plan-{{workflow_id}}.json"
+      - 'plan-{{workflow_id}}.json'
     artifacts:
       plan:
-        path: ".claude/context/artifacts/plan-{{workflow_id}}.json"
+        path: '.claude/context/artifacts/plan-{{workflow_id}}.json'
 ```
 
 ### 2. Execution Flow Analysis
 
 **Current Execution Path**:
+
 1. `workflow-executor.mjs` loads YAML file
 2. YAML parser reads raw template (placeholders intact)
 3. Steps array passed to orchestrator **without substitution**
@@ -56,6 +58,7 @@ steps:
 5. **FAILURE**: Agent cannot process placeholder syntax
 
 **Expected Execution Path**:
+
 1. `workflow-executor.mjs` loads YAML file
 2. **Template engine substitutes placeholders** ← MISSING STEP
 3. YAML parser reads substituted content
@@ -85,12 +88,14 @@ steps:
 ### 4. Template Substitution Requirements
 
 **Mustache-Style Syntax**:
+
 - Pattern: `{{variable_name}}`
 - Case-sensitive
 - No spaces inside braces
 - Nested objects: `{{config.setting}}`
 
 **Required Substitution Context**:
+
 ```javascript
 {
   // Workflow context
@@ -163,12 +168,12 @@ steps:
 
 ## Risk Assessment
 
-| Risk | Impact | Likelihood | Mitigation |
-|------|--------|-----------|------------|
-| **Breaking changes to existing workflows** | HIGH | MEDIUM | Create template engine with backward compatibility (skip substitution if no context) |
-| **Performance degradation** | LOW | LOW | Template substitution is fast (< 10ms for typical workflow) |
-| **Placeholder collision** | MEDIUM | LOW | Use strict mustache syntax, validate placeholder names |
-| **Missing context values** | HIGH | MEDIUM | Implement default values and warning logs for missing placeholders |
+| Risk                                       | Impact | Likelihood | Mitigation                                                                           |
+| ------------------------------------------ | ------ | ---------- | ------------------------------------------------------------------------------------ |
+| **Breaking changes to existing workflows** | HIGH   | MEDIUM     | Create template engine with backward compatibility (skip substitution if no context) |
+| **Performance degradation**                | LOW    | LOW        | Template substitution is fast (< 10ms for typical workflow)                          |
+| **Placeholder collision**                  | MEDIUM | LOW        | Use strict mustache syntax, validate placeholder names                               |
+| **Missing context values**                 | HIGH   | MEDIUM     | Implement default values and warning logs for missing placeholders                   |
 
 ---
 
@@ -179,6 +184,7 @@ steps:
 **Blockers**: None
 
 **Breakdown**:
+
 - Template engine creation: 2 hours
 - Workflow executor integration: 1 hour
 - Run manager context generation: 1 hour
@@ -211,26 +217,31 @@ steps:
 <summary>Complete list of 65+ placeholders found in fallback-routing-flow.yaml</summary>
 
 **Workflow Context** (15):
+
 - `{{workflow_id}}` (appears 8 times)
 - `{{workflow_name}}` (appears 3 times)
 - `{{run_id}}` (appears 4 times)
 
 **Agent Routing** (20):
+
 - `{{primary_agent}}` (appears 10 times)
 - `{{fallback_agent}}` (appears 5 times)
 - `{{current_agent}}` (appears 5 times)
 
 **Planning** (12):
+
 - `{{plan_id}}` (appears 6 times)
 - `{{task_description}}` (appears 4 times)
 - `{{plan_score}}` (appears 2 times)
 
 **File Paths** (10):
+
 - `{{artifact_path}}` (appears 5 times)
 - `{{reasoning_path}}` (appears 3 times)
 - `{{gate_path}}` (appears 2 times)
 
 **Validation** (8):
+
 - `{{gate_result}}` (appears 4 times)
 - `{{validation_status}}` (appears 2 times)
 - `{{retry_count}}` (appears 2 times)

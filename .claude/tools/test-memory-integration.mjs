@@ -172,10 +172,10 @@ async function testMemoryPressureDetection() {
   assert.ok(pressure.stats.heapUsedMB >= 0);
 
   console.log(
-    `  Current pressure: ${pressure.level} (${pressure.stats.heapUsagePercent.toFixed(1)}%)`
+    `  Current pressure: ${pressure.level} (${(pressure.stats.heapUsagePercent ?? 0).toFixed(1)}%)`
   );
   console.log(
-    `  Heap: ${pressure.stats.heapUsedMB.toFixed(2)}MB / ${pressure.stats.heapLimitMB.toFixed(2)}MB`
+    `  Heap: ${(pressure.stats.heapUsedMB ?? 0).toFixed(2)}MB / ${(pressure.stats.heapLimitMB ?? 0).toFixed(2)}MB`
   );
   console.log('✅ Test 6 passed: Memory pressure detection works');
 }
@@ -194,7 +194,7 @@ async function testPressureCallback() {
     (level, usage, stats) => {
       callbackCalled = true;
       detectedLevel = level;
-      console.log(`  Callback triggered: ${level} at ${stats.heapUsagePercent.toFixed(1)}%`);
+      console.log(`  Callback triggered: ${level} at ${(stats.heapUsagePercent ?? 0).toFixed(1)}%`);
     },
     {
       highThreshold: 0.01, // 1% - will trigger

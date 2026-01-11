@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20%7C%20Cursor%20%7C%20Factory-purple.svg)]()
-[![Agents](https://img.shields.io/badge/Agents-34-green.svg)]()
-[![Skills](https://img.shields.io/badge/Skills-107-orange.svg)]()
+[![Agents](https://img.shields.io/badge/Agents-35-green.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-110-orange.svg)]()
 
 **Enterprise-grade AI agent orchestration system** for Claude Code, Cursor IDE, and Factory Droid with comprehensive enforcement gates, security validation, and workflow automation.
 
@@ -15,33 +15,34 @@ A **production-ready, drop-in configuration bundle** for AI agent orchestration.
 
 ### Core Components
 
-- **34 specialized AI agents** with defined roles (core development, enterprise, code quality, specialized)
+- **35 specialized AI agents** with defined roles (core development, enterprise, code quality, specialized)
   - Each agent is a markdown file (`.claude/agents/<name>.md`) with instructions, capabilities, and tool permissions
   - Agents are activated automatically based on keywords, task analysis, or explicit workflow steps
 
-- **107 utility skills** for code generation, validation, planning, and recovery
+- **110 utility skills** for code generation, validation, planning, and recovery (108 Agent Studio + 2 Codex)
   - Skills are markdown files (`.claude/skills/<name>/SKILL.md`) that provide reusable capabilities
   - Skills can be invoked directly or automatically injected into agent contexts
-  - Two types: **Agent Studio Skills** (native) and **Codex Skills** (CLI-based multi-AI)
+  - Two types: **Agent Studio Skills** (108 native) and **Codex Skills** (2 CLI-based multi-AI)
 
-- **14 workflow definitions** with enforcement gates and security validation
+- **20 workflow definitions** with enforcement gates and security validation
   - YAML files (`.claude/workflows/<name>.yaml`) defining multi-step, multi-agent processes
   - Workflows include plan rating gates, signoff validation, and error recovery
 
-- **60 Customer User Journeys (CUJs)** documenting complete workflows
+- **61 Customer User Journeys (CUJs)** documenting complete workflows (2 reserved IDs: CUJ-031, CUJ-032, CUJ-033)
   - Markdown files (`.claude/docs/cujs/CUJ-XXX.md`) documenting end-to-end user scenarios
   - CUJs map to workflows or skills, providing executable documentation
   - Machine-readable registry (`.claude/context/cuj-registry.json`) for programmatic access
+  - 54 workflow-based, 5 skill-only, 2 manual setup
 
-- **93 JSON schemas** for artifact validation
+- **124 JSON schemas** for artifact validation
   - Schema files (`.claude/schemas/<name>.schema.json`) for validating workflow artifacts
   - Ensures consistency and correctness of generated outputs
 
-- **1,081+ technology rule packs** with dynamic discovery
+- **151 technology rule packs** with dynamic discovery
   - 8 master rules (core protocols) in `.claude/rules-master/`
-  - 1,073+ library rules (tech-specific) in `.claude/rules-library/`
+  - 143 library rules (tech-specific) in `.claude/rules-library/`
   - Dynamic rule index (`.claude/context/rule-index.json`) enables progressive disclosure
-  - Only 5-10 relevant rules loaded per task (not all 1,081)
+  - Only 5-10 relevant rules loaded per task (not all 151)
 
 - **Enforcement system** with plan rating, signoffs, and security triggers
   - Plan rating: All plans must score ≥7/10 via `response-rater` skill
@@ -150,15 +151,15 @@ pnpm cuj CUJ-005          # Greenfield project planning
 
 ```
 .claude/
-├── agents/           # 34 specialized agent definitions (.md files)
-├── skills/           # 107 utility skills (each in own directory with SKILL.md)
+├── agents/           # 35 specialized agent definitions (.md files)
+├── skills/           # 108 Agent Studio skills (each in own directory with SKILL.md)
 │   └── <skill-name>/
 │       └── SKILL.md  # Skill documentation and instructions
-├── workflows/        # 14 workflow definitions (.yaml files)
-├── templates/        # 30 artifact templates (.md files)
-├── schemas/          # 93 JSON validation schemas (.schema.json files)
+├── workflows/        # 20 workflow definitions (.yaml files)
+├── templates/        # 24 artifact templates (.md files)
+├── schemas/          # 124 JSON validation schemas (.schema.json files)
 ├── rules-master/     # 8 master rules (core protocols)
-├── rules-library/    # 1,073+ library rules (tech-specific)
+├── rules-library/    # 143 library rules (tech-specific)
 ├── context/          # Enforcement matrices, security triggers, CUJ registry
 │   ├── cuj-registry.json      # Machine-readable CUJ catalog
 │   ├── skill-integration-matrix.json  # Agent-to-skill mappings
@@ -170,14 +171,16 @@ pnpm cuj CUJ-005          # Greenfield project planning
 │   ├── enforcement-gate.mjs # Validation gates
 │   ├── skill-injector.mjs   # Skill injection system
 │   └── ...                  # 195+ more tools
-├── hooks/            # 7 production hooks (security, audit, enforcement)
-│   ├── security-pre-tool.mjs              # Pre-execution security
-│   ├── orchestrator-enforcement-pre-tool.mjs  # Orchestrator rules
-│   ├── audit-post-tool.mjs                 # Post-execution audit
-│   └── ...                                 # 4 more hooks
+├── hooks/            # 6 production hooks (security, audit, enforcement)
+│   ├── security-pre-tool.mjs              # Pre-execution security (blocks dangerous commands)
+│   ├── file-path-validator.js             # File path validation (prevents SLOP)
+│   ├── orchestrator-enforcement-hook.mjs  # Orchestrator delegation rules
+│   ├── skill-injection-hook.js            # Automatic skill injection
+│   ├── audit-post-tool.mjs                # Post-execution audit logging
+│   └── post-session-cleanup.js            # Session cleanup
 ├── system/           # Guardrails, permissions, system config
 ├── docs/             # Comprehensive documentation
-│   ├── cujs/         # 60 Customer User Journey docs
+│   ├── cujs/         # 61 Customer User Journey docs (2 reserved IDs)
 │   ├── setup-guides/ # Setup and installation guides
 │   └── ...           # Additional documentation
 ├── .mcp.json         # MCP client configuration (connects to external servers)
@@ -195,7 +198,7 @@ codex-skills/         # CLI-based multi-AI skills (optional)
 └── response-rater/          # Multi-AI plan rating skill
 ```
 
-## Agents (34 Specialized Roles)
+## Agents (35 Specialized Roles)
 
 | Category                | Agents                                                                                                                                                                               |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -207,7 +210,7 @@ codex-skills/         # CLI-based multi-AI skills (optional)
 
 See `.claude/agents/` for detailed agent documentation.
 
-## Skills (43 Utilities)
+## Skills (110 Total: 108 Agent Studio + 2 Codex)
 
 Skills provide 90%+ context savings vs MCP servers. Invoke with natural language or the Skill tool.
 
@@ -235,7 +238,7 @@ Codex skills are specialized skills that invoke **external AI CLI tools** (Claud
 
 **Two Types of Skills**:
 
-- **Agent Studio Skills** (`.claude/skills/`): Native Claude Code skills (107 total) - Pure configuration, no CLI required
+- **Agent Studio Skills** (`.claude/skills/`): Native Claude Code skills (108 total) - Pure configuration, no CLI required
 - **Codex Skills** (`codex-skills/`): CLI-based multi-AI tools (2 total: `multi-ai-code-review`, `response-rater`) - Require CLI installation
 
 ### Codex Skills Directory
@@ -332,7 +335,7 @@ See `.claude/workflows/code-review-flow.yaml` for complete example.
 
 ## Workflows
 
-14 workflow definitions for complex multi-agent orchestration:
+20 workflow definitions for complex multi-agent orchestration:
 
 ### Automatic PR Workflow
 
@@ -506,17 +509,17 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 
 ### Security & Enforcement Hooks
 
-7 production hooks provide security validation, audit logging, and orchestrator enforcement:
+6 production hooks provide security validation, audit logging, and orchestrator enforcement:
 
-**PreToolUse Hooks:**
+**PreToolUse Hooks (4 hooks):**
 
 - **security-pre-tool.mjs**: Blocks dangerous commands and sensitive file operations
-- **orchestrator-enforcement-pre-tool.mjs**: Enforces orchestrator delegation rules (2-file Read limit, no Write/Edit/Grep/Glob)
 - **file-path-validator.js**: Validates file paths to prevent SLOP (files in wrong locations)
+- **orchestrator-enforcement-hook.mjs**: Enforces orchestrator delegation rules (2-file Read limit, no Write/Edit/Grep/Glob)
+- **skill-injection-hook.js**: Automatically injects skills into Task tool calls
 
-**PostToolUse Hooks:**
+**PostToolUse Hooks (2 hooks):**
 
-- **orchestrator-audit-post-tool.mjs**: Tracks orchestrator compliance metrics
 - **audit-post-tool.mjs**: Logs tool usage with performance metrics
 - **post-session-cleanup.js**: Automatic session cleanup for temporary files
 
@@ -548,7 +551,7 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 - **Agent-Skill Matrix**: `.claude/docs/AGENT_SKILL_MATRIX.md`
 - **Enforcement Examples**: `.claude/docs/ENFORCEMENT_EXAMPLES.md`
 - **Security Triggers**: `.claude/docs/SECURITY_TRIGGERS.md`
-- **CUJ Index**: `.claude/docs/cujs/CUJ-INDEX.md` (56 user journeys)
+- **CUJ Index**: `.claude/docs/cujs/CUJ-INDEX.md` (61 user journeys)
 - **First-Time User Guide**: `FIRST_TIME_USER.md`
 
 ## New Features in Phase 2.1.2

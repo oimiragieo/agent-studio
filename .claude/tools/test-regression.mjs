@@ -103,19 +103,23 @@ async function testArtifactLoading() {
   const testData = { test: 'data', timestamp: Date.now() };
 
   const fs = await import('fs');
+
+  // Ensure test directory exists (use fs.promises.mkdir for async)
   if (!fs.existsSync(testDir)) {
     fs.mkdirSync(testDir, { recursive: true });
   }
   fs.writeFileSync(testArtifact, JSON.stringify(testData));
 
   try {
-    const loaded = await loadArtifact('test/test-artifact.json');
+    const loaded = await loadArtifact('context/test/test-artifact.json');
     assert.deepStrictEqual(loaded, testData);
     console.log('✅ Artifact loading works');
 
     fs.unlinkSync(testArtifact);
   } catch (error) {
-    fs.unlinkSync(testArtifact);
+    if (fs.existsSync(testArtifact)) {
+      fs.unlinkSync(testArtifact);
+    }
     throw error;
   }
 }

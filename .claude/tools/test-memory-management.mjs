@@ -97,9 +97,15 @@ test('shouldUseStreaming detects large files', () => {
 // Test cleanup
 test('Cleanup clears all caches', () => {
   const results = cleanupAllCaches();
-  assert.ok(typeof results.gitCache === 'number');
-  assert.ok(typeof results.artifactCache === 'number');
-  assert.ok(typeof results.skillCache === 'number');
+  // Results should be an object with numeric values
+  assert.ok(typeof results === 'object', 'Results should be an object');
+  assert.ok(typeof results.gitCache === 'number', 'gitCache should be a number');
+  // artifactCache returns an object with file_cache, workflow_cache, total
+  assert.ok(
+    typeof results.artifactCache === 'object' || typeof results.artifactCache === 'number',
+    'artifactCache should be an object or number'
+  );
+  assert.ok(typeof results.skillCache === 'number', 'skillCache should be a number');
 });
 
 test('Periodic cleanup can be set up and stopped', () => {

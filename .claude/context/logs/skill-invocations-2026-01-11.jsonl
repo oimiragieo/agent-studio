@@ -1,0 +1,1 @@
+{"timestamp":"2026-01-11T19:23:50.087Z","type":"skill_invocation","skill":"test-skill","params":"{\"test\":true}","result":"success","duration_ms":100,"cache_hit":false,"agent":"test-agent","run_id":"test-run-001","cuj_id":"TEST-001","error":null,"metadata":{}}
