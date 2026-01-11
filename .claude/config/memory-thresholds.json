@@ -1,11 +1,33 @@
 {
-  "warnThreshold": 3000,
-  "blockThreshold": 3500,
-  "unit": "MB",
-  "description": "Central memory thresholds for workflow runner + hooks (RSS-based).",
-  "max_rss_mb": 4096,
-  "warn_rss_mb": 3000,
-  "min_free_mb_spawn_subagent": 800,
-  "min_free_mb_skill_injection": 300,
-  "monitor_interval_ms": 60000
+  "$schema": "../schemas/memory-thresholds.schema.json",
+  "description": "Centralized memory threshold configuration for all system components",
+  "version": "1.0.0",
+  "thresholds": {
+    "skill_injection": {
+      "max_memory_gb": 3.5,
+      "warning_threshold_gb": 3.0,
+      "critical_threshold_gb": 3.25,
+      "check_interval_ms": 30000
+    },
+    "workflow_runner": {
+      "max_memory_gb": 3.5,
+      "warning_threshold_gb": 3.0,
+      "critical_threshold_gb": 3.25,
+      "check_interval_ms": 60000
+    },
+    "shared_cache": {
+      "max_size_mb": 50,
+      "warning_threshold_mb": 40,
+      "eviction_threshold_mb": 45,
+      "ttl_seconds": 60
+    },
+    "context_monitoring": {
+      "max_tokens": 200000,
+      "warning_threshold_tokens": 160000,
+      "critical_threshold_tokens": 180000,
+      "estimation_ratio": 4
+    }
+  },
+  "updated_at": "2026-01-10T00:00:00Z",
+  "updated_by": "Priority 1 Foundation Fixes - Issue 1.3"
 }

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-01-10T00:00:00.000Z",
+  "config": {
+    "failureThreshold": 3,
+    "resetTimeout": 30000,
+    "halfOpenMaxAttempts": 1
+  },
+  "states": {},
+  "description": "Circuit breaker state persistence for skill injection hook. This file is automatically managed by the circuit breaker system."
+}
