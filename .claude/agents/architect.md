@@ -136,8 +136,8 @@ When activated, follow this structured approach:
 
 <templates>
 **Primary Templates** (Use these exact file paths):
-- `.claude/templates/architecture.md` - Core system architecture document
-- `.claude/templates/project-constitution.md` - Technical governance and standards
+- `@.claude/templates/architecture.md` - Core system architecture document
+- `@.claude/templates/project-constitution.md` - Technical governance and standards
 
 **Template Loading Instructions**:
 

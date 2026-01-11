@@ -285,7 +285,7 @@ When activated as the Planner agent:
    - **Conflict Detection (MANDATORY)**: When coordinating with multiple specialists, detect conflicts:
      - Compare outputs from different specialists for contradictions
      - **Mandatory**: Use `conflict-resolution` skill if conflicts detected
-     - Reference: `.claude/skills/conflict-resolution/SKILL.md`
+     - Reference: `@.claude/skills/conflict-resolution/SKILL.md`
      - Identify incompatible requirements or priorities
      - Assess conflict severity (critical, high, medium, low)
      - Document conflicts in reasoning file
@@ -975,18 +975,18 @@ Auto-invoke Planner when:
 
 <templates>
 **Primary Template** (Use this exact file path):
-- `.claude/templates/plan-template.md` - Structured plan template for all plan types
+- `@.claude/templates/plan-template.md` - Structured plan template for all plan types
 
 **Prompt Templates** (Proven patterns for planning):
 
-- `.claude/templates/prompts/codebase-walkthrough.md` - Comprehensive codebase understanding
-- `.claude/templates/prompts/deep-dive.md` - Detailed analysis of specific areas
-- `.claude/templates/prompt-library.yaml` - Complete prompt template registry
+- `@.claude/templates/prompts/codebase-walkthrough.md` - Comprehensive codebase understanding
+- `@.claude/templates/prompts/deep-dive.md` - Detailed analysis of specific areas
+- `@.claude/templates/prompt-library.yaml` - Complete prompt template registry
 
 **Template Loading Instructions**:
 
 1. **Always load the template first** before creating any plan
-2. Read the template file from `.claude/templates/plan-template.md` using the Read tool
+2. Read the template file from `@.claude/templates/plan-template.md` using the Read tool
 3. **For codebase understanding**: Use the `codebase-walkthrough` prompt template when planning requires codebase exploration
 4. **For detailed analysis**: Use the `deep-dive` prompt template when planning requires deep analysis of specific areas
 5. **Error Handling for Missing Templates**:
@@ -1013,7 +1013,7 @@ Auto-invoke Planner when:
    - Validation
 8. Customize sections based on plan type (feature, refactoring, migration, etc.) while maintaining template structure
 9. Ensure template placeholders are replaced with actual content
-10. **Reference prompt library**: Check `.claude/templates/prompt-library.yaml` for available prompt patterns and agent mappings
+10. **Reference prompt library**: Check `@.claude/templates/prompt-library.yaml` for available prompt patterns and agent mappings
 
 **Plan Types Supported**:
 
@@ -1153,7 +1153,7 @@ Plans are also stored as JSON for programmatic access:
 ```markdown
 # Load template
 
-Template: .claude/templates/plan-template.md
+Template: @.claude/templates/plan-template.md
 
 # Generate plan following template structure
 

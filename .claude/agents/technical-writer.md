@@ -539,7 +539,7 @@ Create claude.md files when:
 
 3. **Generate claude.md**:
    - Use claude-md-generator skill: "Generate claude.md for [path]"
-   - Or use template from `.claude/templates/claude-md-template.md`
+   - Or use template from `@.claude/templates/claude-md-template.md`
    - Include module-specific rules and guidelines
    - Document key patterns and conventions
    - Reference parent claude.md for inheritance
@@ -591,7 +591,7 @@ Create claude.md files when:
 - "Create an executive summary of the technical spec"
 - "Generate a summary of the meeting notes"
 
-See `.claude/skills/summarizer/SKILL.md` for details.
+See `@.claude/skills/summarizer/SKILL.md` for details.
 
 ### Integration with Developer Agent
 

@@ -87,13 +87,13 @@ Map classification to workflow file:
 
 | Intent         | Complexity | Cloud Provider | Workflow File                                                                                  |
 | -------------- | ---------- | -------------- | ---------------------------------------------------------------------------------------------- |
-| web_app        | high       | any            | `.claude/workflows/greenfield-fullstack.yaml`                                                  |
-| web_app        | medium     | any            | `.claude/workflows/greenfield-fullstack.yaml`                                                  |
-| script         | any        | any            | `.claude/workflows/quick-flow.yaml` (fallback to quick-flow for scripts)                       |
-| analysis       | any        | any            | `.claude/workflows/code-quality-flow.yaml` (fallback to code-quality for analysis)             |
-| infrastructure | any        | any            | `.claude/workflows/automated-enterprise-flow.yaml` (fallback to enterprise for infrastructure) |
-| mobile         | any        | any            | `.claude/workflows/mobile-flow.yaml`                                                           |
-| ai_system      | any        | any            | `.claude/workflows/ai-system-flow.yaml`                                                        |
+| web_app        | high       | any            | `@.claude/workflows/greenfield-fullstack.yaml`                                                  |
+| web_app        | medium     | any            | `@.claude/workflows/greenfield-fullstack.yaml`                                                  |
+| script         | any        | any            | `@.claude/workflows/quick-flow.yaml` (fallback to quick-flow for scripts)                       |
+| analysis       | any        | any            | `@.claude/workflows/code-quality-flow.yaml` (fallback to code-quality for analysis)             |
+| infrastructure | any        | any            | `@.claude/workflows/automated-enterprise-flow.yaml` (fallback to enterprise for infrastructure) |
+| mobile         | any        | any            | `@.claude/workflows/mobile-flow.yaml`                                                           |
+| ai_system      | any        | any            | `@.claude/workflows/ai-system-flow.yaml`                                                        |
 
 **Workflow File Validation**: Before returning workflow selection, verify the workflow file exists:
 
@@ -137,7 +137,7 @@ Generate a JSON classification following the `route_decision.schema.json` schema
   "intent": "web_app",
   "complexity": "high",
   "cloud_provider": "gcp",
-  "workflow_selection": ".claude/workflows/greenfield-fullstack.yaml",
+  "workflow_selection": "@.claude/workflows/greenfield-fullstack.yaml",
   "confidence": 0.95,
   "reasoning": "User wants to build an enterprise web application connecting to Google Cloud, which matches the fullstack workflow",
   "keywords_detected": ["enterprise", "web application", "google cloud"]
@@ -156,7 +156,7 @@ Generate a JSON classification following the `route_decision.schema.json` schema
   "intent": "web_app",
   "complexity": "high",
   "cloud_provider": "gcp",
-  "workflow_selection": ".claude/workflows/greenfield-fullstack.yaml",
+  "workflow_selection": "@.claude/workflows/greenfield-fullstack.yaml",
   "confidence": 0.98
 }
 ```
@@ -171,7 +171,7 @@ Generate a JSON classification following the `route_decision.schema.json` schema
   "intent": "script",
   "complexity": "low",
   "cloud_provider": null,
-  "workflow_selection": ".claude/workflows/script-flow.yaml",
+  "workflow_selection": "@.claude/workflows/script-flow.yaml",
   "confidence": 0.9,
   "reasoning": "Despite 'enterprise-grade', this is a script task, not a full application"
 }
@@ -187,7 +187,7 @@ Generate a JSON classification following the `route_decision.schema.json` schema
   "intent": "mobile",
   "complexity": "medium",
   "cloud_provider": null,
-  "workflow_selection": ".claude/workflows/mobile-flow.yaml",
+  "workflow_selection": "@.claude/workflows/mobile-flow.yaml",
   "confidence": 0.95
 }
 ```

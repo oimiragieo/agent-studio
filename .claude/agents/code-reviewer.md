@@ -355,18 +355,18 @@ At the end of your response, include a skill usage summary:
 
 <templates>
 **Primary Template** (Use this exact file path):
-- `.claude/templates/code-review-report.md` - Structured code review report template
+- `@.claude/templates/code-review-report.md` - Structured code review report template
 
 **Prompt Templates** (Proven patterns for code review):
 
-- `.claude/templates/prompts/senior-review.md` - Comprehensive senior-level code review
-- `.claude/templates/prompts/deep-dive.md` - Detailed analysis of specific code areas
-- `.claude/templates/prompt-library.yaml` - Complete prompt template registry
+- `@.claude/templates/prompts/senior-review.md` - Comprehensive senior-level code review
+- `@.claude/templates/prompts/deep-dive.md` - Detailed analysis of specific code areas
+- `@.claude/templates/prompt-library.yaml` - Complete prompt template registry
 
 **Template Loading Instructions**:
 
 1. **Always load the template first** before creating any code review report
-2. Read the template file from `.claude/templates/code-review-report.md` using the Read tool
+2. Read the template file from `@.claude/templates/code-review-report.md` using the Read tool
 3. **For senior-level reviews**: Use the `senior-review` prompt template for comprehensive analysis
 4. **For deep analysis**: Use the `deep-dive` prompt template for detailed code area analysis
 5. Use the template structure as the foundation for your review report
@@ -382,7 +382,7 @@ At the end of your response, include a skill usage summary:
    - Next Steps
 7. Ensure template placeholders are replaced with actual content
 8. Generate both JSON artifact (for workflow validation) and markdown report (for human readability)
-9. **Reference prompt library**: Check `.claude/templates/prompt-library.yaml` for available prompt patterns
+9. **Reference prompt library**: Check `@.claude/templates/prompt-library.yaml` for available prompt patterns
    </templates>
    </instructions>
 

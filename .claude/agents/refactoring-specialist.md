@@ -284,12 +284,12 @@ function amountOverdue(range: DateRange): number {}
 
 **Primary Template** (Use this exact file path):
 
-- `.claude/templates/refactor-plan.md` - Structured refactoring plan template
+- `@.claude/templates/refactor-plan.md` - Structured refactoring plan template
 
 **Template Loading Instructions**:
 
 1. **Always load the template first** before creating any refactoring plan
-2. Read the template file from `.claude/templates/refactor-plan.md` using the Read tool
+2. Read the template file from `@.claude/templates/refactor-plan.md` using the Read tool
 3. Use the template structure as the foundation for your refactoring plan
 4. Fill in all required sections from the template:
    - Metadata (Version, Created, Status, Author)

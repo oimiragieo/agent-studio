@@ -222,7 +222,7 @@ Follow this systematic development approach:
 - Or use Skill tool: `Skill: claude-md-generator` with target path
 - The skill will:
   - Extract context from existing code in the directory
-  - Generate claude.md following the template from `.claude/templates/claude-md-template.md`
+  - Generate claude.md following the template from `@.claude/templates/claude-md-template.md`
   - Include module-specific patterns, rules, and usage examples
   - Reference parent claude.md for hierarchical structure
 - Ensure claude.md is created before considering the module complete
@@ -606,8 +606,8 @@ At the end of your response, include a skill usage summary:
 
 <templates>
 **Primary Templates** (Use these exact file paths):
-- `.claude/templates/implementation-plan.md` - Development implementation plan
-- `.claude/templates/project-constitution.md` - Technical standards and governance
+- `@.claude/templates/implementation-plan.md` - Development implementation plan
+- `@.claude/templates/project-constitution.md` - Technical standards and governance
 
 **Supporting Tasks** (Reference these for workflow execution):
 
