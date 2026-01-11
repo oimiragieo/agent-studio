@@ -1,11 +1,13 @@
 # Default Plan Rating Rubric
 
 ## Purpose
+
 This rubric provides default criteria for rating implementation plans when no workflow-specific rubric is provided. Plans must score 7/10 or higher to proceed to execution.
 
 ## Criteria (10 points total)
 
 ### 1. Completeness (3 points)
+
 **Are all requirements addressed?**
 
 - **3 points**: All requirements explicitly addressed with detailed approach
@@ -14,6 +16,7 @@ This rubric provides default criteria for rating implementation plans when no wo
 - **0 points**: Major requirements omitted
 
 **Evaluation Questions**:
+
 - Does the plan cover all user stories/requirements?
 - Are edge cases and error scenarios included?
 - Are all acceptance criteria addressable?
@@ -21,6 +24,7 @@ This rubric provides default criteria for rating implementation plans when no wo
 ---
 
 ### 2. Feasibility (2 points)
+
 **Is the plan technically achievable?**
 
 - **2 points**: Technically sound with proven approaches
@@ -28,6 +32,7 @@ This rubric provides default criteria for rating implementation plans when no wo
 - **0 points**: Contains infeasible or overly complex approaches
 
 **Evaluation Questions**:
+
 - Are proposed technologies mature and well-supported?
 - Are dependencies available and compatible?
 - Is the timeline realistic given scope?
@@ -35,6 +40,7 @@ This rubric provides default criteria for rating implementation plans when no wo
 ---
 
 ### 3. Risk Mitigation (2 points)
+
 **Are risks identified and mitigated?**
 
 - **2 points**: Risks identified with concrete mitigation strategies
@@ -42,6 +48,7 @@ This rubric provides default criteria for rating implementation plans when no wo
 - **0 points**: Risks not addressed or mitigation absent
 
 **Evaluation Questions**:
+
 - Are technical risks (performance, security, scalability) identified?
 - Are project risks (timeline, dependencies, resource) addressed?
 - Do mitigations reduce risk to acceptable levels?
@@ -49,6 +56,7 @@ This rubric provides default criteria for rating implementation plans when no wo
 ---
 
 ### 4. Agent Coverage (2 points)
+
 **Are appropriate agents assigned to tasks?**
 
 - **2 points**: All tasks have optimal agent assignments with clear roles
@@ -56,6 +64,7 @@ This rubric provides default criteria for rating implementation plans when no wo
 - **0 points**: Missing agents or significant misassignments
 
 **Evaluation Questions**:
+
 - Does each task have the most specialized agent?
 - Are security-sensitive tasks assigned to security-architect?
 - Are architecture decisions assigned to architect?
@@ -64,12 +73,14 @@ This rubric provides default criteria for rating implementation plans when no wo
 ---
 
 ### 5. Integration (1 point)
+
 **Does it integrate with existing systems?**
 
 - **1 point**: Integration points clearly defined and compatible
 - **0 points**: Integration not addressed or conflicts present
 
 **Evaluation Questions**:
+
 - Are existing APIs/services properly integrated?
 - Are database schema changes backward compatible?
 - Are authentication/authorization flows consistent?
@@ -78,13 +89,13 @@ This rubric provides default criteria for rating implementation plans when no wo
 
 ## Scoring Guide
 
-| Score Range | Rating | Action |
-|-------------|--------|--------|
-| **9-10** | Excellent | Ready to execute immediately |
-| **7-8** | Good | Ready to execute, minor improvements recommended |
-| **5-6** | Acceptable | Requires refinement before execution |
-| **3-4** | Poor | Needs major rework before execution |
-| **0-2** | Inadequate | Return to planning phase |
+| Score Range | Rating     | Action                                           |
+| ----------- | ---------- | ------------------------------------------------ |
+| **9-10**    | Excellent  | Ready to execute immediately                     |
+| **7-8**     | Good       | Ready to execute, minor improvements recommended |
+| **5-6**     | Acceptable | Requires refinement before execution             |
+| **3-4**     | Poor       | Needs major rework before execution              |
+| **0-2**     | Inadequate | Return to planning phase                         |
 
 ---
 
@@ -97,6 +108,7 @@ This rubric provides default criteria for rating implementation plans when no wo
 ## Usage
 
 ### For Orchestrators
+
 1. Load this rubric when workflow-specific rubric is missing
 2. Use response-rater skill to evaluate plan against criteria
 3. Document rating in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
@@ -104,7 +116,9 @@ This rubric provides default criteria for rating implementation plans when no wo
 5. If score >= 7: Proceed with execution
 
 ### For Planners
+
 Use this rubric as guidance when creating plans:
+
 - Ensure completeness by addressing all requirement categories
 - Validate feasibility of proposed approaches
 - Identify and mitigate risks proactively
@@ -116,6 +130,7 @@ Use this rubric as guidance when creating plans:
 ## Examples
 
 ### Excellent Plan (9/10)
+
 ```
 ✓ All requirements addressed with detailed steps
 ✓ Technically sound with proven libraries/frameworks
@@ -125,6 +140,7 @@ Use this rubric as guidance when creating plans:
 ```
 
 ### Good Plan (7/10)
+
 ```
 ✓ Most requirements addressed (minor edge case missing)
 ✓ Feasible approach with minor research needed
@@ -134,6 +150,7 @@ Use this rubric as guidance when creating plans:
 ```
 
 ### Needs Improvement (5/10)
+
 ```
 ⚠ Some requirements vague or missing
 ✓ Feasible but lacks detail
@@ -143,6 +160,7 @@ Use this rubric as guidance when creating plans:
 ```
 
 ### Inadequate (3/10)
+
 ```
 ✗ Major requirements missing
 ✗ Infeasible approaches proposed
@@ -159,6 +177,7 @@ Workflows with specific needs should provide custom rubrics at:
 `.claude/workflows/<workflow-name>-rubric.md`
 
 Custom rubrics override this default rubric and may adjust:
+
 - Scoring weights per category
 - Minimum passing scores (e.g., 8/10 for security-critical workflows)
 - Additional criteria specific to workflow type
@@ -169,6 +188,7 @@ Custom rubrics override this default rubric and may adjust:
 ## Validation
 
 This rubric can be validated using:
+
 ```bash
 node .claude/tools/enforcement-gate.mjs validate-plan \
   --run-id <run_id> \

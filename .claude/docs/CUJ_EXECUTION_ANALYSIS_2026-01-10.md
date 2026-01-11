@@ -25,6 +25,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **What You Did**: Centralized memory thresholds in `.claude/config/memory-thresholds.json`
 
 **Strengths**:
+
 - ✅ Single source of truth for memory thresholds
 - ✅ Consistent with `memory-monitor.mjs` approach
 - ✅ Good fallback to defaults if config fails
@@ -32,38 +33,44 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **Critical Issue Found**:
 
 **Issue 1.1.1: Syntax Error - Top-Level Await**
+
 - **Location**: `skill-injection-hook.js` lines 118-144 and 148-162
 - **Problem**: Using `await` in non-async function `loadMemoryThresholds()` and at top-level
 - **Impact**: Hook will crash on initialization
 - **Current Code**:
+
   ```javascript
   function loadMemoryThresholds() {
     const fs = await import('fs'); // ❌ ERROR: await in non-async function
   }
-  
+
   // Top level
   const { readFileSync } = await import('fs'); // ❌ ERROR: top-level await
   ```
-- **Recommendation**: 
+
+- **Recommendation**:
   - Remove `loadMemoryThresholds()` function (unused)
   - Use synchronous `readFileSync` from `fs` module (already imported)
   - Wrap top-level config loading in IIFE or make it synchronous
   - **Fix**: Use `import { readFileSync } from 'fs'` at top, then call synchronously
 
 **Issue 1.1.2: Duplicate Config Loading**
+
 - **Location**: Lines 114-144 (function) and 146-162 (top-level)
 - **Problem**: Two separate attempts to load config, function never called
 - **Recommendation**: Remove unused `loadMemoryThresholds()` function, keep only top-level loading
 
 **Issue 1.1.3: Config Path Validation Missing**
+
 - **Location**: Line 120, 151
 - **Problem**: Path `../config/memory-thresholds.json` may not exist
-- **Recommendation**: 
+- **Recommendation**:
   - Validate config file exists before reading
   - Use `existsSync()` check
   - Provide clearer error message if config missing
 
 **Issue 1.1.4: Config Schema Validation Incomplete**
+
 - **Location**: Line 126
 - **Problem**: Only checks for 3 fields, doesn't validate types or ranges
 - **Recommendation**:
@@ -79,14 +86,16 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **Status**: ✅ Working correctly
 
 **Verification Needed**:
+
 - **Recommendation**: Test with actual plan mode to verify <5ms execution time
 - **Recommendation**: Verify skills still injected during execution phase (not planning)
 
 **Potential Issue**:
+
 - **Issue 1.2.1**: Planning mode detection might be too broad
 - **Location**: Lines 172-186
 - **Problem**: Any prompt with "plan" keyword triggers fast-path, even if not planning
-- **Recommendation**: 
+- **Recommendation**:
   - Make detection more specific (check agent type first)
   - Add negative keywords (e.g., "execute plan" should NOT skip injection)
   - Consider adding explicit flag in Task input: `skip_skill_injection: true`
@@ -100,18 +109,20 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **Remaining Issues**:
 
 **Issue 1.3.1: Cache Not Shared Across Hook Instances**
+
 - **Location**: `skill-injector.mjs` lines 34-39
 - **Problem**: Each hook execution creates new cache instance
 - **Impact**: Cache doesn't persist between calls, wasted memory
-- **Recommendation**: 
+- **Recommendation**:
   - Use module-level cache (already done, but verify persistence)
   - Consider file-based cache for cross-process sharing
   - Add cache persistence to disk for long-running sessions
 
 **Issue 1.3.2: Cache Cleanup Frequency**
+
 - **Location**: `skill-injector.mjs` line 89
 - **Problem**: Cleanup removes 30% of cache, might be too aggressive
-- **Recommendation**: 
+- **Recommendation**:
   - Make cleanup percentage configurable
   - Use LRU eviction instead of FIFO
   - Track access frequency, evict least-used first
@@ -125,6 +136,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **Simulated Execution**:
 
 **Step 0: Planning Phase**
+
 1. ✅ User: "Build a new e-commerce platform"
 2. ✅ Orchestrator detects: Keywords "new", "platform" → matches `greenfield-fullstack.yaml`
 3. ✅ Workflow ID generated: `1735123456-abc123`
@@ -134,6 +146,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 7. ✅ Plan saved to artifacts directory
 
 **Step 0.1: Plan Rating Gate**
+
 1. ✅ Orchestrator loads plan from artifacts
 2. ⚠️ **Issue 2.1.1**: No timeout wrapper around `response-rater` invocation
 3. ⚠️ **Issue 2.1.2**: Rubric file path not validated before rating
@@ -143,6 +156,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 7. ✅ If score >= 7, proceed to Step 1
 
 **Step 1: Project Discovery**
+
 1. ✅ Analyst agent spawned
 2. ✅ Skill injection hook runs (analyst not in planning mode)
 3. ✅ Required skills injected: `repo-rag`, `summarizer`
@@ -152,6 +166,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **Issues Found**:
 
 **Issue 2.1.1: Plan Rating Timeout Missing**
+
 - **Location**: `plan-rating-gate.mjs` line 148
 - **Problem**: `spawn()` has timeout, but no overall timeout for multi-provider rating
 - **Impact**: If providers hang, workflow can wait indefinitely
@@ -161,6 +176,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Implement timeout wrapper around `invokeResponseRater()`
 
 **Issue 2.1.2: Rubric File Not Validated**
+
 - **Location**: `greenfield-fullstack.yaml` line 86
 - **Problem**: Rubric path `.claude/context/artifacts/standard-plan-rubric.json` not checked
 - **Impact**: Rating fails if rubric missing
@@ -170,6 +186,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Add rubric validation to `workflow_runner.js` before Step 0.1
 
 **Issue 2.1.3: No Fallback for Codex Skill Failure**
+
 - **Location**: `plan-rating-gate.mjs` lines 404-407
 - **Problem**: If `response-rater` Codex skill fails, no fallback
 - **Impact**: Workflow blocked if Codex CLI unavailable
@@ -179,6 +196,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Allow manual override with documented risk
 
 **Issue 2.1.4: Plan Rating Not Cached**
+
 - **Location**: `plan-rating-gate.mjs` line 2404
 - **Problem**: Plans re-rated even if unchanged
 - **Impact**: Wastes time and API calls
@@ -192,6 +210,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **Simulated Execution**:
 
 **Step 0: Planning Phase**
+
 1. ✅ User: `/quick-ship Fix login button`
 2. ✅ Quick-flow workflow selected
 3. ✅ Planner creates fix plan
@@ -199,17 +218,20 @@ This analysis walks through the application as if executing each CUJ scenario, i
 5. ✅ If score >= 7, proceed
 
 **Step 1: Bug Analysis**
+
 1. ✅ Developer agent spawned
 2. ✅ Skills injected: `rule-auditor`, `repo-rag`
 3. ✅ Developer analyzes bug
 4. ✅ Root cause identified
 
 **Step 2: Implementation**
+
 1. ✅ Developer implements fix
 2. ✅ Code changes saved
 3. ✅ Local testing performed
 
 **Step 3: Quality Validation**
+
 1. ✅ QA agent spawned
 2. ✅ Regression tests run
 3. ✅ Fix validated
@@ -217,6 +239,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **Issues Found**:
 
 **Issue 2.2.1: Quick Flow Still Requires Planning**
+
 - **Location**: `CUJ-011.md` line 17
 - **Problem**: Quick flow has Step 0 (planning) which adds overhead
 - **Impact**: "Quick" flow takes 3-5 minutes instead of 1-2 minutes
@@ -226,6 +249,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Use lightweight planning (haiku model) for quick flows
 
 **Issue 2.2.2: No Parallel Execution in Quick Flow**
+
 - **Location**: `quick-flow.yaml`
 - **Problem**: Steps run sequentially even when independent
 - **Impact**: Slower execution
@@ -238,6 +262,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **Simulated Execution**:
 
 **Step 1: Multi-AI Code Review**
+
 1. ✅ User: "Validate the implementation"
 2. ✅ Model-Orchestrator agent activated
 3. ⚠️ **Issue**: `multi-ai-code-review` skill not in skill matrix
@@ -248,6 +273,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 **Issues Found**:
 
 **Issue 2.3.1: Multi-AI Code Review Not in Skill Matrix**
+
 - **Location**: `skill-integration-matrix.json`
 - **Problem**: `multi-ai-code-review` Codex skill not listed for `model-orchestrator`
 - **Impact**: Skill not auto-injected, must be invoked manually
@@ -257,6 +283,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Extend skill matrix to support Codex skills with `type: "codex"` field
 
 **Issue 2.3.2: Codex Skills Not Supported by Hook**
+
 - **Location**: `skill-injection-hook.js`
 - **Problem**: Hook only loads Agent Studio skills (`.claude/skills/`)
 - **Impact**: Codex skills (`codex-skills/`) not auto-injected
@@ -266,6 +293,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Handle Codex skill loading differently (CLI invocation vs markdown)
 
 **Issue 2.3.3: CUJ-030 Execution Mode Mismatch**
+
 - **Location**: `CUJ-030.md` line 13
 - **Problem**: Marked as `skill-only` but requires agent orchestration
 - **Impact**: Confusing execution flow
@@ -280,6 +308,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 3.1 Artifact Dependency Resolution
 
 **Issue 3.1.1: Incomplete Dependency Validation**
+
 - **Location**: `workflow_runner.js` lines 269-318
 - **Problem**: Only checks if artifacts exist, not completeness
 - **Impact**: Missing fields can cause silent failures later
@@ -289,6 +318,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Add dependency graph visualization for debugging
 
 **Issue 3.1.2: Artifact Versioning Missing**
+
 - **Location**: Artifact schemas
 - **Problem**: Artifacts referenced by name only, no versioning
 - **Impact**: Using outdated artifacts if workflow rerun
@@ -298,6 +328,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Include version in artifact references
 
 **Issue 3.1.3: Pre-Flight Dependency Check Missing**
+
 - **Location**: `workflow_runner.js`
 - **Problem**: Dependencies checked during execution, not before
 - **Impact**: Failures happen after work started
@@ -309,6 +340,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 3.2 Parallel Execution
 
 **Issue 3.2.1: Parallel Execution Underutilized**
+
 - **Location**: `greenfield-fullstack.yaml` parallel_execution config
 - **Problem**: Many independent steps still run sequentially
 - **Impact**: Slower execution (could be 67% faster)
@@ -318,6 +350,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Implement dependency-aware parallel executor
 
 **Issue 3.2.2: No Auto-Detection of Parallel Opportunities**
+
 - **Location**: Workflow execution
 - **Problem**: Requires explicit `parallel_group` configuration
 - **Impact**: Manual configuration needed
@@ -329,6 +362,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 3.3 Checkpoint System
 
 **Issue 3.3.1: Checkpoint Integrity Not Validated**
+
 - **Location**: Recovery scenarios (CUJ-027, CUJ-040, etc.)
 - **Problem**: Checkpoints saved but not validated before restoration
 - **Impact**: Corrupted checkpoints can cause failures
@@ -338,6 +372,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Add checkpoint validation to recovery protocol
 
 **Issue 3.3.2: Incremental Checkpoints Not Implemented**
+
 - **Location**: Checkpoint creation
 - **Problem**: Full checkpoint created at each step
 - **Impact**: Large checkpoint files, slow save/restore
@@ -353,6 +388,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 4.1 Response-Rater (Plan Rating)
 
 **Issue 4.1.1: Provider Timeout Handling**
+
 - **Location**: `plan-rating-gate.mjs` line 148
 - **Problem**: 180s timeout per provider, sequential fallback
 - **Impact**: Total timeout can exceed 540s (3 providers × 180s)
@@ -362,6 +398,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Use fastest provider result if others timeout
 
 **Issue 4.1.2: Rating Cache Not Implemented**
+
 - **Location**: `plan-rating-gate.mjs`
 - **Problem**: Plans re-rated on every execution
 - **Impact**: Wastes time and API calls for unchanged plans
@@ -371,6 +408,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Invalidate cache on plan changes
 
 **Issue 4.1.3: Rubric File Not Validated**
+
 - **Location**: `greenfield-fullstack.yaml` line 86
 - **Problem**: Rubric path not checked before rating
 - **Impact**: Rating fails if rubric missing
@@ -382,6 +420,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 4.2 Multi-AI Code Review
 
 **Issue 4.2.1: Artifact Persistence Path Inconsistency**
+
 - **Location**: `multi-ai-code-review/SKILL.md` lines 68-78
 - **Problem**: Default vs run-specific paths
 - **Impact**: Artifacts may be saved to wrong location
@@ -391,6 +430,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Document artifact location strategy clearly
 
 **Issue 4.2.2: Consensus Calculation Not Documented**
+
 - **Location**: Multi-AI review logic
 - **Problem**: Consensus algorithm not clearly documented
 - **Impact**: Unclear how disagreements resolved
@@ -406,6 +446,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 5.1 Context Size Management
 
 **Issue 5.1.1: Context Size Not Monitored Per Step**
+
 - **Location**: `workflow_runner.js` estimateContextUsage()
 - **Problem**: Context usage estimated but not tracked
 - **Impact**: No visibility into actual usage
@@ -415,6 +456,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Alert when approaching context limits
 
 **Issue 5.1.2: Proactive Context Compression Missing**
+
 - **Location**: Context management
 - **Problem**: Compression happens when limit reached
 - **Impact**: Context exhaustion possible
@@ -424,6 +466,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Use streaming compression for large artifacts
 
 **Issue 5.1.3: Artifact Summarization Not Implemented**
+
 - **Location**: Artifact storage
 - **Problem**: Full artifacts stored in context
 - **Impact**: Context bloat for long workflows
@@ -435,12 +478,14 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 5.2 Memory Management
 
 **Issue 5.2.1: Memory Threshold Mismatch**
+
 - **Location**: `skill-injection-hook.js` vs `memory-monitor.mjs`
 - **Problem**: Hook uses 3GB/3.5GB, monitor uses 3.5GB default
 - **Impact**: Inconsistent behavior (now fixed with your config)
 - **Status**: ✅ Fixed with centralized config
 
 **Issue 5.2.2: Periodic Memory Cleanup Missing**
+
 - **Location**: Workflow execution
 - **Problem**: Cleanup happens on error or high usage only
 - **Impact**: Gradual memory accumulation
@@ -456,6 +501,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 6.1 Recovery Protocol
 
 **Issue 6.1.1: Recovery Not Fully Automated**
+
 - **Location**: Recovery scenarios (CUJ-027, CUJ-040, etc.)
 - **Problem**: Manual intervention required for recovery
 - **Impact**: Slow recovery, user must intervene
@@ -465,6 +511,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Add checkpoint validation before restore
 
 **Issue 6.1.2: Error Recovery Not Comprehensive**
+
 - **Location**: Error handling
 - **Problem**: Basic retry logic, limited recovery
 - **Impact**: Complex failures require manual intervention
@@ -476,6 +523,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 6.2 Validation Feedback
 
 **Issue 6.2.1: Validation Failure Feedback Loop Missing**
+
 - **Location**: Workflow validation
 - **Problem**: Validation fails but agent doesn't get specific feedback
 - **Impact**: Agents repeat same mistakes
@@ -485,6 +533,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Implement feedback loop in workflow_runner.js
 
 **Issue 6.2.2: Error Messages Not User-Friendly**
+
 - **Location**: `workflow_runner.js` validation errors
 - **Problem**: Technical error messages
 - **Impact**: Hard to understand and fix
@@ -500,6 +549,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 7.1 Cursor Platform
 
 **Issue 7.1.1: Skill Porting Priority**
+
 - **Location**: CUJ compatibility matrix
 - **Problem**: 12 CUJs are Claude-only due to missing skills
 - **Impact**: Limited Cursor support
@@ -509,6 +559,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Document Cursor workarounds more clearly
 
 **Issue 7.1.2: Cursor Workaround Documentation**
+
 - **Location**: CUJ files
 - **Problem**: Workarounds documented but not easily discoverable
 - **Impact**: Poor user experience for Cursor users
@@ -520,6 +571,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 7.2 Factory Droid
 
 **Issue 7.2.1: No Factory Support**
+
 - **Location**: CUJ compatibility
 - **Problem**: 0/62 CUJs have explicit Factory support
 - **Impact**: No Factory compatibility
@@ -535,6 +587,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 8.1 Code Organization
 
 **Issue 8.1.1: Validation Tools Not Consolidated**
+
 - **Location**: Multiple validation tools
 - **Problem**: `workflow_runner.js`, `plan-rating-gate.mjs`, `enforcement-gate.mjs` all do validation
 - **Impact**: Inconsistent validation behavior
@@ -544,6 +597,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Use framework by all tools
 
 **Issue 8.1.2: Skill Loader Consolidation**
+
 - **Location**: `skill-loader.mjs` and `skill-injector.mjs`
 - **Problem**: Both load skills, some duplication
 - **Impact**: Maintenance burden
@@ -555,6 +609,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 ### 8.2 Documentation
 
 **Issue 8.2.1: CUJ Execution Guide Missing**
+
 - **Location**: Documentation
 - **Problem**: No "How to Execute" guide for CUJs
 - **Impact**: Hard for new users to understand
@@ -564,6 +619,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
   - Add troubleshooting section
 
 **Issue 8.2.2: Troubleshooting Decision Tree Missing**
+
 - **Location**: Documentation
 - **Problem**: Troubleshooting scattered across multiple docs
 - **Impact**: Hard to find solutions

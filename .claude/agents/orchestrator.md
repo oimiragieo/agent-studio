@@ -1146,12 +1146,12 @@ The CUJ mapping is defined in `@.claude/docs/cujs/CUJ-INDEX.md` under "Run CUJ M
 ```markdown
 ## Run CUJ Mapping
 
-| CUJ     | Execution Mode | Workflow Path                    | Primary Skill |
-| ------- | -------------- | -------------------------------- | ------------- |
-| CUJ-001 | manual         | -                                | -             |
-| CUJ-002 | skill          | -                                | rule-selector |
+| CUJ     | Execution Mode | Workflow Path                     | Primary Skill |
+| ------- | -------------- | --------------------------------- | ------------- |
+| CUJ-001 | manual         | -                                 | -             |
+| CUJ-002 | skill          | -                                 | rule-selector |
 | CUJ-004 | workflow       | @.claude/workflows/fullstack.yaml | -             |
-| CUJ-013 | skill          | -                                | code-reviewer |
+| CUJ-013 | skill          | -                                 | code-reviewer |
 ```
 
 **Execution Modes**:

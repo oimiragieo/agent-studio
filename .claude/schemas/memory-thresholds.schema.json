@@ -25,7 +25,12 @@
       "properties": {
         "skill_injection": {
           "type": "object",
-          "required": ["max_memory_gb", "warning_threshold_gb", "critical_threshold_gb", "check_interval_ms"],
+          "required": [
+            "max_memory_gb",
+            "warning_threshold_gb",
+            "critical_threshold_gb",
+            "check_interval_ms"
+          ],
           "properties": {
             "max_memory_gb": {
               "type": "number",
@@ -51,7 +56,12 @@
         },
         "workflow_runner": {
           "type": "object",
-          "required": ["max_memory_gb", "warning_threshold_gb", "critical_threshold_gb", "check_interval_ms"],
+          "required": [
+            "max_memory_gb",
+            "warning_threshold_gb",
+            "critical_threshold_gb",
+            "check_interval_ms"
+          ],
           "properties": {
             "max_memory_gb": {
               "type": "number",
@@ -73,7 +83,12 @@
         },
         "shared_cache": {
           "type": "object",
-          "required": ["max_size_mb", "warning_threshold_mb", "eviction_threshold_mb", "ttl_seconds"],
+          "required": [
+            "max_size_mb",
+            "warning_threshold_mb",
+            "eviction_threshold_mb",
+            "ttl_seconds"
+          ],
           "properties": {
             "max_size_mb": {
               "type": "number",
@@ -99,7 +114,12 @@
         },
         "context_monitoring": {
           "type": "object",
-          "required": ["max_tokens", "warning_threshold_tokens", "critical_threshold_tokens", "estimation_ratio"],
+          "required": [
+            "max_tokens",
+            "warning_threshold_tokens",
+            "critical_threshold_tokens",
+            "estimation_ratio"
+          ],
           "properties": {
             "max_tokens": {
               "type": "integer",

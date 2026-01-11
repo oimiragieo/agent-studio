@@ -1,0 +1,11 @@
+{
+  "workflow_id": "test-wf",
+  "step": 1,
+  "inputs": {
+    "foo": "bar"
+  },
+  "artifact": {
+    "result": "output"
+  },
+  "timestamp": 1768153823112
+}

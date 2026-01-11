@@ -169,9 +169,7 @@ export function getReasoningPath(runId, reasoningName, workflowId = null) {
  * @returns {string} Full directory path
  */
 export function getArtifactDir(runId, category = 'artifacts', ensureExists = true) {
-  const dir = runId
-    ? join(CONTEXT_DIR, 'runs', runId, category)
-    : join(CONTEXT_DIR, category);
+  const dir = runId ? join(CONTEXT_DIR, 'runs', runId, category) : join(CONTEXT_DIR, category);
 
   if (ensureExists && !existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
@@ -239,7 +237,7 @@ export function migrateLegacyPath(legacyPath, runId) {
 
 // Compression thresholds (exported)
 export const COMPRESSION_THRESHOLD_BYTES = 1 * 1024 * 1024; // 1MB - compress artifacts larger than this
-export const STREAMING_THRESHOLD_BYTES = 10 * 1024 * 1024;  // 10MB - use streaming for artifacts larger than this
+export const STREAMING_THRESHOLD_BYTES = 10 * 1024 * 1024; // 10MB - use streaming for artifacts larger than this
 
 /**
  * Get file size in bytes (synchronous for speed)
@@ -326,7 +324,7 @@ export async function compressArtifact(sourcePath, options = {}) {
       compressedSize: originalSize,
       ratio: 0,
       path: sourcePath,
-      reason: 'Below compression threshold'
+      reason: 'Below compression threshold',
     };
   }
 
@@ -350,7 +348,7 @@ export async function compressArtifact(sourcePath, options = {}) {
 
     const compressedStats = await stat(compressedPath);
     const compressedSize = compressedStats.size;
-    const ratio = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
+    const ratio = (((originalSize - compressedSize) / originalSize) * 100).toFixed(1);
 
     // Optionally delete original
     if (deleteOriginal) {
@@ -363,7 +361,7 @@ export async function compressArtifact(sourcePath, options = {}) {
       compressedSize,
       ratio: parseFloat(ratio),
       path: compressedPath,
-      streaming: useStreaming
+      streaming: useStreaming,
     };
   } catch (error) {
     // Clean up partial compressed file on error
@@ -393,7 +391,7 @@ export async function decompressArtifact(compressedPath, options = {}) {
   const {
     destPath = compressedPath.replace(/\.gz$/, ''),
     deleteCompressed = false,
-    forceStreaming = false
+    forceStreaming = false,
   } = options;
 
   if (!existsSync(compressedPath)) {
@@ -410,11 +408,7 @@ export async function decompressArtifact(compressedPath, options = {}) {
   try {
     if (useStreaming) {
       // Issue 5.2b: Streaming decompression for large files
-      await pipeline(
-        createReadStream(compressedPath),
-        createGunzip(),
-        createWriteStream(destPath)
-      );
+      await pipeline(createReadStream(compressedPath), createGunzip(), createWriteStream(destPath));
     } else {
       // In-memory decompression for smaller files
       const compressed = await readFile(compressedPath);
@@ -435,7 +429,7 @@ export async function decompressArtifact(compressedPath, options = {}) {
       originalSize: compressedSize,
       decompressedSize,
       path: destPath,
-      streaming: useStreaming
+      streaming: useStreaming,
     };
   } catch (error) {
     // Clean up partial decompressed file on error
@@ -481,16 +475,14 @@ export async function readArtifact(artifactPath, options = {}) {
       // For very large files, stream to temp file then read
       const tempPath = `${artifactPath}.tmp.${process.pid}`;
       try {
-        await pipeline(
-          createReadStream(actualPath),
-          createGunzip(),
-          createWriteStream(tempPath)
-        );
+        await pipeline(createReadStream(actualPath), createGunzip(), createWriteStream(tempPath));
         const content = await readFile(tempPath, encoding);
         await unlink(tempPath);
         return { content, compressed: true, size: content.length };
       } catch (error) {
-        try { await unlink(tempPath); } catch {}
+        try {
+          await unlink(tempPath);
+        } catch {}
         throw error;
       }
     } else {
@@ -539,14 +531,14 @@ export async function writeArtifact(artifactPath, content, options = {}) {
       // Write uncompressed first, then stream compress
       await writeFile(artifactPath, contentBuffer);
       const result = await compressArtifact(artifactPath, {
-        deleteOriginal: !keepUncompressed
+        deleteOriginal: !keepUncompressed,
       });
       return {
         path: result.path,
         compressed: true,
         originalSize,
         finalSize: result.compressedSize,
-        ratio: result.ratio
+        ratio: result.ratio,
       };
     } else {
       // In-memory compression
@@ -557,13 +549,13 @@ export async function writeArtifact(artifactPath, content, options = {}) {
         await writeFile(artifactPath, contentBuffer);
       }
 
-      const ratio = ((originalSize - compressed.length) / originalSize * 100).toFixed(1);
+      const ratio = (((originalSize - compressed.length) / originalSize) * 100).toFixed(1);
       return {
         path: compressedPath,
         compressed: true,
         originalSize,
         finalSize: compressed.length,
-        ratio: parseFloat(ratio)
+        ratio: parseFloat(ratio),
       };
     }
   } else {
@@ -574,7 +566,7 @@ export async function writeArtifact(artifactPath, content, options = {}) {
       compressed: false,
       originalSize,
       finalSize: originalSize,
-      ratio: 0
+      ratio: 0,
     };
   }
 }
@@ -604,13 +596,13 @@ export function getArtifactStream(artifactPath) {
     return {
       stream: gunzipStream,
       compressed: true,
-      path: actualPath
+      path: actualPath,
     };
   } else {
     return {
       stream: readStream,
       compressed: false,
-      path: actualPath
+      path: actualPath,
     };
   }
 }
@@ -640,13 +632,13 @@ export function getArtifactWriteStream(artifactPath, options = {}) {
     return {
       stream: gzipStream,
       compressed: true,
-      path: compressedPath
+      path: compressedPath,
     };
   } else {
     return {
       stream: createWriteStream(artifactPath),
       compressed: false,
-      path: artifactPath
+      path: artifactPath,
     };
   }
 }
@@ -674,7 +666,7 @@ export async function getArtifactMetadata(artifactPath) {
       compressed: true,
       size: stats.size,
       uncompressedSize: stats.size * 3, // Estimate
-      path: actualPath
+      path: actualPath,
     };
   }
 
@@ -682,7 +674,7 @@ export async function getArtifactMetadata(artifactPath) {
     exists: true,
     compressed: false,
     size: stats.size,
-    path: actualPath
+    path: actualPath,
   };
 }
 

@@ -3,18 +3,22 @@
 ## Issues Fixed
 
 ### 1. **CRITICAL: Blocking stdin Read** ✅ FIXED
+
 **Problem**: `readStdin()` used `for await (const chunk of stdin)` which could block FOREVER if stdin doesn't close, causing complete lockup.
 
-**Fix**: 
+**Fix**:
+
 - Added timeout (5 seconds default)
 - Proper event listener cleanup to prevent leaks
 - Graceful error handling that never blocks execution
 - Non-blocking stdin handling
 
 ### 2. **CRITICAL: No Timeouts on Async Operations** ✅ FIXED
+
 **Problem**: File reads, skill loading, and other async operations had no timeouts - if any operation hung, the hook hung forever.
 
 **Fixes**:
+
 - Added 3-second timeout on `loadSkillMatrix()`
 - Added 2-second timeout on `loadSkillMetadata()`
 - Added 5-second timeout on file reads
@@ -22,26 +26,32 @@
 - All timeouts gracefully degrade (pass through without injection)
 
 ### 3. **CRITICAL: Expensive Cache Size Calculation** ✅ FIXED
+
 **Problem**: `estimateCacheSize()` called `JSON.stringify()` on every cached value, which could be expensive and blocking.
 
 **Fix**:
+
 - Cached size estimate with 1-second TTL
 - Limited estimation to first 100 entries (then extrapolates)
 - Avoids `JSON.stringify()` - uses fast string length calculation
 - Prevents blocking during cache size checks
 
 ### 4. **CRITICAL: Race Conditions in Cache Cleanup** ✅ FIXED
+
 **Problem**: Multiple concurrent calls could cause cache corruption during cleanup.
 
 **Fix**:
+
 - Added `cacheCleanupLock` to prevent concurrent cleanup
 - Thread-safe cleanup with try/finally
 - Invalidates size estimate after cleanup
 
 ### 5. **CRITICAL: Event Listener Leaks** ✅ FIXED
+
 **Problem**: stdin event listeners weren't cleaned up, causing memory leaks.
 
 **Fix**:
+
 - Proper cleanup function removes all listeners
 - Cleanup called on timeout, error, and success
 - Prevents memory accumulation from event listeners
@@ -63,12 +73,14 @@
 ## Monitoring
 
 The hook now logs:
+
 - Timeout events (if any occur)
 - Cache cleanup events
 - Memory usage before/after
 - Execution time
 
 Watch for these warnings:
+
 - `stdin read timeout` - Indicates stdin issue (should be rare)
 - `Skill injection timeout` - Indicates slow skill loading (investigate)
 - `Memory increased by X MB` - Monitor for memory leaks
@@ -76,6 +88,7 @@ Watch for these warnings:
 ## Configuration
 
 Timeouts can be adjusted in code:
+
 - **stdin timeout**: 5000ms (line 27 in hook)
 - **skill injection timeout**: 10000ms (line 148 in hook)
 - **file read timeout**: 5000ms (line 169 in skill-injector)

@@ -344,13 +344,13 @@ node .claude/tools/skill-validator.mjs --agent developer --log <path> --task "<d
 
 ### Troubleshooting Skill Injection
 
-| Issue                  | Cause                             | Fix                                                                  |
-| ---------------------- | --------------------------------- | -------------------------------------------------------------------- |
+| Issue                  | Cause                             | Fix                                                                   |
+| ---------------------- | --------------------------------- | --------------------------------------------------------------------- |
 | Skills not injected    | Hook not active                   | Check `@.claude/hooks/skill-injection-hook.js` registered in settings |
-| Wrong skills triggered | Trigger keywords mismatch         | Update skill_triggers in skill-integration-matrix.json               |
-| Excessive tokens       | Too many skills loaded            | Use skill-context-optimizer with lower level (MINIMAL/ESSENTIAL)     |
-| Missing required skill | Agent config incomplete           | Update required_skills in skill-integration-matrix.json              |
-| Hook timeout (>100ms)  | Too many skills or large SKILL.md | Use optimization, reduce skill count                                 |
+| Wrong skills triggered | Trigger keywords mismatch         | Update skill_triggers in skill-integration-matrix.json                |
+| Excessive tokens       | Too many skills loaded            | Use skill-context-optimizer with lower level (MINIMAL/ESSENTIAL)      |
+| Missing required skill | Agent config incomplete           | Update required_skills in skill-integration-matrix.json               |
+| Hook timeout (>100ms)  | Too many skills or large SKILL.md | Use optimization, reduce skill count                                  |
 
 ### Manual Override (Rare Cases)
 

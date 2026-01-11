@@ -1,0 +1,13 @@
+{
+  "workflow_id": "example-workflow-001",
+  "step": 1,
+  "inputs": {
+    "requirement": "Payment processing system"
+  },
+  "artifact": {
+    "code": "// Generated code for Payment processing system",
+    "tests": "// Generated tests for Payment processing system",
+    "timestamp": "2026-01-11T17:51:05.424Z"
+  },
+  "timestamp": 1768153865424
+}

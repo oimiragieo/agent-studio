@@ -49,7 +49,7 @@ export const ErrorCategory = {
   TRANSIENT: 'transient',
   PERMANENT: 'permanent',
   RECOVERABLE: 'recoverable',
-  CRITICAL: 'critical'
+  CRITICAL: 'critical',
 };
 
 /**
@@ -124,7 +124,8 @@ export class ErrorRecovery {
    */
   static isTransientError(error) {
     const transientCodes = ['ETIMEDOUT', 'ECONNREFUSED', 'EBUSY', 'ENOTFOUND', 'ECONNRESET'];
-    const transientMessages = /timeout|rate limit|temporarily unavailable|service unavailable|connection reset/i;
+    const transientMessages =
+      /timeout|rate limit|temporarily unavailable|service unavailable|connection reset/i;
 
     return (
       transientCodes.includes(error.code) ||
@@ -140,7 +141,8 @@ export class ErrorRecovery {
   static isPermanentError(error) {
     const permanentCodes = ['ENOENT', 'EACCES', 'EPERM'];
     const permanentStatuses = [401, 403, 404, 410];
-    const permanentMessages = /not found|permission denied|invalid syntax|schema validation failed|does not exist/i;
+    const permanentMessages =
+      /not found|permission denied|invalid syntax|schema validation failed|does not exist/i;
 
     return (
       permanentCodes.includes(error.code) ||
@@ -153,19 +155,18 @@ export class ErrorRecovery {
    * Check if error is recoverable (needs user intervention)
    */
   static isRecoverableError(error) {
-    const recoverableMessages = /module.*not found|environment variable.*not set|configuration.*invalid|missing dependency|insufficient.*resources/i;
+    const recoverableMessages =
+      /module.*not found|environment variable.*not set|configuration.*invalid|missing dependency|insufficient.*resources/i;
 
-    return (
-      error.code === 'MODULE_NOT_FOUND' ||
-      recoverableMessages.test(error.message)
-    );
+    return error.code === 'MODULE_NOT_FOUND' || recoverableMessages.test(error.message);
   }
 
   /**
    * Check if error is critical (stop workflow)
    */
   static isCriticalError(error) {
-    const criticalMessages = /security violation|data corruption|out of memory|disk full|circuit.*open|heap.*exhausted/i;
+    const criticalMessages =
+      /security violation|data corruption|out of memory|disk full|circuit.*open|heap.*exhausted/i;
     const criticalCodes = ['ENOMEM', 'ENOSPC'];
 
     return (
@@ -200,7 +201,7 @@ export class ErrorRecovery {
             success: true,
             category: ErrorCategory.TRANSIENT,
             attempts: attempt,
-            message: 'Recovered after retry with exponential backoff'
+            message: 'Recovered after retry with exponential backoff',
           };
         } else {
           // No operation to retry, just return success indicator
@@ -209,7 +210,7 @@ export class ErrorRecovery {
             category: ErrorCategory.TRANSIENT,
             canRetry: true,
             attempts: attempt,
-            message: 'Transient error detected but no retry function provided'
+            message: 'Transient error detected but no retry function provided',
           };
         }
       } catch (retryError) {
@@ -220,7 +221,7 @@ export class ErrorRecovery {
             category: ErrorCategory.TRANSIENT,
             attempts: attempt,
             message: `Failed after ${maxAttempts} retry attempts`,
-            lastError: retryError.message
+            lastError: retryError.message,
           };
         }
 
@@ -252,7 +253,7 @@ export class ErrorRecovery {
       message: error.message,
       suggestion: suggestion,
       context: context,
-      canRetry: false
+      canRetry: false,
     };
   }
 
@@ -280,7 +281,7 @@ export class ErrorRecovery {
       fixInstructions: fixInstructions,
       context: context,
       canRetry: true,
-      requiresUserAction: true
+      requiresUserAction: true,
     };
   }
 
@@ -317,7 +318,7 @@ export class ErrorRecovery {
       canRetry: false,
       rollbackAttempted: context.rollbackSupported,
       rollbackSuccess: rollbackSuccess,
-      recommendation: 'System requires manual inspection and recovery'
+      recommendation: 'System requires manual inspection and recovery',
     };
   }
 
@@ -349,10 +350,7 @@ export class ErrorRecovery {
       const moduleName = this.extractModuleName(error.message);
       return {
         primary: `Install missing dependency: pnpm add ${moduleName}`,
-        alternatives: [
-          `npm install ${moduleName}`,
-          `yarn add ${moduleName}`
-        ]
+        alternatives: [`npm install ${moduleName}`, `yarn add ${moduleName}`],
       };
     } else if (error.message.includes('Environment variable')) {
       const varName = this.extractVariableName(error.message);
@@ -360,30 +358,30 @@ export class ErrorRecovery {
         primary: `Set environment variable: export ${varName}=<value>`,
         alternatives: [
           `Add ${varName} to .env file`,
-          `Set ${varName} in system environment variables`
-        ]
+          `Set ${varName} in system environment variables`,
+        ],
       };
     } else if (error.message.includes('configuration')) {
       return {
         primary: 'Review and fix configuration in .claude/config.yaml',
         alternatives: [
           'Use default configuration: cp .claude/config.default.yaml .claude/config.yaml',
-          'Validate configuration: node .claude/tools/validate-config.mjs'
-        ]
+          'Validate configuration: node .claude/tools/validate-config.mjs',
+        ],
       };
     } else if (error.message.includes('disk full') || error.code === 'ENOSPC') {
       return {
         primary: 'Free up disk space and retry',
         alternatives: [
           'Clear temporary files: rm -rf .claude/context/tmp/*',
-          'Clear old run artifacts: node .claude/tools/cleanup-old-runs.mjs'
-        ]
+          'Clear old run artifacts: node .claude/tools/cleanup-old-runs.mjs',
+        ],
       };
     }
 
     return {
       primary: 'Review error details and correct the issue',
-      alternatives: []
+      alternatives: [],
     };
   }
 
@@ -443,9 +441,9 @@ export class ErrorRecovery {
       error: {
         message: error.message,
         stack: error.stack,
-        code: error.code
+        code: error.code,
       },
-      context
+      context,
     };
 
     const logLine = `[${timestamp}] [${context.runId || 'unknown'}] [${context.operation || 'unknown'}] [critical] ${error.message}\n`;

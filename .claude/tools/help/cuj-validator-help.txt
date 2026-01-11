@@ -1,0 +1,43 @@
+
+Unified CUJ Validation Framework
+
+Consolidates validation logic from validate-cuj.mjs, cuj-doctor.mjs, and validate-cuj-e2e.mjs
+
+Usage:
+  node .claude/tools/cuj-validator-unified.mjs <CUJ-ID> [options]
+  node .claude/tools/cuj-validator-unified.mjs --doctor [options]
+
+Options:
+  --mode <mode>        Validation mode: quick|dry-run|full|doctor (default: full)
+  --json               Output results as JSON
+  --verbose            Show detailed progress
+  --fix-suggestions    Generate actionable fix commands
+  --performance        Include performance metrics
+  --help, -h           Show this help message
+
+Modes:
+  quick      Fast structural validation only
+  dry-run    Simulated execution without actual execution
+  full       Complete validation including workflow dry-runs
+  doctor     System-wide health check across all CUJs
+
+Examples:
+  # Validate a single CUJ
+  node .claude/tools/cuj-validator-unified.mjs CUJ-005
+
+  # Quick validation with JSON output
+  node .claude/tools/cuj-validator-unified.mjs CUJ-005 --mode quick --json
+
+  # Full validation with performance metrics
+  node .claude/tools/cuj-validator-unified.mjs CUJ-005 --mode full --performance --verbose
+
+  # System-wide health check
+  node .claude/tools/cuj-validator-unified.mjs --doctor
+
+  # Doctor mode with fix suggestions
+  node .claude/tools/cuj-validator-unified.mjs --doctor --fix-suggestions
+
+Exit codes:
+  0: All validations passed
+  1: One or more validations failed
+  2: Fatal error (missing dependencies, unable to run)

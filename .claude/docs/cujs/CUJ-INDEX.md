@@ -1,20 +1,20 @@
 # Customer User Journey (CUJ) Index
 
-This index maps all 60 Customer User Journeys (CUJs) to agents, skills, workflows, and expected outcomes (63 reserved IDs).
+This index maps all 61 Customer User Journeys (CUJs) to agents, skills, workflows, and expected outcomes (63 reserved IDs).
 
-**Note**: CUJ-031, CUJ-032, CUJ-033 are reserved for future use and not included in active documentation. The project has 60 implemented CUJs with 3 reserved slots for a total of 63 CUJ IDs.
+**Note**: CUJ-031, CUJ-032, CUJ-033 are reserved for future use and not included in active documentation. The project has 61 implemented CUJs with 2 reserved slots for a total of 63 CUJ IDs.
 
 ## Implementation Status Summary
 
-**All CUJs Implemented**: ✅ 60/60 CUJs defined and documented (3 reserved)
+**All CUJs Implemented**: ✅ 61/61 CUJs defined and documented (2 reserved)
 
-- **Workflow-Based CUJs**: 53 (multi-agent workflows)
+- **Workflow-Based CUJs**: 54 (multi-agent workflows)
 - **Skill-Only CUJs**: 5 (direct skill invocation without workflow)
 - **Manual CUJs**: 2 (require manual setup/execution)
 
 **Execution Modes**:
 
-- ✅ `workflow`: Direct YAML workflow execution (53 CUJs) - Load and execute full multi-step workflows
+- ✅ `workflow`: Direct YAML workflow execution (54 CUJs) - Load and execute full multi-step workflows
 - ✅ `skill`: Direct skill invocation (5 CUJs) - Invoke single skill without agents or planning
 - ✅ `manual`: Manual setup/execution (2 CUJs) - Require user-driven steps
 
@@ -130,6 +130,7 @@ This matrix shows which platforms support each CUJ:
 | CUJ-061                      | Artifact Publishing Workflow              | ✅     | ✅     | ❌      | Workflow-based - artifact-publisher                               |
 | CUJ-062                      | Skill Integration Validation              | ✅     | ✅     | ❌      | Workflow-based - skill-manager                                    |
 | CUJ-063                      | Error Recovery and Checkpoint Restoration | ✅     | ❌     | ❌      | Workflow-based - recovery                                         |
+| CUJ-064                      | Search Functionality                      | ✅     | ✅     | ⚠️      | Workflow-based - search-setup-flow                                |
 
 ### Platform-Specific Notes
 
@@ -157,21 +158,21 @@ This matrix shows which platforms support each CUJ:
 All other CUJs work on both Claude and Cursor platforms with equivalent functionality.
 
 **Factory Droid Compatibility**:
-Currently, 0 CUJs have explicit Factory support (`platform_compatibility.factory: true`). However, 7 CUJs may be runnable on Factory Droid with manual adaptation:
+Currently, 1 CUJ has partial Factory support (CUJ-064 marked as ⚠️). However, 7 CUJs may be runnable on Factory Droid with manual adaptation:
 
 - **Skill-only CUJs** (5 total): May work if skills are ported to Factory
 - **Manual CUJs** (2 total): Require manual setup regardless of platform
-- **Workflow CUJs** (53 total): Require Factory workflow engine support
+- **Workflow CUJs** (54 total): Require Factory workflow engine support
 
-Factory native support is planned for Phase 2+. Current status: 0/62 CUJs with official Factory support.
+Factory native support is planned for Phase 2+. Current status: 1/61 CUJs with partial Factory support (CUJ-064 with Algolia API configuration).
 
 ### Compatibility Summary
 
 | Platform    | Total CUJs Supported | Exclusive CUJs | Universal CUJs | Potentially Runnable |
 | ----------- | -------------------- | -------------- | -------------- | -------------------- |
-| **Claude**  | 60/62 (97%)          | 12 Claude-only | 48 universal   | N/A                  |
-| **Cursor**  | 50/62 (81%)          | 2 Cursor-only  | 48 universal   | N/A                  |
-| **Factory** | 0/62 (0%)            | 0              | 0              | 7 (with adaptation)  |
+| **Claude**  | 61/61 (100%)         | 12 Claude-only | 49 universal   | N/A                  |
+| **Cursor**  | 51/61 (84%)          | 2 Cursor-only  | 49 universal   | N/A                  |
+| **Factory** | 1/61 (2%)            | 0              | 1 partial      | 7 (with adaptation)  |
 
 **Note**:
 
@@ -226,7 +227,7 @@ Factory native support is planned for Phase 2+. Current status: 0/62 CUJs with o
 - [CUJ-023: Dependency Updates](#cuj-023-dependency-updates)
 - [CUJ-024: Incident Response](#cuj-024-incident-response)
 
-### Category 8: Advanced Workflows (6 CUJs)
+### Category 8: Advanced Workflows (7 CUJs)
 
 - [CUJ-025: Large Requirements Document Processing](#cuj-025-large-requirements-document-processing)
 - [CUJ-026: Multi-Phase Project Planning](#cuj-026-multi-phase-project-planning)
@@ -234,6 +235,7 @@ Factory native support is planned for Phase 2+. Current status: 0/62 CUJs with o
 - [CUJ-028: Infrastructure-First Development](#cuj-028-infrastructure-first-development)
 - [CUJ-029: Cloud Integration Workflow](#cuj-029-cloud-integration-workflow)
 - [CUJ-030: Multi-AI Validation Workflow](#cuj-030-multi-ai-validation-workflow)
+- [CUJ-064: Search Functionality](#cuj-064-search-functionality)
 
 ### Category 9: Testing & Validation (24 CUJs)
 
@@ -331,6 +333,7 @@ Factory native support is planned for Phase 2+. Current status: 0/62 CUJs with o
 | CUJ-061 | Artifact Publishing Workflow              | "Publish artifacts to project feed"                     | Planner → Developer → QA → Technical Writer                       | Artifact publishing               |
 | CUJ-062 | Skill Integration Validation              | "Validate skill integration"                            | Planner → Developer → QA → Performance Engineer                   | Skill integration testing         |
 | CUJ-063 | Error Recovery and Checkpoint Restoration | "Test error recovery"                                   | Planner → Orchestrator → [All agents with fallbacks]              | Checkpoint recovery               |
+| CUJ-064 | Search Functionality                      | "Search codebase for authentication patterns"           | Analyst → Orchestrator                                            | Algolia search workflow           |
 
 ## Skill-Only CUJ Execution
 
@@ -643,7 +646,8 @@ Each CUJ has a dedicated documentation file:
 
 - `.claude/docs/cujs/CUJ-001.md` through `.claude/docs/cujs/CUJ-030.md`
 - `.claude/docs/cujs/CUJ-034.md` (Browser-Based UI Testing)
-- `.claude/docs/cujs/CUJ-035.md` through `.claude/docs/cujs/CUJ-055.md` (Testing & Validation)
+- `.claude/docs/cujs/CUJ-035.md` through `.claude/docs/cujs/CUJ-063.md` (Testing & Validation)
+- `.claude/docs/cujs/CUJ-064.md` (Search Functionality)
 
 See individual CUJ files for:
 
@@ -729,6 +733,7 @@ This table maps each CUJ to its execution mode (workflow file or skill-only), wo
 | CUJ-061 | workflow       | `.claude/workflows/brownfield-fullstack.yaml`              | artifact-publisher        |
 | CUJ-062 | workflow       | `.claude/workflows/automated-enterprise-flow.yaml`         | skill-manager             |
 | CUJ-063 | workflow       | `.claude/workflows/recovery-test-flow.yaml`                | recovery                  |
+| CUJ-064 | workflow       | `.claude/workflows/search-setup-flow.yaml`                 | algolia-search            |
 
 **Notes**:
 

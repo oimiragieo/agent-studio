@@ -85,8 +85,8 @@ Identify if cloud provider is mentioned:
 
 Map classification to workflow file:
 
-| Intent         | Complexity | Cloud Provider | Workflow File                                                                                  |
-| -------------- | ---------- | -------------- | ---------------------------------------------------------------------------------------------- |
+| Intent         | Complexity | Cloud Provider | Workflow File                                                                                   |
+| -------------- | ---------- | -------------- | ----------------------------------------------------------------------------------------------- |
 | web_app        | high       | any            | `@.claude/workflows/greenfield-fullstack.yaml`                                                  |
 | web_app        | medium     | any            | `@.claude/workflows/greenfield-fullstack.yaml`                                                  |
 | script         | any        | any            | `@.claude/workflows/quick-flow.yaml` (fallback to quick-flow for scripts)                       |

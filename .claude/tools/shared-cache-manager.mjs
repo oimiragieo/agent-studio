@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 /**
  * Shared Cache Manager - Cross-Process Skill Content Cache
- * 
+ *
  * Issue 5.3: Provides shared caching across Node.js processes to:
  * - Reduce memory duplication when multiple hook instances run
  * - Speed up skill loading through pre-warming
  * - Persist cache to disk for cross-process access
- * 
+ *
  * Features:
  * - File-based shared cache with versioning
  * - File locking for concurrent access safety
  * - TTL (time-to-live) for automatic cache invalidation
  * - Pre-warming support for frequently used skills
  * - O(1) size tracking
- * 
+ *
  * Performance Target: <50MB cache memory usage
- * 
+ *
  * @module shared-cache-manager
  * @version 1.0.0
  */
@@ -62,14 +62,14 @@ function ensureCacheDir() {
 async function acquireLock() {
   const startTime = Date.now();
   let waitTime = LOCK_RETRY_INTERVAL_MS;
-  
+
   while (Date.now() - startTime < MAX_LOCK_WAIT_MS) {
     try {
       // Check if lock exists and is stale (>10 seconds old)
       if (existsSync(LOCK_FILE)) {
         const lockStat = await stat(LOCK_FILE);
         const lockAge = Date.now() - lockStat.mtimeMs;
-        
+
         if (lockAge > 10000) {
           // Lock is stale, remove it
           try {
@@ -85,14 +85,18 @@ async function acquireLock() {
           continue;
         }
       }
-      
+
       // Try to create lock file
-      writeFileSync(LOCK_FILE, JSON.stringify({
-        pid: process.pid,
-        timestamp: Date.now(),
-        hostname: process.env.COMPUTERNAME || process.env.HOSTNAME || 'unknown'
-      }), { flag: 'wx' }); // wx = exclusive write
-      
+      writeFileSync(
+        LOCK_FILE,
+        JSON.stringify({
+          pid: process.pid,
+          timestamp: Date.now(),
+          hostname: process.env.COMPUTERNAME || process.env.HOSTNAME || 'unknown',
+        }),
+        { flag: 'wx' }
+      ); // wx = exclusive write
+
       return true;
     } catch (error) {
       if (error.code === 'EEXIST') {
@@ -106,7 +110,7 @@ async function acquireLock() {
       return false;
     }
   }
-  
+
   // Timeout - proceed without lock (graceful degradation)
   console.warn('[shared-cache] Lock acquisition timeout, proceeding without lock');
   return false;
@@ -155,7 +159,7 @@ function generateContentHash(content) {
  */
 async function readSharedCache() {
   ensureCacheDir();
-  
+
   try {
     if (!existsSync(CACHE_FILE)) {
       return {
@@ -165,14 +169,14 @@ async function readSharedCache() {
           created: Date.now(),
           lastModified: Date.now(),
           totalSizeMB: 0,
-          entryCount: 0
-        }
+          entryCount: 0,
+        },
       };
     }
-    
+
     const content = await readFile(CACHE_FILE, 'utf-8');
     const cache = JSON.parse(content);
-    
+
     // Version check
     if (cache.version !== CACHE_VERSION) {
       console.warn('[shared-cache] Cache version mismatch, starting fresh');
@@ -183,11 +187,11 @@ async function readSharedCache() {
           created: Date.now(),
           lastModified: Date.now(),
           totalSizeMB: 0,
-          entryCount: 0
-        }
+          entryCount: 0,
+        },
       };
     }
-    
+
     return cache;
   } catch (error) {
     console.warn(`[shared-cache] Failed to read cache: ${error.message}`);
@@ -198,8 +202,8 @@ async function readSharedCache() {
         created: Date.now(),
         lastModified: Date.now(),
         totalSizeMB: 0,
-        entryCount: 0
-      }
+        entryCount: 0,
+      },
     };
   }
 }
@@ -211,28 +215,28 @@ async function readSharedCache() {
  */
 async function writeSharedCache(cache) {
   ensureCacheDir();
-  
+
   const lockAcquired = await acquireLock();
-  
+
   try {
     // Update metadata
     cache.metadata.lastModified = Date.now();
     cache.metadata.entryCount = Object.keys(cache.entries).length;
-    
+
     // Calculate total size
     let totalSize = 0;
     for (const entry of Object.values(cache.entries)) {
       totalSize += entry.sizeMB || 0;
     }
     cache.metadata.totalSizeMB = totalSize;
-    
+
     // Write atomically (write to temp file, then rename)
     const tempFile = `${CACHE_FILE}.tmp.${process.pid}`;
     await writeFile(tempFile, JSON.stringify(cache, null, 2), 'utf-8');
-    
+
     const { rename } = await import('fs/promises');
     await rename(tempFile, CACHE_FILE);
-    
+
     return true;
   } catch (error) {
     console.warn(`[shared-cache] Failed to write cache: ${error.message}`);
@@ -260,30 +264,30 @@ export async function getFromSharedCache(key) {
     inMemoryCacheSize -= memEntry.sizeMB;
     inMemoryCache.delete(key);
   }
-  
+
   // Check disk cache
   try {
     const cache = await readSharedCache();
     const entry = cache.entries[key];
-    
+
     if (!entry) {
       return null;
     }
-    
+
     // Check TTL
     if (Date.now() > entry.expiresAt) {
       // Entry expired
       return null;
     }
-    
+
     // Update in-memory cache
     inMemoryCache.set(key, {
       content: entry.content,
       expiresAt: entry.expiresAt,
-      sizeMB: entry.sizeMB
+      sizeMB: entry.sizeMB,
     });
     inMemoryCacheSize += entry.sizeMB;
-    
+
     return entry.content;
   } catch (error) {
     console.warn(`[shared-cache] Get error: ${error.message}`);
@@ -302,7 +306,7 @@ export async function setInSharedCache(key, content, ttlMs = DEFAULT_TTL_MS) {
   const sizeMB = calculateEntrySize(content);
   const expiresAt = Date.now() + ttlMs;
   const hash = generateContentHash(content);
-  
+
   // Update in-memory cache
   if (inMemoryCache.has(key)) {
     inMemoryCacheSize -= inMemoryCache.get(key).sizeMB;
@@ -310,33 +314,33 @@ export async function setInSharedCache(key, content, ttlMs = DEFAULT_TTL_MS) {
   inMemoryCache.set(key, {
     content,
     expiresAt,
-    sizeMB
+    sizeMB,
   });
   inMemoryCacheSize += sizeMB;
-  
+
   // Debounce disk writes
   const now = Date.now();
   if (now - lastSyncTime > SYNC_INTERVAL_MS) {
     lastSyncTime = now;
-    
+
     try {
       const cache = await readSharedCache();
-      
+
       // Check size limit before adding
       const newTotalSize = cache.metadata.totalSizeMB + sizeMB;
       if (newTotalSize > MAX_CACHE_SIZE_MB) {
         // Evict oldest entries to make room
         await evictOldestEntries(cache, sizeMB);
       }
-      
+
       cache.entries[key] = {
         content,
         expiresAt,
         sizeMB,
         hash,
-        createdAt: Date.now()
+        createdAt: Date.now(),
       };
-      
+
       await writeSharedCache(cache);
       return true;
     } catch (error) {
@@ -344,7 +348,7 @@ export async function setInSharedCache(key, content, ttlMs = DEFAULT_TTL_MS) {
       return false;
     }
   }
-  
+
   return true; // Cached in memory, will sync later
 }
 
@@ -357,48 +361,48 @@ export async function batchSetInSharedCache(entries) {
   if (!entries || entries.length === 0) {
     return { success: 0, failed: 0 };
   }
-  
+
   const cache = await readSharedCache();
   let success = 0;
   let failed = 0;
   let addedSize = 0;
-  
+
   for (const { key, content, ttlMs = DEFAULT_TTL_MS } of entries) {
     try {
       const sizeMB = calculateEntrySize(content);
       const expiresAt = Date.now() + ttlMs;
       const hash = generateContentHash(content);
-      
+
       // Update in-memory cache
       if (inMemoryCache.has(key)) {
         inMemoryCacheSize -= inMemoryCache.get(key).sizeMB;
       }
       inMemoryCache.set(key, { content, expiresAt, sizeMB });
       inMemoryCacheSize += sizeMB;
-      
+
       // Add to disk cache
       cache.entries[key] = {
         content,
         expiresAt,
         sizeMB,
         hash,
-        createdAt: Date.now()
+        createdAt: Date.now(),
       };
-      
+
       addedSize += sizeMB;
       success++;
     } catch (error) {
       failed++;
     }
   }
-  
+
   // Check size limit and evict if needed
   if (cache.metadata.totalSizeMB + addedSize > MAX_CACHE_SIZE_MB) {
     await evictOldestEntries(cache, addedSize);
   }
-  
+
   await writeSharedCache(cache);
-  
+
   return { success, failed };
 }
 
@@ -412,23 +416,23 @@ async function evictOldestEntries(cache, neededMB) {
   const entries = Object.entries(cache.entries)
     .map(([key, entry]) => ({ key, ...entry }))
     .sort((a, b) => a.createdAt - b.createdAt);
-  
+
   let freedMB = 0;
   for (const entry of entries) {
     if (freedMB >= neededMB) {
       break;
     }
-    
+
     freedMB += entry.sizeMB;
     delete cache.entries[entry.key];
-    
+
     // Also remove from in-memory cache
     if (inMemoryCache.has(entry.key)) {
       inMemoryCacheSize -= inMemoryCache.get(entry.key).sizeMB;
       inMemoryCache.delete(entry.key);
     }
   }
-  
+
   cache.metadata.totalSizeMB -= freedMB;
   console.log(`[shared-cache] Evicted ${freedMB.toFixed(2)}MB to free space`);
 }
@@ -444,24 +448,24 @@ export async function prewarmCache(skillNames, loader) {
   const startTime = Date.now();
   let loaded = 0;
   let failed = 0;
-  
+
   // Load skills in parallel batches of 5
   const batchSize = 5;
   const batches = [];
-  
+
   for (let i = 0; i < skillNames.length; i += batchSize) {
     batches.push(skillNames.slice(i, i + batchSize));
   }
-  
+
   for (const batch of batches) {
     const results = await Promise.allSettled(
-      batch.map(async (skillName) => {
+      batch.map(async skillName => {
         // Check if already cached
         const cached = await getFromSharedCache(`skill:${skillName}`);
         if (cached) {
           return { skillName, cached: true };
         }
-        
+
         // Load and cache
         try {
           const content = await loader(skillName);
@@ -475,7 +479,7 @@ export async function prewarmCache(skillNames, loader) {
         }
       })
     );
-    
+
     for (const result of results) {
       if (result.status === 'fulfilled') {
         if (result.value.loaded || result.value.cached) {
@@ -488,9 +492,9 @@ export async function prewarmCache(skillNames, loader) {
       }
     }
   }
-  
+
   const timeMs = Date.now() - startTime;
-  
+
   return { loaded, failed, timeMs };
 }
 
@@ -500,17 +504,17 @@ export async function prewarmCache(skillNames, loader) {
  */
 export async function getSharedCacheStats() {
   const cache = await readSharedCache();
-  
+
   return {
     version: cache.version,
     entryCount: Object.keys(cache.entries).length,
     totalSizeMB: cache.metadata.totalSizeMB,
     maxSizeMB: MAX_CACHE_SIZE_MB,
-    utilization: (cache.metadata.totalSizeMB / MAX_CACHE_SIZE_MB * 100).toFixed(1) + '%',
+    utilization: ((cache.metadata.totalSizeMB / MAX_CACHE_SIZE_MB) * 100).toFixed(1) + '%',
     inMemoryEntries: inMemoryCache.size,
     inMemorySizeMB: inMemoryCacheSize.toFixed(2),
     lastModified: new Date(cache.metadata.lastModified).toISOString(),
-    created: new Date(cache.metadata.created).toISOString()
+    created: new Date(cache.metadata.created).toISOString(),
   };
 }
 
@@ -521,7 +525,7 @@ export async function getSharedCacheStats() {
 export async function clearSharedCache() {
   inMemoryCache.clear();
   inMemoryCacheSize = 0;
-  
+
   const cache = {
     version: CACHE_VERSION,
     entries: {},
@@ -529,10 +533,10 @@ export async function clearSharedCache() {
       created: Date.now(),
       lastModified: Date.now(),
       totalSizeMB: 0,
-      entryCount: 0
-    }
+      entryCount: 0,
+    },
   };
-  
+
   return await writeSharedCache(cache);
 }
 
@@ -545,26 +549,26 @@ export async function cleanupExpiredEntries() {
   const now = Date.now();
   let removed = 0;
   let freedMB = 0;
-  
+
   for (const [key, entry] of Object.entries(cache.entries)) {
     if (now > entry.expiresAt) {
       freedMB += entry.sizeMB;
       delete cache.entries[key];
-      
+
       if (inMemoryCache.has(key)) {
         inMemoryCacheSize -= inMemoryCache.get(key).sizeMB;
         inMemoryCache.delete(key);
       }
-      
+
       removed++;
     }
   }
-  
+
   if (removed > 0) {
     cache.metadata.totalSizeMB -= freedMB;
     await writeSharedCache(cache);
   }
-  
+
   return { removed, freedMB };
 }
 
@@ -575,7 +579,7 @@ export async function cleanupExpiredEntries() {
 export async function forceSyncToCache() {
   try {
     const cache = await readSharedCache();
-    
+
     // Sync all in-memory entries to disk
     for (const [key, entry] of inMemoryCache.entries()) {
       if (!cache.entries[key] || cache.entries[key].expiresAt < entry.expiresAt) {
@@ -584,14 +588,14 @@ export async function forceSyncToCache() {
           expiresAt: entry.expiresAt,
           sizeMB: entry.sizeMB,
           hash: generateContentHash(entry.content),
-          createdAt: Date.now()
+          createdAt: Date.now(),
         };
       }
     }
-    
+
     await writeSharedCache(cache);
     lastSyncTime = Date.now();
-    
+
     return true;
   } catch (error) {
     console.warn(`[shared-cache] Sync error: ${error.message}`);
@@ -608,5 +612,5 @@ export default {
   getSharedCacheStats,
   clearSharedCache,
   cleanupExpiredEntries,
-  forceSyncToCache
+  forceSyncToCache,
 };

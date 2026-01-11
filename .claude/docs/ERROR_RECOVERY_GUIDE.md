@@ -19,6 +19,7 @@ This guide defines error categories and automatic recovery strategies for workfl
 **Characteristics**: Temporary failures that resolve with retries
 
 **Examples**:
+
 - Network timeouts (ETIMEDOUT, ECONNREFUSED)
 - Rate limiting (HTTP 429)
 - Temporary file locks (EBUSY)
@@ -27,6 +28,7 @@ This guide defines error categories and automatic recovery strategies for workfl
 - Resource temporarily unavailable
 
 **Recovery Strategy**: Exponential backoff retry
+
 - **Max attempts**: 3
 - **Base delay**: 1000ms
 - **Max delay**: 10000ms
@@ -34,6 +36,7 @@ This guide defines error categories and automatic recovery strategies for workfl
 - **Jitter**: ±200ms
 
 **Implementation**:
+
 ```javascript
 async function retryWithBackoff(fn, maxAttempts = 3) {
   let attempt = 1;
@@ -82,6 +85,7 @@ function isTransientError(error) {
 **Characteristics**: Errors that will not resolve with retries
 
 **Examples**:
+
 - File not found (ENOENT, HTTP 404)
 - Permission denied (EACCES, HTTP 403)
 - Invalid syntax errors
@@ -90,11 +94,13 @@ function isTransientError(error) {
 - Authentication invalid (HTTP 401 with invalid credentials)
 
 **Recovery Strategy**: Fail fast with clear error message
+
 - **No retries**: Error is permanent
 - **Action**: Log error, report to user with actionable feedback
 - **Workflow**: Mark step as failed, halt execution
 
 **Implementation**:
+
 ```javascript
 function isPermanentError(error) {
   const permanentCodes = ['ENOENT', 'EACCES', 'EPERM'];
@@ -117,7 +123,7 @@ function handlePermanentError(error, context) {
     message: error.message,
     suggestion: generateSuggestion(error),
     context: context,
-    canRetry: false
+    canRetry: false,
   };
 }
 
@@ -142,6 +148,7 @@ function generateSuggestion(error) {
 **Characteristics**: Errors that require user input or configuration changes
 
 **Examples**:
+
 - Missing dependencies (MODULE_NOT_FOUND)
 - Configuration errors (invalid config values)
 - Invalid credentials (need refresh/re-authentication)
@@ -149,12 +156,14 @@ function generateSuggestion(error) {
 - Insufficient resources (disk space, memory)
 
 **Recovery Strategy**: Prompt user with specific fix instructions
+
 - **Action**: Generate detailed fix instructions
 - **Wait**: Pause workflow for user intervention
 - **Verify**: Check if issue resolved before continuing
 - **Fallback**: Offer alternative approaches
 
 **Implementation**:
+
 ```javascript
 async function handleRecoverableError(error, context) {
   const fixInstructions = generateFixInstructions(error);
@@ -186,7 +195,7 @@ async function handleRecoverableError(error, context) {
     fixInstructions: fixInstructions,
     context: context,
     canRetry: true,
-    requiresUserAction: true
+    requiresUserAction: true,
   };
 }
 
@@ -195,10 +204,7 @@ function generateFixInstructions(error) {
     const moduleName = extractModuleName(error.message);
     return {
       primary: `Install missing dependency: pnpm add ${moduleName}`,
-      alternatives: [
-        `npm install ${moduleName}`,
-        `yarn add ${moduleName}`
-      ]
+      alternatives: [`npm install ${moduleName}`, `yarn add ${moduleName}`],
     };
   } else if (error.message.includes('Environment variable')) {
     const varName = extractVariableName(error.message);
@@ -206,22 +212,22 @@ function generateFixInstructions(error) {
       primary: `Set environment variable: export ${varName}=<value>`,
       alternatives: [
         `Add ${varName} to .env file`,
-        `Set ${varName} in system environment variables`
-      ]
+        `Set ${varName} in system environment variables`,
+      ],
     };
   } else if (error.message.includes('configuration')) {
     return {
       primary: 'Review and fix configuration in .claude/config.yaml',
       alternatives: [
         'Use default configuration: cp .claude/config.default.yaml .claude/config.yaml',
-        'Validate configuration: node .claude/tools/validate-config.mjs'
-      ]
+        'Validate configuration: node .claude/tools/validate-config.mjs',
+      ],
     };
   }
 
   return {
     primary: 'Review error details and correct the issue',
-    alternatives: []
+    alternatives: [],
   };
 }
 ```
@@ -233,6 +239,7 @@ function generateFixInstructions(error) {
 **Characteristics**: Errors that indicate system-level failures or security issues
 
 **Examples**:
+
 - Security violations (unauthorized access attempts)
 - Data corruption detected
 - System resource exhaustion (out of memory, disk full)
@@ -241,12 +248,14 @@ function generateFixInstructions(error) {
 - Process crashes or segmentation faults
 
 **Recovery Strategy**: Stop immediately, rollback if possible
+
 - **Action**: Halt workflow, prevent further damage
 - **Rollback**: Undo changes if transaction support available
 - **Alert**: Notify user with critical severity
 - **Log**: Detailed error context for debugging
 
 **Implementation**:
+
 ```javascript
 async function handleCriticalError(error, context) {
   console.error(`CRITICAL ERROR in ${context.operation}:`);
@@ -278,12 +287,13 @@ async function handleCriticalError(error, context) {
     context: context,
     canRetry: false,
     rollbackAttempted: context.rollbackSupported,
-    recommendation: 'System requires manual inspection and recovery'
+    recommendation: 'System requires manual inspection and recovery',
   };
 }
 
 function isCriticalError(error) {
-  const criticalMessages = /security violation|data corruption|out of memory|disk full|circuit.*open/i;
+  const criticalMessages =
+    /security violation|data corruption|out of memory|disk full|circuit.*open/i;
   const criticalCodes = ['ENOMEM', 'ENOSPC'];
 
   return (
@@ -301,9 +311,9 @@ async function logCriticalError(error, context) {
     error: {
       message: error.message,
       stack: error.stack,
-      code: error.code
+      code: error.code,
     },
-    context
+    context,
   };
 
   // Write to critical error log
@@ -354,7 +364,7 @@ async function executeStep(step, context) {
       workflowId: context.workflowId,
       runId: context.runId,
       interactive: context.interactive || false,
-      rollbackSupported: step.rollbackSupported || false
+      rollbackSupported: step.rollbackSupported || false,
     });
 
     if (recoveryResult.success) {
@@ -362,7 +372,9 @@ async function executeStep(step, context) {
       return recoveryResult;
     } else if (recoveryResult.canRetry && recoveryResult.requiresUserAction) {
       // Wait for user to fix, then retry
-      throw new Error(`Step ${step.number} requires user action: ${recoveryResult.fixInstructions.primary}`);
+      throw new Error(
+        `Step ${step.number} requires user action: ${recoveryResult.fixInstructions.primary}`
+      );
     } else {
       // Unrecoverable, fail workflow
       throw error;
@@ -378,11 +390,13 @@ async function executeStep(step, context) {
 All recovery attempts are logged to `.claude/context/logs/error-recovery.log`:
 
 **Log Format**:
+
 ```
 [timestamp] [workflow-id] [step] [error-category] [recovery-status] [error-message]
 ```
 
 **Example**:
+
 ```
 [2026-01-10T12:34:56.789Z] [run-001] [step-3] [transient] [retry-success] ETIMEDOUT after 3 attempts
 [2026-01-10T12:35:12.456Z] [run-002] [step-1] [permanent] [fail-fast] File not found: plan.json

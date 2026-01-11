@@ -45,6 +45,7 @@ This document describes the platform compatibility system for Customer User Jour
 **Version Tested**: 0.40+
 
 **Excluded Skills**:
+
 - `recovery` - Claude Code specific orchestration recovery
 - `optional-artifact-handler` - Requires hook system
 - `conflict-resolution` - Requires agent system
@@ -72,6 +73,7 @@ This document describes the platform compatibility system for Customer User Jour
 **Version Tested**: 2024.12+
 
 **Supported Skills**:
+
 - `rule-auditor` - Rule compliance checking
 - `rule-selector` - Technology stack rule selection
 - `scaffolder` - Boilerplate generation
@@ -105,6 +107,7 @@ This document describes the platform compatibility system for Customer User Jour
 **Version Tested**: 2024.12+
 
 **Supported Skills** (from `codex-skills/` directory):
+
 - `multi-ai-code-review` - Multi-model code review
 - `response-rater` - Plan and response quality rating
 
@@ -123,14 +126,14 @@ All capabilities are marked as `untested` for these platforms. CUJs will not be 
 
 ## Capability Levels
 
-| Level | Description |
-|-------|-------------|
-| `true` | Fully supported - feature works as documented |
-| `false` | Not supported - feature unavailable |
-| `limited` | Partially supported - check supported_* lists |
-| `platform-specific` | Requires platform-specific implementation |
-| `codex-only` | Only codex-specific skills work |
-| `untested` | Support unknown - needs validation |
+| Level               | Description                                     |
+| ------------------- | ----------------------------------------------- |
+| `true`              | Fully supported - feature works as documented   |
+| `false`             | Not supported - feature unavailable             |
+| `limited`           | Partially supported - check supported\_\* lists |
+| `platform-specific` | Requires platform-specific implementation       |
+| `codex-only`        | Only codex-specific skills work                 |
+| `untested`          | Support unknown - needs validation              |
 
 ## Execution Mode Requirements
 
@@ -138,11 +141,13 @@ All capabilities are marked as `untested` for these platforms. CUJs will not be 
 
 **Required Capabilities**: `workflows`, `agents`
 
-**Compatible Platforms**: 
+**Compatible Platforms**:
+
 - Claude Code (native)
 - Cursor (via extension)
 
 **Incompatible Platforms**:
+
 - Factory (uses task-tool pattern instead)
 - Codex CLI (no workflow support)
 
@@ -153,6 +158,7 @@ All capabilities are marked as `untested` for these platforms. CUJs will not be 
 **Required Capabilities**: `skills` (and the specific skill must be available)
 
 **Compatible Platforms**:
+
 - Claude Code (all skills)
 - Cursor (104 skills, excludes 4)
 - Factory (8 core skills only)
@@ -171,7 +177,7 @@ The CUJ validation system checks platform compatibility using these steps:
 1. **Load Platform Matrix**: Read `.claude/context/platform-compatibility.json`
 2. **Determine Execution Mode**: Workflow, skill-only, or manual
 3. **Check Capability Requirements**: Verify platform supports required capabilities
-4. **Check Resource Availability**: 
+4. **Check Resource Availability**:
    - For skills: Is the specific skill available on the platform?
    - For workflows: Is the workflow file present?
 5. **Generate Compatibility Report**: List compatible platforms with any warnings
@@ -187,6 +193,7 @@ To add support for a new platform:
 5. **Document**: Update this file with platform details
 
 Example entry:
+
 ```json
 {
   "new-platform": {
@@ -234,6 +241,7 @@ Factory does not execute `.yaml` workflows directly. To adapt:
 4. **Handle artifacts**: Use artifact-publisher skill for state passing
 
 Example adaptation:
+
 ```
 // Workflow CUJ (Claude Code)
 workflow: greenfield-fullstack.yaml
@@ -241,7 +249,7 @@ steps: analyst -> architect -> developer -> qa
 
 // Factory Adaptation
 Task 1: "Spawn analyst to gather requirements"
-Task 2: "Spawn architect to design system" 
+Task 2: "Spawn architect to design system"
 Task 3: "Spawn developer to implement"
 Task 4: "Spawn qa to validate"
 ```
@@ -249,11 +257,13 @@ Task 4: "Spawn qa to validate"
 ## Validation Commands
 
 Check CUJ platform compatibility:
+
 ```bash
 node .claude/tools/validate-cuj-e2e.mjs --verbose
 ```
 
 View platform compatibility matrix:
+
 ```bash
 cat .claude/context/platform-compatibility.json | jq '.platforms'
 ```
@@ -266,6 +276,6 @@ cat .claude/context/platform-compatibility.json | jq '.platforms'
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-10 | Initial release - replace hardcoded assumptions with matrix |
+| Version | Date       | Changes                                                     |
+| ------- | ---------- | ----------------------------------------------------------- |
+| 1.0.0   | 2025-01-10 | Initial release - replace hardcoded assumptions with matrix |

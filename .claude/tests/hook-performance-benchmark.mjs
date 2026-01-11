@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
  * Hook Performance Benchmark
- * 
+ *
  * Measures and validates hook execution time against the <100ms target.
  * Tests various scenarios with different agent types and skill counts.
- * 
+ *
  * Usage:
  *   node .claude/tests/hook-performance-benchmark.mjs
  *   node .claude/tests/hook-performance-benchmark.mjs --iterations 50
  *   node .claude/tests/hook-performance-benchmark.mjs --verbose
- * 
+ *
  * Performance Target: <100ms average execution time
  */
 
@@ -22,7 +22,7 @@ import {
   loadSkillsInParallel,
   getTopSkills,
   getSkillContentCacheStats,
-  clearSkillContentCache
+  clearSkillContentCache,
 } from '../tools/skill-injector.mjs';
 import { getSharedCacheStats, clearSharedCache } from '../tools/shared-cache-manager.mjs';
 import { getMemoryUsage } from '../tools/memory-monitor.mjs';
@@ -40,33 +40,33 @@ const TEST_SCENARIOS = [
   {
     name: 'Developer - Simple Task',
     agent: 'developer',
-    prompt: 'Create a new React component for user profile display'
+    prompt: 'Create a new React component for user profile display',
   },
   {
     name: 'Developer - Complex Task',
     agent: 'developer',
-    prompt: 'Implement OAuth2 authentication with JWT tokens and refresh token rotation'
+    prompt: 'Implement OAuth2 authentication with JWT tokens and refresh token rotation',
   },
   {
     name: 'Architect - System Design',
     agent: 'architect',
-    prompt: 'Design a microservices architecture for e-commerce platform'
+    prompt: 'Design a microservices architecture for e-commerce platform',
   },
   {
     name: 'QA - Testing Task',
     agent: 'qa',
-    prompt: 'Create comprehensive test suite for user authentication flow'
+    prompt: 'Create comprehensive test suite for user authentication flow',
   },
   {
     name: 'Code Reviewer - PR Review',
     agent: 'code-reviewer',
-    prompt: 'Review the pull request for security vulnerabilities and code quality'
+    prompt: 'Review the pull request for security vulnerabilities and code quality',
   },
   {
     name: 'Security Architect - Audit',
     agent: 'security-architect',
-    prompt: 'Perform security audit on the authentication module'
-  }
+    prompt: 'Perform security audit on the authentication module',
+  },
 ];
 
 /**
@@ -78,7 +78,7 @@ function parseArgs() {
     iterations: DEFAULT_ITERATIONS,
     verbose: false,
     warmup: true,
-    report: true
+    report: true,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -104,10 +104,10 @@ function calculateStats(values) {
   const sorted = [...values].sort((a, b) => a - b);
   const sum = values.reduce((a, b) => a + b, 0);
   const avg = sum / values.length;
-  
+
   const variance = values.reduce((acc, val) => acc + Math.pow(val - avg, 2), 0) / values.length;
   const stdDev = Math.sqrt(variance);
-  
+
   return {
     count: values.length,
     min: sorted[0],
@@ -116,7 +116,7 @@ function calculateStats(values) {
     median: sorted[Math.floor(sorted.length / 2)],
     p95: sorted[Math.floor(sorted.length * 0.95)],
     p99: sorted[Math.floor(sorted.length * 0.99)],
-    stdDev: stdDev
+    stdDev: stdDev,
   };
 }
 
@@ -125,28 +125,28 @@ function calculateStats(values) {
  */
 async function runScenarioBenchmark(scenario, iterations, verbose) {
   const times = [];
-  
+
   for (let i = 0; i < iterations; i++) {
     const startTime = process.hrtime.bigint();
-    
+
     try {
       await injectSkillsForAgent(scenario.agent, scenario.prompt, {
-        includeRecommended: false
+        includeRecommended: false,
       });
     } catch (error) {
       console.error(`  Error in iteration ${i + 1}: ${error.message}`);
       continue;
     }
-    
+
     const endTime = process.hrtime.bigint();
     const durationMs = Number(endTime - startTime) / 1_000_000;
     times.push(durationMs);
-    
+
     if (verbose && (i + 1) % 10 === 0) {
       console.log(`  Iteration ${i + 1}/${iterations}: ${durationMs.toFixed(2)}ms`);
     }
   }
-  
+
   return calculateStats(times);
 }
 
@@ -156,30 +156,30 @@ async function runScenarioBenchmark(scenario, iterations, verbose) {
 async function runParallelLoadingBenchmark(iterations, verbose) {
   const topSkills = await getTopSkills(10);
   const times = [];
-  
+
   for (let i = 0; i < iterations; i++) {
     // Clear cache to measure actual loading time
     clearSkillContentCache();
     await clearSharedCache();
-    
+
     const startTime = process.hrtime.bigint();
-    
+
     try {
       await loadSkillsInParallel(topSkills, false); // Disable cache for accurate measurement
     } catch (error) {
       console.error(`  Error in iteration ${i + 1}: ${error.message}`);
       continue;
     }
-    
+
     const endTime = process.hrtime.bigint();
     const durationMs = Number(endTime - startTime) / 1_000_000;
     times.push(durationMs);
-    
+
     if (verbose && (i + 1) % 10 === 0) {
       console.log(`  Iteration ${i + 1}/${iterations}: ${durationMs.toFixed(2)}ms`);
     }
   }
-  
+
   return calculateStats(times);
 }
 
@@ -190,17 +190,17 @@ async function runPrewarmBenchmark() {
   // Clear caches
   clearSkillContentCache();
   await clearSharedCache();
-  
+
   const startTime = process.hrtime.bigint();
   const result = await prewarmSkillCache();
   const endTime = process.hrtime.bigint();
-  
+
   const durationMs = Number(endTime - startTime) / 1_000_000;
-  
+
   return {
     durationMs,
     loaded: result.loaded,
-    failed: result.failed
+    failed: result.failed,
   };
 }
 
@@ -212,12 +212,14 @@ function formatResults(stats, targetMs) {
   const statusIcon = passedTarget ? '✓' : '✗';
   const color = passedTarget ? '\x1b[32m' : '\x1b[31m';
   const reset = '\x1b[0m';
-  
-  return `${color}${statusIcon}${reset} Avg: ${stats.avg.toFixed(2)}ms | ` +
-         `P95: ${stats.p95.toFixed(2)}ms | ` +
-         `P99: ${stats.p99.toFixed(2)}ms | ` +
-         `Min: ${stats.min.toFixed(2)}ms | ` +
-         `Max: ${stats.max.toFixed(2)}ms`;
+
+  return (
+    `${color}${statusIcon}${reset} Avg: ${stats.avg.toFixed(2)}ms | ` +
+    `P95: ${stats.p95.toFixed(2)}ms | ` +
+    `P99: ${stats.p99.toFixed(2)}ms | ` +
+    `Min: ${stats.min.toFixed(2)}ms | ` +
+    `Max: ${stats.max.toFixed(2)}ms`
+  );
 }
 
 /**
@@ -228,10 +230,10 @@ function generateReport(results, config) {
   if (!existsSync(reportDir)) {
     mkdirSync(reportDir, { recursive: true });
   }
-  
+
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const reportPath = join(reportDir, 'hook-performance-report.md');
-  
+
   let report = `# Hook Performance Benchmark Report
 
 Generated: ${new Date().toISOString()}
@@ -321,7 +323,7 @@ Target: <${TARGET_MS}ms
 
   writeFileSync(reportPath, report, 'utf-8');
   console.log(`\nReport saved to: ${reportPath}`);
-  
+
   return reportPath;
 }
 
@@ -330,38 +332,42 @@ Target: <${TARGET_MS}ms
  */
 async function main() {
   const config = parseArgs();
-  
+
   console.log('═══════════════════════════════════════════════════════════════');
   console.log('   Hook Performance Benchmark');
   console.log('   Target: <100ms average execution time');
   console.log('═══════════════════════════════════════════════════════════════\n');
-  
+
   const results = {
     scenarios: {},
     overall: null,
     parallelLoading: null,
     prewarm: null,
     cacheStats: null,
-    memory: null
+    memory: null,
   };
-  
+
   // 1. Pre-warming benchmark
   console.log('1. Pre-warming Cache...');
   results.prewarm = await runPrewarmBenchmark();
-  console.log(`   Pre-warm: ${results.prewarm.durationMs.toFixed(2)}ms, ${results.prewarm.loaded} skills loaded\n`);
-  
+  console.log(
+    `   Pre-warm: ${results.prewarm.durationMs.toFixed(2)}ms, ${results.prewarm.loaded} skills loaded\n`
+  );
+
   // 2. Re-warm cache for scenario tests
   if (config.warmup) {
     console.log('2. Warming up cache for scenario tests...');
     await prewarmSkillCache();
     console.log('   Cache warmed\n');
   }
-  
+
   // 3. Run scenario benchmarks
-  console.log(`3. Running ${TEST_SCENARIOS.length} scenarios (${config.iterations} iterations each)...\n`);
-  
+  console.log(
+    `3. Running ${TEST_SCENARIOS.length} scenarios (${config.iterations} iterations each)...\n`
+  );
+
   const allTimes = [];
-  
+
   for (const scenario of TEST_SCENARIOS) {
     console.log(`   ${scenario.name}...`);
     const stats = await runScenarioBenchmark(scenario, config.iterations, config.verbose);
@@ -369,17 +375,15 @@ async function main() {
     allTimes.push(...Array(stats.count).fill(stats.avg));
     console.log(`   ${formatResults(stats, TARGET_MS)}\n`);
   }
-  
+
   // 4. Calculate overall statistics
-  results.overall = calculateStats(
-    Object.values(results.scenarios).map(s => s.avg)
-  );
-  
+  results.overall = calculateStats(Object.values(results.scenarios).map(s => s.avg));
+
   console.log('═══════════════════════════════════════════════════════════════');
   console.log('   Overall Results');
   console.log('═══════════════════════════════════════════════════════════════\n');
   console.log(`   ${formatResults(results.overall, TARGET_MS)}\n`);
-  
+
   // 5. Parallel loading benchmark (reduced iterations)
   console.log('4. Parallel Loading Benchmark (10 skills)...');
   results.parallelLoading = await runParallelLoadingBenchmark(
@@ -387,28 +391,34 @@ async function main() {
     config.verbose
   );
   console.log(`   ${formatResults(results.parallelLoading, TARGET_MS)}\n`);
-  
+
   // 6. Collect cache statistics
   console.log('5. Cache Statistics...');
   results.cacheStats = {
     local: getSkillContentCacheStats(),
-    shared: await getSharedCacheStats()
+    shared: await getSharedCacheStats(),
   };
-  console.log(`   Local: ${results.cacheStats.local.size} skills, ${results.cacheStats.local.estimatedSizeMB}MB`);
-  console.log(`   Shared: ${results.cacheStats.shared.entryCount} entries, ${results.cacheStats.shared.totalSizeMB}MB\n`);
-  
+  console.log(
+    `   Local: ${results.cacheStats.local.size} skills, ${results.cacheStats.local.estimatedSizeMB}MB`
+  );
+  console.log(
+    `   Shared: ${results.cacheStats.shared.entryCount} entries, ${results.cacheStats.shared.totalSizeMB}MB\n`
+  );
+
   // 7. Memory usage
   results.memory = getMemoryUsage();
   console.log('6. Memory Usage...');
-  console.log(`   Heap: ${results.memory.heapUsedMB.toFixed(2)}MB / ${results.memory.heapTotalMB.toFixed(2)}MB`);
+  console.log(
+    `   Heap: ${results.memory.heapUsedMB.toFixed(2)}MB / ${results.memory.heapTotalMB.toFixed(2)}MB`
+  );
   console.log(`   RSS: ${results.memory.rssMB.toFixed(2)}MB\n`);
-  
+
   // 8. Generate report
   if (config.report) {
     console.log('7. Generating Report...');
     generateReport(results, config);
   }
-  
+
   // 9. Final verdict
   console.log('\n═══════════════════════════════════════════════════════════════');
   if (results.overall.avg < TARGET_MS) {
@@ -419,13 +429,13 @@ async function main() {
     console.log(`   Average: ${results.overall.avg.toFixed(2)}ms > Target: ${TARGET_MS}ms`);
   }
   console.log('═══════════════════════════════════════════════════════════════\n');
-  
+
   // Exit with appropriate code
   process.exit(results.overall.avg < TARGET_MS ? 0 : 1);
 }
 
 // Run benchmark
-main().catch((error) => {
+main().catch(error => {
   console.error(`Fatal error: ${error.message}`);
   console.error(error.stack);
   process.exit(1);

@@ -22,7 +22,8 @@
         "test-generator",
         "claude-md-generator",
         "dependency-analyzer",
-        "code-style-validator"
+        "code-style-validator",
+        "algolia-search"
       ],
       "skill_triggers": {
         "new_component": "scaffolder",
@@ -31,7 +32,10 @@
         "test_creation": "test-generator",
         "new_module": "claude-md-generator",
         "dependency_update": "dependency-analyzer",
-        "style_check": "code-style-validator"
+        "style_check": "code-style-validator",
+        "search_setup": "algolia-search",
+        "index_content": "algolia-search",
+        "search_implementation": "algolia-search"
       },
       "description": "Developer implements features and creates code. Uses scaffolder for boilerplate, rule-auditor before commit, repo-rag for pattern discovery."
     },
@@ -225,13 +229,14 @@
     },
     "performance-engineer": {
       "required_skills": ["dependency-analyzer", "repo-rag", "diagram-generator"],
-      "recommended_skills": ["sequential-thinking", "doc-generator"],
+      "recommended_skills": ["sequential-thinking", "doc-generator", "algolia-search"],
       "skill_triggers": {
         "dependency_analysis": "dependency-analyzer",
         "performance_pattern_search": "repo-rag",
         "performance_diagram": "diagram-generator",
         "optimization_analysis": "sequential-thinking",
-        "performance_docs": "doc-generator"
+        "performance_docs": "doc-generator",
+        "search_optimization": "algolia-search"
       },
       "description": "Performance engineer optimizes systems. Uses dependency-analyzer for bundle analysis, repo-rag for optimization patterns."
     },
