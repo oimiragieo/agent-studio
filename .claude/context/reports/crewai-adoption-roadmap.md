@@ -12,6 +12,7 @@
 This roadmap outlines the adoption of CrewAI best practices into our Claude Code subagent system. Based on analysis of the CrewAI framework, we have identified key patterns in memory architecture, entity extraction, and cross-agent coordination that can enhance our existing Phase 2 memory system.
 
 **Key Improvements Targeted**:
+
 1. **Entity Memory**: Structured knowledge graph for entities and relationships
 2. **Hierarchical Memory Tiers**: Short-term and long-term memory with promotion logic
 3. **Enhanced Context Injection**: Relevance scoring and task-aware memory selection
@@ -25,27 +26,27 @@ This roadmap outlines the adoption of CrewAI best practices into our Claude Code
 
 Our Phase 2 memory system provides a solid foundation:
 
-| Component | Description | Status |
-|-----------|-------------|--------|
-| `database.mjs` | SQLite with FTS5 full-text search | Production |
-| `vector-store.mjs` | HNSW-based similarity search | Production |
-| `semantic-memory.mjs` | Semantic search coordination | Production |
-| `pattern-learner.mjs` | Pattern tracking with confidence | Production |
-| `preference-tracker.mjs` | User preference learning | Production |
-| `overflow-handler.mjs` | Context compaction | Production |
+| Component                | Description                       | Status     |
+| ------------------------ | --------------------------------- | ---------- |
+| `database.mjs`           | SQLite with FTS5 full-text search | Production |
+| `vector-store.mjs`       | HNSW-based similarity search      | Production |
+| `semantic-memory.mjs`    | Semantic search coordination      | Production |
+| `pattern-learner.mjs`    | Pattern tracking with confidence  | Production |
+| `preference-tracker.mjs` | User preference learning          | Production |
+| `overflow-handler.mjs`   | Context compaction                | Production |
 
 **Test Coverage**: 157 tests passed
 **Performance**: 17/17 targets met
 
 ### Gaps Identified from CrewAI Analysis
 
-| Gap | CrewAI Pattern | Impact |
-|-----|----------------|--------|
-| No entity memory | Dedicated entity extraction and storage | Medium |
-| Flat memory structure | Hierarchical tiers (short/long-term) | Medium |
-| Basic relevance scoring | Multi-factor relevance with decay | High |
-| No cross-agent sharing | Workflow-scoped shared memory | Medium |
-| No memory kickoff | Session initialization service | Low |
+| Gap                     | CrewAI Pattern                          | Impact |
+| ----------------------- | --------------------------------------- | ------ |
+| No entity memory        | Dedicated entity extraction and storage | Medium |
+| Flat memory structure   | Hierarchical tiers (short/long-term)    | Medium |
+| Basic relevance scoring | Multi-factor relevance with decay       | High   |
+| No cross-agent sharing  | Workflow-scoped shared memory           | Medium |
+| No memory kickoff       | Session initialization service          | Low    |
 
 ---
 
@@ -79,18 +80,21 @@ Week 1-2 (Days 1-10)
 ```
 
 **Success Criteria**:
+
 - Entity extraction identifies 90%+ of named entities
 - Entity relationships correctly mapped
 - Entity retrieval latency <50ms
 - 15+ tests passing
 
 **Files Created**:
+
 - `.claude/tools/memory/entity-extractor.mjs`
 - `.claude/tools/memory/entity-memory.mjs`
 - `.claude/tools/memory/entity-memory.test.mjs`
 - `.claude/tools/memory/migrations/002-entity-schema.sql`
 
 **Files Modified**:
+
 - `.claude/tools/memory/database.mjs`
 
 ---
@@ -123,16 +127,19 @@ Week 2 (Days 8-14) - Can run parallel with Phase 1
 ```
 
 **Success Criteria**:
+
 - Short-term memory captures conversation context
 - Long-term memory persists important insights
 - Promotion logic correctly identifies high-value memories
 - Integration with overflow handler prevents context bloat
 
 **Files Created**:
+
 - `.claude/tools/memory/short-term-memory.mjs`
 - `.claude/tools/memory/memory-tier-manager.mjs`
 
 **Files Modified**:
+
 - `.claude/tools/memory/semantic-memory.mjs`
 - `.claude/tools/memory/overflow-handler.mjs`
 
@@ -169,17 +176,20 @@ Week 3 (Days 15-21)
 ```
 
 **Success Criteria**:
+
 - Relevance scoring improves retrieval precision by 20%+
 - Task-aware selection reduces irrelevant memory injection
 - Kickoff service initializes context in <500ms
 - Injection latency remains <200ms
 
 **Files Created**:
+
 - `.claude/tools/memory/relevance-scorer.mjs`
 - `.claude/tools/memory/task-aware-selector.mjs`
 - `.claude/tools/memory/kickoff-service.mjs`
 
 **Files Modified**:
+
 - `.claude/hooks/memory-injection-pre-tool.mjs`
 
 ---
@@ -213,17 +223,20 @@ Week 4 (Days 22-28)
 ```
 
 **Success Criteria**:
+
 - Agents can share context within workflow runs
 - Agent-specific views filter irrelevant memories
 - Access control prevents unauthorized memory access
 - No performance regression in orchestrator
 
 **Files Created**:
+
 - `.claude/tools/memory/workflow-memory.mjs`
 - `.claude/tools/memory/agent-memory-view.mjs`
 - `.claude/tools/memory/memory-access-control.mjs`
 
 **Files Modified**:
+
 - `.claude/tools/orchestrator-entry.mjs`
 
 ---
@@ -257,6 +270,7 @@ Week 5 (Days 29-32)
 ```
 
 **Success Criteria**:
+
 - All integration tests pass (30+ new tests)
 - Performance targets met (injection <200ms, search <500ms)
 - Documentation updated and reviewed
@@ -287,6 +301,7 @@ Phase 4: Cross-Agent Sharing
 ```
 
 **Parallel Execution**:
+
 - Phases 1 and 2 can run in parallel (different components)
 - Phase 3 depends on Phase 1 (entity-based relevance scoring)
 - Phase 4 depends on Phase 2 (tier-aware sharing)
@@ -298,24 +313,24 @@ Phase 4: Cross-Agent Sharing
 
 ### High Priority Risks
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Cross-agent memory leaks sensitive context | High | Low | Default to isolated mode, require explicit sharing |
-| Performance regression | High | Low | Pre-compute scores, use caching, lazy loading |
+| Risk                                       | Impact | Probability | Mitigation                                         |
+| ------------------------------------------ | ------ | ----------- | -------------------------------------------------- |
+| Cross-agent memory leaks sensitive context | High   | Low         | Default to isolated mode, require explicit sharing |
+| Performance regression                     | High   | Low         | Pre-compute scores, use caching, lazy loading      |
 
 ### Medium Priority Risks
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Entity extraction accuracy | Medium | Medium | Hybrid approach: regex + LLM-based extraction |
-| Memory promotion too aggressive/conservative | Medium | Medium | Configurable thresholds with sensible defaults |
-| Integration issues require rework | Medium | Medium | Run integration tests continuously |
+| Risk                                         | Impact | Probability | Mitigation                                     |
+| -------------------------------------------- | ------ | ----------- | ---------------------------------------------- |
+| Entity extraction accuracy                   | Medium | Medium      | Hybrid approach: regex + LLM-based extraction  |
+| Memory promotion too aggressive/conservative | Medium | Medium      | Configurable thresholds with sensible defaults |
+| Integration issues require rework            | Medium | Medium      | Run integration tests continuously             |
 
 ### Low Priority Risks
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Database schema migration issues | Medium | High | Use existing migration system |
+| Risk                             | Impact | Probability | Mitigation                    |
+| -------------------------------- | ------ | ----------- | ----------------------------- |
+| Database schema migration issues | Medium | High        | Use existing migration system |
 
 ---
 
@@ -323,13 +338,13 @@ Phase 4: Cross-Agent Sharing
 
 ### Quantitative Targets
 
-| Metric | Target | Measurement Method |
-|--------|--------|-------------------|
-| Entity extraction accuracy | 90%+ | Manual review of sample set |
-| Memory retrieval precision | +20% improvement | A/B comparison |
-| Context injection latency | <200ms | Performance benchmarks |
-| Test coverage | 200+ tests | Test runner output |
-| Backward compatibility | 100% | All 157 existing tests pass |
+| Metric                     | Target           | Measurement Method          |
+| -------------------------- | ---------------- | --------------------------- |
+| Entity extraction accuracy | 90%+             | Manual review of sample set |
+| Memory retrieval precision | +20% improvement | A/B comparison              |
+| Context injection latency  | <200ms           | Performance benchmarks      |
+| Test coverage              | 200+ tests       | Test runner output          |
+| Backward compatibility     | 100%             | All 157 existing tests pass |
 
 ### Qualitative Targets
 
@@ -344,14 +359,14 @@ Phase 4: Cross-Agent Sharing
 
 ### Agent Allocation
 
-| Agent | Allocation | Tasks |
-|-------|------------|-------|
-| developer | 60% | Primary implementation of all components |
-| qa | 20% | Testing, integration, backward compatibility |
-| database-architect | 5% | Schema design (Phase 1) |
-| security-architect | 5% | Access control (Phase 4) |
-| technical-writer | 5% | Documentation (Phase 5) |
-| performance-engineer | 5% | Benchmarking (Phase 5) |
+| Agent                | Allocation | Tasks                                        |
+| -------------------- | ---------- | -------------------------------------------- |
+| developer            | 60%        | Primary implementation of all components     |
+| qa                   | 20%        | Testing, integration, backward compatibility |
+| database-architect   | 5%         | Schema design (Phase 1)                      |
+| security-architect   | 5%         | Access control (Phase 4)                     |
+| technical-writer     | 5%         | Documentation (Phase 5)                      |
+| performance-engineer | 5%         | Benchmarking (Phase 5)                       |
 
 ### Skills Required
 
@@ -373,10 +388,10 @@ Phase 4: Cross-Agent Sharing
 
 ```javascript
 // All existing APIs will continue to work unchanged
-createMemoryDatabase()
-SemanticMemoryService
-PatternLearner
-VectorStore
+createMemoryDatabase();
+SemanticMemoryService;
+PatternLearner;
+VectorStore;
 // Memory hooks interface
 ```
 
@@ -384,11 +399,11 @@ VectorStore
 
 ```javascript
 // New APIs are additive, optional to adopt
-EntityMemory
-ShortTermMemory
-MemoryTierManager
-RelevanceScorer
-WorkflowMemory
+EntityMemory;
+ShortTermMemory;
+MemoryTierManager;
+RelevanceScorer;
+WorkflowMemory;
 ```
 
 ### Validation Strategy

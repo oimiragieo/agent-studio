@@ -14,6 +14,9 @@
 .claude/context/runs/
 .claude/context/cache/
 
+# Context session files (runtime data)
+context/sessions/
+
 # Local Settings
 .claude/settings.local.json
 .cursor/settings.local.json

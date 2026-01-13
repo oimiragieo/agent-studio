@@ -10,6 +10,7 @@ Add Goal and Backstory sections to all 35 agent definitions following CrewAI's R
 **Remaining**: 19 agents
 
 ### Completed Agents
+
 1. ✅ developer.md
 2. ✅ qa.md
 3. ✅ architect.md
@@ -28,6 +29,7 @@ Add Goal and Backstory sections to all 35 agent definitions following CrewAI's R
 16. ✅ agent-template.md (template file)
 
 ### Remaining Agents
+
 1. orchestrator.md
 2. master-orchestrator.md
 3. router.md

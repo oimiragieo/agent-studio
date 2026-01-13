@@ -11,10 +11,9 @@ console.log(`   Cleaned ${cleaned} temp files older than 24 hours`);
 // Check for temp files in root
 try {
   const rootFiles = execSync('git status --short --untracked-files=all', { encoding: 'utf8' });
-  const tempInRoot = rootFiles.split('\n').filter(line =>
-    line.includes('tmpclaude') ||
-    line.match(/^\?\? (tmp-|nul$|con$)/)
-  );
+  const tempInRoot = rootFiles
+    .split('\n')
+    .filter(line => line.includes('tmpclaude') || line.match(/^\?\? (tmp-|nul$|con$)/));
 
   if (tempInRoot.length > 0) {
     console.error('❌ ERROR: Temp files found in root:');

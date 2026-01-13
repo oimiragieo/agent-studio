@@ -91,7 +91,10 @@ function parseTable(content) {
     }
 
     if (inMappingTable && headerPassed && line.startsWith('|')) {
-      const cols = line.split('|').map(c => c.trim()).filter(c => c);
+      const cols = line
+        .split('|')
+        .map(c => c.trim())
+        .filter(c => c);
       if (cols.length >= 4) {
         const cujId = cols[0];
         const executionMode = cols[1];

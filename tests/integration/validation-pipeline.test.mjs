@@ -26,35 +26,55 @@ function runScript(scriptPath, args = [], options = {}) {
     });
     let stdout = '';
     let stderr = '';
-    const timeoutId = setTimeout(() => { child.kill('SIGTERM'); }, timeout);
-    child.stdout.on('data', (data) => { stdout += data.toString(); });
-    child.stderr.on('data', (data) => { stderr += data.toString(); });
-    child.on('exit', (code) => {
+    const timeoutId = setTimeout(() => {
+      child.kill('SIGTERM');
+    }, timeout);
+    child.stdout.on('data', data => {
+      stdout += data.toString();
+    });
+    child.stderr.on('data', data => {
+      stderr += data.toString();
+    });
+    child.on('exit', code => {
       clearTimeout(timeoutId);
       resolve({ code: code || 0, stdout, stderr });
     });
-    child.on('error', (error) => { clearTimeout(timeoutId); reject(error); });
+    child.on('error', error => {
+      clearTimeout(timeoutId);
+      reject(error);
+    });
   });
 }
 
 describe('Validation Pipeline Integration', () => {
   describe('CUJ Registry Sync', () => {
     it('should sync CUJ registry without errors', async () => {
-      const result = await runScript('.claude/tools/sync-cuj-registry.mjs', ['--validate-only'], { timeout: 60000 });
+      const result = await runScript('.claude/tools/sync-cuj-registry.mjs', ['--validate-only'], {
+        timeout: 60000,
+      });
       assert.strictEqual(result.code, 0, 'Registry sync validation should pass');
     });
   });
 
   describe('CUJ Validator', () => {
     it('should run doctor mode without errors', async () => {
-      const result = await runScript('.claude/tools/cuj-validator-unified.mjs', ['--mode', 'doctor'], { timeout: 60000 });
+      const result = await runScript(
+        '.claude/tools/cuj-validator-unified.mjs',
+        ['--mode', 'doctor'],
+        { timeout: 60000 }
+      );
       assert.strictEqual(result.code, 0, 'CUJ doctor should pass');
     });
 
     it('should validate CUJ-064 specifically', async () => {
-      const result = await runScript('.claude/tools/cuj-validator-unified.mjs', ['CUJ-064'], { timeout: 30000 });
+      const result = await runScript('.claude/tools/cuj-validator-unified.mjs', ['CUJ-064'], {
+        timeout: 30000,
+      });
       // CUJ-064 validation - may have warnings but should not error
-      assert.ok(result.code === 0 || result.stdout.includes('CUJ-064'), 'CUJ-064 should be processable');
+      assert.ok(
+        result.code === 0 || result.stdout.includes('CUJ-064'),
+        'CUJ-064 should be processable'
+      );
     });
   });
 
@@ -96,13 +116,13 @@ describe('CUJ Execution Mode Normalization', () => {
     const registry = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
     const validModes = ['workflow', 'skill-only', 'manual-setup'];
     const invalidModes = [];
-    
+
     for (const cuj of registry.cujs) {
       if (cuj.execution_mode && !validModes.includes(cuj.execution_mode)) {
         invalidModes.push({ id: cuj.id, mode: cuj.execution_mode });
       }
     }
-    
+
     if (invalidModes.length > 0) {
       console.log('CUJs with non-canonical execution modes:', invalidModes.length);
     }
@@ -119,7 +139,7 @@ describe('Template Workflow Validation', () => {
     }
     const content = fs.readFileSync(workflowPath, 'utf-8');
     const hasPlaceholders = content.includes('{{') && content.includes('}}');
-    
+
     if (hasPlaceholders) {
       // Template workflows should be handled gracefully
       console.log('Template workflow detected with placeholders');

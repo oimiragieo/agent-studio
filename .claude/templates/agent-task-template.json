@@ -138,13 +138,7 @@
     "created_by": "master-orchestrator",
     "workflow_id": "security-hardening-workflow",
     "step_number": 3,
-    "tags": [
-      "security",
-      "authentication",
-      "authorization",
-      "middleware",
-      "jwt"
-    ],
+    "tags": ["security", "authentication", "authorization", "middleware", "jwt"],
     "research_sources": [
       "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/chain-of-thought",
       "https://aicompetence.org/json-prompting-supercharges-multi-agent-ai-systems/",

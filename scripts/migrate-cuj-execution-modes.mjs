@@ -212,10 +212,10 @@ async function migrateCUJ(migration) {
  * @returns {string} Summary report
  */
 function generateSummary(results) {
-  const successful = results.filter((r) => r.status === 'success');
-  const failed = results.filter((r) => r.status === 'failed');
-  const skipped = results.filter((r) => r.status === 'skipped');
-  const errors = results.filter((r) => r.status === 'error');
+  const successful = results.filter(r => r.status === 'success');
+  const failed = results.filter(r => r.status === 'failed');
+  const skipped = results.filter(r => r.status === 'skipped');
+  const errors = results.filter(r => r.status === 'error');
 
   let summary = '\n';
   summary += '='.repeat(60) + '\n';
@@ -231,7 +231,7 @@ function generateSummary(results) {
   if (successful.length > 0) {
     summary += '✅ Successfully Migrated:\n';
     summary += '-'.repeat(60) + '\n';
-    successful.forEach((r) => {
+    successful.forEach(r => {
       summary += `  ${r.cuj}: ${r.oldMode} → ${r.newMode}\n`;
       summary += `    Workflow: ${r.workflowFile}\n`;
     });
@@ -241,7 +241,7 @@ function generateSummary(results) {
   if (skipped.length > 0) {
     summary += '⏭️  Skipped (Already Migrated):\n';
     summary += '-'.repeat(60) + '\n';
-    skipped.forEach((r) => {
+    skipped.forEach(r => {
       summary += `  ${r.cuj}: ${r.reason}\n`;
     });
     summary += '\n';
@@ -250,7 +250,7 @@ function generateSummary(results) {
   if (failed.length > 0) {
     summary += '❌ Failed Migrations:\n';
     summary += '-'.repeat(60) + '\n';
-    failed.forEach((r) => {
+    failed.forEach(r => {
       summary += `  ${r.cuj}: ${r.reason}\n`;
     });
     summary += '\n';
@@ -259,7 +259,7 @@ function generateSummary(results) {
   if (errors.length > 0) {
     summary += '⚠️  Errors:\n';
     summary += '-'.repeat(60) + '\n';
-    errors.forEach((r) => {
+    errors.forEach(r => {
       summary += `  ${r.cuj}: ${r.error}\n`;
     });
     summary += '\n';
@@ -317,7 +317,7 @@ ${summary}
 ## Migration Details
 
 ${results
-  .map((r) => {
+  .map(r => {
     let detail = `### ${r.cuj}\n\n`;
     detail += `- **Status**: ${r.status}\n`;
     if (r.status === 'success') {
@@ -364,7 +364,7 @@ node .claude/tools/cuj-registry.mjs validate-all
 }
 
 // Run migration
-main().catch((error) => {
+main().catch(error => {
   console.error('Fatal error during migration:', error);
   process.exit(1);
 });

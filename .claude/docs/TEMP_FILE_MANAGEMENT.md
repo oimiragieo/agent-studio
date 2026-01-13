@@ -55,27 +55,30 @@ console.log(`Cleaned ${cleaned} temp files`);
 ### Pre-commit Hook
 
 The pre-commit hook automatically:
+
 1. Cleans temp files older than 24 hours
 2. Checks for temp files in project root
 3. Blocks commit if temp files found in root
 
 **Run manually**:
+
 ```bash
 pnpm precommit
 ```
 
 **Automatic execution**:
+
 - Runs before every commit
 - Integrated into PR workflow
 - No manual intervention required
 
 ### Cleanup Schedule
 
-| Trigger | Age Threshold | Action |
-|---------|---------------|--------|
-| Pre-commit hook | 24 hours | Auto-clean |
-| PR workflow | 24 hours | Auto-clean + validate |
-| Manual cleanup | Configurable | Clean on demand |
+| Trigger         | Age Threshold | Action                |
+| --------------- | ------------- | --------------------- |
+| Pre-commit hook | 24 hours      | Auto-clean            |
+| PR workflow     | 24 hours      | Auto-clean + validate |
+| Manual cleanup  | Configurable  | Clean on demand       |
 
 ## Never Do This
 
@@ -136,6 +139,7 @@ steps:
 ### Temp Files Found in Root
 
 **Error message**:
+
 ```
 ❌ ERROR: Temp files found in root:
    ?? tmpclaude-abc123/
@@ -145,6 +149,7 @@ steps:
 ```
 
 **Solution**:
+
 1. Run `pnpm cleanup` to clean all temp files
 2. Verify cleanup: `git status --short`
 3. Retry commit
@@ -152,6 +157,7 @@ steps:
 ### Pre-commit Hook Not Running
 
 **Check hook is executable**:
+
 ```bash
 # Unix/Linux/Mac
 chmod +x .claude/hooks/pre-commit-cleanup.mjs
@@ -161,6 +167,7 @@ git update-index --chmod=+x .claude/hooks/pre-commit-cleanup.mjs
 ```
 
 **Verify package.json script**:
+
 ```json
 {
   "scripts": {
@@ -233,6 +240,7 @@ Ensures `.claude/context/tmp/` directory exists.
 **Returns**: void
 
 **Example**:
+
 ```javascript
 TempFileManager.ensureTempDir();
 ```
@@ -242,11 +250,13 @@ TempFileManager.ensureTempDir();
 Creates a temporary directory in `.claude/context/tmp/`.
 
 **Parameters**:
+
 - `prefix` (string, optional): Directory name prefix. Default: `'tmpclaude-'`
 
 **Returns**: string - Absolute path to created directory
 
 **Example**:
+
 ```javascript
 const tmpDir = TempFileManager.createTempDir('analysis-');
 // → C:\dev\projects\LLM-RULES\.claude\context\tmp\analysis-abc123
@@ -257,11 +267,13 @@ const tmpDir = TempFileManager.createTempDir('analysis-');
 Creates path for a temporary file in `.claude/context/tmp/`.
 
 **Parameters**:
+
 - `name` (string): File name
 
 **Returns**: string - Absolute path to temp file
 
 **Example**:
+
 ```javascript
 const tmpFile = TempFileManager.createTempFile('results.json');
 // → C:\dev\projects\LLM-RULES\.claude\context\tmp\results.json
@@ -272,11 +284,13 @@ const tmpFile = TempFileManager.createTempFile('results.json');
 Removes temp files older than specified hours.
 
 **Parameters**:
+
 - `olderThanHours` (number, optional): Age threshold in hours. Default: 24
 
 **Returns**: number - Count of cleaned files/directories
 
 **Example**:
+
 ```javascript
 const cleaned = TempFileManager.cleanup(1); // Clean files older than 1 hour
 console.log(`Cleaned ${cleaned} temp files`);
@@ -286,23 +300,23 @@ console.log(`Cleaned ${cleaned} temp files`);
 
 ### Allowed Locations
 
-| File Type | Location | Example |
-|-----------|----------|---------|
-| Temp directories | `.claude/context/tmp/tmpclaude-*` | `.claude/context/tmp/tmpclaude-abc123/` |
-| Temp files | `.claude/context/tmp/tmp-*` | `.claude/context/tmp/tmp-analysis.json` |
-| Named temp files | `.claude/context/tmp/<name>` | `.claude/context/tmp/workflow-state.json` |
+| File Type        | Location                          | Example                                   |
+| ---------------- | --------------------------------- | ----------------------------------------- |
+| Temp directories | `.claude/context/tmp/tmpclaude-*` | `.claude/context/tmp/tmpclaude-abc123/`   |
+| Temp files       | `.claude/context/tmp/tmp-*`       | `.claude/context/tmp/tmp-analysis.json`   |
+| Named temp files | `.claude/context/tmp/<name>`      | `.claude/context/tmp/workflow-state.json` |
 
 ### Prohibited Locations
 
-| Location | Status | Action |
-|----------|--------|--------|
-| Project root | ❌ BLOCKED | Pre-commit hook blocks |
-| `node_modules/` | ❌ BLOCKED | Pre-commit hook blocks |
-| `.git/` | ❌ BLOCKED | Pre-commit hook blocks |
+| Location                 | Status     | Action                 |
+| ------------------------ | ---------- | ---------------------- |
+| Project root             | ❌ BLOCKED | Pre-commit hook blocks |
+| `node_modules/`          | ❌ BLOCKED | Pre-commit hook blocks |
+| `.git/`                  | ❌ BLOCKED | Pre-commit hook blocks |
 | Any path outside project | ❌ BLOCKED | Pre-commit hook blocks |
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-12 | Initial release - TempFileManager utility and pre-commit hook |
+| Version | Date       | Changes                                                       |
+| ------- | ---------- | ------------------------------------------------------------- |
+| 1.0.0   | 2026-01-12 | Initial release - TempFileManager utility and pre-commit hook |

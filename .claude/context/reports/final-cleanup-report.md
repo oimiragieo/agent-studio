@@ -17,19 +17,20 @@
 
 ### Breakdown by Category
 
-| Category | Count | Size |
-|----------|-------|------|
-| `tmpclaude-*` directories in root | 17 | 442 Bytes |
-| Temporary files in `.claude/context/tmp/` | 1 | 79 Bytes |
-| Nested `.claude/` structures | 0 | 0 Bytes |
-| Malformed Windows paths | 0 | 0 Bytes |
-| Reserved Windows names (nul, con, prn, aux) | 0 | 0 Bytes |
-| Old log files | 0 | 0 Bytes |
-| Test artifacts in root | 0 | 0 Bytes |
+| Category                                    | Count | Size      |
+| ------------------------------------------- | ----- | --------- |
+| `tmpclaude-*` directories in root           | 17    | 442 Bytes |
+| Temporary files in `.claude/context/tmp/`   | 1     | 79 Bytes  |
+| Nested `.claude/` structures                | 0     | 0 Bytes   |
+| Malformed Windows paths                     | 0     | 0 Bytes   |
+| Reserved Windows names (nul, con, prn, aux) | 0     | 0 Bytes   |
+| Old log files                               | 0     | 0 Bytes   |
+| Test artifacts in root                      | 0     | 0 Bytes   |
 
 ### Detailed Deletions
 
 **Root Directory Cleanup** (17 items):
+
 - `tmpclaude-f685-cwd`
 - `tmpclaude-ebbe-cwd`
 - `tmpclaude-eb6e-cwd`
@@ -49,6 +50,7 @@
 - `tmpclaude-0f2a-cwd`
 
 **Temp Directory Cleanup** (1 item):
+
 - `.claude/context/tmp/tmp-validation-task-progress.txt`
 
 ---
@@ -65,6 +67,7 @@
 ### Intentional Changes (Modified)
 
 **Agent Updates** (15 files):
+
 - `.claude/agents/analyst.md`
 - `.claude/agents/api-designer.md`
 - `.claude/agents/architect.md`
@@ -82,6 +85,7 @@
 - `.claude/agents/ux-expert.md`
 
 **Infrastructure Updates** (4 files):
+
 - `.claude/rules/subagent-file-rules.md`
 - `.claude/templates/agent-template.md`
 - `.claude/tools/cleanup-repo.mjs`
@@ -92,9 +96,11 @@
 ### Deleted Files (Cleanup)
 
 **Malformed Paths** (1 file):
+
 - `.claudecontextartifactsdev-manifest.json` (SLOP - missing separators)
 
 **Temp Directories** (12 files):
+
 - `tmpclaude-04bc-cwd`
 - `tmpclaude-31e5-cwd`
 - `tmpclaude-40c9-cwd`
@@ -111,6 +117,7 @@
 ### New Files (Documentation/Tools)
 
 **Reports** (7 files):
+
 - `.claude/context/reports/crewai-adoption-roadmap.md`
 - `.claude/context/reports/crewai-llm-patterns-analysis.md`
 - `.claude/context/reports/crewai-vs-claude-architecture-comparison.md`
@@ -122,17 +129,21 @@
 - `.claude/context/reports/tmp-fix-verification.md`
 
 **Tasks** (1 file):
+
 - `.claude/context/tasks/add-goal-backstory-completion-task.md`
 
 **Documentation** (2 files):
+
 - `.claude/docs/AGENT_TASK_TEMPLATE_GUIDE.md`
 - `.claude/docs/TEMP_FILE_MANAGEMENT.md`
 
 **Tools** (3 files):
+
 - `.claude/hooks/pre-commit-cleanup.mjs`
 - `.claude/tools/path-validator.mjs`
 
 **Schemas/Templates** (2 files):
+
 - `.claude/schemas/agent-task.schema.json`
 - `.claude/templates/agent-task-template.json`
 
@@ -151,6 +162,7 @@
 ### ✅ File Location Compliance
 
 All new files follow the file location rules:
+
 - Reports → `.claude/context/reports/`
 - Tasks → `.claude/context/tasks/`
 - Documentation → `.claude/docs/`
@@ -165,6 +177,7 @@ All new files follow the file location rules:
 **Status**: ✅ PASS - Well under 2700+ SLOP threshold
 
 The 52 files consist of:
+
 - 19 modified (agent updates, infrastructure)
 - 13 deleted (temp files, malformed paths)
 - 20 untracked (new documentation, tools, reports)
@@ -204,6 +217,7 @@ This prevents future SLOP from being committed to the repository.
 ### Detection Accuracy
 
 The script successfully detected all categories of SLOP:
+
 - ✅ Nested `.claude/` structures
 - ✅ `tmpclaude-*` temp directories
 - ✅ Malformed Windows paths
@@ -216,6 +230,7 @@ The script successfully detected all categories of SLOP:
 ### Future Prevention
 
 The following systems are now in place to prevent SLOP:
+
 1. **Pre-commit hook** (`.claude/hooks/pre-commit-cleanup.mjs`) - Blocks commits with temp files
 2. **Path validator** (`.claude/tools/path-validator.mjs`) - Validates paths before writing
 3. **Cleanup script** (`.claude/tools/cleanup-repo.mjs`) - Manual cleanup on demand
@@ -248,6 +263,7 @@ The following systems are now in place to prevent SLOP:
 The repository cleanup was **successful**. All SLOP has been removed, and only 52 intentional changes remain. The repository is now ready for PR creation.
 
 **Key Metrics**:
+
 - 18 files deleted (521 Bytes reclaimed)
 - 0 failures
 - 52 intentional changes (vs 2700+ before cleanup)

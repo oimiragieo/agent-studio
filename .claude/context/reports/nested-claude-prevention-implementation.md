@@ -19,6 +19,7 @@ Added comprehensive rules and validation to prevent nested .claude folder struct
 #### PROHIBITED Locations Section
 
 **Added to prohibited locations list**:
+
 - ❌ `.claude/.claude/` - NEVER nest .claude folders
 - ❌ `.claude/context/.claude/` - NEVER nest .claude folders
 - ❌ Any nested .claude directory structure
@@ -26,6 +27,7 @@ Added comprehensive rules and validation to prevent nested .claude folder struct
 #### New Section: "Nested Directory Prevention"
 
 **Added comprehensive section covering**:
+
 - **Blocked Patterns Table**: Visual examples of what NOT to do
 - **Why This Is Bad**: 5 reasons explaining the dangers
 - **Correct Patterns**: Code examples showing right vs wrong
@@ -37,6 +39,7 @@ Added comprehensive rules and validation to prevent nested .claude folder struct
 #### Updated Path Validation Functions
 
 **JavaScript Validation** (`validateFilePath`):
+
 ```javascript
 // Check for nested .claude folders (CRITICAL)
 const segments = filePath.split(/[\/\\]/);
@@ -47,6 +50,7 @@ if (claudeCount > 1) {
 ```
 
 **Python Validation** (`validate_file_path`):
+
 ```python
 # Check for nested .claude folders (CRITICAL)
 segments = re.split(r'[\/\\]', file_path)
@@ -58,6 +62,7 @@ if claude_count > 1:
 #### Updated Enforcement Levels
 
 **HARD BLOCK (Validation Fails)**:
+
 1. **Nested .claude folders** - Any path containing multiple `.claude` segments (NEW - FIRST PRIORITY)
 2. Mangled paths
 3. Root directory reports
@@ -68,15 +73,16 @@ if claude_count > 1:
 #### Updated Subagent Checklist
 
 **Added to file write verification**:
+
 - [ ] Path contains ONLY ONE `.claude` segment (no nesting) ← NEW FIRST CHECK
 
 #### Version History
 
 Updated version table:
-| Version | Date       | Changes                                          |
+| Version | Date | Changes |
 | ------- | ---------- | ------------------------------------------------ |
-| 1.1.0   | 2025-01-12 | Added nested .claude folder prevention rules     |
-| 1.0.0   | 2025-01-05 | Initial release - address SLOP issues            |
+| 1.1.0 | 2025-01-12 | Added nested .claude folder prevention rules |
+| 1.0.0 | 2025-01-05 | Initial release - address SLOP issues |
 
 ---
 
@@ -85,6 +91,7 @@ Updated version table:
 #### Added Cleanup Category
 
 **New cleanup pattern**:
+
 ```javascript
 nestedClaudeFolders: {
   pattern: '.claude/**/.claude',
@@ -95,12 +102,14 @@ nestedClaudeFolders: {
 #### Added Detection Function
 
 **New function `findNestedClaudeFolders()`**:
+
 - Searches `.claude/**/.claude` pattern
 - Verifies nested structure by counting `.claude` segments
 - Filters protected paths
 - Returns list of nested .claude folders
 
 **Key features**:
+
 - Uses `dot: true` to find hidden directories
 - Validates each match by counting `.claude` occurrences
 - Only flags paths with `claudeCount > 1`
@@ -108,6 +117,7 @@ nestedClaudeFolders: {
 #### Updated Scan Order
 
 **Modified file collection to check nested folders FIRST**:
+
 ```javascript
 const filesToDelete = {
   nestedClaudeFolders: await findNestedClaudeFolders(), // Check this FIRST
@@ -128,6 +138,7 @@ const filesToDelete = {
 **Input Path**: `.claude/.claude/context/reports/analysis.md`
 
 **Validation Result**:
+
 ```
 ❌ BLOCKED
 Error: "Nested .claude folders detected: Found 2 .claude segments in path"
@@ -142,6 +153,7 @@ Claude Count: 2
 **Input Path**: `.claude/context/tasks/task-001.md`
 
 **Validation Result**:
+
 ```
 ✅ PASSED
 Segments: ['.claude', 'context', 'tasks', 'task-001.md']
@@ -183,6 +195,7 @@ If nested .claude folders are detected:
 5. **Validate**: Re-run cleanup script to verify
 
 **Automated Command**:
+
 ```bash
 node .claude/tools/cleanup-repo.mjs --execute
 ```
@@ -192,22 +205,27 @@ node .claude/tools/cleanup-repo.mjs --execute
 ## Benefits
 
 ### 1. Path Resolution Clarity
+
 - Tools always know `.claude/` is at project root
 - No ambiguity about which `.claude` folder to use
 
 ### 2. Findability
+
 - Directory tree remains navigable
 - Files appear in expected locations
 
 ### 3. Single Source of Truth
+
 - Only one `.claude/` folder exists
 - No confusion about canonical file locations
 
 ### 4. Maintenance Simplicity
+
 - Cleanup operations work predictably
 - No exponential complexity from nesting
 
 ### 5. Tool Compatibility
+
 - All tools assume `.claude/` at root
 - No breaking changes to existing tooling
 
@@ -218,6 +236,7 @@ node .claude/tools/cleanup-repo.mjs --execute
 ### Manual Test Cases
 
 **Test 1: Nested Folder Creation Attempt**
+
 ```javascript
 const path = '.claude/.claude/context/reports/test.md';
 const result = validateFilePath(path);
@@ -225,6 +244,7 @@ const result = validateFilePath(path);
 ```
 
 **Test 2: Valid Path**
+
 ```javascript
 const path = '.claude/context/reports/test.md';
 const result = validateFilePath(path);
@@ -232,6 +252,7 @@ const result = validateFilePath(path);
 ```
 
 **Test 3: Cleanup Detection**
+
 ```bash
 # Create nested folder
 mkdir -p .claude/context/.claude/test
@@ -324,11 +345,11 @@ node .claude/tools/cleanup-repo.mjs --dry-run
 
 ## Files Modified
 
-| File                                         | Changes                            |
-| -------------------------------------------- | ---------------------------------- |
-| `.claude/rules/subagent-file-rules.md`       | Added nested folder prevention     |
-| `.claude/tools/cleanup-repo.mjs`             | Added nested folder detection      |
-| `.claude/context/reports/nested-claude-...`  | Implementation documentation       |
+| File                                        | Changes                        |
+| ------------------------------------------- | ------------------------------ |
+| `.claude/rules/subagent-file-rules.md`      | Added nested folder prevention |
+| `.claude/tools/cleanup-repo.mjs`            | Added nested folder detection  |
+| `.claude/context/reports/nested-claude-...` | Implementation documentation   |
 
 ---
 

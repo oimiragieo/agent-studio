@@ -19,12 +19,14 @@ Created comprehensive TempFileManager utility and pre-commit hook to permanently
 **File**: `.claude/tools/temp-file-manager.mjs`
 
 **Features**:
+
 - Centralized temp file/directory creation
 - Automatic cleanup of old temp files (configurable age threshold)
 - Ensures all temp files go to `.claude/context/tmp/`
 - Prevents root directory pollution
 
 **API**:
+
 ```javascript
 // Ensure temp directory exists
 TempFileManager.ensureTempDir();
@@ -50,6 +52,7 @@ const cleaned = TempFileManager.cleanup(1);
 ```
 
 **Test Coverage**: 8/8 tests passing
+
 - ✅ Directory creation with default prefix
 - ✅ Directory creation with custom prefix
 - ✅ File path creation
@@ -64,6 +67,7 @@ const cleaned = TempFileManager.cleanup(1);
 **File**: `.claude/hooks/pre-commit-cleanup.mjs`
 
 **Features**:
+
 - Runs automatically before every commit
 - Cleans temp files older than 24 hours
 - Detects temp files in project root
@@ -71,6 +75,7 @@ const cleaned = TempFileManager.cleanup(1);
 - Provides clear error messages with remediation steps
 
 **Validation**:
+
 ```bash
 🧹 Pre-commit: Running automatic cleanup...
    Cleaned 0 temp files older than 24 hours
@@ -78,6 +83,7 @@ const cleaned = TempFileManager.cleanup(1);
 ```
 
 **Error Handling**:
+
 ```bash
 ❌ ERROR: Temp files found in root:
    ?? tmpclaude-abc123-cwd
@@ -89,6 +95,7 @@ const cleaned = TempFileManager.cleanup(1);
 ### 3. Package.json Integration
 
 **Script Added**:
+
 ```json
 {
   "scripts": {
@@ -98,6 +105,7 @@ const cleaned = TempFileManager.cleanup(1);
 ```
 
 **Usage**:
+
 ```bash
 # Manual execution
 pnpm precommit
@@ -111,6 +119,7 @@ pnpm precommit
 **File**: `.claude/workflows/pr-creation-workflow.yaml`
 
 **New Step Added**: Step 00-precommit-cleanup
+
 ```yaml
 - id: '00-precommit-cleanup'
   name: 'Pre-commit Automatic Cleanup'
@@ -130,6 +139,7 @@ pnpm precommit
 ```
 
 **Workflow Sequence**:
+
 1. **Step 00**: Pre-commit cleanup (NEW)
 2. Step 01: Repository cleanup
 3. Step 02: Lint & format
@@ -141,6 +151,7 @@ pnpm precommit
 **File**: `.claude/docs/TEMP_FILE_MANAGEMENT.md`
 
 **Sections**:
+
 - Overview and usage
 - Creating temp directories/files
 - Automatic cleanup schedule
@@ -159,6 +170,7 @@ pnpm precommit
 **File**: `.claude/tools/temp-file-manager.test.mjs`
 
 **Results**:
+
 ```
 TAP version 13
 # tests 8
@@ -172,6 +184,7 @@ TAP version 13
 ```
 
 **Coverage**:
+
 - ✅ Directory creation (default and custom prefixes)
 - ✅ File path creation
 - ✅ Cleanup with age thresholds (24 hours, 1 hour)
@@ -182,11 +195,13 @@ TAP version 13
 ### Integration Tests
 
 **Pre-commit Hook Execution**:
+
 ```bash
 $ node .claude/hooks/pre-commit-cleanup.mjs
 ```
 
 **Result**: ✅ PASS
+
 - Detects temp files in root
 - Blocks commit with clear error message
 - Provides remediation instructions
@@ -214,12 +229,14 @@ $ node .claude/hooks/pre-commit-cleanup.mjs
 ### Creating Temp Directories
 
 **❌ WRONG - Creates in root**:
+
 ```javascript
 const tmpDir = fs.mkdtempSync('tmpclaude-');
 // → C:\dev\projects\LLM-RULES\tmpclaude-abc123 (ROOT!)
 ```
 
 **✅ CORRECT - Uses TempFileManager**:
+
 ```javascript
 import { TempFileManager } from './.claude/tools/temp-file-manager.mjs';
 
@@ -230,12 +247,14 @@ const tmpDir = TempFileManager.createTempDir();
 ### Creating Temp Files
 
 **❌ WRONG - Creates in root**:
+
 ```javascript
 const tmpFile = path.join(process.cwd(), 'tmp-results.json');
 // → C:\dev\projects\LLM-RULES\tmp-results.json (ROOT!)
 ```
 
 **✅ CORRECT - Uses TempFileManager**:
+
 ```javascript
 import { TempFileManager } from './.claude/tools/temp-file-manager.mjs';
 
@@ -246,6 +265,7 @@ const tmpFile = TempFileManager.createTempFile('results.json');
 ### Cleanup After Task
 
 **Best Practice**:
+
 ```javascript
 import { TempFileManager } from './.claude/tools/temp-file-manager.mjs';
 import fs from 'fs';
@@ -269,11 +289,13 @@ try {
 ### For Existing Code
 
 **Step 1**: Find all `fs.mkdtempSync` calls
+
 ```bash
 grep -r "mkdtempSync" --include="*.mjs" --include="*.js"
 ```
 
 **Step 2**: Replace with TempFileManager
+
 ```javascript
 // Before
 const tmpDir = fs.mkdtempSync('tmpclaude-');
@@ -284,6 +306,7 @@ const tmpDir = TempFileManager.createTempDir();
 ```
 
 **Step 3**: Update cleanup logic
+
 ```javascript
 // Before
 fs.rmSync(tmpDir, { recursive: true });
@@ -296,6 +319,7 @@ fs.rmSync(tmpDir, { recursive: true });
 ### For New Code
 
 **Always use TempFileManager**:
+
 ```javascript
 import { TempFileManager } from './.claude/tools/temp-file-manager.mjs';
 
@@ -313,12 +337,14 @@ const tmpFile = TempFileManager.createTempFile('state.json');
 ### 1. Root Directory Protection
 
 **Before**:
+
 - Temp files scattered in project root
 - 200+ temp directories (`tmpclaude-*-cwd`)
 - Reserved names (`nul`, `con`) polluting root
 - Manual cleanup required
 
 **After**:
+
 - All temp files in `.claude/context/tmp/`
 - Automatic cleanup of old files
 - Pre-commit hook blocks violations
@@ -327,11 +353,13 @@ const tmpFile = TempFileManager.createTempFile('state.json');
 ### 2. Automated Cleanup
 
 **Automatic Triggers**:
+
 - Pre-commit hook: Cleans files older than 24 hours
 - PR workflow: Runs cleanup before push
 - Manual: `pnpm precommit`
 
 **No Manual Intervention**:
+
 - Set it and forget it
 - Old temp files removed automatically
 - No disk space accumulation
@@ -339,6 +367,7 @@ const tmpFile = TempFileManager.createTempFile('state.json');
 ### 3. Clear Error Messages
 
 **When violations detected**:
+
 ```
 ❌ ERROR: Temp files found in root:
    ?? tmpclaude-abc123-cwd
@@ -348,6 +377,7 @@ const tmpFile = TempFileManager.createTempFile('state.json');
 ```
 
 **Provides remediation**:
+
 - Clear error message
 - Specific files listed
 - Remediation command provided
@@ -355,6 +385,7 @@ const tmpFile = TempFileManager.createTempFile('state.json');
 ### 4. Developer Experience
 
 **Easy to Use**:
+
 ```javascript
 // One line to create temp directory
 const tmpDir = TempFileManager.createTempDir();
@@ -364,6 +395,7 @@ const tmpFile = TempFileManager.createTempFile('data.json');
 ```
 
 **No Configuration Required**:
+
 - Works out of the box
 - Automatic directory creation
 - Integrated into workflows
@@ -375,11 +407,13 @@ const tmpFile = TempFileManager.createTempFile('data.json');
 ### Monitoring
 
 **Check temp directory size**:
+
 ```bash
 du -sh .claude/context/tmp/
 ```
 
 **List temp files**:
+
 ```bash
 ls -la .claude/context/tmp/
 ```
@@ -387,11 +421,13 @@ ls -la .claude/context/tmp/
 ### Manual Cleanup
 
 **Clean all temp files**:
+
 ```bash
 pnpm cleanup
 ```
 
 **Clean files older than 1 hour**:
+
 ```javascript
 import { TempFileManager } from './.claude/tools/temp-file-manager.mjs';
 const cleaned = TempFileManager.cleanup(1);
@@ -401,12 +437,14 @@ console.log(`Cleaned ${cleaned} temp files`);
 ### Updating Age Threshold
 
 **Edit pre-commit hook**:
+
 ```javascript
 // .claude/hooks/pre-commit-cleanup.mjs
 const cleaned = TempFileManager.cleanup(24); // Change threshold here
 ```
 
 **Options**:
+
 - 1 hour: Aggressive cleanup
 - 24 hours: Default (recommended)
 - 72 hours: Conservative cleanup
@@ -418,11 +456,13 @@ const cleaned = TempFileManager.cleanup(24); // Change threshold here
 ### Recommended Actions
 
 1. **Clean Current Root** (MANUAL):
+
    ```bash
    pnpm cleanup
    ```
 
 2. **Verify Pre-commit Hook**:
+
    ```bash
    pnpm precommit
    # Should show: ✅ Pre-commit: Cleanup complete
@@ -440,11 +480,13 @@ const cleaned = TempFileManager.cleanup(24); // Change threshold here
 ### Migration Priority
 
 **High Priority**:
+
 - Scripts that create temp directories
 - Tools that generate temp files
 - Workflow steps that use temp storage
 
 **Low Priority**:
+
 - One-off scripts
 - Test utilities
 - Development-only code
@@ -497,6 +539,7 @@ The TempFileManager utility and pre-commit hook provide a permanent solution to 
 - **Documented**: Comprehensive guide for developers
 
 **Impact**:
+
 - Zero temp files in root
 - Automatic cleanup of old files
 - Clear error messages

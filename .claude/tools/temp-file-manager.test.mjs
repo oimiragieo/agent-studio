@@ -65,7 +65,7 @@ describe('TempFileManager', () => {
     const recentDir = TempFileManager.createTempDir('recent-');
 
     // Make old directory appear old (25 hours ago)
-    const oldTime = Date.now() - (25 * 60 * 60 * 1000);
+    const oldTime = Date.now() - 25 * 60 * 60 * 1000;
     fs.utimesSync(oldDir, new Date(oldTime), new Date(oldTime));
 
     // Cleanup files older than 24 hours
@@ -85,7 +85,7 @@ describe('TempFileManager', () => {
     const dir2 = TempFileManager.createTempDir('test2-');
 
     // Make dir1 appear 2 hours old
-    const oldTime = Date.now() - (2 * 60 * 60 * 1000);
+    const oldTime = Date.now() - 2 * 60 * 60 * 1000;
     fs.utimesSync(dir1, new Date(oldTime), new Date(oldTime));
 
     // Cleanup files older than 1 hour
@@ -105,7 +105,7 @@ describe('TempFileManager', () => {
     fs.writeFileSync(hiddenFile, '');
 
     // Make it old
-    const oldTime = Date.now() - (25 * 60 * 60 * 1000);
+    const oldTime = Date.now() - 25 * 60 * 60 * 1000;
     fs.utimesSync(hiddenFile, new Date(oldTime), new Date(oldTime));
 
     // Cleanup

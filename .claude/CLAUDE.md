@@ -42,6 +42,97 @@ ANALYSIS        → Task tool → Spawn analyst agent
 **Analysis Operations**: "analyze", "review", "audit", "check", "validate", "inspect", "examine"
 **THE RULE IS ABSOLUTE: TRIGGER WORD PRESENT = DELEGATE VIA TASK TOOL**
 
+### MANDATORY TASK DELEGATION FORMAT
+
+**ALL task delegations MUST use the agent-task.schema.json template:**
+
+**Schema**: `.claude/schemas/agent-task.schema.json`
+**Template**: `.claude/templates/agent-task-template.json`
+**Documentation**: `.claude/docs/AGENT_TASK_TEMPLATE_GUIDE.md`
+
+**Required Format** (JSON structure):
+
+```json
+{
+  "task_id": "unique-task-identifier",
+  "objective": "Clear, single-sentence objective",
+  "reasoning_style": "step-by-step",
+  "mode": "execute",
+  "uncertainty_permission": true,
+  "thinking_budget": 1000,
+  "context": {
+    "problem": "What problem are we solving?",
+    "why_now": "Why is this urgent?",
+    "related_files": ["file1.mjs", "file2.md"]
+  },
+  "deliverables": [
+    {
+      "type": "file",
+      "path": ".claude/context/reports/task-report.md",
+      "description": "What to create",
+      "format": "markdown",
+      "validation": "How to verify success"
+    }
+  ],
+  "constraints": {
+    "max_time_minutes": 30,
+    "max_file_reads": 10,
+    "must_validate": true
+  },
+  "success_criteria": ["Criterion 1", "Criterion 2"],
+  "examples": [
+    {
+      "input": "Example input",
+      "output": "Expected output",
+      "explanation": "Why this demonstrates best practices"
+    }
+  ],
+  "output_format": {
+    "structure": "xml-tagged",
+    "sections": [
+      { "tag": "thinking", "description": "Reasoning process", "required": false },
+      { "tag": "answer", "description": "Final deliverable", "required": true }
+    ]
+  },
+  "validation_schema": {
+    "type": "object",
+    "required": ["field1"],
+    "properties": {}
+  },
+  "assigned_agent": "developer"
+}
+```
+
+**Key Optimization Fields** (Research-Backed):
+
+| Field | Purpose | Impact |
+| `reasoning_style` | Control reasoning approach (chain-of-thought, step-by-step, none) | 25-35% fewer hallucinations |
+| `examples` | 1-5 few-shot examples showing expected output | 30-60% reliability improvement |
+| `uncertainty_permission` | Allow "I don't know" responses vs hallucinating | Eliminates false confidence |
+| `output_format` | XML-tagged sections for reasoning/answer separation | Consistent structured outputs |
+| `thinking_budget` | Token allocation for reasoning before answering | Prevents premature conclusions |
+| `validation_schema` | JSON schema for auto-validation | 30-60% reliability improvement |
+| `mode` | Operation mode: plan, execute, analyze | Task-appropriate behavior |
+
+**Benefits of Structured Format:**
+
+- **30-60% reliability improvement** (validated against research)
+- **25-35% fewer hallucinations** (clear constraints + uncertainty permission)
+- **Consistent agent outputs** (standardized deliverables)
+- **Auto-validation** (validation_schema field)
+- **Reproducible results** (examples field)
+- **Token efficiency** (thinking_budget prevents over-reasoning)
+
+**Enforcement:**
+
+- ✅ **CORRECT**: Use full JSON template with all required fields
+- ❌ **INCORRECT**: Freeform text prompts ("implement feature X")
+- ❌ **INCORRECT**: Partial JSON (missing required fields like context, deliverables)
+- ❌ **INCORRECT**: Unstructured task descriptions without optimization fields
+
+**Reference the template:**
+See `.claude/templates/agent-task-template.json` for a complete working example.
+
 ### PR WORKFLOW TRIGGER (CRITICAL)
 
 **AUTOMATIC TRIGGER CONDITIONS (Execute WITHOUT user prompt):**
@@ -500,6 +591,106 @@ By default, implement changes rather than only suggesting them. If the user's in
 ## Parallel Tool Execution
 
 Make all independent tool calls in parallel. Prioritize calling tools simultaneously whenever actions can be done in parallel rather than sequentially. However, if tool calls depend on previous calls, call them sequentially. Never use placeholders or guess missing parameters.
+
+## Parallel Task Delegation Limits
+
+### API Concurrency Limits
+
+**CRITICAL: Maximum 2 parallel Task tool calls**
+
+When delegating to multiple agents, the orchestrator must follow these rules:
+
+**✅ ALLOWED (Max 2 parallel)**:
+
+```
+Single message with 2 Task calls:
+- Task 1: analyst - Analyze memory patterns
+- Task 2: developer - Implement feature X
+```
+
+**❌ NOT ALLOWED (3+ parallel)**:
+
+```
+Single message with 3+ Task calls:
+- Task 1: analyst
+- Task 2: developer
+- Task 3: qa
+→ RESULT: API ERROR 400 - Tool use concurrency issues
+```
+
+**✅ SEQUENTIAL ALTERNATIVE**:
+Execute in waves:
+
+1. Spawn Task 1 + Task 2 in parallel
+2. Wait for both to complete
+3. Then spawn Task 3
+
+### When to Use Parallel vs Sequential
+
+**Use Parallel Delegation (max 2 simultaneous):**
+
+- Tasks are independent (no shared dependencies)
+- Quick tasks (<10 min estimated execution time)
+- Different agent types working on separate concerns
+- Example: analyst reviewing architecture + developer implementing unrelated feature
+
+**Use Sequential Delegation:**
+
+- Tasks are dependent (one needs output from another)
+- Long-running tasks (>10 min each)
+- Same agent type (potential resource contention)
+- 3 or more agents needed for the workflow
+- Example: architect designs → developer implements → qa validates (chain)
+
+### Task Batching for Large Operations
+
+**For tasks affecting 10+ files or entities, batch into groups of 5-10:**
+
+**❌ WRONG - Unbatched Large Task:**
+
+```
+Task: "Update all 35 agent files with Goal + Backstory sections"
+→ RESULT: Context exhaustion after ~15 files, incomplete work
+```
+
+**✅ CORRECT - Batched Execution:**
+
+```
+Task 1: "Update agents 1-10: accessibility-expert through code-reviewer (batch 1/4)"
+→ Wait for completion →
+Task 2: "Update agents 11-20: code-simplifier through incident-responder (batch 2/4)"
+→ Wait for completion →
+Task 3: "Update agents 21-30: legacy-modernizer through refactoring-specialist (batch 3/4)"
+→ Wait for completion →
+Task 4: "Update agents 31-35: router through ux-expert (batch 4/4)"
+→ All complete
+```
+
+**Batching Guidelines:**
+
+- **Optimal batch size**: 5-10 files/entities per task
+- **Always batch**: 15+ files/entities
+- **Include batch info**: Specify "(batch 2/5)" in task prompt
+- **Track progress**: Create task file in `.claude/context/tasks/` to track batches
+- **Sequential batches**: Wait for batch N to complete before spawning batch N+1
+
+**Examples of Tasks Requiring Batching:**
+
+- Updating 34 agent definitions → 4 batches of 8-9 each
+- Refactoring 50 test files → 5 batches of 10 each
+- Migrating 100 database records → 10 batches of 10 each
+- Processing 25 CUJ files → 3 batches of 8-9 each
+
+### Enforcement
+
+These limits are MANDATORY for orchestrator agents. Violations result in:
+
+- API 400 errors (3+ parallel calls)
+- Context exhaustion (unbatched large tasks)
+- Incomplete work delivery
+- Wasted API calls and retries
+
+Worker agents do not have Task tool access and are not affected by these limits.
 
 ## Slash Commands
 

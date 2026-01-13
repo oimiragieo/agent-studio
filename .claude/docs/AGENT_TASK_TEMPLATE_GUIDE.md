@@ -32,11 +32,13 @@ The agent-task template is a structured format for delegating work to subagents 
 Unique identifier for the task. Use descriptive kebab-case naming.
 
 **Examples**:
+
 - `fix-auth-bug-001`
 - `implement-user-dashboard-042`
 - `analyze-performance-bottleneck-003`
 
 **Best Practices**:
+
 - Include action verb (fix, implement, analyze, refactor)
 - Add context (what component/feature)
 - Add sequence number for tracking
@@ -51,6 +53,7 @@ Clear, single-sentence objective describing what needs to be accomplished.
 **Formula**: `[Action Verb] + [What] + [Why/Outcome]`
 
 **Examples**:
+
 - ✅ "Implement JWT authentication middleware to secure API endpoints"
 - ✅ "Refactor database queries to reduce latency by 50%"
 - ❌ "Fix the thing" (too vague)
@@ -63,15 +66,18 @@ Clear, single-sentence objective describing what needs to be accomplished.
 Background information to help the subagent understand the problem.
 
 **Required fields**:
+
 - `problem` (string): What problem are we solving? What's broken or missing?
 - `why_now` (string): Why is this urgent? What's the business/user impact?
 
 **Optional fields**:
+
 - `previous_attempts` (array): What has already been tried? What didn't work?
 - `related_files` (array): Files that may be relevant to this task
 - `dependencies` (array): Other tasks or systems this depends on
 
 **Example**:
+
 ```json
 "context": {
   "problem": "API endpoints lack authentication. Anyone can access sensitive user data.",
@@ -97,6 +103,7 @@ Background information to help the subagent understand the problem.
 Concrete outputs expected from this task.
 
 **Each deliverable includes**:
+
 - `type` (enum): file, report, fix, analysis, refactor, test, documentation
 - `path` (string or null): File path where deliverable should be saved
 - `description` (string): What this deliverable contains or accomplishes
@@ -104,6 +111,7 @@ Concrete outputs expected from this task.
 - `validation` (optional string): How to validate this deliverable is correct
 
 **Example**:
+
 ```json
 "deliverables": [
   {
@@ -130,6 +138,7 @@ Concrete outputs expected from this task.
 Limits and requirements for task execution.
 
 **Fields**:
+
 - `max_time_minutes` (integer, 1-120, default 30): Maximum time allowed
 - `max_file_reads` (integer, 1-50, default 10): Maximum files to read
 - `max_tokens` (integer, 1000-200000, default 50000): Maximum context tokens
@@ -138,6 +147,7 @@ Limits and requirements for task execution.
 - `blocked_operations` (array): Operations explicitly prohibited
 
 **Example**:
+
 ```json
 "constraints": {
   "max_time_minutes": 45,
@@ -159,6 +169,7 @@ Limits and requirements for task execution.
 Measurable criteria for task completion. Use SMART criteria (Specific, Measurable, Achievable, Relevant, Time-bound).
 
 **Examples**:
+
 ```json
 "success_criteria": [
   "Middleware correctly validates JWT tokens and rejects invalid/expired tokens",
@@ -184,6 +195,7 @@ Task priority level. Affects scheduling and resource allocation.
 Specific subagent type to handle this task. See `.claude/docs/AGENT_DIRECTORY.md` for full list.
 
 **Common agents**:
+
 - `developer`: Implementation, code changes
 - `analyst`: Research, code analysis
 - `architect`: System design, architecture decisions
@@ -208,13 +220,14 @@ Controls how the agent reasons about the task.
 
 **When to use each**:
 
-| Style | Use When | Benefits | Example Task |
-|-------|----------|----------|--------------|
-| `chain-of-thought` | Complex problem requiring deep reasoning | Shows full reasoning path, reduces errors in logic-heavy tasks | Debugging race condition, architectural design |
-| `step-by-step` | Multi-step task with clear sequence | Decomposes problem, prevents skipping steps | Implementation with tests, refactoring workflow |
-| `none` | Simple, direct task with single output | Faster execution, minimal overhead | Format conversion, simple fix |
+| Style              | Use When                                 | Benefits                                                       | Example Task                                    |
+| ------------------ | ---------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------- |
+| `chain-of-thought` | Complex problem requiring deep reasoning | Shows full reasoning path, reduces errors in logic-heavy tasks | Debugging race condition, architectural design  |
+| `step-by-step`     | Multi-step task with clear sequence      | Decomposes problem, prevents skipping steps                    | Implementation with tests, refactoring workflow |
+| `none`             | Simple, direct task with single output   | Faster execution, minimal overhead                             | Format conversion, simple fix                   |
 
 **Example**:
+
 ```json
 "reasoning_style": "step-by-step"
 ```
@@ -228,17 +241,20 @@ Controls how the agent reasons about the task.
 Few-shot examples demonstrating expected behavior and output format. Provide 1-5 concrete examples.
 
 **Structure**:
+
 - `input` (string): Example input or task description
 - `output` (string): Expected output format and content
 - `explanation` (string): Why this example demonstrates best practices
 
 **When to include examples**:
+
 - Novel task type the agent hasn't seen before
 - Complex output format requirements
 - Edge cases that need explicit handling
 - Demonstrating tone or style preferences
 
 **Example**:
+
 ```json
 "examples": [
   {
@@ -264,15 +280,18 @@ Few-shot examples demonstrating expected behavior and output format. Provide 1-5
 Allow agent to respond "I don't know" or "I'm uncertain" instead of hallucinating answers.
 
 **When to set to true** (recommended default):
+
 - Research tasks where information may not exist
 - Analysis tasks requiring expert knowledge
 - Any task where incorrect answers are worse than no answer
 
 **When to set to false**:
+
 - Task where all information is provided in context
 - Agent must make best-effort attempt even with incomplete data
 
 **Example**:
+
 ```json
 "uncertainty_permission": true
 ```
@@ -286,10 +305,12 @@ Allow agent to respond "I don't know" or "I'm uncertain" instead of hallucinatin
 Structured output format specification with XML tags for reasoning/answer separation.
 
 **Structure**:
+
 - `structure` (enum): `xml-tagged`, `json-only`, `markdown-sections`, `freeform`
 - `sections` (array): Required sections in output
 
 **Default sections**:
+
 ```json
 "output_format": {
   "structure": "xml-tagged",
@@ -309,6 +330,7 @@ Structured output format specification with XML tags for reasoning/answer separa
 ```
 
 **Custom sections example**:
+
 ```json
 "output_format": {
   "structure": "xml-tagged",
@@ -348,12 +370,14 @@ Structured output format specification with XML tags for reasoning/answer separa
 Token budget allocated for reasoning before producing final answer. Prevents premature conclusions.
 
 **Guidance**:
+
 - Simple tasks: 500-1000 tokens
 - Medium complexity: 1000-2500 tokens
 - Complex tasks: 2500-5000 tokens
 - Very complex: 5000-10000 tokens
 
 **Example**:
+
 ```json
 "thinking_budget": 2000
 ```
@@ -368,6 +392,7 @@ Token budget allocated for reasoning before producing final answer. Prevents pre
 JSON schema for validating agent output. Structured outputs improve reliability 30-60%.
 
 **Example**:
+
 ```json
 "validation_schema": {
   "type": "object",
@@ -402,13 +427,14 @@ Agent operation mode. Different modes use different prompting strategies.
 
 **Modes**:
 
-| Mode | Purpose | Agent Behavior | Example Task |
-|------|---------|----------------|--------------|
-| `plan` | Create strategy or roadmap | Focus on planning, decomposition, alternatives | "Create implementation plan for feature X" |
-| `execute` | Implement solution | Focus on action, deliverables, validation | "Implement auth middleware" |
-| `analyze` | Review or assess | Focus on evaluation, findings, recommendations | "Analyze performance bottlenecks" |
+| Mode      | Purpose                    | Agent Behavior                                 | Example Task                               |
+| --------- | -------------------------- | ---------------------------------------------- | ------------------------------------------ |
+| `plan`    | Create strategy or roadmap | Focus on planning, decomposition, alternatives | "Create implementation plan for feature X" |
+| `execute` | Implement solution         | Focus on action, deliverables, validation      | "Implement auth middleware"                |
+| `analyze` | Review or assess           | Focus on evaluation, findings, recommendations | "Analyze performance bottlenecks"          |
 
 **Example**:
+
 ```json
 "mode": "execute"
 ```
@@ -441,9 +467,7 @@ For simple, low-risk tasks:
     "max_file_reads": 2,
     "max_tokens": 10000
   },
-  "success_criteria": [
-    "Error message displays 'Password' correctly"
-  ],
+  "success_criteria": ["Error message displays 'Password' correctly"],
   "priority": "low",
   "assigned_agent": "developer",
   "reasoning_style": "none"
@@ -504,14 +528,8 @@ For critical, high-risk tasks requiring maximum reliability:
   "context": {
     "problem": "No formal security review has been done on auth system",
     "why_now": "SOC 2 compliance requires security audit before certification",
-    "previous_attempts": [
-      "Internal review found some issues but not comprehensive"
-    ],
-    "related_files": [
-      "src/auth/",
-      "src/middleware/auth-middleware.ts",
-      "src/config/jwt.config.ts"
-    ]
+    "previous_attempts": ["Internal review found some issues but not comprehensive"],
+    "related_files": ["src/auth/", "src/middleware/auth-middleware.ts", "src/config/jwt.config.ts"]
   },
   "deliverables": [
     {
@@ -534,9 +552,7 @@ For critical, high-risk tasks requiring maximum reliability:
     "max_tokens": 100000,
     "must_validate": true,
     "allowed_tools": ["Read", "Grep", "Glob"],
-    "blocked_operations": [
-      "Modifying production code without security-architect approval"
-    ]
+    "blocked_operations": ["Modifying production code without security-architect approval"]
   },
   "success_criteria": [
     "All authentication endpoints reviewed against OWASP Top 10",
@@ -627,6 +643,7 @@ For critical, high-risk tasks requiring maximum reliability:
 When delegating a task type the agent hasn't seen before, include 1-3 concrete examples.
 
 **Example**: First time implementing WebSocket connection
+
 ```json
 "examples": [
   {
@@ -824,10 +841,10 @@ node .claude/tools/enforcement-gate.mjs validate-schema \
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 2.0.0 | 2026-01-12 | Added 2026 prompt optimization fields: reasoning_style, examples, uncertainty_permission, output_format, thinking_budget, validation_schema, mode |
-| 1.0.0 | 2025-12-01 | Initial release with core fields |
+| Version | Date       | Changes                                                                                                                                           |
+| ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2.0.0   | 2026-01-12 | Added 2026 prompt optimization fields: reasoning_style, examples, uncertainty_permission, output_format, thinking_budget, validation_schema, mode |
+| 1.0.0   | 2025-12-01 | Initial release with core fields                                                                                                                  |
 
 ---
 

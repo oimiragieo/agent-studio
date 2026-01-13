@@ -120,8 +120,9 @@ export class MemoryDatabase {
    */
   async runMigrations() {
     try {
-      const currentVersion = this.getSchemaVersion();
+      let currentVersion = this.getSchemaVersion();
       const migrationsDir = join(__dirname, 'migrations');
+      let applied = 0;
 
       // If schema_version table doesn't exist, this is initial migration
       if (currentVersion === 0) {
@@ -132,16 +133,35 @@ export class MemoryDatabase {
           const sql = readFileSync(initialMigration, 'utf-8');
           this.db.exec(sql);
           console.log('[MemoryDB] Initial migration complete');
-          return { applied: 1, current: 1 };
+          applied++;
+          currentVersion = this.getSchemaVersion(); // Update current version
         } else {
           throw new Error('Initial migration file not found');
         }
       }
 
-      // Future migrations can be added here
-      // For now, we only have the initial migration
+      // Run pending migrations
+      const migrations = [{ version: 4, file: '004-cross-agent-memory.sql' }];
 
-      return { applied: 0, current: currentVersion };
+      for (const migration of migrations) {
+        if (currentVersion < migration.version) {
+          console.log(`[MemoryDB] Running migration ${migration.version}...`);
+          const migrationPath = join(migrationsDir, migration.file);
+
+          if (existsSync(migrationPath)) {
+            const sql = readFileSync(migrationPath, 'utf-8');
+            this.db.exec(sql);
+            applied++;
+            console.log(`[MemoryDB] Migration ${migration.version} complete`);
+            currentVersion = this.getSchemaVersion(); // Update version after each migration
+          } else {
+            console.warn(`[MemoryDB] Migration file not found: ${migration.file}`);
+          }
+        }
+      }
+
+      const finalVersion = this.getSchemaVersion();
+      return { applied, current: finalVersion };
     } catch (error) {
       console.error('[MemoryDB] Migration failed:', error.message);
       throw error;
