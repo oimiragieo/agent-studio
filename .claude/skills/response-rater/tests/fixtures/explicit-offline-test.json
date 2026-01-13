@@ -1,0 +1,9 @@
+{
+  "business_objective": "Test explicit offline mode",
+  "steps": [
+    {
+      "name": "Step 1",
+      "agent": "developer"
+    }
+  ]
+}

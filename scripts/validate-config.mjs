@@ -39,7 +39,13 @@ try {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const rootDir = resolve(__dirname, '..');
+
+// Allow custom root directory via --root parameter (for testing)
+const rootDirArgIndex = process.argv.indexOf('--root');
+const rootDir =
+  rootDirArgIndex !== -1 && process.argv[rootDirArgIndex + 1]
+    ? resolve(process.argv[rootDirArgIndex + 1])
+    : resolve(__dirname, '..');
 
 const verbose = process.argv.includes('--verbose');
 const errors = [];
@@ -447,11 +453,19 @@ function validateConfig() {
         try {
           const parsed = yaml.load(frontmatter);
 
-          // Check required fields
-          const requiredFields = ['name', 'description', 'allowed-tools', 'version'];
+          // Check required fields (MUST have these)
+          const requiredFields = ['name', 'description'];
           for (const field of requiredFields) {
             if (!parsed[field]) {
               errors.push(`Skill ${name}: Missing required field: ${field}`);
+            }
+          }
+
+          // Check recommended fields (SHOULD have these - warnings only)
+          const recommendedFields = ['allowed-tools', 'version'];
+          for (const field of recommendedFields) {
+            if (!parsed[field]) {
+              warnings.push(`Skill ${name}: Missing recommended field: ${field}`);
             }
           }
 
@@ -492,10 +506,17 @@ function validateConfig() {
         }
       } else {
         // Without yaml parser, do basic checks
-        const requiredFields = ['name:', 'description:', 'allowed-tools:', 'version:'];
+        const requiredFields = ['name:', 'description:'];
         for (const field of requiredFields) {
           if (!frontmatter.includes(field)) {
             errors.push(`Skill ${name}: Missing required field: ${field.replace(':', '')}`);
+          }
+        }
+
+        const recommendedFields = ['allowed-tools:', 'version:'];
+        for (const field of recommendedFields) {
+          if (!frontmatter.includes(field)) {
+            warnings.push(`Skill ${name}: Missing recommended field: ${field.replace(':', '')}`);
           }
         }
         console.log(`  ⚠️  Skill ${name}: Basic validation (YAML parser not available)`);
@@ -721,40 +742,91 @@ function validateConfig() {
       const mcpContent = readFileSync(resolve(rootDir, mcpConfigPath), 'utf-8');
       const mcpConfig = JSON.parse(mcpContent);
 
-      // Validate MCP server config structure (SDK-compatible)
-      if (typeof mcpConfig !== 'object') {
+      // Validate MCP config root structure (Claude Code format)
+      if (typeof mcpConfig !== 'object' || mcpConfig === null) {
         errors.push('.mcp.json: Root must be an object');
       } else {
-        // Each key is a server name, value is server config
-        for (const [serverName, serverConfig] of Object.entries(mcpConfig)) {
-          if (typeof serverConfig !== 'object' || serverConfig === null) {
-            errors.push(`.mcp.json: Server ${serverName} config must be an object`);
-            continue;
-          }
+        // Validate top-level structure (betaFeatures, toolSearch, mcpServers)
+        const allowedTopLevelKeys = ['betaFeatures', 'toolSearch', 'mcpServers'];
+        const unknownKeys = Object.keys(mcpConfig).filter(
+          key => !allowedTopLevelKeys.includes(key)
+        );
+        if (unknownKeys.length > 0) {
+          warnings.push(`.mcp.json: Unknown top-level keys: ${unknownKeys.join(', ')}`);
+        }
 
-          // Check server type (stdio, sse, http, or sdk)
-          const validTypes = ['stdio', 'sse', 'http', 'sdk'];
-          if (serverConfig.type && !validTypes.includes(serverConfig.type)) {
-            warnings.push(`.mcp.json: Server ${serverName} has invalid type: ${serverConfig.type}`);
+        // Validate betaFeatures if present
+        if (mcpConfig.betaFeatures !== undefined) {
+          if (!Array.isArray(mcpConfig.betaFeatures)) {
+            errors.push('.mcp.json: betaFeatures must be an array');
           }
+        }
 
-          // Validate required fields based on type
-          if (serverConfig.type === 'stdio' || !serverConfig.type) {
-            // stdio is default, needs command
-            if (!serverConfig.command) {
-              warnings.push(
-                `.mcp.json: Server ${serverName} (stdio) missing required field: command`
-              );
+        // Validate toolSearch if present
+        if (mcpConfig.toolSearch !== undefined) {
+          if (typeof mcpConfig.toolSearch !== 'object' || mcpConfig.toolSearch === null) {
+            errors.push('.mcp.json: toolSearch must be an object');
+          } else {
+            if (
+              mcpConfig.toolSearch.enabled !== undefined &&
+              typeof mcpConfig.toolSearch.enabled !== 'boolean'
+            ) {
+              errors.push('.mcp.json: toolSearch.enabled must be a boolean');
             }
-          } else if (serverConfig.type === 'sse' || serverConfig.type === 'http') {
-            if (!serverConfig.url) {
-              errors.push(
-                `.mcp.json: Server ${serverName} (${serverConfig.type}) missing required field: url`
-              );
+            if (
+              mcpConfig.toolSearch.autoEnableThreshold !== undefined &&
+              typeof mcpConfig.toolSearch.autoEnableThreshold !== 'number'
+            ) {
+              errors.push('.mcp.json: toolSearch.autoEnableThreshold must be a number');
             }
-          } else if (serverConfig.type === 'sdk') {
-            if (!serverConfig.name) {
-              warnings.push(`.mcp.json: Server ${serverName} (sdk) missing name field`);
+            if (
+              mcpConfig.toolSearch.defaultDeferLoading !== undefined &&
+              typeof mcpConfig.toolSearch.defaultDeferLoading !== 'boolean'
+            ) {
+              errors.push('.mcp.json: toolSearch.defaultDeferLoading must be a boolean');
+            }
+          }
+        }
+
+        // Validate mcpServers (the actual server configurations)
+        if (mcpConfig.mcpServers !== undefined) {
+          if (typeof mcpConfig.mcpServers !== 'object' || mcpConfig.mcpServers === null) {
+            errors.push('.mcp.json: mcpServers must be an object');
+          } else {
+            // Each key in mcpServers is a server name, value is server config
+            for (const [serverName, serverConfig] of Object.entries(mcpConfig.mcpServers)) {
+              if (typeof serverConfig !== 'object' || serverConfig === null) {
+                errors.push(`.mcp.json: Server ${serverName} config must be an object`);
+                continue;
+              }
+
+              // Check server type (stdio, sse, http, or sdk)
+              const validTypes = ['stdio', 'sse', 'http', 'sdk'];
+              if (serverConfig.type && !validTypes.includes(serverConfig.type)) {
+                warnings.push(
+                  `.mcp.json: Server ${serverName} has invalid type: ${serverConfig.type}`
+                );
+              }
+
+              // Validate required fields based on type
+              if (serverConfig.type === 'stdio' || !serverConfig.type) {
+                // stdio is default, needs command
+                if (!serverConfig.command) {
+                  warnings.push(
+                    `.mcp.json: Server ${serverName} (stdio) missing required field: command`
+                  );
+                }
+              } else if (serverConfig.type === 'sse' || serverConfig.type === 'http') {
+                if (!serverConfig.url) {
+                  errors.push(
+                    `.mcp.json: Server ${serverName} (${serverConfig.type}) missing required field: url`
+                  );
+                }
+              } else if (serverConfig.type === 'sdk') {
+                if (!serverConfig.name) {
+                  warnings.push(`.mcp.json: Server ${serverName} (sdk) missing name field`);
+                }
+              }
             }
           }
         }

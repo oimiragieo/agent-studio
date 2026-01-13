@@ -18,7 +18,14 @@ const SKILLS_DIR = path.join(ROOT, '.claude/skills');
 const REGISTRY_PATH = path.join(ROOT, '.claude/context/cuj-registry.json');
 const INDEX_PATH = path.join(ROOT, '.claude/docs/cujs/CUJ-INDEX.md');
 
-const colors = { reset: '\x1b[0m', red: '\x1b[31m', yellow: '\x1b[33m', green: '\x1b[32m', cyan: '\x1b[36m', bold: '\x1b[1m' };
+const colors = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  yellow: '\x1b[33m',
+  green: '\x1b[32m',
+  cyan: '\x1b[36m',
+  bold: '\x1b[1m',
+};
 
 /** @class CUJValidator - Unified validation framework for CUJs */
 export class CUJValidator {
@@ -114,8 +121,9 @@ export class CUJValidator {
       const duration = Date.now() - startTime;
       result.info.validation_duration_ms = duration;
 
-      this.log(`\n  ${result.valid ? '✅' : '❌'} Validation ${result.valid ? 'PASSED' : 'FAILED'} (${duration}ms)`);
-
+      this.log(
+        `\n  ${result.valid ? '✅' : '❌'} Validation ${result.valid ? 'PASSED' : 'FAILED'} (${duration}ms)`
+      );
     } catch (error) {
       result.valid = false;
       result.errors.push(`Error during validation: ${error.message}`);
@@ -160,7 +168,9 @@ export class CUJValidator {
       sections['## Skills Used'] || sections['## Capabilities/Tools Used'];
     if (!hasSkillsOrCapabilities) {
       result.valid = false;
-      result.errors.push('Missing required section: "## Skills Used" or "## Capabilities/Tools Used"');
+      result.errors.push(
+        'Missing required section: "## Skills Used" or "## Capabilities/Tools Used"'
+      );
     }
 
     // Extract and validate execution mode
@@ -296,11 +306,14 @@ export class CUJValidator {
           if (this.mode === 'full') {
             // Full workflow dry-run
             try {
-              execSync(`node .claude/tools/workflow_runner.js --workflow ${workflowPath} --dry-run`, {
-                cwd: ROOT,
-                encoding: 'utf-8',
-                stdio: 'pipe',
-              });
+              execSync(
+                `node .claude/tools/workflow_runner.js --workflow ${workflowPath} --dry-run`,
+                {
+                  cwd: ROOT,
+                  encoding: 'utf-8',
+                  stdio: 'pipe',
+                }
+              );
               this.log(`    ✓ Workflow dry-run passed`);
             } catch (error) {
               result.valid = false;
@@ -352,9 +365,7 @@ export class CUJValidator {
 
     // Check for resource-intensive operations
     const resourceKeywords = ['build', 'compile', 'test', 'deploy', 'migration'];
-    const resourceOps = resourceKeywords.filter(keyword =>
-      content.toLowerCase().includes(keyword)
-    );
+    const resourceOps = resourceKeywords.filter(keyword => content.toLowerCase().includes(keyword));
 
     if (resourceOps.length > 0) {
       result.metrics.resource_intensive_operations = resourceOps;
@@ -444,7 +455,9 @@ export class CUJValidator {
       const registryIds = new Set(registry.cujs.map(c => c.id));
       const orphanedDocs = cujFiles.filter(f => !registryIds.has(f.replace('.md', '')));
       if (orphanedDocs.length > 0) {
-        doctorResults.critical.push(`Orphaned CUJ docs (not in registry): ${orphanedDocs.join(', ')}`);
+        doctorResults.critical.push(
+          `Orphaned CUJ docs (not in registry): ${orphanedDocs.join(', ')}`
+        );
       }
 
       // Check for missing docs
@@ -493,7 +506,9 @@ export class CUJValidator {
         doctorResults.passed.push('All workflow references valid');
       } else {
         for (const [workflow, cujIds] of missingWorkflows.entries()) {
-          doctorResults.critical.push(`Missing workflow "${workflow}" referenced by: ${cujIds.join(', ')}`);
+          doctorResults.critical.push(
+            `Missing workflow "${workflow}" referenced by: ${cujIds.join(', ')}`
+          );
         }
       }
     } catch (error) {
@@ -541,7 +556,9 @@ export class CUJValidator {
         doctorResults.passed.push('All skill references valid');
       } else {
         for (const [skill, cujIds] of missingSkills.entries()) {
-          doctorResults.warnings.push(`Missing skill "${skill}" referenced by: ${cujIds.join(', ')}`);
+          doctorResults.warnings.push(
+            `Missing skill "${skill}" referenced by: ${cujIds.join(', ')}`
+          );
         }
       }
     } catch (error) {
@@ -570,7 +587,11 @@ export class CUJValidator {
           totalLinks++;
           const linkPath = match[2];
 
-          if (linkPath.startsWith('http://') || linkPath.startsWith('https://') || linkPath.startsWith('#')) {
+          if (
+            linkPath.startsWith('http://') ||
+            linkPath.startsWith('https://') ||
+            linkPath.startsWith('#')
+          ) {
             continue;
           }
 
@@ -656,17 +677,75 @@ export class CUJValidator {
     }
   }
 
-  /** Check for non-measurable success criteria */
+  /** Check for non-measurable expected_outputs in registry (registry source of truth) */
   async checkSuccessCriteria(doctorResults) {
-    this.log('📏 Checking success criteria measurability...');
+    this.log('📏 Checking registry expected_outputs measurability...');
+    this.log('    Source: cuj-registry.json → expected_outputs array');
+    this.log('    See: .claude/docs/CUJ-MEASURABILITY-DEFINITION.md');
 
     try {
       const registry = JSON.parse(readFileSync(REGISTRY_PATH, 'utf-8'));
+
+      // Measurable keywords (aligned with CUJ-MEASURABILITY-DEFINITION.md)
       const measurableKeywords = [
-        'time', 'seconds', 'minutes', 'hours', 'count', 'number', 'total', 'size',
-        'percentage', '%', 'ratio', 'score', 'rating', 'exists', 'contains', 'includes',
-        'passes', 'fails', 'equal', 'greater', 'less', 'than', 'valid', 'invalid',
-        'status code', 'response', 'deployed', 'running', 'coverage',
+        // File references
+        '.json',
+        '.md',
+        '.yaml',
+        'schema',
+        'artifact',
+        'manifest',
+        // Validation terms
+        'validated',
+        'validation',
+        'passes',
+        'fails',
+        'gate',
+        // Numeric/threshold
+        'time',
+        'seconds',
+        'minutes',
+        'hours',
+        'count',
+        'number',
+        'total',
+        'size',
+        'percentage',
+        '%',
+        'ratio',
+        'score',
+        'rating',
+        '>=',
+        '<=',
+        '>',
+        // Status/boolean
+        'exists',
+        'present',
+        'contains',
+        'includes',
+        'true',
+        'false',
+        'exit code',
+        'status code',
+        'response code',
+        // Data structure
+        'array',
+        'field',
+        'populated',
+        'empty',
+        'null',
+        'undefined',
+        // Weak indicators (contextual)
+        'equal',
+        'greater',
+        'less',
+        'than',
+        'valid',
+        'invalid',
+        'deployed',
+        'running',
+        'coverage',
+        'response',
       ];
 
       const nonMeasurableIssues = [];
@@ -687,30 +766,32 @@ export class CUJValidator {
           if (isMeasurable) {
             measurableCriteria++;
           } else {
-            nonMeasurableIssues.push(`${cuj.id}: Non-measurable output: "${output}"`);
+            nonMeasurableIssues.push(`${cuj.id}: Non-measurable expected_output: "${output}"`);
           }
         }
       }
 
-      doctorResults.stats.totalCriteria = totalCriteria;
-      doctorResults.stats.measurableCriteria = measurableCriteria;
-      doctorResults.stats.nonMeasurablePercent =
-        totalCriteria > 0 ? (((totalCriteria - measurableCriteria) / totalCriteria) * 100).toFixed(1) : 0;
+      doctorResults.stats.totalRegistryCriteria = totalCriteria;
+      doctorResults.stats.measurableRegistryCriteria = measurableCriteria;
+      doctorResults.stats.registryNonMeasurablePercent =
+        totalCriteria > 0
+          ? (((totalCriteria - measurableCriteria) / totalCriteria) * 100).toFixed(1)
+          : 0;
 
       if (nonMeasurableIssues.length === 0) {
-        doctorResults.passed.push(`All ${totalCriteria} success criteria measurable`);
+        doctorResults.passed.push(`All ${totalCriteria} registry expected_outputs measurable`);
       } else {
         const topIssues = nonMeasurableIssues.slice(0, 10);
         topIssues.forEach(issue => doctorResults.warnings.push(issue));
 
         if (nonMeasurableIssues.length > 10) {
           doctorResults.warnings.push(
-            `... and ${nonMeasurableIssues.length - 10} more non-measurable criteria`
+            `... and ${nonMeasurableIssues.length - 10} more non-measurable registry criteria`
           );
         }
       }
     } catch (error) {
-      doctorResults.critical.push(`Failed to check success criteria: ${error.message}`);
+      doctorResults.critical.push(`Failed to check registry expected_outputs: ${error.message}`);
     }
   }
 
@@ -745,7 +826,9 @@ export class CUJValidator {
           (cuj.execution_mode === 'skill-only' || cuj.execution_mode === 'delegated-skill') &&
           (!cuj.skills || cuj.skills.length === 0)
         ) {
-          modeIssues.push(`${cuj.id}: Execution mode "${cuj.execution_mode}" but no skills defined`);
+          modeIssues.push(
+            `${cuj.id}: Execution mode "${cuj.execution_mode}" but no skills defined`
+          );
         }
       }
 
@@ -939,10 +1022,15 @@ async function main() {
 
   if (args.includes('--help') || args.includes('-h')) {
     try {
-      const helpText = readFileSync(path.join(__dirname, 'help', 'cuj-validator-help.txt'), 'utf-8');
+      const helpText = readFileSync(
+        path.join(__dirname, 'help', 'cuj-validator-help.txt'),
+        'utf-8'
+      );
       console.log(helpText);
     } catch (error) {
-      console.log('Help file not found. Run: node .claude/tools/cuj-validator-unified.mjs <CUJ-ID> [--mode quick|dry-run|full|doctor] [--json] [--verbose]');
+      console.log(
+        'Help file not found. Run: node .claude/tools/cuj-validator-unified.mjs <CUJ-ID> [--mode quick|dry-run|full|doctor] [--json] [--verbose]'
+      );
     }
     process.exit(0);
   }

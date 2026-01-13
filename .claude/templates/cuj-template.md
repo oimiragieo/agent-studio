@@ -12,24 +12,28 @@
 
 ## Workflow
 
-**Execution Mode**: `workflow` | `skill-only` | `manual-setup` | `[workflow-name].yaml`
+**Execution Mode**: `workflow` | `skill-only` | `manual-setup`
 
-> **REQUIRED**: Every CUJ must explicitly declare its execution mode:
+> **REQUIRED**: Every CUJ must explicitly declare its execution mode using ONE of these three canonical values:
 >
-> - `workflow` - Multi-agent workflow execution (use when referencing a .yaml file)
-> - `[workflow-name].yaml` - Specific workflow file (e.g., `greenfield-fullstack.yaml`)
-> - `skill-only` - Direct skill invocation without workflow orchestration
-> - `manual-setup` - Manual setup/execution steps (no automation)
+> | Mode           | Description                                   | Required Fields |
+> | -------------- | --------------------------------------------- | --------------- |
+> | `workflow`     | Multi-agent workflow execution via YAML file  | `workflow_file` |
+> | `skill-only`   | Direct skill invocation without orchestration | `primary_skill` |
+> | `manual-setup` | Manual setup/execution steps (no automation)  | None            |
 >
-> **Examples**:
+> **DEPRECATED**: Using raw workflow filenames (e.g., `greenfield-fullstack.yaml`) as execution_mode is deprecated.
+> Instead, use `workflow` mode with a separate `**Workflow File**:` field.
 >
-> - `greenfield-fullstack.yaml` - Full workflow with planner → developer → qa
-> - `brownfield-feature.yaml` - Feature addition to existing codebase
-> - `incident-flow.yaml` - Incident response workflow
-> - `skill-only` - Direct skill invocation (e.g., CUJ-002, CUJ-013)
-> - `manual-setup` - Manual installation or configuration (e.g., CUJ-001)
->
-> See `.claude/workflows/` for available workflow files.
+> See `.claude/docs/EXECUTION_MODE_STANDARD.md` for the canonical standard.
+
+**Workflow File**: `.claude/workflows/[workflow-name].yaml`
+
+<!-- Required when execution_mode is "workflow". Omit for skill-only and manual-setup modes. -->
+
+**Primary Skill**: `[skill-name]`
+
+<!-- Required when execution_mode is "skill-only". Omit for workflow and manual-setup modes. -->
 
 ### Step 0: Planning Phase (MANDATORY)
 
@@ -61,31 +65,59 @@
 
 - [Agent 1] → [Agent 2] → [Agent 3]
 
-## Skills Used
-
-- `[skill-name]` - [Description of skill usage]
-- `[another-skill]` - [Description]
-
-**OR** (if capabilities don't exist as skills):
-
 ## Capabilities/Tools Used
 
-- [Capability 1] - [Description]
-- [Capability 2] - [Description]
+**Use this section for:**
 
-**Note**:
+- Platform-specific tools (e.g., "Chrome DevTools", "Cursor features", "GitHub API")
+- MCP (Model Context Protocol) tools (e.g., `navigate_page`, `click`, `screenshot`)
+- Native IDE features that aren't formal skills
+- Generic behaviors that don't have dedicated skill implementations
 
-- **Use `## Skills Used`** when referencing actual `.claude/skills/*/SKILL.md` files (e.g., `plan-generator`, `repo-rag`, `artifact-publisher`)
-  - Skills must exist in `.claude/skills/` directory
-  - Reference skills using backticks: `` `skill-name` ``
-  - Example: `` `plan-generator` - Creates structured plans from requirements ``
-- **Use `## Capabilities/Tools Used`** for:
-  - Free-form capabilities that don't have skill files
-  - Platform-specific tools (e.g., "Cursor Plan Mode", "Chrome DevTools")
-  - Generic behaviors (e.g., "artifact sharing", "coordination")
-  - Native IDE features that aren't skills
-- **Either section is acceptable**, but use the appropriate one based on whether you're referencing real skills
-- **Best Practice**: If a skill exists in `.claude/skills/`, use `## Skills Used` and reference it. Otherwise, use `## Capabilities/Tools Used`
+**Format**: `- [tool-name]: [Description of what it does]`
+
+**Examples**:
+
+- **Chrome DevTools MCP**:
+  - `navigate_page`: Navigate to URLs
+  - `take_screenshot`: Capture page screenshots
+  - `click`: Click UI elements
+- **GitHub API**:
+  - `create-pull-request`: Create a new PR
+  - `list-issues`: Query issues
+
+## Skills Used
+
+**Use this section for:**
+
+- Actual `.claude/skills/*/SKILL.md` implementations
+- Formal utilities with dedicated skill files
+- Reusable agent capabilities
+
+**Format**: `` `skill-name` - [Description] ``
+
+**Examples**:
+
+- `` `plan-generator` - Creates structured plans from requirements ``
+- `` `response-rater` - Validates and scores completeness ``
+- `` `artifact-publisher` - Publishes artifacts to project feed ``
+
+---
+
+## Key Distinction: Tools vs Skills
+
+| Aspect         | MCP Tools / Capabilities                    | Skills                                      |
+| -------------- | ------------------------------------------- | ------------------------------------------- |
+| **Location**   | External platform/MCP                       | `.claude/skills/*/SKILL.md`                 |
+| **Section**    | `## Capabilities/Tools Used`                | `## Skills Used`                            |
+| **Example**    | `navigate_page`, `click`, `Chrome DevTools` | `plan-generator`, `response-rater`          |
+| **Detection**  | Listed by tool name                         | Listed by skill name with backticks         |
+| **Validation** | No "missing" check - external tools         | Checked against `.claude/skills/` directory |
+
+**Critical**: Do NOT mix tool names and skill names in the same section. Use:
+
+- **Capabilities/Tools Used** for MCP tools, platform features, external capabilities
+- **Skills Used** for actual `.claude/skills/` implementations
 
 ## Expected Outputs
 

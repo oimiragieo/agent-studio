@@ -32,12 +32,12 @@ node .claude/tools/performance-benchmarker.mjs help
 
 ## Core Methods
 
-| Method | Purpose | Example |
-|--------|---------|---------|
-| `startBenchmark(cujId)` | Begin tracking | `await benchmarker.startBenchmark('CUJ-001')` |
-| `recordStep(benchmark, step, data)` | Record step | `benchmarker.recordStep(benchmark, 1, {...})` |
-| `endBenchmark(benchmark)` | Finish & save | `await benchmarker.endBenchmark(benchmark)` |
-| `getStatistics()` | Get all stats | `await benchmarker.getStatistics()` |
+| Method                              | Purpose        | Example                                       |
+| ----------------------------------- | -------------- | --------------------------------------------- |
+| `startBenchmark(cujId)`             | Begin tracking | `await benchmarker.startBenchmark('CUJ-001')` |
+| `recordStep(benchmark, step, data)` | Record step    | `benchmarker.recordStep(benchmark, 1, {...})` |
+| `endBenchmark(benchmark)`           | Finish & save  | `await benchmarker.endBenchmark(benchmark)`   |
+| `getStatistics()`                   | Get all stats  | `await benchmarker.getStatistics()`           |
 
 ## Performance Report
 
@@ -77,7 +77,7 @@ for (let i = 0; i < steps.length; i++) {
   await executeStep(steps[i]);
   benchmarker.recordStep(benchmark, i + 1, {
     action: steps[i].action,
-    agent: steps[i].agent
+    agent: steps[i].agent,
   });
 }
 
@@ -106,7 +106,7 @@ benchmarker.recordStep(benchmark, 1, {
   agent: 'qa',
   schema: 'workflow.schema.json',
   validation_errors: 0,
-  tests_run: 15
+  tests_run: 15,
 });
 ```
 

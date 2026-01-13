@@ -754,6 +754,38 @@ child.stdin.end();
   };
 }
 
+async function tryOfflineRating(responseFile) {
+  try {
+    // Try to import offline rater (ESM)
+    const offlineRaterPath = path.join(__dirname, "offline-rater.mjs");
+    const { ratePlanOffline } = await import(`file:///${offlineRaterPath.replace(/\\/g, "/")}`);
+
+    const result = await ratePlanOffline(responseFile);
+    return result;
+  } catch (error) {
+    return {
+      ok: false,
+      error: `Offline rating failed: ${error.message}`,
+      hint: "Ensure offline-rater.mjs exists and is executable",
+    };
+  }
+}
+
+function isNetworkError(error) {
+  const networkPatterns = [
+    /ENOTFOUND/i,
+    /ECONNREFUSED/i,
+    /ETIMEDOUT/i,
+    /network/i,
+    /connection/i,
+    /ECONNRESET/i,
+    /timeout/i,
+  ];
+
+  const errorStr = String(error?.message || error || "");
+  return networkPatterns.some(pattern => pattern.test(errorStr));
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) usage(0);
@@ -782,30 +814,78 @@ async function main() {
   });
 
   const results = {};
+  let allProvidersFailed = true;
+  let networkErrorDetected = false;
+
   for (const provider of providers) {
+    let providerResult;
+
     if (provider === "claude") {
-      results.claude = await runClaude(prompt, { authMode: args.authMode });
+      providerResult = await runClaude(prompt, { authMode: args.authMode });
     } else if (provider === "gemini") {
-      results.gemini = await runGemini(prompt, args.geminiModel, {
+      providerResult = await runGemini(prompt, args.geminiModel, {
         authMode: args.authMode,
       });
     } else if (provider === "codex") {
-      results.codex = await runCodex(prompt, args.codexModel, {
+      providerResult = await runCodex(prompt, args.codexModel, {
         authMode: args.authMode,
       });
     } else if (provider === "cursor") {
-      results.cursor = await runCursor(prompt, args.cursorModel, {
+      providerResult = await runCursor(prompt, args.cursorModel, {
         authMode: args.authMode,
       });
     } else if (provider === "copilot") {
-      results.copilot = await runCopilot(prompt, args.copilotModel, {
+      providerResult = await runCopilot(prompt, args.copilotModel, {
         authMode: args.authMode,
       });
     } else {
-      results[provider] = {
+      providerResult = {
         skipped: true,
         reason: `unsupported provider '${provider}' (supported: claude, gemini, codex, cursor, copilot)`,
       };
+    }
+
+    results[provider] = providerResult;
+
+    // Check if this provider succeeded
+    if (providerResult.ok) {
+      allProvidersFailed = false;
+    }
+
+    // Detect network errors
+    if (!providerResult.ok && providerResult.error) {
+      if (isNetworkError(providerResult.error)) {
+        networkErrorDetected = true;
+      }
+    }
+  }
+
+  // If all providers failed due to network, try offline fallback
+  if (allProvidersFailed && networkErrorDetected && args.responseFile) {
+    console.error("All providers failed with network errors. Attempting offline fallback...");
+
+    const offlineResult = await tryOfflineRating(args.responseFile);
+
+    if (offlineResult.ok) {
+      console.log(
+        JSON.stringify(
+          {
+            promptVersion: 3,
+            template: args.template,
+            authMode: args.authMode,
+            method: "offline",
+            offline_fallback: true,
+            providers: results,
+            offline_rating: offlineResult,
+          },
+          null,
+          2,
+        ),
+      );
+      return;
+    } else {
+      // Offline also failed
+      results.offline_fallback = offlineResult;
     }
   }
 

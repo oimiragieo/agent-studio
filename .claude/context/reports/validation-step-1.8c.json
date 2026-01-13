@@ -1,0 +1,83 @@
+{
+  "step": "1.8c",
+  "status": "PASS",
+  "timestamp": "2026-01-12T14:48:09.263Z",
+  "cujs_sampled": 5,
+  "cujs_validated": [
+    {
+      "cuj_id": "CUJ-001",
+      "title": "First-Time Installation",
+      "execution_mode": "manual-setup",
+      "complexity": "low",
+      "router_compatible": true,
+      "session_handoff_compatible": true,
+      "workflow_routing": "not_required",
+      "issues": []
+    },
+    {
+      "cuj_id": "CUJ-002",
+      "title": "Rule Configuration",
+      "execution_mode": "skill-only",
+      "complexity": "low",
+      "router_compatible": true,
+      "session_handoff_compatible": true,
+      "workflow_routing": "direct_handling",
+      "issues": []
+    },
+    {
+      "cuj_id": "CUJ-004",
+      "title": "New Feature Planning",
+      "execution_mode": "workflow",
+      "complexity": "medium",
+      "router_compatible": true,
+      "session_handoff_compatible": true,
+      "workflow_routing": "orchestrator_handoff",
+      "issues": []
+    },
+    {
+      "cuj_id": "CUJ-012",
+      "title": "Feature Implementation",
+      "execution_mode": "greenfield-fullstack.yaml",
+      "complexity": "high",
+      "router_compatible": true,
+      "session_handoff_compatible": true,
+      "workflow_routing": "orchestrator_handoff",
+      "issues": []
+    },
+    {
+      "cuj_id": "CUJ-022",
+      "title": "AI System Development",
+      "execution_mode": "ai-system-flow.yaml",
+      "complexity": "high",
+      "router_compatible": true,
+      "session_handoff_compatible": true,
+      "workflow_routing": "orchestrator_handoff",
+      "issues": []
+    }
+  ],
+  "summary": {
+    "total_cujs": 5,
+    "pass": 5,
+    "fail": 0,
+    "pass_rate": "100%"
+  },
+  "router_handler_validation": {
+    "classifyIntent": "PASS - All execution modes can be classified",
+    "selectWorkflow": "PASS - Workflow mapping covers all tested CUJs",
+    "routeToOrchestrator": "PASS - Session context and handoff work correctly",
+    "trackCosts": "PASS - Cost tracking available for all routing paths"
+  },
+  "execution_mode_coverage": {
+    "manual_setup": "Supported via direct handling (no routing)",
+    "skill_only": "Supported via handleSimpleQuery()",
+    "workflow": "Supported via routeToOrchestrator()",
+    "specific_workflow": "Supported via mapIntentToWorkflow()"
+  },
+  "issues": [],
+  "recommendations": [
+    "Consider adding explicit execution_mode parsing in classifyIntent for CUJ-aware routing",
+    "Add CUJ metadata to session context for better traceability"
+  ],
+  "files_read": 6,
+  "memory_bounded": true
+}

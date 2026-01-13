@@ -18,13 +18,16 @@ console.log('');
 
 // Test 2: Multiple placeholders
 console.log('Test 2: Multiple placeholders');
-const result2 = engine.substitute(
-  'Primary: {{primary_agent}}, Fallback: {{fallback_agent}}',
-  { primary_agent: 'architect', fallback_agent: 'developer' }
-);
+const result2 = engine.substitute('Primary: {{primary_agent}}, Fallback: {{fallback_agent}}', {
+  primary_agent: 'architect',
+  fallback_agent: 'developer',
+});
 console.log('  Input:  Primary: {{primary_agent}}, Fallback: {{fallback_agent}}');
 console.log('  Output:', result2);
-console.log('  Status:', result2 === 'Primary: architect, Fallback: developer' ? '✅ PASS' : '❌ FAIL');
+console.log(
+  '  Status:',
+  result2 === 'Primary: architect, Fallback: developer' ? '✅ PASS' : '❌ FAIL'
+);
 console.log('');
 
 // Test 3: Nested placeholders
@@ -44,7 +47,8 @@ try {
   const content = readFileSync(templatePath, 'utf8');
 
   // Check for required placeholders
-  const hasPlaceholders = /\{\{primary_agent\}\}/.test(content) && /\{\{fallback_agent\}\}/.test(content);
+  const hasPlaceholders =
+    /\{\{primary_agent\}\}/.test(content) && /\{\{fallback_agent\}\}/.test(content);
 
   if (hasPlaceholders) {
     console.log(`  ✅ PASS: ${templatePath}`);

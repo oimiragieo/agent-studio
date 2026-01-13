@@ -4,13 +4,18 @@
  *
  * Comprehensive validation of workflow YAML files:
  * - YAML structure and syntax
- * - Referenced agents exist
+ * - Referenced agents exist (skipped for template workflows)
  * - Referenced schemas exist
  * - Step dependencies (artifacts from previous steps)
  * - Circular dependencies
  * - Step numbering (sequential or proper decimals)
  * - Optional artifact syntax consistency
  * - Template variable usage
+ * - Template workflow mode detection
+ *
+ * Template Workflows:
+ *   Workflows with `template: true` metadata or agent fields containing {{...}}
+ *   placeholders skip agent file existence validation during dry-run.
  *
  * Usage:
  *   node scripts/validate-workflow.mjs [--workflow <path>] [--verbose]
@@ -47,6 +52,39 @@ const workflowArg =
 
 const errors = [];
 const warnings = [];
+
+/**
+ * Check if a value contains template placeholders
+ * @param {string} value - Value to check
+ * @returns {boolean} - True if value contains {{...}} placeholders
+ */
+function hasTemplatePlaceholder(value) {
+  if (typeof value !== 'string') return false;
+  return /\{\{[^}]+\}\}/.test(value);
+}
+
+/**
+ * Check if workflow is a template workflow
+ * @param {object} workflow - Parsed workflow object
+ * @returns {boolean} - True if workflow is a template
+ */
+function isTemplateWorkflow(workflow) {
+  // Check for explicit template metadata
+  if (workflow.template === true || workflow.metadata?.template === true) {
+    return true;
+  }
+
+  // Check if any step has template placeholders in agent field
+  const stepNumbers = getAllStepNumbers(workflow);
+  for (const stepNumber of stepNumbers) {
+    const step = findStepInWorkflow(workflow, stepNumber);
+    if (step && step.agent && hasTemplatePlaceholder(step.agent)) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 /**
  * Find all workflow YAML files
@@ -311,7 +349,15 @@ function validateWorkflow(workflowPath) {
     return { errors: workflowErrors, warnings: workflowWarnings };
   }
 
-  // 2. Get all step numbers
+  // 2. Check if this is a template workflow
+  const isTemplate = isTemplateWorkflow(workflow);
+  if (isTemplate && verbose) {
+    console.log(
+      `  ℹ️  Template workflow detected - skipping agent file validation for placeholder agents`
+    );
+  }
+
+  // 3. Get all step numbers
   const stepNumbers = getAllStepNumbers(workflow);
 
   // 3. Check for duplicate step numbers
@@ -364,15 +410,27 @@ function validateWorkflow(workflowPath) {
       return;
     }
 
-    // Check agent exists
+    // Check agent exists (skip for template placeholders)
     if (step.agent) {
-      const agentFile = resolve(rootDir, `.claude/agents/${step.agent}.md`);
-      if (!existsSync(agentFile)) {
-        workflowErrors.push(
-          `Step ${stepNumber}: Agent file not found: .claude/agents/${step.agent}.md`
-        );
-      } else if (verbose) {
-        console.log(`  ✓ Step ${stepNumber}: Agent ${step.agent} exists`);
+      const hasPlaceholder = hasTemplatePlaceholder(step.agent);
+
+      if (hasPlaceholder) {
+        // Template placeholder detected - skip agent file validation
+        if (verbose) {
+          console.log(
+            `  ⚙️  Step ${stepNumber}: Template agent placeholder '${step.agent}' detected - skipping file validation`
+          );
+        }
+      } else {
+        // Regular agent - validate file exists
+        const agentFile = resolve(rootDir, `.claude/agents/${step.agent}.md`);
+        if (!existsSync(agentFile)) {
+          workflowErrors.push(
+            `Step ${stepNumber}: Agent file not found: .claude/agents/${step.agent}.md`
+          );
+        } else if (verbose) {
+          console.log(`  ✓ Step ${stepNumber}: Agent ${step.agent} exists`);
+        }
       }
     } else {
       workflowWarnings.push(`Step ${stepNumber}: No agent specified`);
@@ -441,12 +499,18 @@ function validateWorkflow(workflowPath) {
                   }
                 }
 
-                // For JSON artifacts, check if artifact names match (ignoring template variables)
+                // For JSON artifacts, check if artifact names match (ignoring template variables and annotations)
                 if (!ref.isSpecial && !outputSpecial.isSpecial) {
+                  // Remove template variables for comparison
                   const outputBase = outputName.replace(/\{\{[^}]+\}\}/g, '{{*}}');
                   const artifactBase = ref.artifact.replace(/\{\{[^}]+\}\}/g, '{{*}}');
 
+                  // Also remove annotations like (partial), (complete), etc.
+                  const outputClean = outputBase.replace(/\s*\([^)]+\)\s*$/, '').trim();
+                  const artifactClean = artifactBase.trim();
+
                   if (
+                    outputClean === artifactClean ||
                     outputBase === artifactBase ||
                     outputName.includes(ref.artifact.replace(/\{\{[^}]+\}\}/g, ''))
                   ) {
@@ -531,7 +595,17 @@ function validateWorkflow(workflowPath) {
           if (templateVars) {
             templateVars.forEach(varName => {
               const varKey = varName.replace(/\{\{|\}\}/g, '');
-              if (!['workflow_id', 'story_id', 'epic_id'].includes(varKey)) {
+              // Allowed template variables: workflow_id, story_id, epic_id, run_id, plan_id, primary_agent, fallback_agent
+              const allowedVars = [
+                'workflow_id',
+                'story_id',
+                'epic_id',
+                'run_id',
+                'plan_id',
+                'primary_agent',
+                'fallback_agent',
+              ];
+              if (!allowedVars.includes(varKey)) {
                 workflowWarnings.push(
                   `Step ${stepNumber}: Unknown template variable in output: ${varName}`
                 );

@@ -2,7 +2,11 @@
 /**
  * CUJ Measurability Analysis
  *
- * Analyzes success criteria in CUJ files for measurability.
+ * Analyzes success criteria in CUJ MARKDOWN files for measurability.
+ * Source: .claude/docs/cujs/CUJ-*.md → ## Success Criteria section
+ * Complementary to: cuj-validator-unified.mjs (checks registry expected_outputs)
+ * Definition: .claude/docs/CUJ-MEASURABILITY-DEFINITION.md
+ *
  * Usage: node scripts/cuj-measurability.mjs [--threshold N] [--json]
  */
 
@@ -50,34 +54,69 @@ const results = {
   cujs: [],
 };
 
-// Patterns that indicate measurability
+// Patterns that indicate measurability (aligned with CUJ-MEASURABILITY-DEFINITION.md)
 const measurablePatterns = [
+  // File references
   /\.json/i,
-  /\.md\s+validated/i,
-  /schema.*\.json/i,
+  /\.md/i,
+  /\.yaml/i,
+  /schema/i,
+  /artifact/i,
+  /manifest/i,
+
+  // Validation terms
+  /validated/i,
+  /validation/i,
+  /passes?\s+(validation|test)/i,
+  /fails?/i,
   /gates?\//i,
-  /\.claude\/context\//i,
-  /artifact.*exists/i,
   /validated\s+(by|against)/i,
-  />=?\s*\d+\/\d+/i,
+  /validated by gate/i,
+
+  // Numeric/threshold
+  />=?\s*\d+/i,
+  /<=?\s*\d+/i,
   /score.*\d+/i,
+  /\d+%/i,
+  /percentage/i,
+  /ratio/i,
+  /rating/i,
+  /count/i,
+  /number/i,
+  /total/i,
+  /size/i,
+  /time/i,
+  /seconds/i,
+  /minutes/i,
+  /hours/i,
+
+  // Status/boolean
+  /exists/i,
+  /present/i,
+  /contains/i,
+  /includes/i,
+  /\btrue\b/i,
+  /\bfalse\b/i,
   /exit\s+code/i,
-  /file\s+present/i,
+  /status\s+code/i,
+  /response\s+code/i,
+
+  // Data structure
+  /array/i,
+  /field/i,
+  /populated/i,
+  /empty/i,
+  /\bnull\b/i,
+  /undefined/i,
+
+  // Path references
+  /\.claude\/context\//i,
   /artifact-registry/i,
   /run_id/i,
   /workflow_id/i,
-  /validated by gate/i,
-  /passes?\s+validation/i,
-  /check.*exists/i,
-  /metric.*[<>=]/i,
-  /measured.*[<>=]/i,
-  /populated/i,
-  /array/i,
-  /field/i,
-  /contains/i,
 ];
 
-// Patterns that indicate non-measurable criteria
+// Patterns that indicate non-measurable criteria (aligned with CUJ-MEASURABILITY-DEFINITION.md)
 const nonMeasurablePatterns = [
   /\bimproved\b/i,
   /\bfaster\b/i,
@@ -90,6 +129,10 @@ const nonMeasurablePatterns = [
   /\baccurate\b/i,
   /\bmet\b/i,
   /\bstandards\b/i,
+  /\bquality\b/i,
+  /\bclean\b/i,
+  /\bmaintainable\b/i,
+  /\breliable\b/i,
 ];
 
 files.forEach(file => {

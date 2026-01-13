@@ -1464,6 +1464,193 @@ outputs:
 
 ### Template Variables
 
+Template workflows support `{{placeholder}}` substitution at runtime. Common placeholders:
+
+| Placeholder          | Type    | Example Value                 | Purpose                           |
+| -------------------- | ------- | ----------------------------- | --------------------------------- |
+| `{{workflow_id}}`    | String  | `workflow-web-app-2025-01-17` | Unique workflow identifier        |
+| `{{run_id}}`         | String  | `run-2025-01-17-001`          | Execution run identifier          |
+| `{{primary_agent}}`  | String  | `developer`                   | Primary agent for this execution  |
+| `{{fallback_agent}}` | String  | `architect`                   | Fallback agent if primary fails   |
+| `{{step_number}}`    | Number  | `1`, `2`, `3`                 | Current workflow step number      |
+| `{{timestamp}}`      | ISO     | `2025-01-17T10:30:00Z`        | Workflow start timestamp          |
+
+**Usage in Workflows**:
+
+```yaml
+# templates/fallback-routing-template.yaml
+steps:
+  - step: 1
+    agent: "{{primary_agent}}"
+    inputs:
+      - workflow_id: "{{workflow_id}}"
+      - run_id: "{{run_id}}"
+    fallback:
+      agent: "{{fallback_agent}}"
+```
+
+**How Substitution Works**:
+
+1. Template workflow loaded with `{{placeholder}}` values as strings
+2. Workflow engine substitutes actual values before execution
+3. Dry-run mode validates templates without breaking on placeholder values
+4. Each placeholder can be used multiple times in the same workflow
+
+**Creating Template Workflows**:
+
+Template workflows allow generic, reusable patterns. Use when:
+- The same workflow structure is used with different agents
+- You want to support fallback agent routing without duplicating files
+- Runtime values determine which agents execute
+
+See `.claude/templates/fallback-routing-template.yaml` for a complete example.
+
+### Template Workflows (Runtime Substitution)
+
+**NEW**: Workflows can now use runtime placeholders for dynamic execution.
+
+#### What are Template Workflows?
+
+Template workflows use `{{placeholder}}` syntax for values that are substituted at runtime. This eliminates the need for duplicate workflow files and enables dynamic agent routing.
+
+**Before** (without templates - high duplication):
+```
+fallback-routing-developer-qa.yaml       (explicit file)
+fallback-routing-architect-developer.yaml (explicit file)
+fallback-routing-security-architect.yaml  (explicit file)
+...many duplicates with slightly different agents...
+```
+
+**After** (with templates - single reusable file):
+```
+templates/fallback-routing-template.yaml  (one template)
+  └── Used at runtime with {{primary_agent}}, {{fallback_agent}} substitution
+```
+
+#### Using Template Workflows
+
+Template workflows are invoked with agent parameters:
+
+```bash
+# Invoke template workflow with specific agents
+node .claude/tools/workflow-template-engine.mjs \
+  --template .claude/templates/fallback-routing-template.yaml \
+  --primary-agent developer \
+  --fallback-agent architect \
+  --workflow-id my-workflow-123
+```
+
+#### Placeholder Values
+
+Placeholders are replaced with actual values before execution:
+
+```yaml
+# Template workflow (before substitution)
+steps:
+  - agent: "{{primary_agent}}"    # Placeholder
+    fallback: "{{fallback_agent}}" # Placeholder
+
+# Concrete workflow (after substitution)
+steps:
+  - agent: "developer"             # Actual agent
+    fallback: "architect"          # Actual agent
+```
+
+#### Dry-Run Validation of Templates
+
+Template workflows can be validated without executing:
+
+```bash
+# Validate template without substituting placeholders
+node .claude/tools/workflow_runner.js \
+  --workflow .claude/templates/fallback-routing-template.yaml \
+  --dry-run
+
+# Output: Template validation passes ({{primary_agent}} recognized as placeholder)
+# Does NOT fail if agent "{{primary_agent}}" doesn't exist
+```
+
+**Template Validation**:
+- Checks for valid placeholder syntax: `{{placeholder}}`
+- Verifies workflow structure (steps, fields, references)
+- Skips literal agent file existence checks for placeholders
+- Validates substituted values after replacement
+
+#### Example: Fallback Routing Template
+
+The `fallback-routing-template.yaml` is used when you want automatic fallback to a different agent if the primary fails:
+
+```yaml
+# .claude/templates/fallback-routing-template.yaml
+metadata:
+  name: Fallback Routing
+  type: template
+  placeholders:
+    - primary_agent
+    - fallback_agent
+
+steps:
+  - step: 1
+    agent: "{{primary_agent}}"
+    task: Execute primary task
+    fallback:
+      agent: "{{fallback_agent}}"
+      task: Execute alternative approach
+```
+
+**Invocation**:
+
+```bash
+# At runtime, substitute actual agent names
+node .claude/tools/workflow-template-engine.mjs \
+  --template fallback-routing-template.yaml \
+  --primary-agent developer \
+  --fallback-agent architect
+```
+
+#### When to Use Templates
+
+Use template workflows when:
+- ✓ Multiple similar workflows with different agent assignments
+- ✓ Dynamic fallback routing based on runtime conditions
+- ✓ Generic patterns that vary by agent but not structure
+- ✗ Different workflow structures (use separate workflows instead)
+- ✗ Different step sequences (use separate workflows instead)
+
+#### Common Template Patterns
+
+**Parallel Agent Execution**:
+```yaml
+# Two agents working in parallel
+- step: 1a
+  agent: "{{agent_1}}"
+- step: 1b
+  agent: "{{agent_2}}"
+  depends_on: null  # Parallel with 1a
+```
+
+**Sequential with Fallback**:
+```yaml
+- step: 1
+  agent: "{{primary_agent}}"
+  fallback:
+    agent: "{{fallback_agent}}"
+- step: 2
+  agent: "{{secondary_agent}}"
+  depends_on: 1
+```
+
+**Conditional Routing**:
+```yaml
+- step: 1
+  agent: "{{router_agent}}"
+  outputs:
+    - routing_decision.json
+- step: 2
+  agent: "{{primary_agent}}"
+  condition: "routing_decision.json:primary == true"
+```
+
 </template_usage>
 
 <examples>

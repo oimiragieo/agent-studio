@@ -145,7 +145,7 @@ async function runTests() {
     await fs.writeFile(fullPath, JSON.stringify({ modified: true }, null, 2), 'utf-8');
 
     // Wait for file system to update mtime
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     // Cache should be invalidated
     const cached = await getCachedArtifact(TEST_ARTIFACT_PATH);
@@ -284,7 +284,7 @@ async function runTests() {
     await cacheArtifact(TEST_ARTIFACT_PATH, TEST_ARTIFACT_DATA, 0);
 
     // Wait for expiration
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     const removed = cleanExpiredEntries();
     assert.equal(removed.file_cache >= 1, true);
@@ -338,10 +338,10 @@ async function runTests() {
 
 // Run tests
 runTests()
-  .then((exitCode) => {
+  .then(exitCode => {
     process.exit(exitCode);
   })
-  .catch((error) => {
+  .catch(error => {
     console.error('Test runner failed:', error);
     process.exit(1);
   });

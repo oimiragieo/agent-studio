@@ -71,7 +71,28 @@
   "session": {
     "auto_save": true,
     "context_file": ".claude/context/session.json",
-    "max_context_tokens": 100000
+    "max_context_tokens": 100000,
+    "default_model": "claude-3-5-haiku-20241022",
+    "default_temperature": 0.1,
+    "default_role": "router",
+    "router_enabled": true,
+    "auto_route_to_orchestrator": true,
+    "session_timeout_ms": 3600000,
+    "state_persistence": true
+  },
+  "models": {
+    "router": "claude-3-5-haiku-20241022",
+    "orchestrator": "claude-sonnet-4-20250514",
+    "complex": "claude-opus-4-20241113"
+  },
+  "routing": {
+    "complexity_threshold": 0.7,
+    "cost_optimization_enabled": true,
+    "fallback_to_sonnet": true
+  },
+  "backward_compatibility": {
+    "legacy_routing_mode": false,
+    "allow_direct_agent_calls": true
   },
   "rules": {
     "exclude_patterns": [".claude/archive/**"],
@@ -100,5 +121,20 @@
   "hooks": {
     "PreToolUse": [],
     "PostToolUse": []
+  },
+  "memory": {
+    "rag": {
+      "enabled": true,
+      "model": "text-embedding-3-small",
+      "dimensions": 1536,
+      "batchSize": 100,
+      "cacheEnabled": true,
+      "indexPath": ".claude/context/memory/vectors.hnsw",
+      "backgroundIndexing": true,
+      "indexInterval": 60000,
+      "semanticSearchWeight": 0.4,
+      "ftsSearchWeight": 0.6,
+      "minRelevance": 0.7
+    }
   }
 }
