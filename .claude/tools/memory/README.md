@@ -30,25 +30,25 @@ await db.initialize();
 
 // Create session
 db.createSession({
-    sessionId: 'session-001',
-    userId: 'user-123',
-    projectId: 'project-abc',
-    metadata: { source: 'web' }
+  sessionId: 'session-001',
+  userId: 'user-123',
+  projectId: 'project-abc',
+  metadata: { source: 'web' },
 });
 
 // Create conversation
 const conversationId = db.createConversation({
-    sessionId: 'session-001',
-    conversationId: 'conv-001',
-    title: 'Getting Started'
+  sessionId: 'session-001',
+  conversationId: 'conv-001',
+  title: 'Getting Started',
 });
 
 // Add messages
 db.addMessage({
-    conversationId: conversationId,
-    role: 'user',
-    content: 'How do I use the memory system?',
-    tokenCount: 8
+  conversationId: conversationId,
+  role: 'user',
+  content: 'How do I use the memory system?',
+  tokenCount: 8,
 });
 
 // Search messages (FTS5)
@@ -72,19 +72,20 @@ db.close();
 
 ### Performance Targets
 
-| Operation | Target (p95) | Actual |
-|-----------|--------------|--------|
-| Database initialization | <100ms | ~50ms |
-| Schema creation | <500ms | ~200ms |
-| Single row insert | <1ms | ~0.1ms |
-| FTS5 search (1000 messages) | <10ms | ~3ms |
-| Vacuum operation | <5s | ~2s |
+| Operation                   | Target (p95) | Actual |
+| --------------------------- | ------------ | ------ |
+| Database initialization     | <100ms       | ~50ms  |
+| Schema creation             | <500ms       | ~200ms |
+| Single row insert           | <1ms         | ~0.1ms |
+| FTS5 search (1000 messages) | <10ms        | ~3ms   |
+| Vacuum operation            | <5s          | ~2s    |
 
 ## Schema Design
 
 ### Core Tables
 
 #### sessions
+
 Top-level session tracking with status management.
 
 ```sql
@@ -101,11 +102,13 @@ CREATE TABLE sessions (
 ```
 
 **Indexes**:
+
 - `idx_sessions_user` - Fast user lookups
 - `idx_sessions_active` - Partial index for active sessions
 - `idx_sessions_last_active` - TTL-based cleanup
 
 #### conversations
+
 Conversation threads within sessions.
 
 ```sql
@@ -123,6 +126,7 @@ CREATE TABLE conversations (
 ```
 
 #### messages
+
 Individual messages with importance scoring and FTS5 search.
 
 ```sql
@@ -140,6 +144,7 @@ CREATE TABLE messages (
 ```
 
 **FTS5 Index**:
+
 ```sql
 CREATE VIRTUAL TABLE messages_fts USING fts5(
     content,
@@ -152,6 +157,7 @@ CREATE VIRTUAL TABLE messages_fts USING fts5(
 ### Agent Tracking Tables
 
 #### agent_interactions
+
 Track agent usage, costs, and results.
 
 ```sql
@@ -171,6 +177,7 @@ CREATE TABLE agent_interactions (
 ```
 
 #### routing_decisions
+
 Log all routing decisions for analysis.
 
 ```sql
@@ -190,6 +197,7 @@ CREATE TABLE routing_decisions (
 ### Cost Tracking
 
 #### cost_tracking
+
 Aggregate costs per session and model.
 
 ```sql
@@ -207,6 +215,7 @@ CREATE TABLE cost_tracking (
 ### Memory Intelligence
 
 #### user_preferences
+
 Cross-session user preferences.
 
 ```sql
@@ -220,6 +229,7 @@ CREATE TABLE user_preferences (
 ```
 
 #### learned_patterns
+
 Pattern recognition across sessions.
 
 ```sql
@@ -243,10 +253,10 @@ CREATE TABLE learned_patterns (
 ```javascript
 // Create session
 db.createSession({
-    sessionId: 'sess-001',
-    userId: 'user-1',
-    projectId: 'proj-1',
-    metadata: { browser: 'Chrome' }
+  sessionId: 'sess-001',
+  userId: 'user-1',
+  projectId: 'proj-1',
+  metadata: { browser: 'Chrome' },
 });
 
 // Get session
@@ -254,8 +264,8 @@ const session = db.getSession('sess-001');
 
 // Update session
 db.updateSession('sess-001', {
-    status: 'paused',
-    metadata: { lastAction: 'save' }
+  status: 'paused',
+  metadata: { lastAction: 'save' },
 });
 
 // Get active sessions
@@ -267,24 +277,24 @@ const activeSessions = db.getActiveSessions('user-1', 10);
 ```javascript
 // Create conversation
 const convId = db.createConversation({
-    sessionId: 'sess-001',
-    conversationId: 'conv-001',
-    title: 'Database Setup'
+  sessionId: 'sess-001',
+  conversationId: 'conv-001',
+  title: 'Database Setup',
 });
 
 // Add messages
 db.addMessage({
-    conversationId: convId,
-    role: 'user',
-    content: 'How do I optimize queries?',
-    tokenCount: 6
+  conversationId: convId,
+  role: 'user',
+  content: 'How do I optimize queries?',
+  tokenCount: 6,
 });
 
 db.addMessage({
-    conversationId: convId,
-    role: 'assistant',
-    content: 'Use indexes and query planning...',
-    tokenCount: 12
+  conversationId: convId,
+  role: 'assistant',
+  content: 'Use indexes and query planning...',
+  tokenCount: 12,
 });
 
 // Get recent messages
@@ -298,7 +308,7 @@ const messages = db.getRecentMessages('sess-001', 5);
 const results = db.searchMessages('optimize queries', 10);
 
 results.forEach(msg => {
-    console.log(`[${msg.role}]: ${msg.content}`);
+  console.log(`[${msg.role}]: ${msg.content}`);
 });
 ```
 
@@ -307,22 +317,22 @@ results.forEach(msg => {
 ```javascript
 // Atomic operations
 db.transaction(() => {
-    const convId = db.createConversation({
-        sessionId: 'sess-001',
-        conversationId: 'conv-002'
-    });
+  const convId = db.createConversation({
+    sessionId: 'sess-001',
+    conversationId: 'conv-002',
+  });
 
-    db.addMessage({
-        conversationId: convId,
-        role: 'user',
-        content: 'First message'
-    });
+  db.addMessage({
+    conversationId: convId,
+    role: 'user',
+    content: 'First message',
+  });
 
-    db.addMessage({
-        conversationId: convId,
-        role: 'assistant',
-        content: 'Second message'
-    });
+  db.addMessage({
+    conversationId: convId,
+    role: 'assistant',
+    content: 'Second message',
+  });
 })();
 ```
 
@@ -393,19 +403,23 @@ console.log(`Journal Mode: ${stats.journalMode}`);
 
 ```javascript
 // Archive old sessions
-db.prepare(`
+db.prepare(
+  `
     UPDATE sessions
     SET status = 'archived'
     WHERE status = 'active'
       AND last_active_at < datetime('now', '-30 days')
-`).run();
+`
+).run();
 
 // Delete old summarized messages
-db.prepare(`
+db.prepare(
+  `
     DELETE FROM messages
     WHERE is_summarized = TRUE
       AND created_at < datetime('now', '-7 days')
-`).run();
+`
+).run();
 ```
 
 ## Backup and Recovery
@@ -434,9 +448,9 @@ import { copyFileSync, existsSync } from 'fs';
 
 // Restore from backup
 if (existsSync('sessions-backup.db')) {
-    copyFileSync('sessions-backup.db', 'sessions.db');
-    copyFileSync('sessions-backup.db-wal', 'sessions.db-wal');
-    copyFileSync('sessions-backup.db-shm', 'sessions.db-shm');
+  copyFileSync('sessions-backup.db', 'sessions.db');
+  copyFileSync('sessions-backup.db-wal', 'sessions.db-wal');
+  copyFileSync('sessions-backup.db-shm', 'sessions.db-shm');
 }
 
 // Initialize
@@ -452,6 +466,7 @@ node .claude/tools/memory/database.test.mjs
 ```
 
 Test coverage:
+
 - Database initialization
 - Schema creation
 - CRUD operations
@@ -479,6 +494,7 @@ Test coverage:
 **Cause**: Missing indexes or large dataset.
 
 **Solutions**:
+
 - Run `ANALYZE` to update query planner statistics
 - Add indexes for frequently queried columns
 - Use `EXPLAIN QUERY PLAN` to identify bottlenecks
@@ -489,6 +505,7 @@ Test coverage:
 **Cause**: Large cache size or many connections.
 
 **Solutions**:
+
 - Reduce `cache_size` pragma
 - Close unused connections
 - Run `VACUUM` to free space
@@ -544,6 +561,7 @@ See architecture document for detailed integration patterns.
 ```
 
 **Why better-sqlite3?**
+
 - Synchronous API (simpler error handling)
 - Native addon (faster than sql.js)
 - Proper Windows file locking
@@ -552,9 +570,9 @@ See architecture document for detailed integration patterns.
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-12 | Initial implementation |
+| Version | Date       | Changes                |
+| ------- | ---------- | ---------------------- |
+| 1.0.0   | 2026-01-12 | Initial implementation |
 
 ## License
 

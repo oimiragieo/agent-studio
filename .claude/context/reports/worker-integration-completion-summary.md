@@ -18,6 +18,7 @@ Successfully integrated the Ephemeral Worker Pattern into `orchestrator-entry.mj
 ### 1. Core Integration ✅
 
 **File Modified**: `.claude/tools/orchestrator-entry.mjs`
+
 - ✅ Feature flag `USE_WORKERS` (default: false)
 - ✅ Supervisor initialization with singleton pattern
 - ✅ Task duration heuristics (9 keywords, complexity threshold)
@@ -31,11 +32,13 @@ Successfully integrated the Ephemeral Worker Pattern into `orchestrator-entry.mj
 ### 2. Test Infrastructure ✅
 
 **Integration Tests**: `.claude/tools/tests/orchestrator-entry.worker-integration.test.mjs`
+
 - ✅ 8 test suites
 - ✅ 21 test cases
 - ✅ Coverage: feature flags, heuristics, routing, cleanup
 
 **Validation Script**: `.claude/tools/tests/validate-worker-integration.mjs`
+
 - ✅ Feature flag detection (2 modes)
 - ✅ Supervisor initialization validation
 - ✅ Task classification (9 test cases)
@@ -44,6 +47,7 @@ Successfully integrated the Ephemeral Worker Pattern into `orchestrator-entry.mj
 ### 3. Documentation ✅
 
 **Reports Created**:
+
 - ✅ `worker-pattern-integration-report.md` (500+ lines)
 - ✅ `dev-manifest-worker-integration.json` (comprehensive metadata)
 - ✅ `worker-integration-completion-summary.md` (this file)
@@ -59,6 +63,7 @@ $ node .claude/tools/tests/validate-worker-integration.mjs
 ```
 
 **Result**: ✅ ALL PASSED
+
 - Feature flag: Correctly disabled
 - Supervisor: Correctly null
 - Task classification: 9/9 passed
@@ -71,6 +76,7 @@ $ USE_WORKERS=true node .claude/tools/tests/validate-worker-integration.mjs
 ```
 
 **Result**: ✅ ALL PASSED
+
 - Feature flag: Correctly enabled
 - Supervisor: Initialized successfully (ID: supervisor-1768270818876)
 - Max workers: 4, Heap limit: 4096MB
@@ -83,21 +89,23 @@ $ USE_WORKERS=true node .claude/tools/tests/validate-worker-integration.mjs
 ## Task Classification Validation
 
 ### Long-Running Tasks (Correctly Classified) ✅
-| Task Description | Complexity | Classification |
-|------------------|------------|----------------|
-| "Implement authentication feature" | 0.7 | ✅ long-running |
-| "Refactor entire codebase" | 0.8 | ✅ long-running |
-| "Analyze codebase for patterns" | 0.6 | ✅ long-running |
-| "Just above threshold" | 0.61 | ✅ long-running |
-| "High complexity overrides quick" | 0.85 | ✅ long-running |
+
+| Task Description                   | Complexity | Classification  |
+| ---------------------------------- | ---------- | --------------- |
+| "Implement authentication feature" | 0.7        | ✅ long-running |
+| "Refactor entire codebase"         | 0.8        | ✅ long-running |
+| "Analyze codebase for patterns"    | 0.6        | ✅ long-running |
+| "Just above threshold"             | 0.61       | ✅ long-running |
+| "High complexity overrides quick"  | 0.85       | ✅ long-running |
 
 ### Short-Running Tasks (Correctly Classified) ✅
-| Task Description | Complexity | Classification |
-|------------------|------------|----------------|
-| "Fix login button bug" | 0.3 | ✅ short-running |
-| "Update README documentation" | 0.2 | ✅ short-running |
-| "Add code comment" | 0.1 | ✅ short-running |
-| "Ambiguous task" | 0.5 | ✅ short-running |
+
+| Task Description              | Complexity | Classification   |
+| ----------------------------- | ---------- | ---------------- |
+| "Fix login button bug"        | 0.3        | ✅ short-running |
+| "Update README documentation" | 0.2        | ✅ short-running |
+| "Add code comment"            | 0.1        | ✅ short-running |
+| "Ambiguous task"              | 0.5        | ✅ short-running |
 
 **Accuracy**: 9/9 (100%)
 
@@ -181,6 +189,7 @@ node .claude/tools/orchestrator-entry.mjs --prompt "Implement feature"
 ```
 
 **Output**:
+
 ```
 [Orchestrator Entry] Worker pattern disabled (USE_WORKERS=false)
 [Orchestrator Entry] Using legacy in-process execution
@@ -194,6 +203,7 @@ USE_WORKERS=true node .claude/tools/orchestrator-entry.mjs --prompt "Implement f
 ```
 
 **Output** (if long-running):
+
 ```
 [Orchestrator Entry] Initializing worker supervisor
 [Orchestrator Entry] Supervisor initialized successfully
@@ -202,6 +212,7 @@ USE_WORKERS=true node .claude/tools/orchestrator-entry.mjs --prompt "Implement f
 ```
 
 **Output** (if short-running):
+
 ```
 [Orchestrator Entry] Using legacy in-process execution (task is short-running)
 ```
@@ -220,11 +231,13 @@ USE_WORKERS=true pnpm agent:production .claude/tools/orchestrator-entry.mjs --pr
 ### Memory Usage
 
 **Without Workers** (Current):
+
 - Main heap accumulates over time
 - Crashes after 30-35 minutes
 - 4GB+ heap usage before crash
 
 **With Workers** (New):
+
 - Supervisor heap: <500MB (stable)
 - Worker heaps: 4GB each (isolated, reclaimed on exit)
 - No crashes (isolated heaps prevent leaks)
@@ -232,11 +245,13 @@ USE_WORKERS=true pnpm agent:production .claude/tools/orchestrator-entry.mjs --pr
 ### Execution Time
 
 **Short Tasks** (< 5 minutes):
+
 - Legacy: ~0ms overhead
 - Worker: ~100ms overhead (spawn + cleanup)
 - **Recommendation**: Use legacy (faster)
 
 **Long Tasks** (> 30 minutes):
+
 - Legacy: Crashes (unacceptable)
 - Worker: Completes successfully
 - **Recommendation**: Use workers (only option)
@@ -298,6 +313,7 @@ USE_WORKERS=false node orchestrator-entry.mjs --prompt "..."
 **Objective**: Replace worker placeholder with actual agent execution
 
 **Tasks**:
+
 1. Integrate `workflow_runner.js` into worker thread
 2. Pass workflow execution parameters to worker
 3. Handle worker results and artifacts

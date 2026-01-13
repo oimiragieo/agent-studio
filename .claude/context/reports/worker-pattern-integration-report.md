@@ -20,6 +20,7 @@ Successfully integrated the Ephemeral Worker Pattern into `orchestrator-entry.mj
 ### 1. Feature Flag System
 
 **Environment Variable**: `USE_WORKERS`
+
 - **Default**: `false` (safe rollback)
 - **Enabled**: Set `USE_WORKERS=true`
 - **Scope**: Global to orchestrator-entry.mjs process
@@ -31,6 +32,7 @@ const USE_WORKERS = process.env.USE_WORKERS === 'true' || false;
 ### 2. Supervisor Initialization
 
 **Function**: `initializeSupervisor()`
+
 - **Singleton Pattern**: Returns same supervisor instance across calls
 - **Lazy Initialization**: Only creates supervisor when `USE_WORKERS=true`
 - **Configuration**:
@@ -39,6 +41,7 @@ const USE_WORKERS = process.env.USE_WORKERS === 'true' || false;
   - Timeout: 10 minutes (600,000ms)
 
 **Return Value**:
+
 - `null` when workers disabled
 - `AgentSupervisor` instance when enabled
 
@@ -47,18 +50,22 @@ const USE_WORKERS = process.env.USE_WORKERS === 'true' || false;
 **Function**: `isLongRunningTask(taskDescription, complexity)`
 
 **Long-Running Keywords**:
+
 - `implement`, `refactor`, `analyze codebase`, `migrate`, `redesign`
 - `architecture`, `comprehensive`, `extensive`, `large-scale`
 
 **Short-Running Keywords**:
+
 - `fix`, `update`, `add`, `remove`, `delete`, `rename`, `quick`
 
 **Decision Logic**:
+
 1. If short keywords + complexity < 0.5 → short-running
 2. If long keywords OR complexity > 0.7 → long-running
 3. Default: complexity > 0.6 → long-running
 
 **Examples**:
+
 - "Implement authentication" → long-running ✅
 - "Fix login bug" (complexity 0.3) → short-running ✅
 - "Refactor codebase" → long-running ✅
@@ -69,6 +76,7 @@ const USE_WORKERS = process.env.USE_WORKERS === 'true' || false;
 **Modified Function**: `executeStep0(runId, workflowPath, taskDescription, complexity)`
 
 **Decision Tree**:
+
 ```
 USE_WORKERS enabled?
   ├─ YES → isLongRunningTask?
@@ -78,12 +86,14 @@ USE_WORKERS enabled?
 ```
 
 **New Functions**:
+
 - `executeStep0Legacy()` - Original in-process execution (renamed)
 - `executeStep0Worker()` - Worker thread spawning and result waiting
 
 ### 5. Complexity Mapping
 
 **Complexity String → Numeric Conversion**:
+
 - `"high"` → 0.8
 - `"medium"` → 0.5
 - `"low"` → 0.3
@@ -94,11 +104,13 @@ USE_WORKERS enabled?
 ### 6. Cleanup Handlers
 
 **Process Lifecycle Hooks**:
+
 - `process.on('exit')` - Cleanup supervisor on normal exit
 - `process.on('SIGINT')` - Cleanup on Ctrl+C
 - `process.on('SIGTERM')` - Cleanup on termination signal
 
 **Cleanup Actions**:
+
 - Terminate all active workers
 - Close database connections
 - Log cleanup completion
@@ -114,33 +126,38 @@ USE_WORKERS enabled?
 **Total File Size**: 915 lines (from 765 lines)
 
 **New Imports**:
+
 ```javascript
 import { AgentSupervisor } from './workers/supervisor.mjs';
 ```
 
 **New Global Variables**:
+
 ```javascript
 const USE_WORKERS = process.env.USE_WORKERS === 'true' || false;
 let globalSupervisor = null;
 ```
 
 **New Functions**:
+
 1. `initializeSupervisor()` - 22 lines
 2. `isLongRunningTask()` - 32 lines
 3. `executeStep0Worker()` - 38 lines
 4. Cleanup handlers - 24 lines
 
 **Modified Functions**:
+
 1. `executeStep0()` - Renamed to `executeStep0Legacy()` + new conditional wrapper
 2. `processUserPrompt()` - Added complexity mapping and execution mode tracking
 
 **New Exports**:
+
 ```javascript
 export default {
   processUserPrompt,
   detectRuntime,
-  initializeSupervisor,    // NEW
-  isLongRunningTask,       // NEW
+  initializeSupervisor, // NEW
+  isLongRunningTask, // NEW
 };
 ```
 
@@ -157,11 +174,13 @@ export default {
 ### Test Coverage
 
 #### 1. Feature Flag Behavior (3 tests)
+
 - ✅ Workers disabled by default (USE_WORKERS=false)
 - ✅ Workers enabled when USE_WORKERS=true
 - ✅ Singleton supervisor instance across calls
 
 #### 2. Task Duration Heuristics (8 tests)
+
 - ✅ "Implement feature" → long-running
 - ✅ "Refactor codebase" → long-running
 - ✅ "Analyze codebase" → long-running
@@ -172,20 +191,24 @@ export default {
 - ✅ High complexity overrides short keywords
 
 #### 3. Execution Mode Routing (2 tests)
+
 - ✅ Legacy execution when workers disabled
 - ✅ Worker execution when enabled + long-running task
 
 #### 4. Complexity Mapping (4 tests)
+
 - ✅ "high" → 0.8
 - ✅ "medium" → 0.5
 - ✅ "low" → 0.3
 - ✅ Undefined → 0.5 (default)
 
 #### 5. Safe Rollback Validation (2 tests)
+
 - ✅ No breaking changes when workers disabled
 - ✅ Existing exports still available
 
 #### 6. Cleanup Handlers (2 tests)
+
 - ✅ Cleanup handlers registered
 - ✅ SIGINT handled gracefully
 
@@ -203,6 +226,7 @@ node .claude/tools/orchestrator-entry.mjs --prompt "Implement user authenticatio
 ```
 
 **Output**:
+
 ```
 [Orchestrator Entry] Worker pattern disabled (USE_WORKERS=false)
 [Orchestrator Entry] Using legacy in-process execution (worker pattern disabled)
@@ -218,6 +242,7 @@ USE_WORKERS=true node .claude/tools/orchestrator-entry.mjs --prompt "Implement c
 ```
 
 **Output**:
+
 ```
 [Orchestrator Entry] Initializing worker supervisor
 [Orchestrator Entry] Supervisor initialized successfully
@@ -237,6 +262,7 @@ USE_WORKERS=true node .claude/tools/orchestrator-entry.mjs --prompt "Fix login b
 ```
 
 **Output**:
+
 ```
 [Orchestrator Entry] Initializing worker supervisor
 [Orchestrator Entry] Supervisor initialized successfully
@@ -253,6 +279,7 @@ USE_WORKERS=true pnpm agent:production .claude/tools/orchestrator-entry.mjs --pr
 ```
 
 **V8 Flags Applied**:
+
 - `--max-old-space-size=8192` (8GB heap)
 - `--expose-gc` (manual GC available)
 - `--optimize_for_size` (memory-efficient compilation)
@@ -291,6 +318,7 @@ USE_WORKERS=true pnpm agent:production .claude/tools/orchestrator-entry.mjs --pr
 ### Without Workers (Default)
 
 **Current Behavior**:
+
 - Execution: In-process (main heap)
 - Memory: Accumulates over time
 - Crash Risk: High after 30-35 minutes
@@ -299,12 +327,14 @@ USE_WORKERS=true pnpm agent:production .claude/tools/orchestrator-entry.mjs --pr
 ### With Workers (USE_WORKERS=true)
 
 **New Behavior**:
+
 - Execution: Isolated worker threads
 - Memory: Fully reclaimed after each task
 - Crash Risk: Near zero (isolated heaps)
 - Use Case: Long-running tasks, complex workflows
 
 **Expected Improvements** (for long-running tasks):
+
 - 0 heap crashes in 24 hours (vs 3-4 per 2 hours)
 - Unlimited agent runtime (vs 30-35 minutes)
 - <500MB supervisor heap (vs 4GB+ accumulation)
@@ -316,11 +346,13 @@ USE_WORKERS=true pnpm agent:production .claude/tools/orchestrator-entry.mjs --pr
 ### Phase 1: Testing (Week 1) - CURRENT PHASE
 
 **Action**: Run integration tests
+
 ```bash
 pnpm test:tools
 ```
 
 **Validation**:
+
 - All 21 tests pass
 - No regressions in legacy mode
 - Workers spawn successfully when enabled
@@ -328,11 +360,13 @@ pnpm test:tools
 ### Phase 2: Opt-In Beta (Week 2)
 
 **Action**: Enable for select workflows
+
 ```bash
 USE_WORKERS=true node orchestrator-entry.mjs --prompt "..."
 ```
 
 **Metrics to Track**:
+
 - Worker spawn success rate
 - Execution time comparison (worker vs legacy)
 - Memory usage patterns
@@ -341,11 +375,13 @@ USE_WORKERS=true node orchestrator-entry.mjs --prompt "..."
 ### Phase 3: Production Default (Week 3)
 
 **Action**: Update default to `true`
+
 ```javascript
 const USE_WORKERS = process.env.USE_WORKERS !== 'false'; // Default: true
 ```
 
 **Rollback Plan**:
+
 ```bash
 USE_WORKERS=false node orchestrator-entry.mjs --prompt "..."
 ```
@@ -404,6 +440,7 @@ USE_WORKERS=false node orchestrator-entry.mjs --prompt "..."
 ### Immediate (Next Session)
 
 1. **Run Integration Tests**:
+
    ```bash
    pnpm test:tools
    ```
@@ -441,18 +478,18 @@ USE_WORKERS=false node orchestrator-entry.mjs --prompt "..."
 
 ## Files Modified
 
-| File | Lines Added | Lines Modified | Status |
-|------|-------------|----------------|--------|
-| `orchestrator-entry.mjs` | ~150 | ~20 | ✅ Complete |
+| File                     | Lines Added | Lines Modified | Status      |
+| ------------------------ | ----------- | -------------- | ----------- |
+| `orchestrator-entry.mjs` | ~150        | ~20            | ✅ Complete |
 
 ---
 
 ## Files Created
 
-| File | Lines | Purpose | Status |
-|------|-------|---------|--------|
-| `orchestrator-entry.worker-integration.test.mjs` | 300 | Integration tests | ✅ Complete |
-| `worker-pattern-integration-report.md` | 500+ | This report | ✅ Complete |
+| File                                             | Lines | Purpose           | Status      |
+| ------------------------------------------------ | ----- | ----------------- | ----------- |
+| `orchestrator-entry.worker-integration.test.mjs` | 300   | Integration tests | ✅ Complete |
+| `worker-pattern-integration-report.md`           | 500+  | This report       | ✅ Complete |
 
 ---
 

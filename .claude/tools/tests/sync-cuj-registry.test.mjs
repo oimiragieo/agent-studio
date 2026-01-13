@@ -190,7 +190,17 @@ const testCases = [
 - \`plan-generator\` - Project planning
 - \`scaffolder\` - Code generation
 `,
-    expectedAgents: ['planner', 'analyst', 'pm', 'ux-expert', 'architect', 'database-architect', 'qa', 'developer', 'technical-writer'],
+    expectedAgents: [
+      'planner',
+      'analyst',
+      'pm',
+      'ux-expert',
+      'architect',
+      'database-architect',
+      'qa',
+      'developer',
+      'technical-writer',
+    ],
     expectedSkills: ['plan-generator', 'scaffolder'],
   },
 ];
@@ -218,7 +228,9 @@ function extractAgentsAndSkills(content) {
 
     // Pattern 2: Chain format - Parse entire chain and extract all agents
     // Handles: Planner -> Developer -> QA or Planner → Developer → QA
-    const chainLines = sectionText.split('\n').filter(line => line.includes('->') || line.includes('→'));
+    const chainLines = sectionText
+      .split('\n')
+      .filter(line => line.includes('->') || line.includes('→'));
     for (const line of chainLines) {
       // Split by arrows (both ASCII and Unicode)
       const agentNames = line.split(/(?:->|→)/).map(part => part.trim().replace(/^[-*]\s+/, ''));
@@ -235,7 +247,9 @@ function extractAgentsAndSkills(content) {
 
     // Pattern 3: Title case agents without arrows - Agent Name (description)
     // Match lines without arrows that start with capital letter
-    const titleCaseMatches = sectionText.matchAll(/^[-*]\s+([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*)(?:\s+\(|$)/gm);
+    const titleCaseMatches = sectionText.matchAll(
+      /^[-*]\s+([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*)(?:\s+\(|$)/gm
+    );
     for (const match of titleCaseMatches) {
       const agentName = match[1].trim();
       // Convert "Security Architect" → "security-architect"
@@ -249,7 +263,12 @@ function extractAgentsAndSkills(content) {
     const lowercaseMatches = sectionText.matchAll(/[-*]\s+([a-z][a-z-]+)(?:\s|$|\()/g);
     for (const match of lowercaseMatches) {
       const agent = match[1].toLowerCase().trim();
-      if (agent !== 'none' && agent !== 'skill' && agent !== 'skill-based' && !metadata.agents.includes(agent)) {
+      if (
+        agent !== 'none' &&
+        agent !== 'skill' &&
+        agent !== 'skill-based' &&
+        !metadata.agents.includes(agent)
+      ) {
         metadata.agents.push(agent);
       }
     }

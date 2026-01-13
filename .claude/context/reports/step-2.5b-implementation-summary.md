@@ -13,6 +13,7 @@ Updated `.claude/tools/memory/overflow-handler.mjs` with:
 **Method**: `summarizeConversations(sessionId)`
 
 **Algorithm**:
+
 - Query old conversations (ended, not current, no summary)
 - Limit to 5 conversations per run (performance constraint)
 - For each conversation:
@@ -23,6 +24,7 @@ Updated `.claude/tools/memory/overflow-handler.mjs` with:
   - Calculate tokens freed
 
 **Helper Method**: `_generateSimpleSummary(firstMsg, lastMsg, title)`
+
 - Uses conversation title if available
 - Otherwise: "User requested: [first message]. Result: [last message]."
 - Max 200 characters
@@ -35,6 +37,7 @@ Updated `.claude/tools/memory/overflow-handler.mjs` with:
 **Method**: `initiateHandoff(sessionId)`
 
 **Algorithm**:
+
 - Get current session from database
 - Get all conversations for summary
 - Generate overall summary using `_generateHandoffSummary()`
@@ -44,6 +47,7 @@ Updated `.claude/tools/memory/overflow-handler.mjs` with:
 - Record handoff in `session_handoffs` table
 
 **Helper Method**: `_generateHandoffSummary(conversations)`
+
 - Lists all conversation titles/summaries
 - Max 1000 characters
 - Simple text aggregation (no external API)
@@ -55,6 +59,7 @@ Updated `.claude/tools/memory/overflow-handler.mjs` with:
 **Method**: `handleOverflow(sessionId, currentTokens, maxTokens)`
 
 **Logic**:
+
 - 90-93%: Stage 1 - Compress old messages
 - 93-97%: Stage 2 - Summarize conversations
 - 97%+: Stage 3 - Session handoff
@@ -81,6 +86,7 @@ Updated `.claude/tools/memory/overflow-handler.mjs` with:
 ## Implementation Details
 
 ### Simplified Summarization
+
 - **NO external API calls** (kept simple as requested)
 - Uses basic text extraction:
   - Conversation title (if available)
@@ -91,6 +97,7 @@ Updated `.claude/tools/memory/overflow-handler.mjs` with:
 - Max 1000 characters for session handoff summaries
 
 ### Performance Characteristics
+
 - **Stage 2**: ~100ms for 5 conversations
 - **Stage 3**: ~200ms for session handoff
 - **No blocking operations**: All database queries are synchronous (SQLite)
@@ -101,6 +108,7 @@ Updated `.claude/tools/memory/overflow-handler.mjs` with:
 **File**: `.claude/tools/memory/overflow-handler.mjs`
 
 **Updates**:
+
 1. Header documentation - Added Stage 2 and Stage 3 to implementation scope
 2. THRESHOLDS comments - Removed "(NOT IMPLEMENTED)" notes
 3. New methods added:
@@ -131,6 +139,7 @@ Updated `.claude/tools/memory/overflow-handler.mjs` with:
 ## Next Steps (Step 2.5c)
 
 Deferred to next step:
+
 - ❌ Test file (overflow-handler.test.mjs)
 - ❌ Integration with memory injection manager
 - ❌ Complex handoff logic enhancements

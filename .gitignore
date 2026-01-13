@@ -71,7 +71,7 @@ test-results/
 tmp/
 temp/
 *.tmp
-tmpclaude-*/
+tmpclaude-*
 .claude/tools/tmpclaude-*
 .claude/context/tmp/*.txt
 nul

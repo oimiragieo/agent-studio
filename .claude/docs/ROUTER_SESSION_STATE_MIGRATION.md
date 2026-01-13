@@ -61,12 +61,14 @@ All sessions now include:
 ### New Functions Added
 
 **Router-Specific**:
+
 - `recordRoutingDecision(sessionId, decision)` - Track routing decisions
 - `updateModelUsage(sessionId, model, inputTokens, outputTokens)` - Track costs
 - `getSessionCosts(sessionId)` - Get cost breakdown
 - `getRoutingMetrics(sessionId)` - Get routing metrics
 
 **Utility Functions**:
+
 - `listSessions()` - List all active sessions
 - `cleanupOldSessions()` - Remove sessions older than 24 hours
 
@@ -105,7 +107,7 @@ import { initSession } from './.claude/tools/session-state.mjs';
 // Initialize router session
 const session = initSession('router-123', 'router', {
   initialPrompt: 'User initial prompt',
-  model: 'claude-3-5-haiku-20241022' // Optional, defaults from settings
+  model: 'claude-3-5-haiku-20241022', // Optional, defaults from settings
 });
 
 // Session is ready to use
@@ -123,7 +125,7 @@ const state = initSession('orchestrator');
 
 // New API (recommended)
 const state = initSession('sess-123', 'router', {
-  initialPrompt: 'Build a web app'
+  initialPrompt: 'Build a web app',
 });
 ```
 
@@ -158,7 +160,7 @@ const costSummary = updateModelUsage(
   'router-123',
   'claude-3-5-haiku-20241022',
   1000, // input tokens
-  500   // output tokens
+  500 // output tokens
 );
 
 console.log(costSummary);
@@ -189,7 +191,7 @@ recordRoutingDecision('router-123', {
   type: 'simple',
   complexity: 0.3,
   confidence: 0.9,
-  workflow: null
+  workflow: null,
 });
 
 // Record orchestrator routing
@@ -197,7 +199,7 @@ recordRoutingDecision('router-123', {
   type: 'orchestrator',
   complexity: 0.8,
   confidence: 0.95,
-  workflow: '@.claude/workflows/greenfield-fullstack.yaml'
+  workflow: '@.claude/workflows/greenfield-fullstack.yaml',
 });
 
 // Get metrics
@@ -248,6 +250,7 @@ await recordRoutingDecision('router-123', { type: 'simple', complexity: 0.3, con
 **Location**: `.claude/context/tmp/orchestrator-session-state.json`
 
 **Usage**:
+
 ```javascript
 // Load orchestrator session (no ID required)
 const state = loadSessionState();
@@ -261,6 +264,7 @@ const state = loadSessionState('orchestrator');
 **Location**: `.claude/context/sessions/<session-id>.json`
 
 **Usage**:
+
 ```javascript
 // Load router session (ID required)
 const state = loadSessionState('router-123');
@@ -317,6 +321,7 @@ node .claude/tools/session-state.test.mjs
 ```
 
 Expected output:
+
 ```
 Running Session State Manager Tests...
 
@@ -347,11 +352,11 @@ Test 2: Initialize orchestrator session
 
 Model pricing (per million tokens):
 
-| Model                          | Input  | Output |
-| ------------------------------ | ------ | ------ |
-| claude-3-5-haiku-20241022      | $1.00  | $5.00  |
-| claude-sonnet-4-20250514       | $3.00  | $15.00 |
-| claude-opus-4-20241113         | $15.00 | $75.00 |
+| Model                     | Input  | Output |
+| ------------------------- | ------ | ------ |
+| claude-3-5-haiku-20241022 | $1.00  | $5.00  |
+| claude-sonnet-4-20250514  | $3.00  | $15.00 |
+| claude-opus-4-20241113    | $15.00 | $75.00 |
 
 **Example Cost Calculation**:
 
@@ -380,6 +385,7 @@ git checkout HEAD~1 .claude/tools/session-state.mjs
 ## Support
 
 For issues or questions, see:
+
 - **Tests**: `.claude/tools/session-state.test.mjs`
 - **Implementation**: `.claude/tools/session-state.mjs`
 - **Router Integration**: `.claude/tools/router-session-handler.mjs`

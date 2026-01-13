@@ -20,6 +20,7 @@ Successfully added Step 0.1 (Plan Rating Gate) to `search-setup-flow.yaml` workf
 **File**: `.claude/workflows/search-setup-flow.yaml`
 
 #### Added Step 0: Planning Phase
+
 - **Agent**: planner
 - **Purpose**: Generate comprehensive plan before search execution
 - **Outputs**:
@@ -30,6 +31,7 @@ Successfully added Step 0.1 (Plan Rating Gate) to `search-setup-flow.yaml` workf
   - Gate: `.claude/context/history/gates/{{workflow_id}}/00-planner.json`
 
 #### Added Step 0.1: Plan Rating Gate
+
 - **Agent**: orchestrator
 - **Type**: validation
 - **Skill**: response-rater
@@ -48,6 +50,7 @@ Successfully added Step 0.1 (Plan Rating Gate) to `search-setup-flow.yaml` workf
 - **Offline Fallback**: Manual review process (see Step 3.5 of plan)
 
 #### Renumbered Step 0 → Step 0.2: Query Analysis
+
 - **Agent**: analyst
 - **Purpose**: Analyze and enhance user search query
 - **Updated Inputs**: Added `plan-{{workflow_id}}.json` (from Step 0)
@@ -81,6 +84,7 @@ All schemas referenced in the workflow exist:
 Ran validation using `.claude/tools/validate-workflow-rating-gates.mjs`:
 
 **Results**:
+
 - ✅ Step 0 exists (Planning Phase)
 - ✅ Step 0.1 exists (Plan Rating Gate)
 - ✅ Step 0.1 uses `response-rater` skill

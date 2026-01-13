@@ -8,7 +8,7 @@ The repository cleanup script (`.claude/tools/cleanup-repo.mjs`) is a comprehens
 
 This script prevents repository pollution by automatically detecting and removing:
 
-- **tmpclaude-* files and directories**: Temporary working directories created by Claude Code
+- **tmpclaude-\* files and directories**: Temporary working directories created by Claude Code
 - **Malformed Windows path files**: Files with UTF-8 encoded paths or concatenated segments
 - **Temporary files**: Files in `.claude/context/tmp/` and files with `tmp-` prefix
 - **Old log files**: Log files older than 7 days
@@ -42,13 +42,14 @@ node .claude/tools/cleanup-repo.mjs --execute --yes
 
 ## What Gets Deleted
 
-### 1. tmpclaude-* Files and Directories
+### 1. tmpclaude-\* Files and Directories
 
 **Pattern**: `tmpclaude-*`, `.claude/tools/tmpclaude-*`
 
 **Reason**: These are temporary working directories created by Claude Code. They contain intermediate state and should never be committed.
 
 **Example**:
+
 ```
 tmpclaude-01ae-cwd
 tmpclaude-ff81-cwd
@@ -58,6 +59,7 @@ tmpclaude-ff81-cwd
 ### 2. Malformed Windows Path Files
 
 **Patterns**:
+
 - Files starting with `C:` without proper separators (e.g., `C:devprojects`)
 - Files with UTF-8 encoded path markers (e.g., `C\357\200\272devprojects`)
 - Windows reserved names: `nul`, `con`, `prn`, `aux`, `com1-9`, `lpt1-9`
@@ -66,6 +68,7 @@ tmpclaude-ff81-cwd
 **Reason**: These files have malformed paths due to Windows path handling issues and are unreadable/corrupt.
 
 **Example**:
+
 ```
 nul
 CdevprojectsLLM-RULES.claudecontexttmptmp-step-1-2-complete.txt
@@ -74,12 +77,14 @@ CdevprojectsLLM-RULES.claudecontexttmptmp-step-1-2-complete.txt
 ### 3. Temporary Files
 
 **Patterns**:
+
 - `.claude/context/tmp/*.txt`
 - `**/tmp-*` (older than 24 hours)
 
 **Reason**: Temporary scratch files used during agent execution. Safe to delete after task completion.
 
 **Example**:
+
 ```
 .claude/context/tmp/tmp-heap-research-query.txt
 .claude/context/tmp/gemini-heap-solutions.txt
@@ -88,6 +93,7 @@ CdevprojectsLLM-RULES.claudecontexttmptmp-step-1-2-complete.txt
 ### 4. Old Log Files
 
 **Patterns**:
+
 - `*.log` (in root, older than 7 days)
 - `.claude/context/logs/*.log` (older than 7 days)
 - `.claude/context/logs/*.txt` (older than 7 days)

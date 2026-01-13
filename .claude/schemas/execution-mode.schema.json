@@ -4,26 +4,26 @@
   "title": "CUJ Execution Mode Schema",
   "description": "Canonical schema for CUJ execution mode validation. Defines the three valid execution modes and their associated fields.",
   "version": "1.0.0",
-  
+
   "definitions": {
     "execution_mode": {
       "type": "string",
       "enum": ["workflow", "skill-only", "manual-setup"],
       "description": "Canonical execution mode for CUJ execution"
     },
-    
+
     "workflow_file": {
       "type": ["string", "null"],
       "pattern": "^\\.claude/workflows/[a-z0-9-]+\\.yaml$",
       "description": "Path to workflow YAML file. Required when execution_mode is 'workflow', null otherwise."
     },
-    
+
     "primary_skill": {
       "type": ["string", "null"],
       "pattern": "^[a-z0-9-]+$",
       "description": "Primary skill name for skill-only CUJs. Required when execution_mode is 'skill-only', optional for 'workflow', null for 'manual-setup'."
     },
-    
+
     "execution_config": {
       "type": "object",
       "properties": {
@@ -103,10 +103,10 @@
       ]
     }
   },
-  
+
   "type": "object",
   "$ref": "#/definitions/execution_config",
-  
+
   "examples": [
     {
       "execution_mode": "workflow",

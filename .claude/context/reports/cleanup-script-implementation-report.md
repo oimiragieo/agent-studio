@@ -12,6 +12,7 @@
 Successfully created a comprehensive repository cleanup script that identifies and removes 250+ temporary files and SLOP (files in wrong locations) before committing. The script prevents repository pollution and ensures only intentional changes are committed.
 
 **Key Metrics**:
+
 - **Files Detected**: 252 files/directories (247 tmpclaude files, 2 malformed paths, 2 temp files, 1 external dependency)
 - **Space to Reclaim**: 169.89 MB
 - **Safety Features**: 6 protective mechanisms
@@ -23,13 +24,14 @@ Successfully created a comprehensive repository cleanup script that identifies a
 
 The repository had 2700+ changes including hundreds of temporary files that should NEVER be committed:
 
-1. **tmpclaude-* directories/files**: 200+ temporary working directories
+1. **tmpclaude-\* directories/files**: 200+ temporary working directories
 2. **Malformed Windows path files**: Files with UTF-8 encoded paths (e.g., `C\357\200\272devprojects...`)
 3. **AI logs and temporary outputs**: Scratch files in `.claude/context/tmp/`
 4. **Test artifacts**: Validation files in root directory
 5. **External dependencies**: Third-party code (`crewAI-main/`) in root
 
 **Risk**: Committing these files would:
+
 - Pollute repository history
 - Increase repo size by 170MB
 - Violate file location rules
@@ -42,6 +44,7 @@ The repository had 2700+ changes including hundreds of temporary files that shou
 ### 1. Cleanup Script (`.claude/tools/cleanup-repo.mjs`)
 
 **Features**:
+
 - ✅ Cross-platform (Windows/Mac/Linux) compatibility
 - ✅ Dry-run mode for safe preview
 - ✅ Execute mode with confirmation prompt
@@ -53,16 +56,16 @@ The repository had 2700+ changes including hundreds of temporary files that shou
 
 **File Detection Categories**:
 
-| Category                | Pattern                  | Count | Size       |
-| ----------------------- | ------------------------ | ----- | ---------- |
-| tmpclaude files         | `tmpclaude-*`            | 247   | 6.3 KB     |
-| Malformed Windows paths | `C:dev...`, `nul`, etc.  | 2     | 801 Bytes  |
-| Temporary files         | `.claude/context/tmp/*`  | 2     | 8.28 KB    |
-| Old logs                | `*.log` (>7 days)        | 0     | 0 Bytes    |
-| tmp- prefix files       | `tmp-*` (>24 hours)      | 0     | 0 Bytes    |
-| Test artifacts          | `validation-*.json`      | 0     | 0 Bytes    |
-| External dependencies   | `crewAI-main/`           | 1     | 169.87 MB  |
-| **Total**               | -                        | 252   | 169.89 MB  |
+| Category                | Pattern                 | Count | Size      |
+| ----------------------- | ----------------------- | ----- | --------- |
+| tmpclaude files         | `tmpclaude-*`           | 247   | 6.3 KB    |
+| Malformed Windows paths | `C:dev...`, `nul`, etc. | 2     | 801 Bytes |
+| Temporary files         | `.claude/context/tmp/*` | 2     | 8.28 KB   |
+| Old logs                | `*.log` (>7 days)       | 0     | 0 Bytes   |
+| tmp- prefix files       | `tmp-*` (>24 hours)     | 0     | 0 Bytes   |
+| Test artifacts          | `validation-*.json`     | 0     | 0 Bytes   |
+| External dependencies   | `crewAI-main/`          | 1     | 169.87 MB |
+| **Total**               | -                       | 252   | 169.89 MB |
 
 ### 2. NPM Scripts
 
@@ -76,6 +79,7 @@ Added to `package.json`:
 ```
 
 **Usage**:
+
 ```bash
 pnpm cleanup:check   # Preview deletions (dry-run)
 pnpm cleanup         # Execute cleanup (auto-confirm)
@@ -86,6 +90,7 @@ pnpm cleanup         # Execute cleanup (auto-confirm)
 Created comprehensive documentation:
 
 **`.claude/docs/CLEANUP_SCRIPT.md`**:
+
 - Usage instructions
 - File detection patterns
 - Protected paths
@@ -213,6 +218,7 @@ Run with --execute to perform cleanup
 ### Protected Path Validation
 
 Verified that script NEVER touches:
+
 - ✅ `.git/` directory
 - ✅ `node_modules/`
 - ✅ `.claude/rules-library/`
@@ -266,13 +272,13 @@ exit 0
 
 ## Performance Benchmarks
 
-| Metric              | Value      |
-| ------------------- | ---------- |
-| Scan Time           | < 5s       |
-| Deletion Time       | < 10s      |
-| Memory Usage        | < 100MB    |
-| Files per Second    | ~25        |
-| Total Execution     | < 1 minute |
+| Metric           | Value      |
+| ---------------- | ---------- |
+| Scan Time        | < 5s       |
+| Deletion Time    | < 10s      |
+| Memory Usage     | < 100MB    |
+| Files per Second | ~25        |
+| Total Execution  | < 1 minute |
 
 **Tested on**: Windows 11, Node.js v22.17.1, 252 files
 
@@ -305,7 +311,7 @@ exit 0
    - Added `cleanup:check` script
 
 2. **`.gitignore`**
-   - Added tmpclaude-* patterns
+   - Added tmpclaude-\* patterns
    - Added malformed path patterns
    - Added temporary file patterns
 
@@ -313,21 +319,21 @@ exit 0
 
 ## Success Criteria
 
-| Criterion                   | Status | Notes                            |
-| --------------------------- | ------ | -------------------------------- |
-| Remove tmpclaude files      | ✅     | 247 files detected               |
-| Remove malformed paths      | ✅     | 2 files detected (UTF-8 encoded) |
-| Remove temp files           | ✅     | 2 files in .claude/context/tmp/  |
-| Remove external deps        | ✅     | crewAI-main/ (169.87 MB)         |
-| Cross-platform              | ✅     | Works on Windows/Mac/Linux       |
-| Dry-run mode                | ✅     | Preview without deleting         |
-| Execute mode                | ✅     | Actually deletes files           |
-| Protected paths             | ✅     | Never deletes critical files     |
-| No false positives          | ✅     | Only deletes temp files          |
-| Comprehensive logging       | ✅     | Detailed output and statistics   |
-| Documentation               | ✅     | Complete usage guide             |
-| NPM script integration      | ✅     | `pnpm cleanup` and `cleanup:check` |
-| .gitignore integration      | ✅     | Patterns added                   |
+| Criterion              | Status | Notes                              |
+| ---------------------- | ------ | ---------------------------------- |
+| Remove tmpclaude files | ✅     | 247 files detected                 |
+| Remove malformed paths | ✅     | 2 files detected (UTF-8 encoded)   |
+| Remove temp files      | ✅     | 2 files in .claude/context/tmp/    |
+| Remove external deps   | ✅     | crewAI-main/ (169.87 MB)           |
+| Cross-platform         | ✅     | Works on Windows/Mac/Linux         |
+| Dry-run mode           | ✅     | Preview without deleting           |
+| Execute mode           | ✅     | Actually deletes files             |
+| Protected paths        | ✅     | Never deletes critical files       |
+| No false positives     | ✅     | Only deletes temp files            |
+| Comprehensive logging  | ✅     | Detailed output and statistics     |
+| Documentation          | ✅     | Complete usage guide               |
+| NPM script integration | ✅     | `pnpm cleanup` and `cleanup:check` |
+| .gitignore integration | ✅     | Patterns added                     |
 
 **Overall Status**: ✅ **All Success Criteria Met**
 
@@ -381,8 +387,8 @@ Add cleanup script to onboarding documentation:
 Always run cleanup script to remove temporary files:
 
 \`\`\`bash
-pnpm cleanup:check  # Preview
-pnpm cleanup        # Execute
+pnpm cleanup:check # Preview
+pnpm cleanup # Execute
 \`\`\`
 ```
 

@@ -68,9 +68,9 @@ async function processUserPrompt(
 
 | Parameter         | Type     | Required | Description                             |
 | ----------------- | -------- | -------- | --------------------------------------- |
-| `userPrompt`      | `string` | ✅        | User's request text                     |
-| `options`         | `object` | ❌        | Options (runId, sessionContext)         |
-| `routingDecision` | `object` | ❌        | Router's routing decision (for handoff) |
+| `userPrompt`      | `string` | ✅       | User's request text                     |
+| `options`         | `object` | ❌       | Options (runId, sessionContext)         |
+| `routingDecision` | `object` | ❌       | Router's routing decision (for handoff) |
 
 ### `options` Object
 
@@ -309,7 +309,7 @@ console.log(runRecord.metadata.routerHandoff);
 ```javascript
 // Ensure workflow is in routing decision
 const routingDecision = {
-  workflow: '@.claude/workflows/greenfield-fullstack.yaml',  // Required
+  workflow: '@.claude/workflows/greenfield-fullstack.yaml', // Required
   intent: 'web_app',
   complexity: 'high',
 };
@@ -331,7 +331,8 @@ const routingDecision = {
 const options = {
   sessionContext: {
     session_id: 'router-sess-123',
-    cost_tracking: {  // Required for cost aggregation
+    cost_tracking: {
+      // Required for cost aggregation
       total_cost_usd: 0.00045,
       total_input_tokens: 150,
       total_output_tokens: 100,

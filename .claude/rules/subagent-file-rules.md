@@ -82,6 +82,9 @@ Before writing to a path, verify:
 │  ❌ dist/, build/, out/                                         │
 │  ❌ Any path outside project directory                          │
 │  ❌ Any path with malformed Windows segments                    │
+│  ❌ .claude/.claude/ - NEVER nest .claude folders               │
+│  ❌ .claude/context/.claude/ - NEVER nest .claude folders       │
+│  ❌ Any nested .claude directory structure                      │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -126,6 +129,89 @@ SECURITY.md
 
 - `.claude/context/reports/report-analysis.md` → Proper path with separators
 - `.claude/context/tasks/analysis-task.md` → Correct hierarchy
+
+---
+
+## Nested Directory Prevention
+
+### CRITICAL: Never Create Nested .claude Folders
+
+**BLOCKED PATTERNS** - If you see these, STOP and fix immediately:
+
+| Pattern                      | Problem                        | Example                                |
+| ---------------------------- | ------------------------------ | -------------------------------------- |
+| `.claude/.claude/`           | Nested .claude structure       | `.claude/.claude/context/file.md`      |
+| `.claude/context/.claude/`   | Nested .claude in subdirectory | `.claude/context/.claude/reports/`     |
+| `.claude/tools/.claude/`     | Nested .claude in tools        | `.claude/tools/.claude/script.mjs`     |
+| Multiple `.claude/` segments | Path contains 2+ .claude parts | `.claude/.claude/docs/.claude/file.md` |
+
+**WHY THIS IS BAD**:
+
+1. **Confuses Path Resolution** - Tools cannot find files in nested structures
+2. **Makes Files Unfindable** - Directory tree becomes impossible to navigate
+3. **Violates Single Source of Truth** - Multiple .claude folders create ambiguity
+4. **Creates Maintenance Nightmare** - Cleanup becomes exponentially harder
+5. **Breaks Tool Assumptions** - All tools assume `.claude/` is at project root
+
+**CORRECT PATTERNS**:
+
+```javascript
+// ❌ WRONG - nested .claude
+const reportPath = '.claude/.claude/context/reports/analysis.md';
+const taskPath = '.claude/context/.claude/tasks/task.md';
+
+// ✅ CORRECT - single .claude at root
+const reportPath = '.claude/context/reports/analysis.md';
+const taskPath = '.claude/context/tasks/task.md';
+```
+
+**VALIDATION BEFORE WRITING**:
+
+Before creating any path, verify:
+
+1. **Count `.claude` occurrences**: Split path by `/` and count `.claude` segments
+2. **If count > 1**: ERROR - path is malformed with nested .claude
+3. **Fix path**: Remove nested .claude directories, use single `.claude` at root
+4. **Validate again**: Re-check before writing
+
+**DETECTION FUNCTION**:
+
+```javascript
+/**
+ * Detect nested .claude folders in path
+ * @param {string} filePath - The path to validate
+ * @returns {boolean} - True if nested .claude detected
+ */
+function hasNestedClaudeFolder(filePath) {
+  const segments = filePath.split(/[\/\\]/);
+  const claudeCount = segments.filter(s => s === '.claude').length;
+
+  if (claudeCount > 1) {
+    console.error(`NESTED .claude DETECTED: Found ${claudeCount} .claude segments in path`);
+    console.error(`Path: ${filePath}`);
+    console.error(`Fix: Remove nested .claude directories`);
+    return true;
+  }
+
+  return false;
+}
+```
+
+**ENFORCEMENT**:
+
+- Pre-commit hook validates no nested .claude folders exist
+- File location validator blocks paths with multiple `.claude` segments
+- Cleanup script detects and reports nested .claude structures
+
+**RECOVERY**:
+
+If nested .claude folders are detected:
+
+1. **Identify files**: Find all files in nested .claude directories
+2. **Move files**: Relocate to correct location in single `.claude/` hierarchy
+3. **Delete empty folders**: Remove nested .claude directories
+4. **Update references**: Fix any hardcoded paths in code
+5. **Validate**: Verify no nested .claude folders remain
 
 ---
 
@@ -200,6 +286,13 @@ CdevprojectsLLM-RULES.claudecontextartifactsplan.md  ← Mangled!
 function validateFilePath(filePath) {
   const errors = [];
 
+  // Check for nested .claude folders (CRITICAL)
+  const segments = filePath.split(/[\/\\]/);
+  const claudeCount = segments.filter(s => s === '.claude').length;
+  if (claudeCount > 1) {
+    errors.push(`Nested .claude folders detected: Found ${claudeCount} .claude segments in path`);
+  }
+
   // Check for malformed Windows paths
   if (/C:[a-zA-Z]/.test(filePath) && !/C:\\/.test(filePath) && !/C:\//.test(filePath)) {
     errors.push('Malformed Windows path: missing separator after drive letter');
@@ -255,6 +348,12 @@ def validate_file_path(file_path: str) -> tuple[bool, list[str]]:
     """Validate file path before writing."""
     errors = []
 
+    # Check for nested .claude folders (CRITICAL)
+    segments = re.split(r'[\/\\]', file_path)
+    claude_count = sum(1 for s in segments if s == '.claude')
+    if claude_count > 1:
+        errors.append(f'Nested .claude folders detected: Found {claude_count} .claude segments in path')
+
     # Check for malformed Windows paths
     if re.search(r'C:[a-zA-Z]', file_path) and not re.search(r'C:[\\\/]', file_path):
         errors.append('Malformed Windows path: missing separator after drive letter')
@@ -285,11 +384,12 @@ def validate_file_path(file_path: str) -> tuple[bool, list[str]]:
 
 ### HARD BLOCK (Validation Fails)
 
-1. **Mangled paths** - Any path matching malformed patterns
-2. **Root directory reports** - `*-report.md`, `*-report.json` in root
-3. **Root directory tasks** - `*-task.md`, `*-task.json` in root
-4. **Root directory artifacts** - Workflow outputs in root
-5. **Paths outside project** - Any absolute path not under project root
+1. **Nested .claude folders** - Any path containing multiple `.claude` segments
+2. **Mangled paths** - Any path matching malformed patterns
+3. **Root directory reports** - `*-report.md`, `*-report.json` in root
+4. **Root directory tasks** - `*-task.md`, `*-task.json` in root
+5. **Root directory artifacts** - Workflow outputs in root
+6. **Paths outside project** - Any absolute path not under project root
 
 ### WARNING (Logged, May Proceed)
 
@@ -303,6 +403,7 @@ def validate_file_path(file_path: str) -> tuple[bool, list[str]]:
 
 **Before EVERY file write operation, verify:**
 
+- [ ] Path contains ONLY ONE `.claude` segment (no nesting)
 - [ ] Path uses forward slashes OR proper Windows backslashes
 - [ ] Path does NOT match any malformed pattern
 - [ ] File type matches required location from matrix
@@ -355,6 +456,7 @@ node .claude/tools/enforcement-gate.mjs validate-file-location --path "<file_pat
 
 ## Version History
 
-| Version | Date       | Changes                               |
-| ------- | ---------- | ------------------------------------- |
-| 1.0.0   | 2025-01-05 | Initial release - address SLOP issues |
+| Version | Date       | Changes                                      |
+| ------- | ---------- | -------------------------------------------- |
+| 1.1.0   | 2025-01-12 | Added nested .claude folder prevention rules |
+| 1.0.0   | 2025-01-05 | Initial release - address SLOP issues        |

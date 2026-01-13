@@ -42,36 +42,40 @@ async function testNetworkFallback() {
   // Run rate.cjs with providers that will fail (no auth configured)
   const rateScript = path.join(__dirname, '..', 'scripts', 'rate.cjs');
 
-  return new Promise((resolve) => {
-    const proc = spawn('node', [
-      rateScript,
-      '--response-file',
-      planPath,
-      '--providers',
-      'claude,gemini', // These will fail without auth
-    ], {
-      env: {
-        ...process.env,
-        // Clear API keys to force failure
-        ANTHROPIC_API_KEY: '',
-        GEMINI_API_KEY: '',
-        GOOGLE_API_KEY: '',
-      },
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
+  return new Promise(resolve => {
+    const proc = spawn(
+      'node',
+      [
+        rateScript,
+        '--response-file',
+        planPath,
+        '--providers',
+        'claude,gemini', // These will fail without auth
+      ],
+      {
+        env: {
+          ...process.env,
+          // Clear API keys to force failure
+          ANTHROPIC_API_KEY: '',
+          GEMINI_API_KEY: '',
+          GOOGLE_API_KEY: '',
+        },
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }
+    );
 
     let stdout = '';
     let stderr = '';
 
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on('data', data => {
       stdout += data.toString();
     });
 
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       try {
         // Parse output
         const result = JSON.parse(stdout);
@@ -123,7 +127,7 @@ async function testExplicitOfflineMode() {
 
   const offlineRaterScript = path.join(__dirname, '..', 'scripts', 'offline-rater.mjs');
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const proc = spawn('node', [offlineRaterScript, planPath], {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
@@ -131,15 +135,15 @@ async function testExplicitOfflineMode() {
     let stdout = '';
     let stderr = '';
 
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on('data', data => {
       stdout += data.toString();
     });
 
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       try {
         const result = JSON.parse(stdout);
 
@@ -219,7 +223,7 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch((error) => {
+runTests().catch(error => {
   console.error(`Fatal error: ${error.message}`);
   process.exit(1);
 });

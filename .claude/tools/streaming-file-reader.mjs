@@ -29,9 +29,9 @@ import path from 'path';
  * Hard limits to prevent memory bloat
  */
 const LIMITS = {
-  MAX_LINE_LENGTH: 2000,    // Truncate lines longer than this
-  MAX_LINES: 2000,          // Maximum lines to return
-  CHUNK_SIZE: 64 * 1024,    // 64KB chunks for streaming
+  MAX_LINE_LENGTH: 2000, // Truncate lines longer than this
+  MAX_LINES: 2000, // Maximum lines to return
+  CHUNK_SIZE: 64 * 1024, // 64KB chunks for streaming
   MAX_FILE_SIZE: 50 * 1024 * 1024, // 50MB warning threshold
 };
 
@@ -64,13 +64,13 @@ class StreamingFileReader {
     // Create read stream
     const fileStream = createReadStream(filePath, {
       encoding,
-      highWaterMark
+      highWaterMark,
     });
 
     // Create readline interface
     const rl = createInterface({
       input: fileStream,
-      crlfDelay: Infinity // Recognize all CR LF instances
+      crlfDelay: Infinity, // Recognize all CR LF instances
     });
 
     try {
@@ -105,7 +105,7 @@ class StreamingFileReader {
     const {
       offset = 0,
       limit = LIMITS.MAX_LINES,
-      maxLineLength = LIMITS.MAX_LINE_LENGTH
+      maxLineLength = LIMITS.MAX_LINE_LENGTH,
     } = options;
 
     // Enforce hard limits
@@ -124,9 +124,10 @@ class StreamingFileReader {
 
         // Only collect lines in the requested range
         if (lineNum >= offset) {
-          const truncated = line.length > safeMaxLineLength
-            ? line.substring(0, safeMaxLineLength) + '...[truncated]'
-            : line;
+          const truncated =
+            line.length > safeMaxLineLength
+              ? line.substring(0, safeMaxLineLength) + '...[truncated]'
+              : line;
           lines.push(truncated);
         }
 
@@ -157,16 +158,11 @@ class StreamingFileReader {
    * );
    */
   static async searchFile(filePath, pattern, options = {}) {
-    const {
-      caseInsensitive = false,
-      maxMatches = 100,
-      contextLines = 0
-    } = options;
+    const { caseInsensitive = false, maxMatches = 100, contextLines = 0 } = options;
 
     // Convert string pattern to RegExp
-    const regex = typeof pattern === 'string'
-      ? new RegExp(pattern, caseInsensitive ? 'i' : '')
-      : pattern;
+    const regex =
+      typeof pattern === 'string' ? new RegExp(pattern, caseInsensitive ? 'i' : '') : pattern;
 
     const matches = [];
     let lineNum = 0;
@@ -189,7 +185,7 @@ class StreamingFileReader {
           const match = {
             lineNum,
             line: line.substring(0, LIMITS.MAX_LINE_LENGTH),
-            context: contextLines > 0 ? [...contextBuffer.slice(0, -1)] : []
+            context: contextLines > 0 ? [...contextBuffer.slice(0, -1)] : [],
           };
 
           matches.push(match);
@@ -250,9 +246,10 @@ class StreamingFileReader {
         size: stats.size,
         sizeMB: sizeMB.toFixed(2),
         modified: stats.mtime,
-        warning: sizeMB > (LIMITS.MAX_FILE_SIZE / (1024 * 1024))
-          ? `Large file (${sizeMB.toFixed(2)}MB) - streaming recommended`
-          : null
+        warning:
+          sizeMB > LIMITS.MAX_FILE_SIZE / (1024 * 1024)
+            ? `Large file (${sizeMB.toFixed(2)}MB) - streaming recommended`
+            : null,
       };
     } catch (error) {
       throw new Error(`Failed to get stats for ${filePath}: ${error.message}`);
@@ -274,13 +271,10 @@ class StreamingFileReader {
    * }
    */
   static async *readChunks(filePath, options = {}) {
-    const {
-      chunkSize = LIMITS.CHUNK_SIZE,
-      maxChunks = Infinity
-    } = options;
+    const { chunkSize = LIMITS.CHUNK_SIZE, maxChunks = Infinity } = options;
 
     const stream = createReadStream(filePath, {
-      highWaterMark: chunkSize
+      highWaterMark: chunkSize,
     });
 
     let chunkCount = 0;

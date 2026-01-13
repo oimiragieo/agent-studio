@@ -22,6 +22,7 @@ Successfully implemented a production-ready SQLite database system for the Phase
 - ✅ Complete documentation
 
 All performance targets met or exceeded:
+
 - Database initialization: ~50ms (target <100ms)
 - Single row insert: ~0.1ms (target <1ms)
 - FTS5 search: ~3ms (target <10ms)
@@ -72,22 +73,23 @@ All performance targets met or exceeded:
 
 ### Table Summary
 
-| Table | Purpose | Row Count (Typical) |
-|-------|---------|---------------------|
-| **sessions** | Session tracking | 100-1000 |
-| **conversations** | Conversation threads | 500-5000 |
-| **messages** | Individual messages | 5000-50000 |
-| **agent_interactions** | Agent usage logs | 1000-10000 |
-| **routing_decisions** | Router decisions | 500-5000 |
-| **cost_tracking** | Token/cost aggregation | 1000-10000 |
-| **user_preferences** | User preferences | 50-500 |
-| **learned_patterns** | Pattern recognition | 100-1000 |
-| **session_handoffs** | Session continuations | 10-100 |
-| **memory_metrics** | Performance metrics | 10000-100000 |
+| Table                  | Purpose                | Row Count (Typical) |
+| ---------------------- | ---------------------- | ------------------- |
+| **sessions**           | Session tracking       | 100-1000            |
+| **conversations**      | Conversation threads   | 500-5000            |
+| **messages**           | Individual messages    | 5000-50000          |
+| **agent_interactions** | Agent usage logs       | 1000-10000          |
+| **routing_decisions**  | Router decisions       | 500-5000            |
+| **cost_tracking**      | Token/cost aggregation | 1000-10000          |
+| **user_preferences**   | User preferences       | 50-500              |
+| **learned_patterns**   | Pattern recognition    | 100-1000            |
+| **session_handoffs**   | Session continuations  | 10-100              |
+| **memory_metrics**     | Performance metrics    | 10000-100000        |
 
 ### Key Features
 
 #### 1. Foreign Key Constraints
+
 All relationships enforced with `ON DELETE CASCADE` for data integrity.
 
 ```sql
@@ -100,6 +102,7 @@ CREATE TABLE conversations (
 ```
 
 #### 2. FTS5 Full-Text Search
+
 Porter stemming with Unicode support for multi-language search.
 
 ```sql
@@ -114,6 +117,7 @@ CREATE VIRTUAL TABLE messages_fts USING fts5(
 Automatic triggers keep FTS index in sync with messages table.
 
 #### 3. Partial Indexes
+
 Optimized indexes for common query patterns.
 
 ```sql
@@ -127,6 +131,7 @@ WHERE is_summarized = FALSE;
 ```
 
 #### 4. Helper Views
+
 Pre-aggregated views for common analytics.
 
 ```sql
@@ -160,10 +165,10 @@ await db.initialize(); // Creates schema, runs migrations
 ```javascript
 // Create session
 db.createSession({
-    sessionId: 'sess-001',
-    userId: 'user-1',
-    projectId: 'proj-1',
-    metadata: { source: 'web' }
+  sessionId: 'sess-001',
+  userId: 'user-1',
+  projectId: 'proj-1',
+  metadata: { source: 'web' },
 });
 
 // Get session
@@ -181,17 +186,17 @@ const active = db.getActiveSessions('user-1', 10);
 ```javascript
 // Create conversation
 const convId = db.createConversation({
-    sessionId: 'sess-001',
-    conversationId: 'conv-001',
-    title: 'Database Setup'
+  sessionId: 'sess-001',
+  conversationId: 'conv-001',
+  title: 'Database Setup',
 });
 
 // Add message
 db.addMessage({
-    conversationId: convId,
-    role: 'user',
-    content: 'How do I optimize queries?',
-    tokenCount: 6
+  conversationId: convId,
+  role: 'user',
+  content: 'How do I optimize queries?',
+  tokenCount: 6,
 });
 
 // Get recent messages
@@ -264,15 +269,15 @@ configureSQLite() {
 
 22 comprehensive tests covering:
 
-| Category | Tests | Coverage |
-|----------|-------|----------|
-| Initialization | 5 | DB setup, schema, configuration |
-| Session Management | 3 | CRUD operations |
-| Message Management | 2 | Add, retrieve messages |
-| Full-Text Search | 2 | FTS5 functionality, performance |
-| Foreign Keys | 2 | Constraints, cascade delete |
-| Performance | 3 | Insert, vacuum, stats |
-| Concurrent Access | 1 | WAL mode verification |
+| Category           | Tests | Coverage                        |
+| ------------------ | ----- | ------------------------------- |
+| Initialization     | 5     | DB setup, schema, configuration |
+| Session Management | 3     | CRUD operations                 |
+| Message Management | 2     | Add, retrieve messages          |
+| Full-Text Search   | 2     | FTS5 functionality, performance |
+| Foreign Keys       | 2     | Constraints, cascade delete     |
+| Performance        | 3     | Insert, vacuum, stats           |
+| Concurrent Access  | 1     | WAL mode verification           |
 
 ### Test Results
 
@@ -319,6 +324,7 @@ node .claude/tools/memory/database.test.mjs
 ### Current Schema Version
 
 **Version 1.0.0** - Initial schema with:
+
 - 10 tables (sessions, conversations, messages, etc.)
 - FTS5 full-text search
 - Foreign key constraints
@@ -364,9 +370,9 @@ await db.initialize();
 
 // Create session when router initializes
 db.createSession({
-    sessionId: process.env.CLAUDE_SESSION_ID,
-    userId: getUserId(),
-    projectId: getProjectId()
+  sessionId: process.env.CLAUDE_SESSION_ID,
+  userId: getUserId(),
+  projectId: getProjectId(),
 });
 ```
 
@@ -375,22 +381,28 @@ db.createSession({
 ```javascript
 // Fetch recent context for memory injection
 const messages = db.getRecentMessages(sessionId, 10);
-const agentHistory = db.prepare(`
+const agentHistory = db
+  .prepare(
+    `
     SELECT * FROM agent_interactions
     WHERE conversation_id = ?
     ORDER BY started_at DESC
     LIMIT 5
-`).all(conversationId);
+`
+  )
+  .all(conversationId);
 ```
 
 ### Cost Tracking Integration
 
 ```javascript
 // Track agent costs
-db.prepare(`
+db.prepare(
+  `
     INSERT INTO cost_tracking (session_id, model, input_tokens, output_tokens, cost_usd)
     VALUES (?, ?, ?, ?, ?)
-`).run(sessionId, model, inputTokens, outputTokens, cost);
+`
+).run(sessionId, model, inputTokens, outputTokens, cost);
 ```
 
 ---
@@ -410,19 +422,23 @@ cp .claude/context/memory/sessions.db-shm sessions-backup.db-shm
 
 ```javascript
 // Archive old sessions
-db.prepare(`
+db.prepare(
+  `
     UPDATE sessions
     SET status = 'archived'
     WHERE status = 'active'
       AND last_active_at < datetime('now', '-30 days')
-`).run();
+`
+).run();
 
 // Delete old summarized messages
-db.prepare(`
+db.prepare(
+  `
     DELETE FROM messages
     WHERE is_summarized = TRUE
       AND created_at < datetime('now', '-7 days')
-`).run();
+`
+).run();
 
 // Vacuum to reclaim space
 await db.vacuum();
@@ -440,11 +456,15 @@ console.log(`Page Count: ${stats.pageCount}`);
 console.log(`Journal Mode: ${stats.journalMode}`);
 
 // Get session counts
-const sessionCounts = db.prepare(`
+const sessionCounts = db
+  .prepare(
+    `
     SELECT status, COUNT(*) as count
     FROM sessions
     GROUP BY status
-`).all();
+`
+  )
+  .all();
 ```
 
 ---
@@ -492,17 +512,18 @@ gpg --encrypt --recipient user@example.com sessions-backup.db
 
 ### Actual Performance
 
-| Operation | Target (p95) | Actual | Status |
-|-----------|--------------|--------|--------|
-| Database initialization | <100ms | ~50ms | ✅ 2x faster |
-| Schema creation | <500ms | ~200ms | ✅ 2.5x faster |
-| Single row insert | <1ms | ~0.1ms | ✅ 10x faster |
-| FTS5 search (1000 messages) | <10ms | ~3ms | ✅ 3x faster |
-| Vacuum operation | <5s | ~2s | ✅ 2.5x faster |
+| Operation                   | Target (p95) | Actual | Status         |
+| --------------------------- | ------------ | ------ | -------------- |
+| Database initialization     | <100ms       | ~50ms  | ✅ 2x faster   |
+| Schema creation             | <500ms       | ~200ms | ✅ 2.5x faster |
+| Single row insert           | <1ms         | ~0.1ms | ✅ 10x faster  |
+| FTS5 search (1000 messages) | <10ms        | ~3ms   | ✅ 3x faster   |
+| Vacuum operation            | <5s          | ~2s    | ✅ 2.5x faster |
 
 ### Scalability
 
 Tested with:
+
 - 1000 sessions
 - 5000 conversations
 - 50000 messages
@@ -518,14 +539,14 @@ Query performance remains within targets up to 1M records.
 
 **Why better-sqlite3 over node-sqlite3?**
 
-| Feature | better-sqlite3 | node-sqlite3 |
-|---------|----------------|--------------|
-| API | Synchronous | Asynchronous |
-| Performance | 10x faster | Baseline |
-| Windows Support | Excellent | Poor file locking |
-| FTS5 Support | Built-in | Manual build |
-| Native Addon | Yes | Yes |
-| Maintenance | Active | Less active |
+| Feature         | better-sqlite3 | node-sqlite3      |
+| --------------- | -------------- | ----------------- |
+| API             | Synchronous    | Asynchronous      |
+| Performance     | 10x faster     | Baseline          |
+| Windows Support | Excellent      | Poor file locking |
+| FTS5 Support    | Built-in       | Manual build      |
+| Native Addon    | Yes            | Yes               |
+| Maintenance     | Active         | Less active       |
 
 **Installation:**
 
@@ -568,16 +589,16 @@ pnpm install better-sqlite3@^11.0.0
 
 ## Success Criteria Validation
 
-| Criterion | Target | Actual | Status |
-|-----------|--------|--------|--------|
-| Database file created | `.claude/context/memory/sessions.db` | ✅ Created | ✅ |
-| All 10 tables created | Correct schemas | ✅ All tables | ✅ |
-| FTS5 working | Full-text search | ✅ Tested | ✅ |
-| Foreign keys enforced | Referential integrity | ✅ Tested | ✅ |
-| WAL mode enabled | Concurrent access | ✅ Verified | ✅ |
-| Migration system | Functional | ✅ Tested | ✅ |
-| Tests passing | 100% pass rate | ✅ 22/22 | ✅ |
-| Documentation complete | Comprehensive docs | ✅ Complete | ✅ |
+| Criterion              | Target                               | Actual        | Status |
+| ---------------------- | ------------------------------------ | ------------- | ------ |
+| Database file created  | `.claude/context/memory/sessions.db` | ✅ Created    | ✅     |
+| All 10 tables created  | Correct schemas                      | ✅ All tables | ✅     |
+| FTS5 working           | Full-text search                     | ✅ Tested     | ✅     |
+| Foreign keys enforced  | Referential integrity                | ✅ Tested     | ✅     |
+| WAL mode enabled       | Concurrent access                    | ✅ Verified   | ✅     |
+| Migration system       | Functional                           | ✅ Tested     | ✅     |
+| Tests passing          | 100% pass rate                       | ✅ 22/22      | ✅     |
+| Documentation complete | Comprehensive docs                   | ✅ Complete   | ✅     |
 
 ---
 

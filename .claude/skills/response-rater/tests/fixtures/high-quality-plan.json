@@ -4,24 +4,15 @@
   "phases": [
     {
       "name": "Design",
-      "steps": [
-        "architecture",
-        "API design"
-      ]
+      "steps": ["architecture", "API design"]
     },
     {
       "name": "Implementation",
-      "steps": [
-        "backend",
-        "frontend"
-      ]
+      "steps": ["backend", "frontend"]
     },
     {
       "name": "Testing",
-      "steps": [
-        "unit tests",
-        "integration tests"
-      ]
+      "steps": ["unit tests", "integration tests"]
     }
   ],
   "steps": [
@@ -35,34 +26,25 @@
       "name": "Implement OAuth2 backend",
       "agent": "developer",
       "estimated_duration": "5 days",
-      "dependencies": [
-        "Design authentication architecture"
-      ]
+      "dependencies": ["Design authentication architecture"]
     },
     {
       "name": "Implement JWT middleware",
       "agent": "developer",
       "estimated_duration": "3 days",
-      "dependencies": [
-        "Implement OAuth2 backend"
-      ]
+      "dependencies": ["Implement OAuth2 backend"]
     },
     {
       "name": "Frontend authentication flow",
       "agent": "frontend-developer",
       "estimated_duration": "4 days",
-      "dependencies": [
-        "Implement OAuth2 backend"
-      ]
+      "dependencies": ["Implement OAuth2 backend"]
     },
     {
       "name": "Security review",
       "agent": "security-architect",
       "estimated_duration": "2 days",
-      "dependencies": [
-        "Implement JWT middleware",
-        "Frontend authentication flow"
-      ]
+      "dependencies": ["Implement JWT middleware", "Frontend authentication flow"]
     }
   ],
   "success_criteria": [
@@ -92,20 +74,9 @@
       "mitigation": "Implement CSRF tokens and SameSite cookie policy"
     }
   ],
-  "resources": [
-    "2 backend developers",
-    "1 frontend developer",
-    "1 security architect"
-  ],
-  "constraints": [
-    "Must integrate with existing user database",
-    "Backward compatibility required"
-  ],
-  "integration_points": [
-    "User database",
-    "OAuth2 provider",
-    "Frontend application"
-  ],
+  "resources": ["2 backend developers", "1 frontend developer", "1 security architect"],
+  "constraints": ["Must integrate with existing user database", "Backward compatibility required"],
+  "integration_points": ["User database", "OAuth2 provider", "Frontend application"],
   "data_flow": "User → Frontend → Backend → OAuth2 Provider → JWT issuance",
   "backward_compatibility": "Provide migration path for existing session-based auth"
 }

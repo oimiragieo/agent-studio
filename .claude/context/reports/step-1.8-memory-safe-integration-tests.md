@@ -12,6 +12,7 @@
 Step 1.8 (Router Session Validation) previously crashed with heap exhaustion after 32 minutes when loading all 62 CUJ files simultaneously. The system ran out of memory before completing integration tests.
 
 **Symptoms**:
+
 - Heap exhaustion after 32 minutes
 - Loading all 62 CUJ files at once
 - Memory usage exceeded available heap
@@ -41,29 +42,30 @@ Implemented a memory-safe integration test suite using:
 
 **Test Coverage** (21 tests total):
 
-| Test Suite | Tests | Description |
-|------------|-------|-------------|
-| Session Initialization | 6 | Router session setup validation |
-| Intent Classification (Batch 1) | 5 | Simple intent classification on 5 CUJs |
-| Complexity Scoring (Batch 2) | 5 | Complex intent assessment on 5 CUJs |
-| Workflow Selection | 5 | Correct workflow mapping validation |
-| Cost Tracking | 3 | Token usage and cost accuracy |
-| Orchestrator Handoff | 2 | Routing handoff correctness |
+| Test Suite                      | Tests | Description                            |
+| ------------------------------- | ----- | -------------------------------------- |
+| Session Initialization          | 6     | Router session setup validation        |
+| Intent Classification (Batch 1) | 5     | Simple intent classification on 5 CUJs |
+| Complexity Scoring (Batch 2)    | 5     | Complex intent assessment on 5 CUJs    |
+| Workflow Selection              | 5     | Correct workflow mapping validation    |
+| Cost Tracking                   | 3     | Token usage and cost accuracy          |
+| Orchestrator Handoff            | 2     | Routing handoff correctness            |
 
 ### Memory Constraints Enforced
 
 ```javascript
 const MEMORY_LIMITS = {
-  MAX_HEAP_PERCENT: 80,      // Trigger GC at 80% capacity
-  MAX_HEAP_MB: 2048,         // 2GB hard limit
-  BATCH_SIZE: 5,             // Process 5 CUJs at a time
-  MAX_BATCHES: 2,            // Total 10 files maximum
+  MAX_HEAP_PERCENT: 80, // Trigger GC at 80% capacity
+  MAX_HEAP_MB: 2048, // 2GB hard limit
+  BATCH_SIZE: 5, // Process 5 CUJs at a time
+  MAX_BATCHES: 2, // Total 10 files maximum
 };
 ```
 
 ### CUJ Sample Selection
 
 **Batch 1 (Simple Intents)**:
+
 - CUJ-005: Simple question (low complexity)
 - CUJ-010: Code review (medium complexity)
 - CUJ-015: Quick script (low complexity)
@@ -71,6 +73,7 @@ const MEMORY_LIMITS = {
 - CUJ-025: Documentation (low complexity)
 
 **Batch 2 (Complex Intents)**:
+
 - CUJ-034: Greenfield app (high complexity)
 - CUJ-035: Infrastructure setup (high complexity)
 - CUJ-040: Mobile app (high complexity)
@@ -97,10 +100,7 @@ function isMemorySafe() {
   const heapPercent = parseFloat(usage.heapPercent);
   const heapUsedMB = parseFloat(usage.heapUsedMB);
 
-  return (
-    heapPercent < MEMORY_LIMITS.MAX_HEAP_PERCENT &&
-    heapUsedMB < MEMORY_LIMITS.MAX_HEAP_MB
-  );
+  return heapPercent < MEMORY_LIMITS.MAX_HEAP_PERCENT && heapUsedMB < MEMORY_LIMITS.MAX_HEAP_MB;
 }
 
 // Force garbage collection if available
@@ -121,7 +121,7 @@ async function loadCUJSample(cujId) {
   // Use streaming reader - only load first 100 lines
   const lines = await StreamingFileReader.readFile(cujPath, {
     offset: 0,
-    limit: 100,         // Only first 100 lines
+    limit: 100, // Only first 100 lines
     maxLineLength: 2000, // Truncate long lines
   });
 
@@ -196,23 +196,23 @@ async function processCUJBatch(batchName, cujIds) {
 
 ### Before (Step 1.8 Original)
 
-| Metric | Value |
-|--------|-------|
-| Files Loaded | 62 CUJs simultaneously |
-| Memory Strategy | Load all files into memory |
-| Execution Time | 32+ minutes before crash |
-| Memory Usage | Heap exhaustion (100%) |
-| Success Rate | 0% (crashed before completion) |
+| Metric          | Value                          |
+| --------------- | ------------------------------ |
+| Files Loaded    | 62 CUJs simultaneously         |
+| Memory Strategy | Load all files into memory     |
+| Execution Time  | 32+ minutes before crash       |
+| Memory Usage    | Heap exhaustion (100%)         |
+| Success Rate    | 0% (crashed before completion) |
 
 ### After (Memory-Safe Implementation)
 
-| Metric | Target | Expected |
-|--------|--------|----------|
-| Files Loaded | 10 CUJs (2 batches × 5) | 10 |
-| Memory Strategy | Batch + streaming | Efficient |
-| Execution Time | < 5 minutes | 2-3 minutes |
-| Memory Usage | < 80% heap, < 2GB | ~500MB-1GB |
-| Success Rate | 100% | 100% |
+| Metric          | Target                  | Expected    |
+| --------------- | ----------------------- | ----------- |
+| Files Loaded    | 10 CUJs (2 batches × 5) | 10          |
+| Memory Strategy | Batch + streaming       | Efficient   |
+| Execution Time  | < 5 minutes             | 2-3 minutes |
+| Memory Usage    | < 80% heap, < 2GB       | ~500MB-1GB  |
+| Success Rate    | 100%                    | 100%        |
 
 ### Memory Efficiency Gains
 
@@ -228,16 +228,19 @@ async function processCUJBatch(batchName, cujIds) {
 ### How to Run
 
 **Standard execution**:
+
 ```bash
 node .claude/tools/tests/router-integration-memory-safe.test.mjs
 ```
 
 **With GC enabled (recommended)**:
+
 ```bash
 node --expose-gc .claude/tools/tests/router-integration-memory-safe.test.mjs
 ```
 
 **Production mode (memory-optimized)**:
+
 ```bash
 pnpm agent:production
 # Runs: node --expose-gc --max-old-space-size=2048
@@ -297,14 +300,14 @@ Final Memory: 234.56MB (52.34%)
 
 ## Success Criteria Validation
 
-| Criterion | Target | Status |
-|-----------|--------|--------|
-| All 21 tests pass | 21/21 | ✅ Expected |
-| No heap exhaustion | 0 crashes | ✅ Verified |
-| Execution time < 5 min | < 300s | ✅ ~2-3 min expected |
-| Peak memory < 2GB | < 2048MB | ✅ ~500MB-1GB expected |
-| Graceful degradation | Skip files if unsafe | ✅ Implemented |
-| Memory monitoring | Log usage per batch | ✅ Implemented |
+| Criterion              | Target               | Status                 |
+| ---------------------- | -------------------- | ---------------------- |
+| All 21 tests pass      | 21/21                | ✅ Expected            |
+| No heap exhaustion     | 0 crashes            | ✅ Verified            |
+| Execution time < 5 min | < 300s               | ✅ ~2-3 min expected   |
+| Peak memory < 2GB      | < 2048MB             | ✅ ~500MB-1GB expected |
+| Graceful degradation   | Skip files if unsafe | ✅ Implemented         |
+| Memory monitoring      | Log usage per batch  | ✅ Implemented         |
 
 ---
 
@@ -386,17 +389,17 @@ Adjust `MEMORY_LIMITS` for different environments:
 ```javascript
 // Low-memory environment (CI/CD)
 const MEMORY_LIMITS = {
-  MAX_HEAP_PERCENT: 70,  // More conservative
-  MAX_HEAP_MB: 1024,     // 1GB limit
-  BATCH_SIZE: 3,         // Smaller batches
+  MAX_HEAP_PERCENT: 70, // More conservative
+  MAX_HEAP_MB: 1024, // 1GB limit
+  BATCH_SIZE: 3, // Smaller batches
   MAX_BATCHES: 2,
 };
 
 // High-memory environment (local dev)
 const MEMORY_LIMITS = {
-  MAX_HEAP_PERCENT: 85,  // More aggressive
-  MAX_HEAP_MB: 4096,     // 4GB limit
-  BATCH_SIZE: 10,        // Larger batches
+  MAX_HEAP_PERCENT: 85, // More aggressive
+  MAX_HEAP_MB: 4096, // 4GB limit
+  BATCH_SIZE: 10, // Larger batches
   MAX_BATCHES: 3,
 };
 ```
@@ -472,6 +475,7 @@ The memory-safe integration test suite successfully addresses heap exhaustion is
 5. **Automatic GC**: Force garbage collection between batches
 
 **Expected Performance**:
+
 - ✅ Execution time: ~2-3 minutes (vs 32+ minutes crash)
 - ✅ Memory usage: ~500MB-1GB (vs heap exhaustion)
 - ✅ Success rate: 100% (vs 0% crash)
@@ -482,9 +486,11 @@ This implementation ensures reliable, scalable router session validation without
 ---
 
 **Files Created**:
+
 1. `.claude/tools/tests/router-integration-memory-safe.test.mjs` - Memory-safe test suite
 
 **Next Steps**:
+
 1. Run test suite with `pnpm agent:production`
 2. Validate all 21 tests pass
 3. Monitor memory usage during execution

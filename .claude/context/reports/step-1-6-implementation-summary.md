@@ -52,7 +52,9 @@ export async function processUserPrompt(userPrompt, options = {}, routingDecisio
 if (routingDecision) {
   console.log(`[Orchestrator Entry] Router session handoff detected`);
   console.log(`[Orchestrator Entry] Intent: ${routingDecision.intent}`);
-  console.log(`[Orchestrator Entry] Workflow: ${routingDecision.workflow || routingDecision.selected_workflow || 'none'}`);
+  console.log(
+    `[Orchestrator Entry] Workflow: ${routingDecision.workflow || routingDecision.selected_workflow || 'none'}`
+  );
   console.log(`[Orchestrator Entry] Complexity: ${routingDecision.complexity}`);
   console.log(`[Orchestrator Entry] Skipping redundant semantic routing`);
 }
@@ -197,9 +199,9 @@ const aggregatedCosts = sessionContext
 return {
   runId,
   routing: routingResult,
-  executionMode: 'skill_only',  // or normal workflow
+  executionMode: 'skill_only', // or normal workflow
   runRecord: await readRun(runId),
-  costs: aggregatedCosts,  // NEW: Aggregated costs
+  costs: aggregatedCosts, // NEW: Aggregated costs
 };
 ```
 
@@ -247,13 +249,13 @@ node .claude/tools/tests/orchestrator-router-handoff.test.mjs
 
 ## Success Criteria
 
-| Criterion                              | Status | Evidence                                          |
-| -------------------------------------- | ------ | ------------------------------------------------- |
-| ✅ Handoff from router works seamlessly | ✅      | Test 1 passed - routing decision used             |
-| ✅ Context transfers correctly          | ✅      | Test 2 passed - metadata includes routerHandoff   |
-| ✅ Cost aggregation accurate            | ✅      | Test 3 passed - costs match expected values       |
-| ✅ Backward compatible                  | ✅      | Test 4 passed - works without routing decision    |
-| ✅ Logging shows router handoff clearly | ✅      | Console logs indicate handoff and skipped routing |
+| Criterion                               | Status | Evidence                                          |
+| --------------------------------------- | ------ | ------------------------------------------------- |
+| ✅ Handoff from router works seamlessly | ✅     | Test 1 passed - routing decision used             |
+| ✅ Context transfers correctly          | ✅     | Test 2 passed - metadata includes routerHandoff   |
+| ✅ Cost aggregation accurate            | ✅     | Test 3 passed - costs match expected values       |
+| ✅ Backward compatible                  | ✅     | Test 4 passed - works without routing decision    |
+| ✅ Logging shows router handoff clearly | ✅     | Console logs indicate handoff and skipped routing |
 
 ---
 
@@ -304,12 +306,12 @@ const result = await processUserPrompt('Build a web app', { runId: 'run-001' });
 
 ## Files Modified
 
-| File                                                            | Changes                                           |
-| --------------------------------------------------------------- | ------------------------------------------------- |
-| `.claude/tools/orchestrator-entry.mjs`                          | ✅ Updated function signature and routing logic   |
-| `.claude/tools/tests/orchestrator-router-handoff.test.mjs`     | ✅ Created integration tests (5 tests)            |
-| `.claude/docs/router-orchestrator-handoff-examples.md`         | ✅ Created example handoff scenarios (5 examples) |
-| `.claude/context/reports/step-1-6-implementation-summary.md`   | ✅ Created this summary                           |
+| File                                                         | Changes                                           |
+| ------------------------------------------------------------ | ------------------------------------------------- |
+| `.claude/tools/orchestrator-entry.mjs`                       | ✅ Updated function signature and routing logic   |
+| `.claude/tools/tests/orchestrator-router-handoff.test.mjs`   | ✅ Created integration tests (5 tests)            |
+| `.claude/docs/router-orchestrator-handoff-examples.md`       | ✅ Created example handoff scenarios (5 examples) |
+| `.claude/context/reports/step-1-6-implementation-summary.md` | ✅ Created this summary                           |
 
 ---
 

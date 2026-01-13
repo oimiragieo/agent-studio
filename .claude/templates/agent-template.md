@@ -8,6 +8,14 @@ Template for creating new agents based on Claude Cookbooks Chief of Staff patter
 **Purpose**: [Brief description of agent's purpose]
 **Model**: [claude-sonnet-4-5 | claude-opus-4-5 | claude-haiku-4-5]
 
+## Goal
+
+[One action-oriented sentence describing what the agent aims to accomplish]
+
+## Backstory
+
+[2-3 sentences establishing the agent's expertise, experience, and authority in their domain]
+
 ## Features Included
 
 - ✅ Memory: CLAUDE.md context loading

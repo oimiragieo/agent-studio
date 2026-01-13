@@ -15,6 +15,7 @@
 **Issue**: Worker expected `supervisorId` in workerData but Supervisor didn't pass it
 
 **Fix Applied**:
+
 ```javascript
 // BEFORE
 workerData: {
@@ -47,6 +48,7 @@ workerData: {
 **Issue**: Worker sent UPPERCASE message types but Supervisor expected lowercase
 
 **Fixes Applied**:
+
 - Line 45: `type: 'ERROR'` → `type: 'error'`
 - Line 66: `type: 'STARTED'` → `type: 'started'`
 - Line 103: `type: 'RESULT'` → `type: 'result'`
@@ -66,6 +68,7 @@ workerData: {
 **Issue**: Supervisor didn't handle `memory_report` messages from Worker
 
 **Fix Applied**:
+
 ```javascript
 case 'memory_report':
   // Log memory metrics
@@ -95,11 +98,11 @@ case 'memory_report':
 
 All 3 fixes applied successfully:
 
-| Fix # | Severity | Component | Status |
-|-------|----------|-----------|--------|
-| 1 | CRITICAL | Supervisor → Worker | ✅ FIXED |
-| 2 | HIGH | Worker → Supervisor | ✅ FIXED |
-| 3 | MEDIUM | Supervisor | ✅ FIXED |
+| Fix # | Severity | Component           | Status   |
+| ----- | -------- | ------------------- | -------- |
+| 1     | CRITICAL | Supervisor → Worker | ✅ FIXED |
+| 2     | HIGH     | Worker → Supervisor | ✅ FIXED |
+| 3     | MEDIUM   | Supervisor          | ✅ FIXED |
 
 ---
 
@@ -117,11 +120,13 @@ All 3 fixes applied successfully:
 ## Next Steps
 
 **Recommended**:
+
 1. Run integration tests to verify worker spawn/execution
 2. Test memory monitoring with actual workload
 3. Validate error handling paths (worker crash, timeout, SIGTERM)
 
 **Optional** (from validation report warnings):
+
 - Add `maxQueueSize` limit to prevent unbounded queue growth
 - Use `workerData.dbPath` instead of default in Worker
 

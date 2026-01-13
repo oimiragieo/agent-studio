@@ -34,17 +34,17 @@ const CUJ_INDEX_PATH = path.join(__dirname, '..', 'context', 'CUJ-INDEX.json');
 // Model pricing (per million tokens) - Updated Jan 2025
 const MODEL_PRICING = {
   'claude-3-5-haiku-20241022': {
-    input: 1.00,
-    output: 5.00
+    input: 1.0,
+    output: 5.0,
   },
   'claude-sonnet-4-20250514': {
-    input: 3.00,
-    output: 15.00
+    input: 3.0,
+    output: 15.0,
   },
   'claude-opus-4-20241113': {
-    input: 15.00,
-    output: 75.00
-  }
+    input: 15.0,
+    output: 75.0,
+  },
 };
 
 // Complexity scoring thresholds
@@ -53,24 +53,33 @@ const COMPLEXITY_THRESHOLDS = {
   ACTION_WEIGHT: 0.4,
   QUESTION_WEIGHT: 0.2,
   FILE_WEIGHT: 0.3,
-  ROUTE_THRESHOLD: 0.7
+  ROUTE_THRESHOLD: 0.7,
 };
 
 // Intent classification keywords
 const INTENT_KEYWORDS = {
-  web_app: ['web app', 'website', 'full-stack', 'enterprise app', 'application', 'frontend', 'backend', 'api'],
+  web_app: [
+    'web app',
+    'website',
+    'full-stack',
+    'enterprise app',
+    'application',
+    'frontend',
+    'backend',
+    'api',
+  ],
   script: ['script', 'automate', 'one-off', 'quick', 'simple task', 'utility'],
   analysis: ['analyze', 'review', 'audit', 'refactor', 'inspect', 'examine', 'check'],
   infrastructure: ['deploy', 'infrastructure', 'devops', 'ci/cd', 'docker', 'kubernetes'],
   mobile: ['mobile', 'ios', 'android', 'react native', 'flutter'],
-  ai_system: ['ai', 'llm', 'rag', 'embeddings', 'chatbot', 'machine learning']
+  ai_system: ['ai', 'llm', 'rag', 'embeddings', 'chatbot', 'machine learning'],
 };
 
 const ACTION_KEYWORDS = ['implement', 'create', 'build', 'design', 'develop', 'generate'];
 const CLOUD_KEYWORDS = {
   gcp: ['google cloud', 'gcp', 'cloud run', 'cloud sql', 'gcs', 'pub/sub'],
   aws: ['aws', 'amazon web services', 'lambda', 's3', 'rds', 'ec2'],
-  azure: ['azure', 'microsoft azure', 'functions', 'cosmos db', 'blob storage']
+  azure: ['azure', 'microsoft azure', 'functions', 'cosmos db', 'blob storage'],
 };
 
 // ===========================
@@ -104,10 +113,10 @@ export async function initializeRouterSession(sessionId, initialPrompt) {
         total_input_tokens: 0,
         total_output_tokens: 0,
         total_cost_usd: 0,
-        model_usage: []
+        model_usage: [],
       },
       routing_history: [],
-      settings
+      settings,
     };
 
     // Save session state
@@ -134,16 +143,16 @@ async function loadSettings() {
       models: {
         router: 'claude-3-5-haiku-20241022',
         orchestrator: 'claude-sonnet-4-20250514',
-        complex: 'claude-opus-4-20241113'
+        complex: 'claude-opus-4-20241113',
       },
       session: {
         default_temperature: 0.1,
-        default_role: 'router'
+        default_role: 'router',
       },
       routing: {
         complexity_threshold: 0.7,
-        cost_optimization_enabled: true
-      }
+        cost_optimization_enabled: true,
+      },
     };
   }
 }
@@ -216,7 +225,7 @@ export async function classifyIntent(userPrompt) {
     confidence,
     reasoning: buildReasoning(intent, complexity, cloudProvider, shouldRoute),
     keywords_detected: intent.keywords,
-    classification_time_ms: Date.now() - startTime
+    classification_time_ms: Date.now() - startTime,
   };
 
   return classification;
@@ -258,14 +267,24 @@ function calculateComplexityScore(promptLower, promptOriginal) {
   }
 
   // Multiple file references
-  const fileReferences = (promptOriginal.match(/\.(ts|js|tsx|jsx|py|md|json|yaml|yml)/g) || []).length;
+  const fileReferences = (promptOriginal.match(/\.(ts|js|tsx|jsx|py|md|json|yaml|yml)/g) || [])
+    .length;
   if (fileReferences > 2) {
     score += COMPLEXITY_THRESHOLDS.FILE_WEIGHT;
     signals.push('multiple_files');
   }
 
   // Check for complex technical terms (each adds to complexity)
-  const complexTerms = ['full-stack', 'enterprise', 'authentication', 'database', 'deployment', 'integration', 'architecture', 'api design'];
+  const complexTerms = [
+    'full-stack',
+    'enterprise',
+    'authentication',
+    'database',
+    'deployment',
+    'integration',
+    'architecture',
+    'api design',
+  ];
   const matchedComplexTerms = complexTerms.filter(term => promptLower.includes(term));
   if (matchedComplexTerms.length > 0) {
     // Each complex term adds to score, capped at 0.3
@@ -321,7 +340,7 @@ function detectIntent(promptLower) {
   return {
     type: topIntent,
     keywords: matchedKeywords[topIntent] || [],
-    score: maxScore
+    score: maxScore,
   };
 }
 
@@ -464,7 +483,7 @@ function mapIntentToWorkflow(intent, complexity, cujIndex) {
     analysis: '@.claude/workflows/code-quality-flow.yaml',
     infrastructure: '@.claude/workflows/automated-enterprise-flow.yaml',
     mobile: '@.claude/workflows/mobile-flow.yaml',
-    ai_system: '@.claude/workflows/ai-system-flow.yaml'
+    ai_system: '@.claude/workflows/ai-system-flow.yaml',
   };
 
   return workflowMap[intent] || '@.claude/workflows/greenfield-fullstack.yaml';
@@ -508,7 +527,7 @@ export async function routeToOrchestrator(workflow, userPrompt, sessionContext) 
       timestamp: new Date().toISOString(),
       workflow,
       prompt_preview: userPrompt.substring(0, 100),
-      session_id: sessionContext.session_id
+      session_id: sessionContext.session_id,
     };
 
     // Update session state
@@ -523,20 +542,20 @@ export async function routeToOrchestrator(workflow, userPrompt, sessionContext) 
       session_context: {
         session_id: sessionContext.session_id,
         router_classification: sessionContext.classification,
-        cost_tracking: session.cost_tracking
+        cost_tracking: session.cost_tracking,
       },
       routing_metadata: {
         routed_at: new Date().toISOString(),
         router_model: session.model,
-        skip_redundant_routing: true // Tell orchestrator routing is done
-      }
+        skip_redundant_routing: true, // Tell orchestrator routing is done
+      },
     };
 
     // Return handoff data (orchestrator-entry.mjs will process this)
     return {
       success: true,
       handoff_data: handoffData,
-      message: `Routing to orchestrator with workflow: ${workflow}`
+      message: `Routing to orchestrator with workflow: ${workflow}`,
     };
   } catch (error) {
     throw new Error(`Orchestrator routing failed: ${error.message}`);
@@ -578,7 +597,7 @@ export async function trackCosts(sessionId, modelUsed, inputTokens, outputTokens
       model: modelUsed,
       input_tokens: inputTokens,
       output_tokens: outputTokens,
-      cost_usd: totalCost
+      cost_usd: totalCost,
     });
 
     // Save updated session
@@ -591,8 +610,8 @@ export async function trackCosts(sessionId, modelUsed, inputTokens, outputTokens
         input_tokens: inputTokens,
         output_tokens: outputTokens,
         cost_usd: totalCost,
-        model: modelUsed
-      }
+        model: modelUsed,
+      },
     };
   } catch (error) {
     throw new Error(`Cost tracking failed: ${error.message}`);
@@ -613,13 +632,13 @@ export async function getCostSummary(sessionId) {
       total_cost_usd: session.cost_tracking.total_cost_usd,
       total_input_tokens: session.cost_tracking.total_input_tokens,
       total_output_tokens: session.cost_tracking.total_output_tokens,
-      model_breakdown: session.cost_tracking.model_usage
+      model_breakdown: session.cost_tracking.model_usage,
     };
   } catch (error) {
     return {
       session_id: sessionId,
       error: error.message,
-      total_cost_usd: 0
+      total_cost_usd: 0,
     };
   }
 }
@@ -644,7 +663,7 @@ export async function handleSimpleQuery(query, session) {
     model: session.model,
     response_type: 'direct',
     message: 'Query handled directly by router',
-    classification: await classifyIntent(query)
+    classification: await classifyIntent(query),
   };
 }
 
@@ -761,5 +780,5 @@ export default {
   trackCosts,
   getCostSummary,
   handleSimpleQuery,
-  cleanupOldSessions
+  cleanupOldSessions,
 };

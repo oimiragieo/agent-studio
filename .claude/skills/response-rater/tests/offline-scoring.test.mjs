@@ -76,7 +76,12 @@ function createTestFixtures() {
       'Test coverage >= 90%',
     ],
     timeline: '16 days total',
-    deliverables: ['OAuth2 implementation', 'JWT middleware', 'Frontend auth UI', 'Security audit report'],
+    deliverables: [
+      'OAuth2 implementation',
+      'JWT middleware',
+      'Frontend auth UI',
+      'Security audit report',
+    ],
     risks: [
       {
         description: 'OAuth2 provider downtime',
@@ -315,7 +320,7 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch((error) => {
+runTests().catch(error => {
   console.error(`Fatal error: ${error.message}`);
   process.exit(1);
 });

@@ -199,7 +199,7 @@ async function executeAgentTask(agentType, taskDescription) {
   // 4. Return final result
 
   // Simulate task execution with delay
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 100));
 
   // Return mock result
   return {
@@ -231,7 +231,7 @@ process.on('SIGTERM', async () => {
 /**
  * Handle uncaught errors
  */
-process.on('uncaughtException', async (error) => {
+process.on('uncaughtException', async error => {
   console.error(`Worker ${workerData.sessionId}: Uncaught exception:`, error);
 
   // Notify parent of fatal error
@@ -265,7 +265,7 @@ process.on('unhandledRejection', async (reason, promise) => {
 });
 
 // Start worker task execution
-runWorkerTask().catch((error) => {
+runWorkerTask().catch(error => {
   console.error(`Worker ${workerData.sessionId}: Fatal error in runWorkerTask:`, error);
 
   // Notify parent

@@ -5,6 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "precommit": "node .claude/hooks/pre-commit-cleanup.mjs",
     "cleanup": "node .claude/tools/cleanup-repo.mjs --execute --yes",
     "cleanup:check": "node .claude/tools/cleanup-repo.mjs --dry-run",
     "format": "node scripts/format-tracked.mjs --write",

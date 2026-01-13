@@ -83,13 +83,13 @@ export class MemoryCleanupService {
     });
 
     // Run initial cleanup
-    this.runCleanup().catch((err) => {
+    this.runCleanup().catch(err => {
       console.error('[MemoryCleanup] Initial cleanup failed:', err);
     });
 
     // Schedule periodic cleanup
     this.intervalId = setInterval(() => {
-      this.runCleanup().catch((err) => {
+      this.runCleanup().catch(err => {
         console.error('[MemoryCleanup] Periodic cleanup failed:', err);
       });
     }, this.config.runInterval);
@@ -124,7 +124,9 @@ export class MemoryCleanupService {
 
     try {
       // Get database size before cleanup
-      const sizeBeforeStmt = this.db.prepare('SELECT page_count * page_size as size FROM pragma_page_count(), pragma_page_size()');
+      const sizeBeforeStmt = this.db.prepare(
+        'SELECT page_count * page_size as size FROM pragma_page_count(), pragma_page_size()'
+      );
       const sizeBefore = sizeBeforeStmt.get().size;
 
       // Run cleanup operations
@@ -136,7 +138,9 @@ export class MemoryCleanupService {
       this.vacuumDatabase();
 
       // Get database size after cleanup
-      const sizeAfterStmt = this.db.prepare('SELECT page_count * page_size as size FROM pragma_page_count(), pragma_page_size()');
+      const sizeAfterStmt = this.db.prepare(
+        'SELECT page_count * page_size as size FROM pragma_page_count(), pragma_page_size()'
+      );
       const sizeAfter = sizeAfterStmt.get().size;
       const spaceReclaimed = Math.max(0, sizeBefore - sizeAfter);
 
@@ -182,7 +186,9 @@ export class MemoryCleanupService {
     const deleted = result.changes || 0;
 
     if (deleted > 0) {
-      console.log(`[MemoryCleanup] Deleted ${deleted} old archived sessions (TTL: ${this.config.sessionTTL} days)`);
+      console.log(
+        `[MemoryCleanup] Deleted ${deleted} old archived sessions (TTL: ${this.config.sessionTTL} days)`
+      );
     }
 
     return deleted;
@@ -205,7 +211,9 @@ export class MemoryCleanupService {
     const cleared = result.changes || 0;
 
     if (cleared > 0) {
-      console.log(`[MemoryCleanup] Cleared original_content from ${cleared} summarized messages (TTL: ${this.config.messageTTL} days)`);
+      console.log(
+        `[MemoryCleanup] Cleared original_content from ${cleared} summarized messages (TTL: ${this.config.messageTTL} days)`
+      );
     }
 
     return cleared;
@@ -240,7 +248,9 @@ export class MemoryCleanupService {
     const totalDeleted = messageVectorsDeleted + sessionVectorsDeleted;
 
     if (totalDeleted > 0) {
-      console.log(`[MemoryCleanup] Deleted ${totalDeleted} orphaned vectors (${messageVectorsDeleted} message, ${sessionVectorsDeleted} session) (TTL: ${this.config.vectorTTL} days)`);
+      console.log(
+        `[MemoryCleanup] Deleted ${totalDeleted} orphaned vectors (${messageVectorsDeleted} message, ${sessionVectorsDeleted} session) (TTL: ${this.config.vectorTTL} days)`
+      );
     }
 
     return totalDeleted;

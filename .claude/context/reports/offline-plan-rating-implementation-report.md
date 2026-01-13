@@ -22,6 +22,7 @@ Successfully implemented offline fallback for plan rating in the `response-rater
 **File**: `.claude/skills/response-rater/scripts/offline-rater.mjs`
 
 **Functionality**:
+
 - Heuristic-based plan scoring (5 dimensions)
 - Structural analysis without AI providers
 - Performance optimized (<1 second per plan)
@@ -30,13 +31,13 @@ Successfully implemented offline fallback for plan rating in the `response-rater
 
 **Scoring Dimensions** (Equal Weights: 20% each):
 
-| Dimension           | Scoring Method                                                   |
-| ------------------- | ---------------------------------------------------------------- |
+| Dimension           | Scoring Method                                                  |
+| ------------------- | --------------------------------------------------------------- |
 | **Completeness**    | Checks for objectives, context, phases, steps, success criteria |
-| **Feasibility**     | Analyzes time estimates, dependencies, resource requirements     |
+| **Feasibility**     | Analyzes time estimates, dependencies, resource requirements    |
 | **Risk Mitigation** | Counts identified risks with mitigation strategies              |
-| **Agent Coverage**  | Verifies agent assignments and diversity of agent types          |
-| **Integration**     | Checks integration points, data flow, API contracts              |
+| **Agent Coverage**  | Verifies agent assignments and diversity of agent types         |
+| **Integration**     | Checks integration points, data flow, API contracts             |
 
 **Overall Score**: Average of all 5 dimensions
 
@@ -47,6 +48,7 @@ Successfully implemented offline fallback for plan rating in the `response-rater
 **File**: `.claude/skills/response-rater/scripts/rate.cjs`
 
 **Changes**:
+
 1. Added `tryOfflineRating()` function to invoke offline rater
 2. Added `isNetworkError()` detection with 7 error patterns:
    - `ENOTFOUND` (DNS resolution failure)
@@ -92,20 +94,21 @@ Successfully implemented offline fallback for plan rating in the `response-rater
 ### 3. Test Suite
 
 **Files**:
+
 - `.claude/skills/response-rater/tests/offline-scoring.test.mjs` (6 unit tests)
 - `.claude/skills/response-rater/tests/network-fallback.test.mjs` (1 integration test)
 
 **Test Coverage**:
 
-| Test Case                          | Status     | Score Range     |
-| ---------------------------------- | ---------- | --------------- |
-| High-quality plan (should pass)    | ✅ PASS    | 9.3/10          |
-| Low-quality plan (should fail)     | ✅ PASS    | 4.9/10          |
-| Medium-quality plan (should ~pass) | ✅ PASS    | 7.0/10          |
-| Performance test                   | ✅ PASS    | <1ms            |
-| Invalid plan handling              | ✅ PASS    | Error handled   |
-| Improvement suggestions            | ✅ PASS    | 4 suggestions   |
-| Explicit offline mode              | ✅ PASS    | Works correctly |
+| Test Case                          | Status  | Score Range     |
+| ---------------------------------- | ------- | --------------- |
+| High-quality plan (should pass)    | ✅ PASS | 9.3/10          |
+| Low-quality plan (should fail)     | ✅ PASS | 4.9/10          |
+| Medium-quality plan (should ~pass) | ✅ PASS | 7.0/10          |
+| Performance test                   | ✅ PASS | <1ms            |
+| Invalid plan handling              | ✅ PASS | Error handled   |
+| Improvement suggestions            | ✅ PASS | 4 suggestions   |
+| Explicit offline mode              | ✅ PASS | Works correctly |
 
 **Pass Rate**: 100% (7/7 tests)
 
@@ -116,6 +119,7 @@ Successfully implemented offline fallback for plan rating in the `response-rater
 **File**: `.claude/skills/response-rater/SKILL.md`
 
 **Sections Added**:
+
 - "Offline Fallback Mode" - Complete overview
 - "How It Works" - Automatic detection and scoring algorithm
 - "Offline vs Online Scoring" - Comparison table
@@ -125,14 +129,15 @@ Successfully implemented offline fallback for plan rating in the `response-rater
 - "Limitations" - Clear offline mode constraints
 
 **Sections Updated**:
+
 - "Notes / Constraints" - Added offline fallback mention
 
 ---
 
 ## Performance Metrics
 
-| Metric                       | Target     | Achieved   | Status     |
-| ---------------------------- | ---------- | ---------- | ---------- |
+| Metric                       | Target     | Achieved   | Status      |
+| ---------------------------- | ---------- | ---------- | ----------- |
 | Offline scoring speed        | <1 second  | <1ms       | ✅ Exceeded |
 | Accuracy (vs online)         | 80-85%     | 85-90%     | ✅ Exceeded |
 | Score tolerance              | ±1 point   | ±1 point   | ✅ Met      |
@@ -181,9 +186,7 @@ node .claude/skills/response-rater/scripts/rate.cjs \
     },
     "overall_score": 7.4,
     "summary": "Plan scored 7.4/10 using offline heuristic analysis. Plan meets minimum quality standards.",
-    "improvements": [
-      "Add missing plan sections: objectives, context, success criteria"
-    ]
+    "improvements": ["Add missing plan sections: objectives, context, success criteria"]
   }
 }
 ```
@@ -223,28 +226,30 @@ node .claude/skills/response-rater/scripts/offline-rater.mjs \
 
 ## Offline vs Online Comparison
 
-| Feature                | Online (AI Providers)  | Offline (Heuristic)      |
-| ---------------------- | ---------------------- | ------------------------ |
-| Network Required       | ✅ Yes                 | ❌ No                    |
-| Scoring Method         | AI semantic analysis   | Structural heuristics    |
-| Accuracy               | High (95%+)            | Good (85-90%)            |
-| Speed                  | 10-60 seconds          | <1 second                |
-| Improvement Feedback   | Detailed, actionable   | Template-based           |
-| Minimum Score          | 7/10 (standard)        | 7/10 (same threshold)    |
-| Score Tolerance        | Exact scores           | ±1 point variance        |
-| Use Cases              | Production workflows   | Air-gapped, CI/CD, dev   |
+| Feature              | Online (AI Providers) | Offline (Heuristic)    |
+| -------------------- | --------------------- | ---------------------- |
+| Network Required     | ✅ Yes                | ❌ No                  |
+| Scoring Method       | AI semantic analysis  | Structural heuristics  |
+| Accuracy             | High (95%+)           | Good (85-90%)          |
+| Speed                | 10-60 seconds         | <1 second              |
+| Improvement Feedback | Detailed, actionable  | Template-based         |
+| Minimum Score        | 7/10 (standard)       | 7/10 (same threshold)  |
+| Score Tolerance      | Exact scores          | ±1 point variance      |
+| Use Cases            | Production workflows  | Air-gapped, CI/CD, dev |
 
 ---
 
 ## Limitations
 
 **Offline mode cannot**:
+
 - Perform semantic analysis (detects structure, not content quality)
 - Validate business logic correctness
 - Detect subtle plan flaws (e.g., circular dependencies)
 - Provide nuanced improvement suggestions
 
 **Offline mode is suitable for**:
+
 - Air-gapped environments (no network access)
 - CI/CD pipelines without external network
 - Development environments with intermittent connectivity
@@ -256,16 +261,16 @@ node .claude/skills/response-rater/scripts/offline-rater.mjs \
 
 ## Success Criteria Validation
 
-| Criterion                                  | Status     |
-| ------------------------------------------ | ---------- |
-| Offline scoring works without network      | ✅ Verified |
-| Scores consistent (±1 point tolerance)     | ✅ Verified |
-| Clear logging of method used               | ✅ Verified |
-| Tests pass                                 | ✅ Verified |
-| Documentation complete                     | ✅ Verified |
-| Performance <1 second                      | ✅ Verified |
-| High-quality plans score ≥7                | ✅ Verified |
-| Low-quality plans score <7                 | ✅ Verified |
+| Criterion                              | Status      |
+| -------------------------------------- | ----------- |
+| Offline scoring works without network  | ✅ Verified |
+| Scores consistent (±1 point tolerance) | ✅ Verified |
+| Clear logging of method used           | ✅ Verified |
+| Tests pass                             | ✅ Verified |
+| Documentation complete                 | ✅ Verified |
+| Performance <1 second                  | ✅ Verified |
+| High-quality plans score ≥7            | ✅ Verified |
+| Low-quality plans score <7             | ✅ Verified |
 
 ---
 
@@ -295,7 +300,10 @@ if (rating.offline_fallback) {
 }
 
 // Proceed if score >= 7
-if (rating.offline_rating?.overall_score >= 7 || rating.providers.claude?.parsed?.overall_score >= 7) {
+if (
+  rating.offline_rating?.overall_score >= 7 ||
+  rating.providers.claude?.parsed?.overall_score >= 7
+) {
   console.log('✅ Plan meets minimum quality standards');
   // Execute workflow
 } else {
@@ -322,6 +330,7 @@ if (rating.offline_rating?.overall_score >= 7 || rating.providers.claude?.parsed
 ## Files Created/Modified
 
 **Created**:
+
 - `.claude/skills/response-rater/scripts/offline-rater.mjs` (344 lines)
 - `.claude/skills/response-rater/tests/offline-scoring.test.mjs` (310 lines)
 - `.claude/skills/response-rater/tests/network-fallback.test.mjs` (184 lines)
@@ -329,6 +338,7 @@ if (rating.offline_rating?.overall_score >= 7 || rating.providers.claude?.parsed
 - `.claude/context/reports/offline-plan-rating-implementation-report.md` (this file)
 
 **Modified**:
+
 - `.claude/skills/response-rater/scripts/rate.cjs` (+81 lines)
 - `.claude/skills/response-rater/SKILL.md` (+160 lines)
 

@@ -9,6 +9,7 @@ This guide helps CUJ authors migrate from deprecated execution mode patterns to 
 ### Before Migration
 
 CUJs used various patterns for `execution_mode`:
+
 - Raw workflow filenames (e.g., `greenfield-fullstack.yaml`)
 - Canonical modes (e.g., `workflow`, `skill-only`)
 - Invalid modes (e.g., `skill-workflow`)
@@ -16,6 +17,7 @@ CUJs used various patterns for `execution_mode`:
 ### After Migration
 
 All CUJs will use exactly three canonical modes:
+
 - `workflow` - with separate `workflow_file` field
 - `skill-only` - with `primary_skill` field
 - `manual-setup` - with optional `manual_steps` field
@@ -24,74 +26,74 @@ All CUJs will use exactly three canonical modes:
 
 ### CUJs Requiring Migration
 
-| CUJ ID | Current Mode | Canonical Mode | Workflow File | Primary Skill | Action Required |
-|--------|--------------|----------------|---------------|---------------|-----------------|
-| CUJ-005 | `greenfield-fullstack.yaml` | `workflow` | `.claude/workflows/greenfield-fullstack.yaml` | null | Update mode + add workflow_file |
-| CUJ-010 | `brownfield-fullstack.yaml` | `workflow` | `.claude/workflows/brownfield-fullstack.yaml` | scaffolder | Update mode + add workflow_file |
-| CUJ-011 | `quick-flow.yaml` | `workflow` | `.claude/workflows/quick-flow.yaml` | null | Update mode + add workflow_file |
-| CUJ-012 | `greenfield-fullstack.yaml` | `workflow` | `.claude/workflows/greenfield-fullstack.yaml` | null | Update mode + add workflow_file |
-| CUJ-019 | `performance-flow.yaml` | `workflow` | `.claude/workflows/performance-flow.yaml` | null | Update mode + add workflow_file |
-| CUJ-021 | `mobile-flow.yaml` | `workflow` | `.claude/workflows/mobile-flow.yaml` | null | Update mode + add workflow_file |
-| CUJ-022 | `ai-system-flow.yaml` | `workflow` | `.claude/workflows/ai-system-flow.yaml` | null | Update mode + add workflow_file |
-| CUJ-024 | `incident-flow.yaml` | `workflow` | `.claude/workflows/incident-flow.yaml` | null | Update mode + add workflow_file |
-| CUJ-026 | `greenfield-fullstack.yaml` | `workflow` | `.claude/workflows/enterprise-track.yaml` | null | Update mode + add workflow_file |
-| CUJ-028 | `greenfield-fullstack.yaml` | `workflow` | `.claude/workflows/greenfield-fullstack.yaml` | null | Update mode + add workflow_file |
-| CUJ-029 | `greenfield-fullstack.yaml` | `workflow` | `.claude/workflows/greenfield-fullstack.yaml` | null | Update mode + add workflow_file |
-| CUJ-034 | `browser-testing-flow.yaml` | `workflow` | `.claude/workflows/browser-testing-flow.yaml` | null | Update mode + add workflow_file |
-| CUJ-037 | `greenfield-fullstack.yaml` | `workflow` | `.claude/workflows/enterprise-track.yaml` | null | Update mode + add workflow_file |
-| CUJ-059 | `performance-flow.yaml` | `workflow` | `.claude/workflows/performance-flow.yaml` | null | Update mode + add workflow_file |
-| CUJ-063 | `recovery-test-flow.yaml` | `workflow` | `.claude/workflows/recovery-test-flow.yaml` | recovery | Update mode + add workflow_file |
-| CUJ-064 | `skill-workflow` (INVALID) | `workflow` | `.claude/workflows/search-setup-flow.yaml` | algolia-search | Update to valid mode |
+| CUJ ID  | Current Mode                | Canonical Mode | Workflow File                                 | Primary Skill  | Action Required                 |
+| ------- | --------------------------- | -------------- | --------------------------------------------- | -------------- | ------------------------------- |
+| CUJ-005 | `greenfield-fullstack.yaml` | `workflow`     | `.claude/workflows/greenfield-fullstack.yaml` | null           | Update mode + add workflow_file |
+| CUJ-010 | `brownfield-fullstack.yaml` | `workflow`     | `.claude/workflows/brownfield-fullstack.yaml` | scaffolder     | Update mode + add workflow_file |
+| CUJ-011 | `quick-flow.yaml`           | `workflow`     | `.claude/workflows/quick-flow.yaml`           | null           | Update mode + add workflow_file |
+| CUJ-012 | `greenfield-fullstack.yaml` | `workflow`     | `.claude/workflows/greenfield-fullstack.yaml` | null           | Update mode + add workflow_file |
+| CUJ-019 | `performance-flow.yaml`     | `workflow`     | `.claude/workflows/performance-flow.yaml`     | null           | Update mode + add workflow_file |
+| CUJ-021 | `mobile-flow.yaml`          | `workflow`     | `.claude/workflows/mobile-flow.yaml`          | null           | Update mode + add workflow_file |
+| CUJ-022 | `ai-system-flow.yaml`       | `workflow`     | `.claude/workflows/ai-system-flow.yaml`       | null           | Update mode + add workflow_file |
+| CUJ-024 | `incident-flow.yaml`        | `workflow`     | `.claude/workflows/incident-flow.yaml`        | null           | Update mode + add workflow_file |
+| CUJ-026 | `greenfield-fullstack.yaml` | `workflow`     | `.claude/workflows/enterprise-track.yaml`     | null           | Update mode + add workflow_file |
+| CUJ-028 | `greenfield-fullstack.yaml` | `workflow`     | `.claude/workflows/greenfield-fullstack.yaml` | null           | Update mode + add workflow_file |
+| CUJ-029 | `greenfield-fullstack.yaml` | `workflow`     | `.claude/workflows/greenfield-fullstack.yaml` | null           | Update mode + add workflow_file |
+| CUJ-034 | `browser-testing-flow.yaml` | `workflow`     | `.claude/workflows/browser-testing-flow.yaml` | null           | Update mode + add workflow_file |
+| CUJ-037 | `greenfield-fullstack.yaml` | `workflow`     | `.claude/workflows/enterprise-track.yaml`     | null           | Update mode + add workflow_file |
+| CUJ-059 | `performance-flow.yaml`     | `workflow`     | `.claude/workflows/performance-flow.yaml`     | null           | Update mode + add workflow_file |
+| CUJ-063 | `recovery-test-flow.yaml`   | `workflow`     | `.claude/workflows/recovery-test-flow.yaml`   | recovery       | Update mode + add workflow_file |
+| CUJ-064 | `skill-workflow` (INVALID)  | `workflow`     | `.claude/workflows/search-setup-flow.yaml`    | algolia-search | Update to valid mode            |
 
 ### CUJs Already Compliant
 
-| CUJ ID | Current Mode | Status |
-|--------|--------------|--------|
+| CUJ ID  | Current Mode   | Status    |
+| ------- | -------------- | --------- |
 | CUJ-001 | `manual-setup` | Compliant |
-| CUJ-002 | `skill-only` | Compliant |
-| CUJ-003 | `skill-only` | Compliant |
-| CUJ-004 | `workflow` | Compliant |
-| CUJ-006 | `workflow` | Compliant |
-| CUJ-007 | `workflow` | Compliant |
-| CUJ-008 | `workflow` | Compliant |
-| CUJ-009 | `workflow` | Compliant |
-| CUJ-013 | `workflow` | Compliant |
-| CUJ-014 | `workflow` | Compliant |
-| CUJ-015 | `workflow` | Compliant |
-| CUJ-016 | `workflow` | Compliant |
-| CUJ-017 | `skill-only` | Compliant |
-| CUJ-018 | `workflow` | Compliant |
-| CUJ-020 | `workflow` | Compliant |
-| CUJ-023 | `workflow` | Compliant |
-| CUJ-025 | `workflow` | Compliant |
-| CUJ-027 | `skill-only` | Compliant |
-| CUJ-030 | `skill-only` | Compliant |
-| CUJ-035 | `workflow` | Compliant |
-| CUJ-036 | `workflow` | Compliant |
-| CUJ-038 | `workflow` | Compliant |
-| CUJ-039 | `workflow` | Compliant |
-| CUJ-040 | `workflow` | Compliant |
-| CUJ-041 | `workflow` | Compliant |
+| CUJ-002 | `skill-only`   | Compliant |
+| CUJ-003 | `skill-only`   | Compliant |
+| CUJ-004 | `workflow`     | Compliant |
+| CUJ-006 | `workflow`     | Compliant |
+| CUJ-007 | `workflow`     | Compliant |
+| CUJ-008 | `workflow`     | Compliant |
+| CUJ-009 | `workflow`     | Compliant |
+| CUJ-013 | `workflow`     | Compliant |
+| CUJ-014 | `workflow`     | Compliant |
+| CUJ-015 | `workflow`     | Compliant |
+| CUJ-016 | `workflow`     | Compliant |
+| CUJ-017 | `skill-only`   | Compliant |
+| CUJ-018 | `workflow`     | Compliant |
+| CUJ-020 | `workflow`     | Compliant |
+| CUJ-023 | `workflow`     | Compliant |
+| CUJ-025 | `workflow`     | Compliant |
+| CUJ-027 | `skill-only`   | Compliant |
+| CUJ-030 | `skill-only`   | Compliant |
+| CUJ-035 | `workflow`     | Compliant |
+| CUJ-036 | `workflow`     | Compliant |
+| CUJ-038 | `workflow`     | Compliant |
+| CUJ-039 | `workflow`     | Compliant |
+| CUJ-040 | `workflow`     | Compliant |
+| CUJ-041 | `workflow`     | Compliant |
 | CUJ-042 | `manual-setup` | Compliant |
-| CUJ-043 | `workflow` | Compliant |
-| CUJ-044 | `workflow` | Compliant |
-| CUJ-045 | `workflow` | Compliant |
-| CUJ-046 | `workflow` | Compliant |
-| CUJ-047 | `workflow` | Compliant |
-| CUJ-048 | `workflow` | Compliant |
-| CUJ-049 | `workflow` | Compliant |
-| CUJ-050 | `workflow` | Compliant |
-| CUJ-051 | `workflow` | Compliant |
-| CUJ-052 | `workflow` | Compliant |
-| CUJ-053 | `workflow` | Compliant |
-| CUJ-054 | `workflow` | Compliant |
-| CUJ-055 | `workflow` | Compliant |
-| CUJ-056 | `workflow` | Compliant |
-| CUJ-057 | `workflow` | Compliant |
-| CUJ-058 | `workflow` | Compliant |
-| CUJ-060 | `workflow` | Compliant |
-| CUJ-061 | `workflow` | Compliant |
-| CUJ-062 | `workflow` | Compliant |
+| CUJ-043 | `workflow`     | Compliant |
+| CUJ-044 | `workflow`     | Compliant |
+| CUJ-045 | `workflow`     | Compliant |
+| CUJ-046 | `workflow`     | Compliant |
+| CUJ-047 | `workflow`     | Compliant |
+| CUJ-048 | `workflow`     | Compliant |
+| CUJ-049 | `workflow`     | Compliant |
+| CUJ-050 | `workflow`     | Compliant |
+| CUJ-051 | `workflow`     | Compliant |
+| CUJ-052 | `workflow`     | Compliant |
+| CUJ-053 | `workflow`     | Compliant |
+| CUJ-054 | `workflow`     | Compliant |
+| CUJ-055 | `workflow`     | Compliant |
+| CUJ-056 | `workflow`     | Compliant |
+| CUJ-057 | `workflow`     | Compliant |
+| CUJ-058 | `workflow`     | Compliant |
+| CUJ-060 | `workflow`     | Compliant |
+| CUJ-061 | `workflow`     | Compliant |
+| CUJ-062 | `workflow`     | Compliant |
 
 ## Step-by-Step Migration
 
@@ -107,6 +109,7 @@ grep -n "Execution Mode" .claude/docs/cujs/CUJ-XXX.md
 ### Step 2: Update Markdown File
 
 **Before** (deprecated pattern):
+
 ```markdown
 ## Workflow
 
@@ -116,6 +119,7 @@ grep -n "Execution Mode" .claude/docs/cujs/CUJ-XXX.md
 ```
 
 **After** (canonical pattern):
+
 ```markdown
 ## Workflow
 
@@ -131,6 +135,7 @@ grep -n "Execution Mode" .claude/docs/cujs/CUJ-XXX.md
 If your CUJ is in `cuj-registry.json`, update the entry:
 
 **Before**:
+
 ```json
 {
   "id": "CUJ-005",
@@ -140,6 +145,7 @@ If your CUJ is in `cuj-registry.json`, update the entry:
 ```
 
 **After**:
+
 ```json
 {
   "id": "CUJ-005",
@@ -166,11 +172,13 @@ pnpm validate:cujs
 **CUJ-019: Performance Optimization**
 
 Before:
+
 ```markdown
 **Execution Mode**: `performance-flow.yaml`
 ```
 
 After:
+
 ```markdown
 **Execution Mode**: `workflow`
 
@@ -182,6 +190,7 @@ After:
 **CUJ-064: Search Functionality**
 
 Before:
+
 ```markdown
 **Execution Mode**: `skill-workflow`
 
@@ -189,6 +198,7 @@ Before:
 ```
 
 After:
+
 ```markdown
 **Execution Mode**: `workflow`
 
@@ -229,6 +239,7 @@ node .claude/tools/migrate-execution-modes.mjs --cuj CUJ-064 --apply
 ### Check Markdown Syntax
 
 Ensure the format matches:
+
 ```markdown
 **Execution Mode**: `workflow`
 
@@ -238,6 +249,7 @@ Ensure the format matches:
 ### Check Registry Sync
 
 After migration, resync the registry:
+
 ```bash
 node scripts/sync-cuj-registry.mjs
 ```
@@ -276,22 +288,22 @@ pnpm validate
 
 ## Migration Statistics
 
-| Category | Count |
-|----------|-------|
-| Total CUJs | 62 |
-| Already Compliant | 46 |
-| Requiring Migration | 16 |
-| Using Invalid Mode | 1 (CUJ-064) |
+| Category            | Count       |
+| ------------------- | ----------- |
+| Total CUJs          | 62          |
+| Already Compliant   | 46          |
+| Requiring Migration | 16          |
+| Using Invalid Mode  | 1 (CUJ-064) |
 
 ## Timeline
 
-| Phase | Date | Status |
-|-------|------|--------|
-| Standard Definition | 2025-01-12 | Complete |
-| Migration Guide | 2025-01-12 | Complete |
-| Deprecation Warnings | 2025-01-12 | Active |
-| Migration Deadline | 2025-03-01 | Pending |
-| Hard Enforcement | 2025-04-01 | Pending |
+| Phase                | Date       | Status   |
+| -------------------- | ---------- | -------- |
+| Standard Definition  | 2025-01-12 | Complete |
+| Migration Guide      | 2025-01-12 | Complete |
+| Deprecation Warnings | 2025-01-12 | Active   |
+| Migration Deadline   | 2025-03-01 | Pending  |
+| Hard Enforcement     | 2025-04-01 | Pending  |
 
 ## Related Documentation
 
@@ -302,6 +314,6 @@ pnpm validate
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-12 | Initial migration guide |
+| Version | Date       | Changes                 |
+| ------- | ---------- | ----------------------- |
+| 1.0.0   | 2025-01-12 | Initial migration guide |

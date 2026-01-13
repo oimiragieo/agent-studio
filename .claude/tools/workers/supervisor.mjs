@@ -93,11 +93,7 @@ export class AgentSupervisor {
     }
 
     // Create session in database
-    const sessionId = this.db.createWorkerSession(
-      this.supervisorId,
-      agentType,
-      taskDescription
-    );
+    const sessionId = this.db.createWorkerSession(this.supervisorId, agentType, taskDescription);
 
     this._log('info', 'Creating worker session', {
       sessionId,
@@ -180,17 +176,17 @@ export class AgentSupervisor {
         this.db.updateWorkerStatus(sessionId, 'running');
 
         // Handle worker messages
-        worker.on('message', (message) => {
+        worker.on('message', message => {
           this._handleWorkerMessage(sessionId, message);
         });
 
         // Handle worker errors
-        worker.on('error', (error) => {
+        worker.on('error', error => {
           this._handleWorkerError(sessionId, error);
         });
 
         // Handle worker exit
-        worker.on('exit', (code) => {
+        worker.on('exit', code => {
           this._handleWorkerExit(sessionId, code);
         });
 
@@ -512,8 +508,8 @@ export class AgentSupervisor {
 
     // Spawn worker for queued task
     this.spawnWorker(task.agentType, task.taskDescription, task.taskPayload)
-      .then((sessionId) => task.resolve(sessionId))
-      .catch((error) => task.reject(error));
+      .then(sessionId => task.resolve(sessionId))
+      .catch(error => task.reject(error));
   }
 
   /**
@@ -539,7 +535,7 @@ export class AgentSupervisor {
     });
 
     // Terminate all active workers
-    const terminationPromises = Array.from(this.activeWorkers.keys()).map((sessionId) =>
+    const terminationPromises = Array.from(this.activeWorkers.keys()).map(sessionId =>
       this.terminateWorker(sessionId)
     );
 
