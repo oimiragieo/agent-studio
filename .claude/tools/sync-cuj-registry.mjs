@@ -109,6 +109,7 @@ const CATEGORIES = {
   'CUJ-061': 'Testing & Validation',
   'CUJ-062': 'Testing & Validation',
   'CUJ-063': 'Testing & Validation',
+  'CUJ-064': 'Search & Discovery',
 };
 
 /**
@@ -328,25 +329,109 @@ async function parseCUJFile(filePath) {
     }
   }
 
-  // Extract agents
+  // Extract agents with comprehensive pattern matching
   const agentsSection = content.match(/##\s+Agents Used\s+(.+?)(?=\n##)/s);
   if (agentsSection) {
-    const agentMatches = agentsSection[1].matchAll(/[-*]\s+`?([a-z-]+)`?/g);
-    for (const match of agentMatches) {
-      const agent = match[1].toLowerCase();
-      if (agent !== 'none' && !agent.includes('(') && !metadata.agents.includes(agent)) {
+    const sectionText = agentsSection[1];
+
+    // Pattern 1: Backticks - `agent-name`
+    const backtickMatches = sectionText.matchAll(/`([a-z][a-z-]+)`/g);
+    for (const match of backtickMatches) {
+      const agent = match[1].toLowerCase().trim();
+      if (agent !== 'none' && !metadata.agents.includes(agent)) {
+        metadata.agents.push(agent);
+      }
+    }
+
+    // Pattern 2: Chain format - Parse entire chain and extract all agents
+    // Handles: Planner -> Developer -> QA or Planner → Developer → QA
+    const chainLines = sectionText
+      .split('\n')
+      .filter(line => line.includes('->') || line.includes('→'));
+    for (const line of chainLines) {
+      // Split by arrows (both ASCII and Unicode)
+      const agentNames = line.split(/(?:->|→)/).map(part => part.trim().replace(/^[-*]\s+/, ''));
+      for (const agentName of agentNames) {
+        if (agentName) {
+          // Handle both "Security Architect" and "security-architect" formats
+          const agent = agentName.toLowerCase().replace(/\s+/g, '-');
+          if (agent !== 'none' && !metadata.agents.includes(agent)) {
+            metadata.agents.push(agent);
+          }
+        }
+      }
+    }
+
+    // Pattern 3: Title case agents without arrows - Agent Name (description)
+    // Match lines without arrows that start with capital letter
+    const titleCaseMatches = sectionText.matchAll(
+      /^[-*]\s+([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*)(?:\s+\(|$)/gm
+    );
+    for (const match of titleCaseMatches) {
+      const agentName = match[1].trim();
+      // Convert "Security Architect" → "security-architect"
+      const agent = agentName.toLowerCase().replace(/\s+/g, '-');
+      if (agent !== 'none' && !metadata.agents.includes(agent)) {
+        metadata.agents.push(agent);
+      }
+    }
+
+    // Pattern 4: Lowercase with hyphens directly - agent-name (no backticks)
+    const lowercaseMatches = sectionText.matchAll(/[-*]\s+([a-z][a-z-]+)(?:\s|$|\()/g);
+    for (const match of lowercaseMatches) {
+      const agent = match[1].toLowerCase().trim();
+      if (
+        agent !== 'none' &&
+        agent !== 'skill' &&
+        agent !== 'skill-based' &&
+        !metadata.agents.includes(agent)
+      ) {
         metadata.agents.push(agent);
       }
     }
   }
 
-  // Extract skills
+  // Extract skills with comprehensive pattern matching
   const skillsSection = content.match(/##\s+Skills Used\s+(.+?)(?=\n##)/s);
   if (skillsSection) {
-    const skillMatches = skillsSection[1].matchAll(/[-*]\s+`([^`]+)`/g);
-    for (const match of skillMatches) {
-      const skill = match[1];
-      if (skill !== 'None' && !metadata.skills.includes(skill)) {
+    const sectionText = skillsSection[1];
+
+    // Pattern 1: Backticks - `skill-name` (most common)
+    const backtickMatches = sectionText.matchAll(/`([a-z][a-z-]+)`/g);
+    for (const match of backtickMatches) {
+      const skill = match[1].trim();
+      if (skill !== 'none' && !metadata.skills.includes(skill)) {
+        metadata.skills.push(skill);
+      }
+    }
+
+    // Pattern 2: Bold list - **skill**: skill-name
+    const boldListMatches = sectionText.matchAll(/[-*]\s+\*\*([a-z][a-z-]+)\*\*:/g);
+    for (const match of boldListMatches) {
+      const skill = match[1].trim();
+      if (skill !== 'none' && !metadata.skills.includes(skill)) {
+        metadata.skills.push(skill);
+      }
+    }
+
+    // Pattern 3: Plain list without backticks - skill-name (description)
+    // Only capture if it looks like a skill (lowercase with hyphens)
+    const plainListMatches = sectionText.matchAll(/[-*]\s+([a-z][a-z-]+)(?:\s+-\s+|\s+\()/g);
+    for (const match of plainListMatches) {
+      const skill = match[1].trim();
+      // Exclude common false positives
+      const excludeWords = ['none', 'skill', 'skill-based', 'manual', 'setup', 'phase'];
+      if (!excludeWords.includes(skill) && !metadata.skills.includes(skill)) {
+        metadata.skills.push(skill);
+      }
+    }
+
+    // Pattern 4: Section header format - ## skill-name
+    // Sometimes skills are listed as subsections
+    const sectionHeaderMatches = sectionText.matchAll(/###\s+`?([a-z][a-z-]+)`?/g);
+    for (const match of sectionHeaderMatches) {
+      const skill = match[1].trim();
+      if (skill !== 'none' && !metadata.skills.includes(skill)) {
         metadata.skills.push(skill);
       }
     }

@@ -24,7 +24,9 @@ if (typeof global.gc === 'function') {
   console.log('   ✅ global.gc is available');
   testsPass++;
 } else {
-  console.log('   ⚠️  global.gc is NOT available - skipping GC tests (run with --expose-gc to enable)');
+  console.log(
+    '   ⚠️  global.gc is NOT available - skipping GC tests (run with --expose-gc to enable)'
+  );
   testsPass++; // Don't fail - just skip GC tests
 }
 

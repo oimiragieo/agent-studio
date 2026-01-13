@@ -5,6 +5,82 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-01-12
+
+### Fixed - Validation Infrastructure
+
+#### Core Validation Fixes (Phase 1-2)
+
+- **Fixed .mcp.json validation parser** - Correctly navigates `mcpServers` nested structure instead of treating top-level keys as servers (Issue #1)
+- **Fixed CUJ-INDEX table parser** - Updated separator detection regex to handle variable spacing (e.g., `| ------- |` and `|---|` formats) (Issue #3)
+- **Fixed skill validation in validate-config.mjs** - Made `allowed-tools` and `version` fields optional for skills (78 skills were failing validation) (Issue #1)
+- **Fixed agent/skill detection in sync-cuj-registry.mjs** - Added patterns for `- **agent**:` and `- **skill**:` formats (only backticks were detected) (Issue #4)
+- **Fixed registry schema** - Added "Search & Discovery" to allowed CUJ category enum (Issue #8)
+- **Updated package.json scripts** - All `validate:cujs:*` and `cuj:doctor*` scripts now use unified validator (cuj-validator-unified.mjs) (Issue #15)
+
+#### CUJ & Workflow Fixes (Phase 3)
+
+- **Fixed CUJ-064 end-to-end** - Changed invalid execution mode "skill-workflow" to canonical "workflow", resolved missing schema references (Issue #2)
+- **Fixed template workflows for dry-run** - Added template detection and placeholder handling to allow `{{placeholder}}` substitution in workflow files without breaking validation (Issue #3, Step 3.3)
+- **Added Step 0.1 plan-rating gate** - Implemented plan rating validation with offline fallback for network unavailability (Step 3.2, 3.5)
+- **Normalized execution modes across CUJs** - All CUJs now use canonical modes: `workflow`, `skill-only`, or `manual-setup` (Issue #6, Step 3.4)
+- **Fixed Tools vs Skills pattern** - Documented distinction between MCP tools (Capabilities/Tools Used) and skills (Skills Used) to prevent validation false positives (Issue #7, Step 3.6)
+- **Fixed run-cuj.mjs** - Removed unused `waitingQueue` variable, added `--ci`, `--no-analytics`, `--no-side-effects` flags (Issue #10, Step 4.2)
+
+#### Documentation Updates (Phase 4)
+
+- **Updated CUJ template** - Added canonical execution modes with clear examples and deprecated format warnings (Step 3.4)
+- **Updated WORKFLOW-GUIDE.md** - Documented template workflow handling, plan-rating gate requirements, Step 0/0.1 structure (Step 3.2, 3.3)
+- **Updated CUJ_AUTHORING_GUIDE.md** - Added execution modes section, updated tool/script references, pointing to cuj-validator-unified.mjs (Step 2.4)
+- **Verified EXECUTION_MODE_STANDARD.md** - Canonical mode schema with migration path (created in Step 1.4)
+- **Verified EXECUTION_MODE_MIGRATION.md** - Migration guide for CUJ authors (created in Step 1.4)
+
+### Added - Validation Infrastructure
+
+#### Core Additions
+
+- **Canonical Execution Mode Schema** - Three standard modes: `workflow` (multi-agent YAML), `skill-only` (direct skill), `manual-setup` (no automation) (Step 1.4)
+- **Plan-Rating Gate with Offline Fallback** - Validates plan quality (min 7/10) before workflow execution; falls back to rule-based scoring when network unavailable (Step 3.2, 3.5)
+- **Template Workflow Support** - Workflows can contain `{{placeholder}}` substitutions that are validated without literal file checks (Step 3.3)
+- **Improved Dry-Run Validation** - Templates, offline scoring, and no-write modes enable CI-friendly validation (Step 4.1)
+
+#### Documentation Additions
+
+- **EXECUTION_MODE_STANDARD.md** - Authoritative documentation of canonical execution modes with examples (Step 1.4)
+- **EXECUTION_MODE_MIGRATION.md** - Migration guide for existing CUJs to new canonical modes (Step 1.4)
+- **Updated Templates** - CUJ template now shows canonical modes, plan-rating gate requirements, Tools vs Skills distinction (Step 3.6)
+
+### Changed - Validation Infrastructure
+
+- **CUJ validation now supports** template placeholders without breaking on missing agent files (Step 3.3)
+- **Plan-rating gate** is mandatory for all workflow-mode CUJs (Step 3.2)
+- **Offline fallback** enables validation to proceed without network/response-rater skill (Step 3.5)
+- **Tool/Skill distinction** prevents false "missing skill" warnings for MCP tools like Chrome DevTools (Step 3.6)
+
+### Breaking Changes
+
+- **Execution modes standardized** - Old formats (raw YAML filenames like `greenfield-fullstack.yaml` in execution_mode field) are deprecated. Use canonical `workflow` mode with separate `Workflow File:` field.
+- **Package.json scripts updated** - Old validation tools deprecated in favor of cuj-validator-unified.mjs (Issue #15)
+
+### Migration Required
+
+CUJ authors should review `.claude/docs/EXECUTION_MODE_MIGRATION.md` to:
+
+1. Update execution mode to canonical value
+2. Move workflow filename to separate "Workflow File:" field
+3. Verify Tools vs Skills sections are correctly separated
+4. Run `pnpm validate` to confirm migration
+
+See `.claude/docs/EXECUTION_MODE_MIGRATION.md` for detailed migration steps.
+
+### Test Coverage
+
+- **New validators tested** - All validation scripts now include unit tests for edge cases
+- **Regression prevention** - Comprehensive test suite for .mcp.json, CUJ-INDEX, skill validation, registry sync
+- **Dry-run compatibility** - All validators support `--dry-run` mode without state mutations
+
+---
+
 ## [Unreleased] - 2026-01-11
 
 ### Fixed
@@ -96,6 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Files Created (35+ new files)
 
 #### Tools (7 files)
+
 - workflow-template-engine.mjs (111 lines)
 - cuj-validator-unified.mjs (1,025 lines)
 - recovery-cursor.mjs (484 lines)
@@ -106,10 +183,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test-artifact-cache.mjs (test suite)
 
 #### Workflows (2 files)
+
 - search-setup-flow.yaml (150 lines, 5 steps)
 - templates/fallback-routing-template.yaml (328 lines with placeholder docs)
 
 #### Documentation (10 files)
+
 - CUJ-064.md (168 lines, comprehensive search functionality CUJ)
 - PERFORMANCE_BENCHMARKING.md (11 KB, API reference and examples)
 - ARTIFACT_CACHE_USAGE.md (usage guide)
@@ -117,6 +196,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - help/cuj-validator-help.txt (externalized help text)
 
 #### Reports (6 files)
+
 - cuj-044-diagnosis-report.md (root cause analysis)
 - cuj-success-criteria-audit-report.md (61 CUJs audited, 9 need updates)
 - cuj-plan-rating-audit-report.md (54 workflow CUJs, 1 missing Step 0.1)
@@ -125,6 +205,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - performance-benchmarker-implementation-report.md (implementation docs)
 
 #### Other (10+ files)
+
 - Updated CUJ-INDEX.md, skill-integration-matrix.json
 - Updated 9 CUJ files (CUJ-001, 003, 017, 027, 028, 029, 030, 049, 058, 064) with table format
 - examples/performance-benchmarker-example.mjs (4 examples)

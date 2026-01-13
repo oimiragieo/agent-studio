@@ -65,7 +65,9 @@ async function testCacheHitRates() {
   console.log(`Cache hit time: ${duration}ms`);
 
   if (duration >= 50) {
-    console.log(`⚠️  Cache hit took longer than expected (threshold: <50ms), but this is acceptable`);
+    console.log(
+      `⚠️  Cache hit took longer than expected (threshold: <50ms), but this is acceptable`
+    );
   }
 
   console.log('✅ Cache performance acceptable');

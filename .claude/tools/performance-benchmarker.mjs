@@ -104,7 +104,7 @@ export class PerformanceBenchmarker {
       cuj_id: cujId,
       start_time: Date.now(),
       start_memory: process.memoryUsage(),
-      steps: []
+      steps: [],
     };
   }
 
@@ -129,7 +129,7 @@ export class PerformanceBenchmarker {
       timestamp: now,
       duration_ms: now - benchmark.start_time,
       memory: process.memoryUsage(),
-      ...stepData
+      ...stepData,
     });
   }
 
@@ -183,12 +183,11 @@ export class PerformanceBenchmarker {
       // Append new benchmark
       metrics.push({
         ...benchmark,
-        saved_at: new Date().toISOString()
+        saved_at: new Date().toISOString(),
       });
 
       // Write back to file
       await writeFile(this.metricsFile, JSON.stringify(metrics, null, 2), 'utf-8');
-
     } catch (error) {
       console.error('Failed to save metrics:', error.message);
       throw error;
@@ -203,13 +202,17 @@ export class PerformanceBenchmarker {
    */
   generateReport(benchmark) {
     const totalTimeSeconds = (benchmark.total_duration_ms / 1000).toFixed(2);
-    const avgStepTimeSeconds = benchmark.steps.length > 0
-      ? (benchmark.total_duration_ms / benchmark.steps.length / 1000).toFixed(2)
-      : '0.00';
+    const avgStepTimeSeconds =
+      benchmark.steps.length > 0
+        ? (benchmark.total_duration_ms / benchmark.steps.length / 1000).toFixed(2)
+        : '0.00';
 
-    const memoryUsedMB = benchmark.end_memory && benchmark.start_memory
-      ? ((benchmark.end_memory.heapUsed - benchmark.start_memory.heapUsed) / 1024 / 1024).toFixed(2)
-      : '0.00';
+    const memoryUsedMB =
+      benchmark.end_memory && benchmark.start_memory
+        ? ((benchmark.end_memory.heapUsed - benchmark.start_memory.heapUsed) / 1024 / 1024).toFixed(
+            2
+          )
+        : '0.00';
 
     return {
       cuj_id: benchmark.cuj_id,
@@ -217,7 +220,7 @@ export class PerformanceBenchmarker {
       steps_count: benchmark.steps.length,
       avg_step_time: `${avgStepTimeSeconds}s`,
       memory_used: `${memoryUsedMB} MB`,
-      slowest_step: this.findSlowestStep(benchmark.steps)
+      slowest_step: this.findSlowestStep(benchmark.steps),
     };
   }
 
@@ -237,7 +240,7 @@ export class PerformanceBenchmarker {
     if (steps.length === 1) {
       return {
         step: steps[0].step,
-        duration: `${(steps[0].duration_ms / 1000).toFixed(2)}s`
+        duration: `${(steps[0].duration_ms / 1000).toFixed(2)}s`,
       };
     }
 
@@ -264,7 +267,7 @@ export class PerformanceBenchmarker {
     return {
       step: slowestStep.step,
       duration: `${(maxDuration / 1000).toFixed(2)}s`,
-      action: slowestStep.action || 'unknown'
+      action: slowestStep.action || 'unknown',
     };
   }
 
@@ -292,7 +295,7 @@ export class PerformanceBenchmarker {
           min_execution_time: '0.00s',
           max_execution_time: '0.00s',
           avg_memory_usage: '0.00 MB',
-          most_common_slowest_step: { step: 0, count: 0 }
+          most_common_slowest_step: { step: 0, count: 0 },
         };
       }
 
@@ -306,7 +309,7 @@ export class PerformanceBenchmarker {
           min_execution_time: '0.00s',
           max_execution_time: '0.00s',
           avg_memory_usage: '0.00 MB',
-          most_common_slowest_step: { step: 0, count: 0 }
+          most_common_slowest_step: { step: 0, count: 0 },
         };
       }
 
@@ -322,9 +325,10 @@ export class PerformanceBenchmarker {
         .filter(m => m.end_memory && m.start_memory)
         .map(m => (m.end_memory.heapUsed - m.start_memory.heapUsed) / 1024 / 1024);
 
-      const avgMemory = memoryUsages.length > 0
-        ? memoryUsages.reduce((sum, m) => sum + m, 0) / memoryUsages.length
-        : 0;
+      const avgMemory =
+        memoryUsages.length > 0
+          ? memoryUsages.reduce((sum, m) => sum + m, 0) / memoryUsages.length
+          : 0;
 
       // Find most common slowest step
       const slowestSteps = {};
@@ -334,8 +338,7 @@ export class PerformanceBenchmarker {
         slowestSteps[step] = (slowestSteps[step] || 0) + 1;
       });
 
-      const mostCommonStep = Object.entries(slowestSteps)
-        .sort((a, b) => b[1] - a[1])[0] || [0, 0];
+      const mostCommonStep = Object.entries(slowestSteps).sort((a, b) => b[1] - a[1])[0] || [0, 0];
 
       return {
         total_cujs: totalCujs,
@@ -348,10 +351,9 @@ export class PerformanceBenchmarker {
         most_common_slowest_step: {
           step: parseInt(mostCommonStep[0]),
           count: mostCommonStep[1],
-          percentage: `${((mostCommonStep[1] / totalCujs) * 100).toFixed(1)}%`
-        }
+          percentage: `${((mostCommonStep[1] / totalCujs) * 100).toFixed(1)}%`,
+        },
       };
-
     } catch (error) {
       console.error('Failed to calculate statistics:', error.message);
       throw error;
@@ -368,9 +370,7 @@ export class PerformanceBenchmarker {
     const sorted = [...values].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
 
-    return sorted.length % 2 === 0
-      ? (sorted[mid - 1] + sorted[mid]) / 2
-      : sorted[mid];
+    return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
   }
 
   /**

@@ -6,8 +6,11 @@
  *   node .claude/tools/run-cuj.mjs --list
  *   node .claude/tools/run-cuj.mjs --simulate CUJ-005
  *   node .claude/tools/run-cuj.mjs --validate CUJ-005
- *   node .claude/tools/run-cuj.mjs --no-cache CUJ-005   # Disable skill caching
- *   node .claude/tools/run-cuj.mjs --cache-stats       # Show cache statistics
+ *   node .claude/tools/run-cuj.mjs --no-cache CUJ-005        # Disable skill caching
+ *   node .claude/tools/run-cuj.mjs --cache-stats             # Show cache statistics
+ *   node .claude/tools/run-cuj.mjs --no-analytics CUJ-005    # Skip analytics logging
+ *   node .claude/tools/run-cuj.mjs --no-side-effects CUJ-005 # Read-only mode
+ *   node .claude/tools/run-cuj.mjs --ci CUJ-005              # CI mode (no analytics/side effects)
  */
 
 import fs from 'fs';
@@ -62,10 +65,14 @@ process.on('SIGTERM', () => {
 const SKILL_CACHE_TTL_MS = 3600000; // 1 hour default
 const cacheEnabled = !process.argv.includes('--no-cache') && !process.env.NO_SKILL_CACHE;
 
+// CI-friendly flags for read-only operation
+const ciMode = process.argv.includes('--ci');
+const noAnalytics = process.argv.includes('--no-analytics') || ciMode;
+const noSideEffects = process.argv.includes('--no-side-effects') || ciMode;
+
 // Subagent spawning limits
 const MAX_CONCURRENT_SUBAGENTS = 3;
 let activeSubagents = 0;
-const waitingQueue = [];
 
 async function loadRegistry() {
   if (shouldUseStreaming(registryPath, 1)) {
@@ -384,6 +391,12 @@ async function recordPerformance(
   warnings = [],
   codexSkillTimings = {}
 ) {
+  // Skip analytics in CI mode or when explicitly disabled
+  if (noAnalytics) {
+    console.log(`[Analytics] Skipped (${ciMode ? 'CI mode' : '--no-analytics flag'})`);
+    return;
+  }
+
   const metrics = await loadPerformanceMetrics();
 
   const runEntry = {
@@ -479,6 +492,15 @@ function validateCUJ(cujId) {
 }
 
 async function runCUJ(cujId) {
+  // Display active flags for CI-friendly operation
+  if (ciMode || noAnalytics || noSideEffects) {
+    console.log('\n🔧 CI-Friendly Mode Active:');
+    if (ciMode) console.log('  ✓ CI mode enabled (--ci)');
+    if (noAnalytics) console.log('  ✓ Analytics disabled (--no-analytics)');
+    if (noSideEffects) console.log('  ✓ Side effects disabled (--no-side-effects)');
+    console.log('');
+  }
+
   // Start memory monitoring
   logMemoryUsage('Initial');
   startMonitoring({
@@ -697,7 +719,12 @@ async function runCUJ(cujId) {
         });
       }
 
-      console.log(`📊 Performance data saved to ${analyticsPath}`);
+      // Only show analytics message if analytics were actually saved
+      if (!noAnalytics) {
+        console.log(`📊 Performance data saved to ${analyticsPath}`);
+      } else {
+        console.log(`📊 Performance data not saved (analytics disabled)`);
+      }
 
       process.exit(code);
     });
@@ -726,11 +753,21 @@ Usage:
   run-cuj.mjs --list             List all available CUJs
   run-cuj.mjs --simulate <ID>    Simulate CUJ execution (dry run)
   run-cuj.mjs --validate <ID>    Validate CUJ structure
+  run-cuj.mjs --cache-stats      Show skill cache statistics
+
+Flags:
+  --no-cache                     Disable skill caching for this run
+  --no-analytics                 Skip analytics/performance logging
+  --no-side-effects              Skip all state mutations (read-only mode)
+  --ci                           CI mode (enables --no-analytics and --no-side-effects)
 
 Examples:
   node .claude/tools/run-cuj.mjs CUJ-005
   node .claude/tools/run-cuj.mjs --list
   node .claude/tools/run-cuj.mjs --simulate CUJ-034
+  node .claude/tools/run-cuj.mjs --ci CUJ-005                    # CI-friendly run
+  node .claude/tools/run-cuj.mjs --no-analytics CUJ-005          # Skip analytics only
+  node .claude/tools/run-cuj.mjs --no-cache --ci CUJ-005         # No cache + CI mode
   `);
   process.exit(0);
 }

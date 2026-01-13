@@ -71,6 +71,13 @@ test-results/
 tmp/
 temp/
 *.tmp
+tmpclaude-*/
+.claude/tools/tmpclaude-*
+.claude/context/tmp/*.txt
+nul
+con
+prn
+aux
 
 # Python
 __pycache__/

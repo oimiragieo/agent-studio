@@ -25,17 +25,67 @@ fallback_agents:
 
 steps:
   - step: 0
-    name: 'Query Analysis'
-    agent: analyst
+    name: 'Planning Phase'
+    agent: planner
     inputs:
       - user_search_query
       - search_context (optional)
     outputs:
+      - plan-{{workflow_id}}.md
+      - plan-{{workflow_id}}.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-planner.json
+    validation:
+      schema: .claude/schemas/plan.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00-planner.json
+    description: |
+      Comprehensive planning before search execution:
+      - Analyze search requirements and context
+      - Generate structured plan with search strategy, steps, and dependencies
+      - Validate plan completeness and feasibility
+      - Note: If search_context provided, incorporate into plan
+      - **Publishing**: After validation, use `artifact-publisher` skill to publish plan artifacts to project feed
+
+  - step: 0.1
+    name: 'Plan Rating Gate'
+    agent: orchestrator
+    type: validation
+    skill: response-rater
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+    outputs:
+      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
+    validation:
+      minimum_score: 7
+      rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
+    retry:
+      max_attempts: 3
+      on_failure: escalate_to_human
+    description: |
+      Rate plan quality using response-rater skill.
+      - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
+      - Minimum passing score: 7/10
+      - If score < 7: Return to Planner with feedback, request improvements, re-rate until passing
+      - If score >= 7: Proceed with workflow execution
+      - Log rating in reasoning file and artifact metadata
+      - Never execute an unrated plan - this is a hard requirement
+      - Offline fallback: If response-rater unavailable, use manual review process (see Step 3.5 of plan)
+
+  - step: 0.2
+    name: 'Query Analysis'
+    agent: analyst
+    inputs:
+      - plan-{{workflow_id}}.json (from step 0)
+      - user_search_query
+      - search_context (optional)
+    outputs:
       - analyzed-query.json
-      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00-analyst.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.2-analyst.json
     validation:
       schema: .claude/schemas/search_query.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/00-analyst.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.2-analyst.json
     description: |
       Analyze and enhance user search query:
       - Parse user's search intent
@@ -49,7 +99,8 @@ steps:
     agent: orchestrator
     skill: algolia-search
     inputs:
-      - analyzed-query.json (from step 0)
+      - plan-{{workflow_id}}.json (from step 0)
+      - analyzed-query.json (from step 0.2)
       - environment_config
     outputs:
       - search-config.json
@@ -74,7 +125,8 @@ steps:
     agent: orchestrator
     skill: algolia-search
     inputs:
-      - analyzed-query.json (from step 0)
+      - plan-{{workflow_id}}.json (from step 0)
+      - analyzed-query.json (from step 0.2)
       - search-config.json (from step 1)
     outputs:
       - search-results.json
@@ -102,6 +154,7 @@ steps:
     name: 'Format and Present Results'
     agent: analyst
     inputs:
+      - plan-{{workflow_id}}.json (from step 0)
       - search-results.json (from step 2)
       - search-metadata.json (from step 2)
       - user_search_query
@@ -127,7 +180,8 @@ steps:
     agent: orchestrator
     condition: 'cache_enabled == true'
     inputs:
-      - analyzed-query.json (from step 0)
+      - plan-{{workflow_id}}.json (from step 0)
+      - analyzed-query.json (from step 0.2)
       - search-results.json (from step 2)
     outputs:
       - cache-entry.json

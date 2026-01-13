@@ -3,6 +3,7 @@ description: Test workflow for validating fallback agent routing, context preser
 type: testing
 project_type: validation
 publish_policy: auto-on-pass # Automatically publish artifacts after validation passes
+template: true # This is a template workflow - agent fields use {{placeholders}} for dynamic substitution
 
 # Error Recovery Configuration
 recovery:

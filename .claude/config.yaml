@@ -52,6 +52,7 @@ agent_routing:
     priority: highest
     context_strategy: minimal
     description: 'Lightweight intent classification and workflow routing agent'
+    # Note: For Haiku-based router sessions with cost tracking and model escalation, see router_session configuration below
 
   planner:
     trigger_words:
@@ -562,6 +563,47 @@ agent_routing:
       - .claude/rules-master/TECH_STACK_NEXTJS.md
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
+
+# Router Session Configuration (Haiku-based routing with cost tracking and model escalation)
+router_session:
+  # Session enablement - Toggle Haiku-based routing sessions
+  enabled: true
+
+  # Model configuration for router sessions
+  model: claude-3-5-haiku-20241022 # Primary model for lightweight routing and classification
+  temperature: 0.1 # Low temperature for deterministic routing decisions
+  max_tokens: 2000 # Sufficient for classification and routing logic
+
+  # Model escalation configuration
+  # Automatically escalates to more capable models when complexity or confidence thresholds are exceeded
+  escalation:
+    complexity_threshold: 0.7 # Complexity score above this triggers escalation (0.0-1.0)
+    confidence_threshold: 0.85 # Confidence score below this triggers escalation (0.0-1.0)
+    orchestrator_model: claude-sonnet-4-20250514 # Model for standard orchestration tasks
+    complex_model: claude-opus-4-20241113 # Model for high-complexity tasks requiring extended thinking
+
+  # Cost tracking configuration
+  # Monitors API usage and costs for router sessions to optimize spend
+  cost_tracking:
+    enabled: true # Enable cost tracking and logging
+    log_file: .claude/context/logs/router-costs.log # Cost log location
+    aggregation_interval_ms: 60000 # Aggregate costs every 60 seconds (1 minute)
+    alert_threshold_usd: 10.0 # Alert when cumulative cost exceeds this threshold
+
+  # Routing behavior configuration
+  # Controls how the router makes decisions and handles edge cases
+  routing:
+    auto_route_to_orchestrator: true # Automatically route complex requests to orchestrator
+    fallback_to_sonnet: true # Fallback to Sonnet if Haiku fails or times out
+    cache_routing_decisions: true # Cache routing decisions to avoid duplicate classifications
+    cache_ttl_ms: 300000 # Cache TTL: 5 minutes (300000ms)
+
+  # Performance configuration
+  # Tuning parameters for router session responsiveness and reliability
+  performance:
+    max_classification_time_ms: 100 # Maximum time for classification decision (100ms)
+    timeout_ms: 30000 # Overall session timeout: 30 seconds
+    retry_attempts: 2 # Number of retry attempts on failure
 
 # Workflow Selection Configuration
 workflow_selection:

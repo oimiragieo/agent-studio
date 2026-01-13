@@ -19,21 +19,21 @@ async function exampleBasicUsage() {
   await simulateWork(100);
   benchmarker.recordStep(benchmark, 1, {
     action: 'parse_workflow',
-    agent: 'planner'
+    agent: 'planner',
   });
   console.log('✓ Recorded step 1: parse_workflow');
 
   await simulateWork(200);
   benchmarker.recordStep(benchmark, 2, {
     action: 'validate_schema',
-    agent: 'qa'
+    agent: 'qa',
   });
   console.log('✓ Recorded step 2: validate_schema');
 
   await simulateWork(150);
   benchmarker.recordStep(benchmark, 3, {
     action: 'execute_agent',
-    agent: 'developer'
+    agent: 'developer',
   });
   console.log('✓ Recorded step 3: execute_agent');
 
@@ -55,7 +55,7 @@ async function exampleWithMetadata() {
     action: 'load_workflow',
     agent: 'orchestrator',
     workflow: 'greenfield-workflow.yaml',
-    file_size: '1.2 KB'
+    file_size: '1.2 KB',
   });
 
   await simulateWork(300);
@@ -63,14 +63,14 @@ async function exampleWithMetadata() {
     action: 'run_validation',
     agent: 'qa',
     tests_run: 15,
-    tests_passed: 15
+    tests_passed: 15,
   });
 
   await simulateWork(100);
   benchmarker.recordStep(benchmark, 3, {
     action: 'generate_report',
     agent: 'technical-writer',
-    report_type: 'markdown'
+    report_type: 'markdown',
   });
 
   const report = await benchmarker.endBenchmark(benchmark);
@@ -95,7 +95,9 @@ async function exampleAggregatedStats() {
   console.log(`Fastest execution: ${stats.min_execution_time}`);
   console.log(`Slowest execution: ${stats.max_execution_time}`);
   console.log(`95th percentile: ${stats.p95_execution_time}`);
-  console.log(`Most common bottleneck: Step ${stats.most_common_slowest_step.step} (${stats.most_common_slowest_step.percentage})`);
+  console.log(
+    `Most common bottleneck: Step ${stats.most_common_slowest_step.step} (${stats.most_common_slowest_step.percentage})`
+  );
 }
 
 async function exampleErrorHandling() {
@@ -110,7 +112,6 @@ async function exampleErrorHandling() {
 
     // Simulate error during workflow
     throw new Error('Simulated workflow failure');
-
   } catch (error) {
     console.log(`✗ Error occurred: ${error.message}`);
     console.log('✓ Still saving benchmark metrics...');
@@ -140,7 +141,6 @@ async function runExamples() {
     console.log('- View aggregated stats: node .claude/tools/performance-benchmarker.mjs stats');
     console.log('- Check metrics file: .claude/context/performance/cuj-metrics.json');
     console.log('- Read documentation: .claude/docs/PERFORMANCE_BENCHMARKING.md');
-
   } catch (error) {
     console.error('Example failed:', error);
     process.exit(1);

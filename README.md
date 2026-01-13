@@ -133,9 +133,14 @@ cp CLAUDE.md your-project/
 cd your-project
 pnpm install
 
-# Validate configuration
-pnpm validate              # Quick validation
-pnpm validate:all          # Full validation
+# Validate configuration (using unified validator)
+pnpm validate              # Quick validation of all configs
+pnpm validate:cujs         # Full CUJ validation
+pnpm validate:cujs:quick   # Fast CUJ validation (skip links)
+pnpm validate:cujs:dry-run # Dry-run (no state changes, CI-friendly)
+
+# CUJ diagnostics
+pnpm cuj:doctor            # Detailed CUJ diagnostics
 
 # List available CUJs
 pnpm cuj:list
@@ -258,6 +263,7 @@ codex-skills/
 ```
 
 These skills are **optional** - the system works without them. They provide multi-model consensus for high-stakes decisions but require:
+
 - Node.js 18+
 - CLI tools installed (`claude`, `gemini`, `codex`, etc.)
 - API keys or authentication configured

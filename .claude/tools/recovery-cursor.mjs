@@ -171,7 +171,7 @@ function loadReasoningFiles(runId, workflowId, lastStep) {
       const reasoning = JSON.parse(readFileSync(filePath, 'utf8'));
       reasoningFiles.push({
         filename: file,
-        ...reasoning
+        ...reasoning,
       });
     } catch (error) {
       console.warn(`Failed to parse reasoning file ${file}: ${error.message}`);
@@ -217,7 +217,7 @@ function getNextStepInfo(workflow, lastStep, artifacts) {
     return {
       step: null,
       status: 'workflow_complete',
-      message: 'All workflow steps completed'
+      message: 'All workflow steps completed',
     };
   }
 
@@ -233,7 +233,7 @@ function getNextStepInfo(workflow, lastStep, artifacts) {
       requiredInputs.push({
         name: inputName,
         optional: isOptional,
-        available: checkArtifactAvailable(artifacts, inputName)
+        available: checkArtifactAvailable(artifacts, inputName),
       });
 
       if (!isOptional && !checkArtifactAvailable(artifacts, inputName)) {
@@ -250,7 +250,7 @@ function getNextStepInfo(workflow, lastStep, artifacts) {
     requiredInputs,
     missingInputs,
     canProceed: missingInputs.length === 0,
-    status: missingInputs.length === 0 ? 'ready' : 'blocked'
+    status: missingInputs.length === 0 ? 'ready' : 'blocked',
   };
 }
 
@@ -292,7 +292,10 @@ function generateRecoverySummary(recoveryData) {
   lines.push('');
 
   lines.push('Completed Artifacts:');
-  const artifactCount = Object.values(recoveryData.artifacts).reduce((sum, arr) => sum + arr.length, 0);
+  const artifactCount = Object.values(recoveryData.artifacts).reduce(
+    (sum, arr) => sum + arr.length,
+    0
+  );
   lines.push(`  Total: ${artifactCount}`);
 
   for (const [step, artifacts] of Object.entries(recoveryData.artifacts)) {
@@ -320,7 +323,7 @@ function generateRecoverySummary(recoveryData) {
       lines.push('');
       lines.push('Required Inputs:');
       for (const input of recoveryData.next_step.requiredInputs) {
-        const status = input.available ? '✓' : (input.optional ? '○' : '✗');
+        const status = input.available ? '✓' : input.optional ? '○' : '✗';
         const label = input.optional ? '(optional)' : '(required)';
         lines.push(`  ${status} ${input.name} ${label}`);
       }
@@ -369,8 +372,8 @@ export async function recoverWorkflowCursor(runId, options = {}) {
   console.log(`Loaded workflow: ${workflow.name}`);
 
   // Find last successful step
-  const lastStep = checkpoint?.last_completed_step
-    || findLastSuccessfulStep(runId, runRecord.workflow_id);
+  const lastStep =
+    checkpoint?.last_completed_step || findLastSuccessfulStep(runId, runRecord.workflow_id);
   console.log(`Last completed step: ${lastStep}`);
 
   // Load artifact registry
@@ -379,9 +382,10 @@ export async function recoverWorkflowCursor(runId, options = {}) {
   console.log(`Loaded ${Object.values(artifacts).flat().length} artifacts from completed steps`);
 
   // Load reasoning files
-  const reasoningFiles = options.includeReasoning !== false
-    ? loadReasoningFiles(runId, runRecord.workflow_id, lastStep)
-    : [];
+  const reasoningFiles =
+    options.includeReasoning !== false
+      ? loadReasoningFiles(runId, runRecord.workflow_id, lastStep)
+      : [];
 
   // Determine next step
   const nextStepInfo = getNextStepInfo(workflow, lastStep, artifacts);
@@ -394,7 +398,7 @@ export async function recoverWorkflowCursor(runId, options = {}) {
       name: workflow.name,
       description: workflow.description,
       steps: workflow.steps,
-      file_path: workflowPath
+      file_path: workflowPath,
     },
     last_completed_step: lastStep,
     next_step: nextStepInfo,
@@ -403,7 +407,7 @@ export async function recoverWorkflowCursor(runId, options = {}) {
     checkpoint: checkpoint || null,
     recovery_timestamp: new Date().toISOString(),
     run_status: runRecord.status,
-    run_metadata: runRecord.metadata || {}
+    run_metadata: runRecord.metadata || {},
   };
 
   return recoveryData;
@@ -422,7 +426,9 @@ async function main() {
   const noReasoningIndex = args.indexOf('--no-reasoning');
 
   if (runIdIndex === -1 || runIdIndex === args.length - 1) {
-    console.error('Usage: node recovery-cursor.mjs --run-id <run_id> [--output json|summary] [--verbose] [--no-reasoning]');
+    console.error(
+      'Usage: node recovery-cursor.mjs --run-id <run_id> [--output json|summary] [--verbose] [--no-reasoning]'
+    );
     console.error('');
     console.error('Options:');
     console.error('  --run-id <id>       Run identifier (required)');
@@ -433,9 +439,8 @@ async function main() {
   }
 
   const runId = args[runIdIndex + 1];
-  const outputFormat = outputIndex !== -1 && outputIndex < args.length - 1
-    ? args[outputIndex + 1]
-    : 'summary';
+  const outputFormat =
+    outputIndex !== -1 && outputIndex < args.length - 1 ? args[outputIndex + 1] : 'summary';
   const verbose = verboseIndex !== -1;
   const includeReasoning = noReasoningIndex === -1;
 

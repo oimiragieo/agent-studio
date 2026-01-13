@@ -1,0 +1,31 @@
+{
+  "business_objective": "Implement authentication",
+  "context": "Need secure authentication",
+  "steps": [
+    {
+      "name": "Design auth",
+      "agent": "architect",
+      "estimated_duration": "2 days"
+    },
+    {
+      "name": "Implement auth",
+      "agent": "developer",
+      "estimated_duration": "5 days"
+    },
+    {
+      "name": "Test auth",
+      "agent": "qa",
+      "estimated_duration": "2 days"
+    }
+  ],
+  "success_criteria": [
+    "Users can log in",
+    "Security audit passes"
+  ],
+  "risks": [
+    {
+      "description": "Security vulnerabilities",
+      "mitigation": "Code review and security audit"
+    }
+  ]
+}

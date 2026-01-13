@@ -24,7 +24,9 @@ const colors = {
 };
 
 console.log(`\n${colors.blue}Running scaffolder tests...${colors.reset}\n`);
-console.log(`${colors.yellow}⚠️  SKIPPING: Scaffolder CLI tests require Windows path fix${colors.reset}`);
+console.log(
+  `${colors.yellow}⚠️  SKIPPING: Scaffolder CLI tests require Windows path fix${colors.reset}`
+);
 console.log(`   Issue: import.meta.url check fails on Windows`);
 console.log(`   Location: scaffold.mjs:993`);
 console.log(`   Fix needed: Convert process.argv[1] to file:// URL format`);

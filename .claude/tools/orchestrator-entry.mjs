@@ -24,6 +24,7 @@ import {
 import { routeWorkflow } from './workflow-router.mjs';
 import { updateRunSummary } from './dashboard-generator.mjs';
 import { detectAllSkills } from './skill-trigger-detector.mjs';
+import { AgentSupervisor } from './workers/supervisor.mjs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 // Generate simple UUID-like ID
@@ -34,6 +35,12 @@ function generateSimpleId() {
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Feature flag for worker pattern (default: false for safe rollback)
+const USE_WORKERS = process.env.USE_WORKERS === 'true' || false;
+
+// Global supervisor instance (only when workers enabled)
+let globalSupervisor = null;
 
 // Runtime capability matrix
 const RUNTIME_CAPABILITIES = {
@@ -76,6 +83,106 @@ function detectRuntime() {
 
   // Default to CLI wrapper
   return 'cli_wrapper';
+}
+
+/**
+ * Initialize supervisor for worker pattern
+ * @returns {Promise<AgentSupervisor|null>}
+ */
+async function initializeSupervisor() {
+  if (!USE_WORKERS) {
+    console.log('[Orchestrator Entry] Worker pattern disabled (USE_WORKERS=false)');
+    return null;
+  }
+
+  if (globalSupervisor) {
+    return globalSupervisor;
+  }
+
+  console.log('[Orchestrator Entry] Initializing worker supervisor');
+  globalSupervisor = new AgentSupervisor({
+    maxWorkers: 4,
+    heapLimit: 4096, // 4GB per worker
+    timeout: 600000, // 10 minutes
+  });
+
+  await globalSupervisor.initialize();
+  console.log('[Orchestrator Entry] Supervisor initialized successfully');
+
+  return globalSupervisor;
+}
+
+/**
+ * Determine if task should use worker pattern based on heuristics
+ * @param {string} taskDescription - Task description
+ * @param {number} complexity - Task complexity (0-1)
+ * @returns {boolean}
+ */
+function isLongRunningTask(taskDescription, complexity = 0.5) {
+  // Long-running keywords
+  const longRunningKeywords = [
+    'implement',
+    'refactor',
+    'analyze codebase',
+    'migrate',
+    'redesign',
+    'architecture',
+    'comprehensive',
+    'extensive',
+    'large-scale',
+  ];
+
+  // Short-running keywords
+  const shortRunningKeywords = ['fix', 'update', 'add', 'remove', 'delete', 'rename', 'quick'];
+
+  const lowerTask = taskDescription.toLowerCase();
+
+  // Check for short-running indicators
+  const hasShortKeywords = shortRunningKeywords.some(kw => lowerTask.includes(kw));
+  if (hasShortKeywords && complexity < 0.5) {
+    return false;
+  }
+
+  // Check for long-running indicators
+  const hasLongKeywords = longRunningKeywords.some(kw => lowerTask.includes(kw));
+  if (hasLongKeywords || complexity > 0.7) {
+    return true;
+  }
+
+  // Default: use complexity threshold
+  return complexity > 0.6;
+}
+
+/**
+ * Aggregate costs from router and orchestrator sessions
+ * @param {Object|null} routerCosts - Cost tracking from router session
+ * @param {Object} orchestratorCosts - Cost tracking from orchestrator session
+ * @returns {Object} Aggregated cost summary
+ */
+function aggregateCostsFromRouter(routerCosts, orchestratorCosts = {}) {
+  if (!routerCosts) {
+    return {
+      router: null,
+      orchestrator: orchestratorCosts,
+      total: orchestratorCosts.total_cost_usd || 0,
+    };
+  }
+
+  return {
+    router: {
+      total_cost_usd: routerCosts.total_cost_usd || 0,
+      total_input_tokens: routerCosts.total_input_tokens || 0,
+      total_output_tokens: routerCosts.total_output_tokens || 0,
+      model_usage: routerCosts.model_usage || [],
+    },
+    orchestrator: {
+      total_cost_usd: orchestratorCosts.total_cost_usd || 0,
+      total_input_tokens: orchestratorCosts.total_input_tokens || 0,
+      total_output_tokens: orchestratorCosts.total_output_tokens || 0,
+      model_usage: orchestratorCosts.model_usage || [],
+    },
+    total: (routerCosts.total_cost_usd || 0) + (orchestratorCosts.total_cost_usd || 0),
+  };
 }
 
 /**
@@ -177,9 +284,9 @@ async function detectAndLogSkills(agentType, taskDescription, runId) {
 }
 
 /**
- * Execute step 0 via workflow runner
+ * Execute step 0 via workflow runner (legacy in-process execution)
  */
-async function executeStep0(runId, workflowPath) {
+async function executeStep0Legacy(runId, workflowPath) {
   const runtime = detectRuntime();
   const runDirs = getRunDirectoryStructure(runId);
 
@@ -205,6 +312,64 @@ async function executeStep0(runId, workflowPath) {
   } catch (error) {
     console.error(`Error executing step 0: ${error.message}`);
     throw error;
+  }
+}
+
+/**
+ * Execute step 0 via worker thread (when USE_WORKERS enabled)
+ */
+async function executeStep0Worker(runId, workflowPath, taskDescription, complexity) {
+  const supervisor = await initializeSupervisor();
+  if (!supervisor) {
+    throw new Error('Supervisor not initialized');
+  }
+
+  console.log('[Orchestrator Entry] Spawning worker for step 0');
+
+  // Spawn worker with workflow execution task
+  const sessionId = await supervisor.spawnWorker('orchestrator', taskDescription, {
+    runId,
+    workflowPath,
+    step: 0,
+    executionMode: 'workflow',
+  });
+
+  console.log(`[Orchestrator Entry] Worker spawned: ${sessionId}`);
+
+  // Wait for worker completion
+  try {
+    const result = await supervisor.waitForCompletion(sessionId, {
+      timeout: 600000, // 10 minutes
+    });
+
+    console.log(`[Orchestrator Entry] Worker completed: ${sessionId}`);
+
+    return {
+      success: true,
+      output: result.result || result,
+      runId,
+      sessionId,
+      executionMode: 'worker',
+    };
+  } catch (error) {
+    console.error(`[Orchestrator Entry] Worker execution failed: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Execute step 0 with conditional worker usage
+ */
+async function executeStep0(runId, workflowPath, taskDescription = '', complexity = 0.5) {
+  if (USE_WORKERS && isLongRunningTask(taskDescription, complexity)) {
+    console.log('[Orchestrator Entry] Using worker pattern for long-running task');
+    return await executeStep0Worker(runId, workflowPath, taskDescription, complexity);
+  } else {
+    const reason = USE_WORKERS
+      ? 'task is short-running'
+      : 'worker pattern disabled (USE_WORKERS=false)';
+    console.log(`[Orchestrator Entry] Using legacy in-process execution (${reason})`);
+    return await executeStep0Legacy(runId, workflowPath);
   }
 }
 
@@ -343,29 +508,79 @@ export async function resolveCUJExecutionMode(cujId) {
 
 /**
  * Main entry point
+ * @param {string} userPrompt - User's request
+ * @param {Object} options - Options including runId and sessionContext
+ * @param {Object|null} routingDecision - Optional routing decision from router session
+ * @returns {Promise<Object>} Execution result
  */
-export async function processUserPrompt(userPrompt, options = {}) {
-  const { runId: providedRunId } = options;
+export async function processUserPrompt(userPrompt, options = {}, routingDecision = null) {
+  const { runId: providedRunId, sessionContext } = options;
   const runtime = detectRuntime();
 
   console.log(`[Orchestrator Entry] Runtime detected: ${runtime}`);
   console.log(`[Orchestrator Entry] Processing prompt: ${userPrompt.substring(0, 100)}...`);
+
+  // Handle router session handoff
+  if (routingDecision) {
+    console.log(`[Orchestrator Entry] Router session handoff detected`);
+    console.log(`[Orchestrator Entry] Intent: ${routingDecision.intent}`);
+    console.log(
+      `[Orchestrator Entry] Workflow: ${routingDecision.workflow || routingDecision.selected_workflow || 'none'}`
+    );
+    console.log(`[Orchestrator Entry] Complexity: ${routingDecision.complexity}`);
+    console.log(`[Orchestrator Entry] Skipping redundant semantic routing`);
+  }
 
   // Generate or use provided run ID
   const runId = providedRunId || generateRunId();
 
   // Step 1: Create run
   console.log(`[Orchestrator Entry] Creating run: ${runId}`);
-  const runRecord = await createRun(runId, {
+
+  // Transfer session context from router if available
+  const runMetadata = {
     userRequest: userPrompt,
     sessionId: process.env.CLAUDE_CODE_SESSION_ID || process.env.CURSOR_SESSION_ID || null,
-  });
+  };
 
-  // Step 2: Check for CUJ reference
+  if (sessionContext) {
+    console.log(`[Orchestrator Entry] Transferring session context from router`);
+    runMetadata.routerHandoff = {
+      timestamp: new Date().toISOString(),
+      sessionId: sessionContext.session_id,
+      routerModel: sessionContext.router_classification?.model || 'claude-3-5-haiku-20241022',
+      routingDecision,
+      accumulatedCosts: sessionContext.cost_tracking || null,
+    };
+  }
+
+  const runRecord = await createRun(runId, runMetadata);
+
+  // Step 2: Routing logic (skip if router already decided)
   const cujId = detectCUJReference(userPrompt);
   let routingResult;
+  let skipSemanticRouting = false;
 
-  if (cujId) {
+  // Use routing decision from router if provided
+  if (routingDecision) {
+    const workflow = routingDecision.workflow || routingDecision.selected_workflow;
+
+    if (workflow) {
+      console.log(`[Orchestrator Entry] Using workflow from router: ${workflow}`);
+      routingResult = {
+        selected_workflow: workflow,
+        workflow_selection: workflow,
+        routing_method: 'router_handoff',
+        intent: routingDecision.intent,
+        complexity: routingDecision.complexity,
+        confidence: routingDecision.confidence || 0.9,
+        router_session_id: sessionContext?.session_id || null,
+      };
+      skipSemanticRouting = true;
+    }
+  }
+
+  if (!skipSemanticRouting && cujId) {
     console.log(`[Orchestrator Entry] CUJ reference detected: ${cujId}`);
 
     // Resolve CUJ execution mode
@@ -446,6 +661,11 @@ export async function processUserPrompt(userPrompt, options = {}) {
         // Generate initial run-summary.md
         await updateRunSummary(runId);
 
+        // Aggregate costs if router session provided
+        const aggregatedCosts = sessionContext
+          ? aggregateCostsFromRouter(sessionContext.cost_tracking)
+          : null;
+
         return {
           runId,
           routing: routingResult,
@@ -454,6 +674,7 @@ export async function processUserPrompt(userPrompt, options = {}) {
           skillInvocationCommand: `Skill: ${cujMapping.primarySkill}`,
           message: `CUJ ${cujId} is skill-only. Invoke with: Skill: ${cujMapping.primarySkill}`,
           runRecord: await readRun(runId),
+          costs: aggregatedCosts,
         };
       } catch (error) {
         console.error(`[Orchestrator Entry] Skill-only execution failed: ${error.message}`);
@@ -488,8 +709,8 @@ export async function processUserPrompt(userPrompt, options = {}) {
         throw error;
       }
     }
-  } else {
-    // No CUJ reference - use standard semantic routing
+  } else if (!skipSemanticRouting) {
+    // No CUJ reference and no router decision - use standard semantic routing
     console.log(`[Orchestrator Entry] No CUJ reference detected. Using semantic routing.`);
 
     try {
@@ -555,6 +776,11 @@ export async function processUserPrompt(userPrompt, options = {}) {
     // Generate initial run-summary.md
     await updateRunSummary(runId);
 
+    // Aggregate costs if router session provided
+    const aggregatedCosts = sessionContext
+      ? aggregateCostsFromRouter(sessionContext.cost_tracking)
+      : null;
+
     return {
       runId,
       routing: routingResult,
@@ -563,21 +789,38 @@ export async function processUserPrompt(userPrompt, options = {}) {
       skillInvocationCommand: `Skill: ${routingResult.primary_skill}`,
       message: `Skill-only execution prepared. Invoke with: Skill: ${routingResult.primary_skill}`,
       runRecord: await readRun(runId),
+      costs: aggregatedCosts,
     };
   }
 
   console.log(`[Orchestrator Entry] Executing step 0: ${selectedWorkflow}`);
   try {
-    const stepResult = await executeStep0(runId, selectedWorkflow);
+    // Pass task description and complexity for worker decision
+    const taskComplexity = routingResult.complexity
+      ? routingResult.complexity === 'high'
+        ? 0.8
+        : routingResult.complexity === 'medium'
+          ? 0.5
+          : 0.3
+      : 0.5;
+
+    const stepResult = await executeStep0(runId, selectedWorkflow, userPrompt, taskComplexity);
 
     // Step 4: Generate initial run-summary.md
     await updateRunSummary(runId);
+
+    // Aggregate costs if router session provided
+    const aggregatedCosts = sessionContext
+      ? aggregateCostsFromRouter(sessionContext.cost_tracking)
+      : null;
 
     return {
       runId,
       routing: routingResult,
       step0Result: stepResult,
       runRecord: await readRun(runId),
+      costs: aggregatedCosts,
+      executionMode: stepResult.executionMode || 'legacy',
     };
   } catch (error) {
     console.error(`[Orchestrator Entry] Step 0 execution failed: ${error.message}`);
@@ -636,12 +879,42 @@ async function main() {
   }
 }
 
+// Cleanup handler for supervisor
+process.on('exit', async () => {
+  if (globalSupervisor) {
+    console.log('[Orchestrator Entry] Cleaning up supervisor on exit');
+    await globalSupervisor.cleanup();
+  }
+});
+
+process.on('SIGINT', async () => {
+  if (globalSupervisor) {
+    console.log('[Orchestrator Entry] SIGINT received, cleaning up supervisor');
+    await globalSupervisor.cleanup();
+  }
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  if (globalSupervisor) {
+    console.log('[Orchestrator Entry] SIGTERM received, cleaning up supervisor');
+    await globalSupervisor.cleanup();
+  }
+  process.exit(0);
+});
+
+// Export helper functions for testing
+export { detectRuntime, initializeSupervisor, isLongRunningTask };
+
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(console.error);
 }
 
+// Default export for backward compatibility
 export default {
   processUserPrompt,
   detectRuntime,
+  initializeSupervisor,
+  isLongRunningTask,
 };

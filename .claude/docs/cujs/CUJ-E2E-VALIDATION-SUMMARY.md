@@ -8,9 +8,9 @@ The CUJ E2E Validation System provides **comprehensive smoke testing** for the e
 
 ### 1. Main Validation Script
 
-**File**: `.claude/tools/validate-cuj-e2e.mjs`
+**File**: `.claude/tools/cuj-validator-unified.mjs`
 
-**Purpose**: Single command to validate entire CUJ system health
+**Purpose**: Unified validator for all CUJ validation modes (replaces validate-cuj-e2e.mjs, cuj-doctor.mjs, and validate-cuj.mjs)
 
 **Features**:
 
@@ -24,14 +24,33 @@ The CUJ E2E Validation System provides **comprehensive smoke testing** for the e
 **Usage**:
 
 ```bash
-# Basic validation
-node .claude/tools/validate-cuj-e2e.mjs
+# Validate a single CUJ (full mode)
+npm run validate:cuj -- CUJ-005
 
-# With fix suggestions
-node .claude/tools/validate-cuj-e2e.mjs --fix-suggestions
+# Validate all CUJs (doctor mode)
+npm run validate:cujs
 
-# JSON output for CI/CD
-node .claude/tools/validate-cuj-e2e.mjs --json
+# E2E validation with full checks
+npm run validate:cujs:e2e -- CUJ-005
+
+# Doctor mode with JSON output
+npm run cuj:doctor:json
+```
+
+**Direct CLI Usage**:
+
+```bash
+# Validate single CUJ
+node .claude/tools/cuj-validator-unified.mjs CUJ-005
+
+# Doctor mode (system health check)
+node .claude/tools/cuj-validator-unified.mjs --doctor
+
+# Quick validation mode
+node .claude/tools/cuj-validator-unified.mjs CUJ-005 --mode quick
+
+# Dry-run mode
+node .claude/tools/cuj-validator-unified.mjs CUJ-005 --mode dry-run
 ```
 
 ### 2. Comprehensive Documentation
@@ -82,7 +101,7 @@ node .claude/tools/validate-cuj-e2e.mjs --json
 
 ### Suite 2: CUJ File Validation
 
-**Command**: `node scripts/validate-cujs.mjs`
+**Command**: `npm run validate:cujs` (uses unified validator in doctor mode)
 
 **Checks**:
 
@@ -275,7 +294,7 @@ jobs:
           node-version: '18'
       - run: pnpm install
       - name: Run CUJ E2E Validation
-        run: node .claude/tools/validate-cuj-e2e.mjs --json > cuj-report.json
+        run: npm run cuj:doctor:json > cuj-report.json
       - name: Upload Report
         uses: actions/upload-artifact@v3
         with:
@@ -310,14 +329,14 @@ jobs:
 # 1. Make changes to CUJ files or workflows
 vim .claude/docs/cujs/CUJ-010.md
 
-# 2. Run validation
-node .claude/tools/validate-cuj-e2e.mjs
+# 2. Run validation for single CUJ
+npm run validate:cuj -- CUJ-010
 
-# 3. Fix any issues
-node .claude/tools/validate-cuj-e2e.mjs --fix-suggestions
+# 3. Run full system health check
+npm run validate:cujs
 
-# 4. Verify fixes
-node .claude/tools/validate-cuj-e2e.mjs
+# 4. Verify fixes with e2e mode
+npm run validate:cujs:e2e -- CUJ-010
 
 # 5. Commit changes
 git add .
@@ -337,7 +356,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - run: pnpm install
-      - run: node .claude/tools/validate-cuj-e2e.mjs --json > report.json
+      - run: npm run cuj:doctor:json > report.json
       - uses: actions/upload-artifact@v3
         with:
           name: cuj-report

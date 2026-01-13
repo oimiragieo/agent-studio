@@ -54,14 +54,15 @@
               "Specialized Workflows",
               "Maintenance & Operations",
               "Advanced Workflows",
-              "Testing & Validation"
+              "Testing & Validation",
+              "Search & Discovery"
             ],
             "description": "CUJ category for organization"
           },
           "execution_mode": {
             "type": "string",
-            "enum": ["workflow", "skill-only", "delegated-skill", "manual-setup"],
-            "description": "How the CUJ is executed (workflow, skill, or manual)"
+            "enum": ["workflow", "skill-only", "manual-setup"],
+            "description": "Canonical execution mode. See .claude/docs/EXECUTION_MODE_STANDARD.md for details. Note: 'delegated-skill' is deprecated - use 'skill-only' instead."
           },
           "workflow": {
             "type": ["string", "null"],

@@ -90,7 +90,9 @@ if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}`) {
 
   if (args.length < 2) {
     console.error('Usage: node workflow-template-engine.mjs <template> <output> [context-json]');
-    console.error('Example: node workflow-template-engine.mjs template.yaml output.yaml \'{"key":"value"}\'');
+    console.error(
+      'Example: node workflow-template-engine.mjs template.yaml output.yaml \'{"key":"value"}\''
+    );
     process.exit(1);
   }
 

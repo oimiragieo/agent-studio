@@ -3,6 +3,13 @@
  * Session Handler - SDK Session Management
  * Manages agent sessions with SDK integration for context retention
  * Based on: https://docs.claude.com/en/docs/agent-sdk/sessions.md
+ *
+ * Features:
+ * - Router session defaults (Haiku model)
+ * - Orchestrator session defaults (Sonnet model)
+ * - Settings.json integration
+ * - Router prompt template injection
+ * - Model-based session initialization
  */
 
 import { readFile, writeFile, mkdir } from 'fs/promises';
@@ -14,6 +21,89 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const SESSIONS_DIR = join(__dirname, '../../../context/sessions');
+const SETTINGS_PATH = join(__dirname, '../../../settings.json');
+const ROUTER_TEMPLATE_PATH = join(__dirname, '../../../templates/user-session-router.md');
+
+// ===========================
+// Settings & Configuration
+// ===========================
+
+/**
+ * Load settings from settings.json
+ *
+ * @returns {Promise<Object>} Settings object with defaults
+ */
+export async function loadSettings() {
+  try {
+    if (existsSync(SETTINGS_PATH)) {
+      const content = await readFile(SETTINGS_PATH, 'utf-8');
+      return JSON.parse(content);
+    }
+  } catch (error) {
+    console.warn('Failed to load settings.json, using defaults:', error.message);
+  }
+
+  // Return defaults if settings.json not found
+  return {
+    models: {
+      router: 'claude-3-5-haiku-20241022',
+      orchestrator: 'claude-sonnet-4-20250514',
+      complex: 'claude-opus-4-20241113',
+    },
+    session: {
+      default_model: 'claude-3-5-haiku-20241022',
+      default_temperature: 0.1,
+      default_role: 'router',
+      router_enabled: true,
+      auto_route_to_orchestrator: true,
+    },
+    routing: {
+      complexity_threshold: 0.7,
+      cost_optimization_enabled: true,
+      fallback_to_sonnet: true,
+    },
+  };
+}
+
+/**
+ * Load router prompt template
+ *
+ * @returns {Promise<string|null>} Router template content or null
+ */
+export async function loadRouterTemplate() {
+  try {
+    if (existsSync(ROUTER_TEMPLATE_PATH)) {
+      return await readFile(ROUTER_TEMPLATE_PATH, 'utf-8');
+    }
+  } catch (error) {
+    console.warn('Failed to load router template:', error.message);
+  }
+  return null;
+}
+
+/**
+ * Determine model based on role and settings
+ *
+ * @param {string} role - Session role ('router', 'orchestrator', etc.)
+ * @param {Object} settings - Settings object
+ * @returns {string} Model identifier
+ */
+function getModelForRole(role, settings) {
+  if (role === 'router') {
+    return settings.models?.router || 'claude-3-5-haiku-20241022';
+  } else if (role === 'orchestrator') {
+    return settings.models?.orchestrator || 'claude-sonnet-4-20250514';
+  } else if (role === 'complex') {
+    return settings.models?.complex || 'claude-opus-4-20241113';
+  }
+
+  // Default to router model
+  return settings.session?.default_model || 'claude-3-5-haiku-20241022';
+}
+
+// ===========================
+// Session ID & File Management
+// ===========================
 
 /**
  * Generate unique session ID
@@ -30,11 +120,38 @@ function getSessionFilePath(sessionId) {
 }
 
 /**
- * Create SDK session
+ * Create SDK session with router/orchestrator defaults
  * Note: Full implementation would use: import { Session } from '@anthropic-ai/sdk';
+ *
+ * @param {string} agentName - Agent name (or role: 'router', 'orchestrator')
+ * @param {Object} metadata - Session metadata
+ * @param {string} metadata.role - Session role ('router', 'orchestrator', etc.)
+ * @param {string} metadata.initialPrompt - Initial user prompt (for router sessions)
+ * @returns {Promise<Object>} Session object
  */
 export async function createSDKSession(agentName, metadata = {}) {
   const sessionId = generateSessionId();
+
+  // Load settings
+  const settings = await loadSettings();
+
+  // Determine role (default to router for user sessions)
+  let role;
+  if (metadata.role) {
+    role = metadata.role;
+  } else if (agentName === 'router') {
+    role = 'router';
+  } else if (agentName === 'orchestrator') {
+    role = 'orchestrator';
+  } else {
+    role = settings.session?.default_role || 'router';
+  }
+
+  // Get model for role
+  const model = getModelForRole(role, settings);
+
+  // Load router template if router role
+  const routerTemplate = role === 'router' ? await loadRouterTemplate() : null;
 
   // In production, this would use SDK Session class:
   // const session = new Session({
@@ -50,6 +167,9 @@ export async function createSDKSession(agentName, metadata = {}) {
   const session = {
     session_id: sessionId,
     agent: agentName,
+    role,
+    model,
+    temperature: settings.session?.default_temperature || 0.1,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     status: 'active',
@@ -57,6 +177,7 @@ export async function createSDKSession(agentName, metadata = {}) {
       project: metadata.project || null,
       feature: metadata.feature || null,
       workflow: metadata.workflow || null,
+      initial_prompt: metadata.initialPrompt || null,
       ...metadata,
     },
     messages: [],
@@ -68,6 +189,24 @@ export async function createSDKSession(agentName, metadata = {}) {
       tool_calls: 0,
     },
     history: [],
+    settings: {
+      router_enabled: settings.session?.router_enabled ?? true,
+      auto_route_to_orchestrator: settings.session?.auto_route_to_orchestrator ?? true,
+      complexity_threshold: settings.routing?.complexity_threshold ?? 0.7,
+    },
+    // Router-specific fields
+    ...(role === 'router'
+      ? {
+          router_prompt: routerTemplate || null,
+          routing_decisions: {
+            total: 0,
+            simple_handled: 0,
+            routed_to_orchestrator: 0,
+            average_complexity: 0.0,
+            average_confidence: 0.0,
+          },
+        }
+      : {}),
   };
 
   // Save session state
@@ -209,6 +348,63 @@ export async function closeSDKSession(sessionId, reason = 'completed') {
   });
 }
 
+// ===========================
+// Convenience Functions
+// ===========================
+
+/**
+ * Initialize router session with Haiku model
+ * Convenience wrapper for createSDKSession with router defaults
+ *
+ * @param {string} initialPrompt - User's initial prompt
+ * @param {Object} metadata - Additional metadata
+ * @returns {Promise<Object>} Router session object
+ */
+export async function initializeRouterSession(initialPrompt, metadata = {}) {
+  return await createSDKSession('router', {
+    role: 'router',
+    initialPrompt,
+    ...metadata,
+  });
+}
+
+/**
+ * Initialize orchestrator session with Sonnet model
+ * Convenience wrapper for createSDKSession with orchestrator defaults
+ *
+ * @param {Object} metadata - Session metadata
+ * @returns {Promise<Object>} Orchestrator session object
+ */
+export async function initializeOrchestratorSession(metadata = {}) {
+  return await createSDKSession('orchestrator', {
+    role: 'orchestrator',
+    ...metadata,
+  });
+}
+
+/**
+ * Get session model and settings
+ *
+ * @param {string} sessionId - Session identifier
+ * @returns {Promise<Object|null>} Session model info or null
+ */
+export async function getSessionModelInfo(sessionId) {
+  const session = await loadSDKSession(sessionId);
+
+  if (!session) {
+    return null;
+  }
+
+  return {
+    session_id: sessionId,
+    role: session.role,
+    model: session.model,
+    temperature: session.temperature,
+    router_enabled: session.settings?.router_enabled ?? false,
+    auto_route_to_orchestrator: session.settings?.auto_route_to_orchestrator ?? false,
+  };
+}
+
 export default {
   createSDKSession,
   updateSDKSession,
@@ -218,4 +414,9 @@ export default {
   addSessionToolCall,
   updateSessionCost,
   closeSDKSession,
+  initializeRouterSession,
+  initializeOrchestratorSession,
+  getSessionModelInfo,
+  loadSettings,
+  loadRouterTemplate,
 };

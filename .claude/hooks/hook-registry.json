@@ -1,0 +1,78 @@
+{
+  "$schema": "../schemas/hook-registry.schema.json",
+  "version": "1.0.0",
+  "hooks": [
+    {
+      "name": "security-validation",
+      "type": "preToolUse",
+      "path": ".claude/hooks/security-pre-tool.mjs",
+      "enabled": true,
+      "priority": 1,
+      "matcher": "Bash|Write|Edit",
+      "description": "Validates tool usage for security (blocks dangerous commands)"
+    },
+    {
+      "name": "file-path-validation",
+      "type": "preToolUse",
+      "path": ".claude/hooks/file-path-validator.js",
+      "enabled": true,
+      "priority": 2,
+      "matcher": "*",
+      "description": "Validates file paths on all tools to prevent SLOP"
+    },
+    {
+      "name": "orchestrator-enforcement",
+      "type": "preToolUse",
+      "path": ".claude/hooks/orchestrator-enforcement-hook.mjs",
+      "enabled": true,
+      "priority": 3,
+      "matcher": "Read|Write|Edit|Bash|Grep|Glob",
+      "description": "Enforces orchestrator delegation rules"
+    },
+    {
+      "name": "skill-injection",
+      "type": "preToolUse",
+      "path": ".claude/hooks/skill-injection-hook.js",
+      "enabled": true,
+      "priority": 4,
+      "matcher": "Task",
+      "description": "Injects skills into Task tool calls"
+    },
+    {
+      "name": "memory-injection",
+      "type": "preToolUse",
+      "path": ".claude/hooks/memory-injection-pre-tool.mjs",
+      "enabled": true,
+      "priority": 10,
+      "matcher": "*",
+      "description": "Injects relevant memory before tool execution"
+    },
+    {
+      "name": "audit-logging",
+      "type": "postToolUse",
+      "path": ".claude/hooks/audit-post-tool.mjs",
+      "enabled": true,
+      "priority": 1,
+      "matcher": "Bash|Read|Write|Edit|Grep|Glob|Search",
+      "description": "Logs tool execution for audit trail"
+    },
+    {
+      "name": "session-cleanup",
+      "type": "postToolUse",
+      "path": ".claude/hooks/post-session-cleanup.js",
+      "enabled": true,
+      "priority": 2,
+      "matcher": "Write|Edit",
+      "description": "Cleans up SLOP files after file operations"
+    },
+    {
+      "name": "memory-capture",
+      "type": "postToolUse",
+      "path": ".claude/hooks/memory-capture-post-tool.mjs",
+      "enabled": true,
+      "priority": 10,
+      "matcher": "*",
+      "description": "Captures tool results for memory storage"
+    }
+  ]
+}

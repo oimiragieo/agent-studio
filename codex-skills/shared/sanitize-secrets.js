@@ -59,7 +59,10 @@ const ENV_VAR_PATTERNS = [
  */
 const ADDITIONAL_PATTERNS = [
   // JWT tokens (three base64 sections separated by dots)
-  { pattern: /eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, replacement: '[REDACTED_JWT]' },
+  {
+    pattern: /eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g,
+    replacement: '[REDACTED_JWT]',
+  },
 
   // Authorization headers with Bearer tokens
   {

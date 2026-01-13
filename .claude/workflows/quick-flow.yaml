@@ -159,6 +159,7 @@ steps:
     outputs:
       - quality-report.json
       - test-results.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-qa.json
     validation:
       gate: .claude/context/history/gates/{{workflow_id}}/03-qa.json
 

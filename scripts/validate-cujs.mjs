@@ -341,8 +341,8 @@ async function getCUJMapping() {
         continue;
       }
 
-      // Skip separator line
-      if (inMappingTable && !headerPassed && line.includes('|---')) {
+      // Skip separator line (handles both |---| and | ------- | formats)
+      if (inMappingTable && !headerPassed && /^\|\s*-{3,}/.test(line)) {
         headerPassed = true;
         continue;
       }

@@ -31,8 +31,12 @@ console.log(templateCanGenerate ? '  ✅ PASS' : '  ❌ FAIL');
 
 // Check 4: Template workflow has correct placeholders
 console.log('\nCheck 4: Template has correct placeholders');
-const templateContent = readFileSync('.claude/workflows/templates/fallback-routing-template.yaml', 'utf8');
-const hasPlaceholders = /\{\{primary_agent\}\}/.test(templateContent) && /\{\{fallback_agent\}\}/.test(templateContent);
+const templateContent = readFileSync(
+  '.claude/workflows/templates/fallback-routing-template.yaml',
+  'utf8'
+);
+const hasPlaceholders =
+  /\{\{primary_agent\}\}/.test(templateContent) && /\{\{fallback_agent\}\}/.test(templateContent);
 checks.push({ name: 'Template has required placeholders', passed: hasPlaceholders });
 console.log(hasPlaceholders ? '  ✅ PASS' : '  ❌ FAIL');
 
@@ -53,7 +57,9 @@ checks.push({ name: 'Template YAML valid', passed: templateYamlValid });
 console.log('\nCheck 6: Template engine substitutions');
 try {
   const testEngine = new WorkflowTemplateEngine();
-  const testResult = testEngine.substitute('agent: {{primary_agent}}', { primary_agent: 'developer' });
+  const testResult = testEngine.substitute('agent: {{primary_agent}}', {
+    primary_agent: 'developer',
+  });
   const substitutionWorks = testResult === 'agent: developer';
   checks.push({ name: 'Template engine substitutions work', passed: substitutionWorks });
   console.log(substitutionWorks ? '  ✅ PASS' : '  ❌ FAIL');
@@ -81,10 +87,10 @@ console.log(`  ${reportExists ? '✅' : '❌'} Report: ${reportExists}`);
 // Summary
 console.log('\n' + '='.repeat(60));
 console.log('📊 Summary\n');
-const passedCount = checks.filter((c) => c.passed).length;
+const passedCount = checks.filter(c => c.passed).length;
 const totalCount = checks.length;
 console.log(`Checks passed: ${passedCount}/${totalCount}`);
-checks.forEach((check) => {
+checks.forEach(check => {
   console.log(`  ${check.passed ? '✅' : '❌'} ${check.name}`);
 });
 

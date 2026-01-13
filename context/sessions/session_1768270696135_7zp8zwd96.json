@@ -1,0 +1,32 @@
+{
+  "session_id": "session_1768270696135_7zp8zwd96",
+  "agent": "router",
+  "role": "router",
+  "model": "claude-3-5-haiku-20241022",
+  "temperature": 0.1,
+  "created_at": "2026-01-13T02:18:16.136Z",
+  "updated_at": "2026-01-13T02:18:16.136Z",
+  "status": "active",
+  "metadata": {
+    "project": null,
+    "feature": null,
+    "workflow": null,
+    "initial_prompt": "Test",
+    "role": "router",
+    "initialPrompt": "Test"
+  },
+  "messages": [],
+  "tool_calls": [],
+  "cost": {
+    "total": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "tool_calls": 0
+  },
+  "history": [],
+  "settings": {
+    "router_enabled": true,
+    "auto_route_to_orchestrator": true,
+    "complexity_threshold": 0.7
+  }
+}
