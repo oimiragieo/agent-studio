@@ -23,10 +23,10 @@ await db.initialize(); // Creates schema, runs migrations (~50ms)
 
 ```javascript
 db.createSession({
-    sessionId: 'my-session-001',
-    userId: 'developer-123',
-    projectId: 'my-project',
-    metadata: { environment: 'development' }
+  sessionId: 'my-session-001',
+  userId: 'developer-123',
+  projectId: 'my-project',
+  metadata: { environment: 'development' },
 });
 ```
 
@@ -34,9 +34,9 @@ db.createSession({
 
 ```javascript
 const convId = db.createConversation({
-    sessionId: 'my-session-001',
-    conversationId: 'conv-001',
-    title: 'Getting Started with Memory DB'
+  sessionId: 'my-session-001',
+  conversationId: 'conv-001',
+  title: 'Getting Started with Memory DB',
 });
 ```
 
@@ -44,17 +44,17 @@ const convId = db.createConversation({
 
 ```javascript
 db.addMessage({
-    conversationId: convId,
-    role: 'user',
-    content: 'How do I use the memory database?',
-    tokenCount: 8
+  conversationId: convId,
+  role: 'user',
+  content: 'How do I use the memory database?',
+  tokenCount: 8,
 });
 
 db.addMessage({
-    conversationId: convId,
-    role: 'assistant',
-    content: 'Follow the Quick Start guide!',
-    tokenCount: 6
+  conversationId: convId,
+  role: 'assistant',
+  content: 'Follow the Quick Start guide!',
+  tokenCount: 6,
 });
 ```
 
@@ -65,7 +65,7 @@ db.addMessage({
 const results = db.searchMessages('memory database', 10);
 
 results.forEach(msg => {
-    console.log(`[${msg.role}]: ${msg.content}`);
+  console.log(`[${msg.role}]: ${msg.content}`);
 });
 ```
 
@@ -110,9 +110,9 @@ db.updateSession(sessionId, { status: 'archived' });
 ```javascript
 // Start conversation
 const convId = db.createConversation({
-    sessionId,
-    conversationId: `conv-${Date.now()}`,
-    title: 'Code Review Request'
+  sessionId,
+  conversationId: `conv-${Date.now()}`,
+  title: 'Code Review Request',
 });
 
 // Add messages as conversation progresses
@@ -120,12 +120,14 @@ db.addMessage({ conversationId: convId, role: 'user', content: '...' });
 db.addMessage({ conversationId: convId, role: 'assistant', content: '...' });
 
 // End conversation with summary
-db.prepare(`
+db.prepare(
+  `
     UPDATE conversations
     SET ended_at = CURRENT_TIMESTAMP,
         summary = ?
     WHERE id = ?
-`).run('Reviewed authentication logic', convId);
+`
+).run('Reviewed authentication logic', convId);
 ```
 
 ### Pattern 3: Cost Tracking
@@ -133,18 +135,24 @@ db.prepare(`
 ```javascript
 // Track costs per request
 function trackCost({ sessionId, model, inputTokens, outputTokens }) {
-    const cost = calculateCost(model, inputTokens, outputTokens);
+  const cost = calculateCost(model, inputTokens, outputTokens);
 
-    db.prepare(`
+  db.prepare(
+    `
         INSERT INTO cost_tracking (session_id, model, input_tokens, output_tokens, cost_usd)
         VALUES (?, ?, ?, ?, ?)
-    `).run(sessionId, model, inputTokens, outputTokens, cost);
+    `
+  ).run(sessionId, model, inputTokens, outputTokens, cost);
 }
 
 // Get total cost for session
-const totalCost = db.prepare(`
+const totalCost = db
+  .prepare(
+    `
     SELECT SUM(cost_usd) as total FROM cost_tracking WHERE session_id = ?
-`).get(sessionId);
+`
+  )
+  .get(sessionId);
 ```
 
 ### Pattern 4: Batch Operations
@@ -152,9 +160,9 @@ const totalCost = db.prepare(`
 ```javascript
 // Use transactions for bulk inserts
 db.transaction(() => {
-    for (const message of bulkMessages) {
-        db.addMessage(message);
-    }
+  for (const message of bulkMessages) {
+    db.addMessage(message);
+  }
 })();
 ```
 
@@ -162,20 +170,26 @@ db.transaction(() => {
 
 ```javascript
 // Save preference
-db.prepare(`
+db.prepare(
+  `
     INSERT INTO user_preferences (user_id, preference_key, preference_value)
     VALUES (?, ?, ?)
     ON CONFLICT(user_id, preference_key) DO UPDATE SET
         preference_value = ?,
         updated_at = CURRENT_TIMESTAMP
-`).run(userId, 'code_style', 'prettier', 'prettier');
+`
+).run(userId, 'code_style', 'prettier', 'prettier');
 
 // Get all preferences
-const prefs = db.prepare(`
+const prefs = db
+  .prepare(
+    `
     SELECT preference_key, preference_value
     FROM user_preferences
     WHERE user_id = ?
-`).all(userId);
+`
+  )
+  .all(userId);
 ```
 
 ---
@@ -215,13 +229,13 @@ Total: 22
 ```javascript
 // ❌ Slow: Create new statement each time
 for (const msg of messages) {
-    db.prepare('INSERT INTO messages ...').run(msg.content);
+  db.prepare('INSERT INTO messages ...').run(msg.content);
 }
 
 // ✅ Fast: Reuse prepared statement
 const stmt = db.prepare('INSERT INTO messages ...');
 for (const msg of messages) {
-    stmt.run(msg.content);
+  stmt.run(msg.content);
 }
 ```
 
@@ -230,14 +244,14 @@ for (const msg of messages) {
 ```javascript
 // ❌ Slow: Individual inserts
 for (const msg of messages) {
-    db.addMessage(msg);
+  db.addMessage(msg);
 }
 
 // ✅ Fast: Batch in transaction
 db.transaction(() => {
-    for (const msg of messages) {
-        db.addMessage(msg);
-    }
+  for (const msg of messages) {
+    db.addMessage(msg);
+  }
 })();
 ```
 
@@ -291,6 +305,7 @@ console.log(plan);
 ```
 
 **Solutions**:
+
 - Add missing indexes
 - Use `LIMIT` clauses
 - Run `VACUUM` to optimize

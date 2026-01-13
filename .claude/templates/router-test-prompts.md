@@ -5,8 +5,10 @@ This document contains test prompts for validating the router template's classif
 ## Test Set 1: Simple Queries (shouldRoute: false)
 
 ### Test 1.1: File Location Query
+
 **Prompt**: "What files handle routing in this project?"
 **Expected**:
+
 ```json
 {
   "intent": "question",
@@ -18,8 +20,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 1.2: Status Check
+
 **Prompt**: "Show me the current workflow status"
 **Expected**:
+
 ```json
 {
   "intent": "question",
@@ -31,8 +35,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 1.3: Single File Read
+
 **Prompt**: "Read the router agent definition file"
 **Expected**:
+
 ```json
 {
   "intent": "question",
@@ -44,8 +50,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 1.4: Quick Explanation
+
 **Prompt**: "Explain what the orchestrator agent does"
 **Expected**:
+
 ```json
 {
   "intent": "question",
@@ -57,8 +65,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 1.5: Documentation Lookup
+
 **Prompt**: "Where can I find the workflow documentation?"
 **Expected**:
+
 ```json
 {
   "intent": "question",
@@ -72,8 +82,10 @@ This document contains test prompts for validating the router template's classif
 ## Test Set 2: Medium Complexity (shouldRoute: true, complexity 0.3-0.6)
 
 ### Test 2.1: Bug Fix
+
 **Prompt**: "Fix the login error in the authentication service"
 **Expected**:
+
 ```json
 {
   "intent": "fix",
@@ -85,8 +97,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 2.2: Documentation Update
+
 **Prompt**: "Update the API documentation for user endpoints"
 **Expected**:
+
 ```json
 {
   "intent": "document",
@@ -98,8 +112,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 2.3: Test Addition
+
 **Prompt**: "Add unit tests for the authentication module"
 **Expected**:
+
 ```json
 {
   "intent": "test",
@@ -111,8 +127,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 2.4: Code Review
+
 **Prompt**: "Review the pull request for security issues"
 **Expected**:
+
 ```json
 {
   "intent": "review",
@@ -124,8 +142,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 2.5: Feature Addition
+
 **Prompt**: "Add password reset functionality to the user service"
 **Expected**:
+
 ```json
 {
   "intent": "implement",
@@ -139,8 +159,10 @@ This document contains test prompts for validating the router template's classif
 ## Test Set 3: High Complexity (shouldRoute: true, complexity 0.7-1.0)
 
 ### Test 3.1: Complex Implementation
+
 **Prompt**: "Implement a new authentication system with JWT and OAuth"
 **Expected**:
+
 ```json
 {
   "intent": "implement",
@@ -152,8 +174,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 3.2: Full Application Build
+
 **Prompt**: "Build an enterprise web application connecting to Google Cloud"
 **Expected**:
+
 ```json
 {
   "intent": "implement",
@@ -165,8 +189,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 3.3: Security Audit
+
 **Prompt**: "Audit the entire codebase for security vulnerabilities"
 **Expected**:
+
 ```json
 {
   "intent": "security",
@@ -178,8 +204,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 3.4: Architecture Design
+
 **Prompt**: "Design a microservices architecture for the user management system"
 **Expected**:
+
 ```json
 {
   "intent": "implement",
@@ -191,8 +219,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 3.5: Major Refactoring
+
 **Prompt**: "Refactor the entire application to use dependency injection"
 **Expected**:
+
 ```json
 {
   "intent": "refactor",
@@ -206,8 +236,10 @@ This document contains test prompts for validating the router template's classif
 ## Test Set 4: Edge Cases and Ambiguity
 
 ### Test 4.1: Multi-Step Workflow
+
 **Prompt**: "Implement authentication and then deploy to production"
 **Expected**:
+
 ```json
 {
   "intent": "implement",
@@ -219,8 +251,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 4.2: Ambiguous Query
+
 **Prompt**: "Do something with the authentication system"
 **Expected**:
+
 ```json
 {
   "intent": "question",
@@ -232,8 +266,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 4.3: Script Creation
+
 **Prompt**: "Create a simple script to backup the database"
 **Expected**:
+
 ```json
 {
   "intent": "implement",
@@ -245,8 +281,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 4.4: Performance Optimization
+
 **Prompt**: "Optimize the database queries in the user service"
 **Expected**:
+
 ```json
 {
   "intent": "optimize",
@@ -258,8 +296,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 4.5: Infrastructure Setup
+
 **Prompt**: "Set up a CI/CD pipeline for the project"
 **Expected**:
+
 ```json
 {
   "intent": "infrastructure",
@@ -273,8 +313,10 @@ This document contains test prompts for validating the router template's classif
 ## Test Set 5: Intent Category Coverage
 
 ### Test 5.1: Analyze Intent
+
 **Prompt**: "Analyze the code quality of the user service"
 **Expected**:
+
 ```json
 {
   "intent": "analyze",
@@ -286,8 +328,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 5.2: Deploy Intent
+
 **Prompt**: "Deploy the application to the staging environment"
 **Expected**:
+
 ```json
 {
   "intent": "deploy",
@@ -299,8 +343,10 @@ This document contains test prompts for validating the router template's classif
 ```
 
 ### Test 5.3: Question Intent (Complex)
+
 **Prompt**: "How would I implement a real-time notification system using WebSockets?"
 **Expected**:
+
 ```json
 {
   "intent": "question",
@@ -331,12 +377,12 @@ This document contains test prompts for validating the router template's classif
 
 ## Performance Benchmarks
 
-| Metric                | Target  | Acceptable | Unacceptable |
-| --------------------- | ------- | ---------- | ------------ |
-| Classification time   | < 100ms | < 200ms    | > 200ms      |
-| Intent accuracy       | > 95%   | > 90%      | < 90%        |
-| Routing accuracy      | 100%    | > 98%      | < 98%        |
-| Average confidence    | > 0.85  | > 0.80     | < 0.80       |
+| Metric              | Target  | Acceptable | Unacceptable |
+| ------------------- | ------- | ---------- | ------------ |
+| Classification time | < 100ms | < 200ms    | > 200ms      |
+| Intent accuracy     | > 95%   | > 90%      | < 90%        |
+| Routing accuracy    | 100%    | > 98%      | < 98%        |
+| Average confidence  | > 0.85  | > 0.80     | < 0.80       |
 
 ## Notes
 

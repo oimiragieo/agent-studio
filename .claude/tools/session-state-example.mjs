@@ -12,7 +12,7 @@ import {
   updateModelUsage,
   getSessionCosts,
   getRoutingMetrics,
-  clearSession
+  clearSession,
 } from './session-state.mjs';
 
 console.log('Session State Manager - Usage Example\n');
@@ -22,7 +22,7 @@ console.log('=====================================\n');
 console.log('1. Initialize Router Session');
 const sessionId = `example-${Date.now()}`;
 const session = initSession(sessionId, 'router', {
-  initialPrompt: 'Build a full-stack web application with authentication'
+  initialPrompt: 'Build a full-stack web application with authentication',
 });
 
 console.log(`   Session ID: ${session.session_id}`);
@@ -36,7 +36,7 @@ recordRoutingDecision(sessionId, {
   type: 'simple',
   complexity: 0.3,
   confidence: 0.9,
-  workflow: null
+  workflow: null,
 });
 console.log('   ✅ Simple routing recorded (complexity: 0.3, confidence: 0.9)\n');
 
@@ -46,7 +46,7 @@ recordRoutingDecision(sessionId, {
   type: 'orchestrator',
   complexity: 0.8,
   confidence: 0.95,
-  workflow: '@.claude/workflows/greenfield-fullstack.yaml'
+  workflow: '@.claude/workflows/greenfield-fullstack.yaml',
 });
 console.log('   ✅ Orchestrator routing recorded (complexity: 0.8, confidence: 0.95)\n');
 
@@ -76,9 +76,15 @@ console.log(`   - Avg Confidence: ${metrics.metrics.averageConfidence.toFixed(2)
 console.log('7. Get Cost Summary');
 const costs = getSessionCosts(sessionId);
 console.log('   Costs by Model:');
-console.log(`   - Haiku:  $${costs.costs.haiku.costUSD.toFixed(6)} (${costs.costs.haiku.inputTokens} in, ${costs.costs.haiku.outputTokens} out)`);
-console.log(`   - Sonnet: $${costs.costs.sonnet.costUSD.toFixed(6)} (${costs.costs.sonnet.inputTokens} in, ${costs.costs.sonnet.outputTokens} out)`);
-console.log(`   - Opus:   $${costs.costs.opus.costUSD.toFixed(6)} (${costs.costs.opus.inputTokens} in, ${costs.costs.opus.outputTokens} out)`);
+console.log(
+  `   - Haiku:  $${costs.costs.haiku.costUSD.toFixed(6)} (${costs.costs.haiku.inputTokens} in, ${costs.costs.haiku.outputTokens} out)`
+);
+console.log(
+  `   - Sonnet: $${costs.costs.sonnet.costUSD.toFixed(6)} (${costs.costs.sonnet.inputTokens} in, ${costs.costs.sonnet.outputTokens} out)`
+);
+console.log(
+  `   - Opus:   $${costs.costs.opus.costUSD.toFixed(6)} (${costs.costs.opus.inputTokens} in, ${costs.costs.opus.outputTokens} out)`
+);
 console.log(`   - TOTAL:  $${costs.costs.total.toFixed(6)}\n`);
 
 // Example 8: Load Session State

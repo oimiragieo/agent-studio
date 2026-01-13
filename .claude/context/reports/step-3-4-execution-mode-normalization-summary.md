@@ -27,23 +27,23 @@ Created `scripts/migrate-cuj-execution-modes.mjs` with the following capabilitie
 
 ### Successfully Migrated (15 CUJs)
 
-| CUJ      | Old Mode                           | New Mode | Workflow File                                          |
-| -------- | ---------------------------------- | -------- | ------------------------------------------------------ |
-| CUJ-005  | `greenfield-fullstack.yaml`        | workflow | `.claude/workflows/greenfield-fullstack.yaml`          |
-| CUJ-010  | `brownfield-fullstack.yaml`        | workflow | `.claude/workflows/brownfield-fullstack.yaml`          |
-| CUJ-015  | workflow (missing workflow_file)   | workflow | `.claude/workflows/code-quality.yaml`                  |
-| CUJ-020  | workflow (missing workflow_file)   | workflow | `.claude/workflows/greenfield-fullstack.yaml`          |
-| CUJ-025  | workflow (missing workflow_file)   | workflow | `.claude/workflows/ai-system.yaml`                     |
-| CUJ-035  | workflow (missing workflow_file)   | workflow | `.claude/workflows/performance.yaml`                   |
-| CUJ-040  | workflow (missing workflow_file)   | workflow | `.claude/workflows/incident-response.yaml`             |
-| CUJ-045  | workflow (missing workflow_file)   | workflow | `.claude/workflows/code-quality.yaml`                  |
-| CUJ-050  | workflow (missing workflow_file)   | workflow | `.claude/workflows/brownfield-fullstack.yaml`          |
-| CUJ-055  | workflow (missing workflow_file)   | workflow | `.claude/workflows/legacy-modernization.yaml`          |
-| CUJ-060  | workflow (missing workflow_file)   | workflow | `.claude/workflows/ai-system.yaml`                     |
-| CUJ-061  | `security-and-compliance.yaml` (1) | workflow | `.claude/workflows/artifact-publishing-flow.yaml` (2)  |
-| CUJ-062  | workflow (missing workflow_file)   | workflow | `.claude/workflows/multi-platform-deployment.yaml`     |
-| CUJ-063  | `recovery-test-flow.yaml`          | workflow | `.claude/workflows/recovery-test-flow.yaml`            |
-| CUJ-064  | workflow (missing workflow_file)   | workflow | `.claude/workflows/greenfield-fullstack.yaml`          |
+| CUJ     | Old Mode                           | New Mode | Workflow File                                         |
+| ------- | ---------------------------------- | -------- | ----------------------------------------------------- |
+| CUJ-005 | `greenfield-fullstack.yaml`        | workflow | `.claude/workflows/greenfield-fullstack.yaml`         |
+| CUJ-010 | `brownfield-fullstack.yaml`        | workflow | `.claude/workflows/brownfield-fullstack.yaml`         |
+| CUJ-015 | workflow (missing workflow_file)   | workflow | `.claude/workflows/code-quality.yaml`                 |
+| CUJ-020 | workflow (missing workflow_file)   | workflow | `.claude/workflows/greenfield-fullstack.yaml`         |
+| CUJ-025 | workflow (missing workflow_file)   | workflow | `.claude/workflows/ai-system.yaml`                    |
+| CUJ-035 | workflow (missing workflow_file)   | workflow | `.claude/workflows/performance.yaml`                  |
+| CUJ-040 | workflow (missing workflow_file)   | workflow | `.claude/workflows/incident-response.yaml`            |
+| CUJ-045 | workflow (missing workflow_file)   | workflow | `.claude/workflows/code-quality.yaml`                 |
+| CUJ-050 | workflow (missing workflow_file)   | workflow | `.claude/workflows/brownfield-fullstack.yaml`         |
+| CUJ-055 | workflow (missing workflow_file)   | workflow | `.claude/workflows/legacy-modernization.yaml`         |
+| CUJ-060 | workflow (missing workflow_file)   | workflow | `.claude/workflows/ai-system.yaml`                    |
+| CUJ-061 | `security-and-compliance.yaml` (1) | workflow | `.claude/workflows/artifact-publishing-flow.yaml` (2) |
+| CUJ-062 | workflow (missing workflow_file)   | workflow | `.claude/workflows/multi-platform-deployment.yaml`    |
+| CUJ-063 | `recovery-test-flow.yaml`          | workflow | `.claude/workflows/recovery-test-flow.yaml`           |
+| CUJ-064 | workflow (missing workflow_file)   | workflow | `.claude/workflows/greenfield-fullstack.yaml`         |
 
 **Notes**:
 
@@ -52,9 +52,9 @@ Created `scripts/migrate-cuj-execution-modes.mjs` with the following capabilitie
 
 ### Excluded from Migration (1 CUJ)
 
-| CUJ      | Reason                                       |
-| -------- | -------------------------------------------- |
-| CUJ-030  | Already uses `skill-only` mode (not workflow) |
+| CUJ     | Reason                                        |
+| ------- | --------------------------------------------- |
+| CUJ-030 | Already uses `skill-only` mode (not workflow) |
 
 ## Validation Results
 

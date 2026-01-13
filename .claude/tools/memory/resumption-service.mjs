@@ -249,7 +249,7 @@ export class ConversationResumptionService {
 
       let currentConversation = null;
 
-      messages.forEach((message) => {
+      messages.forEach(message => {
         // Add conversation header if changed
         if (message.conversation_title && message.conversation_title !== currentConversation) {
           currentConversation = message.conversation_title;

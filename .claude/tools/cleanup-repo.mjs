@@ -73,8 +73,8 @@ const CLEANUP_PATTERNS = {
   // Malformed Windows path files
   malformedPaths: {
     patterns: [
-      'C:*',           // Files starting with C: (malformed Windows paths)
-      'nul',           // Windows reserved names
+      'C:*', // Files starting with C: (malformed Windows paths)
+      'nul', // Windows reserved names
       'con',
       'prn',
       'aux',
@@ -92,11 +92,7 @@ const CLEANUP_PATTERNS = {
 
   // Old log files
   oldLogs: {
-    patterns: [
-      '*.log',
-      '.claude/context/logs/*.log',
-      '.claude/context/logs/*.txt',
-    ],
+    patterns: ['*.log', '.claude/context/logs/*.log', '.claude/context/logs/*.txt'],
     ageInHours: 168, // 7 days
     description: 'Log files older than 7 days',
   },
@@ -122,10 +118,14 @@ const CLEANUP_PATTERNS = {
 
   // External dependencies in root (shouldn't be there)
   externalDeps: {
-    patterns: [
-      'crewAI-main/',
-    ],
+    patterns: ['crewAI-main/'],
     description: 'External dependencies in root directory',
+  },
+
+  // Nested .claude folders (CRITICAL - violates single source of truth)
+  nestedClaudeFolders: {
+    pattern: '.claude/**/.claude',
+    description: 'Nested .claude directory structures',
   },
 };
 
@@ -257,7 +257,30 @@ function isMalformedWindowsPath(filePath) {
   }
 
   // Check for Windows reserved names
-  const reservedNames = ['nul', 'con', 'prn', 'aux', 'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9', 'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9'];
+  const reservedNames = [
+    'nul',
+    'con',
+    'prn',
+    'aux',
+    'com1',
+    'com2',
+    'com3',
+    'com4',
+    'com5',
+    'com6',
+    'com7',
+    'com8',
+    'com9',
+    'lpt1',
+    'lpt2',
+    'lpt3',
+    'lpt4',
+    'lpt5',
+    'lpt6',
+    'lpt7',
+    'lpt8',
+    'lpt9',
+  ];
   if (reservedNames.includes(basename.toLowerCase())) {
     return true;
   }
@@ -278,8 +301,8 @@ async function askConfirmation(message) {
     output: process.stdout,
   });
 
-  return new Promise((resolve) => {
-    rl.question(`${message} (y/N): `, (answer) => {
+  return new Promise(resolve => {
+    rl.question(`${message} (y/N): `, answer => {
       rl.close();
       resolve(answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
     });
@@ -332,7 +355,9 @@ async function findTmpClaudeDirs() {
     }
 
     // Also check .claude/tools/
-    const toolsPattern = path.join(projectRoot, '.claude', 'tools', 'tmpclaude-*').replace(/\\/g, '/');
+    const toolsPattern = path
+      .join(projectRoot, '.claude', 'tools', 'tmpclaude-*')
+      .replace(/\\/g, '/');
     const toolsMatches = await glob(toolsPattern, {
       absolute: true,
       dot: false,
@@ -395,11 +420,12 @@ async function findMalformedPaths() {
 
       // If it starts with C and contains strange characters or patterns
       const utf8Marker = String.fromCharCode(0xef); // UTF-8 marker character
-      if (basename.startsWith('C') && (
-        /C[^a-zA-Z0-9_.-]/.test(basename) || // C followed by non-standard char
-        basename.includes(utf8Marker) || // UTF-8 encoded marker
-        basename.length > 100 // Suspiciously long
-      )) {
+      if (
+        basename.startsWith('C') &&
+        (/C[^a-zA-Z0-9_.-]/.test(basename) || // C followed by non-standard char
+          basename.includes(utf8Marker) || // UTF-8 encoded marker
+          basename.length > 100) // Suspiciously long
+      ) {
         if (!results.includes(match) && !isProtectedPath(match)) {
           results.push(match);
         }
@@ -566,6 +592,37 @@ async function findExternalDeps() {
   return results;
 }
 
+/**
+ * Find nested .claude folders (CRITICAL)
+ */
+async function findNestedClaudeFolders() {
+  const results = [];
+
+  try {
+    // Search for any .claude folder that is inside another .claude folder
+    const pattern = path.join(projectRoot, '.claude', '**', '.claude').replace(/\\/g, '/');
+    const matches = await glob(pattern, {
+      absolute: true,
+      dot: true, // Include hidden directories
+    });
+
+    for (const match of matches) {
+      // Verify this is actually a nested .claude folder
+      const relativePath = path.relative(projectRoot, match);
+      const segments = relativePath.split(/[\/\\]/);
+      const claudeCount = segments.filter(s => s === '.claude').length;
+
+      if (claudeCount > 1 && !isProtectedPath(match)) {
+        results.push(match);
+      }
+    }
+  } catch (error) {
+    console.error(`Error finding nested .claude folders: ${error.message}`);
+  }
+
+  return results;
+}
+
 // ============================================================================
 // MAIN CLEANUP LOGIC
 // ============================================================================
@@ -584,6 +641,7 @@ async function runCleanup() {
 
   // Collect all files to delete
   const filesToDelete = {
+    nestedClaudeFolders: await findNestedClaudeFolders(), // Check this FIRST
     tmpclaudeDirs: await findTmpClaudeDirs(),
     malformedPaths: await findMalformedPaths(),
     claudeTempFiles: await findClaudeTempFiles(),
@@ -689,10 +747,10 @@ async function runCleanup() {
 // ============================================================================
 
 runCleanup()
-  .then((exitCode) => {
+  .then(exitCode => {
     process.exit(exitCode);
   })
-  .catch((error) => {
+  .catch(error => {
     console.error('Fatal error:', error);
     process.exit(1);
   });

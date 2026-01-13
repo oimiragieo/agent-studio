@@ -9,6 +9,7 @@
 ## Problem Statement
 
 Original sync-cuj-registry.mjs (lines 334, 346) only detected agents/skills in backticks:
+
 - Pattern: `` - `agent-name` ``
 - **Result**: Many CUJs using bold lists or title case format were missed
 - **Impact**: Registry showed "Unique Agents: 0" and missed many skills
@@ -20,23 +21,28 @@ Original sync-cuj-registry.mjs (lines 334, 346) only detected agents/skills in b
 ### Original Detection (Lines 334-342, 345-354)
 
 **Agents (Line 334-342)**:
+
 ```javascript
 const agentMatches = agentsSection[1].matchAll(/[-*]\s+`?([a-z-]+)`?/g);
 ```
+
 - Only captured lowercase with hyphens
 - Required backticks or direct format
 - **Missed**: Title case agents (e.g., "Security Architect"), chain formats
 
 **Skills (Line 345-354)**:
+
 ```javascript
 const skillMatches = skillsSection[1].matchAll(/[-*]\s+`([^`]+)`/g);
 ```
+
 - **Required backticks** - failed if backticks missing
 - **Missed**: Bold list format, plain lists without backticks
 
 ### CUJ Format Variations Found
 
 **Agent Formats**:
+
 1. `` - `developer` `` - Backticks (original detection worked)
 2. `- Developer (description)` - Title case (MISSED)
 3. `- Security Architect` - Multi-word title case (MISSED)
@@ -44,7 +50,8 @@ const skillMatches = skillsSection[1].matchAll(/[-*]\s+`([^`]+)`/g);
 5. `- Planner → Analyst → PM` - Unicode arrows (MISSED)
 
 **Skill Formats**:
-1. `` - `scaffolder` - Description `` - Backticks (original detection worked)
+
+1. ``- `scaffolder` - Description`` - Backticks (original detection worked)
 2. `- **scaffolder**: Description` - Bold list (MISSED)
 3. `- plan-generator (description)` - Plain list (MISSED)
 
@@ -55,57 +62,75 @@ const skillMatches = skillsSection[1].matchAll(/[-*]\s+`([^`]+)`/g);
 ### Enhanced Agent Detection (Lines 332-383)
 
 **Pattern 1: Backticks** - Original detection (kept)
+
 ```javascript
 const backtickMatches = sectionText.matchAll(/`([a-z][a-z-]+)`/g);
 ```
 
 **Pattern 2: Chain Format** - NEW
+
 ```javascript
-const chainLines = sectionText.split('\n').filter(line => line.includes('->') || line.includes('→'));
+const chainLines = sectionText
+  .split('\n')
+  .filter(line => line.includes('->') || line.includes('→'));
 const agentNames = line.split(/(?:->|→)/).map(part => part.trim().replace(/^[-*]\s+/, ''));
 ```
+
 - Handles both ASCII `->` and Unicode `→` arrows
 - Extracts ALL agents in chain (Planner → Developer → QA)
 
 **Pattern 3: Title Case** - NEW
+
 ```javascript
-const titleCaseMatches = sectionText.matchAll(/^[-*]\s+([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*)(?:\s+\(|$)/gm);
+const titleCaseMatches = sectionText.matchAll(
+  /^[-*]\s+([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*)(?:\s+\(|$)/gm
+);
 const agent = agentName.toLowerCase().replace(/\s+/g, '-');
 ```
+
 - Matches "Security Architect", "Database Architect", etc.
 - Converts to kebab-case: "security-architect"
 
 **Pattern 4: Lowercase Hyphens** - Enhanced
+
 ```javascript
 const lowercaseMatches = sectionText.matchAll(/[-*]\s+([a-z][a-z-]+)(?:\s|$|\()/g);
 ```
+
 - Handles direct lowercase format
 - Filters out false positives: "none", "skill", "skill-based"
 
 ### Enhanced Skill Detection (Lines 387-431)
 
 **Pattern 1: Backticks** - Original detection (kept)
+
 ```javascript
 const backtickMatches = sectionText.matchAll(/`([a-z][a-z-]+)`/g);
 ```
 
 **Pattern 2: Bold List** - NEW
+
 ```javascript
 const boldListMatches = sectionText.matchAll(/[-*]\s+\*\*([a-z][a-z-]+)\*\*:/g);
 ```
+
 - Matches: `- **skill-name**: Description`
 
 **Pattern 3: Plain List** - NEW
+
 ```javascript
 const plainListMatches = sectionText.matchAll(/[-*]\s+([a-z][a-z-]+)(?:\s+-\s+|\s+\()/g);
 ```
+
 - Matches: `- skill-name (description)` or `- skill-name - description`
 - Excludes false positives: "none", "skill", "skill-based", "manual", "setup", "phase"
 
 **Pattern 4: Section Headers** - NEW
+
 ```javascript
 const sectionHeaderMatches = sectionText.matchAll(/###\s+`?([a-z][a-z-]+)`?/g);
 ```
+
 - Handles skills listed as subsections
 
 ---
@@ -139,12 +164,14 @@ Created comprehensive test suite: `.claude/tools/tests/sync-cuj-registry.test.mj
 ## Verification Results
 
 ### Before Fix
+
 ```
 Unique Agents: 0
 Unique Skills: ~5-10 (many missed)
 ```
 
 ### After Fix
+
 ```
 Unique Agents: 36
 Unique Skills: 23
@@ -152,24 +179,30 @@ Total CUJs: 61
 ```
 
 ### Detailed Agent Detection
+
 All format variations now detected:
+
 - Backticks: `developer`, `architect`
 - Title case: Security Architect, Database Architect
 - Chains: Planner → Developer → QA
 - Mixed: All formats in same CUJ
 
 ### Detailed Skill Detection
+
 All format variations now detected:
+
 - Backticks: `scaffolder`, `rule-auditor`
 - Bold: **plan-generator**: Description
 - Plain: doc-generator (description)
 
 ### Registry Validation
+
 ```bash
 node .claude/tools/sync-cuj-registry.mjs
 ```
 
 Output:
+
 ```
 ✅ Parsed 61 CUJ files
 ✅ Schema validation passed
@@ -212,6 +245,7 @@ Output:
 ## Integration with Step 1.3
 
 This fix depends on Step 1.3 completion:
+
 - ✅ Registry schema updated with all categories
 - ✅ CATEGORIES mapping in sync-cuj-registry.mjs includes all CUJ IDs
 - ✅ Detection now populates agents/skills arrays correctly
@@ -221,6 +255,7 @@ This fix depends on Step 1.3 completion:
 ## Next Steps
 
 Ready for Step 2.3: Fix Workflow Path Resolution
+
 - Workflow detection heuristics need improvement
 - Many CUJs show null workflow when execution_mode is "workflow"
 - Will implement workflow path resolution from CUJ-INDEX.md table

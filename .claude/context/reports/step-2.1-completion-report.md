@@ -24,6 +24,7 @@
 **Location**: Lines 451-523
 
 **Changes**:
+
 - Split `requiredFields` into:
   - **Required** (MUST have): `['name', 'description']` → Error if missing
   - **Recommended** (SHOULD have): `['allowed-tools', 'version']` → Warning if missing
@@ -31,6 +32,7 @@
 - No breaking changes to existing validation logic
 
 **Before**:
+
 ```javascript
 const requiredFields = ['name', 'description', 'allowed-tools', 'version'];
 for (const field of requiredFields) {
@@ -41,6 +43,7 @@ for (const field of requiredFields) {
 ```
 
 **After**:
+
 ```javascript
 // Check required fields (MUST have these)
 const requiredFields = ['name', 'description'];
@@ -63,10 +66,12 @@ for (const field of recommendedFields) {
 
 **Lines of Code**: 413 lines
 **Test Coverage**:
+
 - ✅ 20 test cases across 7 test suites
 - ✅ 100% pass rate
 
 **Test Suites**:
+
 1. **Required Fields Validation** (4 tests)
    - Pass with all required fields
    - Pass with only required fields
@@ -106,6 +111,7 @@ for (const field of recommendedFields) {
 **Purpose**: Comprehensive documentation of field requirements
 
 **Contents**:
+
 - Field classification (required vs recommended vs optional)
 - Validation behavior with examples
 - Error level definitions
@@ -117,6 +123,7 @@ for (const field of recommendedFields) {
 ## Validation Results
 
 ### Before Changes
+
 ```
 ❌ FAILED: 78 errors
 - 73 skills missing version field (ERROR)
@@ -125,6 +132,7 @@ for (const field of recommendedFields) {
 ```
 
 ### After Changes
+
 ```
 ✅ PASSED: 0 errors, 79 warnings
 - 73 skills missing version field (WARNING)
@@ -134,6 +142,7 @@ for (const field of recommendedFields) {
 ```
 
 ### Test Results
+
 ```
 ✅ 20/20 tests passing
 - 0 failures
@@ -146,6 +155,7 @@ for (const field of recommendedFields) {
 ## Impact Analysis
 
 ### Skills Affected
+
 - **Total skills**: 108
 - **Skills with warnings**: 78 (72%)
   - 73 missing `version`
@@ -153,11 +163,13 @@ for (const field of recommendedFields) {
 - **Skills with no warnings**: 30 (28%)
 
 ### Backwards Compatibility
+
 - ✅ **No breaking changes**: All existing skills remain valid
 - ✅ **Graceful degradation**: Skills without recommended fields still work
 - ✅ **Forward compatible**: New skills encouraged to include all fields
 
 ### Developer Experience
+
 - ✅ Clear distinction between errors and warnings
 - ✅ Actionable feedback: "Missing recommended field: version"
 - ✅ Gradual migration path for legacy skills
@@ -184,6 +196,7 @@ for (const field of recommendedFields) {
 ## Testing Evidence
 
 ### Unit Tests
+
 ```bash
 $ node --test tests/validate-skills.test.mjs
 ✅ 20 tests passed
@@ -192,6 +205,7 @@ $ node --test tests/validate-skills.test.mjs
 ```
 
 ### Integration Test (pnpm validate)
+
 ```bash
 $ pnpm validate
 ✅ All 108 skills validated
@@ -201,6 +215,7 @@ $ pnpm validate
 ```
 
 ### Specific Skills Tested
+
 - ✅ `rule-auditor`: Complete skill with all fields
 - ✅ `explaining-rules`: Minimal skill (name + description only)
 - ✅ `repo-rag`: Partial skill (has allowed-tools, no version)
@@ -210,31 +225,34 @@ $ pnpm validate
 
 ## Success Criteria Met
 
-| Criterion | Status | Evidence |
-|-----------|--------|----------|
-| All 108 skills pass validation | ✅ | Exit code 0, no errors |
-| Clear distinction between required and optional | ✅ | Errors vs warnings |
-| Warnings for missing recommended fields | ✅ | 79 warnings displayed |
-| `pnpm validate` exits 0 | ✅ | Verified in testing |
-| Test coverage for skill validation | ✅ | 20 comprehensive tests |
-| Documentation of field requirements | ✅ | SKILL_FIELD_REQUIREMENTS.md |
+| Criterion                                       | Status | Evidence                    |
+| ----------------------------------------------- | ------ | --------------------------- |
+| All 108 skills pass validation                  | ✅     | Exit code 0, no errors      |
+| Clear distinction between required and optional | ✅     | Errors vs warnings          |
+| Warnings for missing recommended fields         | ✅     | 79 warnings displayed       |
+| `pnpm validate` exits 0                         | ✅     | Verified in testing         |
+| Test coverage for skill validation              | ✅     | 20 comprehensive tests      |
+| Documentation of field requirements             | ✅     | SKILL_FIELD_REQUIREMENTS.md |
 
 ---
 
 ## Recommendations
 
 ### Immediate Actions
+
 1. ✅ **DONE**: Update validation logic (completed)
 2. ✅ **DONE**: Create test suite (completed)
 3. ✅ **DONE**: Document field requirements (completed)
 
 ### Future Improvements
+
 1. **Gradual Migration**: Add `version` field to skills as they're updated
 2. **Automated Migration**: Create script to bulk-add `version: 1.0` to all skills
 3. **CI Integration**: Add test suite to CI pipeline
 4. **Linting**: Add pre-commit hook to warn about missing recommended fields
 
 ### Phase 2.2 Preparation
+
 - Step 2.1 completion unblocks Step 2.2 (Agent/Skill Detection)
 - All skill validation infrastructure is now stable
 - Ready to proceed with sync-cuj-registry.mjs fixes
@@ -244,17 +262,20 @@ $ pnpm validate
 ## Lessons Learned
 
 ### What Went Well
+
 - **Backwards compatibility preserved**: No existing skills broken
 - **Clear error messages**: Developers know exactly what's wrong
 - **Comprehensive testing**: 100% test coverage achieved
 - **Good documentation**: SKILL_FIELD_REQUIREMENTS.md is thorough
 
 ### What Could Be Improved
+
 - **Migration automation**: Could provide script to bulk-update skills
 - **Warning aggregation**: Could summarize warnings by type
 - **Version tracking**: Could add version history to skill frontmatter
 
 ### Technical Insights
+
 - **js-yaml vs yaml**: Project uses `js-yaml` not `yaml` package
 - **YAML parsing**: Need closing `---` marker for frontmatter
 - **Field naming**: Fields with colons (e.g., `context:fork`) work in YAML

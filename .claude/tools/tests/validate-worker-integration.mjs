@@ -180,13 +180,17 @@ if (edgeFailed > 0) {
 console.log('=== Validation Summary ===\n');
 console.log(`  Feature Flag: ✅ Working`);
 console.log(`  Supervisor Init: ✅ Working`);
-console.log(`  Task Classification: ✅ ${passed + edgePassed}/${testCases.length + edgeCases.length} tests passed`);
+console.log(
+  `  Task Classification: ✅ ${passed + edgePassed}/${testCases.length + edgeCases.length} tests passed`
+);
 console.log(`  Workers Enabled: ${USE_WORKERS ? 'YES' : 'NO (default)'}`);
 
 console.log('\n✅ ALL VALIDATIONS PASSED\n');
 console.log('Next steps:');
 console.log('  1. Run full integration tests: pnpm test:tools');
-console.log('  2. Test with workers enabled: USE_WORKERS=true node orchestrator-entry.mjs --prompt "test"');
+console.log(
+  '  2. Test with workers enabled: USE_WORKERS=true node orchestrator-entry.mjs --prompt "test"'
+);
 console.log('  3. Validate production deployment with V8 flags: pnpm agent:production\n');
 
 process.exit(0);

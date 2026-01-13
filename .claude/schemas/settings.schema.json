@@ -96,11 +96,7 @@
     "routing": {
       "type": "object",
       "description": "Routing configuration",
-      "required": [
-        "complexity_threshold",
-        "cost_optimization_enabled",
-        "fallback_to_sonnet"
-      ],
+      "required": ["complexity_threshold", "cost_optimization_enabled", "fallback_to_sonnet"],
       "properties": {
         "complexity_threshold": {
           "type": "number",

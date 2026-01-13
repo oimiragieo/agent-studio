@@ -15,7 +15,7 @@ import {
   routeToOrchestrator,
   trackCosts,
   getCostSummary,
-  cleanupOldSessions
+  cleanupOldSessions,
 } from './router-session-handler.mjs';
 
 // Test utilities
@@ -58,7 +58,10 @@ async function runTests() {
   {
     const result = await classifyIntent('write a python script to backup files');
     assert(result.intent === 'script', 'Classifies script intent correctly');
-    assert(result.complexity === 'low' || result.complexity === 'medium', 'Assigns appropriate complexity');
+    assert(
+      result.complexity === 'low' || result.complexity === 'medium',
+      'Assigns appropriate complexity'
+    );
   }
 
   // Test 1.3: Analysis Intent
@@ -137,7 +140,7 @@ async function runTests() {
       analysis: await selectWorkflow('analysis', 'medium'),
       infrastructure: await selectWorkflow('infrastructure', 'high'),
       mobile: await selectWorkflow('mobile', 'medium'),
-      ai_system: await selectWorkflow('ai_system', 'high')
+      ai_system: await selectWorkflow('ai_system', 'high'),
     };
 
     assert(workflows.web_app.includes('greenfield'), 'Maps web_app to greenfield workflow');
@@ -162,7 +165,7 @@ async function runTests() {
       sessionId,
       'claude-3-5-haiku-20241022',
       1000, // input tokens
-      500   // output tokens
+      500 // output tokens
     );
 
     assert(costResult.this_request.cost_usd > 0, 'Calculates cost correctly');
@@ -188,7 +191,7 @@ async function runTests() {
       sessionId,
       'claude-3-5-haiku-20241022',
       1_000_000, // 1M input tokens
-      1_000_000  // 1M output tokens
+      1_000_000 // 1M output tokens
     );
 
     // Expected: $1 + $5 = $6
@@ -196,7 +199,10 @@ async function runTests() {
     const actualCost = result.this_request.cost_usd;
     const withinTolerance = Math.abs(actualCost - expectedCost) < 0.01;
 
-    assert(withinTolerance, `Cost accuracy: expected ~$${expectedCost}, got $${actualCost.toFixed(2)}`);
+    assert(
+      withinTolerance,
+      `Cost accuracy: expected ~$${expectedCost}, got $${actualCost.toFixed(2)}`
+    );
   }
 
   // ===========================
@@ -218,8 +224,14 @@ async function runTests() {
 
     assert(routeResult.success === true, 'Routing succeeds');
     assert(routeResult.handoff_data !== undefined, 'Provides handoff data');
-    assert(routeResult.handoff_data.workflow.includes('greenfield'), 'Includes workflow in handoff');
-    assert(routeResult.handoff_data.routing_metadata.skip_redundant_routing === true, 'Flags to skip redundant routing');
+    assert(
+      routeResult.handoff_data.workflow.includes('greenfield'),
+      'Includes workflow in handoff'
+    );
+    assert(
+      routeResult.handoff_data.routing_metadata.skip_redundant_routing === true,
+      'Flags to skip redundant routing'
+    );
   }
 
   // ===========================
@@ -281,7 +293,7 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch((error) => {
+runTests().catch(error => {
   console.error('Test suite failed:', error);
   process.exit(1);
 });

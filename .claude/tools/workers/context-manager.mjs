@@ -63,7 +63,8 @@ export class ContextManager {
       [ContextTier.HEAD]: options.headTokens || DEFAULT_TOKEN_BUDGETS[ContextTier.HEAD],
       [ContextTier.RECENT]: options.recentTokens || DEFAULT_TOKEN_BUDGETS[ContextTier.RECENT],
       [ContextTier.MID_TERM]: options.midTermTokens || DEFAULT_TOKEN_BUDGETS[ContextTier.MID_TERM],
-      [ContextTier.LONG_TERM]: options.longTermTokens || DEFAULT_TOKEN_BUDGETS[ContextTier.LONG_TERM],
+      [ContextTier.LONG_TERM]:
+        options.longTermTokens || DEFAULT_TOKEN_BUDGETS[ContextTier.LONG_TERM],
     };
   }
 
@@ -74,9 +75,8 @@ export class ContextManager {
    * @returns {Promise<object>} Context segments by tier
    */
   async loadContext(sessionId, tier = 'all') {
-    const tiersToLoad = tier === 'all'
-      ? Object.values(ContextTier)
-      : Array.isArray(tier) ? tier : [tier];
+    const tiersToLoad =
+      tier === 'all' ? Object.values(ContextTier) : Array.isArray(tier) ? tier : [tier];
 
     const context = {};
 
@@ -241,7 +241,10 @@ export class ContextManager {
     await this.saveContextSegment(sessionId, ContextTier.MID_TERM, summary, summaryTokens);
 
     // Delete compacted segments from RECENT
-    await this._deleteSegments(sessionId, oldSegments.map(s => s.id));
+    await this._deleteSegments(
+      sessionId,
+      oldSegments.map(s => s.id)
+    );
   }
 
   /**
@@ -263,10 +266,18 @@ export class ContextManager {
     const referenceTokens = this.estimateTokens(vectorReference);
 
     // Insert into LONG_TERM tier
-    await this.saveContextSegment(sessionId, ContextTier.LONG_TERM, vectorReference, referenceTokens);
+    await this.saveContextSegment(
+      sessionId,
+      ContextTier.LONG_TERM,
+      vectorReference,
+      referenceTokens
+    );
 
     // Delete compacted segments from MID_TERM
-    await this._deleteSegments(sessionId, oldSegments.map(s => s.id));
+    await this._deleteSegments(
+      sessionId,
+      oldSegments.map(s => s.id)
+    );
   }
 
   /**
@@ -284,7 +295,10 @@ export class ContextManager {
     }
 
     // Delete archived segments (future: move to external storage)
-    await this._deleteSegments(sessionId, oldSegments.map(s => s.id));
+    await this._deleteSegments(
+      sessionId,
+      oldSegments.map(s => s.id)
+    );
   }
 
   /**

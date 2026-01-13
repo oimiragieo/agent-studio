@@ -24,92 +24,86 @@ let managerInstance = null;
  * @returns {Promise<MemoryInjectionManager>}
  */
 async function getManager() {
-    if (!managerInstance) {
-        managerInstance = createMemoryInjectionManager();
-        await managerInstance.initialize();
-    }
+  if (!managerInstance) {
+    managerInstance = createMemoryInjectionManager();
+    await managerInstance.initialize();
+  }
 
-    return managerInstance;
+  return managerInstance;
 }
 
 /**
  * Main hook function
  */
 async function main() {
-    try {
-        // Read input from stdin
-        const input = await new Promise((resolve, reject) => {
-            let data = '';
+  try {
+    // Read input from stdin
+    const input = await new Promise((resolve, reject) => {
+      let data = '';
 
-            process.stdin.on('data', chunk => {
-                data += chunk;
-            });
+      process.stdin.on('data', chunk => {
+        data += chunk;
+      });
 
-            process.stdin.on('end', () => {
-                try {
-                    resolve(JSON.parse(data));
-                } catch (error) {
-                    reject(new Error(`Invalid JSON input: ${error.message}`));
-                }
-            });
+      process.stdin.on('end', () => {
+        try {
+          resolve(JSON.parse(data));
+        } catch (error) {
+          reject(new Error(`Invalid JSON input: ${error.message}`));
+        }
+      });
 
-            process.stdin.on('error', reject);
+      process.stdin.on('error', reject);
 
-            // Timeout after 1 second
-            setTimeout(() => {
-                reject(new Error('stdin read timeout'));
-            }, 1000);
-        });
+      // Timeout after 1 second
+      setTimeout(() => {
+        reject(new Error('stdin read timeout'));
+      }, 1000);
+    });
 
-        const {
-            tool_name: toolName,
-            tool_input: toolInput,
-            tool_result: toolResult,
-            duration
-        } = input;
+    const { tool_name: toolName, tool_input: toolInput, tool_result: toolResult, duration } = input;
 
-        // Extract context
-        const context = {
-            sessionId: process.env.CLAUDE_SESSION_ID || 'default',
-            toolName,
-            toolParams: toolInput,
-            duration
-        };
+    // Extract context
+    const context = {
+      sessionId: process.env.CLAUDE_SESSION_ID || 'default',
+      toolName,
+      toolParams: toolInput,
+      duration,
+    };
 
-        // Get manager instance (lazy init)
-        const manager = await getManager();
+    // Get manager instance (lazy init)
+    const manager = await getManager();
 
-        // Capture tool result (async, non-blocking)
-        // Use setImmediate to return immediately without waiting
-        setImmediate(async () => {
-            try {
-                await manager.captureToolResult(context, toolResult);
-            } catch (error) {
-                console.error(`[Memory Capture] Background capture error: ${error.message}`);
-            }
-        });
+    // Capture tool result (async, non-blocking)
+    // Use setImmediate to return immediately without waiting
+    setImmediate(async () => {
+      try {
+        await manager.captureToolResult(context, toolResult);
+      } catch (error) {
+        console.error(`[Memory Capture] Background capture error: ${error.message}`);
+      }
+    });
 
-        // Return immediately (don't block tool completion)
-        const result = {
-            captured: true,
-            async: true
-        };
+    // Return immediately (don't block tool completion)
+    const result = {
+      captured: true,
+      async: true,
+    };
 
-        process.stdout.write(JSON.stringify(result));
-        process.exit(0);
+    process.stdout.write(JSON.stringify(result));
+    process.exit(0);
+  } catch (error) {
+    // FAIL-SAFE: Never block tool completion
+    console.error(`[Memory Capture] Error (non-blocking): ${error.message}`);
 
-    } catch (error) {
-        // FAIL-SAFE: Never block tool completion
-        console.error(`[Memory Capture] Error (non-blocking): ${error.message}`);
+    const result = {
+      captured: false,
+      error: error.message,
+    };
 
-        const result = {
-            captured: false,
-            error: error.message
-        };
-
-        process.stdout.write(JSON.stringify(result));
-        process.exit(0);
-    }
+    process.stdout.write(JSON.stringify(result));
+    process.exit(0);
+  }
 }
 
 // Execute

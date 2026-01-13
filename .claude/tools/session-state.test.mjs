@@ -24,7 +24,7 @@ import {
   getSessionCosts,
   getRoutingMetrics,
   listSessions,
-  cleanupOldSessions
+  cleanupOldSessions,
 } from './session-state.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -68,7 +68,7 @@ console.log('Running Session State Manager Tests...\n');
   const sessionId = `test-router-${Date.now()}`;
 
   const state = initSession(sessionId, 'router', {
-    initialPrompt: 'Test prompt for router'
+    initialPrompt: 'Test prompt for router',
   });
 
   assert.equal(state.session_id, sessionId, 'Session ID should match');
@@ -78,7 +78,11 @@ console.log('Running Session State Manager Tests...\n');
   assert.equal(state.routingDecisions.total, 0, 'Routing decisions should start at 0');
   assert.equal(state.costs.total, 0, 'Total cost should start at 0');
   assert.ok(state.modelHistory.length === 1, 'Model history should have 1 entry');
-  assert.equal(state.modelHistory[0].model, 'claude-3-5-haiku-20241022', 'Model history should record initial model');
+  assert.equal(
+    state.modelHistory[0].model,
+    'claude-3-5-haiku-20241022',
+    'Model history should record initial model'
+  );
 
   clearSession(sessionId);
   console.log('✅ Test 1 passed\n');
@@ -93,7 +97,11 @@ console.log('Running Session State Manager Tests...\n');
 
   assert.equal(state.session_id, sessionId, 'Session ID should match');
   assert.equal(state.agent_role, 'orchestrator', 'Role should be orchestrator');
-  assert.equal(state.model, 'claude-sonnet-4-20250514', 'Default orchestrator model should be Sonnet');
+  assert.equal(
+    state.model,
+    'claude-sonnet-4-20250514',
+    'Default orchestrator model should be Sonnet'
+  );
   assert.equal(state.read_count, 0, 'Read count should start at 0');
   assert.equal(state.violations.length, 0, 'Violations should be empty');
 
@@ -116,7 +124,7 @@ console.log('Running Session State Manager Tests...\n');
 
   // Update session
   const updatedState = updateSessionState(sessionId, {
-    metadata: { testKey: 'testValue' }
+    metadata: { testKey: 'testValue' },
   });
   assert.equal(updatedState.metadata.testKey, 'testValue', 'Metadata should be updated');
 
@@ -140,13 +148,17 @@ console.log('Running Session State Manager Tests...\n');
     type: 'simple',
     complexity: 0.3,
     confidence: 0.9,
-    workflow: null
+    workflow: null,
   });
 
   let state = loadSessionState(sessionId);
   assert.equal(state.routingDecisions.total, 1, 'Total routing decisions should be 1');
   assert.equal(state.routingDecisions.simpleHandled, 1, 'Simple handled should be 1');
-  assert.equal(state.routingDecisions.routedToOrchestrator, 0, 'Routed to orchestrator should be 0');
+  assert.equal(
+    state.routingDecisions.routedToOrchestrator,
+    0,
+    'Routed to orchestrator should be 0'
+  );
   assert.equal(state.routingDecisions.averageComplexity, 0.3, 'Average complexity should be 0.3');
   assert.equal(state.routingDecisions.averageConfidence, 0.9, 'Average confidence should be 0.9');
 
@@ -155,13 +167,17 @@ console.log('Running Session State Manager Tests...\n');
     type: 'orchestrator',
     complexity: 0.8,
     confidence: 0.95,
-    workflow: '@.claude/workflows/greenfield-fullstack.yaml'
+    workflow: '@.claude/workflows/greenfield-fullstack.yaml',
   });
 
   state = loadSessionState(sessionId);
   assert.equal(state.routingDecisions.total, 2, 'Total routing decisions should be 2');
   assert.equal(state.routingDecisions.simpleHandled, 1, 'Simple handled should still be 1');
-  assert.equal(state.routingDecisions.routedToOrchestrator, 1, 'Routed to orchestrator should be 1');
+  assert.equal(
+    state.routingDecisions.routedToOrchestrator,
+    1,
+    'Routed to orchestrator should be 1'
+  );
   assert.ok(state.routingDecisions.averageComplexity > 0.3, 'Average complexity should increase');
   assert.ok(state.metadata.routingHistory.length === 2, 'Routing history should have 2 entries');
 
@@ -195,7 +211,11 @@ console.log('Running Session State Manager Tests...\n');
   assert.equal(state.costs.sonnet.inputTokens, 2000, 'Sonnet input tokens should be 2000');
   assert.equal(state.costs.sonnet.outputTokens, 1000, 'Sonnet output tokens should be 1000');
   assert.ok(state.costs.total > state.costs.haiku.costUSD, 'Total cost should include both models');
-  assert.equal(state.modelHistory.length, 2, 'Model history should have 2 entries (switch recorded)');
+  assert.equal(
+    state.modelHistory.length,
+    2,
+    'Model history should have 2 entries (switch recorded)'
+  );
   assert.equal(state.model, 'claude-sonnet-4-20250514', 'Current model should be Sonnet');
 
   clearSession(sessionId);

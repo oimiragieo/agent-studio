@@ -14,7 +14,7 @@ pnpm cleanup
 
 Removes temporary files that should NEVER be committed:
 
-- ✅ 247 tmpclaude-* files/directories
+- ✅ 247 tmpclaude-\* files/directories
 - ✅ 2 malformed Windows path files (`C:devprojects...`, `nul`)
 - ✅ 2 temporary files in `.claude/context/tmp/`
 - ✅ 1 external dependency (`crewAI-main/`)
@@ -54,6 +54,7 @@ node .claude/tools/cleanup-repo.mjs --execute --yes
 ## What Gets Protected
 
 **NEVER DELETED**:
+
 - `.git/` - Git repository
 - `node_modules/` - Dependencies
 - `.claude/rules-*` - Rule files
@@ -63,7 +64,7 @@ node .claude/tools/cleanup-repo.mjs --execute --yes
 
 ## What Gets Deleted
 
-### 1. tmpclaude-* Files
+### 1. tmpclaude-\* Files
 
 ```
 tmpclaude-01ae-cwd

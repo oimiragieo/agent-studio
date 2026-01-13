@@ -35,21 +35,24 @@ Added comprehensive documentation of dual-mode operation:
 Added detailed routing logic optimized for session mode:
 
 #### Minimal Context Classification
+
 - Analyzes requests using < 2000 tokens
 - Quick heuristics for complexity scoring
 - Avoids deep code analysis (delegates to orchestrator)
 
 #### Complexity Scoring (0.0-1.0 Scale)
-| Score Range | Criteria | Typical Action |
-|------------|----------|----------------|
-| 0.0-0.3 | Single file, simple query | Handle directly |
-| 0.3-0.6 | Multiple files, moderate changes | Route to orchestrator |
-| 0.6-0.8 | Feature addition, cross-module | Route to orchestrator |
-| 0.8-1.0 | Full application, enterprise system | Route to orchestrator |
+
+| Score Range | Criteria                            | Typical Action        |
+| ----------- | ----------------------------------- | --------------------- |
+| 0.0-0.3     | Single file, simple query           | Handle directly       |
+| 0.3-0.6     | Multiple files, moderate changes    | Route to orchestrator |
+| 0.6-0.8     | Feature addition, cross-module      | Route to orchestrator |
+| 0.8-1.0     | Full application, enterprise system | Route to orchestrator |
 
 #### Routing Decision Rules
 
 **Route to Orchestrator** when:
+
 - Complexity >= 0.7
 - Confidence < 0.85
 - Multi-step workflow detected
@@ -58,6 +61,7 @@ Added detailed routing logic optimized for session mode:
 - User requests planning/architecture
 
 **Handle Directly** when:
+
 - Simple queries (< 200 tokens, complexity < 0.3)
 - Single file reads
 - Status checks
@@ -67,11 +71,13 @@ Added detailed routing logic optimized for session mode:
 **Safety Threshold**: Confidence < 0.85 → Always route to orchestrator
 
 #### Cost-Awareness
+
 - **Haiku**: $1/$5 per MTok (session mode)
 - **Sonnet**: $3/$15 per MTok (orchestrator)
 - **Opus**: $15/$75 per MTok (specialized agents)
 
 **Optimization Rules**:
+
 1. Use minimal context (< 500 tokens)
 2. Fast decisions (< 100ms)
 3. Confident routing (route when uncertain)
@@ -83,6 +89,7 @@ Added detailed routing logic optimized for session mode:
 Comprehensive escalation rules:
 
 #### Complexity-Based Escalation
+
 - Complexity >= 0.7 → Escalate
 - Confidence < 0.85 → Escalate
 - Multi-step workflow → Escalate
@@ -98,12 +105,14 @@ Comprehensive escalation rules:
 **NEVER escalate**: question, status, read (unless very complex)
 
 #### Explicit Escalation Keywords
+
 - "plan", "design", "architect", "structure"
 - "build from scratch", "create system"
 - "refactor all", "update across"
 - "enterprise", "production", "mission-critical"
 
 #### Safety-First Escalation
+
 - When uncertain (confidence < 0.85), default to escalation
 - Better to over-route than under-route
 
@@ -112,6 +121,7 @@ Comprehensive escalation rules:
 Documented all integration touchpoints:
 
 #### Router Session Mode Integration
+
 - Initialized by: `router-session-handler.mjs`
 - Template: `user-session-router.md`
 - Configuration: `.claude/config.yaml`
@@ -119,18 +129,21 @@ Documented all integration touchpoints:
 - Schema: `route_decision.schema.json`
 
 **Session Handler Flow**:
+
 1. User submits request
 2. Handler loads Haiku with session template
 3. Router classifies (JSON output)
 4. Handler routes based on `shouldRoute` flag
 
 #### Explicit Agent Mode Integration
+
 - Spawned by: Orchestrator via Task tool
 - Context: Full agent context
 - Tools: Read, Grep
 - Output: `route_decision.json` with workflow
 
 #### Cost Tracking Integration
+
 - Metrics: Token usage, classification time, routing decision
 - Logging: `router-metrics.log`
 - Analysis: Weekly cost reports
@@ -146,6 +159,7 @@ Detailed cost optimization strategies:
 5. **Continuous Learning**: Weekly pattern analysis
 
 **Log Format** (JSON):
+
 ```json
 {
   "timestamp": "2025-01-12T10:30:00Z",
@@ -168,6 +182,7 @@ Detailed cost optimization strategies:
 ### 6. Core Persona Update
 
 Updated values to include:
+
 - **Values**: Accuracy, speed, determinism, **cost-effectiveness** (added)
 
 ---
@@ -175,15 +190,20 @@ Updated values to include:
 ## Before/After Comparison
 
 ### Before
+
 ```markdown
 ## Core Persona
+
 **Values**: Accuracy, speed, determinism
 
 ## Purpose
+
 Classify user requests to determine:
+
 - Intent, complexity, cloud provider, workflow selection
 
 ## Classification Process
+
 1. Analyze User Request
 2. Security Intent Detection
 3. Intent Classification
@@ -192,52 +212,66 @@ Classify user requests to determine:
 6. Workflow Mapping
 
 ## Integration
+
 This agent is called by the workflow routing system BEFORE keyword matching
 ```
 
 ### After
+
 ```markdown
 ## Core Persona
+
 **Values**: Accuracy, speed, determinism, cost-effectiveness
 
 ## Router Session Mode (NEW)
+
 ### Session Mode (DEFAULT - Haiku Model)
+
 - Embedded in user session via router-session-handler.mjs
 - 60-80% cost reduction
 - < 100ms classification, < 500 tokens
 
 ### Explicit Mode (Traditional)
+
 - Invoked via Task tool by orchestrator
 
 ## Session-Aware Routing Logic (NEW)
+
 ### 1. Minimal Context Classification
+
 - < 2000 tokens
 - Quick heuristics
 - Avoid deep analysis
 
 ### 2. Complexity Scoring (0.0-1.0)
+
 - 0.0-0.3: Handle directly
 - 0.3-1.0: Route to orchestrator
 
 ### 3. Routing Decision
+
 - Route when: complexity >= 0.7, confidence < 0.85
 - Handle when: simple queries, single file reads
 
 ### 4. Cost-Awareness
+
 - Haiku: $1/$5 per MTok
 - Track everything, optimize continuously
 
 ## Escalation Criteria (NEW)
+
 - Complexity-based: >= 0.7, < 0.85 confidence
 - Intent-based: ALWAYS for implement/architecture
 - Safety-first: When uncertain, escalate
 
 ## Integration Points (NEW)
+
 - Router Session Mode Integration
 - Explicit Agent Mode Integration
 - Cost Tracking Integration
 
 ## Cost Optimization Guidelines (NEW)
+
 1. Use minimal context (< 500 tokens)
 2. Fast decisions (< 100ms)
 3. Confident routing
@@ -256,6 +290,7 @@ Expected Cost Reduction: 60-80%
 **User Request**: "Read the router agent definition"
 
 **Session Mode Classification**:
+
 ```json
 {
   "intent": "question",
@@ -269,6 +304,7 @@ Expected Cost Reduction: 60-80%
 **Action**: Handle directly with Haiku (no orchestrator needed)
 
 **Cost Analysis**:
+
 - Haiku tokens: ~400 (input: 300, output: 100)
 - Haiku cost: $0.0008
 - Sonnet cost (if routed): $0.0024
@@ -281,6 +317,7 @@ Expected Cost Reduction: 60-80%
 **User Request**: "Implement a new authentication system with JWT and OAuth"
 
 **Session Mode Classification**:
+
 ```json
 {
   "intent": "implement",
@@ -294,6 +331,7 @@ Expected Cost Reduction: 60-80%
 **Action**: Route to orchestrator (Sonnet) → Spawn developer, architect, security-architect
 
 **Cost Analysis**:
+
 - Haiku classification: ~500 tokens → $0.001
 - Sonnet orchestration: ~5000 tokens → $0.075
 - Total cost: $0.076
@@ -308,6 +346,7 @@ Expected Cost Reduction: 60-80%
 **User Request**: "Fix the login error in user service"
 
 **Session Mode Classification**:
+
 ```json
 {
   "intent": "fix",
@@ -321,6 +360,7 @@ Expected Cost Reduction: 60-80%
 **Action**: Route to orchestrator → Spawn developer
 
 **Cost Analysis**:
+
 - Haiku classification: ~450 tokens → $0.0009
 - Sonnet orchestration: ~3000 tokens → $0.045
 - Total: $0.0459
@@ -335,6 +375,7 @@ Expected Cost Reduction: 60-80%
 **User Request**: "Where is the documentation for workflows?"
 
 **Session Mode Classification**:
+
 ```json
 {
   "intent": "question",
@@ -348,6 +389,7 @@ Expected Cost Reduction: 60-80%
 **Action**: Handle directly with Haiku (Grep/Read tools)
 
 **Cost Analysis**:
+
 - Haiku tokens: ~600 (input: 400, output: 200)
 - Haiku cost: $0.0014
 - Sonnet cost (if routed): $0.0042
@@ -360,6 +402,7 @@ Expected Cost Reduction: 60-80%
 **User Request**: "Update the user authentication flow"
 
 **Session Mode Classification**:
+
 ```json
 {
   "intent": "fix",
@@ -380,29 +423,29 @@ Expected Cost Reduction: 60-80%
 
 ### Baseline (No Router - Always Sonnet)
 
-| Request Type | Daily Volume | Sonnet Cost per Request | Daily Cost |
-|--------------|--------------|-------------------------|------------|
-| Simple queries | 50 | $0.003 | $0.15 |
-| Complex tasks | 20 | $0.075 | $1.50 |
-| **Total** | **70** | - | **$1.65** |
+| Request Type   | Daily Volume | Sonnet Cost per Request | Daily Cost |
+| -------------- | ------------ | ----------------------- | ---------- |
+| Simple queries | 50           | $0.003                  | $0.15      |
+| Complex tasks  | 20           | $0.075                  | $1.50      |
+| **Total**      | **70**       | -                       | **$1.65**  |
 
 ### With Router (Haiku Session Mode)
 
-| Request Type | Daily Volume | Router + Handler Cost | Daily Cost |
-|--------------|--------------|----------------------|------------|
-| Simple queries (handled by Haiku) | 50 | $0.0014 | $0.07 |
-| Complex tasks (routed to Sonnet) | 20 | $0.076 | $1.52 |
-| **Total** | **70** | - | **$1.59** |
+| Request Type                      | Daily Volume | Router + Handler Cost | Daily Cost |
+| --------------------------------- | ------------ | --------------------- | ---------- |
+| Simple queries (handled by Haiku) | 50           | $0.0014               | $0.07      |
+| Complex tasks (routed to Sonnet)  | 20           | $0.076                | $1.52      |
+| **Total**                         | **70**       | -                     | **$1.59**  |
 
 **Daily Savings**: $1.65 - $1.59 = **$0.06** (4% reduction in this scenario)
 
 ### Optimistic Scenario (80% Simple Queries)
 
-| Request Type | Daily Volume | Router + Handler Cost | Daily Cost |
-|--------------|--------------|----------------------|------------|
-| Simple queries (handled by Haiku) | 56 | $0.0014 | $0.08 |
-| Complex tasks (routed to Sonnet) | 14 | $0.076 | $1.06 |
-| **Total** | **70** | - | **$1.14** |
+| Request Type                      | Daily Volume | Router + Handler Cost | Daily Cost |
+| --------------------------------- | ------------ | --------------------- | ---------- |
+| Simple queries (handled by Haiku) | 56           | $0.0014               | $0.08      |
+| Complex tasks (routed to Sonnet)  | 14           | $0.076                | $1.06      |
+| **Total**                         | **70**       | -                     | **$1.14**  |
 
 **Daily Savings**: $1.65 - $1.14 = **$0.51** (31% reduction)
 
@@ -447,11 +490,13 @@ Expected Cost Reduction: 60-80%
 ## Next Steps
 
 ### Immediate (Phase 1.7 Completion)
+
 1. ✅ Update router agent definition (this task)
 2. ⏭️ Create router session handler tests (Step 1.8)
 3. ⏭️ Integration testing (Step 1.9)
 
 ### Future Enhancements
+
 1. **A/B Testing**: Compare router routing vs always-Sonnet baseline
 2. **Metrics Dashboard**: Real-time cost tracking and savings visualization
 3. **Pattern Learning**: ML-based heuristic optimization over time

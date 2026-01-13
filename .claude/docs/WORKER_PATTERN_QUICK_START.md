@@ -36,23 +36,27 @@ The **Ephemeral Worker Pattern** spawns agent tasks in isolated Worker Threads w
 ## When to Use Workers
 
 ### ✅ Use Workers For:
+
 - **Long-running tasks** (>30 minutes)
 - **Complex workflows** (architecture, refactoring, migrations)
 - **Memory-intensive operations** (large codebase analysis)
 - **Production deployments** (stability critical)
 
 **Examples**:
+
 - "Implement comprehensive authentication system"
 - "Refactor entire codebase"
 - "Migrate to new framework"
 - "Analyze large codebase for patterns"
 
 ### ❌ Don't Use Workers For:
+
 - **Quick fixes** (<5 minutes)
 - **Simple updates** (README edits, config changes)
 - **Debugging sessions** (fast iteration needed)
 
 **Examples**:
+
 - "Fix login button bug"
 - "Update README"
 - "Add code comment"
@@ -69,6 +73,7 @@ node .claude/tools/tests/validate-worker-integration.mjs
 ```
 
 **Expected Output**:
+
 ```
 ✅ ALL VALIDATIONS PASSED
 Feature Flag: ✅ Working
@@ -84,6 +89,7 @@ node .claude/tools/orchestrator-entry.mjs --prompt "Implement feature"
 ```
 
 **Expected Output**:
+
 ```
 [Orchestrator Entry] Worker pattern disabled (USE_WORKERS=false)
 [Orchestrator Entry] Using legacy in-process execution
@@ -98,6 +104,7 @@ USE_WORKERS=true node .claude/tools/orchestrator-entry.mjs \
 ```
 
 **Expected Output** (if long-running):
+
 ```
 [Orchestrator Entry] Initializing worker supervisor
 [Orchestrator Entry] Supervisor initialized successfully
@@ -107,6 +114,7 @@ USE_WORKERS=true node .claude/tools/orchestrator-entry.mjs \
 ```
 
 **Expected Output** (if short-running):
+
 ```
 [Orchestrator Entry] Using legacy in-process execution (task is short-running)
 ```
@@ -157,15 +165,18 @@ USE_WORKERS=true pnpm agent:production orchestrator-entry.mjs \
 The system automatically classifies tasks as **long-running** or **short-running**:
 
 ### Long-Running Keywords
+
 - `implement`, `refactor`, `analyze codebase`
 - `migrate`, `redesign`, `architecture`
 - `comprehensive`, `extensive`, `large-scale`
 
 ### Short-Running Keywords
+
 - `fix`, `update`, `add`, `remove`, `delete`
 - `rename`, `quick`
 
 ### Complexity Threshold
+
 - **High** (0.8): Always use workers
 - **Medium** (0.5): Use heuristics
 - **Low** (0.3): Use legacy (unless long keywords present)
@@ -181,12 +192,14 @@ The system automatically classifies tasks as **long-running** or **short-running
 **Values**: `true` (enabled), `false` (disabled)
 
 **Example**:
+
 ```bash
 export USE_WORKERS=true
 node orchestrator-entry.mjs --prompt "..."
 ```
 
 **Or inline**:
+
 ```bash
 USE_WORKERS=true node orchestrator-entry.mjs --prompt "..."
 ```
@@ -220,7 +233,7 @@ When workers are enabled, you'll see structured logs:
   "timestamp": "2026-01-12T02:20:28.960Z",
   "data": {
     "heapUsed": 256.45,
-    "heapTotal": 512.00,
+    "heapTotal": 512.0,
     "heapUsedPercent": 50.09,
     "external": 10.23,
     "rss": 320.56
@@ -247,6 +260,7 @@ When workers are enabled, you'll see structured logs:
 
 **Cause**: Workers enabled but supervisor failed to initialize
 **Solution**:
+
 ```bash
 # Check if database exists
 ls -la .claude/context/memory/workers.db
@@ -261,6 +275,7 @@ node .claude/tools/tests/validate-worker-integration.mjs
 **Solution**: Adjust complexity in routing result or override manually
 
 **Override Example**:
+
 ```javascript
 // Force worker execution
 const result = await executeStep0Worker(runId, workflowPath, taskDesc, 0.9);
@@ -275,6 +290,7 @@ const result = await executeStep0Legacy(runId, workflowPath);
 **Solution**: Increase timeout in supervisor configuration
 
 **Update**:
+
 ```javascript
 const supervisor = new AgentSupervisor({
   maxWorkers: 4,
@@ -288,6 +304,7 @@ const supervisor = new AgentSupervisor({
 **Solution**: Ensure cleanup handlers run on exit
 
 **Check**:
+
 ```bash
 # Verify cleanup handlers
 grep "Supervisor cleanup" logs/orchestrator.log
@@ -299,17 +316,17 @@ grep "Supervisor cleanup" logs/orchestrator.log
 
 ### Task: Implement Authentication (45 minutes)
 
-| Mode | Heap Usage | Crashes | Completion |
-|------|------------|---------|------------|
-| Legacy (before) | 4GB+ → OOM | 100% | ❌ Failed |
-| Worker (after) | <500MB supervisor | 0% | ✅ Success |
+| Mode            | Heap Usage        | Crashes | Completion |
+| --------------- | ----------------- | ------- | ---------- |
+| Legacy (before) | 4GB+ → OOM        | 100%    | ❌ Failed  |
+| Worker (after)  | <500MB supervisor | 0%      | ✅ Success |
 
 ### Task: Quick Fix (2 minutes)
 
-| Mode | Overhead | Completion |
-|------|----------|------------|
-| Legacy | 0ms | ✅ 2min |
-| Worker | 100ms | ✅ 2min 0.1s |
+| Mode   | Overhead | Completion   |
+| ------ | -------- | ------------ |
+| Legacy | 0ms      | ✅ 2min      |
+| Worker | 100ms    | ✅ 2min 0.1s |
 
 **Recommendation**: Use legacy for quick tasks, workers for long tasks
 
@@ -318,30 +335,35 @@ grep "Supervisor cleanup" logs/orchestrator.log
 ## Best Practices
 
 ### 1. Start with Workers Disabled
+
 ```bash
 # Default: Safe, fast for short tasks
 node orchestrator-entry.mjs --prompt "..."
 ```
 
 ### 2. Enable Workers for Known Long Tasks
+
 ```bash
 # Opt-in when task is complex
 USE_WORKERS=true node orchestrator-entry.mjs --prompt "Implement complex feature"
 ```
 
 ### 3. Use V8 Flags in Production
+
 ```bash
 # Production: Workers + V8 optimization
 USE_WORKERS=true pnpm agent:production orchestrator-entry.mjs --prompt "..."
 ```
 
 ### 4. Monitor Worker Logs
+
 ```bash
 # Check worker status
 tail -f .claude/context/logs/orchestrator.log | grep "supervisor"
 ```
 
 ### 5. Clean Up Test Databases
+
 ```bash
 # Remove test databases after validation
 rm .claude/context/memory/test-workers.db
@@ -369,24 +391,31 @@ USE_WORKERS=false node orchestrator-entry.mjs --prompt "..."
 ## FAQ
 
 ### Q: Will workers break my existing workflows?
+
 **A**: No. Workers are **disabled by default**. Enable with `USE_WORKERS=true`.
 
 ### Q: Do I need to change my code?
+
 **A**: No changes required. The integration is transparent.
 
 ### Q: What's the performance overhead?
+
 **A**: ~100ms for worker spawn + cleanup. Negligible for long tasks (>30 minutes).
 
 ### Q: Can I force workers for all tasks?
+
 **A**: Yes, but not recommended. Short tasks are faster with legacy execution.
 
 ### Q: How do I know if workers are being used?
+
 **A**: Check logs for `[Orchestrator Entry] Using worker pattern` message.
 
 ### Q: What happens on worker crash?
+
 **A**: Supervisor survives. Worker failure isolated. Task marked as failed.
 
 ### Q: Can I run multiple supervisors?
+
 **A**: Yes. Each process gets its own supervisor (singleton per process).
 
 ---
@@ -394,16 +423,19 @@ USE_WORKERS=false node orchestrator-entry.mjs --prompt "..."
 ## Next Steps
 
 1. **Validate Installation**:
+
    ```bash
    node .claude/tools/tests/validate-worker-integration.mjs
    ```
 
 2. **Test with Workers Disabled** (default):
+
    ```bash
    node orchestrator-entry.mjs --prompt "Quick fix"
    ```
 
 3. **Test with Workers Enabled**:
+
    ```bash
    USE_WORKERS=true node orchestrator-entry.mjs --prompt "Implement feature"
    ```

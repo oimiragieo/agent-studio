@@ -157,9 +157,7 @@ async function testSessionContextTransfer() {
 
     console.log('✅ Session context transfer test passed');
     console.log(`   - Session ID transferred: ${runRecord.metadata.routerHandoff.sessionId}`);
-    console.log(
-      `   - Router model: ${runRecord.metadata.routerHandoff.routerModel}`
-    );
+    console.log(`   - Router model: ${runRecord.metadata.routerHandoff.routerModel}`);
 
     await cleanupTestRun(runId);
   } catch (error) {
@@ -220,9 +218,7 @@ async function testCostAggregation() {
 
     console.log('✅ Cost aggregation test passed');
     console.log(`   - Router cost: $${result.costs.router.total_cost_usd.toFixed(6)}`);
-    console.log(
-      `   - Orchestrator cost: $${result.costs.orchestrator.total_cost_usd.toFixed(6)}`
-    );
+    console.log(`   - Orchestrator cost: $${result.costs.orchestrator.total_cost_usd.toFixed(6)}`);
     console.log(`   - Total cost: $${result.costs.total.toFixed(6)}`);
 
     await cleanupTestRun(runId);

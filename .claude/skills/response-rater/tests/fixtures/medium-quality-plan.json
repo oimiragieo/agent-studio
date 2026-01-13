@@ -18,10 +18,7 @@
       "estimated_duration": "2 days"
     }
   ],
-  "success_criteria": [
-    "Users can log in",
-    "Security audit passes"
-  ],
+  "success_criteria": ["Users can log in", "Security audit passes"],
   "risks": [
     {
       "description": "Security vulnerabilities",

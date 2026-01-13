@@ -15,6 +15,7 @@
 Implemented the Memory Injection Hooks system for Phase 2, which integrates the SQLite memory database with the agent execution flow via PreToolUse and PostToolUse hooks. The system provides intelligent context injection with strict performance budgets and fail-safe guarantees.
 
 **Key Achievements**:
+
 - ✅ MemoryInjectionManager class with token budget management
 - ✅ Relevance scoring algorithm (recency, similarity, frequency, cost)
 - ✅ PreToolUse hook for memory injection (<100ms latency)
@@ -32,6 +33,7 @@ Implemented the Memory Injection Hooks system for Phase 2, which integrates the 
 **File**: `.claude/tools/memory/injection-manager.mjs`
 
 **Key Features**:
+
 - Token budget calculation (20% of remaining, max 40k tokens)
 - Relevance scoring with weighted factors:
   - Recency (40%): Exponential decay based on age
@@ -43,6 +45,7 @@ Implemented the Memory Injection Hooks system for Phase 2, which integrates the 
 - Fail-safe error handling (never blocks tool execution)
 
 **Core Methods**:
+
 ```javascript
 // Main injection method
 async injectRelevantMemory(context)
@@ -62,6 +65,7 @@ calculateRelevanceScore(snippet, context, now)
 ```
 
 **Performance Characteristics**:
+
 - Initialization: Lazy (on first use)
 - Cache hit rate: ~90% for repeated queries
 - Memory overhead: ~1MB (100-entry LRU cache)
@@ -73,6 +77,7 @@ calculateRelevanceScore(snippet, context, now)
 **File**: `.claude/hooks/memory-injection-pre-tool.mjs`
 
 **Execution Flow**:
+
 1. Read tool call context from stdin
 2. Extract session ID, tool name, and parameters
 3. Calculate token budget (20% of remaining context)
@@ -81,16 +86,19 @@ calculateRelevanceScore(snippet, context, now)
 6. Return result with `decision: 'allow'` (never blocks)
 
 **Performance Targets**:
+
 - Latency: <100ms (p95)
 - Token budget: 20% of remaining, max 40k tokens
 - Timeout protection: 100ms hard limit
 
 **Fail-Safe Behavior**:
+
 - Timeout → returns empty memory, allows tool
 - Database error → returns empty memory, allows tool
 - Invalid input → returns empty memory, allows tool
 
 **Example Output**:
+
 ```json
 {
   "decision": "allow",
@@ -111,22 +119,26 @@ calculateRelevanceScore(snippet, context, now)
 **File**: `.claude/hooks/memory-capture-post-tool.mjs`
 
 **Execution Flow**:
+
 1. Read tool result from stdin
 2. Extract context (session ID, tool name, result)
 3. Spawn background capture task (setImmediate)
 4. Return immediately (don't wait for capture)
 
 **Performance Characteristics**:
+
 - Execution time: <10ms (returns immediately)
 - Background capture: Async (non-blocking)
 - Never delays tool completion
 
 **Fail-Safe Behavior**:
+
 - Capture error → logs error, returns success
 - Database unavailable → logs error, returns success
 - Invalid input → logs error, returns success
 
 **Example Output**:
+
 ```json
 {
   "captured": true,
@@ -167,11 +179,13 @@ calculateRelevanceScore(snippet, context, now)
 ```
 
 **Priority Levels**:
+
 - Security hooks: Priority 1-4
 - Memory hooks: Priority 10 (lower priority, runs after security)
 - Audit hooks: Priority 1-2
 
 **Matcher Patterns**:
+
 - Memory injection: `*` (all tools)
 - Memory capture: `*` (all tools)
 
@@ -183,17 +197,18 @@ calculateRelevanceScore(snippet, context, now)
 
 **Test Coverage**:
 
-| Test | Purpose | Status |
-|------|---------|--------|
-| **Token Budget Calculation** | Verifies 20% budget, 40k cap | ✅ Pass |
-| **Relevance Scoring** | Validates scoring algorithm | ✅ Pass |
-| **Memory Ranking** | Ensures descending score order | ✅ Pass |
-| **Memory Formatting** | Confirms token budget respect | ✅ Pass |
-| **Memory Injection** | Integration test with database | ✅ Pass |
-| **Fail-Safe Behavior** | Error handling validation | ✅ Pass |
-| **Memory Capture** | Async capture verification | ✅ Pass |
+| Test                         | Purpose                        | Status  |
+| ---------------------------- | ------------------------------ | ------- |
+| **Token Budget Calculation** | Verifies 20% budget, 40k cap   | ✅ Pass |
+| **Relevance Scoring**        | Validates scoring algorithm    | ✅ Pass |
+| **Memory Ranking**           | Ensures descending score order | ✅ Pass |
+| **Memory Formatting**        | Confirms token budget respect  | ✅ Pass |
+| **Memory Injection**         | Integration test with database | ✅ Pass |
+| **Fail-Safe Behavior**       | Error handling validation      | ✅ Pass |
+| **Memory Capture**           | Async capture verification     | ✅ Pass |
 
 **Test Results**:
+
 ```
 🧪 Memory Injection Manager Test Suite
 
@@ -239,6 +254,7 @@ Test 7: Memory Capture
 ### Section 6.2: Token Budget Algorithm ✅
 
 **Implemented**:
+
 ```javascript
 calculateTokenBudget(currentTokens, maxTokens) {
     const remainingTokens = maxTokens - currentTokens;
@@ -248,6 +264,7 @@ calculateTokenBudget(currentTokens, maxTokens) {
 ```
 
 **Compliance**:
+
 - ✅ 20% of remaining context
 - ✅ Hard cap at 40k tokens
 - ✅ Safety margin respected
@@ -255,11 +272,13 @@ calculateTokenBudget(currentTokens, maxTokens) {
 ### Section 6.3: Memory Relevance Scoring ✅
 
 **Implemented**:
+
 ```javascript
-score = (recency * 0.4) + (similarity * 0.3) + (frequency * 0.2) + (cost * 0.1)
+score = recency * 0.4 + similarity * 0.3 + frequency * 0.2 + cost * 0.1;
 ```
 
 **Compliance**:
+
 - ✅ Recency: Exponential decay `e^(-age/maxAge)`
 - ✅ Similarity: Type-based (0.9 for recent messages, 0.8 for context)
 - ✅ Frequency: Placeholder (0.5 default, ready for pattern learning)
@@ -268,6 +287,7 @@ score = (recency * 0.4) + (similarity * 0.3) + (frequency * 0.2) + (cost * 0.1)
 ### Section 6.4: Hook Integration ✅
 
 **Implemented**:
+
 - ✅ PreToolUse hook for memory injection
 - ✅ PostToolUse hook for memory capture
 - ✅ Latency budget: <100ms enforced via timeout
@@ -280,25 +300,26 @@ score = (recency * 0.4) + (similarity * 0.3) + (frequency * 0.2) + (cost * 0.1)
 
 ### Latency Benchmarks
 
-| Operation | Target | Actual | Status |
-|-----------|--------|--------|--------|
-| Memory injection | <100ms | 78ms | ✅ Pass |
-| Token budget calculation | <1ms | <1ms | ✅ Pass |
-| Memory ranking | <50ms | <10ms | ✅ Pass |
-| Memory capture | Async | <10ms | ✅ Pass |
+| Operation                | Target | Actual | Status  |
+| ------------------------ | ------ | ------ | ------- |
+| Memory injection         | <100ms | 78ms   | ✅ Pass |
+| Token budget calculation | <1ms   | <1ms   | ✅ Pass |
+| Memory ranking           | <50ms  | <10ms  | ✅ Pass |
+| Memory capture           | Async  | <10ms  | ✅ Pass |
 
 ### Token Budget Scenarios
 
-| Scenario | Current Tokens | Max Tokens | Budget | Cap Applied |
-|----------|---------------|------------|--------|-------------|
-| Early conversation | 5,000 | 200,000 | 39,000 | Yes (40k cap) |
-| Mid conversation | 50,000 | 200,000 | 30,000 | No |
-| Near limit | 180,000 | 200,000 | 4,000 | No |
-| At limit | 195,000 | 200,000 | 1,000 | No |
+| Scenario           | Current Tokens | Max Tokens | Budget | Cap Applied   |
+| ------------------ | -------------- | ---------- | ------ | ------------- |
+| Early conversation | 5,000          | 200,000    | 39,000 | Yes (40k cap) |
+| Mid conversation   | 50,000         | 200,000    | 30,000 | No            |
+| Near limit         | 180,000        | 200,000    | 4,000  | No            |
+| At limit           | 195,000        | 200,000    | 1,000  | No            |
 
 ### Memory Injection Examples
 
 **Example 1: Recent Messages**
+
 ```
 Input:
   - Session: test-session-001
@@ -318,6 +339,7 @@ Output:
 ```
 
 **Example 2: Near Token Limit**
+
 ```
 Input:
   - Session: test-session-002
@@ -336,28 +358,31 @@ Output:
 
 ### Error Scenarios Tested
 
-| Scenario | Behavior | Result |
-|----------|----------|--------|
-| Database not initialized | Return empty memory | ✅ Pass |
-| Database connection error | Return empty memory | ✅ Pass |
-| Timeout (>100ms) | Return empty memory | ✅ Pass |
-| Invalid session ID | Return empty memory | ✅ Pass |
-| Null tool result | Capture silently fails | ✅ Pass |
+| Scenario                  | Behavior               | Result  |
+| ------------------------- | ---------------------- | ------- |
+| Database not initialized  | Return empty memory    | ✅ Pass |
+| Database connection error | Return empty memory    | ✅ Pass |
+| Timeout (>100ms)          | Return empty memory    | ✅ Pass |
+| Invalid session ID        | Return empty memory    | ✅ Pass |
+| Null tool result          | Capture silently fails | ✅ Pass |
 
 ### Critical Requirements
 
 **REQUIREMENT: Never block tool execution**
+
 - ✅ All errors caught and logged
 - ✅ Default safe values returned
 - ✅ Tool proceeds with execution
 - ✅ No exceptions propagated
 
 **REQUIREMENT: Timeout protection**
+
 - ✅ 100ms hard timeout enforced
 - ✅ Promise.race() implementation
 - ✅ Fallback to empty memory
 
 **REQUIREMENT: Async capture**
+
 - ✅ setImmediate for background execution
 - ✅ Returns immediately (<10ms)
 - ✅ Errors logged, not thrown
@@ -369,35 +394,40 @@ Output:
 ### Phase 1 Integration
 
 **Router Session Handler**:
+
 - Hook system automatically invokes memory injection
 - No changes required to router-session-handler.mjs
 
 **Session State Manager**:
+
 - Session IDs passed via `CLAUDE_SESSION_ID` env variable
 - Memory system reads session state from database
 
 **Orchestrator Entry**:
+
 - Memory injection happens transparently before all tool calls
 - Orchestrator unaware of memory system
 
 ### Database Integration
 
 **MemoryDatabase API Used**:
+
 ```javascript
 // Session management
-getSession(sessionId)
-createSession({ sessionId, userId, projectId, metadata })
+getSession(sessionId);
+createSession({ sessionId, userId, projectId, metadata });
 
 // Message retrieval
-getRecentMessages(sessionId, limit)
-addMessage({ conversationId, role, content, tokenCount })
+getRecentMessages(sessionId, limit);
+addMessage({ conversationId, role, content, tokenCount });
 
 // Conversation management
-createConversation({ sessionId, conversationId, title })
-getConversation(conversationId)
+createConversation({ sessionId, conversationId, title });
+getConversation(conversationId);
 ```
 
 **Database Schema Dependencies**:
+
 - `sessions` table: Session context and metadata
 - `messages` table: Recent conversation turns
 - `conversations` table: Conversation threads
@@ -503,16 +533,16 @@ getConversation(conversationId)
 
 ## Success Criteria Validation
 
-| Criterion | Target | Actual | Status |
-|-----------|--------|--------|--------|
-| MemoryInjectionManager implemented | ✅ | ✅ | ✅ Pass |
-| Token budget algorithm (20%, 40k cap) | ✅ | ✅ | ✅ Pass |
-| Pre-tool hook latency | <100ms | 78ms | ✅ Pass |
-| Post-tool hook async | ✅ | ✅ | ✅ Pass |
-| Hook registry updated | ✅ | ✅ | ✅ Pass |
-| Relevance scoring functional | ✅ | ✅ | ✅ Pass |
-| Tests pass (7/7) | ✅ | ✅ | ✅ Pass |
-| Fail-safe design validated | ✅ | ✅ | ✅ Pass |
+| Criterion                             | Target | Actual | Status  |
+| ------------------------------------- | ------ | ------ | ------- |
+| MemoryInjectionManager implemented    | ✅     | ✅     | ✅ Pass |
+| Token budget algorithm (20%, 40k cap) | ✅     | ✅     | ✅ Pass |
+| Pre-tool hook latency                 | <100ms | 78ms   | ✅ Pass |
+| Post-tool hook async                  | ✅     | ✅     | ✅ Pass |
+| Hook registry updated                 | ✅     | ✅     | ✅ Pass |
+| Relevance scoring functional          | ✅     | ✅     | ✅ Pass |
+| Tests pass (7/7)                      | ✅     | ✅     | ✅ Pass |
+| Fail-safe design validated            | ✅     | ✅     | ✅ Pass |
 
 **Overall Status**: ✅ **All success criteria met**
 
@@ -581,12 +611,14 @@ jq '.hooks | sort_by(.priority)' .claude/hooks/hook-registry.json
 ### Logging
 
 **Memory Injection Logs**:
+
 ```
 [Memory Injection] Tool: Bash, Tokens: 45/1000, Duration: 78ms
 [Memory Injection] Error (non-blocking): Database not initialized
 ```
 
 **Memory Capture Logs**:
+
 ```
 [Memory Capture] Background capture error: Connection timeout
 ```
@@ -595,11 +627,11 @@ jq '.hooks | sort_by(.priority)' .claude/hooks/hook-registry.json
 
 ```javascript
 const MEMORY_METRICS = {
-    'memory.injection.latency_ms': 'histogram',
-    'memory.injection.tokens_injected': 'counter',
-    'memory.injection.cache_hit_rate': 'gauge',
-    'memory.capture.completions': 'counter',
-    'memory.capture.failures': 'counter'
+  'memory.injection.latency_ms': 'histogram',
+  'memory.injection.tokens_injected': 'counter',
+  'memory.injection.cache_hit_rate': 'gauge',
+  'memory.capture.completions': 'counter',
+  'memory.capture.failures': 'counter',
 };
 ```
 
@@ -610,6 +642,7 @@ const MEMORY_METRICS = {
 The Memory Injection Hooks system has been successfully implemented with full architecture compliance and validated fail-safe behavior. All performance targets met, all tests passing, and integration with existing Phase 1 infrastructure complete.
 
 **Next Steps**:
+
 1. Monitor performance in production
 2. Implement Tier 2 (RAG + vectors) for semantic similarity
 3. Add pattern learning for frequency scoring

@@ -75,10 +75,7 @@ function isMemorySafe() {
   const heapPercent = parseFloat(usage.heapPercent);
   const heapUsedMB = parseFloat(usage.heapUsedMB);
 
-  return (
-    heapPercent < MEMORY_LIMITS.MAX_HEAP_PERCENT &&
-    heapUsedMB < MEMORY_LIMITS.MAX_HEAP_MB
-  );
+  return heapPercent < MEMORY_LIMITS.MAX_HEAP_PERCENT && heapUsedMB < MEMORY_LIMITS.MAX_HEAP_MB;
 }
 
 /**
@@ -95,7 +92,7 @@ function forceGC() {
  * Memory-safe delay to allow GC
  */
 async function safeDelay(ms = 100) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // =============================
@@ -156,11 +153,7 @@ const CUJ_SAMPLES = {
  * Load CUJ file with streaming
  */
 async function loadCUJSample(cujId) {
-  const cujPath = path.resolve(
-    __dirname,
-    '../../docs/cujs',
-    `${cujId}.md`
-  );
+  const cujPath = path.resolve(__dirname, '../../docs/cujs', `${cujId}.md`);
 
   if (!fs.existsSync(cujPath)) {
     console.warn(`⚠️  CUJ file not found: ${cujPath}`);
@@ -213,9 +206,7 @@ async function processCUJBatch(batchName, cujIds) {
   console.log(`   Files: ${cujIds.join(', ')}`);
 
   const memBefore = getMemoryUsage();
-  console.log(
-    `   Memory before: ${memBefore.heapUsedMB}MB (${memBefore.heapPercent}%)`
-  );
+  console.log(`   Memory before: ${memBefore.heapUsedMB}MB (${memBefore.heapPercent}%)`);
 
   const batchResults = [];
 
@@ -228,9 +219,7 @@ async function processCUJBatch(batchName, cujIds) {
 
       // Re-check after GC
       if (!isMemorySafe()) {
-        console.error(
-          `❌ Memory still unsafe after GC, skipping ${cujId}`
-        );
+        console.error(`❌ Memory still unsafe after GC, skipping ${cujId}`);
         batchResults.push({ id: cujId, skipped: true, reason: 'memory' });
         continue;
       }
@@ -249,9 +238,7 @@ async function processCUJBatch(batchName, cujIds) {
   }
 
   const memAfter = getMemoryUsage();
-  console.log(
-    `   Memory after: ${memAfter.heapUsedMB}MB (${memAfter.heapPercent}%)`
-  );
+  console.log(`   Memory after: ${memAfter.heapUsedMB}MB (${memAfter.heapPercent}%)`);
 
   // Force GC after batch
   forceGC();
@@ -281,36 +268,17 @@ async function runTests() {
 
   {
     const sessionId = `memory-test-${Date.now()}`;
-    const session = await initializeRouterSession(
-      sessionId,
-      'test memory-safe integration'
-    );
+    const session = await initializeRouterSession(sessionId, 'test memory-safe integration');
 
-    assert(
-      session.session_id === sessionId,
-      '1.1: Session ID initialized correctly'
-    );
-    assert(
-      session.model === 'claude-3-5-haiku-20241022',
-      '1.2: Uses Haiku model'
-    );
+    assert(session.session_id === sessionId, '1.1: Session ID initialized correctly');
+    assert(session.model === 'claude-3-5-haiku-20241022', '1.2: Uses Haiku model');
     assert(session.role === 'router', '1.3: Sets router role');
-    assert(
-      session.cost_tracking !== undefined,
-      '1.4: Initializes cost tracking'
-    );
-    assert(
-      session.routing_history !== undefined,
-      '1.5: Initializes routing history'
-    );
+    assert(session.cost_tracking !== undefined, '1.4: Initializes cost tracking');
+    assert(session.routing_history !== undefined, '1.5: Initializes routing history');
 
     // Check initial memory
     const memUsage = getMemoryUsage();
-    assertLessThan(
-      parseFloat(memUsage.heapPercent),
-      50,
-      '1.6: Initial memory < 50%'
-    );
+    assertLessThan(parseFloat(memUsage.heapPercent), 50, '1.6: Initial memory < 50%');
   }
 
   // =============================
@@ -330,18 +298,9 @@ async function runTests() {
     const { id, cuj } = item;
     const classification = await classifyIntent(cuj.prompt);
 
-    assert(
-      classification.intent !== undefined,
-      `2.${id}: Intent classified for ${id}`
-    );
-    assert(
-      classification.complexity !== undefined,
-      `2.${id}: Complexity assessed`
-    );
-    assert(
-      classification.classification_time_ms < 200,
-      `2.${id}: Classification fast (<200ms)`
-    );
+    assert(classification.intent !== undefined, `2.${id}: Intent classified for ${id}`);
+    assert(classification.complexity !== undefined, `2.${id}: Complexity assessed`);
+    assert(classification.classification_time_ms < 200, `2.${id}: Classification fast (<200ms)`);
   }
 
   // Memory check after batch 1
@@ -409,10 +368,7 @@ async function runTests() {
     const { intent, complexity, expected } = workflowMappings[i];
     const workflow = await selectWorkflow(intent, complexity);
 
-    assert(
-      workflow.includes(expected),
-      `4.${i + 1}: ${intent} → ${expected} workflow`
-    );
+    assert(workflow.includes(expected), `4.${i + 1}: ${intent} → ${expected} workflow`);
 
     // Check memory between workflow selections
     if (i === 2) {
@@ -436,53 +392,24 @@ async function runTests() {
     await initializeRouterSession(sessionId, 'cost test');
 
     // Test 5.1: Cost calculation
-    const costResult = await trackCosts(
-      sessionId,
-      'claude-3-5-haiku-20241022',
-      1000,
-      500
-    );
+    const costResult = await trackCosts(sessionId, 'claude-3-5-haiku-20241022', 1000, 500);
 
-    assert(
-      costResult.this_request.cost_usd > 0,
-      '5.1: Cost calculated correctly'
-    );
-    assertEquals(
-      costResult.this_request.input_tokens,
-      1000,
-      '5.2: Input tokens tracked'
-    );
-    assertEquals(
-      costResult.this_request.output_tokens,
-      500,
-      '5.3: Output tokens tracked'
-    );
+    assert(costResult.this_request.cost_usd > 0, '5.1: Cost calculated correctly');
+    assertEquals(costResult.this_request.input_tokens, 1000, '5.2: Input tokens tracked');
+    assertEquals(costResult.this_request.output_tokens, 500, '5.3: Output tokens tracked');
 
     // Test 5.2: Cost accumulation
     await trackCosts(sessionId, 'claude-3-5-haiku-20241022', 2000, 1000);
 
     const summary = await getCostSummary(sessionId);
-    assertEquals(
-      summary.total_input_tokens,
-      3000,
-      '5.4: Accumulates input tokens'
-    );
-    assertEquals(
-      summary.total_output_tokens,
-      1500,
-      '5.5: Accumulates output tokens'
-    );
+    assertEquals(summary.total_input_tokens, 3000, '5.4: Accumulates input tokens');
+    assertEquals(summary.total_output_tokens, 1500, '5.5: Accumulates output tokens');
 
     // Test 5.3: Pricing accuracy (Haiku: $1/M input, $5/M output)
     const sessionId2 = `accuracy-test-${Date.now()}`;
     await initializeRouterSession(sessionId2, 'accuracy test');
 
-    const result = await trackCosts(
-      sessionId2,
-      'claude-3-5-haiku-20241022',
-      1_000_000,
-      1_000_000
-    );
+    const result = await trackCosts(sessionId2, 'claude-3-5-haiku-20241022', 1_000_000, 1_000_000);
 
     const expectedCost = 6.0; // $1 + $5
     const actualCost = result.this_request.cost_usd;
@@ -514,10 +441,7 @@ async function runTests() {
     );
 
     assert(routeResult.success === true, '6.1: Handoff succeeds');
-    assert(
-      routeResult.handoff_data !== undefined,
-      '6.2: Handoff data provided'
-    );
+    assert(routeResult.handoff_data !== undefined, '6.2: Handoff data provided');
     assert(
       routeResult.handoff_data.workflow.includes('greenfield'),
       '6.3: Workflow included in handoff'
@@ -556,9 +480,7 @@ async function runTests() {
   console.log('\n' + '='.repeat(60));
   console.log(`Test Results: ${testsPassed} passed, ${testsFailed} failed`);
   console.log(`Execution Time: ${testDuration.toFixed(2)}s`);
-  console.log(
-    `Final Memory: ${finalMemory.heapUsedMB}MB (${finalMemory.heapPercent}%)`
-  );
+  console.log(`Final Memory: ${finalMemory.heapUsedMB}MB (${finalMemory.heapPercent}%)`);
   console.log('='.repeat(60));
 
   if (testsFailed > 0) {
@@ -575,7 +497,7 @@ async function runTests() {
 // =============================
 
 // Run tests with memory monitoring
-runTests().catch((error) => {
+runTests().catch(error => {
   console.error('❌ Test suite failed:', error);
   console.error('Stack trace:', error.stack);
   process.exit(1);

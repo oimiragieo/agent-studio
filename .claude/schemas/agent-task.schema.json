@@ -1,0 +1,337 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.com/schemas/agent-task.schema.json",
+  "title": "Agent Task",
+  "description": "Structured task format for delegating work to subagents",
+  "type": "object",
+  "required": ["task_id", "objective", "context", "deliverables", "constraints"],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique task identifier (e.g., 'fix-tmp-files-001', 'analyze-performance-042')",
+      "pattern": "^[a-z0-9-]+$",
+      "minLength": 5,
+      "maxLength": 100
+    },
+    "objective": {
+      "type": "string",
+      "description": "Clear, single-sentence objective describing what needs to be accomplished",
+      "minLength": 10,
+      "maxLength": 200
+    },
+    "context": {
+      "type": "object",
+      "description": "Background information to help the subagent understand the problem",
+      "required": ["problem", "why_now"],
+      "properties": {
+        "problem": {
+          "type": "string",
+          "description": "What problem are we solving? What's broken or missing?"
+        },
+        "why_now": {
+          "type": "string",
+          "description": "Why is this urgent? What's the business/user impact?"
+        },
+        "previous_attempts": {
+          "type": "array",
+          "description": "What has already been tried? What didn't work?",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "related_files": {
+          "type": "array",
+          "description": "Files that may be relevant to this task",
+          "items": {
+            "type": "string",
+            "pattern": "^[^\\0]+$"
+          },
+          "default": []
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "Other tasks or systems this depends on",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    },
+    "deliverables": {
+      "type": "array",
+      "description": "Concrete outputs expected from this task",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["type", "description"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["file", "report", "fix", "analysis", "refactor", "test", "documentation"],
+            "description": "Type of deliverable"
+          },
+          "path": {
+            "type": ["string", "null"],
+            "description": "File path where deliverable should be saved (null if not applicable)",
+            "pattern": "^(\\.claude/context/|src/|scripts/|tests/|null$)"
+          },
+          "description": {
+            "type": "string",
+            "description": "What this deliverable contains or accomplishes"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["json", "markdown", "typescript", "javascript", "python", "yaml", "text"],
+            "description": "Expected format of the deliverable"
+          },
+          "validation": {
+            "type": "string",
+            "description": "How to validate this deliverable is correct"
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "description": "Limits and requirements for task execution",
+      "properties": {
+        "max_time_minutes": {
+          "type": "integer",
+          "description": "Maximum time allowed for this task",
+          "minimum": 1,
+          "maximum": 120,
+          "default": 30
+        },
+        "max_file_reads": {
+          "type": "integer",
+          "description": "Maximum number of files the subagent can read",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10
+        },
+        "max_tokens": {
+          "type": "integer",
+          "description": "Maximum context tokens to use",
+          "minimum": 1000,
+          "maximum": 200000,
+          "default": 50000
+        },
+        "must_validate": {
+          "type": "boolean",
+          "description": "Whether deliverables must pass validation gates",
+          "default": true
+        },
+        "allowed_tools": {
+          "type": "array",
+          "description": "Tools the subagent is allowed to use",
+          "items": {
+            "type": "string",
+            "enum": ["Read", "Write", "Edit", "Bash", "Grep", "Glob", "Task"]
+          },
+          "default": ["Read", "Write", "Edit", "Grep", "Glob"]
+        },
+        "blocked_operations": {
+          "type": "array",
+          "description": "Operations explicitly prohibited for this task",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    },
+    "success_criteria": {
+      "type": "array",
+      "description": "Measurable criteria for task completion",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "description": "Task priority level",
+      "default": "medium"
+    },
+    "assigned_agent": {
+      "type": "string",
+      "description": "Specific subagent type to handle this task",
+      "enum": [
+        "developer",
+        "analyst",
+        "architect",
+        "code-reviewer",
+        "qa",
+        "security-architect",
+        "devops",
+        "technical-writer",
+        "planner",
+        "pm",
+        "ux-expert",
+        "api-designer",
+        "database-architect",
+        "performance-engineer",
+        "accessibility-expert",
+        "compliance-auditor",
+        "incident-responder"
+      ]
+    },
+    "reasoning_style": {
+      "type": "string",
+      "enum": ["chain-of-thought", "step-by-step", "none"],
+      "description": "Reasoning approach for the agent: chain-of-thought (show reasoning), step-by-step (decompose problem), none (direct answer)",
+      "default": "step-by-step"
+    },
+    "examples": {
+      "type": "array",
+      "description": "Few-shot examples (1-5) demonstrating expected behavior and output format",
+      "minItems": 0,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["input", "output"],
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "Example input or task description"
+          },
+          "output": {
+            "type": "string",
+            "description": "Expected output format and content"
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Why this example demonstrates best practices"
+          }
+        }
+      },
+      "default": []
+    },
+    "uncertainty_permission": {
+      "type": "boolean",
+      "description": "Allow agent to respond 'I don't know' or 'I'm uncertain' instead of hallucinating answers",
+      "default": true
+    },
+    "output_format": {
+      "type": "object",
+      "description": "Structured output format specification with XML tags for reasoning/answer separation",
+      "properties": {
+        "structure": {
+          "type": "string",
+          "enum": ["xml-tagged", "json-only", "markdown-sections", "freeform"],
+          "description": "Output structure type",
+          "default": "xml-tagged"
+        },
+        "sections": {
+          "type": "array",
+          "description": "Required sections in output (e.g., <thinking>, <answer>, <validation>)",
+          "items": {
+            "type": "object",
+            "required": ["tag", "description"],
+            "properties": {
+              "tag": {
+                "type": "string",
+                "description": "XML tag or section name"
+              },
+              "description": {
+                "type": "string",
+                "description": "What this section should contain"
+              },
+              "required": {
+                "type": "boolean",
+                "description": "Whether this section is mandatory",
+                "default": true
+              }
+            }
+          },
+          "default": [
+            {
+              "tag": "thinking",
+              "description": "Agent's reasoning process (not shown to user)",
+              "required": false
+            },
+            {
+              "tag": "answer",
+              "description": "Final deliverable or response",
+              "required": true
+            }
+          ]
+        }
+      },
+      "default": {
+        "structure": "xml-tagged",
+        "sections": [
+          {
+            "tag": "thinking",
+            "description": "Agent's reasoning process (not shown to user)",
+            "required": false
+          },
+          {
+            "tag": "answer",
+            "description": "Final deliverable or response",
+            "required": true
+          }
+        ]
+      }
+    },
+    "thinking_budget": {
+      "type": "integer",
+      "description": "Token budget allocated for reasoning before producing final answer (helps prevent premature conclusions)",
+      "minimum": 0,
+      "maximum": 10000,
+      "default": 1000
+    },
+    "validation_schema": {
+      "type": ["object", "null"],
+      "description": "JSON schema for validating agent output (structured outputs improve reliability 30-60%)",
+      "default": null
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["plan", "execute", "analyze"],
+      "description": "Agent operation mode: plan (create strategy), execute (implement), analyze (review/assess)",
+      "default": "execute"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the task",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "description": "Agent or user who created this task"
+        },
+        "workflow_id": {
+          "type": "string",
+          "description": "Workflow this task belongs to"
+        },
+        "step_number": {
+          "type": "integer",
+          "description": "Step number in workflow"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "research_sources": {
+          "type": "array",
+          "description": "Research papers, documentation, or articles informing this task",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "default": []
+        }
+      }
+    }
+  }
+}

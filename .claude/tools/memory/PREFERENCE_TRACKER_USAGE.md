@@ -52,6 +52,7 @@ console.log(pref.confidence); // 0.9
 Record or update a user preference.
 
 **Parameters**:
+
 - `sessionId` (string) - Session ID to get user_id from
 - `key` (string) - Preference key (e.g., 'code_style', 'language')
 - `value` (string) - Preference value
@@ -60,6 +61,7 @@ Record or update a user preference.
 **Returns**: `Promise<{success: boolean, userId: string, key: string, value: string, confidence: number}>`
 
 **Example**:
+
 ```javascript
 // Record code style preference with high confidence
 await tracker.recordPreference('sess-123', 'code_style', 'airbnb', 0.95);
@@ -78,12 +80,14 @@ await tracker.recordPreference('sess-123', 'framework', 'react');
 Get a specific preference for a user.
 
 **Parameters**:
+
 - `userId` (string) - User ID
 - `key` (string) - Preference key
 
 **Returns**: `Promise<{key: string, value: string, confidence: number, lastUpdated: string}|null>`
 
 **Example**:
+
 ```javascript
 const pref = await tracker.getPreference('user-123', 'code_style');
 if (pref) {
@@ -98,11 +102,13 @@ if (pref) {
 Get all preferences for a user, sorted by most recently updated first.
 
 **Parameters**:
+
 - `userId` (string) - User ID
 
 **Returns**: `Promise<Array<{key: string, value: string, confidence: number, lastUpdated: string}>>`
 
 **Example**:
+
 ```javascript
 const prefs = await tracker.getAllPreferences('user-123');
 for (const pref of prefs) {
@@ -117,6 +123,7 @@ for (const pref of prefs) {
 Update confidence score for a preference without changing the value.
 
 **Parameters**:
+
 - `userId` (string) - User ID
 - `key` (string) - Preference key
 - `newConfidence` (number) - New confidence score (0.0-1.0)
@@ -124,6 +131,7 @@ Update confidence score for a preference without changing the value.
 **Returns**: `Promise<{success: boolean, key: string, oldConfidence: number, newConfidence: number}>`
 
 **Example**:
+
 ```javascript
 // Reinforce preference confidence (user consistently uses airbnb style)
 await tracker.updateConfidence('user-123', 'code_style', 0.95);
@@ -139,12 +147,14 @@ await tracker.updateConfidence('user-123', 'language', 0.4);
 Remove a preference from the database.
 
 **Parameters**:
+
 - `userId` (string) - User ID
 - `key` (string) - Preference key
 
 **Returns**: `Promise<{success: boolean, deleted: boolean}>`
 
 **Example**:
+
 ```javascript
 await tracker.deletePreference('user-123', 'old_framework');
 ```
@@ -156,12 +166,14 @@ await tracker.deletePreference('user-123', 'old_framework');
 Get preferences matching a key pattern (SQL LIKE syntax).
 
 **Parameters**:
+
 - `userId` (string) - User ID
-- `pattern` (string) - Key pattern (e.g., 'lang_%', '%_style')
+- `pattern` (string) - Key pattern (e.g., 'lang\_%', '%\_style')
 
 **Returns**: `Promise<Array<{key: string, value: string, confidence: number, lastUpdated: string}>>`
 
 **Example**:
+
 ```javascript
 // Get all language-related preferences
 const langPrefs = await tracker.getPreferencesByPattern('user-123', 'lang_%');
@@ -177,6 +189,7 @@ const stylePrefs = await tracker.getPreferencesByPattern('user-123', '%_style');
 Apply confidence decay to stale preferences. This helps identify preferences that may no longer be relevant.
 
 **Parameters**:
+
 - `userId` (string) - User ID
 - `daysStale` (number) - Number of days before decay applies
 - `decayFactor` (number, optional) - Multiplier for confidence (default 0.8 = 20% decay)
@@ -184,6 +197,7 @@ Apply confidence decay to stale preferences. This helps identify preferences tha
 **Returns**: `Promise<{success: boolean, decayed: number}>`
 
 **Example**:
+
 ```javascript
 // Decay preferences older than 30 days by 20%
 await tracker.applyConfidenceDecay('user-123', 30, 0.8);
@@ -193,6 +207,7 @@ await tracker.applyConfidenceDecay('user-123', 90, 0.5);
 ```
 
 **Notes**:
+
 - Minimum confidence is enforced at 0.1
 - Decay only applies to preferences not updated within `daysStale` days
 
@@ -203,11 +218,13 @@ await tracker.applyConfidenceDecay('user-123', 90, 0.5);
 Get aggregate statistics about user preferences.
 
 **Parameters**:
+
 - `userId` (string) - User ID
 
 **Returns**: `Promise<{totalPreferences: number, avgConfidence: number, mostRecent: string|null, oldestUpdated: string|null}>`
 
 **Example**:
+
 ```javascript
 const stats = await tracker.getPreferenceStats('user-123');
 console.log(`User has ${stats.totalPreferences} preferences`);
@@ -291,12 +308,7 @@ async function migrateFramework(userId, oldFramework, newFramework) {
 
     // Record new preference with slightly lower confidence
     const sessionId = await getCurrentSessionId(userId);
-    await tracker.recordPreference(
-      sessionId,
-      'framework',
-      newFramework,
-      oldPref.confidence * 0.8
-    );
+    await tracker.recordPreference(sessionId, 'framework', newFramework, oldPref.confidence * 0.8);
   }
 }
 ```
@@ -334,28 +346,28 @@ const tools = await tracker.getPreferencesByPattern(userId, 'tool_%');
 
 ## Confidence Score Guidelines
 
-| Confidence | Interpretation | Use Case |
-|------------|----------------|----------|
-| 1.0 | Explicit user selection | User explicitly chose this option |
-| 0.9 | Very confident | Consistently observed behavior |
-| 0.8 | Confident | Frequently observed behavior |
-| 0.7 | Moderately confident | Observed multiple times |
-| 0.5 | Uncertain | Observed once or inferred |
-| 0.3 | Low confidence | Weak signal or old preference |
-| 0.1 | Minimum confidence | Almost obsolete |
+| Confidence | Interpretation          | Use Case                          |
+| ---------- | ----------------------- | --------------------------------- |
+| 1.0        | Explicit user selection | User explicitly chose this option |
+| 0.9        | Very confident          | Consistently observed behavior    |
+| 0.8        | Confident               | Frequently observed behavior      |
+| 0.7        | Moderately confident    | Observed multiple times           |
+| 0.5        | Uncertain               | Observed once or inferred         |
+| 0.3        | Low confidence          | Weak signal or old preference     |
+| 0.1        | Minimum confidence      | Almost obsolete                   |
 
 ---
 
 ## Performance Characteristics
 
-| Operation | Target | Actual (measured) |
-|-----------|--------|-------------------|
-| Insert/Update | <1ms | ~0.5ms |
-| Get Single | <1ms | ~0.3ms |
-| Get All | <5ms | ~2ms (100 prefs) |
-| Pattern Match | <5ms | ~3ms (100 prefs) |
-| Confidence Decay | <10ms | ~8ms (100 prefs) |
-| Statistics | <5ms | ~3ms (100 prefs) |
+| Operation        | Target | Actual (measured) |
+| ---------------- | ------ | ----------------- |
+| Insert/Update    | <1ms   | ~0.5ms            |
+| Get Single       | <1ms   | ~0.3ms            |
+| Get All          | <5ms   | ~2ms (100 prefs)  |
+| Pattern Match    | <5ms   | ~3ms (100 prefs)  |
+| Confidence Decay | <10ms  | ~8ms (100 prefs)  |
+| Statistics       | <5ms   | ~3ms (100 prefs)  |
 
 ---
 
@@ -394,6 +406,7 @@ node --test .claude/tools/memory/preference-tracker.test.mjs
 ```
 
 **Test Coverage**:
+
 - ✅ Record new preferences
 - ✅ Update existing preferences
 - ✅ Get single preference

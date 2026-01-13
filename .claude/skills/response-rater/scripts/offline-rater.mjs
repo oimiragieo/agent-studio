@@ -77,7 +77,7 @@ function scoreFeasibility(plan) {
     let hasEstimates = 0;
     let hasDependencies = 0;
 
-    steps.forEach((step) => {
+    steps.forEach(step => {
       if (step.estimated_duration || step.estimate || step.time) {
         hasEstimates++;
       }
@@ -124,7 +124,7 @@ function scoreRiskMitigation(plan) {
 
   // Count risks with mitigations
   let risksWithMitigation = 0;
-  risks.forEach((risk) => {
+  risks.forEach(risk => {
     if (risk.mitigation || risk.response || risk.strategy) {
       risksWithMitigation++;
     }
@@ -168,7 +168,7 @@ function scoreAgentCoverage(plan) {
   let stepsWithAgents = 0;
   const agentTypes = new Set();
 
-  steps.forEach((step) => {
+  steps.forEach(step => {
     if (step.agent || step.assigned_agent || step.responsible_agent) {
       stepsWithAgents++;
       agentTypes.add(step.agent || step.assigned_agent || step.responsible_agent);
@@ -337,7 +337,7 @@ const scriptPath = fileURLToPath(import.meta.url);
 const argPath = process.argv[1];
 
 if (scriptPath === argPath || scriptPath.replace(/\\/g, '/') === argPath.replace(/\\/g, '/')) {
-  main().catch((err) => {
+  main().catch(err => {
     console.error(`Fatal error: ${err.message}`);
     process.exit(1);
   });

@@ -13,6 +13,7 @@
 **Change**: Added "Search & Discovery" to the category enum
 
 **Before** (9 categories):
+
 ```json
 "enum": [
   "Onboarding & Setup",
@@ -28,6 +29,7 @@
 ```
 
 **After** (10 categories):
+
 ```json
 "enum": [
   "Onboarding & Setup",
@@ -50,11 +52,12 @@
 **Change**: Added CUJ-064 mapping to CATEGORIES constant
 
 **Added**:
+
 ```javascript
 const CATEGORIES = {
   // ... existing entries ...
   'CUJ-063': 'Testing & Validation',
-  'CUJ-064': 'Search & Discovery',  // NEW
+  'CUJ-064': 'Search & Discovery', // NEW
 };
 ```
 
@@ -78,6 +81,7 @@ const CATEGORIES = {
 ### Missing Categories Identified
 
 Only one category was missing from the schema:
+
 - **Search & Discovery** (used by CUJ-064)
 
 All other categories found in the registry were already present in the schema.
@@ -85,6 +89,7 @@ All other categories found in the registry were already present in the schema.
 ## Validation Results
 
 ### Before Changes
+
 ```
 ❌ Schema validation failed:
   - /cujs/60/category: must be equal to one of the allowed values
@@ -92,11 +97,13 @@ All other categories found in the registry were already present in the schema.
 ```
 
 ### After Changes
+
 ```
 ✅ Schema validation passed
 ```
 
 ### Registry Statistics
+
 ```
 By Category:
   Onboarding & Setup: 3

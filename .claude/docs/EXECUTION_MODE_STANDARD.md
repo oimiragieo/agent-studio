@@ -8,28 +8,28 @@ This document defines the canonical execution modes for Customer User Journeys (
 
 The system supports exactly three canonical execution modes:
 
-| Mode | Description | Use Case |
-|------|-------------|----------|
-| `workflow` | Multi-agent workflow execution via YAML file | Complex multi-step journeys with agent coordination |
-| `skill-only` | Direct skill invocation without workflow orchestration | Simple, single-skill operations |
-| `manual-setup` | Manual setup/execution steps (no automation) | Installation, configuration, or human-driven processes |
+| Mode           | Description                                            | Use Case                                               |
+| -------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| `workflow`     | Multi-agent workflow execution via YAML file           | Complex multi-step journeys with agent coordination    |
+| `skill-only`   | Direct skill invocation without workflow orchestration | Simple, single-skill operations                        |
+| `manual-setup` | Manual setup/execution steps (no automation)           | Installation, configuration, or human-driven processes |
 
 ## Field Definitions
 
 ### Required Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
+| Field            | Type     | Description                                      |
+| ---------------- | -------- | ------------------------------------------------ |
 | `execution_mode` | `string` | One of: `workflow`, `skill-only`, `manual-setup` |
 
 ### Conditional Fields
 
-| Field | Type | Required When | Description |
-|-------|------|---------------|-------------|
-| `workflow_file` | `string` | `execution_mode === "workflow"` | Path to workflow YAML (e.g., `.claude/workflows/greenfield-fullstack.yaml`) |
-| `primary_skill` | `string` | `execution_mode === "skill-only"` | Main skill name (e.g., `rule-selector`) |
-| `supporting_skills` | `array<string>` | Optional (any mode) | Additional skills used |
-| `manual_steps` | `array<string>` | Optional (`manual-setup`) | List of manual steps |
+| Field               | Type            | Required When                     | Description                                                                 |
+| ------------------- | --------------- | --------------------------------- | --------------------------------------------------------------------------- |
+| `workflow_file`     | `string`        | `execution_mode === "workflow"`   | Path to workflow YAML (e.g., `.claude/workflows/greenfield-fullstack.yaml`) |
+| `primary_skill`     | `string`        | `execution_mode === "skill-only"` | Main skill name (e.g., `rule-selector`)                                     |
+| `supporting_skills` | `array<string>` | Optional (any mode)               | Additional skills used                                                      |
+| `manual_steps`      | `array<string>` | Optional (`manual-setup`)         | List of manual steps                                                        |
 
 ## Mode Details
 
@@ -38,10 +38,12 @@ The system supports exactly three canonical execution modes:
 Use `workflow` when the CUJ requires multi-agent coordination through a workflow YAML file.
 
 **Requirements**:
+
 - `workflow_file` must be set to a valid path matching `.claude/workflows/*.yaml`
 - `primary_skill` is optional (workflow may use multiple skills)
 
 **Markdown Format**:
+
 ```markdown
 **Execution Mode**: `workflow`
 
@@ -49,6 +51,7 @@ Use `workflow` when the CUJ requires multi-agent coordination through a workflow
 ```
 
 **JSON Format**:
+
 ```json
 {
   "execution_mode": "workflow",
@@ -63,10 +66,12 @@ Use `workflow` when the CUJ requires multi-agent coordination through a workflow
 Use `skill-only` when the CUJ can be completed by invoking a single skill without workflow orchestration.
 
 **Requirements**:
+
 - `primary_skill` must be set to a valid skill name
 - `workflow_file` must be `null`
 
 **Markdown Format**:
+
 ```markdown
 **Execution Mode**: `skill-only`
 
@@ -74,6 +79,7 @@ Use `skill-only` when the CUJ can be completed by invoking a single skill withou
 ```
 
 **JSON Format**:
+
 ```json
 {
   "execution_mode": "skill-only",
@@ -88,21 +94,25 @@ Use `skill-only` when the CUJ can be completed by invoking a single skill withou
 Use `manual-setup` when the CUJ requires human intervention and cannot be fully automated.
 
 **Requirements**:
+
 - `workflow_file` must be `null`
 - `primary_skill` must be `null`
 - `manual_steps` is recommended to document the process
 
 **Markdown Format**:
+
 ```markdown
 **Execution Mode**: `manual-setup`
 
 ### Manual Steps
+
 1. Clone the repository
 2. Run the installation script
 3. Configure environment variables
 ```
 
 **JSON Format**:
+
 ```json
 {
   "execution_mode": "manual-setup",
@@ -120,23 +130,24 @@ Use `manual-setup` when the CUJ requires human intervention and cannot be fully 
 
 The following patterns are **deprecated** and should be migrated to canonical forms:
 
-| Deprecated Pattern | Canonical Replacement | Migration Notes |
-|--------------------|----------------------|-----------------|
-| `greenfield-fullstack.yaml` | `workflow` + `workflow_file` | Move filename to separate field |
-| `brownfield-fullstack.yaml` | `workflow` + `workflow_file` | Move filename to separate field |
-| `quick-flow.yaml` | `workflow` + `workflow_file` | Move filename to separate field |
-| `performance-flow.yaml` | `workflow` + `workflow_file` | Move filename to separate field |
-| `mobile-flow.yaml` | `workflow` + `workflow_file` | Move filename to separate field |
-| `ai-system-flow.yaml` | `workflow` + `workflow_file` | Move filename to separate field |
-| `incident-flow.yaml` | `workflow` + `workflow_file` | Move filename to separate field |
-| `browser-testing-flow.yaml` | `workflow` + `workflow_file` | Move filename to separate field |
-| `recovery-test-flow.yaml` | `workflow` + `workflow_file` | Move filename to separate field |
-| `skill-workflow` | `workflow` (INVALID) | Invalid mode, must choose `workflow` or `skill-only` |
-| `delegated-skill` | `skill-only` | Renamed for clarity |
+| Deprecated Pattern          | Canonical Replacement        | Migration Notes                                      |
+| --------------------------- | ---------------------------- | ---------------------------------------------------- |
+| `greenfield-fullstack.yaml` | `workflow` + `workflow_file` | Move filename to separate field                      |
+| `brownfield-fullstack.yaml` | `workflow` + `workflow_file` | Move filename to separate field                      |
+| `quick-flow.yaml`           | `workflow` + `workflow_file` | Move filename to separate field                      |
+| `performance-flow.yaml`     | `workflow` + `workflow_file` | Move filename to separate field                      |
+| `mobile-flow.yaml`          | `workflow` + `workflow_file` | Move filename to separate field                      |
+| `ai-system-flow.yaml`       | `workflow` + `workflow_file` | Move filename to separate field                      |
+| `incident-flow.yaml`        | `workflow` + `workflow_file` | Move filename to separate field                      |
+| `browser-testing-flow.yaml` | `workflow` + `workflow_file` | Move filename to separate field                      |
+| `recovery-test-flow.yaml`   | `workflow` + `workflow_file` | Move filename to separate field                      |
+| `skill-workflow`            | `workflow` (INVALID)         | Invalid mode, must choose `workflow` or `skill-only` |
+| `delegated-skill`           | `skill-only`                 | Renamed for clarity                                  |
 
 ## Schema Validation
 
 All CUJ execution configurations are validated against:
+
 - `.claude/schemas/execution-mode.schema.json` - Canonical execution mode schema
 - `.claude/schemas/cuj-registry.schema.json` - Registry-level validation
 
@@ -162,12 +173,12 @@ node .claude/tools/cuj-validator-unified.mjs --all --validate-execution-mode
 
 ### Deprecation Timeline
 
-| Phase | Date | Action |
-|-------|------|--------|
+| Phase   | Date       | Action                                       |
+| ------- | ---------- | -------------------------------------------- |
 | Phase 1 | 2025-01-12 | Deprecation warnings for non-canonical modes |
-| Phase 2 | 2025-02-01 | Migration tooling available |
-| Phase 3 | 2025-03-01 | Non-canonical modes become errors |
-| Phase 4 | 2025-04-01 | Remove deprecated pattern support |
+| Phase 2 | 2025-02-01 | Migration tooling available                  |
+| Phase 3 | 2025-03-01 | Non-canonical modes become errors            |
+| Phase 4 | 2025-04-01 | Remove deprecated pattern support            |
 
 ### Deprecation Warnings
 
@@ -192,6 +203,6 @@ See [EXECUTION_MODE_MIGRATION.md](./EXECUTION_MODE_MIGRATION.md) for step-by-ste
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-12 | Initial canonical standard definition |
+| Version | Date       | Changes                               |
+| ------- | ---------- | ------------------------------------- |
+| 1.0.0   | 2025-01-12 | Initial canonical standard definition |

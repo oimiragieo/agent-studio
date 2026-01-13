@@ -50,7 +50,11 @@ describe('Orchestrator Entry - Worker Integration', () => {
       process.env.USE_WORKERS = 'true';
 
       const supervisor = await initializeSupervisor();
-      assert.notStrictEqual(supervisor, null, 'Supervisor should be initialized when workers enabled');
+      assert.notStrictEqual(
+        supervisor,
+        null,
+        'Supervisor should be initialized when workers enabled'
+      );
 
       // Cleanup
       await supervisor.cleanup();
@@ -141,7 +145,11 @@ describe('Orchestrator Entry - Worker Integration', () => {
       assert.notStrictEqual(supervisor, null, 'Should initialize supervisor when enabled');
 
       // Validate supervisor has required methods
-      assert.strictEqual(typeof supervisor.spawnWorker, 'function', 'Should have spawnWorker method');
+      assert.strictEqual(
+        typeof supervisor.spawnWorker,
+        'function',
+        'Should have spawnWorker method'
+      );
       assert.strictEqual(
         typeof supervisor.waitForCompletion,
         'function',
@@ -158,21 +166,33 @@ describe('Orchestrator Entry - Worker Integration', () => {
     it('should map "high" complexity to 0.8', () => {
       const routingResult = { complexity: 'high' };
       const mapped =
-        routingResult.complexity === 'high' ? 0.8 : routingResult.complexity === 'medium' ? 0.5 : 0.3;
+        routingResult.complexity === 'high'
+          ? 0.8
+          : routingResult.complexity === 'medium'
+            ? 0.5
+            : 0.3;
       assert.strictEqual(mapped, 0.8, 'High complexity should map to 0.8');
     });
 
     it('should map "medium" complexity to 0.5', () => {
       const routingResult = { complexity: 'medium' };
       const mapped =
-        routingResult.complexity === 'high' ? 0.8 : routingResult.complexity === 'medium' ? 0.5 : 0.3;
+        routingResult.complexity === 'high'
+          ? 0.8
+          : routingResult.complexity === 'medium'
+            ? 0.5
+            : 0.3;
       assert.strictEqual(mapped, 0.5, 'Medium complexity should map to 0.5');
     });
 
     it('should map "low" complexity to 0.3', () => {
       const routingResult = { complexity: 'low' };
       const mapped =
-        routingResult.complexity === 'high' ? 0.8 : routingResult.complexity === 'medium' ? 0.5 : 0.3;
+        routingResult.complexity === 'high'
+          ? 0.8
+          : routingResult.complexity === 'medium'
+            ? 0.5
+            : 0.3;
       assert.strictEqual(mapped, 0.3, 'Low complexity should map to 0.3');
     });
 
@@ -200,9 +220,21 @@ describe('Orchestrator Entry - Worker Integration', () => {
       delete process.env.USE_WORKERS;
 
       // Validate exports are available
-      assert.strictEqual(typeof processUserPrompt, 'function', 'processUserPrompt should be exported');
-      assert.strictEqual(typeof initializeSupervisor, 'function', 'initializeSupervisor should be exported');
-      assert.strictEqual(typeof isLongRunningTask, 'function', 'isLongRunningTask should be exported');
+      assert.strictEqual(
+        typeof processUserPrompt,
+        'function',
+        'processUserPrompt should be exported'
+      );
+      assert.strictEqual(
+        typeof initializeSupervisor,
+        'function',
+        'initializeSupervisor should be exported'
+      );
+      assert.strictEqual(
+        typeof isLongRunningTask,
+        'function',
+        'isLongRunningTask should be exported'
+      );
     });
   });
 

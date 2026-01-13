@@ -57,11 +57,7 @@ async function testRoutingDecisionAccepted() {
 
   try {
     // Call processUserPrompt - it will fail at workflow execution, but we can check the routing
-    await processUserPrompt(
-      'Build a web app',
-      { runId, sessionContext },
-      routingDecision
-    );
+    await processUserPrompt('Build a web app', { runId, sessionContext }, routingDecision);
   } catch (error) {
     // Expected to fail at workflow execution
     // But we can verify the routing decision was accepted
@@ -131,11 +127,7 @@ async function testSessionContextExtraction() {
   };
 
   try {
-    await processUserPrompt(
-      'Create a script',
-      { runId, sessionContext },
-      routingDecision
-    );
+    await processUserPrompt('Create a script', { runId, sessionContext }, routingDecision);
   } catch (error) {
     // Expected to fail at workflow execution
   }
@@ -161,7 +153,9 @@ async function testSessionContextExtraction() {
   console.log(
     `   - Costs transferred: $${runRecord.metadata.routerHandoff.accumulatedCosts.total_cost_usd.toFixed(6)}`
   );
-  console.log(`   - Routing decision present: ${JSON.stringify(runRecord.metadata.routerHandoff.routingDecision)}`);
+  console.log(
+    `   - Routing decision present: ${JSON.stringify(runRecord.metadata.routerHandoff.routingDecision)}`
+  );
 }
 
 // Test 3: Backward compatibility
@@ -227,11 +221,7 @@ async function testCostAggregationFunction() {
 
   let result;
   try {
-    result = await processUserPrompt(
-      'Analyze code',
-      { runId, sessionContext },
-      routingDecision
-    );
+    result = await processUserPrompt('Analyze code', { runId, sessionContext }, routingDecision);
   } catch (error) {
     // Expected to fail at workflow execution
     // But we should still get the costs in the error (if we caught it early enough)
@@ -244,10 +234,7 @@ async function testCostAggregationFunction() {
   const runRecord = await readRun(runId);
 
   // Verify costs were transferred to metadata
-  assert.ok(
-    runRecord.metadata.routerHandoff.accumulatedCosts,
-    'Costs should be in metadata'
-  );
+  assert.ok(runRecord.metadata.routerHandoff.accumulatedCosts, 'Costs should be in metadata');
   assert.strictEqual(
     runRecord.metadata.routerHandoff.accumulatedCosts.total_cost_usd,
     0.0005,

@@ -25,7 +25,7 @@ import {
   classifyIntent,
   selectWorkflow,
   routeToOrchestrator,
-  trackCosts
+  trackCosts,
 } from './.claude/tools/router-session-handler.mjs';
 ```
 
@@ -36,6 +36,7 @@ import {
 Initialize a new router session with Haiku model.
 
 **Parameters**:
+
 - `sessionId` (string): Unique session identifier
 - `initialPrompt` (string): User's initial prompt
 
@@ -63,6 +64,7 @@ console.log(session);
 Classify user intent and determine routing decision.
 
 **Parameters**:
+
 - `userPrompt` (string): User's input prompt
 
 **Returns**: Classification object
@@ -90,23 +92,24 @@ console.log(classification);
 
 **Classification Results**:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `intent` | string | Intent type (web_app, script, analysis, etc.) |
-| `complexity` | string | Complexity level (low, medium, high) |
-| `complexity_score` | number | Numeric complexity score (0-1) |
-| `cloud_provider` | string/null | Cloud provider (gcp, aws, azure, null) |
-| `should_route` | boolean | Whether to route to orchestrator |
-| `confidence` | number | Classification confidence (0-1) |
-| `reasoning` | string | Human-readable reasoning |
-| `keywords_detected` | string[] | Keywords that matched |
-| `classification_time_ms` | number | Time taken to classify |
+| Field                    | Type        | Description                                   |
+| ------------------------ | ----------- | --------------------------------------------- |
+| `intent`                 | string      | Intent type (web_app, script, analysis, etc.) |
+| `complexity`             | string      | Complexity level (low, medium, high)          |
+| `complexity_score`       | number      | Numeric complexity score (0-1)                |
+| `cloud_provider`         | string/null | Cloud provider (gcp, aws, azure, null)        |
+| `should_route`           | boolean     | Whether to route to orchestrator              |
+| `confidence`             | number      | Classification confidence (0-1)               |
+| `reasoning`              | string      | Human-readable reasoning                      |
+| `keywords_detected`      | string[]    | Keywords that matched                         |
+| `classification_time_ms` | number      | Time taken to classify                        |
 
 ### 3. `selectWorkflow(intent, complexity)`
 
 Select appropriate workflow based on classification.
 
 **Parameters**:
+
 - `intent` (string): Intent type
 - `complexity` (string): Complexity level
 
@@ -124,20 +127,21 @@ const scriptWorkflow = await selectWorkflow('script', 'low');
 
 **Workflow Mapping**:
 
-| Intent | Workflow |
-|--------|----------|
-| web_app | greenfield-fullstack.yaml |
-| script | quick-flow.yaml |
-| analysis | code-quality-flow.yaml |
+| Intent         | Workflow                       |
+| -------------- | ------------------------------ |
+| web_app        | greenfield-fullstack.yaml      |
+| script         | quick-flow.yaml                |
+| analysis       | code-quality-flow.yaml         |
 | infrastructure | automated-enterprise-flow.yaml |
-| mobile | mobile-flow.yaml |
-| ai_system | ai-system-flow.yaml |
+| mobile         | mobile-flow.yaml               |
+| ai_system      | ai-system-flow.yaml            |
 
 ### 4. `routeToOrchestrator(workflow, userPrompt, sessionContext)`
 
 Route request to orchestrator with handoff data.
 
 **Parameters**:
+
 - `workflow` (string): Workflow file path
 - `userPrompt` (string): Original user prompt
 - `sessionContext` (object): Session context
@@ -152,7 +156,7 @@ const handoff = await routeToOrchestrator(
   'Build a web application',
   {
     session_id: 'session-123',
-    classification: { intent: 'web_app', complexity: 'high' }
+    classification: { intent: 'web_app', complexity: 'high' },
   }
 );
 
@@ -178,6 +182,7 @@ console.log(handoff);
 Track costs for model usage.
 
 **Parameters**:
+
 - `sessionId` (string): Session identifier
 - `modelUsed` (string): Model identifier
 - `inputTokens` (number): Input token count
@@ -192,7 +197,7 @@ const cost = await trackCosts(
   'session-123',
   'claude-3-5-haiku-20241022',
   1000, // input tokens
-  500   // output tokens
+  500 // output tokens
 );
 
 console.log(cost);
@@ -209,11 +214,11 @@ console.log(cost);
 
 **Model Pricing** (per million tokens):
 
-| Model | Input | Output |
-|-------|-------|--------|
-| claude-3-5-haiku-20241022 | $1.00 | $5.00 |
-| claude-sonnet-4-20250514 | $3.00 | $15.00 |
-| claude-opus-4-20241113 | $15.00 | $75.00 |
+| Model                     | Input  | Output |
+| ------------------------- | ------ | ------ |
+| claude-3-5-haiku-20241022 | $1.00  | $5.00  |
+| claude-sonnet-4-20250514  | $3.00  | $15.00 |
+| claude-opus-4-20241113    | $15.00 | $75.00 |
 
 ### 6. `getCostSummary(sessionId)`
 
@@ -248,7 +253,7 @@ import {
   classifyIntent,
   selectWorkflow,
   routeToOrchestrator,
-  trackCosts
+  trackCosts,
 } from './.claude/tools/router-session-handler.mjs';
 
 async function handleUserRequest(userPrompt) {
@@ -265,14 +270,11 @@ async function handleUserRequest(userPrompt) {
   // Step 4: Decide routing
   if (classification.should_route) {
     // Route to orchestrator
-    const workflow = await selectWorkflow(
-      classification.intent,
-      classification.complexity
-    );
+    const workflow = await selectWorkflow(classification.intent, classification.complexity);
 
     const handoff = await routeToOrchestrator(workflow, userPrompt, {
       session_id: sessionId,
-      classification
+      classification,
     });
 
     return handoff;
@@ -281,7 +283,7 @@ async function handleUserRequest(userPrompt) {
     return {
       handled_by: 'router',
       classification,
-      message: 'Handled directly without orchestrator'
+      message: 'Handled directly without orchestrator',
     };
   }
 }
@@ -352,6 +354,7 @@ node .claude/tools/router-session-handler.test.mjs
 ```
 
 **Test Coverage**:
+
 - ✅ Intent classification (all types)
 - ✅ Complexity assessment
 - ✅ Cloud provider detection
@@ -364,12 +367,12 @@ node .claude/tools/router-session-handler.test.mjs
 
 ## Performance Characteristics
 
-| Operation | Time | Notes |
-|-----------|------|-------|
-| Intent Classification | < 100ms | Lightweight heuristics |
-| Session Initialization | < 50ms | File I/O |
-| Workflow Selection | < 20ms | Simple mapping |
-| Cost Tracking | < 10ms | Arithmetic only |
+| Operation              | Time    | Notes                  |
+| ---------------------- | ------- | ---------------------- |
+| Intent Classification  | < 100ms | Lightweight heuristics |
+| Session Initialization | < 50ms  | File I/O               |
+| Workflow Selection     | < 20ms  | Simple mapping         |
+| Cost Tracking          | < 10ms  | Arithmetic only        |
 
 ## Error Handling
 
@@ -385,6 +388,7 @@ try {
 ```
 
 **Common Errors**:
+
 - `Failed to initialize router session` - Settings file missing or invalid
 - `Cost tracking failed` - Session not found
 - `Workflow selection failed` - Invalid intent type
@@ -437,6 +441,7 @@ The router uses settings from `.claude/settings.json`:
 ```
 
 **Tunable Parameters**:
+
 - `complexity_threshold`: Minimum score to route to orchestrator (default: 0.7)
 - `cost_optimization_enabled`: Enable cost-aware model selection (default: true)
 

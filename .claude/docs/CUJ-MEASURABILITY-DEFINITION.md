@@ -24,6 +24,7 @@ A success criterion is **measurable** if it can be **objectively verified** thro
 ## Measurable Patterns (Allowed)
 
 ### File-Based Patterns
+
 ```
 ✅ ".claude/context/artifacts/plan-*.json exists"
 ✅ "dev-manifest.json validated against schema"
@@ -33,6 +34,7 @@ A success criterion is **measurable** if it can be **objectively verified** thro
 ```
 
 ### Data Validation Patterns
+
 ```
 ✅ "plan-*.json conforms to plan.schema.json"
 ✅ "Artifact validated by gate function"
@@ -42,6 +44,7 @@ A success criterion is **measurable** if it can be **objectively verified** thro
 ```
 
 ### Numeric/Threshold Patterns
+
 ```
 ✅ "Plan rating score >= 7/10"
 ✅ "Test coverage >= 80%"
@@ -53,6 +56,7 @@ A success criterion is **measurable** if it can be **objectively verified** thro
 ```
 
 ### Boolean/Status Patterns
+
 ```
 ✅ "Validation passes (exit code 0)"
 ✅ "All required fields present"
@@ -66,6 +70,7 @@ A success criterion is **measurable** if it can be **objectively verified** thro
 ## Non-Measurable Patterns (Prohibited)
 
 ### Vague Qualifiers
+
 ```
 ❌ "Code is improved"
 ❌ "System runs faster"
@@ -75,6 +80,7 @@ A success criterion is **measurable** if it can be **objectively verified** thro
 ```
 
 ### Subjective Assessments
+
 ```
 ❌ "Standards met"
 ❌ "Accurate results"
@@ -84,6 +90,7 @@ A success criterion is **measurable** if it can be **objectively verified** thro
 ```
 
 ### Unmeasurable Outcomes
+
 ```
 ❌ "User satisfaction improved"
 ❌ "Developer experience enhanced"
@@ -116,16 +123,19 @@ Criteria that mix measurable and non-measurable elements:
 Both sources must be measurable and aligned:
 
 ### 1. CUJ Registry (`cuj-registry.json`)
+
 - **Field**: `expected_outputs` (array of strings)
 - **Checked By**: `cuj-validator-unified.mjs` line 660
 - **Purpose**: Canonical list of measurable outputs
 
 ### 2. CUJ Markdown (`CUJ-*.md`)
+
 - **Section**: `## Success Criteria`
 - **Checked By**: `scripts/cuj-measurability.mjs`
 - **Purpose**: Human-readable criteria documentation
 
 ### Alignment Requirement
+
 - Registry `expected_outputs` and markdown `## Success Criteria` should describe the same outcomes
 - Both must use measurable patterns
 - Discrepancies should be flagged as warnings
@@ -135,41 +145,99 @@ Both sources must be measurable and aligned:
 ## Measurable Keywords Reference
 
 ### Strong Indicators (High Confidence)
+
 ```javascript
 const strongMeasurableKeywords = [
   // File references
-  '.json', '.md', '.yaml', 'schema', 'artifact', 'manifest',
+  '.json',
+  '.md',
+  '.yaml',
+  'schema',
+  'artifact',
+  'manifest',
 
   // Validation terms
-  'validated', 'validation', 'passes', 'fails', 'gate', 'schema',
+  'validated',
+  'validation',
+  'passes',
+  'fails',
+  'gate',
+  'schema',
 
   // Numeric/threshold
-  'time', 'seconds', 'minutes', 'count', 'number', 'total', 'size',
-  'percentage', '%', 'ratio', 'score', 'rating', '>=', '<=', '>',
+  'time',
+  'seconds',
+  'minutes',
+  'count',
+  'number',
+  'total',
+  'size',
+  'percentage',
+  '%',
+  'ratio',
+  'score',
+  'rating',
+  '>=',
+  '<=',
+  '>',
 
   // Status/boolean
-  'exists', 'present', 'contains', 'includes', 'true', 'false',
-  'exit code', 'status code', 'response code',
+  'exists',
+  'present',
+  'contains',
+  'includes',
+  'true',
+  'false',
+  'exit code',
+  'status code',
+  'response code',
 
   // Data structure
-  'array', 'field', 'populated', 'empty', 'null', 'undefined',
+  'array',
+  'field',
+  'populated',
+  'empty',
+  'null',
+  'undefined',
 ];
 ```
 
 ### Weak Indicators (Contextual)
+
 ```javascript
 const weakMeasurableKeywords = [
-  'greater', 'less', 'equal', 'than', 'valid', 'invalid',
-  'deployed', 'running', 'coverage', 'response',
+  'greater',
+  'less',
+  'equal',
+  'than',
+  'valid',
+  'invalid',
+  'deployed',
+  'running',
+  'coverage',
+  'response',
 ];
 ```
 
 ### Non-Measurable Keywords (Blockers)
+
 ```javascript
 const nonMeasurableKeywords = [
-  'improved', 'faster', 'better', 'working', 'ensured',
-  'correct', 'functional', 'successful', 'accurate', 'met',
-  'standards', 'quality', 'clean', 'maintainable', 'reliable',
+  'improved',
+  'faster',
+  'better',
+  'working',
+  'ensured',
+  'correct',
+  'functional',
+  'successful',
+  'accurate',
+  'met',
+  'standards',
+  'quality',
+  'clean',
+  'maintainable',
+  'reliable',
 ];
 ```
 
@@ -178,9 +246,11 @@ const nonMeasurableKeywords = [
 ## Tool Behavior
 
 ### cuj-validator-unified.mjs
+
 **Function**: `checkSuccessCriteria()` (line 660)
 **Source**: `cuj-registry.json` → `expected_outputs`
 **Logic**:
+
 ```javascript
 for (const output of cuj.expected_outputs) {
   const lowerOutput = output.toLowerCase();
@@ -195,8 +265,10 @@ for (const output of cuj.expected_outputs) {
 ```
 
 ### scripts/cuj-measurability.mjs
+
 **Source**: `CUJ-*.md` → `## Success Criteria` section
 **Logic**:
+
 ```javascript
 criteria.forEach(c => {
   const hasMeasurable = measurablePatterns.some(p => p.test(c.text));
@@ -217,12 +289,14 @@ criteria.forEach(c => {
 ## Alignment Validation
 
 ### Cross-Check Procedure
+
 1. **Parse Both Sources**: Extract criteria from registry and markdown
 2. **Check Measurability**: Apply same keywords to both
 3. **Compare Results**: Flag discrepancies
 4. **Report Alignment**: Pass/warn/fail based on agreement
 
 ### Example Alignment Check
+
 ```javascript
 // Registry (expected_outputs)
 ["plan-*.json validated against schema", "Exit code 0"]
@@ -235,6 +309,7 @@ criteria.forEach(c => {
 ```
 
 ### Misalignment Example
+
 ```javascript
 // Registry (expected_outputs)
 ["Improved code quality", "Tests pass"]
@@ -251,11 +326,13 @@ criteria.forEach(c => {
 ## Thresholds
 
 ### CUJ-Level Thresholds
+
 - **Fully Measurable**: 100% of criteria are measurable
 - **Acceptable**: >= 70% measurable (warnings only)
 - **Needs Improvement**: < 70% measurable (errors)
 
 ### System-Level Thresholds
+
 - **Target**: <= 30% non-measurable criteria across all CUJs
 - **Warning**: 31-50% non-measurable
 - **Failure**: > 50% non-measurable
@@ -267,11 +344,13 @@ criteria.forEach(c => {
 ### Pattern: Vague → Specific
 
 **Before**:
+
 ```
 ❌ "Code is improved"
 ```
 
 **After**:
+
 ```
 ✅ "Code passes linter with 0 errors (exit code 0)"
 ✅ "Cyclomatic complexity reduced from X to Y"
@@ -281,11 +360,13 @@ criteria.forEach(c => {
 ### Pattern: Subjective → Objective
 
 **Before**:
+
 ```
 ❌ "Better architecture"
 ```
 
 **After**:
+
 ```
 ✅ "Architecture validated by architect agent (signoff in .claude/context/signoffs/)"
 ✅ "System architecture diagram present at .claude/docs/architecture.svg"
@@ -295,11 +376,13 @@ criteria.forEach(c => {
 ### Pattern: Ambiguous → Testable
 
 **Before**:
+
 ```
 ❌ "Successful integration"
 ```
 
 **After**:
+
 ```
 ✅ "Integration tests pass (exit code 0)"
 ✅ "API responds with 200 status code"

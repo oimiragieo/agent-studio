@@ -69,7 +69,11 @@ describe('SDK Session Handler - Settings Integration', () => {
       const settings = await loadSettings();
 
       assert.strictEqual(settings.session.default_role, 'router', 'Default role should be router');
-      assert.strictEqual(settings.session.default_temperature, 0.1, 'Default temperature should be 0.1');
+      assert.strictEqual(
+        settings.session.default_temperature,
+        0.1,
+        'Default temperature should be 0.1'
+      );
       assert.strictEqual(
         settings.session.router_enabled,
         true,
@@ -109,7 +113,10 @@ describe('SDK Session Handler - Settings Integration', () => {
     it('should return null if template file not found', async () => {
       // This validates graceful fallback
       const template = await loadRouterTemplate();
-      assert.ok(template === null || typeof template === 'string', 'Should handle missing template gracefully');
+      assert.ok(
+        template === null || typeof template === 'string',
+        'Should handle missing template gracefully'
+      );
     });
   });
 });
@@ -123,11 +130,7 @@ describe('SDK Session Handler - Router Session Creation', () => {
       assert.ok(session, 'Session should be created');
       assert.strictEqual(session.agent, 'router', 'Agent should be router');
       assert.strictEqual(session.role, 'router', 'Role should be router');
-      assert.strictEqual(
-        session.model,
-        'claude-3-5-haiku-20241022',
-        'Model should be Haiku'
-      );
+      assert.strictEqual(session.model, 'claude-3-5-haiku-20241022', 'Model should be Haiku');
       assert.strictEqual(
         session.metadata.initial_prompt,
         prompt,
@@ -161,11 +164,7 @@ describe('SDK Session Handler - Router Session Creation', () => {
       const session = await initializeRouterSession('Test');
 
       assert.ok(session.settings, 'Should have settings');
-      assert.strictEqual(
-        session.settings.router_enabled,
-        true,
-        'Router should be enabled'
-      );
+      assert.strictEqual(session.settings.router_enabled, true, 'Router should be enabled');
       assert.strictEqual(
         session.settings.complexity_threshold,
         0.7,
@@ -187,33 +186,25 @@ describe('SDK Session Handler - Router Session Creation', () => {
       assert.ok(session, 'Session should be created');
       assert.strictEqual(session.agent, 'orchestrator', 'Agent should be orchestrator');
       assert.strictEqual(session.role, 'orchestrator', 'Role should be orchestrator');
-      assert.strictEqual(
-        session.model,
-        'claude-sonnet-4-20250514',
-        'Model should be Sonnet'
-      );
+      assert.strictEqual(session.model, 'claude-sonnet-4-20250514', 'Model should be Sonnet');
     });
 
     it('should NOT include router-specific fields', async () => {
       const session = await initializeOrchestratorSession();
 
-      assert.strictEqual(
-        session.routing_decisions,
-        undefined,
-        'Should not have routing_decisions'
-      );
-      assert.strictEqual(
-        session.router_prompt,
-        undefined,
-        'Should not have router_prompt'
-      );
+      assert.strictEqual(session.routing_decisions, undefined, 'Should not have routing_decisions');
+      assert.strictEqual(session.router_prompt, undefined, 'Should not have router_prompt');
     });
 
     it('should include workflow metadata if provided', async () => {
       const metadata = { workflow: 'greenfield-fullstack', feature: 'authentication' };
       const session = await initializeOrchestratorSession(metadata);
 
-      assert.strictEqual(session.metadata.workflow, 'greenfield-fullstack', 'Workflow should be set');
+      assert.strictEqual(
+        session.metadata.workflow,
+        'greenfield-fullstack',
+        'Workflow should be set'
+      );
       assert.strictEqual(session.metadata.feature, 'authentication', 'Feature should be set');
     });
   });

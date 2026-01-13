@@ -10,6 +10,22 @@ trigger_patterns:
 primary_agent: devops
 
 steps:
+  - id: '00-precommit-cleanup'
+    name: 'Pre-commit Automatic Cleanup'
+    agent: 'devops'
+    description: 'Run automatic cleanup via pre-commit hook'
+    tasks:
+      - 'Run pre-commit cleanup: pnpm precommit'
+      - 'Verify no temp files in root directory'
+      - 'Clean temp files older than 24 hours in .claude/context/tmp/'
+      - 'Block if temp files found in root'
+    artifacts:
+      - 'precommit-cleanup-report.txt'
+    validation:
+      - 'No temp files in root directory'
+      - 'Pre-commit hook executed successfully'
+    failure_action: 'Block push if temp files found in root'
+
   - id: '01-cleanup'
     name: 'Repository Cleanup'
     agent: 'devops'
