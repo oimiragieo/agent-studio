@@ -12,9 +12,7 @@
       "bugs_fixed": 6,
       "tests_passing": "44/44 (100%)",
       "performance_impact": "negligible (<1ms)",
-      "evidence_files": [
-        ".claude/context/reports/phase-5-test-fixes-report.md"
-      ]
+      "evidence_files": [".claude/context/reports/phase-5-test-fixes-report.md"]
     },
     "wave_2_integration_testing": {
       "status": "complete",
@@ -48,9 +46,7 @@
       "status": "complete",
       "total_lines": 4524,
       "phase_4_docs_added": true,
-      "evidence_files": [
-        ".claude/docs/MEMORY_PATTERNS.md"
-      ]
+      "evidence_files": [".claude/docs/MEMORY_PATTERNS.md"]
     }
   },
   "quality_gate_results": {

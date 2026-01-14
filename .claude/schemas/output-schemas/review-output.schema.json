@@ -30,7 +30,14 @@
           },
           "category": {
             "type": "string",
-            "enum": ["security", "performance", "maintainability", "correctness", "style", "documentation"],
+            "enum": [
+              "security",
+              "performance",
+              "maintainability",
+              "correctness",
+              "style",
+              "documentation"
+            ],
             "description": "Issue category"
           },
           "description": {

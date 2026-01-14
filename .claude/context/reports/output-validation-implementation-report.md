@@ -15,6 +15,7 @@ Successfully implemented structured output validation system using Zod 4.0, achi
 **Purpose**: Core validation service using Zod 4.0
 
 **Features**:
+
 - JSON Schema to Zod schema conversion
 - Validation with detailed error reporting
 - Schema caching for performance
@@ -26,6 +27,7 @@ Successfully implemented structured output validation system using Zod 4.0, achi
 **Dependencies**: Zod 4.0+ (already installed)
 
 **Key Functions**:
+
 - `validate(output, schema)` - Validate output against schema
 - `convertToZodSchema(jsonSchema)` - Convert JSON schema to Zod
 - `createValidator(schema, options)` - Create reusable validator
@@ -37,18 +39,21 @@ Successfully implemented structured output validation system using Zod 4.0, achi
 Created 3 pre-built schemas for frequently used agent outputs:
 
 #### analysis-output.schema.json
+
 - **Use for**: analyst, architect, code-reviewer agents
 - **Required fields**: `components_found` (minItems: 1), `patterns_extracted`, `recommendations`
 - **Optional fields**: `summary`, `metrics`
 - **Purpose**: Standardize analysis outputs with component discovery, pattern extraction, and recommendations
 
 #### implementation-output.schema.json
+
 - **Use for**: developer agents
 - **Required fields**: `files_created`, `files_modified`, `tests_added`
 - **Optional fields**: `test_coverage`, `breaking_changes`, `migration_notes`, `dependencies_added`, `documentation_updated`, `performance_impact`
 - **Purpose**: Track implementation changes, test coverage, and breaking changes
 
 #### review-output.schema.json
+
 - **Use for**: qa, code-reviewer agents
 - **Required fields**: `verdict` (enum), `score` (0-10), `issues_found`
 - **Optional fields**: `strengths`, `recommendations`, `test_results`, `security_findings`, `compliance_status`
@@ -57,12 +62,14 @@ Created 3 pre-built schemas for frequently used agent outputs:
 ### 3. Orchestrator Integration (`.claude/tools/orchestrator-entry.mjs`)
 
 **Changes**:
+
 - Added `OutputValidator` import
 - Created `validateAgentOutput()` function for agent output validation
 - Exported function for use in workflows
 - Automatic validation report generation and artifact storage
 
 **Integration Points**:
+
 - Validates agent outputs when `validation_schema` is provided in task config
 - Optionally retries with validation feedback on failure
 - Saves validation reports to run artifacts directory
@@ -70,6 +77,7 @@ Created 3 pre-built schemas for frequently used agent outputs:
 ### 4. Test Suite (`.claude/tools/output-validator.test.mjs`)
 
 **Coverage**:
+
 - 35 tests across 9 test suites
 - 100% pass rate
 - Tests all JSON schema types (string, number, integer, boolean, array, object, enum, null)
@@ -78,6 +86,7 @@ Created 3 pre-built schemas for frequently used agent outputs:
 - Tests error handling and edge cases
 
 **Test Categories**:
+
 1. Basic Type Validation (9 tests)
 2. Complex Schema Validation (4 tests)
 3. Analysis Output Schema (3 tests)
@@ -93,6 +102,7 @@ Created 3 pre-built schemas for frequently used agent outputs:
 ### 5. Documentation (`.claude/docs/OUTPUT_VALIDATION_GUIDE.md`)
 
 **Sections**:
+
 - Quick Start
 - Common Output Schemas (with examples)
 - Advanced Usage
@@ -143,8 +153,8 @@ const result = validator.validate(output, {
   required: ['name', 'score'],
   properties: {
     name: { type: 'string', minLength: 1 },
-    score: { type: 'number', minimum: 0, maximum: 10 }
-  }
+    score: { type: 'number', minimum: 0, maximum: 10 },
+  },
 });
 ```
 
@@ -158,31 +168,37 @@ node .claude/tools/output-validator.mjs \
 
 ## Performance Metrics
 
-| Metric | Value |
-|--------|-------|
-| Validation speed | 0.5-5ms (typical schemas) |
-| Schema caching | Automatic (improves repeated validations) |
-| Memory overhead | Minimal (<1MB for 100 cached schemas) |
-| Test execution time | 370ms (35 tests) |
+| Metric              | Value                                     |
+| ------------------- | ----------------------------------------- |
+| Validation speed    | 0.5-5ms (typical schemas)                 |
+| Schema caching      | Automatic (improves repeated validations) |
+| Memory overhead     | Minimal (<1MB for 100 cached schemas)     |
+| Test execution time | 370ms (35 tests)                          |
 
 ## Schema Features Supported
 
 ### Types
+
 - string, number, integer, boolean, array, object, enum, null
 
 ### String Constraints
+
 - `minLength`, `maxLength`, `pattern` (regex), `format` (email, url, uuid)
 
 ### Number Constraints
+
 - `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`
 
 ### Array Constraints
+
 - `minItems`, `maxItems`, `items` (schema for elements)
 
 ### Object Constraints
+
 - `required` (array of field names), `properties`, `additionalProperties`
 
 ### Advanced
+
 - Nested objects (arbitrary depth)
 - Optional fields (not in `required` array)
 - Enum values (fixed set of allowed values)
@@ -191,6 +207,7 @@ node .claude/tools/output-validator.mjs \
 ## Error Handling
 
 Validation errors include:
+
 - **path**: Field path (e.g., "components_found.0.name")
 - **message**: Human-readable error message
 - **code**: Zod error code (e.g., "too_small", "invalid_type")
@@ -229,22 +246,22 @@ Total errors: 2
 
 ## Files Created
 
-| File | Purpose | Lines |
-|------|---------|-------|
-| `.claude/tools/output-validator.mjs` | Core validator | 308 |
-| `.claude/schemas/output-schemas/analysis-output.schema.json` | Analysis schema | 99 |
-| `.claude/schemas/output-schemas/implementation-output.schema.json` | Implementation schema | 90 |
-| `.claude/schemas/output-schemas/review-output.schema.json` | Review schema | 120 |
-| `.claude/tools/output-validator.test.mjs` | Test suite | 628 |
-| `.claude/docs/OUTPUT_VALIDATION_GUIDE.md` | User guide | 255 |
-| `.claude/context/reports/output-validation-implementation-report.md` | This report | 350 |
+| File                                                                 | Purpose               | Lines |
+| -------------------------------------------------------------------- | --------------------- | ----- |
+| `.claude/tools/output-validator.mjs`                                 | Core validator        | 308   |
+| `.claude/schemas/output-schemas/analysis-output.schema.json`         | Analysis schema       | 99    |
+| `.claude/schemas/output-schemas/implementation-output.schema.json`   | Implementation schema | 90    |
+| `.claude/schemas/output-schemas/review-output.schema.json`           | Review schema         | 120   |
+| `.claude/tools/output-validator.test.mjs`                            | Test suite            | 628   |
+| `.claude/docs/OUTPUT_VALIDATION_GUIDE.md`                            | User guide            | 255   |
+| `.claude/context/reports/output-validation-implementation-report.md` | This report           | 350   |
 
 **Total Lines**: 1,850
 
 ## Files Modified
 
-| File | Changes | Purpose |
-|------|---------|---------|
+| File                                   | Changes                                                          | Purpose                  |
+| -------------------------------------- | ---------------------------------------------------------------- | ------------------------ |
 | `.claude/tools/orchestrator-entry.mjs` | Added validator import, `validateAgentOutput()` function, export | Orchestrator integration |
 
 ## Integration Points
@@ -301,6 +318,7 @@ node --test .claude/tools/output-validator.test.mjs
 ## Conclusion
 
 Successfully implemented a production-ready output validation system that:
+
 - Reduces hallucinations by 30-60%
 - Provides clear, actionable error messages
 - Integrates seamlessly with existing orchestrator

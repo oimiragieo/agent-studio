@@ -262,7 +262,16 @@ export class EntityExtractor {
 
     // Person indicators
     if (
-      ['author', 'user', 'developer', 'creator', 'owner', 'name', 'username', 'developers'].includes(keyLower)
+      [
+        'author',
+        'user',
+        'developer',
+        'creator',
+        'owner',
+        'name',
+        'username',
+        'developers',
+      ].includes(keyLower)
     ) {
       return { type: ENTITY_TYPES.PERSON, confidence: 0.9 };
     }
@@ -273,7 +282,11 @@ export class EntityExtractor {
     }
 
     // Tool indicators
-    if (['tool', 'framework', 'library', 'package', 'dependency', 'technology', 'tools'].includes(keyLower)) {
+    if (
+      ['tool', 'framework', 'library', 'package', 'dependency', 'technology', 'tools'].includes(
+        keyLower
+      )
+    ) {
       return { type: ENTITY_TYPES.TOOL, confidence: 0.9 };
     }
 

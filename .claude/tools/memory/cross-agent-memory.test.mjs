@@ -189,11 +189,13 @@ describe('Cross-Agent Memory Sharing (Phase 4)', () => {
         });
 
         // Update source_agent_id
-        db.prepare(`
+        db.prepare(
+          `
           UPDATE messages
           SET source_agent_id = ?
           WHERE conversation_id = ?
-        `).run('analyst', convId);
+        `
+        ).run('analyst', convId);
       }
     });
 
@@ -332,7 +334,10 @@ describe('Cross-Agent Memory Sharing (Phase 4)', () => {
       const resumePoints = await resumeService.getResumePoints(sessionId);
 
       assert.strictEqual(resumePoints.length, 2);
-      assert.ok(resumePoints.every(p => p.checkpointId), 'All should have checkpoint IDs');
+      assert.ok(
+        resumePoints.every(p => p.checkpointId),
+        'All should have checkpoint IDs'
+      );
     });
 
     it('should update checkpoint stats after resume', async () => {
@@ -466,9 +471,11 @@ describe('Cross-Agent Memory Sharing (Phase 4)', () => {
           content: `Analysis finding ${i}`,
         });
 
-        db.prepare(`
+        db.prepare(
+          `
           UPDATE messages SET source_agent_id = ? WHERE conversation_id = ?
-        `).run('analyst', convId);
+        `
+        ).run('analyst', convId);
       }
 
       // 3. Prepare handoff to developer
@@ -525,6 +532,350 @@ describe('Cross-Agent Memory Sharing (Phase 4)', () => {
       assert.ok(resumed.context.memories.length > 0, 'Should restore context');
       assert.strictEqual(resumed.metadata.checkpointType, 'workflow');
     });
+  });
+});
+
+// ============================================
+// Security Tests - SEC-002: Agent ID Spoofing Prevention
+// ============================================
+
+describe('Security Tests - SEC-002: Agent ID Spoofing', () => {
+  let sessionId;
+
+  beforeEach(() => {
+    sessionId = `security-test-session-${Date.now()}`;
+    db.createSession({ sessionId, userId: 'test-user' });
+  });
+
+  it('should reject unknown agent IDs in source', async () => {
+    await assert.rejects(
+      async () => {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: 'malicious-fake-agent',
+          targetAgentId: 'developer',
+        });
+      },
+      { message: /not a recognized agent/ }
+    );
+  });
+
+  it('should reject unknown agent IDs in target', async () => {
+    await assert.rejects(
+      async () => {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: 'analyst',
+          targetAgentId: 'hacker-agent-123',
+        });
+      },
+      { message: /not a recognized agent/ }
+    );
+  });
+
+  it('should reject agent IDs with invalid characters', async () => {
+    await assert.rejects(
+      async () => {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: 'analyst; DROP TABLE--',
+          targetAgentId: 'developer',
+        });
+      },
+      { message: /invalid characters/ }
+    );
+  });
+
+  it('should reject agent IDs with special characters', async () => {
+    await assert.rejects(
+      async () => {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: 'analyst<script>',
+          targetAgentId: 'developer',
+        });
+      },
+      { message: /invalid characters/ }
+    );
+  });
+
+  it('should accept valid known agent IDs', async () => {
+    const collaboration = await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'analyst',
+      targetAgentId: 'developer',
+    });
+
+    assert.ok(collaboration.handoffId, 'Should create handoff for valid agents');
+    assert.strictEqual(collaboration.sourceAgentId, 'analyst');
+    assert.strictEqual(collaboration.targetAgentId, 'developer');
+  });
+
+  it('should accept agent IDs with hyphens', async () => {
+    const collaboration = await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'security-architect',
+      targetAgentId: 'database-architect',
+    });
+
+    assert.ok(collaboration.handoffId, 'Should create handoff for hyphenated agent IDs');
+  });
+
+  it('should reject empty agent IDs', async () => {
+    await assert.rejects(
+      async () => {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: '',
+          targetAgentId: 'developer',
+        });
+      },
+      { message: /agent ID is required/ }
+    );
+  });
+
+  it('should reject null agent IDs', async () => {
+    await assert.rejects(async () => {
+      await collaborationManager.registerCollaboration({
+        sessionId,
+        sourceAgentId: null,
+        targetAgentId: 'developer',
+      });
+    }, /required/);
+  });
+});
+
+// ============================================
+// Security Tests - SEC-003: Circular DoS Prevention
+// ============================================
+
+describe('Security Tests - SEC-003: Circular DoS Prevention', () => {
+  let sessionId;
+
+  beforeEach(() => {
+    sessionId = `circular-test-session-${Date.now()}`;
+    db.createSession({ sessionId, userId: 'test-user' });
+    // Reset circuit breaker state
+    collaborationManager.circuitBreaker.violations.clear();
+    collaborationManager.circuitBreaker.isOpen.clear();
+  });
+
+  it('should BLOCK circular handoffs (not just warn)', async () => {
+    // Create chain: analyst → developer
+    await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'analyst',
+      targetAgentId: 'developer',
+    });
+
+    // Create chain: developer → architect
+    await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'developer',
+      targetAgentId: 'architect',
+    });
+
+    // Attempt circular: architect → analyst (should BLOCK)
+    await assert.rejects(
+      async () => {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: 'architect',
+          targetAgentId: 'analyst',
+        });
+      },
+      { message: /Circular handoff blocked/ }
+    );
+  });
+
+  it('should record rejected handoff for audit trail', async () => {
+    // Create chain: analyst → developer
+    await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'analyst',
+      targetAgentId: 'developer',
+    });
+
+    // Attempt circular
+    try {
+      await collaborationManager.registerCollaboration({
+        sessionId,
+        sourceAgentId: 'developer',
+        targetAgentId: 'analyst',
+      });
+    } catch (e) {
+      // Expected to throw
+    }
+
+    // Check for rejected record
+    const history = await collaborationManager.getCollaborationHistory(sessionId);
+    const rejected = history.find(h => h.status === 'rejected');
+
+    assert.ok(rejected, 'Should have rejected handoff record');
+    assert.ok(rejected.handoffContext, 'Should have context');
+
+    // handoffContext is already parsed by getCollaborationHistory
+    assert.strictEqual(rejected.handoffContext.reason, 'circular_handoff_blocked');
+  });
+
+  it('should trip circuit breaker after max violations', async () => {
+    // Configure low threshold for testing
+    const originalMax = collaborationManager.config.maxCircularViolations;
+    collaborationManager.config.maxCircularViolations = 2;
+
+    try {
+      // Create chain
+      await collaborationManager.registerCollaboration({
+        sessionId,
+        sourceAgentId: 'analyst',
+        targetAgentId: 'developer',
+      });
+
+      // First circular attempt
+      try {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: 'developer',
+          targetAgentId: 'analyst',
+        });
+      } catch (e) {
+        /* Expected */
+      }
+
+      // Second circular attempt - should trip circuit breaker
+      try {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: 'developer',
+          targetAgentId: 'analyst',
+        });
+      } catch (e) {
+        /* Expected */
+      }
+
+      // Third attempt - circuit breaker should block immediately
+      await assert.rejects(
+        async () => {
+          await collaborationManager.registerCollaboration({
+            sessionId,
+            sourceAgentId: 'analyst',
+            targetAgentId: 'architect', // Even valid handoff blocked
+          });
+        },
+        { message: /Circuit breaker open/ }
+      );
+    } finally {
+      collaborationManager.config.maxCircularViolations = originalMax;
+    }
+  });
+
+  it('should reset circuit breaker after cooldown', async () => {
+    // Configure short cooldown for testing
+    const originalDuration = collaborationManager.config.circuitBreakerDuration;
+    const originalMax = collaborationManager.config.maxCircularViolations;
+    collaborationManager.config.circuitBreakerDuration = 100; // 100ms
+    collaborationManager.config.maxCircularViolations = 1;
+
+    try {
+      // Create chain
+      await collaborationManager.registerCollaboration({
+        sessionId,
+        sourceAgentId: 'analyst',
+        targetAgentId: 'developer',
+      });
+
+      // Trip circuit breaker
+      try {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: 'developer',
+          targetAgentId: 'analyst',
+        });
+      } catch (e) {
+        /* Expected */
+      }
+
+      // Wait for cooldown
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      // Should work now
+      const collab = await collaborationManager.registerCollaboration({
+        sessionId,
+        sourceAgentId: 'architect',
+        targetAgentId: 'qa',
+      });
+
+      assert.ok(collab.handoffId, 'Should allow handoff after cooldown');
+    } finally {
+      collaborationManager.config.circuitBreakerDuration = originalDuration;
+      collaborationManager.config.maxCircularViolations = originalMax;
+    }
+  });
+
+  it('should allow non-circular handoffs while blocking circular ones', async () => {
+    // Create chain: analyst → developer
+    await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'analyst',
+      targetAgentId: 'developer',
+    });
+
+    // Non-circular: developer → architect (should work)
+    const valid = await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'developer',
+      targetAgentId: 'architect',
+    });
+    assert.ok(valid.handoffId, 'Non-circular should work');
+
+    // Circular: architect → analyst (should block)
+    await assert.rejects(
+      async () => {
+        await collaborationManager.registerCollaboration({
+          sessionId,
+          sourceAgentId: 'architect',
+          targetAgentId: 'analyst',
+        });
+      },
+      { message: /Circular handoff blocked/ }
+    );
+
+    // Another non-circular: architect → qa (should still work)
+    const valid2 = await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'architect',
+      targetAgentId: 'qa',
+    });
+    assert.ok(valid2.handoffId, 'Second non-circular should work');
+  });
+
+  it('should include cycle path in error message', async () => {
+    // Create chain
+    await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'analyst',
+      targetAgentId: 'developer',
+    });
+
+    await collaborationManager.registerCollaboration({
+      sessionId,
+      sourceAgentId: 'developer',
+      targetAgentId: 'architect',
+    });
+
+    // Attempt circular
+    try {
+      await collaborationManager.registerCollaboration({
+        sessionId,
+        sourceAgentId: 'architect',
+        targetAgentId: 'analyst',
+      });
+      assert.fail('Should have thrown');
+    } catch (error) {
+      assert.ok(error.message.includes('analyst'), 'Should mention analyst in cycle');
+      assert.ok(error.message.includes('developer'), 'Should mention developer in cycle');
+      assert.ok(error.message.includes('architect'), 'Should mention architect in cycle');
+    }
   });
 });
 

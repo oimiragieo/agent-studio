@@ -115,7 +115,9 @@ async function runDemo() {
     const alice = await memory.getEntity(entityIds['Alice']);
     console.log(`\n**${alice.value}** (${alice.type})`);
     if (alice.relationships.length > 0) {
-      console.log(`- Related: ${alice.relationships.map(r => `${r.relationship_type}: ${r.related_value}`).join(', ')}`);
+      console.log(
+        `- Related: ${alice.relationships.map(r => `${r.relationship_type}: ${r.related_value}`).join(', ')}`
+      );
     }
     console.log(`- Mentioned ${alice.occurrence_count} times`);
   }
@@ -126,7 +128,9 @@ async function runDemo() {
 
   console.log('\n   Entity types:');
   stats.entities.forEach(stat => {
-    console.log(`      - ${stat.type}: ${stat.count} entities (${stat.total_occurrences} occurrences)`);
+    console.log(
+      `      - ${stat.type}: ${stat.count} entities (${stat.total_occurrences} occurrences)`
+    );
   });
 
   console.log('\n   Relationship types:');

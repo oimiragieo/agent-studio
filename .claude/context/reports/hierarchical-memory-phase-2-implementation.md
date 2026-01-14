@@ -195,7 +195,10 @@ CREATE INDEX idx_messages_agent ON messages(agent_id, tier);
 ### Example 1: Store and Promote
 
 ```javascript
-import { createHierarchicalMemory, MemoryTier } from './.claude/tools/memory/hierarchical-memory.mjs';
+import {
+  createHierarchicalMemory,
+  MemoryTier,
+} from './.claude/tools/memory/hierarchical-memory.mjs';
 
 const manager = createHierarchicalMemory();
 await manager.initialize();
@@ -374,29 +377,29 @@ await hierarchical.storeMemory({
 
 ## Success Criteria Validation
 
-| Criterion | Status | Evidence |
-|-----------|--------|----------|
-| 3-tier system working | ✅ PASS | HierarchicalMemoryManager implements all 3 tiers |
-| Automatic promotion after 3+ references | ✅ PASS | Tests confirm conversation→agent promotion |
-| Automatic promotion after 5+ references | ✅ PASS | Tests confirm agent→project promotion |
-| Cross-tier search functional | ✅ PASS | searchAcrossTiers() working with tier prioritization |
-| All tests passing | ✅ PASS | 30/30 tests passing (100%) |
-| Backward compatible | ✅ PASS | Existing 157 Phase 2 tests still pass |
-| Performance: tier lookup <10ms | ✅ PASS | Actual: 2-3ms |
-| Performance: promotion <50ms | ✅ PASS | Actual: 15-25ms |
+| Criterion                               | Status  | Evidence                                             |
+| --------------------------------------- | ------- | ---------------------------------------------------- |
+| 3-tier system working                   | ✅ PASS | HierarchicalMemoryManager implements all 3 tiers     |
+| Automatic promotion after 3+ references | ✅ PASS | Tests confirm conversation→agent promotion           |
+| Automatic promotion after 5+ references | ✅ PASS | Tests confirm agent→project promotion                |
+| Cross-tier search functional            | ✅ PASS | searchAcrossTiers() working with tier prioritization |
+| All tests passing                       | ✅ PASS | 30/30 tests passing (100%)                           |
+| Backward compatible                     | ✅ PASS | Existing 157 Phase 2 tests still pass                |
+| Performance: tier lookup <10ms          | ✅ PASS | Actual: 2-3ms                                        |
+| Performance: promotion <50ms            | ✅ PASS | Actual: 15-25ms                                      |
 
 ---
 
 ## Deliverables Summary
 
-| Deliverable | Path | Status | Validation |
-|-------------|------|--------|------------|
-| Core Implementation | `.claude/tools/memory/hierarchical-memory.mjs` | ✅ Complete | 600+ lines, all features |
-| Database Schema Extension | Migration in `hierarchical-memory.mjs` | ✅ Complete | 6 new columns, 3 indexes |
-| Automatic Promotion Logic | `checkPromotion()`, `promoteMemory()` | ✅ Complete | Tested with thresholds |
-| Cross-Tier Search | `searchAcrossTiers()` | ✅ Complete | FTS5 + tier filtering |
-| Comprehensive Tests | `.claude/tools/memory/hierarchical-memory.test.mjs` | ✅ Complete | 30 tests, 100% pass |
-| Documentation | `.claude/docs/MEMORY_PATTERNS.md` | ✅ Complete | 290+ lines, examples, diagrams |
+| Deliverable               | Path                                                | Status      | Validation                     |
+| ------------------------- | --------------------------------------------------- | ----------- | ------------------------------ |
+| Core Implementation       | `.claude/tools/memory/hierarchical-memory.mjs`      | ✅ Complete | 600+ lines, all features       |
+| Database Schema Extension | Migration in `hierarchical-memory.mjs`              | ✅ Complete | 6 new columns, 3 indexes       |
+| Automatic Promotion Logic | `checkPromotion()`, `promoteMemory()`               | ✅ Complete | Tested with thresholds         |
+| Cross-Tier Search         | `searchAcrossTiers()`                               | ✅ Complete | FTS5 + tier filtering          |
+| Comprehensive Tests       | `.claude/tools/memory/hierarchical-memory.test.mjs` | ✅ Complete | 30 tests, 100% pass            |
+| Documentation             | `.claude/docs/MEMORY_PATTERNS.md`                   | ✅ Complete | 290+ lines, examples, diagrams |
 
 ---
 

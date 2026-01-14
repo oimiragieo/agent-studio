@@ -10,7 +10,12 @@ import assert from 'node:assert';
 import { readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { OutputValidator, ValidationError, validateOutput, createValidator } from './output-validator.mjs';
+import {
+  OutputValidator,
+  ValidationError,
+  validateOutput,
+  createValidator,
+} from './output-validator.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -25,8 +30,8 @@ describe('OutputValidator', () => {
         required: ['name', 'count'],
         properties: {
           name: { type: 'string', minLength: 1 },
-          count: { type: 'integer', minimum: 0 }
-        }
+          count: { type: 'integer', minimum: 0 },
+        },
       };
 
       const output = { name: 'Test', count: 5 };
@@ -42,8 +47,8 @@ describe('OutputValidator', () => {
         required: ['name', 'count'],
         properties: {
           name: { type: 'string', minLength: 1 },
-          count: { type: 'integer', minimum: 0 }
-        }
+          count: { type: 'integer', minimum: 0 },
+        },
       };
 
       const output = { name: '', count: -1 };
@@ -63,9 +68,9 @@ describe('OutputValidator', () => {
           type: 'object',
           required: ['id'],
           properties: {
-            id: { type: 'string' }
-          }
-        }
+            id: { type: 'string' },
+          },
+        },
       };
 
       const output = [{ id: 'a' }, { id: 'b' }];
@@ -79,7 +84,7 @@ describe('OutputValidator', () => {
       const schema = {
         type: 'array',
         minItems: 1,
-        items: { type: 'string' }
+        items: { type: 'string' },
       };
 
       const output = [];
@@ -93,7 +98,7 @@ describe('OutputValidator', () => {
       const schema = {
         type: 'string',
         minLength: 3,
-        maxLength: 10
+        maxLength: 10,
       };
 
       const validOutput = 'hello';
@@ -113,7 +118,7 @@ describe('OutputValidator', () => {
       const schema = {
         type: 'number',
         minimum: 0,
-        maximum: 100
+        maximum: 100,
       };
 
       const valid = 50;
@@ -132,7 +137,7 @@ describe('OutputValidator', () => {
     it('should validate integer type', () => {
       const schema = {
         type: 'integer',
-        minimum: 0
+        minimum: 0,
       };
 
       const validInt = 42;
@@ -163,7 +168,7 @@ describe('OutputValidator', () => {
     it('should validate enum values', () => {
       const schema = {
         type: 'string',
-        enum: ['PASS', 'FAIL', 'PENDING']
+        enum: ['PASS', 'FAIL', 'PENDING'],
       };
 
       const valid = 'PASS';
@@ -187,10 +192,10 @@ describe('OutputValidator', () => {
             required: ['name', 'age'],
             properties: {
               name: { type: 'string' },
-              age: { type: 'integer', minimum: 0 }
-            }
-          }
-        }
+              age: { type: 'integer', minimum: 0 },
+            },
+          },
+        },
       };
 
       const valid = { user: { name: 'Alice', age: 30 } };
@@ -204,8 +209,8 @@ describe('OutputValidator', () => {
         required: ['name'],
         properties: {
           name: { type: 'string' },
-          description: { type: 'string' }
-        }
+          description: { type: 'string' },
+        },
       };
 
       const withOptional = { name: 'Test', description: 'Optional field' };
@@ -229,18 +234,18 @@ describe('OutputValidator', () => {
               required: ['id', 'value'],
               properties: {
                 id: { type: 'string' },
-                value: { type: 'number' }
-              }
-            }
-          }
-        }
+                value: { type: 'number' },
+              },
+            },
+          },
+        },
       };
 
       const valid = {
         items: [
           { id: 'a', value: 1 },
-          { id: 'b', value: 2 }
-        ]
+          { id: 'b', value: 2 },
+        ],
       };
 
       const result = validator.validate(valid, schema);
@@ -250,7 +255,7 @@ describe('OutputValidator', () => {
     it('should validate pattern constraints', () => {
       const schema = {
         type: 'string',
-        pattern: '^[A-Z]{3}-\\d{3}$'
+        pattern: '^[A-Z]{3}-\\d{3}$',
       };
 
       const valid = 'CUJ-001';
@@ -265,7 +270,13 @@ describe('OutputValidator', () => {
 
   describe('Analysis Output Schema', () => {
     it('should validate valid analysis output', async () => {
-      const schemaPath = join(__dirname, '..', 'schemas', 'output-schemas', 'analysis-output.schema.json');
+      const schemaPath = join(
+        __dirname,
+        '..',
+        'schemas',
+        'output-schemas',
+        'analysis-output.schema.json'
+      );
       const schema = JSON.parse(await readFile(schemaPath, 'utf-8'));
 
       const validOutput = {
@@ -274,24 +285,24 @@ describe('OutputValidator', () => {
             name: 'EntityMemory',
             type: 'class',
             location: '.claude/tools/memory/entity-memory.mjs',
-            description: 'Memory storage for entities'
-          }
+            description: 'Memory storage for entities',
+          },
         ],
         patterns_extracted: [
           {
             pattern: 'Singleton pattern',
             occurrences: 3,
-            examples: ['entity-memory.mjs', 'conversation-memory.mjs']
-          }
+            examples: ['entity-memory.mjs', 'conversation-memory.mjs'],
+          },
         ],
         recommendations: [
           {
             title: 'Add error handling',
             priority: 'high',
-            effort: 'small'
-          }
+            effort: 'small',
+          },
         ],
-        summary: 'Analysis complete'
+        summary: 'Analysis complete',
       };
 
       const result = validator.validate(validOutput, schema);
@@ -299,13 +310,19 @@ describe('OutputValidator', () => {
     });
 
     it('should reject analysis output missing required fields', async () => {
-      const schemaPath = join(__dirname, '..', 'schemas', 'output-schemas', 'analysis-output.schema.json');
+      const schemaPath = join(
+        __dirname,
+        '..',
+        'schemas',
+        'output-schemas',
+        'analysis-output.schema.json'
+      );
       const schema = JSON.parse(await readFile(schemaPath, 'utf-8'));
 
       const invalidOutput = {
         components_found: [],
         // Missing patterns_extracted
-        recommendations: []
+        recommendations: [],
       };
 
       const result = validator.validate(invalidOutput, schema);
@@ -314,13 +331,19 @@ describe('OutputValidator', () => {
     });
 
     it('should reject empty components_found array', async () => {
-      const schemaPath = join(__dirname, '..', 'schemas', 'output-schemas', 'analysis-output.schema.json');
+      const schemaPath = join(
+        __dirname,
+        '..',
+        'schemas',
+        'output-schemas',
+        'analysis-output.schema.json'
+      );
       const schema = JSON.parse(await readFile(schemaPath, 'utf-8'));
 
       const invalidOutput = {
         components_found: [], // Must have minItems: 1
         patterns_extracted: [],
-        recommendations: []
+        recommendations: [],
       };
 
       const result = validator.validate(invalidOutput, schema);
@@ -331,7 +354,13 @@ describe('OutputValidator', () => {
 
   describe('Implementation Output Schema', () => {
     it('should validate valid implementation output', async () => {
-      const schemaPath = join(__dirname, '..', 'schemas', 'output-schemas', 'implementation-output.schema.json');
+      const schemaPath = join(
+        __dirname,
+        '..',
+        'schemas',
+        'output-schemas',
+        'implementation-output.schema.json'
+      );
       const schema = JSON.parse(await readFile(schemaPath, 'utf-8'));
 
       const validOutput = {
@@ -339,20 +368,20 @@ describe('OutputValidator', () => {
           {
             path: '.claude/tools/output-validator.mjs',
             purpose: 'Output validation',
-            lines: 250
-          }
+            lines: 250,
+          },
         ],
         files_modified: [
           {
             path: '.claude/tools/orchestrator-entry.mjs',
             changes: 'Added validation support',
             lines_added: 20,
-            lines_removed: 5
-          }
+            lines_removed: 5,
+          },
         ],
         tests_added: 15,
         test_coverage: 85.5,
-        breaking_changes: false
+        breaking_changes: false,
       };
 
       const result = validator.validate(validOutput, schema);
@@ -360,14 +389,20 @@ describe('OutputValidator', () => {
     });
 
     it('should reject invalid test coverage percentage', async () => {
-      const schemaPath = join(__dirname, '..', 'schemas', 'output-schemas', 'implementation-output.schema.json');
+      const schemaPath = join(
+        __dirname,
+        '..',
+        'schemas',
+        'output-schemas',
+        'implementation-output.schema.json'
+      );
       const schema = JSON.parse(await readFile(schemaPath, 'utf-8'));
 
       const invalidOutput = {
         files_created: [],
         files_modified: [],
         tests_added: 0,
-        test_coverage: 105 // Invalid: > 100
+        test_coverage: 105, // Invalid: > 100
       };
 
       const result = validator.validate(invalidOutput, schema);
@@ -378,7 +413,13 @@ describe('OutputValidator', () => {
 
   describe('Review Output Schema', () => {
     it('should validate valid review output', async () => {
-      const schemaPath = join(__dirname, '..', 'schemas', 'output-schemas', 'review-output.schema.json');
+      const schemaPath = join(
+        __dirname,
+        '..',
+        'schemas',
+        'output-schemas',
+        'review-output.schema.json'
+      );
       const schema = JSON.parse(await readFile(schemaPath, 'utf-8'));
 
       const validOutput = {
@@ -390,11 +431,11 @@ describe('OutputValidator', () => {
             category: 'maintainability',
             description: 'Function too complex',
             location: 'validator.mjs:150',
-            suggestion: 'Refactor into smaller functions'
-          }
+            suggestion: 'Refactor into smaller functions',
+          },
         ],
         strengths: ['Good test coverage', 'Clear documentation'],
-        recommendations: ['Add more edge case tests']
+        recommendations: ['Add more edge case tests'],
       };
 
       const result = validator.validate(validOutput, schema);
@@ -402,13 +443,19 @@ describe('OutputValidator', () => {
     });
 
     it('should reject invalid verdict', async () => {
-      const schemaPath = join(__dirname, '..', 'schemas', 'output-schemas', 'review-output.schema.json');
+      const schemaPath = join(
+        __dirname,
+        '..',
+        'schemas',
+        'output-schemas',
+        'review-output.schema.json'
+      );
       const schema = JSON.parse(await readFile(schemaPath, 'utf-8'));
 
       const invalidOutput = {
         verdict: 'INVALID_VERDICT',
         score: 7,
-        issues_found: []
+        issues_found: [],
       };
 
       const result = validator.validate(invalidOutput, schema);
@@ -417,13 +464,19 @@ describe('OutputValidator', () => {
     });
 
     it('should reject score out of range', async () => {
-      const schemaPath = join(__dirname, '..', 'schemas', 'output-schemas', 'review-output.schema.json');
+      const schemaPath = join(
+        __dirname,
+        '..',
+        'schemas',
+        'output-schemas',
+        'review-output.schema.json'
+      );
       const schema = JSON.parse(await readFile(schemaPath, 'utf-8'));
 
       const invalidOutput = {
         verdict: 'PASS',
         score: 11, // Invalid: > 10
-        issues_found: []
+        issues_found: [],
       };
 
       const result = validator.validate(invalidOutput, schema);
@@ -438,13 +491,13 @@ describe('OutputValidator', () => {
         type: 'object',
         required: ['name'],
         properties: {
-          name: { type: 'string' }
-        }
+          name: { type: 'string' },
+        },
       };
 
       const customValidator = validator.createValidator(schema, {
         name: 'UserOutput',
-        throwOnError: false
+        throwOnError: false,
       });
 
       const valid = { name: 'Test' };
@@ -461,13 +514,13 @@ describe('OutputValidator', () => {
         type: 'object',
         required: ['name'],
         properties: {
-          name: { type: 'string' }
-        }
+          name: { type: 'string' },
+        },
       };
 
       const customValidator = validator.createValidator(schema, {
         name: 'UserOutput',
-        throwOnError: true
+        throwOnError: true,
       });
 
       const invalid = { name: 123 };
@@ -482,8 +535,8 @@ describe('OutputValidator', () => {
         required: ['name', 'age'],
         properties: {
           name: { type: 'string', minLength: 1 },
-          age: { type: 'integer', minimum: 0 }
-        }
+          age: { type: 'integer', minimum: 0 },
+        },
       };
 
       const invalid = { name: '', age: -1 };
@@ -515,8 +568,8 @@ describe('OutputValidator', () => {
       const schema = {
         type: 'object',
         properties: {
-          name: { type: 'string' }
-        }
+          name: { type: 'string' },
+        },
       };
 
       // First call - converts and caches
@@ -560,7 +613,7 @@ describe('OutputValidator', () => {
     it('should handle missing minItems on array', () => {
       const schema = {
         type: 'array',
-        items: { type: 'string' }
+        items: { type: 'string' },
       };
 
       const empty = [];
@@ -572,7 +625,7 @@ describe('OutputValidator', () => {
       const schema = {
         type: 'array',
         maxItems: 2,
-        items: { type: 'string' }
+        items: { type: 'string' },
       };
 
       const tooMany = ['a', 'b', 'c'];
@@ -583,7 +636,7 @@ describe('OutputValidator', () => {
     it('should handle format email', () => {
       const schema = {
         type: 'string',
-        format: 'email'
+        format: 'email',
       };
 
       const validEmail = 'test@example.com';
@@ -598,7 +651,7 @@ describe('OutputValidator', () => {
     it('should handle format url', () => {
       const schema = {
         type: 'string',
-        format: 'url'
+        format: 'url',
       };
 
       const validUrl = 'https://example.com';
@@ -613,7 +666,7 @@ describe('OutputValidator', () => {
     it('should handle format uuid', () => {
       const schema = {
         type: 'string',
-        format: 'uuid'
+        format: 'uuid',
       };
 
       const validUuid = '550e8400-e29b-41d4-a716-446655440000';

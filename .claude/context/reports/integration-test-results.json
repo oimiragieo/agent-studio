@@ -1,12 +1,12 @@
 {
   "testSuite": "Phase 5 Wave 2 Integration Tests",
-  "timestamp": "2026-01-13T18:50:14.912Z",
-  "duration": 119,
+  "timestamp": "2026-01-13T23:37:28.839Z",
+  "duration": 128,
   "summary": {
     "total": 15,
-    "passed": 15,
-    "failed": 0,
-    "passRate": "100.0%"
+    "passed": 14,
+    "failed": 1,
+    "passRate": "93.3%"
   },
   "scenarios": [
     {
@@ -17,7 +17,7 @@
     {
       "name": "Session Resume",
       "status": "PASSED",
-      "duration": 4
+      "duration": 7
     },
     {
       "name": "Entity Deduplication",
@@ -27,7 +27,7 @@
     {
       "name": "Tier Promotion",
       "status": "PASSED",
-      "duration": 3
+      "duration": 4
     },
     {
       "name": "Handoff with Entities",
@@ -42,39 +42,34 @@
     {
       "name": "Full E2E Workflow",
       "status": "PASSED",
-      "duration": 4
+      "duration": 6
     },
     {
       "name": "Performance Benchmarks",
-      "status": "PASSED",
-      "duration": 11,
-      "benchmarks": {
-        "memoryStorage": 0.3,
-        "collaborationRegistration": 0.2,
-        "entityLookup": 0.6,
-        "checkpointCreation": 0
-      }
+      "status": "FAILED",
+      "error": "Invalid sourceAgentId: \"agent-0\" is not a recognized agent. Possible agent spoofing attempt detected.",
+      "duration": 4
     },
     {
       "name": "Cross-Tier Search",
       "status": "PASSED",
-      "duration": 3,
+      "duration": 2,
       "resultCount": 2
     },
     {
       "name": "Memory Expiration",
       "status": "PASSED",
-      "duration": 2
+      "duration": 3
     },
     {
       "name": "Multiple Resume Points",
       "status": "PASSED",
-      "duration": 6
+      "duration": 8
     },
     {
       "name": "Entity Statistics",
       "status": "PASSED",
-      "duration": 1,
+      "duration": 2,
       "stats": {
         "globalEntities": [
           {
@@ -104,16 +99,9 @@
             "total_occurrences": 3,
             "total_merges": 0,
             "avg_version": 1
-          },
-          {
-            "type": "test",
-            "count": 1,
-            "total_occurrences": 10,
-            "total_merges": 9,
-            "avg_version": 10
           }
         ],
-        "timestamp": "2026-01-13T18:50:14.891Z"
+        "timestamp": "2026-01-13T23:37:28.819Z"
       }
     },
     {
@@ -129,7 +117,7 @@
     {
       "name": "Concurrent Operations",
       "status": "PASSED",
-      "duration": 11
+      "duration": 5
     }
   ]
 }

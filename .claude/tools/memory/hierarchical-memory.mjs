@@ -33,6 +33,108 @@ export const MemoryTier = {
 };
 
 /**
+ * SECURITY: Allowlist of valid ORDER BY columns
+ *
+ * SEC-001 Mitigation: Prevents SQL injection via orderBy parameter
+ * by restricting to known-safe column names only.
+ *
+ * Defense Layers:
+ * 1. Allowlist validation (primary)
+ * 2. Regex pattern validation (secondary)
+ * 3. Error on invalid input (fail-safe)
+ */
+const ALLOWED_ORDER_BY_COLUMNS = new Set([
+  'id',
+  'created_at',
+  'timestamp',
+  'importance_score',
+  'reference_count',
+  'tier',
+  'last_referenced_at',
+  'tier_promoted_at',
+  'promotion_count',
+  'agent_id',
+  'conversation_id',
+]);
+
+/**
+ * SECURITY: Valid ORDER BY directions
+ */
+const ALLOWED_ORDER_DIRECTIONS = new Set(['ASC', 'DESC', 'asc', 'desc', '']);
+
+/**
+ * Validate and sanitize ORDER BY clause
+ *
+ * @param {string} orderBy - The ORDER BY clause to validate
+ * @returns {string} - Sanitized ORDER BY clause
+ * @throws {Error} - If orderBy contains invalid values
+ *
+ * @security SEC-001 - SQL Injection Prevention
+ */
+function validateOrderBy(orderBy) {
+  if (!orderBy || typeof orderBy !== 'string') {
+    return 'created_at DESC'; // Safe default
+  }
+
+  // Trim and normalize
+  const normalized = orderBy.trim();
+
+  // Empty string gets default
+  if (normalized === '') {
+    return 'created_at DESC';
+  }
+
+  // SECURITY: Block obvious injection patterns (defense layer 2)
+  const dangerousPatterns = [
+    /;/, // Statement terminator
+    /--/, // SQL comment
+    /\/\*/, // Block comment start
+    /\*\//, // Block comment end
+    /\bDROP\b/i, // DROP keyword
+    /\bDELETE\b/i, // DELETE keyword
+    /\bUPDATE\b/i, // UPDATE keyword
+    /\bINSERT\b/i, // INSERT keyword
+    /\bEXEC\b/i, // EXEC keyword
+    /\bUNION\b/i, // UNION keyword
+    /\bOR\b/i, // OR keyword (used in boolean injection)
+    /\bAND\b/i, // AND keyword (used in boolean injection)
+    /'/, // Single quote
+    /"/, // Double quote
+    /\\/, // Backslash
+    /\x00/, // Null byte
+  ];
+
+  for (const pattern of dangerousPatterns) {
+    if (pattern.test(normalized)) {
+      console.error(`[SECURITY] SQL injection attempt blocked in orderBy: ${normalized}`);
+      throw new Error('Invalid orderBy: contains forbidden characters or keywords');
+    }
+  }
+
+  // Parse column and direction
+  const parts = normalized.split(/\s+/);
+  const column = parts[0];
+  const direction = parts[1] || 'DESC';
+
+  // SECURITY: Validate column against allowlist (defense layer 1 - primary)
+  if (!ALLOWED_ORDER_BY_COLUMNS.has(column)) {
+    console.error(`[SECURITY] Invalid orderBy column rejected: ${column}`);
+    throw new Error(
+      `Invalid orderBy column: ${column}. Allowed: ${[...ALLOWED_ORDER_BY_COLUMNS].join(', ')}`
+    );
+  }
+
+  // SECURITY: Validate direction
+  if (!ALLOWED_ORDER_DIRECTIONS.has(direction)) {
+    console.error(`[SECURITY] Invalid orderBy direction rejected: ${direction}`);
+    throw new Error(`Invalid orderBy direction: ${direction}. Allowed: ASC, DESC`);
+  }
+
+  // Return sanitized value
+  return `${column} ${direction.toUpperCase()}`;
+}
+
+/**
  * Hierarchical Memory Manager
  */
 export class HierarchicalMemoryManager {
@@ -232,9 +334,7 @@ export class HierarchicalMemoryManager {
       updateStmt.run(messageId);
 
       // Get updated memory state
-      const memory = this.db
-        .prepare(`SELECT * FROM messages WHERE id = ?`)
-        .get(messageId);
+      const memory = this.db.prepare(`SELECT * FROM messages WHERE id = ?`).get(messageId);
 
       if (!memory) {
         throw new Error(`Memory not found: ${messageId}`);
@@ -270,10 +370,7 @@ export class HierarchicalMemoryManager {
       const { id, tier, reference_count, promotion_count } = memory;
 
       // Conversation → Agent promotion
-      if (
-        tier === MemoryTier.CONVERSATION &&
-        reference_count >= this.options.conversationToAgent
-      ) {
+      if (tier === MemoryTier.CONVERSATION && reference_count >= this.options.conversationToAgent) {
         await this.promoteMemory(id, MemoryTier.AGENT);
         return {
           promoted: true,
@@ -284,10 +381,7 @@ export class HierarchicalMemoryManager {
       }
 
       // Agent → Project promotion
-      if (
-        tier === MemoryTier.AGENT &&
-        reference_count >= this.options.agentToProject
-      ) {
+      if (tier === MemoryTier.AGENT && reference_count >= this.options.agentToProject) {
         await this.promoteMemory(id, MemoryTier.PROJECT);
         return {
           promoted: true,
@@ -431,15 +525,25 @@ export class HierarchicalMemoryManager {
    * @param {string} tier - Target tier
    * @param {object} options - Query options
    * @returns {Promise<Array>} Memories in tier
+   *
+   * @security SEC-001 - orderBy parameter is validated against allowlist
    */
   async getMemoriesByTier(tier, options = {}) {
     if (!this.isInitialized) {
       await this.initialize();
     }
 
-    const { agentId = null, conversationId = null, limit = 50, orderBy = 'created_at DESC' } = options;
+    const {
+      agentId = null,
+      conversationId = null,
+      limit = 50,
+      orderBy = 'created_at DESC',
+    } = options;
 
     try {
+      // SECURITY: Validate orderBy to prevent SQL injection (SEC-001)
+      const sanitizedOrderBy = validateOrderBy(orderBy);
+
       let sql = `
         SELECT * FROM messages
         WHERE tier = ?
@@ -457,7 +561,8 @@ export class HierarchicalMemoryManager {
         params.push(conversationId);
       }
 
-      sql += ` ORDER BY ${orderBy} LIMIT ?`;
+      // SECURITY: Use sanitized orderBy value
+      sql += ` ORDER BY ${sanitizedOrderBy} LIMIT ?`;
       params.push(limit);
 
       const memories = this.db.prepare(sql).all(...params);
@@ -465,6 +570,10 @@ export class HierarchicalMemoryManager {
       return memories;
     } catch (error) {
       console.error('[HierarchicalMemory] Get memories by tier failed:', error.message);
+      // SECURITY: Re-throw security errors, return empty for others
+      if (error.message.includes('Invalid orderBy')) {
+        throw error;
+      }
       return [];
     }
   }

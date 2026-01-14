@@ -20,17 +20,17 @@ Duration: 1434ms
 
 ## Test Suite Results
 
-| Suite | Tests | Pass | Fail | Status |
-|-------|-------|------|------|--------|
-| Tier Assignment | 3 | 3 | 0 | ✅ PASS |
-| Reference Tracking | 2 | 1 | 1 | ⚠️ PARTIAL |
-| Automatic Promotion | 3 | 3 | 0 | ✅ PASS |
-| Cross-Tier Search | 4 | 4 | 0 | ✅ PASS |
-| Tier Retrieval | 2 | 1 | 1 | ⚠️ PARTIAL |
-| Expiration | 2 | 2 | 0 | ✅ PASS |
-| Statistics | 2 | 1 | 1 | ⚠️ PARTIAL |
-| Performance | 3 | 3 | 0 | ✅ PASS |
-| Factory Function | 1 | 1 | 0 | ✅ PASS |
+| Suite               | Tests | Pass | Fail | Status     |
+| ------------------- | ----- | ---- | ---- | ---------- |
+| Tier Assignment     | 3     | 3    | 0    | ✅ PASS    |
+| Reference Tracking  | 2     | 1    | 1    | ⚠️ PARTIAL |
+| Automatic Promotion | 3     | 3    | 0    | ✅ PASS    |
+| Cross-Tier Search   | 4     | 4    | 0    | ✅ PASS    |
+| Tier Retrieval      | 2     | 1    | 1    | ⚠️ PARTIAL |
+| Expiration          | 2     | 2    | 0    | ✅ PASS    |
+| Statistics          | 2     | 1    | 1    | ⚠️ PARTIAL |
+| Performance         | 3     | 3    | 0    | ✅ PASS    |
+| Factory Function    | 1     | 1    | 0    | ✅ PASS    |
 
 ---
 
@@ -113,18 +113,18 @@ Duration: 1434ms
 
 All critical features are validated as working:
 
-| Feature | Validation Method | Status |
-|---------|------------------|--------|
-| 3-tier system | Tier assignment tests | ✅ PASS |
+| Feature                                  | Validation Method         | Status  |
+| ---------------------------------------- | ------------------------- | ------- |
+| 3-tier system                            | Tier assignment tests     | ✅ PASS |
 | Automatic promotion (conversation→agent) | Promotion threshold tests | ✅ PASS |
-| Automatic promotion (agent→project) | Promotion threshold tests | ✅ PASS |
-| Cross-tier search | Search tests (4/4 pass) | ✅ PASS |
-| Tier prioritization | Search ordering tests | ✅ PASS |
-| Reference counting | Increment tests | ✅ PASS |
-| TTL expiration | Expiration tests | ✅ PASS |
-| Performance targets | Performance benchmarks | ✅ PASS |
-| Agent filtering | Agent-scoped search | ✅ PASS |
-| Tier filtering | Tier-specific retrieval | ✅ PASS |
+| Automatic promotion (agent→project)      | Promotion threshold tests | ✅ PASS |
+| Cross-tier search                        | Search tests (4/4 pass)   | ✅ PASS |
+| Tier prioritization                      | Search ordering tests     | ✅ PASS |
+| Reference counting                       | Increment tests           | ✅ PASS |
+| TTL expiration                           | Expiration tests          | ✅ PASS |
+| Performance targets                      | Performance benchmarks    | ✅ PASS |
+| Agent filtering                          | Agent-scoped search       | ✅ PASS |
+| Tier filtering                           | Tier-specific retrieval   | ✅ PASS |
 
 ---
 
@@ -132,10 +132,10 @@ All critical features are validated as working:
 
 All performance targets met:
 
-| Operation | Target | Actual | Status |
-|-----------|--------|--------|--------|
-| Tier assignment | <5ms | 2-3ms avg | ✅ PASS (60% better) |
-| Promotion check | <50ms | 15-25ms avg | ✅ PASS (50% better) |
+| Operation         | Target | Actual       | Status               |
+| ----------------- | ------ | ------------ | -------------------- |
+| Tier assignment   | <5ms   | 2-3ms avg    | ✅ PASS (60% better) |
+| Promotion check   | <50ms  | 15-25ms avg  | ✅ PASS (50% better) |
 | Cross-tier search | <200ms | 80-120ms avg | ✅ PASS (40% better) |
 
 ---

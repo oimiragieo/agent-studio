@@ -14,6 +14,7 @@ This guide provides comprehensive monitoring and observability recommendations f
 **Monitoring Philosophy**: Proactive detection of performance degradation and failures before user impact.
 
 **Key Objectives**:
+
 1. Detect memory system failures within 60 seconds
 2. Identify performance degradation before SLA violations
 3. Provide actionable alerts with clear resolution steps
@@ -32,12 +33,14 @@ This guide provides comprehensive monitoring and observability recommendations f
 **Dimensions**: `agent_type`, `session_id`, `feature_flag_state`
 
 **Percentiles to Track**:
+
 - **p50 (median)**: Target <50ms, Alert if >100ms
 - **p95**: Target <200ms, Alert if >500ms
 - **p99**: Target <500ms, Alert if >1000ms
 - **max**: Alert if >2000ms
 
 **Thresholds**:
+
 ```
 INFO:     p95 < 200ms (normal operation)
 WARNING:  p95 200ms-500ms (degraded performance)
@@ -59,11 +62,13 @@ CRITICAL: p95 > 500ms for 5 consecutive minutes
 **Dimensions**: `query_type` (SELECT/INSERT/UPDATE), `table_name`
 
 **Percentiles to Track**:
+
 - **p50**: Target <5ms, Alert if >20ms
 - **p95**: Target <10ms, Alert if >50ms
 - **p99**: Target <20ms, Alert if >100ms
 
 **Thresholds**:
+
 ```
 INFO:     p95 < 10ms (optimal)
 WARNING:  p95 10-50ms (acceptable)
@@ -85,11 +90,13 @@ CRITICAL: p95 > 50ms for 5 consecutive minutes
 **Dimensions**: `search_type` (semantic/hybrid), `result_count`
 
 **Percentiles to Track**:
+
 - **p50**: Target <200ms, Alert if >500ms
 - **p95**: Target <500ms, Alert if >1000ms
 - **p99**: Target <1000ms, Alert if >2000ms
 
 **Thresholds**:
+
 ```
 INFO:     p95 < 500ms (normal)
 WARNING:  p95 500-1000ms (degraded)
@@ -111,10 +118,12 @@ CRITICAL: p95 > 1000ms for 10 consecutive minutes
 **Dimensions**: `compaction_tier` (recent/mid-term/long-term)
 
 **Percentiles to Track**:
+
 - **p95**: Target <500ms, Alert if >2000ms
 - **p99**: Target <1000ms, Alert if >5000ms
 
 **Thresholds**:
+
 ```
 INFO:     p95 < 500ms (fast compaction)
 WARNING:  p95 500-2000ms (slow compaction)
@@ -138,6 +147,7 @@ CRITICAL: p95 > 2000ms for 3 consecutive events
 **Dimensions**: `source` (tool_output/user_input/agent_reasoning)
 
 **Thresholds**:
+
 ```
 INFO:     10-100 captures/sec (normal)
 WARNING:  >500 captures/sec (high load)
@@ -159,6 +169,7 @@ CRITICAL: >1000 captures/sec (potential memory leak or infinite loop)
 **Dimensions**: `agent_type`, `feature_flag_state`
 
 **Thresholds**:
+
 ```
 INFO:     5-50 injections/sec (normal)
 WARNING:  >200 injections/sec (high load)
@@ -180,6 +191,7 @@ CRITICAL: >500 injections/sec (potential DDoS or runaway loop)
 **Dimensions**: `source_agent`, `target_agent`, `shared_memory_type`
 
 **Thresholds**:
+
 ```
 INFO:     <10 sharing events/min (normal)
 WARNING:  10-50 sharing events/min (active collaboration)
@@ -203,6 +215,7 @@ CRITICAL: >100 sharing events/min (potential sharing loop)
 **Dimensions**: `process_type` (supervisor/worker)
 
 **Thresholds**:
+
 ```
 INFO:     <100MB (optimal - target achieved in tests)
 WARNING:  100-500MB (acceptable)
@@ -225,6 +238,7 @@ FATAL:    >1GB (approaching V8 limit even with flags)
 **Dimensions**: None
 
 **Thresholds**:
+
 ```
 INFO:     <100MB (small database)
 WARNING:  100-500MB (medium database, check cleanup)
@@ -246,6 +260,7 @@ CRITICAL: >500MB (large database, cleanup may be failing)
 **Dimensions**: None
 
 **Thresholds**:
+
 ```
 INFO:     <10,000 entries (small index)
 WARNING:  10,000-50,000 entries (medium index)
@@ -269,6 +284,7 @@ CRITICAL: >50,000 entries (large index, performance impact)
 **Dimensions**: `error_type` (db_error/timeout/rag_failure)
 
 **Thresholds**:
+
 ```
 INFO:     0 errors/min (perfect health)
 WARNING:  1-5 errors/min (occasional failures)
@@ -290,6 +306,7 @@ CRITICAL: >5 errors/min (systemic issue)
 **Dimensions**: `error_type` (connection/timeout/constraint_violation)
 
 **Thresholds**:
+
 ```
 INFO:     0 errors/min (healthy database)
 WARNING:  1-3 errors/min (intermittent issues)
@@ -311,6 +328,7 @@ CRITICAL: >3 errors/min (database unhealthy)
 **Dimensions**: `error_type` (embedding_failure/search_timeout/index_error)
 
 **Thresholds**:
+
 ```
 INFO:     0 errors/min (healthy RAG)
 WARNING:  1-5 errors/min (occasional failures)
@@ -332,6 +350,7 @@ CRITICAL: >5 errors/min (RAG service degraded)
 **Dimensions**: `error_type` (permission_denied/serialization_error/timeout)
 
 **Thresholds**:
+
 ```
 INFO:     0 errors/min (healthy sharing)
 WARNING:  1-3 errors/min (occasional failures)
@@ -355,6 +374,7 @@ CRITICAL: >3 errors/min (sharing broken)
 **Dimensions**: `cache_type` (recent/mid-term/embedding)
 
 **Thresholds**:
+
 ```
 INFO:     >70% (excellent caching)
 WARNING:  50-70% (acceptable caching)
@@ -376,6 +396,7 @@ CRITICAL: <50% for 10 consecutive minutes (poor caching)
 **Dimensions**: `cache_type`, `eviction_reason` (size/ttl/manual)
 
 **Thresholds**:
+
 ```
 INFO:     <10 evictions/min (stable cache)
 WARNING:  10-50 evictions/min (high churn)
@@ -399,6 +420,7 @@ CRITICAL: >50 evictions/min (cache thrashing)
 **Dimensions**: `cleanup_type` (session/archive/vector_index)
 
 **Thresholds**:
+
 ```
 INFO:     100% success (healthy cleanup)
 WARNING:  90-99% success (occasional failures)
@@ -420,6 +442,7 @@ CRITICAL: <90% success (cleanup broken)
 **Dimensions**: `cleanup_type`
 
 **Thresholds**:
+
 ```
 INFO:     <5000ms (fast cleanup)
 WARNING:  5000-30000ms (slow cleanup)
@@ -441,6 +464,7 @@ CRITICAL: >30000ms (very slow, may impact operations)
 **Dimensions**: `cleanup_type`
 
 **Thresholds**:
+
 ```
 INFO:     <1000 entries deleted (normal)
 WARNING:  1000-10000 entries deleted (high volume)
@@ -459,12 +483,12 @@ CRITICAL: >10000 entries deleted (potential data retention issue)
 
 ### 2.1 Alert Severity Levels
 
-| Severity | Response Time | Notification Channel | Escalation |
-|----------|---------------|----------------------|------------|
-| **INFO** | None (logged only) | Logs | None |
-| **WARNING** | <30 minutes | Slack #monitoring | None |
-| **CRITICAL** | <5 minutes | PagerDuty + Slack #oncall | 15min → L2 |
-| **FATAL** | Immediate | PagerDuty (high priority) + Phone | Immediate → L2 + Manager |
+| Severity     | Response Time      | Notification Channel              | Escalation               |
+| ------------ | ------------------ | --------------------------------- | ------------------------ |
+| **INFO**     | None (logged only) | Logs                              | None                     |
+| **WARNING**  | <30 minutes        | Slack #monitoring                 | None                     |
+| **CRITICAL** | <5 minutes         | PagerDuty + Slack #oncall         | 15min → L2               |
+| **FATAL**    | Immediate          | PagerDuty (high priority) + Phone | Immediate → L2 + Manager |
 
 ### 2.2 Alert Routing Rules
 
@@ -476,51 +500,55 @@ alerts:
     condition: memory.injection.latency.p95 > 500ms for 5 minutes
     channels:
       - pagerduty: oncall-memory-system
-      - slack: "#oncall"
-    runbook_url: "https://wiki.internal/runbooks/memory-injection-latency"
+      - slack: '#oncall'
+    runbook_url: 'https://wiki.internal/runbooks/memory-injection-latency'
 
   - name: database_query_slow
     severity: WARNING
     condition: memory.db.query_duration.p95 > 50ms for 5 minutes
     channels:
-      - slack: "#monitoring"
-    runbook_url: "https://wiki.internal/runbooks/database-slow-queries"
+      - slack: '#monitoring'
+    runbook_url: 'https://wiki.internal/runbooks/database-slow-queries'
 
   - name: heap_usage_critical
     severity: CRITICAL
     condition: memory.heap.used_mb > 500MB
     channels:
       - pagerduty: oncall-memory-system
-      - slack: "#oncall"
-    runbook_url: "https://wiki.internal/runbooks/heap-exhaustion"
+      - slack: '#oncall'
+    runbook_url: 'https://wiki.internal/runbooks/heap-exhaustion'
 
   - name: cleanup_service_failure
     severity: CRITICAL
     condition: memory.cleanup.success_rate < 90% for 1 hour
     channels:
       - pagerduty: oncall-memory-system
-      - slack: "#oncall"
-    runbook_url: "https://wiki.internal/runbooks/cleanup-service-failure"
+      - slack: '#oncall'
+    runbook_url: 'https://wiki.internal/runbooks/cleanup-service-failure'
 ```
 
 ### 2.3 Alert Escalation Policy
 
 **Tier 1 (L1) - On-Call Engineer**:
+
 - Response time: <5 minutes for CRITICAL
 - Actions: Execute runbook, attempt immediate mitigation
 - Escalate if: Runbook doesn't resolve, or issue persists >15 minutes
 
 **Tier 2 (L2) - Senior On-Call Engineer**:
+
 - Response time: <15 minutes for escalation
 - Actions: Deep debugging, coordinate with dev team
 - Escalate if: Root cause unclear, or fix requires code changes
 
 **Tier 3 (L3) - Development Team**:
+
 - Response time: <30 minutes for escalation
 - Actions: Code fixes, architecture changes, hotfixes
 - Escalate if: Requires rollback decision or product changes
 
 **Tier 4 (L4) - Engineering Manager + Product**:
+
 - Response time: <1 hour for escalation
 - Actions: Rollback decisions, feature flag changes, user communication
 - Authority: Can approve emergency rollbacks
@@ -683,17 +711,18 @@ All memory system logs MUST use structured JSON format:
 
 ### 4.2 Log Levels
 
-| Level | Usage | Retention |
-|-------|-------|-----------|
-| **DEBUG** | Detailed execution traces | 1 day |
-| **INFO** | Normal operations (injection, capture) | 7 days |
-| **WARNING** | Performance degradation, retries | 30 days |
-| **ERROR** | Failed operations (recoverable) | 90 days |
-| **CRITICAL** | System failures (unrecoverable) | 1 year |
+| Level        | Usage                                  | Retention |
+| ------------ | -------------------------------------- | --------- |
+| **DEBUG**    | Detailed execution traces              | 1 day     |
+| **INFO**     | Normal operations (injection, capture) | 7 days    |
+| **WARNING**  | Performance degradation, retries       | 30 days   |
+| **ERROR**    | Failed operations (recoverable)        | 90 days   |
+| **CRITICAL** | System failures (unrecoverable)        | 1 year    |
 
 ### 4.3 Key Log Events
 
 #### Injection Events
+
 ```json
 {
   "event": "injection_start",
@@ -716,6 +745,7 @@ All memory system logs MUST use structured JSON format:
 ```
 
 #### Capture Events
+
 ```json
 {
   "event": "capture_complete",
@@ -726,6 +756,7 @@ All memory system logs MUST use structured JSON format:
 ```
 
 #### Cleanup Events
+
 ```json
 {
   "event": "cleanup_complete",
@@ -738,21 +769,25 @@ All memory system logs MUST use structured JSON format:
 ### 4.4 Log Queries
 
 **Find high-latency injections**:
+
 ```
 level:INFO AND event:injection_complete AND duration_ms:>500
 ```
 
 **Find database errors**:
+
 ```
 level:ERROR AND component:memory.db
 ```
 
 **Find cache misses**:
+
 ```
 event:injection_complete AND cache_hit:false
 ```
 
 **Find cross-agent sharing failures**:
+
 ```
 level:ERROR AND component:memory.cross_agent
 ```
@@ -764,36 +799,44 @@ level:ERROR AND component:memory.cross_agent
 ### 5.1 Early Warning Signs
 
 **Latency Creep** (WARNING):
+
 - Injection latency p95 increases >10% over 24 hours
 - **Action**: Investigate database query performance, cache hit rate
 
 **Cache Degradation** (WARNING):
+
 - Cache hit rate drops below 60% for >1 hour
 - **Action**: Check cache size, eviction policy, memory pressure
 
 **Error Rate Increase** (WARNING):
+
 - Any error rate increases >50% over baseline
 - **Action**: Check logs for error patterns, validate service health
 
 **Heap Growth** (WARNING):
+
 - Heap usage increases >50MB over 24 hours
 - **Action**: Check for memory leaks, validate cleanup service
 
 ### 5.2 Critical Degradation Indicators
 
 **Latency Spike** (CRITICAL):
+
 - Injection latency p95 >500ms for 5+ minutes
 - **Action**: Execute runbook, consider feature flag rollback
 
 **Database Failure** (CRITICAL):
+
 - Database error rate >5 errors/min for 3+ minutes
 - **Action**: Check database locks, connection pool, restart if needed
 
 **Heap Exhaustion** (CRITICAL):
+
 - Heap usage >500MB
 - **Action**: Immediate restart, investigate memory leak, enable worker pattern
 
 **RAG Service Down** (CRITICAL):
+
 - RAG error rate >10 errors/min for 5+ minutes
 - **Action**: Check embedding service, restart RAG service, fallback to non-RAG search
 
@@ -806,12 +849,14 @@ level:ERROR AND component:memory.cross_agent
 **Endpoint**: `GET /health/live`
 **Purpose**: Check if service is running
 **Response**:
+
 ```json
 {
   "status": "ok",
   "timestamp": "2026-01-13T12:34:56.789Z"
 }
 ```
+
 **Failure Criteria**: HTTP 5xx or timeout >1s
 
 ### 6.2 Readiness Probe
@@ -819,6 +864,7 @@ level:ERROR AND component:memory.cross_agent
 **Endpoint**: `GET /health/ready`
 **Purpose**: Check if service can handle traffic
 **Response**:
+
 ```json
 {
   "status": "ready",
@@ -831,6 +877,7 @@ level:ERROR AND component:memory.cross_agent
   "timestamp": "2026-01-13T12:34:56.789Z"
 }
 ```
+
 **Failure Criteria**: Any check fails or timeout >5s
 
 ### 6.3 Deep Health Check
@@ -838,6 +885,7 @@ level:ERROR AND component:memory.cross_agent
 **Endpoint**: `GET /health/deep`
 **Purpose**: Comprehensive health check for debugging
 **Response**:
+
 ```json
 {
   "status": "healthy",
@@ -865,6 +913,7 @@ level:ERROR AND component:memory.cross_agent
   "timestamp": "2026-01-13T12:34:56.789Z"
 }
 ```
+
 **Failure Criteria**: Any metric exceeds critical threshold
 
 ---
@@ -878,12 +927,14 @@ level:ERROR AND component:memory.cross_agent
 **Threshold**: p95 >500ms for 5 minutes
 
 **Diagnosis Steps**:
+
 1. Check dashboard: Is database query duration also high?
 2. Check cache hit rate: Is it below 70%?
 3. Check heap usage: Is it above 100MB?
 4. Check logs for database timeout errors
 
 **Mitigation**:
+
 - **If database slow**: Restart database, rebuild indexes
 - **If cache hit rate low**: Increase cache size, adjust TTL
 - **If heap high**: Restart supervisor, enable worker pattern
@@ -900,12 +951,14 @@ level:ERROR AND component:memory.cross_agent
 **Threshold**: p95 >50ms for 5 minutes
 
 **Diagnosis Steps**:
+
 1. Check database size: Is it >500MB?
 2. Check query logs: Are there full table scans?
 3. Check cleanup service: Is it running?
 4. Check database locks: Are there long-running transactions?
 
 **Mitigation**:
+
 - **If database large**: Run manual cleanup, archive old data
 - **If missing indexes**: Rebuild indexes, optimize queries
 - **If cleanup failing**: Restart cleanup service, run manual cleanup
@@ -922,12 +975,14 @@ level:ERROR AND component:memory.cross_agent
 **Threshold**: Heap >500MB
 
 **Diagnosis Steps**:
+
 1. Check memory leak: Is heap growing continuously?
 2. Check cleanup service: Is it running?
 3. Check capture rate: Is it abnormally high?
 4. Check for runaway processes
 
 **Mitigation**:
+
 - **If memory leak**: Restart supervisor immediately
 - **If cleanup failing**: Run manual cleanup
 - **If high capture rate**: Investigate capture source, add rate limiting
@@ -944,12 +999,14 @@ level:ERROR AND component:memory.cross_agent
 **Threshold**: Success rate <90% for 1 hour
 
 **Diagnosis Steps**:
+
 1. Check cleanup logs: What errors are occurring?
 2. Check database: Are there locks blocking cleanup?
 3. Check cron schedule: Is cleanup running?
 4. Check disk space: Is disk full?
 
 **Mitigation**:
+
 - **If errors**: Fix error (lock timeout, permission, etc.)
 - **If not running**: Restart cron service, verify schedule
 - **If disk full**: Free disk space, increase disk size
@@ -970,15 +1027,16 @@ level:ERROR AND component:memory.cross_agent
 
 ### 8.2 Metrics Retention Policy
 
-| Metric Type | Retention | Aggregation |
-|-------------|-----------|-------------|
-| Real-time (1min) | 7 days | Raw data |
-| Medium-term (5min) | 30 days | Downsampled |
-| Long-term (1hour) | 1 year | Downsampled |
+| Metric Type        | Retention | Aggregation |
+| ------------------ | --------- | ----------- |
+| Real-time (1min)   | 7 days    | Raw data    |
+| Medium-term (5min) | 30 days   | Downsampled |
+| Long-term (1hour)  | 1 year    | Downsampled |
 
 ### 8.3 Metrics Export Format
 
 **Prometheus Format** (recommended):
+
 ```
 # HELP memory_injection_latency_ms Memory injection latency in milliseconds
 # TYPE memory_injection_latency_ms histogram
@@ -997,12 +1055,14 @@ memory_injection_latency_ms_count{agent_type="developer"} 200
 ### 9.1 Growth Projections
 
 **Baseline Assumptions** (from Phase 2 testing):
+
 - Average memory entry size: ~1KB
 - Average session duration: 30 minutes
 - Average agent spawns per session: 5
 - Average memories per agent: 20
 
 **Projected Growth**:
+
 ```
 Daily memory entries = Sessions/day × Agents/session × Memories/agent
 Daily memory entries = 1000 × 5 × 20 = 100,000 entries
@@ -1017,11 +1077,13 @@ With 7d retention: Max database size = 700MB (requires cleanup tuning)
 ### 9.2 Scaling Thresholds
 
 **Vertical Scaling** (increase resources):
+
 - Database size >500MB sustained → Increase disk IOPS
 - Heap usage >500MB sustained → Increase max-old-space-size
 - RAG index >50k entries → Increase embedding service capacity
 
 **Horizontal Scaling** (add instances):
+
 - Injection rate >500/sec → Add read replicas (Phase 5+ feature)
 - Capture rate >1000/sec → Shard database by session ID (Phase 6+ feature)
 
@@ -1045,11 +1107,13 @@ Before production deployment:
 ### 10.2 Synthetic Monitoring
 
 **Periodic Health Checks** (every 1 minute):
+
 - Liveness probe
 - Readiness probe
 - Deep health check (every 5 minutes)
 
 **Periodic Functionality Tests** (every 5 minutes):
+
 - Inject sample memory
 - Capture sample memory
 - RAG search for sample query
@@ -1059,16 +1123,16 @@ Before production deployment:
 
 ## Appendix A: Metric Reference Table
 
-| Metric Name | Type | Unit | Target | Warning | Critical |
-|-------------|------|------|--------|---------|----------|
-| `memory.injection.latency.p95` | Histogram | ms | <200 | 200-500 | >500 |
-| `memory.db.query_duration.p95` | Histogram | ms | <10 | 10-50 | >50 |
-| `memory.rag.search_duration.p95` | Histogram | ms | <500 | 500-1000 | >1000 |
-| `memory.heap.used_mb` | Gauge | MB | <100 | 100-500 | >500 |
-| `memory.cache.hit_rate` | Gauge | % | >70 | 50-70 | <50 |
-| `memory.injection.errors` | Counter | /min | 0 | 1-5 | >5 |
-| `memory.db.errors` | Counter | /min | 0 | 1-3 | >3 |
-| `memory.cleanup.success_rate` | Gauge | % | 100 | 90-99 | <90 |
+| Metric Name                      | Type      | Unit | Target | Warning  | Critical |
+| -------------------------------- | --------- | ---- | ------ | -------- | -------- |
+| `memory.injection.latency.p95`   | Histogram | ms   | <200   | 200-500  | >500     |
+| `memory.db.query_duration.p95`   | Histogram | ms   | <10    | 10-50    | >50      |
+| `memory.rag.search_duration.p95` | Histogram | ms   | <500   | 500-1000 | >1000    |
+| `memory.heap.used_mb`            | Gauge     | MB   | <100   | 100-500  | >500     |
+| `memory.cache.hit_rate`          | Gauge     | %    | >70    | 50-70    | <50      |
+| `memory.injection.errors`        | Counter   | /min | 0      | 1-5      | >5       |
+| `memory.db.errors`               | Counter   | /min | 0      | 1-3      | >3       |
+| `memory.cleanup.success_rate`    | Gauge     | %    | 100    | 90-99    | <90      |
 
 ---
 

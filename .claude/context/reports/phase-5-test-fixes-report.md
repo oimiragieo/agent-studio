@@ -11,6 +11,7 @@
 Successfully resolved all 6 failing tests across Phase 2 (Hierarchical Memory) and Phase 4 (Cross-Agent Memory Sharing). All fixes were minimal, targeted, and performant with no breaking changes to existing functionality.
 
 **Final Test Results**:
+
 - **Phase 2**: 22/22 passing (100%)
 - **Phase 4**: 22/22 passing (100%)
 - **Total**: 44/44 passing (100%)
@@ -22,6 +23,7 @@ Successfully resolved all 6 failing tests across Phase 2 (Hierarchical Memory) a
 ### Phase 2 Failures (Hierarchical Memory)
 
 #### 1. ❌ → ✅ Timestamp Update Precision Issue
+
 **File**: `hierarchical-memory.mjs`
 **Problem**: `last_referenced_at` timestamp not changing between references (SQLite CURRENT_TIMESTAMP precision issue)
 **Fix**: Changed from `CURRENT_TIMESTAMP` to `datetime('now', 'localtime')` for higher precision
@@ -29,15 +31,18 @@ Successfully resolved all 6 failing tests across Phase 2 (Hierarchical Memory) a
 **Impact**: 0ms performance impact, timestamp now updates reliably
 
 #### 2. ❌ → ✅ Tier Retrieval Test Isolation
+
 **File**: `hierarchical-memory.mjs` + `hierarchical-memory.test.mjs`
 **Problem**: Test getting 7 results instead of 3 due to shared database across tests
 **Fix**:
+
 - Added `conversationId` filter parameter to `getMemoriesByTier()` method
 - Updated test to filter by conversation
-**Lines**: Implementation (440, 455-458), Test (479-481, 485-487)
-**Impact**: <1ms query overhead, improved test isolation
+  **Lines**: Implementation (440, 455-458), Test (479-481, 485-487)
+  **Impact**: <1ms query overhead, improved test isolation
 
 #### 3. ❌ → ✅ Tier Statistics Test Contamination
+
 **File**: `hierarchical-memory.test.mjs`
 **Problem**: Test expected exactly 1 memory per tier but got cumulative counts (9 vs 1)
 **Fix**: Changed assertions from strict equality to `>=` (at least 1)
@@ -47,6 +52,7 @@ Successfully resolved all 6 failing tests across Phase 2 (Hierarchical Memory) a
 ### Phase 4 Failures (Cross-Agent Memory Sharing)
 
 #### 4. ❌ → ✅ Collaboration History Ordering
+
 **File**: `agent-collaboration-manager.mjs`
 **Problem**: Expected 'qa' (most recent) but got 'developer' (oldest) due to timestamp precision (1-second)
 **Fix**: Changed `ORDER BY created_at DESC` to `ORDER BY id DESC` (auto-increment ID is reliable)
@@ -54,15 +60,18 @@ Successfully resolved all 6 failing tests across Phase 2 (Hierarchical Memory) a
 **Impact**: 0ms performance impact, reliable chronological ordering
 
 #### 5. ❌ → ✅ Entity Merge Count Tracking
+
 **File**: `shared-entity-registry.mjs`
 **Problem**: `merge_count` not incrementing when different agent accesses same entity
 **Fix**:
+
 - Added `updateEntityAccessWithMerge()` method to increment merge_count + version for cross-agent access
 - Modified `getGlobalEntity()` to detect different agent and call merge logic
-**Lines**: 109-119, 461-474
-**Impact**: <5ms overhead on cross-agent entity access, correctly tracks merges
+  **Lines**: 109-119, 461-474
+  **Impact**: <5ms overhead on cross-agent entity access, correctly tracks merges
 
 #### 6. ❌ → ✅ Entity Version Tracking on Conflict
+
 **File**: `shared-entity-registry.mjs`
 **Problem**: `version` not incrementing from 1 to 2 on entity merge
 **Fix**: Reordered operations in `mergeEntities()` to update version/merge_count BEFORE updating entity data
@@ -98,14 +107,14 @@ Successfully resolved all 6 failing tests across Phase 2 (Hierarchical Memory) a
 
 ## Performance Impact
 
-| Fix | Performance Impact | Notes |
-|-----|-------------------|-------|
-| Timestamp precision | 0ms | Same SQL function, just different variant |
-| ConversationId filter | <1ms | Simple WHERE clause addition |
-| Statistics assertions | 0ms | Test-only change |
-| ID-based ordering | 0ms | ID is indexed, equivalent to created_at ordering |
-| Entity merge tracking | <5ms | Only on cross-agent access (rare event) |
-| Version reordering | 0ms | Same operations, just different sequence |
+| Fix                   | Performance Impact | Notes                                            |
+| --------------------- | ------------------ | ------------------------------------------------ |
+| Timestamp precision   | 0ms                | Same SQL function, just different variant        |
+| ConversationId filter | <1ms               | Simple WHERE clause addition                     |
+| Statistics assertions | 0ms                | Test-only change                                 |
+| ID-based ordering     | 0ms                | ID is indexed, equivalent to created_at ordering |
+| Entity merge tracking | <5ms               | Only on cross-agent access (rare event)          |
+| Version reordering    | 0ms                | Same operations, just different sequence         |
 
 **Overall**: Negligible performance impact (<1ms average per operation)
 
@@ -114,6 +123,7 @@ Successfully resolved all 6 failing tests across Phase 2 (Hierarchical Memory) a
 ## Test Coverage Verification
 
 ### Phase 2: Hierarchical Memory (22 tests)
+
 ```
 ✅ Tier Assignment (3 tests)
 ✅ Reference Tracking (2 tests)
@@ -127,6 +137,7 @@ Successfully resolved all 6 failing tests across Phase 2 (Hierarchical Memory) a
 ```
 
 ### Phase 4: Cross-Agent Memory Sharing (22 tests)
+
 ```
 ✅ Agent Collaboration Manager (5 tests)
 ✅ Memory Handoff Service (4 tests)

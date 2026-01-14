@@ -122,9 +122,13 @@
     "PreToolUse": [],
     "PostToolUse": [
       {
-        "path": ".claude/hooks/post-session-cleanup.js",
-        "enabled": true,
-        "description": "Cleans up tmpclaude-* files and SLOP files after Bash commands and file operations"
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/post-session-cleanup.js"
+          }
+        ]
       }
     ]
   },

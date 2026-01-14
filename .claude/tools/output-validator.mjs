@@ -53,17 +53,19 @@ export class OutputValidator {
             code: e.code,
             expected: e.expected,
             received: e.received,
-          }))
+          })),
         };
       }
       // Non-Zod error
       return {
         valid: false,
-        errors: [{
-          path: 'root',
-          message: error.message,
-          code: 'unknown_error'
-        }]
+        errors: [
+          {
+            path: 'root',
+            message: error.message,
+            code: 'unknown_error',
+          },
+        ],
       };
     }
   }
@@ -140,9 +142,7 @@ export class OutputValidator {
     }
 
     if (jsonSchema.type === 'array') {
-      const itemSchema = jsonSchema.items
-        ? this._convertSchemaInternal(jsonSchema.items)
-        : z.any();
+      const itemSchema = jsonSchema.items ? this._convertSchemaInternal(jsonSchema.items) : z.any();
 
       let schema = z.array(itemSchema);
 
@@ -239,7 +239,7 @@ export class OutputValidator {
   createValidator(schema, options = {}) {
     const { name = 'Output', throwOnError = false } = options;
 
-    return (data) => {
+    return data => {
       const result = this.validate(data, schema);
 
       if (!result.valid && throwOnError) {
@@ -275,7 +275,7 @@ export class OutputValidator {
     if (result.valid) {
       return {
         ...result,
-        report: '✅ Validation passed'
+        report: '✅ Validation passed',
       };
     }
 
@@ -289,12 +289,12 @@ export class OutputValidator {
       '❌ Validation failed:',
       ...errorLines,
       '',
-      `Total errors: ${result.errors.length}`
+      `Total errors: ${result.errors.length}`,
     ].join('\n');
 
     return {
       ...result,
-      report
+      report,
     };
   }
 

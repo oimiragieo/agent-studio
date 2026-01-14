@@ -314,11 +314,7 @@ async function runTests() {
     assert.deepStrictEqual(tiers1, [MemoryTier.PROJECT, MemoryTier.AGENT]);
 
     const tiers2 = injector.getTiersToSearch({});
-    assert.deepStrictEqual(tiers2, [
-      MemoryTier.PROJECT,
-      MemoryTier.AGENT,
-      MemoryTier.CONVERSATION,
-    ]);
+    assert.deepStrictEqual(tiers2, [MemoryTier.PROJECT, MemoryTier.AGENT, MemoryTier.CONVERSATION]);
   });
 
   // Test 18: Multi-factor scoring integration

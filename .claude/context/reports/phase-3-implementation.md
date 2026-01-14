@@ -55,18 +55,19 @@ score = (0.4 × semantic_similarity) + (0.2 × recency) + (0.3 × tier_priority)
 
 ### Factor Breakdown
 
-| Factor | Weight | Purpose | Implementation |
-|--------|--------|---------|----------------|
-| **Semantic Similarity** | 0.4 (40%) | Match query intent | Embeddings or Jaccard similarity |
-| **Recency** | 0.2 (20%) | Prefer recent memories | Exponential decay: e^(-age/7days) |
-| **Tier Priority** | 0.3 (30%) | Prioritize important tiers | Project=1.0, Agent=0.7, Conversation=0.4 |
-| **Entity Overlap** | 0.1 (10%) | Boost entity matches | Jaccard similarity of entity sets |
+| Factor                  | Weight    | Purpose                    | Implementation                           |
+| ----------------------- | --------- | -------------------------- | ---------------------------------------- |
+| **Semantic Similarity** | 0.4 (40%) | Match query intent         | Embeddings or Jaccard similarity         |
+| **Recency**             | 0.2 (20%) | Prefer recent memories     | Exponential decay: e^(-age/7days)        |
+| **Tier Priority**       | 0.3 (30%) | Prioritize important tiers | Project=1.0, Agent=0.7, Conversation=0.4 |
+| **Entity Overlap**      | 0.1 (10%) | Boost entity matches       | Jaccard similarity of entity sets        |
 
 ### Example Scoring
 
 **Query**: "TypeScript best practices for React hooks"
 
 **Memory 1** (Project Tier, 1 day old):
+
 - Semantic: 0.95 (high similarity)
 - Recency: 0.88 (recent)
 - Tier: 1.0 (project)
@@ -74,6 +75,7 @@ score = (0.4 × semantic_similarity) + (0.2 × recency) + (0.3 × tier_priority)
 - **Combined Score**: 0.93
 
 **Memory 2** (Conversation Tier, 10 minutes old):
+
 - Semantic: 0.45 (low similarity)
 - Recency: 0.99 (very recent)
 - Tier: 0.4 (conversation)
@@ -89,25 +91,20 @@ Memory 1 scores 75% higher despite being older due to semantic relevance, tier p
 ### Algorithm
 
 ```javascript
-budget = min(
-  max(
-    (maxTokens - currentTokens) * tokenBudgetPercent,
-    minTokens
-  ),
-  maxTokens
-)
+budget = min(max((maxTokens - currentTokens) * tokenBudgetPercent, minTokens), maxTokens);
 ```
 
 ### Adaptive Behavior
 
-| Context Usage | Remaining Tokens | Budget (20%) | Bounded Budget |
-|---------------|------------------|--------------|----------------|
-| 5% (10k/200k) | 190k | 38k | 38k (within bounds) |
-| 50% (100k/200k) | 100k | 20k | 20k (ideal) |
-| 75% (150k/200k) | 50k | 10k | 10k |
-| 95% (190k/200k) | 10k | 2k | **1k (min bound)** |
+| Context Usage   | Remaining Tokens | Budget (20%) | Bounded Budget      |
+| --------------- | ---------------- | ------------ | ------------------- |
+| 5% (10k/200k)   | 190k             | 38k          | 38k (within bounds) |
+| 50% (100k/200k) | 100k             | 20k          | 20k (ideal)         |
+| 75% (150k/200k) | 50k              | 10k          | 10k                 |
+| 95% (190k/200k) | 10k              | 2k           | **1k (min bound)**  |
 
 **Benefits**:
+
 - Prevents context overflow near token limits
 - Maximizes memory injection when context available
 - Automatic adaptation without manual tuning
@@ -118,27 +115,30 @@ budget = min(
 
 ### Test Results (25 tests, 100% pass rate)
 
-| Metric | Target | Actual (p95) | Status |
-|--------|--------|--------------|--------|
-| **Scoring Latency** | <100ms | 78ms | ✅ Pass |
-| **Injection Latency** | <500ms | 280ms | ✅ Pass |
-| **Cache Hit Rate** | >50% | 60% | ✅ Pass |
+| Metric                | Target | Actual (p95) | Status  |
+| --------------------- | ------ | ------------ | ------- |
+| **Scoring Latency**   | <100ms | 78ms         | ✅ Pass |
+| **Injection Latency** | <500ms | 280ms        | ✅ Pass |
+| **Cache Hit Rate**    | >50%   | 60%          | ✅ Pass |
 
 ### Detailed Metrics
 
 **Scoring Performance** (50 candidate memories):
+
 - Average: 45ms
 - p50: 42ms
 - p95: 78ms
 - p99: 95ms
 
 **Injection Performance** (end-to-end):
+
 - Average: 120ms
 - p50: 110ms
 - p95: 280ms
 - p99: 450ms
 
 **Cache Efficiency**:
+
 - Hit rate: 60% (target: >50%)
 - TTL: 60 seconds
 - Max size: 100 entries (LRU eviction)
@@ -188,6 +188,7 @@ if (this.options.useEnhancedInjection && this.enhancedInjector) {
 ### 25 Test Cases
 
 **Unit Tests (15 tests)**:
+
 1. Initialization with default options
 2. Custom scoring weights
 3. Recency score calculation (exponential decay)
@@ -204,19 +205,9 @@ if (this.options.useEnhancedInjection && this.enhancedInjector) {
 14. Token budget enforcement in formatting
 15. Empty result handling
 
-**Integration Tests (5 tests)**:
-16. Metrics tracking
-17. Tier filtering based on context
-18. Multi-factor scoring integration
-19. Relevance threshold filtering
-20. Error handling (graceful degradation)
+**Integration Tests (5 tests)**: 16. Metrics tracking 17. Tier filtering based on context 18. Multi-factor scoring integration 19. Relevance threshold filtering 20. Error handling (graceful degradation)
 
-**Performance Benchmarks (5 tests)**:
-21. Scoring latency benchmark (<100ms p95)
-22. Injection latency benchmark (<500ms p95)
-23. Cache hit rate validation (>50%)
-24. Backward compatibility flag
-25. Integration with injection manager
+**Performance Benchmarks (5 tests)**: 21. Scoring latency benchmark (<100ms p95) 22. Injection latency benchmark (<500ms p95) 23. Cache hit rate validation (>50%) 24. Backward compatibility flag 25. Integration with injection manager
 
 **Pass Rate**: 25/25 (100%)
 
@@ -276,7 +267,7 @@ export function createEnhancedContextInjector(options)
 ### Feature Flag
 
 ```javascript
-export const USE_ENHANCED_INJECTION = process.env.USE_ENHANCED_INJECTION !== 'false'
+export const USE_ENHANCED_INJECTION = process.env.USE_ENHANCED_INJECTION !== 'false';
 ```
 
 ---
@@ -364,7 +355,7 @@ console.log(result.relevanceScores); // Score breakdown
 ```javascript
 const manager = createMemoryInjectionManager({
   weights: {
-    semantic: 0.5,  // Prioritize semantic similarity
+    semantic: 0.5, // Prioritize semantic similarity
     recency: 0.1,
     tier: 0.3,
     entity: 0.1,
@@ -391,6 +382,7 @@ const manager = createMemoryInjectionManager({
 **Optional optimizations**:
 
 1. **Add explicit queries** for better results:
+
    ```javascript
    // Before (Phase 2.4)
    await manager.injectRelevantMemory({ sessionId, toolName, toolParams });
@@ -405,6 +397,7 @@ const manager = createMemoryInjectionManager({
    ```
 
 2. **Monitor performance metrics**:
+
    ```javascript
    const metrics = manager.enhancedInjector.getMetrics();
    console.log(metrics); // { scoring, injection, cache }
@@ -440,14 +433,14 @@ const manager = createMemoryInjectionManager({
 
 ## Success Criteria Status
 
-| Criterion | Target | Status |
-|-----------|--------|--------|
-| **Multi-factor scoring implemented** | 4 factors | ✅ Semantic + Recency + Tier + Entity |
-| **Dynamic token budget** | Respects limits | ✅ Min/max bounds enforced |
-| **25+ tests** | 90%+ pass rate | ✅ 25 tests, 100% pass rate |
-| **Scoring performance** | <100ms p95 | ✅ 78ms p95 |
-| **Injection performance** | <500ms p95 | ✅ 280ms p95 |
-| **Backward compatible** | Via flag | ✅ USE_ENHANCED_INJECTION flag |
+| Criterion                            | Target          | Status                                |
+| ------------------------------------ | --------------- | ------------------------------------- |
+| **Multi-factor scoring implemented** | 4 factors       | ✅ Semantic + Recency + Tier + Entity |
+| **Dynamic token budget**             | Respects limits | ✅ Min/max bounds enforced            |
+| **25+ tests**                        | 90%+ pass rate  | ✅ 25 tests, 100% pass rate           |
+| **Scoring performance**              | <100ms p95      | ✅ 78ms p95                           |
+| **Injection performance**            | <500ms p95      | ✅ 280ms p95                          |
+| **Backward compatible**              | Via flag        | ✅ USE_ENHANCED_INJECTION flag        |
 
 **Overall Status**: ✅ **All success criteria met**
 
@@ -457,11 +450,11 @@ const manager = createMemoryInjectionManager({
 
 ### Latency Improvements
 
-| Operation | Phase 2.4 | Phase 3 | Improvement |
-|-----------|-----------|---------|-------------|
-| Scoring | N/A (recency-only) | 78ms p95 | New capability |
-| Injection | ~150ms | 280ms | -87% (added scoring) |
-| Cache hit | 0% | 60% | +60% |
+| Operation | Phase 2.4          | Phase 3  | Improvement          |
+| --------- | ------------------ | -------- | -------------------- |
+| Scoring   | N/A (recency-only) | 78ms p95 | New capability       |
+| Injection | ~150ms             | 280ms    | -87% (added scoring) |
+| Cache hit | 0%                 | 60%      | +60%                 |
 
 **Note**: Phase 3 adds 130ms for intelligent scoring but reduces overall latency by 40% through caching.
 

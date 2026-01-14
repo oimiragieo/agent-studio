@@ -633,7 +633,10 @@ export class EntityMemory {
 
       return entity.id;
     } catch (error) {
-      console.warn('[Entity Memory] Shared registry unavailable, using local creation:', error.message);
+      console.warn(
+        '[Entity Memory] Shared registry unavailable, using local creation:',
+        error.message
+      );
       // Fallback to local creation
       return await this.createEntity(type, value, metadata);
     }

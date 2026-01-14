@@ -7,7 +7,7 @@
  * Cleans up:
  * - Files in root directory (except allowlist)
  * - Files with malformed paths (nul, concatenated paths)
- * - Temporary files created during session
+ * - Temporary files created during session (tmpclaude-* files recursively)
  *
  * Usage: Configured as PostToolUse hook in Claude Code settings
  * Note: Runs after each tool execution to catch SLOP immediately
@@ -156,41 +156,71 @@ async function cleanupFile(filePath) {
 }
 
 /**
- * Cleanup tmpclaude-* files and directories from project root
+ * Cleanup tmpclaude-* files and directories from project (recursive)
  */
 async function cleanupTmpclaudeFiles() {
   const projectRoot = resolve(__dirname, '../..');
   const cleaned = [];
 
-  try {
-    // Read project root directory
-    const entries = await readdir(projectRoot);
+  // Directories to skip during recursive search
+  const skipDirs = new Set([
+    'node_modules',
+    '.git',
+    '.claude/context/tmp', // Our own temp directory
+    'dist',
+    'build',
+    '.next',
+    '.nuxt',
+    '.cache',
+  ]);
 
-    for (const entry of entries) {
-      // Match tmpclaude-* pattern
-      if (entry.startsWith('tmpclaude-') && entry.includes('-cwd')) {
-        const entryPath = join(projectRoot, entry);
-        const fullPath = resolve(entryPath);
+  /**
+   * Recursively search for tmpclaude files
+   */
+  async function searchDirectory(dirPath, relativePath = '') {
+    try {
+      const entries = await readdir(dirPath, { withFileTypes: true });
 
-        try {
-          // Check if it's a directory or file
-          const stats = lstatSync(fullPath);
-          if (stats.isDirectory()) {
-            await rm(fullPath, { recursive: true, force: true });
-          } else {
-            await unlink(fullPath);
+      for (const entry of entries) {
+        const entryName = entry.name;
+        const fullPath = join(dirPath, entryName);
+        const relativeEntryPath = relativePath ? join(relativePath, entryName) : entryName;
+
+        // Skip excluded directories
+        if (entry.isDirectory() && skipDirs.has(entryName)) {
+          continue;
+        }
+
+        // Check if this is a tmpclaude file/directory
+        if (entryName.startsWith('tmpclaude-') && entryName.includes('-cwd')) {
+          try {
+            const stats = lstatSync(fullPath);
+            if (stats.isDirectory()) {
+              await rm(fullPath, { recursive: true, force: true });
+            } else {
+              await unlink(fullPath);
+            }
+
+            cleaned.push({
+              file: relativeEntryPath,
+              reason: 'tmpclaude_file',
+              cleaned_at: new Date().toISOString(),
+            });
+          } catch (error) {
+            // Fail silently for individual files - continue with others
           }
-
-          cleaned.push({
-            file: entry,
-            reason: 'tmpclaude_file',
-            cleaned_at: new Date().toISOString(),
-          });
-        } catch (error) {
-          // Fail silently for individual files - continue with others
+        } else if (entry.isDirectory()) {
+          // Recursively search subdirectories
+          await searchDirectory(fullPath, relativeEntryPath);
         }
       }
+    } catch (error) {
+      // Fail silently - continue with other directories
     }
+  }
+
+  try {
+    await searchDirectory(projectRoot);
   } catch (error) {
     // Fail silently - cleanup is non-critical
   }
@@ -230,7 +260,17 @@ async function main() {
     // Cleanup tmpclaude-* files after Bash commands
     if (toolName === 'Bash') {
       const tmpclaudeCleaned = await cleanupTmpclaudeFiles();
-      cleanedItems.push(...tmpclaudeCleaned);
+      if (tmpclaudeCleaned.length > 0) {
+        cleanedItems.push(...tmpclaudeCleaned);
+      }
+      // Always log cleanup attempt for debugging
+      console.error(
+        JSON.stringify({
+          action: 'cleanup_attempt',
+          tool: toolName,
+          cleaned_count: tmpclaudeCleaned.length,
+        })
+      );
     }
 
     // Log all cleaned items
@@ -256,6 +296,14 @@ async function main() {
     // Always allow (this is post-execution, non-blocking)
     process.exit(0);
   } catch (error) {
+    // Log error to stderr for debugging (non-blocking)
+    console.error(
+      JSON.stringify({
+        action: 'error',
+        error: error.message,
+        stack: error.stack,
+      })
+    );
     // Fail silently - cleanup is non-critical
     process.exit(0);
   }

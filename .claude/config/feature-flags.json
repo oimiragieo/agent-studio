@@ -1,0 +1,185 @@
+{
+  "$schema": "../schemas/feature-flags.schema.json",
+  "version": "1.0.0",
+  "last_updated": "2025-01-13T00:00:00Z",
+  "flags": {
+    "agent_card_generation": {
+      "enabled": false,
+      "description": "Enable AgentCard generation from agent definitions for A2A protocol discovery",
+      "phase": "POC",
+      "rollout_order": 1,
+      "dependencies": [],
+      "environments": {
+        "dev": true,
+        "staging": false,
+        "prod": false
+      },
+      "metadata": {
+        "owner": "architect",
+        "risk_level": "low",
+        "added_date": "2025-01-13",
+        "documentation": ".claude/context/artifacts/a2a-integration-architecture.md#agentcard-generator"
+      }
+    },
+    "agent_card_discovery": {
+      "enabled": false,
+      "description": "Enable /.well-known/agent-card.json endpoint for external agent discovery",
+      "phase": "POC",
+      "rollout_order": 2,
+      "dependencies": ["agent_card_generation"],
+      "environments": {
+        "dev": true,
+        "staging": false,
+        "prod": false
+      },
+      "metadata": {
+        "owner": "developer",
+        "risk_level": "low",
+        "added_date": "2025-01-13",
+        "documentation": ".claude/context/artifacts/a2a-integration-architecture.md#phase-1-proof-of-concept"
+      }
+    },
+    "memory_a2a_bridge": {
+      "enabled": false,
+      "description": "Enable A2A Part format for memory handoff between agents",
+      "phase": "Memory",
+      "rollout_order": 3,
+      "dependencies": ["agent_card_generation"],
+      "environments": {
+        "dev": false,
+        "staging": false,
+        "prod": false
+      },
+      "metadata": {
+        "owner": "developer",
+        "risk_level": "medium",
+        "added_date": "2025-01-13",
+        "documentation": ".claude/context/artifacts/a2a-integration-architecture.md#memory-a2a-bridge"
+      }
+    },
+    "a2a_message_wrapper": {
+      "enabled": false,
+      "description": "Enable A2A message format conversion between internal and A2A protocol formats",
+      "phase": "Lifecycle",
+      "rollout_order": 4,
+      "dependencies": ["agent_card_generation"],
+      "environments": {
+        "dev": false,
+        "staging": false,
+        "prod": false
+      },
+      "metadata": {
+        "owner": "developer",
+        "risk_level": "medium",
+        "added_date": "2025-01-13",
+        "documentation": ".claude/context/artifacts/a2a-integration-architecture.md#a2a-message-wrapper"
+      }
+    },
+    "task_state_manager": {
+      "enabled": false,
+      "description": "Enable A2A task lifecycle state machine (submitted, working, completed, failed, cancelled, rejected, input_required, auth_required)",
+      "phase": "Lifecycle",
+      "rollout_order": 5,
+      "dependencies": ["a2a_message_wrapper"],
+      "environments": {
+        "dev": false,
+        "staging": false,
+        "prod": false
+      },
+      "metadata": {
+        "owner": "developer",
+        "risk_level": "high",
+        "added_date": "2025-01-13",
+        "documentation": ".claude/context/artifacts/a2a-integration-architecture.md#task-state-manager"
+      }
+    },
+    "push_notifications": {
+      "enabled": false,
+      "description": "Enable webhook callbacks for long-running task status updates",
+      "phase": "External",
+      "rollout_order": 6,
+      "dependencies": ["task_state_manager"],
+      "environments": {
+        "dev": false,
+        "staging": false,
+        "prod": false
+      },
+      "metadata": {
+        "owner": "developer",
+        "risk_level": "medium",
+        "added_date": "2025-01-13",
+        "documentation": ".claude/context/artifacts/a2a-integration-architecture.md#push-notification-handler"
+      }
+    },
+    "streaming_support": {
+      "enabled": false,
+      "description": "Enable SendStreamingMessage for real-time task updates via Server-Sent Events",
+      "phase": "External",
+      "rollout_order": 7,
+      "dependencies": ["a2a_message_wrapper", "task_state_manager"],
+      "environments": {
+        "dev": false,
+        "staging": false,
+        "prod": false
+      },
+      "metadata": {
+        "owner": "developer",
+        "risk_level": "medium",
+        "added_date": "2025-01-13",
+        "documentation": ".claude/context/artifacts/a2a-integration-architecture.md#streaming-support"
+      }
+    },
+    "external_federation": {
+      "enabled": false,
+      "description": "Enable discovery and integration with external A2A-compliant agents",
+      "phase": "External",
+      "rollout_order": 8,
+      "dependencies": ["agent_card_discovery", "a2a_message_wrapper", "task_state_manager"],
+      "environments": {
+        "dev": false,
+        "staging": false,
+        "prod": false
+      },
+      "metadata": {
+        "owner": "security-architect",
+        "risk_level": "high",
+        "added_date": "2025-01-13",
+        "documentation": ".claude/context/artifacts/a2a-integration-architecture.md#external-agent-federation"
+      }
+    }
+  },
+  "environment_defaults": {
+    "dev": {
+      "description": "Development environment - POC features enabled",
+      "safe_rollback": true,
+      "auto_enable_dependencies": true
+    },
+    "staging": {
+      "description": "Staging environment - Validated features only",
+      "safe_rollback": true,
+      "auto_enable_dependencies": true
+    },
+    "prod": {
+      "description": "Production environment - All flags OFF by default",
+      "safe_rollback": true,
+      "auto_enable_dependencies": false,
+      "require_approval": true
+    }
+  },
+  "audit": {
+    "enabled": true,
+    "log_path": ".claude/context/logs/feature-flags-audit.log",
+    "retention_days": 90,
+    "include_metadata": true
+  },
+  "validation_rules": {
+    "dependency_check": true,
+    "environment_validation": true,
+    "rollout_order_enforcement": true,
+    "risk_level_gates": {
+      "high": ["security-architect", "architect"],
+      "medium": ["architect"],
+      "low": []
+    }
+  }
+}

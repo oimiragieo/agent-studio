@@ -14,6 +14,7 @@ This document provides step-by-step rollback procedures for the Phase 2-4 memory
 **Rollback Philosophy**: Minimize downtime, preserve data integrity, maintain user experience.
 
 **Rollback Capabilities**:
+
 1. **Feature Flag Rollback**: Instant disable of new features (0 downtime)
 2. **Code Rollback**: Revert to previous code version (2-5 minutes downtime)
 3. **Database Rollback**: Remove migration 004 (5-15 minutes downtime, RARELY NEEDED)
@@ -50,24 +51,24 @@ This document provides step-by-step rollback procedures for the Phase 2-4 memory
 
 ### 1.2 Rollback vs. Fix Forward Matrix
 
-| Scenario | Severity | Rollback? | Rationale |
-|----------|----------|-----------|-----------|
-| Injection latency >500ms | CRITICAL | **YES** (Option A) | User-facing performance degradation |
-| Database connection failures | CRITICAL | **YES** (Option A) | Core functionality broken |
-| Heap exhaustion crashes | CRITICAL | **YES** (Option A) | Service instability |
-| RAG service timeout | WARNING | **NO** - Fix forward | Non-critical feature, graceful degradation |
-| Cache hit rate <50% | WARNING | **NO** - Fix forward | Performance suboptimal but acceptable |
-| Occasional injection errors (<5/min) | WARNING | **NO** - Fix forward | Error rate within acceptable range |
-| Data corruption detected | CRITICAL | **YES** (Option C) | Data integrity compromised |
-| Cross-agent sharing errors >10/min | CRITICAL | **YES** (Option A) | New feature broken |
+| Scenario                             | Severity | Rollback?            | Rationale                                  |
+| ------------------------------------ | -------- | -------------------- | ------------------------------------------ |
+| Injection latency >500ms             | CRITICAL | **YES** (Option A)   | User-facing performance degradation        |
+| Database connection failures         | CRITICAL | **YES** (Option A)   | Core functionality broken                  |
+| Heap exhaustion crashes              | CRITICAL | **YES** (Option A)   | Service instability                        |
+| RAG service timeout                  | WARNING  | **NO** - Fix forward | Non-critical feature, graceful degradation |
+| Cache hit rate <50%                  | WARNING  | **NO** - Fix forward | Performance suboptimal but acceptable      |
+| Occasional injection errors (<5/min) | WARNING  | **NO** - Fix forward | Error rate within acceptable range         |
+| Data corruption detected             | CRITICAL | **YES** (Option C)   | Data integrity compromised                 |
+| Cross-agent sharing errors >10/min   | CRITICAL | **YES** (Option A)   | New feature broken                         |
 
 ### 1.3 Approval Authority
 
-| Rollback Type | Approval Required | Notification Required |
-|---------------|-------------------|------------------------|
-| **Option A: Feature Flag** | On-call engineer (no approval) | Slack #oncall + #monitoring |
-| **Option B: Code Rollback** | On-call engineer (no approval) | Slack #oncall + #engineering |
-| **Option C: Database Rollback** | Engineering Manager + DBA | Slack #oncall + #engineering + Email leadership |
+| Rollback Type                   | Approval Required              | Notification Required                           |
+| ------------------------------- | ------------------------------ | ----------------------------------------------- |
+| **Option A: Feature Flag**      | On-call engineer (no approval) | Slack #oncall + #monitoring                     |
+| **Option B: Code Rollback**     | On-call engineer (no approval) | Slack #oncall + #engineering                    |
+| **Option C: Database Rollback** | Engineering Manager + DBA      | Slack #oncall + #engineering + Email leadership |
 
 **Emergency Override**: If service is completely down, on-call engineer has authority to execute any rollback without approval. Notify leadership immediately after.
 
@@ -83,12 +84,14 @@ This document provides step-by-step rollback procedures for the Phase 2-4 memory
 **Use When**: New features causing issues, performance degradation
 
 **Pros**:
+
 - Instant rollback
 - Zero downtime
 - Fully reversible
 - Data preserved
 
 **Cons**:
+
 - Requires feature flags implemented
 - Only disables new features (code still deployed)
 
@@ -102,11 +105,13 @@ This document provides step-by-step rollback procedures for the Phase 2-4 memory
 **Use When**: Code bugs not covered by feature flags, critical bugs in core logic
 
 **Pros**:
+
 - Reverts all code changes
 - Known-good state
 - Data preserved
 
 **Cons**:
+
 - Requires deployment
 - Brief downtime (2-5 min)
 - Cannot selectively disable features
@@ -121,10 +126,12 @@ This document provides step-by-step rollback procedures for the Phase 2-4 memory
 **Use When**: Data corruption, migration failure, unrecoverable database errors
 
 **Pros**:
+
 - Fixes database schema issues
 - Removes corrupted data
 
 **Cons**:
+
 - **Data loss risk** (memories created after migration)
 - Extended downtime
 - Complex procedure
@@ -148,6 +155,7 @@ This document provides step-by-step rollback procedures for the Phase 2-4 memory
 #### Step 1: Assess Current State (2 minutes)
 
 1. **Check current feature flag values**:
+
    ```bash
    # SSH into production server
    ssh production-server
@@ -235,6 +243,7 @@ curl -X POST http://localhost:8080/admin/feature-flags \
    - Verify heap usage stable
 
 3. **Check logs**:
+
    ```bash
    # Tail logs to verify feature flags disabled
    tail -f /var/log/memory-system/app.log | grep "feature_flag"
@@ -245,6 +254,7 @@ curl -X POST http://localhost:8080/admin/feature-flags \
    ```
 
 4. **Test basic functionality**:
+
    ```bash
    # Execute a simple memory operation to verify system works
    curl http://localhost:8080/health/deep
@@ -272,6 +282,7 @@ curl -X POST http://localhost:8080/admin/feature-flags \
 #### Step 5: Document and Communicate (2 minutes)
 
 1. **Update incident log**:
+
    ```
    Incident: [ID]
    Rollback Type: Feature Flag
@@ -285,6 +296,7 @@ curl -X POST http://localhost:8080/admin/feature-flags \
    ```
 
 2. **Notify stakeholders**:
+
    ```
    Slack #oncall + #engineering: "Feature flag rollback COMPLETE.
    Memory system reverted to Phase 1 (legacy mode).
@@ -321,6 +333,7 @@ After feature flag rollback, verify:
 Once root cause is fixed:
 
 1. **Test fix in staging**:
+
    ```bash
    # Deploy fix to staging
    # Enable feature flag in staging
@@ -334,6 +347,7 @@ Once root cause is fixed:
    ```
 
 2. **Gradual re-enable in production**:
+
    ```bash
    # Enable for 1% of sessions first
    curl -X POST http://localhost:8080/admin/feature-flags \
@@ -359,6 +373,7 @@ Once root cause is fixed:
 #### Step 1: Identify Rollback Target (2 minutes)
 
 1. **Find last known-good version**:
+
    ```bash
    # Check deployment history
    git log --oneline -10
@@ -368,6 +383,7 @@ Once root cause is fixed:
    ```
 
 2. **Verify version in staging** (if possible):
+
    ```bash
    # Deploy to staging first
    git checkout abc1234
@@ -380,6 +396,7 @@ Once root cause is fixed:
 #### Step 2: Notify and Prepare (2 minutes)
 
 1. **Notify team**:
+
    ```
    Slack #oncall + #engineering: "URGENT: Starting code rollback to [VERSION].
    Reason: [BRIEF].
@@ -388,6 +405,7 @@ Once root cause is fixed:
    ```
 
 2. **Prepare rollback**:
+
    ```bash
    # Checkout rollback version
    git checkout abc1234
@@ -402,6 +420,7 @@ Once root cause is fixed:
 #### Step 3: Execute Rollback (3-5 minutes)
 
 1. **Stop production service** (graceful shutdown):
+
    ```bash
    # Send SIGTERM for graceful shutdown
    systemctl stop memory-system
@@ -412,6 +431,7 @@ Once root cause is fixed:
    ```
 
 2. **Deploy previous version**:
+
    ```bash
    # Copy built artifacts to production
    rsync -avz --delete ./dist/ /opt/memory-system/
@@ -421,6 +441,7 @@ Once root cause is fixed:
    ```
 
 3. **Start production service**:
+
    ```bash
    # Start service
    systemctl start memory-system
@@ -433,6 +454,7 @@ Once root cause is fixed:
 #### Step 4: Verify Rollback (2-3 minutes)
 
 1. **Health check**:
+
    ```bash
    curl http://localhost:8080/health/live
    # Expected: HTTP 200 {"status":"ok"}
@@ -442,6 +464,7 @@ Once root cause is fixed:
    ```
 
 2. **Check logs**:
+
    ```bash
    tail -n 50 /var/log/memory-system/app.log
    # Verify: No startup errors, service initialized successfully
@@ -521,6 +544,7 @@ WHERE created_at > '[MIGRATION_TIMESTAMP]';
 ```
 
 **Communicate impact to stakeholders**:
+
 ```
 "Database rollback will result in loss of approximately [COUNT] memory entries
 created since [DATE/TIME]. User sessions after [TIME] may lose context.
@@ -645,6 +669,7 @@ curl http://localhost:8080/health/deep
    - Verify Phase 1 features working
 
 2. **Document data loss**:
+
    ```
    Database rollback COMPLETE.
    Data loss: Approximately [COUNT] memory entries deleted.
@@ -716,6 +741,7 @@ systemctl start memory-system
    - Verify user sessions working correctly
 
 2. **Update status page** (if applicable):
+
    ```
    "Memory system rolled back to [VERSION/MODE].
    Service fully operational.
@@ -777,6 +803,7 @@ systemctl start memory-system
 **BEFORE production deployment, test rollback procedures**:
 
 1. **Test feature flag rollback in staging**:
+
    ```bash
    # Enable flags
    export USE_ENHANCED_INJECTION=true
@@ -792,6 +819,7 @@ systemctl start memory-system
    ```
 
 2. **Test code rollback in staging**:
+
    ```bash
    # Deploy Phase 2-4 code
    git checkout feature/phase-2-4
@@ -809,6 +837,7 @@ systemctl start memory-system
    ```
 
 3. **Test database rollback in staging**:
+
    ```bash
    # Run migration 004
    sqlite3 staging.db < migrations/004_phase_2_hierarchical_memory.sql
@@ -837,6 +866,7 @@ systemctl start memory-system
 4. **Q4**: Full disaster recovery drill
 
 **Document drill results**:
+
 - Time to execute
 - Issues encountered
 - Improvements needed
@@ -950,13 +980,13 @@ Contact: [ON-CALL ENGINEER PHONE]
 
 ## 10. Emergency Contacts
 
-| Role | Name | Contact | Escalation |
-|------|------|---------|------------|
-| On-Call Engineer (L1) | [TBD] | Slack + Phone | First responder |
-| Senior On-Call (L2) | [TBD] | Slack + Phone | 15min escalation |
-| Database Administrator | [TBD] | Slack + Phone | Database rollback approval |
-| Engineering Manager | [TBD] | Slack + Email | Rollback approval, postmortem |
-| Product Manager | [TBD] | Email | User impact decisions |
+| Role                   | Name  | Contact       | Escalation                    |
+| ---------------------- | ----- | ------------- | ----------------------------- |
+| On-Call Engineer (L1)  | [TBD] | Slack + Phone | First responder               |
+| Senior On-Call (L2)    | [TBD] | Slack + Phone | 15min escalation              |
+| Database Administrator | [TBD] | Slack + Phone | Database rollback approval    |
+| Engineering Manager    | [TBD] | Slack + Email | Rollback approval, postmortem |
+| Product Manager        | [TBD] | Email         | User impact decisions         |
 
 ---
 

@@ -128,7 +128,11 @@ export class MemoryHandoffService {
 
     try {
       // 1. Retrieve source agent's memories
-      const sourceMemories = await this.getSourceAgentMemories(sessionId, sourceAgentId, maxMemories);
+      const sourceMemories = await this.getSourceAgentMemories(
+        sessionId,
+        sourceAgentId,
+        maxMemories
+      );
 
       // 2. Extract entities from memories
       const entities = this.config.includeEntities
@@ -278,16 +282,24 @@ export class MemoryHandoffService {
 
         return await Promise.all(
           memories.map(async memory => {
-            const semanticScore = await this.enhancedInjector.calculateSemanticScore(memory, targetTask);
+            const semanticScore = await this.enhancedInjector.calculateSemanticScore(
+              memory,
+              targetTask
+            );
 
             const recencyScore = this.enhancedInjector.calculateRecencyScore(
               memory.created_at,
               Date.now()
             );
 
-            const tierScore = memory.tier ? this.enhancedInjector.calculateTierScore(memory.tier) : 0.5;
+            const tierScore = memory.tier
+              ? this.enhancedInjector.calculateTierScore(memory.tier)
+              : 0.5;
 
-            const entityScore = await this.enhancedInjector.calculateEntityScore(memory, queryEntities);
+            const entityScore = await this.enhancedInjector.calculateEntityScore(
+              memory,
+              queryEntities
+            );
 
             const relevanceScore =
               0.4 * semanticScore + 0.2 * recencyScore + 0.3 * tierScore + 0.1 * entityScore;
@@ -379,13 +391,11 @@ export class MemoryHandoffService {
    * @returns {object} Formatted handoff context
    */
   formatHandoffContext(memories, entities) {
-    const memoryParts = memories.map(memory =>
-      this.formatMemory(memory)
-    );
+    const memoryParts = memories.map(memory => this.formatMemory(memory));
 
-    const entityParts = entities.slice(0, this.config.maxEntities).map(entity =>
-      this.formatEntity(entity)
-    );
+    const entityParts = entities
+      .slice(0, this.config.maxEntities)
+      .map(entity => this.formatEntity(entity));
 
     const tokensUsed =
       memories.reduce((sum, m) => sum + this.estimateTokens(m.content), 0) +
