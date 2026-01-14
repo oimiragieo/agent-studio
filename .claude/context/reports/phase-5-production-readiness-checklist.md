@@ -567,14 +567,14 @@ This checklist provides go/no-go criteria for deploying the Phase 2-4 memory sys
 
 ### 12.1 Identified Risks
 
-| Risk | Severity | Probability | Mitigation |
-|------|----------|-------------|------------|
-| Database migration failure | High | Low | Pre-migration testing in staging; automated rollback |
-| Performance degradation | Medium | Medium | Feature flags allow instant disable; monitoring alerts |
-| Data corruption | High | Very Low | Database backups; foreign key constraints; validation |
-| Heap exhaustion | Medium | Low | V8 flags configured; worker pattern (future) |
-| RAG service failure | Medium | Low | Graceful degradation to non-RAG search |
-| Context overflow | Low | Medium | Overflow handler tested; tiered compaction |
+| Risk                       | Severity | Probability | Mitigation                                             |
+| -------------------------- | -------- | ----------- | ------------------------------------------------------ |
+| Database migration failure | High     | Low         | Pre-migration testing in staging; automated rollback   |
+| Performance degradation    | Medium   | Medium      | Feature flags allow instant disable; monitoring alerts |
+| Data corruption            | High     | Very Low    | Database backups; foreign key constraints; validation  |
+| Heap exhaustion            | Medium   | Low         | V8 flags configured; worker pattern (future)           |
+| RAG service failure        | Medium   | Low         | Graceful degradation to non-RAG search                 |
+| Context overflow           | Low      | Medium      | Overflow handler tested; tiered compaction             |
 
 ### 12.2 Mitigation Actions
 
@@ -665,13 +665,13 @@ This checklist provides go/no-go criteria for deploying the Phase 2-4 memory sys
 
 ## Appendix A: Contact Information
 
-| Role | Name | Contact |
-|------|------|---------|
-| On-Call Engineer | [TBD] | [Phone/Slack] |
+| Role                   | Name  | Contact       |
+| ---------------------- | ----- | ------------- |
+| On-Call Engineer       | [TBD] | [Phone/Slack] |
 | Database Administrator | [TBD] | [Phone/Slack] |
-| Security Lead | [TBD] | [Phone/Slack] |
-| Product Manager | [TBD] | [Phone/Slack] |
-| Escalation Manager | [TBD] | [Phone/Slack] |
+| Security Lead          | [TBD] | [Phone/Slack] |
+| Product Manager        | [TBD] | [Phone/Slack] |
+| Escalation Manager     | [TBD] | [Phone/Slack] |
 
 ---
 

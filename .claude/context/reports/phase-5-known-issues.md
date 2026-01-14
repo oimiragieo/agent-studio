@@ -27,6 +27,7 @@ This document catalogs all known issues, limitations, and future improvement opp
 5 tests in semantic-memory.test.mjs fail due to missing OpenAI API dependency. These tests require active OpenAI credentials for embedding generation.
 
 **Affected Tests**:
+
 1. should generate embeddings for text
 2. should store and search semantic memories
 3. should find similar memories
@@ -34,6 +35,7 @@ This document catalogs all known issues, limitations, and future improvement opp
 5. should handle semantic search with filters
 
 **Root Cause**:
+
 - Tests require OPENAI_API_KEY environment variable
 - Local test environments typically do not have cloud credentials
 - CI/CD environments may not have OpenAI access
@@ -79,12 +81,15 @@ Schema is additive only, no breaking changes.
 ## 4. Future Optimization Opportunities
 
 ### 4.1 Worker Pattern for Heavy Operations
+
 **Priority**: Medium | Heavy operations in main process, but V8 flags sufficient.
 
 ### 4.2 Semantic Search Fallback
+
 **Priority**: Low | Graceful degradation to FTS5 implemented.
 
 ### 4.3 Mock Embedding Service for Testing
+
 **Priority**: Low | Enable 100% test coverage without cloud dependencies.
 
 ---
@@ -92,38 +97,40 @@ Schema is additive only, no breaking changes.
 ## 5. Known Edge Cases
 
 ### 5.1 Rapid Entity Creation
+
 **Severity**: Low | Deduplication handles automatically.
 
 ### 5.2 Circular Collaboration Detection Depth
+
 **Severity**: Low | Default depth 5, configurable.
 
 ---
 
 ## 6. Summary Table
 
-| Issue | Severity | Status |
-|-------|----------|--------|
-| Semantic memory tests (5 failures) | Expected | By Design |
-| SQLite timestamp precision | Low | Fixed |
-| Vector index size limit | Medium | Monitored |
-| Phase 1 compatibility mode | Low | By Design |
-| Schema forward compatibility | Low | By Design |
-| Worker pattern | Enhancement | Future |
-| Semantic search fallback | Enhancement | Implemented |
-| Mock embedding service | Enhancement | Future |
+| Issue                              | Severity    | Status      |
+| ---------------------------------- | ----------- | ----------- |
+| Semantic memory tests (5 failures) | Expected    | By Design   |
+| SQLite timestamp precision         | Low         | Fixed       |
+| Vector index size limit            | Medium      | Monitored   |
+| Phase 1 compatibility mode         | Low         | By Design   |
+| Schema forward compatibility       | Low         | By Design   |
+| Worker pattern                     | Enhancement | Future      |
+| Semantic search fallback           | Enhancement | Implemented |
+| Mock embedding service             | Enhancement | Future      |
 
 ---
 
 ## 7. Acceptance Criteria for Production
 
-| Criterion | Status |
-|-----------|--------|
-| All critical tests passing | PASS |
-| Performance targets met | PASS |
-| Documentation complete | PASS |
-| Rollback capability | PASS |
-| Monitoring configured | PASS |
-| Known issues documented | PASS |
+| Criterion                  | Status |
+| -------------------------- | ------ |
+| All critical tests passing | PASS   |
+| Performance targets met    | PASS   |
+| Documentation complete     | PASS   |
+| Rollback capability        | PASS   |
+| Monitoring configured      | PASS   |
+| Known issues documented    | PASS   |
 
 **Conclusion**: No blockers for production deployment.
 

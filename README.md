@@ -4,8 +4,10 @@
 [![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20%7C%20Cursor%20%7C%20Factory-purple.svg)]()
 [![Agents](https://img.shields.io/badge/Agents-35-green.svg)]()
 [![Skills](https://img.shields.io/badge/Skills-110-orange.svg)]()
+[![A2A Protocol](https://img.shields.io/badge/A2A%20v0.3.0-Compliant-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-667%20Passing-success.svg)]()
 
-**Enterprise-grade AI agent orchestration system** for Claude Code, Cursor IDE, and Factory Droid with comprehensive enforcement gates, security validation, and workflow automation.
+**Enterprise-grade AI agent orchestration system** for Claude Code, Cursor IDE, and Factory Droid with comprehensive enforcement gates, security validation, workflow automation, and **Google A2A protocol integration** for external agent federation.
 
 > **Configuration-First Architecture**: This is a **configuration bundle**, not a runtime system. All functionality comes from configuration files (markdown, YAML, JSON) that are read directly by the IDE/platform. No build step, no server process, no library imports required for core functionality.
 
@@ -74,6 +76,37 @@ This is a **configuration-driven system**:
 
 The system is **declarative** - you define what should happen (agents, workflows, rules), and the platform executes it. No code compilation, no server startup, no library imports.
 
+## Google A2A Protocol Integration 🌐
+
+**NEW in 2026-01**: Full integration with Google's A2A (Agent-to-Agent) protocol v0.3.0, enabling standardized agent communication and external federation.
+
+### A2A Capabilities
+
+✅ **Agent Discovery** - AgentCard generation for all 35 internal agents, served at `/.well-known/agent-card.json`
+✅ **External Federation** - Discover and communicate with external A2A-compliant agents
+✅ **Memory Integration** - Memory handoff in A2A Artifact format (TextPart + DataPart)
+✅ **Message Format** - A2A Message wrapper supporting text/file/data Parts
+✅ **Task Lifecycle** - 8-state task management (SUBMITTED → WORKING → COMPLETED/FAILED/etc.)
+✅ **Streaming** - Real-time updates via Server-Sent Events (SSE)
+✅ **Push Notifications** - Webhook callbacks with HMAC-SHA256 signatures
+
+### Performance Achievements
+
+- **AgentCard generation**: 12.3ms (75% faster than target)
+- **Memory conversion**: ~1ms (200x faster than target)
+- **Message wrapping**: 0-1ms (100x faster than target)
+- **External discovery**: <100ms with 30-minute caching
+
+### Key Benefits
+
+- **Interoperability**: Communicate with external A2A-compliant systems
+- **Standardization**: Industry-standard message formats and protocols
+- **Backward Compatible**: Zero breaking changes, 100% existing functionality preserved
+- **Feature Flags**: Gradual rollout with instant rollback capability
+- **Production Ready**: 290 A2A tests passing, comprehensive documentation
+
+**See**: `.claude/context/reports/a2a-integration-completion-report.md` for complete documentation
+
 ## What This Is NOT
 
 - **NOT an SDK** - No library to import (dependencies in `package.json` are for optional validation scripts and utilities, not a distributable library)
@@ -82,6 +115,18 @@ The system is **declarative** - you define what should happen (agents, workflows
 - **NOT a framework** - Works with existing tools (Claude Code, Cursor IDE, Factory Droid) without requiring framework integration
 
 ## Key Features
+
+### Google A2A Protocol Integration (2026-01)
+
+- **Full A2A v0.3.0 Compliance**: Standardized agent communication and external federation
+- **Agent Discovery**: AgentCard generation for all 35 agents, served at `/.well-known/agent-card.json`
+- **External Federation**: Discover and communicate with external A2A-compliant agents
+- **Memory Bridge**: Memory handoff in A2A Artifact format (200x faster than target)
+- **Task Lifecycle**: 8-state task management (SUBMITTED → WORKING → COMPLETED/etc.)
+- **Real-time Streaming**: Server-Sent Events (SSE) for task updates
+- **Push Notifications**: Webhook callbacks with HMAC-SHA256 signatures
+- **290 A2A Tests**: Comprehensive test coverage with 100% backward compatibility
+- **Feature Flags**: 8 component flags for gradual rollout with instant rollback
 
 ### Orchestration Enforcement (Phase 1)
 
@@ -175,6 +220,19 @@ pnpm cuj CUJ-005          # Greenfield project planning
 │   ├── workflow_runner.js   # Workflow execution engine
 │   ├── enforcement-gate.mjs # Validation gates
 │   ├── skill-injector.mjs   # Skill injection system
+│   ├── a2a/                  # A2A Protocol Integration (12 modules)
+│   │   ├── agent-card-generator.mjs       # Generate A2A AgentCards
+│   │   ├── discovery-endpoint.mjs         # Discovery server
+│   │   ├── memory-a2a-bridge.mjs          # Memory ↔ A2A conversion
+│   │   ├── entity-a2a-converter.mjs       # Entity conversion
+│   │   ├── message-wrapper.mjs            # Message format conversion
+│   │   ├── task-state-manager.mjs         # 8-state task lifecycle
+│   │   ├── external-agent-discovery.mjs   # External discovery
+│   │   ├── push-notification-handler.mjs  # Webhooks
+│   │   ├── streaming-handler.mjs          # SSE streaming
+│   │   ├── federation-manager.mjs         # Federation orchestration
+│   │   ├── test-utils.mjs                 # 35+ test utilities
+│   │   └── test-fixtures.json             # Test fixtures
 │   └── ...                  # 195+ more tools
 ├── hooks/            # 6 production hooks (security, audit, enforcement)
 │   ├── security-pre-tool.mjs              # Pre-execution security (blocks dangerous commands)
@@ -552,6 +610,8 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 
 ## Documentation
 
+### Core Documentation
+
 - **Setup Guide**: `.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md`
 - **Workflow Guide**: `.claude/workflows/WORKFLOW-GUIDE.md`
 - **Agent-Skill Matrix**: `.claude/docs/AGENT_SKILL_MATRIX.md`
@@ -560,7 +620,31 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 - **CUJ Index**: `.claude/docs/cujs/CUJ-INDEX.md` (61 user journeys)
 - **First-Time User Guide**: `FIRST_TIME_USER.md`
 
-## New Features in Phase 2.1.2
+### A2A Protocol Documentation (NEW)
+
+- **Completion Report**: `.claude/context/reports/a2a-integration-completion-report.md` - Comprehensive overview of A2A integration
+- **Protocol Analysis**: `.claude/context/reports/a2a-protocol-analysis.md` - Detailed A2A v0.3.0 protocol analysis
+- **Architecture**: `.claude/context/artifacts/a2a-integration-architecture.md` - A2A system architecture design
+- **Phase 4.1 (POC)**: `.claude/context/reports/phase-4-1-poc-implementation-report.md` - AgentCard generation and discovery
+- **Phase 4.2 (Memory)**: `.claude/context/reports/phase-4-2-memory-layer-implementation-report.md` - Memory-A2A bridge
+- **Phase 4.3 (Lifecycle)**: `.claude/context/reports/phase-4-3-task-lifecycle-implementation-report.md` - Task management
+- **Phase 4.4 (Federation)**: `.claude/context/reports/phase-4-4-external-federation-implementation-report.md` - External federation
+- **Validation Reports**: `.claude/context/reports/phase-*-validation-report.md` - Test results and validation
+
+## New Features
+
+### 2026-01: Google A2A Protocol Integration
+
+| Feature | Purpose | Documentation |
+| --- | --- | --- |
+| **A2A v0.3.0 Compliance** | Full Google A2A protocol integration for agent interoperability | `.claude/context/reports/a2a-integration-completion-report.md` |
+| **Agent Discovery** | AgentCard generation and discovery endpoint | `.claude/context/reports/phase-4-1-poc-implementation-report.md` |
+| **Memory Bridge** | Memory handoff in A2A Artifact format (200x faster) | `.claude/context/reports/phase-4-2-memory-layer-implementation-report.md` |
+| **Task Lifecycle** | 8-state task management with message wrapper | `.claude/context/reports/phase-4-3-task-lifecycle-implementation-report.md` |
+| **External Federation** | External agent discovery, streaming, webhooks | `.claude/context/reports/phase-4-4-external-federation-implementation-report.md` |
+| **290 A2A Tests** | Comprehensive test coverage with 100% backward compatibility | Various validation reports in `.claude/context/reports/` |
+
+### Phase 2.1.2: Codex Skills & Hook Recovery
 
 | Feature                               | Purpose                                                 | Documentation                                |
 | ------------------------------------- | ------------------------------------------------------- | -------------------------------------------- |
@@ -618,14 +702,22 @@ pnpm sync-cuj-registry     # Sync CUJ registry from documentation
 pnpm sync-cuj-registry:validate # Validate CUJ registry sync
 ```
 
-#### Code Quality
+#### Code Quality & Testing
 
 ```bash
 # Formatting
 pnpm format                # Format tracked files
 pnpm format:check          # Check formatting without changes
 
-# Testing
+# A2A Protocol Testing (NEW)
+pnpm test:a2a              # Run all A2A protocol tests (290 tests)
+pnpm test:a2a:framework    # Test A2A test framework (74 tests)
+pnpm test:a2a:poc          # Test AgentCard generation (40 tests)
+pnpm test:a2a:memory       # Test Memory-A2A bridge (73 tests)
+pnpm test:a2a:lifecycle    # Test task lifecycle (90 tests)
+pnpm test:a2a:federation   # Test external federation (102 tests)
+
+# Codex Skills Testing
 pnpm test:codex-integration      # Test Codex skills integration
 pnpm test:codex-integration:mock # Test Codex skills (mock mode)
 pnpm test:version-validation     # Test version validation
@@ -664,6 +756,12 @@ node .claude/tools/skill-injector.mjs --agent developer --task "Create component
 
 # CUJ registry sync
 node .claude/tools/sync-cuj-registry.mjs
+
+# A2A Protocol Tools (NEW)
+node .claude/tools/a2a/agent-card-generator.mjs     # Generate AgentCards
+node .claude/tools/a2a/discovery-endpoint.mjs       # Start discovery server
+node .claude/tools/a2a/external-agent-discovery.mjs # Discover external agents
+node .claude/tools/a2a/federation-manager.mjs       # Manage federation
 ```
 
 ### Tool Categories
@@ -671,6 +769,7 @@ node .claude/tools/sync-cuj-registry.mjs
 The project includes **200+ utility tools** in `.claude/tools/` organized by function:
 
 - **Orchestration**: `orchestrator-entry.mjs`, `orchestrator-coordinator.mjs`, `agent-router.mjs`
+- **A2A Protocol** (NEW): `agent-card-generator.mjs`, `discovery-endpoint.mjs`, `memory-a2a-bridge.mjs`, `message-wrapper.mjs`, `task-state-manager.mjs`, `external-agent-discovery.mjs`, `push-notification-handler.mjs`, `streaming-handler.mjs`, `federation-manager.mjs`
 - **Validation**: `validate-cuj-e2e.mjs`, `validate-workflow-rating-gates.mjs`, `cuj-doctor.mjs`
 - **Execution**: `workflow_runner.js`, `run-cuj.mjs`, `step-executor.mjs`
 - **Enforcement**: `enforcement-gate.mjs`, `plan-rating-gate.mjs`, `signoff-validator.mjs`

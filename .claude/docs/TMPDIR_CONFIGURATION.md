@@ -1,6 +1,6 @@
 # TMPDIR Configuration Guide
 
-## Problem: tmpclaude-* Files in Project Root
+## Problem: tmpclaude-\* Files in Project Root
 
 Claude Code CLI's Bash tool creates temporary files named `tmpclaude-*-cwd` in your project root directory. These files:
 
@@ -13,6 +13,7 @@ Claude Code CLI's Bash tool creates temporary files named `tmpclaude-*-cwd` in y
 ### Why This Happens
 
 Claude Code CLI's Bash tool implementation:
+
 1. Creates isolated working directories for each command
 2. Uses `mkdtemp("tmpclaude-XXXXXX")` pattern
 3. Defaults to current directory (project root) instead of OS temp directory
@@ -52,6 +53,7 @@ $env:TMPDIR = $env:TEMP
 ```
 
 To edit your profile:
+
 ```powershell
 notepad $PROFILE
 ```
@@ -87,6 +89,7 @@ export TMPDIR=/tmp
 ```
 
 Then reload:
+
 ```bash
 source ~/.bashrc
 ```
@@ -100,6 +103,7 @@ export TMPDIR=/tmp
 ```
 
 Then reload:
+
 ```bash
 source ~/.zshrc
 ```
@@ -111,6 +115,7 @@ Even with TMPDIR configured, we've added automatic cleanup as a safety measure:
 ### PostToolUse Hook
 
 The `.claude/hooks/post-session-cleanup.js` hook automatically:
+
 - Detects `tmpclaude-*` files after each Bash command
 - Removes them immediately from project root
 - Logs cleanup actions (non-blocking)
@@ -118,6 +123,7 @@ The `.claude/hooks/post-session-cleanup.js` hook automatically:
 ### Pre-commit Hook
 
 The `.claude/hooks/pre-commit-cleanup.mjs` hook:
+
 - Cleans temp files older than 24 hours
 - Blocks commits if temp files found in root
 - Runs automatically before every commit
@@ -176,6 +182,7 @@ If tmpclaude files still appear after setting TMPDIR:
 If tmpclaude files accumulate:
 
 1. **Verify hook is registered**
+
    ```bash
    cat .claude/hooks/hook-registry.json | grep session-cleanup
    ```
@@ -202,9 +209,10 @@ If tmpclaude files accumulate:
 
 ## Summary
 
-**Problem**: Claude Code CLI creates unnecessary tmpclaude-* files in project root
+**Problem**: Claude Code CLI creates unnecessary tmpclaude-\* files in project root
 
 **Solution**:
+
 1. ✅ Set `TMPDIR` environment variable (prevents creation)
 2. ✅ Automatic cleanup hook (removes files if created)
 3. ✅ Pre-commit validation (blocks commits with temp files)

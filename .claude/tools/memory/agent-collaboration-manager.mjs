@@ -14,10 +14,136 @@
  * - History retrieval: <50ms
  * - Circular detection: <100ms
  *
+ * Security Features (Phase 5):
+ * - SEC-002: Agent ID validation against known agent registry
+ * - SEC-003: Circular handoff blocking with circuit breaker
+ *
  * @module agent-collaboration-manager
  */
 
 import { randomUUID } from 'crypto';
+
+/**
+ * SECURITY: Registry of known/authorized agent IDs
+ *
+ * SEC-002 Mitigation: Validates agent IDs against allowlist
+ * to prevent agent spoofing attacks.
+ *
+ * This list is derived from .claude/agents/ directory.
+ * Update this list when adding new agents.
+ *
+ * Defense Layers:
+ * 1. Allowlist validation (primary)
+ * 2. Pattern validation (secondary - must be lowercase, no special chars)
+ * 3. Logging of invalid attempts (audit trail)
+ */
+const VALID_AGENT_IDS = new Set([
+  // Orchestration agents
+  'master-orchestrator',
+  'orchestrator',
+  'router',
+  'model-orchestrator',
+  'ai-council',
+
+  // Core development agents
+  'developer',
+  'architect',
+  'code-reviewer',
+  'qa',
+  'devops',
+  'technical-writer',
+
+  // Specialized development agents
+  'api-designer',
+  'database-architect',
+  'mobile-developer',
+  'react-component-developer',
+  'performance-engineer',
+  'refactoring-specialist',
+  'code-simplifier',
+  'legacy-modernizer',
+
+  // Analysis and planning agents
+  'analyst',
+  'planner',
+  'pm',
+  'impact-analyzer',
+
+  // Security and compliance agents
+  'security-architect',
+  'compliance-auditor',
+  'incident-responder',
+
+  // Specialized agents
+  'llm-architect',
+  'ux-expert',
+  'accessibility-expert',
+  'cloud-integrator',
+  'gcp-cloud-agent',
+  'context-compressor',
+
+  // Validation agents
+  'cursor-validator',
+  'gemini-validator',
+  'codex-validator',
+]);
+
+/**
+ * SECURITY: Validate agent ID against registry
+ *
+ * @param {string} agentId - Agent ID to validate
+ * @param {string} context - Context for error messages
+ * @returns {boolean} - True if valid
+ * @throws {Error} - If agent ID is invalid
+ *
+ * @security SEC-002 - Agent ID Spoofing Prevention
+ */
+function validateAgentId(agentId, context = 'agent') {
+  // Null/undefined check
+  if (!agentId || typeof agentId !== 'string') {
+    throw new Error(`Invalid ${context}: agent ID is required`);
+  }
+
+  // Trim and normalize
+  const normalized = agentId.trim().toLowerCase();
+
+  // Pattern validation (secondary defense)
+  // Agent IDs must be lowercase alphanumeric with hyphens only
+  const validPattern = /^[a-z][a-z0-9-]*[a-z0-9]$|^[a-z]{2,}$/;
+  if (!validPattern.test(normalized)) {
+    console.error(`[SECURITY] Invalid agent ID pattern rejected: ${agentId}`);
+    throw new Error(
+      `Invalid ${context}: "${agentId}" contains invalid characters. ` +
+        'Agent IDs must be lowercase alphanumeric with hyphens only.'
+    );
+  }
+
+  // Allowlist validation (primary defense)
+  if (!VALID_AGENT_IDS.has(normalized)) {
+    console.error(`[SECURITY] Unknown agent ID rejected: ${agentId}`);
+    throw new Error(
+      `Invalid ${context}: "${agentId}" is not a recognized agent. ` +
+        'Possible agent spoofing attempt detected.'
+    );
+  }
+
+  return true;
+}
+
+/**
+ * Check if agent ID is valid without throwing
+ *
+ * @param {string} agentId - Agent ID to check
+ * @returns {boolean} - True if valid
+ */
+function isValidAgentId(agentId) {
+  try {
+    validateAgentId(agentId, 'agent');
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Handoff Types
@@ -42,20 +168,35 @@ export const CollaborationStatus = {
  * Agent Collaboration Manager
  *
  * Manages agent-to-agent memory handoffs and collaboration tracking
+ *
+ * @security SEC-002 - All agent IDs are validated against registry
+ * @security SEC-003 - Circular handoffs are blocked, not just warned
  */
 export class AgentCollaborationManager {
   /**
    * @param {object} database - MemoryDatabase instance
+   * @param {object} options - Configuration options
    */
-  constructor(database) {
+  constructor(database, options = {}) {
     this.db = database;
     this.isInitialized = false;
 
-    // Configuration
+    // Configuration with security defaults
     this.config = {
-      maxChainLength: 10, // Maximum collaboration chain before warning
-      circularDetectionDepth: 5, // How deep to search for cycles
-      handoffTTL: 3600000, // Handoff expiration (1 hour in ms)
+      maxChainLength: options.maxChainLength || 10, // Maximum collaboration chain before warning
+      circularDetectionDepth: options.circularDetectionDepth || 5, // How deep to search for cycles
+      handoffTTL: options.handoffTTL || 3600000, // Handoff expiration (1 hour in ms)
+
+      // SECURITY: SEC-003 - Circular handoff blocking configuration
+      blockCircularHandoffs: options.blockCircularHandoffs !== false, // Default: block circular handoffs
+      maxCircularViolations: options.maxCircularViolations || 3, // Max violations before circuit breaker
+      circuitBreakerDuration: options.circuitBreakerDuration || 300000, // 5 minutes cooldown
+    };
+
+    // SECURITY: Circuit breaker state for SEC-003
+    this.circuitBreaker = {
+      violations: new Map(), // sessionId -> { count, lastViolation }
+      isOpen: new Map(), // sessionId -> boolean
     };
   }
 
@@ -82,6 +223,10 @@ export class AgentCollaborationManager {
    *
    * @param {object} params - Collaboration parameters
    * @returns {Promise<object>} Collaboration record
+   * @throws {Error} - If agent IDs are invalid or circular handoff detected
+   *
+   * @security SEC-002 - Agent IDs are validated against registry
+   * @security SEC-003 - Circular handoffs are blocked (not just warned)
    */
   async registerCollaboration(params) {
     await this.ensureInitialized();
@@ -95,9 +240,23 @@ export class AgentCollaborationManager {
       handoffType = HandoffType.SEQUENTIAL,
     } = params;
 
-    // Validate parameters
+    // Validate required parameters
     if (!sessionId || !sourceAgentId || !targetAgentId) {
       throw new Error('sessionId, sourceAgentId, and targetAgentId are required');
+    }
+
+    // SECURITY: SEC-002 - Validate agent IDs against registry
+    validateAgentId(sourceAgentId, 'sourceAgentId');
+    validateAgentId(targetAgentId, 'targetAgentId');
+
+    // SECURITY: SEC-003 - Check circuit breaker
+    if (this.isCircuitBreakerOpen(sessionId)) {
+      const error = new Error(
+        `[SECURITY] Circuit breaker open for session ${sessionId}. ` +
+          'Too many circular handoff attempts detected. Please wait before retrying.'
+      );
+      console.error('[SECURITY] Circuit breaker blocked handoff registration:', error.message);
+      throw error;
     }
 
     // Detect circular handoffs
@@ -107,11 +266,56 @@ export class AgentCollaborationManager {
       targetAgentId
     );
 
+    // SECURITY: SEC-003 - Block circular handoffs (not just warn)
     if (circularDetection.isCircular) {
-      console.warn('[Agent Collaboration] Circular handoff detected:', circularDetection);
+      console.error('[SECURITY] Circular handoff BLOCKED:', circularDetection);
 
-      // Allow but log warning
-      handoffContext.circularWarning = circularDetection;
+      // Record violation for circuit breaker
+      this.recordCircularViolation(sessionId);
+
+      if (this.config.blockCircularHandoffs) {
+        // Store rejected handoff for audit trail
+        const handoffId = `handoff-rejected-${randomUUID()}`;
+
+        const stmt = this.db.prepare(`
+          INSERT INTO agent_collaborations (
+            session_id, workflow_id, source_agent_id, target_agent_id,
+            handoff_id, handoff_context, handoff_type, status
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        stmt.run(
+          sessionId,
+          workflowId,
+          sourceAgentId,
+          targetAgentId,
+          handoffId,
+          JSON.stringify({
+            ...handoffContext,
+            circularDetection,
+            blockedAt: new Date().toISOString(),
+            reason: 'circular_handoff_blocked',
+          }),
+          handoffType,
+          CollaborationStatus.REJECTED
+        );
+
+        throw new Error(
+          `[SECURITY] Circular handoff blocked: ${circularDetection.message}. ` +
+            `Cycle path: ${circularDetection.cycle.join(' → ')}. ` +
+            'This is a security violation that could lead to resource exhaustion.'
+        );
+      }
+    }
+
+    // Check for long chains (warning, not blocking)
+    if (circularDetection.longChain) {
+      console.warn(
+        `[Agent Collaboration] Long chain detected: ${circularDetection.chainLength} agents. ` +
+          'Consider breaking down the workflow.'
+      );
+      handoffContext.longChainWarning = circularDetection;
     }
 
     // Create handoff ID
@@ -148,7 +352,7 @@ export class AgentCollaborationManager {
       handoffType,
       status: CollaborationStatus.PENDING,
       createdAt: new Date().toISOString(),
-      circularWarning: circularDetection.isCircular ? circularDetection : null,
+      circularWarning: null, // No warning since we block circular handoffs
     };
 
     console.log(
@@ -156,6 +360,68 @@ export class AgentCollaborationManager {
     );
 
     return collaboration;
+  }
+
+  /**
+   * SECURITY: Check if circuit breaker is open for session
+   *
+   * @param {string} sessionId - Session ID
+   * @returns {boolean} - True if circuit breaker is open (blocking)
+   *
+   * @security SEC-003 - Circuit breaker prevents DoS via repeated circular attempts
+   */
+  isCircuitBreakerOpen(sessionId) {
+    const isOpen = this.circuitBreaker.isOpen.get(sessionId);
+
+    if (!isOpen) {
+      return false;
+    }
+
+    // Check if cooldown has expired
+    const violation = this.circuitBreaker.violations.get(sessionId);
+
+    if (violation) {
+      const elapsed = Date.now() - violation.lastViolation;
+
+      if (elapsed >= this.config.circuitBreakerDuration) {
+        // Reset circuit breaker
+        this.circuitBreaker.isOpen.set(sessionId, false);
+        this.circuitBreaker.violations.delete(sessionId);
+        console.log(`[SECURITY] Circuit breaker reset for session ${sessionId}`);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * SECURITY: Record circular violation and potentially trip circuit breaker
+   *
+   * @param {string} sessionId - Session ID
+   *
+   * @security SEC-003 - Tracks violations and trips circuit breaker
+   */
+  recordCircularViolation(sessionId) {
+    const existing = this.circuitBreaker.violations.get(sessionId) || {
+      count: 0,
+      lastViolation: 0,
+    };
+
+    existing.count += 1;
+    existing.lastViolation = Date.now();
+
+    this.circuitBreaker.violations.set(sessionId, existing);
+
+    // Trip circuit breaker if threshold exceeded
+    if (existing.count >= this.config.maxCircularViolations) {
+      this.circuitBreaker.isOpen.set(sessionId, true);
+      console.error(
+        `[SECURITY] Circuit breaker TRIPPED for session ${sessionId}. ` +
+          `${existing.count} circular violations detected. ` +
+          `Cooldown: ${this.config.circuitBreakerDuration / 1000}s`
+      );
+    }
   }
 
   /**
@@ -207,7 +473,7 @@ export class AgentCollaborationManager {
       params.push(workflowId);
     }
 
-    sql += ' ORDER BY id DESC LIMIT ?';  // Use id DESC for reliable ordering (created_at has 1-second precision)
+    sql += ' ORDER BY id DESC LIMIT ?'; // Use id DESC for reliable ordering (created_at has 1-second precision)
     params.push(limit);
 
     const stmt = this.db.prepare(sql);
@@ -239,7 +505,12 @@ export class AgentCollaborationManager {
 
     // Check if targetAgent → sourceAgent path exists
     // If yes, adding sourceAgent → targetAgent creates a cycle
-    const pathExists = this.findPath(graph, targetAgentId, sourceAgentId, this.config.circularDetectionDepth);
+    const pathExists = this.findPath(
+      graph,
+      targetAgentId,
+      sourceAgentId,
+      this.config.circularDetectionDepth
+    );
 
     if (pathExists) {
       return {
@@ -481,8 +752,25 @@ export class AgentCollaborationManager {
  * Create agent collaboration manager
  *
  * @param {object} database - MemoryDatabase instance
+ * @param {object} options - Configuration options
+ * @param {number} options.maxChainLength - Maximum collaboration chain length (default: 10)
+ * @param {number} options.circularDetectionDepth - Depth for cycle detection (default: 5)
+ * @param {number} options.handoffTTL - Handoff expiration in ms (default: 3600000)
+ * @param {boolean} options.blockCircularHandoffs - Block circular handoffs (default: true)
+ * @param {number} options.maxCircularViolations - Max violations before circuit breaker (default: 3)
+ * @param {number} options.circuitBreakerDuration - Circuit breaker cooldown in ms (default: 300000)
  * @returns {AgentCollaborationManager}
+ *
+ * @security SEC-002 - Agent ID validation enabled by default
+ * @security SEC-003 - Circular handoff blocking enabled by default
  */
-export function createAgentCollaborationManager(database) {
-  return new AgentCollaborationManager(database);
+export function createAgentCollaborationManager(database, options = {}) {
+  return new AgentCollaborationManager(database, options);
 }
+
+/**
+ * Export the valid agent IDs set for external validation
+ *
+ * @security SEC-002 - Allows other modules to validate agent IDs
+ */
+export { VALID_AGENT_IDS, validateAgentId, isValidAgentId };

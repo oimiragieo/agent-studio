@@ -20,7 +20,7 @@ const validator = new OutputValidator();
 const userOutput = {
   name: 'Alice',
   score: 8.5,
-  tags: ['developer', 'typescript']
+  tags: ['developer', 'typescript'],
 };
 
 const basicSchema = {
@@ -29,8 +29,8 @@ const basicSchema = {
   properties: {
     name: { type: 'string', minLength: 1 },
     score: { type: 'number', minimum: 0, maximum: 10 },
-    tags: { type: 'array', items: { type: 'string' } }
-  }
+    tags: { type: 'array', items: { type: 'string' } },
+  },
 };
 
 const result1 = validator.validate(userOutput, basicSchema);
@@ -42,7 +42,7 @@ console.log('\n=== Example 2: Validation with Errors ===');
 const invalidOutput = {
   name: '', // Too short
   score: 11, // Out of range
-  tags: [123] // Wrong type
+  tags: [123], // Wrong type
 };
 
 const result2 = validator.validate(invalidOutput, basicSchema);
@@ -56,7 +56,14 @@ console.log(result3.report);
 
 // Example 4: Using common schema (analysis output)
 console.log('\n=== Example 4: Analysis Output Schema ===');
-const analysisSchemaPath = join(__dirname, '..', '..', 'schemas', 'output-schemas', 'analysis-output.schema.json');
+const analysisSchemaPath = join(
+  __dirname,
+  '..',
+  '..',
+  'schemas',
+  'output-schemas',
+  'analysis-output.schema.json'
+);
 const analysisSchema = JSON.parse(await readFile(analysisSchemaPath, 'utf-8'));
 
 const analysisOutput = {
@@ -65,16 +72,16 @@ const analysisOutput = {
       name: 'OutputValidator',
       type: 'class',
       location: '.claude/tools/output-validator.mjs',
-      description: 'Core validation service'
-    }
+      description: 'Core validation service',
+    },
   ],
   patterns_extracted: [
     {
       pattern: 'Schema caching',
       occurrences: 1,
       examples: ['output-validator.mjs:78'],
-      category: 'design-pattern'
-    }
+      category: 'design-pattern',
+    },
   ],
   recommendations: [
     {
@@ -82,10 +89,10 @@ const analysisOutput = {
       priority: 'medium',
       effort: 'medium',
       impact: 'high',
-      category: 'maintainability'
-    }
+      category: 'maintainability',
+    },
   ],
-  summary: 'Validation system implemented successfully'
+  summary: 'Validation system implemented successfully',
 };
 
 const result4 = validator.validate(analysisOutput, analysisSchema);
@@ -98,8 +105,8 @@ const validateEmail = createValidator(
     type: 'object',
     required: ['email'],
     properties: {
-      email: { type: 'string', format: 'email' }
-    }
+      email: { type: 'string', format: 'email' },
+    },
   },
   { name: 'EmailValidator' }
 );
@@ -123,21 +130,31 @@ console.log('Quick validation:', quickResult.valid);
 
 // Example 7: Implementation output schema
 console.log('\n=== Example 7: Implementation Output Schema ===');
-const implementationSchemaPath = join(__dirname, '..', '..', 'schemas', 'output-schemas', 'implementation-output.schema.json');
+const implementationSchemaPath = join(
+  __dirname,
+  '..',
+  '..',
+  'schemas',
+  'output-schemas',
+  'implementation-output.schema.json'
+);
 const implementationSchema = JSON.parse(await readFile(implementationSchemaPath, 'utf-8'));
 
 const implementationOutput = {
-  files_created: [
-    { path: '.claude/tools/validator.mjs', purpose: 'Validation', lines: 308 }
-  ],
+  files_created: [{ path: '.claude/tools/validator.mjs', purpose: 'Validation', lines: 308 }],
   files_modified: [
-    { path: '.claude/tools/orchestrator.mjs', changes: 'Added validation', lines_added: 20, lines_removed: 0 }
+    {
+      path: '.claude/tools/orchestrator.mjs',
+      changes: 'Added validation',
+      lines_added: 20,
+      lines_removed: 0,
+    },
   ],
   tests_added: 35,
   test_coverage: 100,
   breaking_changes: false,
   documentation_updated: true,
-  performance_impact: 'neutral'
+  performance_impact: 'neutral',
 };
 
 const result7 = validator.validate(implementationOutput, implementationSchema);
@@ -145,7 +162,14 @@ console.log('Implementation output valid:', result7.valid);
 
 // Example 8: Review output schema
 console.log('\n=== Example 8: Review Output Schema ===');
-const reviewSchemaPath = join(__dirname, '..', '..', 'schemas', 'output-schemas', 'review-output.schema.json');
+const reviewSchemaPath = join(
+  __dirname,
+  '..',
+  '..',
+  'schemas',
+  'output-schemas',
+  'review-output.schema.json'
+);
 const reviewSchema = JSON.parse(await readFile(reviewSchemaPath, 'utf-8'));
 
 const reviewOutput = {
@@ -157,11 +181,11 @@ const reviewOutput = {
       category: 'maintainability',
       description: 'Function complexity could be reduced',
       location: 'validator.mjs:150',
-      suggestion: 'Refactor into smaller functions'
-    }
+      suggestion: 'Refactor into smaller functions',
+    },
   ],
   strengths: ['Good test coverage', 'Clear documentation'],
-  recommendations: ['Add more edge case tests']
+  recommendations: ['Add more edge case tests'],
 };
 
 const result8 = validator.validate(reviewOutput, reviewSchema);

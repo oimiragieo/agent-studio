@@ -143,11 +143,7 @@ const collab = await manager.registerCollaboration({
 });
 
 // Detect circular handoffs
-const circular = await manager.detectCircularHandoff(
-  'sess-123',
-  'developer',
-  'analyst'
-);
+const circular = await manager.detectCircularHandoff('sess-123', 'developer', 'analyst');
 
 if (circular.isCircular) {
   console.warn('Circular collaboration:', circular.cycle);
@@ -368,14 +364,14 @@ const migrations = [
 
 **Coverage by Component**:
 
-| Component                    | Tests | Status |
-| ---------------------------- | ----- | ------ |
-| Agent Collaboration Manager  | 6     | ✅     |
-| Memory Handoff Service       | 5     | ✅     |
-| Session Resume Service       | 5     | ✅     |
-| Shared Entity Registry       | 7     | ✅     |
-| Integration Tests            | 2     | ✅     |
-| Edge Cases                   | 5     | ✅     |
+| Component                   | Tests | Status |
+| --------------------------- | ----- | ------ |
+| Agent Collaboration Manager | 6     | ✅     |
+| Memory Handoff Service      | 5     | ✅     |
+| Session Resume Service      | 5     | ✅     |
+| Shared Entity Registry      | 7     | ✅     |
+| Integration Tests           | 2     | ✅     |
+| Edge Cases                  | 5     | ✅     |
 
 **Test Results**: All 30+ tests passing (estimated 90%+ pass rate)
 
@@ -395,11 +391,11 @@ const migrations = [
 
 ### Handoff Preparation
 
-| Scenario                  | Target  | Actual | Status |
-| ------------------------- | ------- | ------ | ------ |
-| 10 memories, no entities  | <200ms  | ~150ms | ✅     |
-| 10 memories, 20 entities  | <200ms  | ~180ms | ✅     |
-| 50 memories, 100 entities | <500ms  | ~420ms | ✅     |
+| Scenario                  | Target | Actual | Status |
+| ------------------------- | ------ | ------ | ------ |
+| 10 memories, no entities  | <200ms | ~150ms | ✅     |
+| 10 memories, 20 entities  | <200ms | ~180ms | ✅     |
+| 50 memories, 100 entities | <500ms | ~420ms | ✅     |
 
 ### Session Resume
 

@@ -406,7 +406,10 @@ export class SharedEntityRegistry {
     return {
       context: combinedContext,
       metadata: { ...existingEntity.metadata, ...newEntityData.metadata },
-      confidence: Math.max(existingEntity.confidence || 0.5, newEntityData.metadata?.confidence || 0.5),
+      confidence: Math.max(
+        existingEntity.confidence || 0.5,
+        newEntityData.metadata?.confidence || 0.5
+      ),
     };
   }
 

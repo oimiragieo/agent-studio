@@ -16,6 +16,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 **Risk Level**: Medium (new features, database changes, but extensive testing complete)
 
 **Key Principles**:
+
 1. **Gradual exposure**: Start with 10% of users, increase only if stable
 2. **Feature flags**: Instant rollback capability at all times
 3. **Data-driven decisions**: Metrics-based go/no-go gates
@@ -27,23 +28,23 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 
 ### 1.1 Rollout Phases
 
-| Phase | % Users | Duration | Success Criteria | Rollback Trigger |
-|-------|---------|----------|------------------|------------------|
-| **Phase 0: Pre-Deployment** | 0% | 1 week | All readiness checks pass | N/A |
-| **Phase 1: 10% Rollout** | 10% | 1 week | Zero critical incidents, latency <200ms p95 | >5 critical alerts OR latency >500ms |
-| **Phase 2: 50% Rollout** | 50% | 1 week | Zero critical incidents, cache hit >70% | >3 critical alerts OR error rate >0.5% |
-| **Phase 3: 100% Rollout** | 100% | 2 weeks | Stable operations, user satisfaction >90% | >2 critical incidents per week |
-| **Phase 4: Stabilization** | 100% | Ongoing | Monitor and optimize | Rollback if instability |
+| Phase                       | % Users | Duration | Success Criteria                            | Rollback Trigger                       |
+| --------------------------- | ------- | -------- | ------------------------------------------- | -------------------------------------- |
+| **Phase 0: Pre-Deployment** | 0%      | 1 week   | All readiness checks pass                   | N/A                                    |
+| **Phase 1: 10% Rollout**    | 10%     | 1 week   | Zero critical incidents, latency <200ms p95 | >5 critical alerts OR latency >500ms   |
+| **Phase 2: 50% Rollout**    | 50%     | 1 week   | Zero critical incidents, cache hit >70%     | >3 critical alerts OR error rate >0.5% |
+| **Phase 3: 100% Rollout**   | 100%    | 2 weeks  | Stable operations, user satisfaction >90%   | >2 critical incidents per week         |
+| **Phase 4: Stabilization**  | 100%    | Ongoing  | Monitor and optimize                        | Rollback if instability                |
 
 **Total Timeline**: 5 weeks (including stabilization)
 
 ### 1.2 Feature Flag Rollout Matrix
 
-| Feature | Phase 1 (10%) | Phase 2 (50%) | Phase 3 (100%) |
-|---------|---------------|---------------|----------------|
-| **Enhanced Injection** (USE_ENHANCED_INJECTION) | 10% random | 50% random | 100% |
-| **Hierarchical Tiers** (USE_HIERARCHICAL_TIERS) | 10% random | 50% random | 100% |
-| **Cross-Agent Sharing** (USE_CROSS_AGENT_SHARING) | 0% (disabled) | 10% subset | 50% → 100% |
+| Feature                                           | Phase 1 (10%) | Phase 2 (50%) | Phase 3 (100%) |
+| ------------------------------------------------- | ------------- | ------------- | -------------- |
+| **Enhanced Injection** (USE_ENHANCED_INJECTION)   | 10% random    | 50% random    | 100%           |
+| **Hierarchical Tiers** (USE_HIERARCHICAL_TIERS)   | 10% random    | 50% random    | 100%           |
+| **Cross-Agent Sharing** (USE_CROSS_AGENT_SHARING) | 0% (disabled) | 10% subset    | 50% → 100%     |
 
 **Rationale**: Cross-agent sharing is new and complex; delay full rollout until Phase 2-3.
 
@@ -60,17 +61,17 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 
 ### 2.2 Tasks and Owners
 
-| Task | Owner | Deadline | Status |
-|------|-------|----------|--------|
-| Complete production readiness checklist | DevOps | [DATE] | [ ] |
-| Database migration tested in staging | DBA | [DATE] | [ ] |
-| Monitoring dashboards configured | SRE | [DATE] | [ ] |
-| Alerting rules configured and tested | SRE | [DATE] | [ ] |
-| Rollback procedures tested in staging | DevOps | [DATE] | [ ] |
-| Team training session completed | Engineering Manager | [DATE] | [ ] |
-| Deployment window scheduled | Product Manager | [DATE] | [ ] |
-| Stakeholder communication sent | Product Manager | [DATE] | [ ] |
-| Baseline metrics captured | SRE | [DATE] | [ ] |
+| Task                                    | Owner               | Deadline | Status |
+| --------------------------------------- | ------------------- | -------- | ------ |
+| Complete production readiness checklist | DevOps              | [DATE]   | [ ]    |
+| Database migration tested in staging    | DBA                 | [DATE]   | [ ]    |
+| Monitoring dashboards configured        | SRE                 | [DATE]   | [ ]    |
+| Alerting rules configured and tested    | SRE                 | [DATE]   | [ ]    |
+| Rollback procedures tested in staging   | DevOps              | [DATE]   | [ ]    |
+| Team training session completed         | Engineering Manager | [DATE]   | [ ]    |
+| Deployment window scheduled             | Product Manager     | [DATE]   | [ ]    |
+| Stakeholder communication sent          | Product Manager     | [DATE]   | [ ]    |
+| Baseline metrics captured               | SRE                 | [DATE]   | [ ]    |
 
 ### 2.3 Success Criteria
 
@@ -84,15 +85,15 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 
 ### 2.4 Baseline Metrics (Phase 1 - Before Rollout)
 
-| Metric | Current Baseline | Target After Rollout |
-|--------|------------------|----------------------|
-| Injection latency p95 | N/A (Phase 1 has no injection) | <200ms |
-| Database query p95 | N/A | <50ms |
-| RAG search p95 | N/A | <1000ms |
-| Heap usage average | ~200MB | <100MB |
-| Context overflow rate | ~5 events/hour | <10 events/hour |
-| Error rate | <0.01% | <0.1% |
-| User session success rate | 99.9% | >99.5% |
+| Metric                    | Current Baseline               | Target After Rollout |
+| ------------------------- | ------------------------------ | -------------------- |
+| Injection latency p95     | N/A (Phase 1 has no injection) | <200ms               |
+| Database query p95        | N/A                            | <50ms                |
+| RAG search p95            | N/A                            | <1000ms              |
+| Heap usage average        | ~200MB                         | <100MB               |
+| Context overflow rate     | ~5 events/hour                 | <10 events/hour      |
+| Error rate                | <0.01%                         | <0.1%                |
+| User session success rate | 99.9%                          | >99.5%               |
 
 ---
 
@@ -112,6 +113,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 **Morning (9:00 AM - 12:00 PM)**:
 
 1. **Pre-deployment verification** (9:00-9:30 AM):
+
    ```bash
    # Verify staging environment stable
    npm run test:integration
@@ -122,6 +124,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
    ```
 
 2. **Database migration** (9:30-10:00 AM):
+
    ```bash
    # Create backup
    sqlite3 /var/lib/memory-system/memory.db ".backup /tmp/backup-$(date +%Y%m%d).db"
@@ -135,6 +138,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
    ```
 
 3. **Code deployment** (10:00-10:30 AM):
+
    ```bash
    # Deploy new code (feature flags still disabled)
    git checkout release/phase-2-4
@@ -147,6 +151,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
    ```
 
 4. **Enable feature flags for 10%** (10:30-11:00 AM):
+
    ```bash
    # Enable enhanced injection for 10% of sessions
    curl -X POST http://production-server/admin/feature-flags \
@@ -228,15 +233,15 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 
 **METRICS DASHBOARD** (End of Week 1):
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| Critical incidents | 0 | [ACTUAL] | [ ] PASS / [ ] FAIL |
+| Metric                | Target | Actual     | Status              |
+| --------------------- | ------ | ---------- | ------------------- |
+| Critical incidents    | 0      | [ACTUAL]   | [ ] PASS / [ ] FAIL |
 | Injection latency p95 | <200ms | [ACTUAL]ms | [ ] PASS / [ ] FAIL |
-| Error rate | <0.5% | [ACTUAL]% | [ ] PASS / [ ] FAIL |
-| Cache hit rate | >60% | [ACTUAL]% | [ ] PASS / [ ] FAIL |
-| Heap usage max | <500MB | [ACTUAL]MB | [ ] PASS / [ ] FAIL |
-| Rollback events | 0 | [ACTUAL] | [ ] PASS / [ ] FAIL |
-| User complaints | 0 | [ACTUAL] | [ ] PASS / [ ] FAIL |
+| Error rate            | <0.5%  | [ACTUAL]%  | [ ] PASS / [ ] FAIL |
+| Cache hit rate        | >60%   | [ACTUAL]%  | [ ] PASS / [ ] FAIL |
+| Heap usage max        | <500MB | [ACTUAL]MB | [ ] PASS / [ ] FAIL |
+| Rollback events       | 0      | [ACTUAL]   | [ ] PASS / [ ] FAIL |
+| User complaints       | 0      | [ACTUAL]   | [ ] PASS / [ ] FAIL |
 
 ### 3.4 Rollback Triggers (Phase 1)
 
@@ -264,6 +269,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 **Decision Criteria**: All success criteria met
 
 **Decision**:
+
 - [ ] **GO to Phase 2** (50% rollout)
 - [ ] **NO-GO** - Hold at 10% for another week
 - [ ] **ROLLBACK** - Revert to Phase 1 (legacy mode)
@@ -293,6 +299,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
    - Confirm go/no-go decision documented
 
 2. **Increase feature flags to 50%** (9:30-10:00 AM):
+
    ```bash
    # Gradually increase from 10% to 50%
    # First: 10% → 25%
@@ -373,15 +380,15 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 
 **METRICS DASHBOARD** (End of Week 2):
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| Critical incidents | 0 | [ACTUAL] | [ ] PASS / [ ] FAIL |
-| Injection latency p95 | <200ms | [ACTUAL]ms | [ ] PASS / [ ] FAIL |
-| Error rate | <0.3% | [ACTUAL]% | [ ] PASS / [ ] FAIL |
-| Cache hit rate | >70% | [ACTUAL]% | [ ] PASS / [ ] FAIL |
-| Heap usage max | <500MB | [ACTUAL]MB | [ ] PASS / [ ] FAIL |
-| Rollback events | 0 | [ACTUAL] | [ ] PASS / [ ] FAIL |
-| User NPS | >0 | [ACTUAL] | [ ] PASS / [ ] FAIL |
+| Metric                     | Target | Actual       | Status              |
+| -------------------------- | ------ | ------------ | ------------------- |
+| Critical incidents         | 0      | [ACTUAL]     | [ ] PASS / [ ] FAIL |
+| Injection latency p95      | <200ms | [ACTUAL]ms   | [ ] PASS / [ ] FAIL |
+| Error rate                 | <0.3%  | [ACTUAL]%    | [ ] PASS / [ ] FAIL |
+| Cache hit rate             | >70%   | [ACTUAL]%    | [ ] PASS / [ ] FAIL |
+| Heap usage max             | <500MB | [ACTUAL]MB   | [ ] PASS / [ ] FAIL |
+| Rollback events            | 0      | [ACTUAL]     | [ ] PASS / [ ] FAIL |
+| User NPS                   | >0     | [ACTUAL]     | [ ] PASS / [ ] FAIL |
 | Cross-agent sharing errors | <3/min | [ACTUAL]/min | [ ] PASS / [ ] FAIL |
 
 ### 4.4 Rollback Triggers (Phase 2)
@@ -411,6 +418,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 **Decision Criteria**: All success criteria met
 
 **Decision**:
+
 - [ ] **GO to Phase 3** (100% rollout)
 - [ ] **NO-GO** - Hold at 50% for another week
 - [ ] **ROLLBACK** - Reduce to 10% or 0%
@@ -440,6 +448,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
    - Confirm go/no-go decision documented
 
 2. **Increase feature flags to 100%** (9:30-10:30 AM):
+
    ```bash
    # Gradually increase from 50% to 100%
    # First: 50% → 75%
@@ -506,9 +515,9 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
   - Heap growth: 0 (should be stable)
 
 - [ ] **User satisfaction tracking**:
-   - NPS score: [DAILY]
-   - Support tickets: [COUNT]
-   - User feedback: [SUMMARY]
+  - NPS score: [DAILY]
+  - Support tickets: [COUNT]
+  - User feedback: [SUMMARY]
 
 ### 5.3 Success Criteria (End of Week 3)
 
@@ -531,18 +540,18 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 
 **FINAL METRICS DASHBOARD** (End of Week 3):
 
-| Metric | Target | 7-Day Average | Status |
-|--------|--------|---------------|--------|
-| Critical incidents | 0 | [ACTUAL] | [ ] PASS / [ ] FAIL |
-| Injection latency p95 | <200ms | [ACTUAL]ms | [ ] PASS / [ ] FAIL |
-| DB query p95 | <50ms | [ACTUAL]ms | [ ] PASS / [ ] FAIL |
-| RAG search p95 | <1000ms | [ACTUAL]ms | [ ] PASS / [ ] FAIL |
-| Error rate | <0.1% | [ACTUAL]% | [ ] PASS / [ ] FAIL |
-| Cache hit rate | >70% | [ACTUAL]% | [ ] PASS / [ ] FAIL |
-| Heap usage max | <500MB | [ACTUAL]MB | [ ] PASS / [ ] FAIL |
-| Rollback events | 0 | [ACTUAL] | [ ] PASS / [ ] FAIL |
-| User NPS | >30 | [ACTUAL] | [ ] PASS / [ ] FAIL |
-| Database size | <500MB | [ACTUAL]MB | [ ] PASS / [ ] FAIL |
+| Metric                | Target  | 7-Day Average | Status              |
+| --------------------- | ------- | ------------- | ------------------- |
+| Critical incidents    | 0       | [ACTUAL]      | [ ] PASS / [ ] FAIL |
+| Injection latency p95 | <200ms  | [ACTUAL]ms    | [ ] PASS / [ ] FAIL |
+| DB query p95          | <50ms   | [ACTUAL]ms    | [ ] PASS / [ ] FAIL |
+| RAG search p95        | <1000ms | [ACTUAL]ms    | [ ] PASS / [ ] FAIL |
+| Error rate            | <0.1%   | [ACTUAL]%     | [ ] PASS / [ ] FAIL |
+| Cache hit rate        | >70%    | [ACTUAL]%     | [ ] PASS / [ ] FAIL |
+| Heap usage max        | <500MB  | [ACTUAL]MB    | [ ] PASS / [ ] FAIL |
+| Rollback events       | 0       | [ACTUAL]      | [ ] PASS / [ ] FAIL |
+| User NPS              | >30     | [ACTUAL]      | [ ] PASS / [ ] FAIL |
+| Database size         | <500MB  | [ACTUAL]MB    | [ ] PASS / [ ] FAIL |
 
 ### 5.4 Rollback Triggers (Phase 3)
 
@@ -571,6 +580,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 **Decision Criteria**: All success criteria met
 
 **Decision**:
+
 - [ ] **GO to Phase 4** (Stabilization - remove legacy code)
 - [ ] **NO-GO** - Maintain 100% for another week
 - [ ] **PARTIAL ROLLBACK** - Reduce to 50%
@@ -619,6 +629,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 **Tasks**:
 
 1. **Remove feature flags** (make new features default):
+
    ```bash
    # Update code to remove flag checks
    # Deploy new code with flags hard-coded to true
@@ -626,6 +637,7 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
    ```
 
 2. **Archive legacy code**:
+
    ```bash
    # Create archive branch
    git checkout -b archive/phase-1-legacy
@@ -698,15 +710,15 @@ This document outlines a phased rollout plan for deploying the Phase 2-4 memory 
 
 ### 7.2 Internal Communication Channels
 
-| Channel | Purpose | Update Frequency |
-|---------|---------|------------------|
-| **Slack #oncall** | Real-time incident updates | Continuous |
-| **Slack #engineering** | Engineering team updates | Daily during rollout |
-| **Slack #product** | Product team updates | Phase transitions |
-| **Email (all-hands)** | Major milestones | Phase transitions |
-| **Status Page** | External communication (if public) | Incidents only |
-| **Team Standup** | Daily sync | Daily |
-| **Leadership Meeting** | Executive updates | Weekly |
+| Channel                | Purpose                            | Update Frequency     |
+| ---------------------- | ---------------------------------- | -------------------- |
+| **Slack #oncall**      | Real-time incident updates         | Continuous           |
+| **Slack #engineering** | Engineering team updates           | Daily during rollout |
+| **Slack #product**     | Product team updates               | Phase transitions    |
+| **Email (all-hands)**  | Major milestones                   | Phase transitions    |
+| **Status Page**        | External communication (if public) | Incidents only       |
+| **Team Standup**       | Daily sync                         | Daily                |
+| **Leadership Meeting** | Executive updates                  | Weekly               |
 
 ### 7.3 User Communication (If Public/External Users)
 
@@ -762,36 +774,40 @@ We hope you enjoy the improvements! As always, feedback is welcome.
 
 ### 8.1 Pre-Identified Risks
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| **Latency spike at 50%** | Medium | High | Gradual increase (10%→25%→50%), rollback if needed |
-| **Database growth faster than expected** | Low | Medium | Monitor daily, increase cleanup frequency |
-| **Heap exhaustion** | Low | High | V8 flags configured, worker pattern ready |
-| **RAG service overload** | Low | Medium | Graceful degradation to non-RAG search |
-| **User complaints** | Low | Low | Responsive support, quick rollback if needed |
-| **Cross-agent sharing bugs** | Medium | Medium | Delayed rollout (Phase 2), extensive monitoring |
+| Risk                                     | Probability | Impact | Mitigation                                         |
+| ---------------------------------------- | ----------- | ------ | -------------------------------------------------- |
+| **Latency spike at 50%**                 | Medium      | High   | Gradual increase (10%→25%→50%), rollback if needed |
+| **Database growth faster than expected** | Low         | Medium | Monitor daily, increase cleanup frequency          |
+| **Heap exhaustion**                      | Low         | High   | V8 flags configured, worker pattern ready          |
+| **RAG service overload**                 | Low         | Medium | Graceful degradation to non-RAG search             |
+| **User complaints**                      | Low         | Low    | Responsive support, quick rollback if needed       |
+| **Cross-agent sharing bugs**             | Medium      | Medium | Delayed rollout (Phase 2), extensive monitoring    |
 
 ### 8.2 Contingency Plans
 
 **If Phase 1 fails**:
+
 - Rollback to 0% immediately
 - Investigate root cause
 - Fix in staging
 - Retry Phase 1 after fix validated
 
 **If Phase 2 fails**:
+
 - Rollback to 10%
 - Investigate root cause
 - Maintain 10% for another week
 - Retry Phase 2 after fix validated
 
 **If Phase 3 fails**:
+
 - Rollback to 50%
 - Investigate root cause
 - Maintain 50% for another week
 - Retry Phase 3 after fix validated
 
 **If catastrophic failure**:
+
 - Rollback to 0% (Phase 1 legacy mode)
 - Conduct thorough postmortem
 - Re-evaluate deployment strategy
@@ -803,24 +819,24 @@ We hope you enjoy the improvements! As always, feedback is welcome.
 
 ### 9.1 Technical Metrics
 
-| Metric | Phase 1 Target | Phase 2 Target | Phase 3 Target | Production Target |
-|--------|----------------|----------------|----------------|-------------------|
-| Injection latency p95 | <200ms | <200ms | <200ms | <200ms |
-| DB query p95 | <50ms | <50ms | <50ms | <50ms |
-| RAG search p95 | <1000ms | <1000ms | <1000ms | <1000ms |
-| Error rate | <0.5% | <0.3% | <0.1% | <0.1% |
-| Cache hit rate | >60% | >70% | >70% | >70% |
-| Heap usage max | <500MB | <500MB | <500MB | <500MB |
-| Critical incidents | 0 | 0 | 0 | <2/week |
+| Metric                | Phase 1 Target | Phase 2 Target | Phase 3 Target | Production Target |
+| --------------------- | -------------- | -------------- | -------------- | ----------------- |
+| Injection latency p95 | <200ms         | <200ms         | <200ms         | <200ms            |
+| DB query p95          | <50ms          | <50ms          | <50ms          | <50ms             |
+| RAG search p95        | <1000ms        | <1000ms        | <1000ms        | <1000ms           |
+| Error rate            | <0.5%          | <0.3%          | <0.1%          | <0.1%             |
+| Cache hit rate        | >60%           | >70%           | >70%           | >70%              |
+| Heap usage max        | <500MB         | <500MB         | <500MB         | <500MB            |
+| Critical incidents    | 0              | 0              | 0              | <2/week           |
 
 ### 9.2 Business Metrics
 
-| Metric | Phase 1 Target | Phase 2 Target | Phase 3 Target | Production Target |
-|--------|----------------|----------------|----------------|-------------------|
-| User satisfaction (NPS) | No change | No change | +10 points | +20 points |
-| Support tickets | <5% increase | <5% increase | No increase | 10% decrease |
-| User retention | Maintain | Maintain | Maintain | Improve |
-| Agent task success rate | Maintain >99% | Maintain >99% | Maintain >99% | >99.5% |
+| Metric                  | Phase 1 Target | Phase 2 Target | Phase 3 Target | Production Target |
+| ----------------------- | -------------- | -------------- | -------------- | ----------------- |
+| User satisfaction (NPS) | No change      | No change      | +10 points     | +20 points        |
+| Support tickets         | <5% increase   | <5% increase   | No increase    | 10% decrease      |
+| User retention          | Maintain       | Maintain       | Maintain       | Improve           |
+| Agent task success rate | Maintain >99%  | Maintain >99%  | Maintain >99%  | >99.5%            |
 
 ---
 
@@ -886,24 +902,28 @@ Use this checklist for each phase:
 ### Phase [N] Checklist
 
 **Pre-Phase**:
+
 - [ ] Previous phase success criteria met
 - [ ] Go/no-go decision documented
 - [ ] Team briefed on Phase [N] plan
 - [ ] Monitoring dashboards ready
 
 **Deployment Day**:
+
 - [ ] Feature flags adjusted to [N]%
 - [ ] Initial monitoring complete (first 2 hours)
 - [ ] No critical alerts
 - [ ] Team notified of successful deployment
 
 **Daily (Throughout Phase)**:
+
 - [ ] Morning metrics review
 - [ ] Dashboard check (every 30 min first day, then hourly)
 - [ ] Error log review
 - [ ] User feedback check
 
 **End of Phase**:
+
 - [ ] All success criteria met
 - [ ] Metrics dashboard completed
 - [ ] Go/no-go decision made

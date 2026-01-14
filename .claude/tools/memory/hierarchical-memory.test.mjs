@@ -271,7 +271,9 @@ describe('Hierarchical Memory - Automatic Promotion', () => {
       await manager.referenceMemory(storeResult.messageId, 'developer');
     }
 
-    let memory = manager.db.prepare('SELECT * FROM messages WHERE id = ?').get(storeResult.messageId);
+    let memory = manager.db
+      .prepare('SELECT * FROM messages WHERE id = ?')
+      .get(storeResult.messageId);
     assert.equal(memory.tier, MemoryTier.AGENT);
 
     // Reference 2 more times to promote to project tier
@@ -616,7 +618,10 @@ describe('Hierarchical Memory - Statistics', () => {
     assert.ok(stats[MemoryTier.PROJECT]);
 
     // Use >= since other tests may have created memories in same database
-    assert.ok(stats[MemoryTier.CONVERSATION].count >= 1, 'Should have at least 1 conversation memory');
+    assert.ok(
+      stats[MemoryTier.CONVERSATION].count >= 1,
+      'Should have at least 1 conversation memory'
+    );
     assert.ok(stats[MemoryTier.AGENT].count >= 1, 'Should have at least 1 agent memory');
     assert.ok(stats[MemoryTier.PROJECT].count >= 1, 'Should have at least 1 project memory');
 
@@ -697,11 +702,7 @@ describe('Hierarchical Memory - Performance', () => {
     // Create 50 memories across tiers
     for (let i = 0; i < 50; i++) {
       const tier =
-        i % 3 === 0
-          ? MemoryTier.PROJECT
-          : i % 3 === 1
-            ? MemoryTier.AGENT
-            : MemoryTier.CONVERSATION;
+        i % 3 === 0 ? MemoryTier.PROJECT : i % 3 === 1 ? MemoryTier.AGENT : MemoryTier.CONVERSATION;
       await manager.storeMemory({
         conversationId: convInternalId,
         content: `Test memory ${i} about TypeScript and React`,
@@ -712,7 +713,10 @@ describe('Hierarchical Memory - Performance', () => {
 
     const searchResult = await manager.searchAcrossTiers('TypeScript React');
 
-    assert.ok(searchResult.duration < 200, `Search took ${searchResult.duration}ms (target: <200ms)`);
+    assert.ok(
+      searchResult.duration < 200,
+      `Search took ${searchResult.duration}ms (target: <200ms)`
+    );
 
     manager.close();
   });
@@ -734,6 +738,181 @@ describe('Hierarchical Memory - Factory Function', () => {
     assert.ok(manager.isInitialized);
     assert.equal(manager.options.conversationToAgent, 5);
     assert.equal(manager.options.agentToProject, 10);
+
+    manager.close();
+  });
+});
+
+// ============================================
+// Security Tests - SEC-001: SQL Injection Prevention
+// ============================================
+
+describe('Hierarchical Memory - Security (SEC-001: SQL Injection)', () => {
+  it('should reject SQL injection in orderBy parameter', async () => {
+    const manager = await createTestManager();
+    const { conversationId, convInternalId } = await createTestConversation(manager.db);
+
+    // Create a test memory first
+    await manager.storeMemory({
+      conversationId: convInternalId,
+      content: 'Test memory',
+      agentId: 'developer',
+    });
+
+    // Attempt SQL injection via orderBy
+    await assert.rejects(
+      async () => {
+        await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+          orderBy: 'timestamp; DROP TABLE messages--',
+        });
+      },
+      { message: /Invalid orderBy/ }
+    );
+
+    manager.close();
+  });
+
+  it('should reject SQL injection with UNION attack', async () => {
+    const manager = await createTestManager();
+
+    await assert.rejects(
+      async () => {
+        await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+          orderBy: 'id UNION SELECT * FROM messages',
+        });
+      },
+      { message: /Invalid orderBy/ }
+    );
+
+    manager.close();
+  });
+
+  it('should reject SQL injection with comment bypass', async () => {
+    const manager = await createTestManager();
+
+    await assert.rejects(
+      async () => {
+        await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+          orderBy: 'created_at /* malicious comment */',
+        });
+      },
+      { message: /Invalid orderBy/ }
+    );
+
+    manager.close();
+  });
+
+  it('should reject unknown column names in orderBy', async () => {
+    const manager = await createTestManager();
+
+    await assert.rejects(
+      async () => {
+        await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+          orderBy: 'malicious_column',
+        });
+      },
+      { message: /Invalid orderBy column/ }
+    );
+
+    manager.close();
+  });
+
+  it('should accept valid orderBy values from allowlist', async () => {
+    const manager = await createTestManager();
+    const { conversationId, convInternalId } = await createTestConversation(manager.db);
+
+    // Create memories
+    await manager.storeMemory({
+      conversationId: convInternalId,
+      content: 'Test memory for valid orderBy',
+      agentId: 'developer',
+    });
+
+    // Valid orderBy values should work
+    const validOrderByValues = [
+      'created_at DESC',
+      'importance_score ASC',
+      'reference_count DESC',
+      'tier ASC',
+      'id DESC',
+    ];
+
+    for (const orderBy of validOrderByValues) {
+      const memories = await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+        orderBy,
+        conversationId: convInternalId,
+      });
+      // Should not throw
+      assert.ok(Array.isArray(memories), `orderBy "${orderBy}" should work`);
+    }
+
+    manager.close();
+  });
+
+  it('should use safe default for null/undefined orderBy', async () => {
+    const manager = await createTestManager();
+    const { conversationId, convInternalId } = await createTestConversation(manager.db);
+
+    await manager.storeMemory({
+      conversationId: convInternalId,
+      content: 'Test memory for default orderBy',
+      agentId: 'developer',
+    });
+
+    // Should not throw with null/undefined
+    const memories1 = await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+      orderBy: null,
+    });
+    assert.ok(Array.isArray(memories1));
+
+    const memories2 = await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+      orderBy: undefined,
+    });
+    assert.ok(Array.isArray(memories2));
+
+    const memories3 = await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+      orderBy: '',
+    });
+    assert.ok(Array.isArray(memories3));
+
+    manager.close();
+  });
+
+  it('should reject orderBy with quotes', async () => {
+    const manager = await createTestManager();
+
+    await assert.rejects(
+      async () => {
+        await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+          orderBy: "created_at'; DELETE FROM messages--",
+        });
+      },
+      { message: /Invalid orderBy/ }
+    );
+
+    await assert.rejects(
+      async () => {
+        await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+          orderBy: 'created_at" OR "1"="1',
+        });
+      },
+      { message: /Invalid orderBy/ }
+    );
+
+    manager.close();
+  });
+
+  it('should reject invalid direction in orderBy', async () => {
+    const manager = await createTestManager();
+
+    await assert.rejects(
+      async () => {
+        await manager.getMemoriesByTier(MemoryTier.CONVERSATION, {
+          orderBy: 'created_at INVALID',
+        });
+      },
+      { message: /Invalid orderBy direction/ }
+    );
 
     manager.close();
   });

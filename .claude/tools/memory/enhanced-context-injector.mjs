@@ -483,9 +483,7 @@ export class EnhancedContextInjector {
       const queryEntityValues = new Set(queryEntities.map(e => e.value.toLowerCase()));
       const memoryEntityValues = new Set(memoryEntities.map(e => e.value.toLowerCase()));
 
-      const intersection = new Set(
-        [...queryEntityValues].filter(e => memoryEntityValues.has(e))
-      );
+      const intersection = new Set([...queryEntityValues].filter(e => memoryEntityValues.has(e)));
       const union = new Set([...queryEntityValues, ...memoryEntityValues]);
 
       return union.size > 0 ? intersection.size / union.size : 0;

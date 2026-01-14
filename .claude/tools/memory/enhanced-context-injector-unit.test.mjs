@@ -320,11 +320,7 @@ async function runUnitTests() {
 
     const tiers = injector.getTiersToSearch({});
 
-    assert.deepStrictEqual(tiers, [
-      MemoryTier.PROJECT,
-      MemoryTier.AGENT,
-      MemoryTier.CONVERSATION,
-    ]);
+    assert.deepStrictEqual(tiers, [MemoryTier.PROJECT, MemoryTier.AGENT, MemoryTier.CONVERSATION]);
   });
 
   // Test 23: Metrics tracking

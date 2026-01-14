@@ -7,6 +7,7 @@ Added mandatory rule to CLAUDE.md orchestrator section requiring all task delega
 ## Changes Made
 
 ### Location
+
 - **File**: `.claude/CLAUDE.md`
 - **Section**: Lines 45-134 (new section added)
 - **Position**: Between "TRIGGER WORDS THAT REQUIRE DELEGATION" and "PR WORKFLOW TRIGGER"
@@ -27,15 +28,15 @@ Added mandatory rule to CLAUDE.md orchestrator section requiring all task delega
 
 3. **7 Key Optimization Fields Table**
 
-   | Field | Purpose | Impact |
-   |-------|---------|--------|
-   | `reasoning_style` | Control reasoning approach | 25-35% fewer hallucinations |
-   | `examples` | Few-shot learning (1-5 examples) | 30-60% reliability improvement |
-   | `uncertainty_permission` | Allow "I don't know" responses | Eliminates false confidence |
-   | `output_format` | XML-tagged sections | Consistent structured outputs |
-   | `thinking_budget` | Token allocation for reasoning | Prevents premature conclusions |
-   | `validation_schema` | JSON schema auto-validation | 30-60% reliability improvement |
-   | `mode` | Operation mode (plan/execute/analyze) | Task-appropriate behavior |
+   | Field                    | Purpose                               | Impact                         |
+   | ------------------------ | ------------------------------------- | ------------------------------ |
+   | `reasoning_style`        | Control reasoning approach            | 25-35% fewer hallucinations    |
+   | `examples`               | Few-shot learning (1-5 examples)      | 30-60% reliability improvement |
+   | `uncertainty_permission` | Allow "I don't know" responses        | Eliminates false confidence    |
+   | `output_format`          | XML-tagged sections                   | Consistent structured outputs  |
+   | `thinking_budget`        | Token allocation for reasoning        | Prevents premature conclusions |
+   | `validation_schema`      | JSON schema auto-validation           | 30-60% reliability improvement |
+   | `mode`                   | Operation mode (plan/execute/analyze) | Task-appropriate behavior      |
 
 4. **Research-Backed Benefits**
    - 30-60% reliability improvement
@@ -74,11 +75,13 @@ The rule is now enforceable because:
 ## Why This Matters
 
 ### Problem Solved
+
 - User observed orchestrator deviating from structured template
 - No explicit rule mandating use of agent-task.schema.json
 - Freeform text prompts resulted in lower reliability
 
 ### Solution Impact
+
 - **Hard requirement**: Orchestrator MUST use structured JSON format
 - **Clear guidance**: Example shows exact format expected
 - **Measurable benefits**: Research-backed improvements (30-60% reliability, 25-35% fewer hallucinations)
@@ -87,12 +90,14 @@ The rule is now enforceable because:
 ## Next Steps
 
 ### Immediate
+
 1. ✅ Rule added to CLAUDE.md
 2. ✅ Schema path referenced
 3. ✅ Template path referenced
 4. ✅ Benefits quantified
 
 ### Future Enhancements
+
 1. Add pre-tool hook to validate Task tool calls against schema
 2. Create enforcement gate for task delegation format
 3. Add task template examples to orchestrator agent definition

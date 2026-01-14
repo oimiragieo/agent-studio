@@ -69,9 +69,18 @@ describe('Entity Extractor', () => {
       assert(tools.length >= 3, 'Should extract at least 3 tool entities');
 
       const toolNames = tools.map(t => t.value.toLowerCase());
-      assert(toolNames.some(name => name.includes('react')), 'Should extract React');
-      assert(toolNames.some(name => name.includes('node')), 'Should extract Node.js');
-      assert(toolNames.some(name => name.includes('postgresql')), 'Should extract PostgreSQL');
+      assert(
+        toolNames.some(name => name.includes('react')),
+        'Should extract React'
+      );
+      assert(
+        toolNames.some(name => name.includes('node')),
+        'Should extract Node.js'
+      );
+      assert(
+        toolNames.some(name => name.includes('postgresql')),
+        'Should extract PostgreSQL'
+      );
     });
 
     it('should extract GitHub usernames', () => {
@@ -79,7 +88,9 @@ describe('Entity Extractor', () => {
       const entities = extractor.extractFromText(text);
 
       const usernames = entities.filter(
-        e => e.type === ENTITY_TYPES.PERSON && e.value.startsWith('alice') || e.value.startsWith('bob')
+        e =>
+          (e.type === ENTITY_TYPES.PERSON && e.value.startsWith('alice')) ||
+          e.value.startsWith('bob')
       );
 
       assert(usernames.length >= 1, 'Should extract at least one GitHub username');
@@ -221,32 +232,20 @@ describe('Entity Extractor', () => {
 
   describe('calculateConfidence', () => {
     it('should give high confidence to known tools', () => {
-      const confidence = extractor.calculateConfidence(
-        ENTITY_TYPES.TOOL,
-        'react',
-        /React/gi
-      );
+      const confidence = extractor.calculateConfidence(ENTITY_TYPES.TOOL, 'react', /React/gi);
 
       assert(confidence >= 0.9, 'Known tools should have high confidence');
     });
 
     it('should penalize very short values', () => {
-      const shortConfidence = extractor.calculateConfidence(
-        ENTITY_TYPES.TOOL,
-        'js',
-        /\w+/g
-      );
+      const shortConfidence = extractor.calculateConfidence(ENTITY_TYPES.TOOL, 'js', /\w+/g);
 
       assert(shortConfidence < 0.7, 'Short values should have lower confidence');
     });
 
     it('should penalize very long values', () => {
       const longValue = 'a'.repeat(100);
-      const longConfidence = extractor.calculateConfidence(
-        ENTITY_TYPES.TOOL,
-        longValue,
-        /\w+/g
-      );
+      const longConfidence = extractor.calculateConfidence(ENTITY_TYPES.TOOL, longValue, /\w+/g);
 
       assert(longConfidence < 0.8, 'Very long values should have lower confidence');
     });

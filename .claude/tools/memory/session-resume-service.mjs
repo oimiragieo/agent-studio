@@ -493,8 +493,9 @@ ${entityParts.length > 0 ? '### Known Entities\n\n' + entityParts.join('\n') : '
   async archiveExpiredCheckpoints() {
     await this.ensureInitialized();
 
-    const expiryDate = new Date(Date.now() - this.config.checkpointRetention * 24 * 60 * 60 * 1000)
-      .toISOString();
+    const expiryDate = new Date(
+      Date.now() - this.config.checkpointRetention * 24 * 60 * 60 * 1000
+    ).toISOString();
 
     const stmt = this.db.prepare(`
       UPDATE session_resume_checkpoints

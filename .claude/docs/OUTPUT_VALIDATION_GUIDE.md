@@ -34,8 +34,8 @@ const result = validator.validate(output, {
   required: ['name', 'score'],
   properties: {
     name: { type: 'string', minLength: 1 },
-    score: { type: 'number', minimum: 0, maximum: 10 }
-  }
+    score: { type: 'number', minimum: 0, maximum: 10 },
+  },
 });
 ```
 
@@ -46,11 +46,13 @@ const result = validator.validate(output, {
 **Use for**: analyst, architect, code-reviewer agents
 
 **Required Fields**:
+
 - `components_found` (array, minItems: 1) - Components discovered
 - `patterns_extracted` (array) - Patterns identified
 - `recommendations` (array) - Actionable recommendations
 
 **Example**:
+
 ```json
 {
   "components_found": [
@@ -81,11 +83,13 @@ const result = validator.validate(output, {
 **Use for**: developer agents
 
 **Required Fields**:
+
 - `files_created` (array) - Files created
 - `files_modified` (array) - Files modified
 - `tests_added` (integer, minimum: 0) - Number of tests added
 
 **Example**:
+
 ```json
 {
   "files_created": [
@@ -107,11 +111,13 @@ const result = validator.validate(output, {
 **Use for**: qa, code-reviewer agents
 
 **Required Fields**:
+
 - `verdict` (enum: PASS, PASS_WITH_WARNINGS, FAIL)
 - `score` (number, 0-10)
 - `issues_found` (array) - Issues discovered
 
 **Example**:
+
 ```json
 {
   "verdict": "PASS_WITH_WARNINGS",
@@ -141,8 +147,8 @@ const validateUser = createValidator(
     required: ['username', 'email'],
     properties: {
       username: { type: 'string', minLength: 3 },
-      email: { type: 'string', format: 'email' }
-    }
+      email: { type: 'string', format: 'email' },
+    },
   },
   { name: 'UserOutput', throwOnError: true }
 );
@@ -180,16 +186,16 @@ async function validateWithRetry(output, schema, maxRetries = 2) {
 
 ### Supported Types
 
-| Type | Example |
-|------|---------|
-| string | `{ type: 'string', minLength: 1, maxLength: 100 }` |
-| number | `{ type: 'number', minimum: 0, maximum: 100 }` |
-| integer | `{ type: 'integer', minimum: 0 }` |
-| boolean | `{ type: 'boolean' }` |
-| array | `{ type: 'array', minItems: 1, items: { type: 'string' } }` |
-| object | `{ type: 'object', required: ['name'], properties: {...} }` |
-| enum | `{ type: 'string', enum: ['PASS', 'FAIL'] }` |
-| null | `{ type: 'null' }` |
+| Type    | Example                                                     |
+| ------- | ----------------------------------------------------------- |
+| string  | `{ type: 'string', minLength: 1, maxLength: 100 }`          |
+| number  | `{ type: 'number', minimum: 0, maximum: 100 }`              |
+| integer | `{ type: 'integer', minimum: 0 }`                           |
+| boolean | `{ type: 'boolean' }`                                       |
+| array   | `{ type: 'array', minItems: 1, items: { type: 'string' } }` |
+| object  | `{ type: 'object', required: ['name'], properties: {...} }` |
+| enum    | `{ type: 'string', enum: ['PASS', 'FAIL'] }`                |
+| null    | `{ type: 'null' }`                                          |
 
 ### String Formats
 
@@ -234,13 +240,13 @@ node .claude/tools/output-validator.mjs \
 
 ### Common Errors
 
-| Error | Solution |
-|-------|----------|
-| Missing required field | Add field or make optional |
-| Type mismatch | Use correct type (string vs number) |
-| Empty array (minItems) | Add items or remove constraint |
-| Invalid enum | Use allowed value |
-| Pattern mismatch | Match regex pattern |
+| Error                  | Solution                            |
+| ---------------------- | ----------------------------------- |
+| Missing required field | Add field or make optional          |
+| Type mismatch          | Use correct type (string vs number) |
+| Empty array (minItems) | Add items or remove constraint      |
+| Invalid enum           | Use allowed value                   |
+| Pattern mismatch       | Match regex pattern                 |
 
 ### Debugging
 
