@@ -1,200 +1,20 @@
 {
   "cleaned_files": [
     {
-      "file": "tmpclaude-2554-cwd",
+      "file": "tmpclaude-7344-cwd",
       "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:47:33.812Z"
+      "cleaned_at": "2026-01-14T04:06:41.776Z"
     },
     {
-      "file": "tmpclaude-282c-cwd",
+      "file": "tmpclaude-2ddb-cwd",
       "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:47:33.814Z"
+      "cleaned_at": "2026-01-14T04:06:43.233Z"
     },
     {
-      "file": "tmpclaude-aa05-cwd",
+      "file": "tmpclaude-5b82-cwd",
       "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:47:33.950Z"
-    },
-    {
-      "file": "tmpclaude-83e9-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:47:34.075Z"
-    },
-    {
-      "file": "tmpclaude-c085-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:47:42.565Z"
-    },
-    {
-      "file": "tmpclaude-d5ea-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:47:42.567Z"
-    },
-    {
-      "file": "tmpclaude-3911-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:47:43.064Z"
-    },
-    {
-      "file": "tmpclaude-5a13-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:47:48.439Z"
-    },
-    {
-      "file": "tmpclaude-c27f-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:47:48.440Z"
-    },
-    {
-      "file": "tmpclaude-244e-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:06.391Z"
-    },
-    {
-      "file": "tmpclaude-021f-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:19.567Z"
-    },
-    {
-      "file": "tmpclaude-6912-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:26.591Z"
-    },
-    {
-      "file": "tmpclaude-cd5a-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:27.160Z"
-    },
-    {
-      "file": "tmpclaude-d4f4-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:27.161Z"
-    },
-    {
-      "file": "tmpclaude-10b9-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:33.535Z"
-    },
-    {
-      "file": "tmpclaude-e0d3-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:35.372Z"
-    },
-    {
-      "file": "tmpclaude-cf11-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:42.141Z"
-    },
-    {
-      "file": "tmpclaude-1378-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:44.393Z"
-    },
-    {
-      "file": "tmpclaude-5c16-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:48:54.894Z"
-    },
-    {
-      "file": "tmpclaude-950a-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:50:20.963Z"
-    },
-    {
-      "file": "tmpclaude-2fda-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:50:21.659Z"
-    },
-    {
-      "file": "tmpclaude-e84c-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:50:21.660Z"
-    },
-    {
-      "file": "tmpclaude-9bf1-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:50:27.379Z"
-    },
-    {
-      "file": "tmpclaude-cc7a-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T02:50:27.380Z"
-    },
-    {
-      "file": "tmpclaude-3f3d-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:04:32.321Z"
-    },
-    {
-      "file": "tmpclaude-f568-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:04:32.322Z"
-    },
-    {
-      "file": "tmpclaude-8d4f-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:04:32.406Z"
-    },
-    {
-      "file": "tmpclaude-c7ec-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:04:40.020Z"
-    },
-    {
-      "file": "tmpclaude-7f83-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:05:12.494Z"
-    },
-    {
-      "file": "tmpclaude-d854-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:05:18.514Z"
-    },
-    {
-      "file": "tmpclaude-db53-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:08:27.038Z"
-    },
-    {
-      "file": "tmpclaude-6842-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:08:34.029Z"
-    },
-    {
-      "file": "tmpclaude-d209-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:08:39.263Z"
-    },
-    {
-      "file": "tmpclaude-088e-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:08:50.227Z"
-    },
-    {
-      "file": "tmpclaude-30dd-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:09:32.251Z"
-    },
-    {
-      "file": "tmpclaude-efa1-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:09:40.261Z"
-    },
-    {
-      "file": "tmpclaude-59ee-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:12:49.064Z"
-    },
-    {
-      "file": "tmpclaude-7029-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:12:58.275Z"
-    },
-    {
-      "file": "tmpclaude-b3e6-cwd",
-      "reason": "tmpclaude_file",
-      "cleaned_at": "2026-01-14T03:13:57.582Z"
+      "cleaned_at": "2026-01-14T04:06:43.976Z"
     }
   ],
-  "last_cleanup": "2026-01-14T03:13:57.584Z"
+  "last_cleanup": "2026-01-14T04:06:43.978Z"
 }
