@@ -130,21 +130,17 @@ describe('PushNotificationHandler', () => {
     });
 
     it('should accept custom event types', () => {
-      const config = handler.configurePushNotification(
-        'task-1',
-        'https://test.com',
-        { events: ['task_completed'] }
-      );
+      const config = handler.configurePushNotification('task-1', 'https://test.com', {
+        events: ['task_completed'],
+      });
 
       assert.deepEqual(config.events, ['task_completed']);
     });
 
     it('should accept custom secret', () => {
-      const config = handler.configurePushNotification(
-        'task-1',
-        'https://test.com',
-        { secret: 'custom-secret' }
-      );
+      const config = handler.configurePushNotification('task-1', 'https://test.com', {
+        secret: 'custom-secret',
+      });
 
       assert.equal(config.secret, 'custom-secret');
     });
@@ -405,7 +401,7 @@ describe('PushNotificationHandler', () => {
       const result = handler.validateWebhookPayload(webhook);
 
       assert.equal(result.valid, false);
-      assert.ok(result.errors.some((e) => e.includes('task_id')));
+      assert.ok(result.errors.some(e => e.includes('task_id')));
     });
   });
 

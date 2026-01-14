@@ -75,7 +75,8 @@ export class StreamingHandler {
   startStreamingMessage(message, onUpdate, options = {}) {
     const startTime = Date.now();
 
-    const enabled = this.featureFlags.isEnabled?.('streaming_support') ?? this.featureFlags.streaming_support;
+    const enabled =
+      this.featureFlags.isEnabled?.('streaming_support') ?? this.featureFlags.streaming_support;
     if (!enabled) {
       throw new Error('streaming_support feature flag is disabled');
     }
@@ -111,7 +112,7 @@ export class StreamingHandler {
     this.activeStreams.set(streamId, streamContext);
 
     // Set up event listener
-    emitter.on('event', (event) => {
+    emitter.on('event', event => {
       streamContext.event_count++;
       streamContext.last_event_at = new Date().toISOString();
 
@@ -253,13 +254,11 @@ export class StreamingHandler {
    * @returns {Array} Active streams
    */
   listActiveStreams(filters = {}) {
-    let streams = Array.from(this.activeStreams.values()).filter(
-      (s) => s.status === 'active'
-    );
+    let streams = Array.from(this.activeStreams.values()).filter(s => s.status === 'active');
 
     // Filter by task ID
     if (filters.task_id) {
-      streams = streams.filter((s) => s.task_id === filters.task_id);
+      streams = streams.filter(s => s.task_id === filters.task_id);
     }
 
     // Apply limit
@@ -300,7 +299,7 @@ export class StreamingHandler {
 
     // Global stats
     const allStreams = Array.from(this.activeStreams.values());
-    const activeCount = allStreams.filter((s) => s.status === 'active').length;
+    const activeCount = allStreams.filter(s => s.status === 'active').length;
     const totalEvents = allStreams.reduce((sum, s) => sum + s.event_count, 0);
 
     return {

@@ -1248,6 +1248,7 @@ cat ~/.claude/audit/tool-usage.log
 **Solutions**:
 
 1. Run specific test suite to identify failing component:
+
    ```bash
    pnpm test:a2a:framework    # Test framework
    pnpm test:a2a:poc          # AgentCard generation
@@ -1274,11 +1275,13 @@ cat ~/.claude/audit/tool-usage.log
 **Solutions**:
 
 1. Run AgentCard generator directly:
+
    ```bash
    node .claude/tools/a2a/agent-card-generator.mjs
    ```
 
 2. Check agent definitions exist:
+
    ```bash
    ls .claude/agents/
    # Should see 35 agent .md files
@@ -1295,6 +1298,7 @@ cat ~/.claude/audit/tool-usage.log
 **Solutions**:
 
 1. Check URL is accessible:
+
    ```bash
    curl https://example.com/.well-known/agent-card.json
    # Should return valid JSON
@@ -1315,11 +1319,13 @@ cat ~/.claude/audit/tool-usage.log
 **Solutions**:
 
 1. Test memory bridge directly:
+
    ```bash
    node .claude/tools/a2a/memory-a2a-bridge.mjs
    ```
 
 2. Verify memory system working:
+
    ```bash
    # Check hierarchical memory
    ls .claude/tools/memory/
@@ -1651,18 +1657,18 @@ See `.claude/docs/ENTERPRISE_FEATURES.md` for complete enterprise feature docume
 
 ### All A2A Protocol Tools (NEW)
 
-| Tool                             | Purpose                      | Command                                                      |
-| -------------------------------- | ---------------------------- | ------------------------------------------------------------ |
-| `agent-card-generator.mjs`       | Generate AgentCards          | `node .claude/tools/a2a/agent-card-generator.mjs`            |
-| `discovery-endpoint.mjs`         | Start discovery server       | `node .claude/tools/a2a/discovery-endpoint.mjs`              |
-| `external-agent-discovery.mjs`   | Discover external agents     | `node .claude/tools/a2a/external-agent-discovery.mjs <url>`  |
-| `memory-a2a-bridge.mjs`          | Memory-A2A conversion        | `node .claude/tools/a2a/memory-a2a-bridge.mjs`               |
-| `entity-a2a-converter.mjs`       | Entity conversion            | `node .claude/tools/a2a/entity-a2a-converter.mjs`            |
-| `message-wrapper.mjs`            | Message format conversion    | `node .claude/tools/a2a/message-wrapper.mjs`                 |
-| `task-state-manager.mjs`         | 8-state task lifecycle       | `node .claude/tools/a2a/task-state-manager.mjs`              |
-| `push-notification-handler.mjs`  | Webhook management           | `node .claude/tools/a2a/push-notification-handler.mjs`       |
-| `streaming-handler.mjs`          | Server-Sent Events streaming | `node .claude/tools/a2a/streaming-handler.mjs`               |
-| `federation-manager.mjs`         | Federation orchestration     | `node .claude/tools/a2a/federation-manager.mjs`              |
+| Tool                            | Purpose                      | Command                                                     |
+| ------------------------------- | ---------------------------- | ----------------------------------------------------------- |
+| `agent-card-generator.mjs`      | Generate AgentCards          | `node .claude/tools/a2a/agent-card-generator.mjs`           |
+| `discovery-endpoint.mjs`        | Start discovery server       | `node .claude/tools/a2a/discovery-endpoint.mjs`             |
+| `external-agent-discovery.mjs`  | Discover external agents     | `node .claude/tools/a2a/external-agent-discovery.mjs <url>` |
+| `memory-a2a-bridge.mjs`         | Memory-A2A conversion        | `node .claude/tools/a2a/memory-a2a-bridge.mjs`              |
+| `entity-a2a-converter.mjs`      | Entity conversion            | `node .claude/tools/a2a/entity-a2a-converter.mjs`           |
+| `message-wrapper.mjs`           | Message format conversion    | `node .claude/tools/a2a/message-wrapper.mjs`                |
+| `task-state-manager.mjs`        | 8-state task lifecycle       | `node .claude/tools/a2a/task-state-manager.mjs`             |
+| `push-notification-handler.mjs` | Webhook management           | `node .claude/tools/a2a/push-notification-handler.mjs`      |
+| `streaming-handler.mjs`         | Server-Sent Events streaming | `node .claude/tools/a2a/streaming-handler.mjs`              |
+| `federation-manager.mjs`        | Federation orchestration     | `node .claude/tools/a2a/federation-manager.mjs`             |
 
 ### Example Prompts by Use Case
 

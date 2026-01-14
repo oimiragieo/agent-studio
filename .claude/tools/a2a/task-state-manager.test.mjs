@@ -159,11 +159,7 @@ describe('Task State Manager', () => {
 
     it('should transition WORKING → INPUT_REQUIRED', () => {
       manager.transitionState(taskId, TaskState.WORKING);
-      const task = manager.transitionState(
-        taskId,
-        TaskState.INPUT_REQUIRED,
-        'Awaiting user input'
-      );
+      const task = manager.transitionState(taskId, TaskState.INPUT_REQUIRED, 'Awaiting user input');
 
       assert.strictEqual(task.state, TaskState.INPUT_REQUIRED);
     });

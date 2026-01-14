@@ -51,7 +51,8 @@ export class FederationManager {
    * @returns {boolean} True if enabled
    */
   isFederationEnabled() {
-    const enabled = this.featureFlags.isEnabled?.('external_federation') ?? this.featureFlags.external_federation;
+    const enabled =
+      this.featureFlags.isEnabled?.('external_federation') ?? this.featureFlags.external_federation;
     return enabled === true;
   }
 
@@ -76,43 +77,23 @@ export class FederationManager {
 
     // Step 2: Validate agent capabilities
     if (!agentCard.supported_interfaces.includes('a2a')) {
-      throw new Error(
-        `Agent at ${agentUrl} does not support A2A interface`
-      );
+      throw new Error(`Agent at ${agentUrl} does not support A2A interface`);
     }
 
     // Step 3: Send message to external agent
     console.log(`[Federation] Sending message to ${agentCard.name}`);
-    const task = await this.sendMessageToExternalAgent(
-      agentUrl,
-      agentCard,
-      message,
-      options
-    );
+    const task = await this.sendMessageToExternalAgent(agentUrl, agentCard, message, options);
 
     // Step 4: Set up streaming if supported
-    if (
-      agentCard.capabilities.streaming &&
-      options.streaming !== false
-    ) {
+    if (agentCard.capabilities.streaming && options.streaming !== false) {
       console.log(`[Federation] Setting up streaming for task ${task.id}`);
       await this.setupStreamingForTask(agentUrl, task, options);
     }
 
     // Step 5: Set up push notifications if supported
-    if (
-      agentCard.capabilities.push_notifications &&
-      options.callbackUrl
-    ) {
-      console.log(
-        `[Federation] Configuring push notifications for task ${task.id}`
-      );
-      await this.setupPushNotificationsForTask(
-        agentUrl,
-        task,
-        options.callbackUrl,
-        options
-      );
+    if (agentCard.capabilities.push_notifications && options.callbackUrl) {
+      console.log(`[Federation] Configuring push notifications for task ${task.id}`);
+      await this.setupPushNotificationsForTask(agentUrl, task, options.callbackUrl, options);
     }
 
     // Track federated task
@@ -124,16 +105,13 @@ export class FederationManager {
       status: task.state,
       capabilities_used: {
         streaming: agentCard.capabilities.streaming && options.streaming !== false,
-        push_notifications:
-          agentCard.capabilities.push_notifications && !!options.callbackUrl,
+        push_notifications: agentCard.capabilities.push_notifications && !!options.callbackUrl,
       },
     });
 
     const duration = Date.now() - startTime;
 
-    console.log(
-      `[Federation] Task ${task.id} initiated on ${agentCard.name} (${duration}ms)`
-    );
+    console.log(`[Federation] Task ${task.id} initiated on ${agentCard.name} (${duration}ms)`);
 
     return task;
   }
@@ -147,12 +125,7 @@ export class FederationManager {
    * @param {object} options - Send options
    * @returns {Promise<object>} Task
    */
-  async sendMessageToExternalAgent(
-    agentUrl,
-    agentCard,
-    message,
-    options = {}
-  ) {
+  async sendMessageToExternalAgent(agentUrl, agentCard, message, options = {}) {
     // Build SendMessage request
     const request = {
       message,
@@ -176,9 +149,7 @@ export class FederationManager {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `External agent returned HTTP ${response.status}: ${response.statusText}`
-        );
+        throw new Error(`External agent returned HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -190,13 +161,8 @@ export class FederationManager {
 
       return data.task;
     } catch (error) {
-      console.error(
-        `[Federation] Failed to send message to ${agentUrl}:`,
-        error
-      );
-      throw new Error(
-        `External task execution failed: ${error.message}`
-      );
+      console.error(`[Federation] Failed to send message to ${agentUrl}:`, error);
+      throw new Error(`External task execution failed: ${error.message}`);
     }
   }
 
@@ -220,7 +186,7 @@ export class FederationManager {
     // Start streaming
     const stream = this.streamingHandler.startStreamingMessage(
       streamMessage,
-      (event) => {
+      event => {
         // Handle streaming events
         if (options.onStreamEvent) {
           options.onStreamEvent(event);
@@ -250,18 +216,9 @@ export class FederationManager {
    * @param {object} options - Notification options
    * @returns {object} Push notification config
    */
-  async setupPushNotificationsForTask(
-    agentUrl,
-    task,
-    callbackUrl,
-    options = {}
-  ) {
+  async setupPushNotificationsForTask(agentUrl, task, callbackUrl, options = {}) {
     // Configure push notification
-    const config = this.pushHandler.configurePushNotification(
-      task.id,
-      callbackUrl,
-      options
-    );
+    const config = this.pushHandler.configurePushNotification(task.id, callbackUrl, options);
 
     // Send subscription request to external agent
     try {
@@ -284,10 +241,7 @@ export class FederationManager {
         );
       }
     } catch (error) {
-      console.warn(
-        `[Federation] Failed to subscribe to task ${task.id}:`,
-        error
-      );
+      console.warn(`[Federation] Failed to subscribe to task ${task.id}:`, error);
     }
 
     return config;
@@ -324,12 +278,12 @@ export class FederationManager {
 
     // Filter by agent URL
     if (filters.agent_url) {
-      tasks = tasks.filter((t) => t.agent_url === filters.agent_url);
+      tasks = tasks.filter(t => t.agent_url === filters.agent_url);
     }
 
     // Filter by status
     if (filters.status) {
-      tasks = tasks.filter((t) => t.status === filters.status);
+      tasks = tasks.filter(t => t.status === filters.status);
     }
 
     // Apply limit
@@ -352,11 +306,8 @@ export class FederationManager {
     return {
       total_external_agents: agents.length,
       total_federated_tasks: tasks.length,
-      streaming_enabled: tasks.filter((t) => t.capabilities_used.streaming)
-        .length,
-      push_notifications_enabled: tasks.filter(
-        (t) => t.capabilities_used.push_notifications
-      ).length,
+      streaming_enabled: tasks.filter(t => t.capabilities_used.streaming).length,
+      push_notifications_enabled: tasks.filter(t => t.capabilities_used.push_notifications).length,
       discovery_cache_size: this.discovery.cache.size,
       active_streams: this.streamingHandler.activeStreams.size,
     };
@@ -375,17 +326,14 @@ export class FederationManager {
     const startTime = Date.now();
 
     // Discover all agents in parallel
-    const discoveryResult = await this.discovery.discoverMultipleAgents(
-      agentUrls,
-      options
-    );
+    const discoveryResult = await this.discovery.discoverMultipleAgents(agentUrls, options);
 
     if (discoveryResult.discovered.length === 0) {
       throw new Error('No agents discovered successfully');
     }
 
     // Score agents based on criteria
-    const scoredAgents = discoveryResult.discovered.map((agentCard) => {
+    const scoredAgents = discoveryResult.discovered.map(agentCard => {
       let score = 0;
 
       // Score based on capabilities
@@ -393,16 +341,13 @@ export class FederationManager {
         score += 10;
       }
 
-      if (
-        criteria.push_notifications &&
-        agentCard.capabilities.push_notifications
-      ) {
+      if (criteria.push_notifications && agentCard.capabilities.push_notifications) {
         score += 10;
       }
 
       // Score based on skills
       if (criteria.required_skills) {
-        const matchingSkills = agentCard.skills.filter((skill) =>
+        const matchingSkills = agentCard.skills.filter(skill =>
           criteria.required_skills.includes(skill.name)
         );
         score += matchingSkills.length * 5;
@@ -416,22 +361,14 @@ export class FederationManager {
 
     const bestAgent = scoredAgents[0].agentCard;
 
-    console.log(
-      `[Federation] Selected ${bestAgent.name} (score: ${scoredAgents[0].score})`
-    );
+    console.log(`[Federation] Selected ${bestAgent.name} (score: ${scoredAgents[0].score})`);
 
     // Execute task on best agent
-    const task = await this.executeExternalTask(
-      bestAgent._discovery.source_url,
-      message,
-      options
-    );
+    const task = await this.executeExternalTask(bestAgent._discovery.source_url, message, options);
 
     const duration = Date.now() - startTime;
 
-    console.log(
-      `[Federation] Task execution with agent selection completed (${duration}ms)`
-    );
+    console.log(`[Federation] Task execution with agent selection completed (${duration}ms)`);
 
     return {
       task,

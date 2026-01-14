@@ -29,11 +29,13 @@ export function serveAgentCards(req, res, options = {}) {
   // Feature flag check
   if (!isEnabled('agent_card_discovery', env)) {
     res.writeHead(503, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      error: 'Service Unavailable',
-      message: 'AgentCard discovery is currently disabled',
-      code: 'FEATURE_DISABLED'
-    }));
+    res.end(
+      JSON.stringify({
+        error: 'Service Unavailable',
+        message: 'AgentCard discovery is currently disabled',
+        code: 'FEATURE_DISABLED',
+      })
+    );
     return;
   }
 
@@ -41,20 +43,22 @@ export function serveAgentCards(req, res, options = {}) {
   if (req.method !== 'GET') {
     res.writeHead(405, {
       'Content-Type': 'application/json',
-      'Allow': 'GET'
+      Allow: 'GET',
     });
-    res.end(JSON.stringify({
-      error: 'Method Not Allowed',
-      message: 'Only GET requests are supported',
-      code: 'METHOD_NOT_ALLOWED'
-    }));
+    res.end(
+      JSON.stringify({
+        error: 'Method Not Allowed',
+        message: 'Only GET requests are supported',
+        code: 'METHOD_NOT_ALLOWED',
+      })
+    );
     return;
   }
 
   try {
     // Check cache
     const now = Date.now();
-    const cacheValid = responseCache && cacheTimestamp && (now - cacheTimestamp) < CACHE_TTL_MS;
+    const cacheValid = responseCache && cacheTimestamp && now - cacheTimestamp < CACHE_TTL_MS;
 
     let agentCards;
     let cacheHit = false;
@@ -81,8 +85,8 @@ export function serveAgentCards(req, res, options = {}) {
         protocol_version: '0.3.0',
         generated_at: new Date(cacheTimestamp).toISOString(),
         cache_hit: cacheHit,
-        response_time_ms: responseTime
-      }
+        response_time_ms: responseTime,
+      },
     };
 
     // Send response
@@ -90,20 +94,21 @@ export function serveAgentCards(req, res, options = {}) {
       'Content-Type': 'application/json',
       'Cache-Control': `public, max-age=${Math.floor(CACHE_TTL_MS / 1000)}`,
       'X-Cache-Hit': cacheHit ? 'true' : 'false',
-      'X-Response-Time': `${responseTime}ms`
+      'X-Response-Time': `${responseTime}ms`,
     });
     res.end(JSON.stringify(response, null, 2));
-
   } catch (error) {
     console.error('AgentCard discovery endpoint error:', error);
 
     res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      error: 'Internal Server Error',
-      message: 'Failed to generate AgentCards',
-      code: 'GENERATION_ERROR',
-      details: error.message
-    }));
+    res.end(
+      JSON.stringify({
+        error: 'Internal Server Error',
+        message: 'Failed to generate AgentCards',
+        code: 'GENERATION_ERROR',
+        details: error.message,
+      })
+    );
   }
 }
 
@@ -128,14 +133,16 @@ export function createDiscoveryServer(options = {}) {
     // Route: /health (health check)
     if (url.pathname === '/health') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        features: {
-          agent_card_generation: isEnabled('agent_card_generation', options.env),
-          agent_card_discovery: isEnabled('agent_card_discovery', options.env)
-        }
-      }));
+      res.end(
+        JSON.stringify({
+          status: 'healthy',
+          timestamp: new Date().toISOString(),
+          features: {
+            agent_card_generation: isEnabled('agent_card_generation', options.env),
+            agent_card_discovery: isEnabled('agent_card_discovery', options.env),
+          },
+        })
+      );
       return;
     }
 
@@ -146,30 +153,30 @@ export function createDiscoveryServer(options = {}) {
       cacheTimestamp = null;
 
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({
-        status: 'success',
-        message: 'Cache cleared',
-        timestamp: new Date().toISOString()
-      }));
+      res.end(
+        JSON.stringify({
+          status: 'success',
+          message: 'Cache cleared',
+          timestamp: new Date().toISOString(),
+        })
+      );
       return;
     }
 
     // 404 for all other routes
     res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      error: 'Not Found',
-      message: 'Endpoint not found',
-      code: 'NOT_FOUND',
-      available_endpoints: [
-        '/.well-known/agent-card.json',
-        '/health',
-        '/cache/clear (POST)'
-      ]
-    }));
+    res.end(
+      JSON.stringify({
+        error: 'Not Found',
+        message: 'Endpoint not found',
+        code: 'NOT_FOUND',
+        available_endpoints: ['/.well-known/agent-card.json', '/health', '/cache/clear (POST)'],
+      })
+    );
   });
 
   // Error handling
-  server.on('error', (error) => {
+  server.on('error', error => {
     console.error('Discovery server error:', error);
   });
 
@@ -202,8 +209,8 @@ export function getResponseCacheStats() {
     timestamp: cacheTimestamp,
     age_ms: cacheTimestamp ? now - cacheTimestamp : null,
     ttl_ms: CACHE_TTL_MS,
-    expired: cacheTimestamp ? (now - cacheTimestamp) >= CACHE_TTL_MS : true,
-    size_bytes: responseCache ? JSON.stringify(responseCache).length : 0
+    expired: cacheTimestamp ? now - cacheTimestamp >= CACHE_TTL_MS : true,
+    size_bytes: responseCache ? JSON.stringify(responseCache).length : 0,
   };
 }
 
@@ -211,5 +218,5 @@ export default {
   serveAgentCards,
   createDiscoveryServer,
   clearResponseCache,
-  getResponseCacheStats
+  getResponseCacheStats,
 };

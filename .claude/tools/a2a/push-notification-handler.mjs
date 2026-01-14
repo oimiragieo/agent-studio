@@ -66,7 +66,8 @@ export class PushNotificationHandler {
    * @returns {object} Push notification configuration
    */
   configurePushNotification(taskId, callbackUrl, options = {}) {
-    const enabled = this.featureFlags.isEnabled?.('push_notifications') ?? this.featureFlags.push_notifications;
+    const enabled =
+      this.featureFlags.isEnabled?.('push_notifications') ?? this.featureFlags.push_notifications;
     if (!enabled) {
       throw new Error('push_notifications feature flag is disabled');
     }
@@ -100,9 +101,7 @@ export class PushNotificationHandler {
     // Store configuration
     this.pushConfigs.set(taskId, config);
 
-    console.log(
-      `[Push Notifications] Configured for task ${taskId} → ${callbackUrl}`
-    );
+    console.log(`[Push Notifications] Configured for task ${taskId} → ${callbackUrl}`);
 
     return config;
   }
@@ -117,7 +116,8 @@ export class PushNotificationHandler {
   handlePushNotification(webhook, options = {}) {
     const startTime = Date.now();
 
-    const enabled = this.featureFlags.isEnabled?.('push_notifications') ?? this.featureFlags.push_notifications;
+    const enabled =
+      this.featureFlags.isEnabled?.('push_notifications') ?? this.featureFlags.push_notifications;
     if (!enabled) {
       throw new Error('push_notifications feature flag is disabled');
     }
@@ -125,9 +125,7 @@ export class PushNotificationHandler {
     // Validate webhook structure
     const validation = this.validateWebhookPayload(webhook);
     if (!validation.valid) {
-      throw new Error(
-        `Invalid webhook payload: ${validation.errors.join(', ')}`
-      );
+      throw new Error(`Invalid webhook payload: ${validation.errors.join(', ')}`);
     }
 
     // Validate signature if provided
@@ -183,10 +181,7 @@ export class PushNotificationHandler {
       .digest('hex');
 
     // Constant-time comparison to prevent timing attacks
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   }
 
   /**
@@ -200,10 +195,7 @@ export class PushNotificationHandler {
     const webhookSecret = secret || this.webhookSecret;
     const payload = JSON.stringify(webhook);
 
-    return crypto
-      .createHmac('sha256', webhookSecret)
-      .update(payload)
-      .digest('hex');
+    return crypto.createHmac('sha256', webhookSecret).update(payload).digest('hex');
   }
 
   /**
@@ -239,10 +231,7 @@ export class PushNotificationHandler {
     };
 
     // Generate signature
-    const signature = this.generateWebhookSignature(
-      webhook,
-      config.secret
-    );
+    const signature = this.generateWebhookSignature(webhook, config.secret);
 
     try {
       // Send POST request to callback URL
@@ -296,10 +285,7 @@ export class PushNotificationHandler {
       // Log delivery error
       this.logDelivery(deliveryResult);
 
-      console.error(
-        `[Push Notifications] Failed to deliver to ${config.callback_url}:`,
-        error
-      );
+      console.error(`[Push Notifications] Failed to deliver to ${config.callback_url}:`, error);
 
       throw new Error(`Push notification delivery failed: ${error.message}`);
     }
@@ -355,7 +341,7 @@ export class PushNotificationHandler {
    * @returns {Array} Delivery log entries
    */
   getDeliveryLog(taskId) {
-    return this.deliveryLog.filter((entry) => entry.task_id === taskId);
+    return this.deliveryLog.filter(entry => entry.task_id === taskId);
   }
 
   /**
@@ -368,13 +354,13 @@ export class PushNotificationHandler {
     let entries = this.deliveryLog;
 
     if (taskId) {
-      entries = entries.filter((e) => e.task_id === taskId);
+      entries = entries.filter(e => e.task_id === taskId);
     }
 
     const total = entries.length;
-    const successful = entries.filter((e) => e.status === 'success').length;
-    const failed = entries.filter((e) => e.status === 'failed').length;
-    const errors = entries.filter((e) => e.status === 'error').length;
+    const successful = entries.filter(e => e.status === 'success').length;
+    const failed = entries.filter(e => e.status === 'failed').length;
+    const errors = entries.filter(e => e.status === 'error').length;
 
     return {
       total,

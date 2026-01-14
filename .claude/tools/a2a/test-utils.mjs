@@ -1,9 +1,9 @@
 /**
  * A2A Test Utilities
- * 
+ *
  * Provides comprehensive testing utilities for A2A protocol integration.
  * Follows A2A v0.3.0 specification.
- * 
+ *
  * @module a2a-test-utils
  */
 
@@ -23,7 +23,7 @@ export const TaskState = Object.freeze({
   CANCELLED: 'TASK_STATE_CANCELLED',
   FAILED: 'TASK_STATE_FAILED',
   REJECTED: 'TASK_STATE_REJECTED',
-  AUTH_REQUIRED: 'TASK_STATE_AUTH_REQUIRED'
+  AUTH_REQUIRED: 'TASK_STATE_AUTH_REQUIRED',
 });
 
 /**
@@ -32,7 +32,7 @@ export const TaskState = Object.freeze({
 export const Role = Object.freeze({
   UNSPECIFIED: 'ROLE_UNSPECIFIED',
   USER: 'ROLE_USER',
-  AGENT: 'ROLE_AGENT'
+  AGENT: 'ROLE_AGENT',
 });
 
 /**
@@ -42,7 +42,7 @@ export const TERMINAL_STATES = Object.freeze([
   TaskState.COMPLETED,
   TaskState.FAILED,
   TaskState.CANCELLED,
-  TaskState.REJECTED
+  TaskState.REJECTED,
 ]);
 
 /**
@@ -50,13 +50,19 @@ export const TERMINAL_STATES = Object.freeze([
  */
 export const VALID_TRANSITIONS = Object.freeze({
   [TaskState.SUBMITTED]: [TaskState.WORKING, TaskState.REJECTED, TaskState.CANCELLED],
-  [TaskState.WORKING]: [TaskState.COMPLETED, TaskState.FAILED, TaskState.CANCELLED, TaskState.INPUT_REQUIRED, TaskState.AUTH_REQUIRED],
+  [TaskState.WORKING]: [
+    TaskState.COMPLETED,
+    TaskState.FAILED,
+    TaskState.CANCELLED,
+    TaskState.INPUT_REQUIRED,
+    TaskState.AUTH_REQUIRED,
+  ],
   [TaskState.INPUT_REQUIRED]: [TaskState.WORKING, TaskState.CANCELLED, TaskState.FAILED],
   [TaskState.AUTH_REQUIRED]: [TaskState.WORKING, TaskState.CANCELLED, TaskState.FAILED],
   [TaskState.COMPLETED]: [],
   [TaskState.FAILED]: [],
   [TaskState.CANCELLED]: [],
-  [TaskState.REJECTED]: []
+  [TaskState.REJECTED]: [],
 });
 
 // ============================================================================
@@ -68,9 +74,9 @@ export const VALID_TRANSITIONS = Object.freeze({
  * @returns {string} UUID string
  */
 export function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -96,7 +102,7 @@ export function mockAgentCard(overrides = {}) {
     capabilities: overrides.capabilities || {
       streaming: false,
       push_notifications: false,
-      state_transition_history: true
+      state_transition_history: true,
     },
     default_input_modes: overrides.default_input_modes || ['text'],
     default_output_modes: overrides.default_output_modes || ['text'],
@@ -106,10 +112,10 @@ export function mockAgentCard(overrides = {}) {
         name: 'Mock Skill',
         description: 'A mock skill for testing',
         tags: ['mock', 'test'],
-        examples: ['Example usage']
-      }
+        examples: ['Example usage'],
+      },
     ],
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -127,13 +133,13 @@ export function mockAgentCardFromDefinition(agentDef) {
       id: 'skill-' + idx,
       name: typeof skill === 'string' ? skill : skill.name,
       description: typeof skill === 'string' ? skill : skill.description || '',
-      tags: typeof skill === 'object' ? skill.tags || [] : []
+      tags: typeof skill === 'object' ? skill.tags || [] : [],
     })),
     capabilities: {
       streaming: agentDef.capabilities?.streaming || false,
       push_notifications: agentDef.capabilities?.push_notifications || false,
-      state_transition_history: true
-    }
+      state_transition_history: true,
+    },
   });
 }
 
@@ -151,7 +157,7 @@ export function mockMessage(overrides = {}) {
     role: overrides.role || Role.USER,
     parts: overrides.parts || [{ text: 'Hello, agent!' }],
     metadata: overrides.metadata || {},
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -164,7 +170,7 @@ export function mockMessage(overrides = {}) {
 export function mockTextMessage(text, role = Role.USER) {
   return mockMessage({
     role,
-    parts: [{ text }]
+    parts: [{ text }],
   });
 }
 
@@ -181,15 +187,15 @@ export function mockFileMessage(name, mimeType, uri = null, bytes = null, role =
   const filePart = {
     file: {
       name,
-      mime_type: mimeType
-    }
+      mime_type: mimeType,
+    },
   };
   if (uri) filePart.file.uri = uri;
   if (bytes) filePart.file.bytes = bytes;
-  
+
   return mockMessage({
     role,
-    parts: [filePart]
+    parts: [filePart],
   });
 }
 
@@ -202,7 +208,7 @@ export function mockFileMessage(name, mimeType, uri = null, bytes = null, role =
 export function mockDataMessage(data, role = Role.USER) {
   return mockMessage({
     role,
-    parts: [{ data }]
+    parts: [{ data }],
   });
 }
 
@@ -236,7 +242,7 @@ export function mockTask(overrides = {}) {
     metadata: overrides.metadata || {},
     created_at: overrides.created_at || new Date().toISOString(),
     updated_at: overrides.updated_at || new Date().toISOString(),
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -268,7 +274,7 @@ export function mockFailedTask(reason = 'Task failed', overrides = {}) {
   return mockTask({
     ...overrides,
     state: TaskState.FAILED,
-    metadata: { ...overrides.metadata, failure_reason: reason }
+    metadata: { ...overrides.metadata, failure_reason: reason },
   });
 }
 
@@ -286,7 +292,7 @@ export function mockRejectedTask(reason = 'Task rejected', overrides = {}) {
   return mockTask({
     ...overrides,
     state: TaskState.REJECTED,
-    metadata: { ...overrides.metadata, rejection_reason: reason }
+    metadata: { ...overrides.metadata, rejection_reason: reason },
   });
 }
 
@@ -297,7 +303,7 @@ export function mockInputRequiredTask(prompt = 'Please provide input', overrides
   return mockTask({
     ...overrides,
     state: TaskState.INPUT_REQUIRED,
-    metadata: { ...overrides.metadata, input_prompt: prompt }
+    metadata: { ...overrides.metadata, input_prompt: prompt },
   });
 }
 
@@ -321,25 +327,25 @@ export function createMockA2AEndpoint(options = {}) {
   const tasks = new Map();
   const subscriptions = new Map();
   const agentCard = options.agentCard || mockAgentCard();
-  
+
   return {
     agentCard,
     tasks,
     subscriptions,
-    
+
     getAgentCard() {
       return agentCard;
     },
-    
+
     sendMessage(request) {
       const { message, task_id, session_id } = request;
-      
+
       let task;
       if (task_id && tasks.has(task_id)) {
         task = tasks.get(task_id);
         task.messages.push(message);
         task.updated_at = new Date().toISOString();
-        
+
         if (task.state === TaskState.INPUT_REQUIRED || task.state === TaskState.AUTH_REQUIRED) {
           task.state = TaskState.WORKING;
         }
@@ -347,25 +353,25 @@ export function createMockA2AEndpoint(options = {}) {
         task = mockTask({
           session_id: session_id || 'session-' + generateUUID(),
           messages: [message],
-          state: TaskState.SUBMITTED
+          state: TaskState.SUBMITTED,
         });
         tasks.set(task.id, task);
       }
-      
+
       if (subscriptions.has(task.id)) {
         subscriptions.get(task.id).forEach(cb => cb(task));
       }
-      
+
       return task;
     },
-    
+
     getTask(taskId) {
       return tasks.get(taskId) || null;
     },
-    
+
     listTasks(filters = {}) {
       let result = Array.from(tasks.values());
-      
+
       if (filters.session_id) {
         result = result.filter(t => t.session_id === filters.session_id);
       }
@@ -375,10 +381,10 @@ export function createMockA2AEndpoint(options = {}) {
       if (filters.limit) {
         result = result.slice(0, filters.limit);
       }
-      
+
       return result;
     },
-    
+
     cancelTask(taskId) {
       const task = tasks.get(taskId);
       if (!task) {
@@ -387,68 +393,68 @@ export function createMockA2AEndpoint(options = {}) {
       if (TERMINAL_STATES.includes(task.state)) {
         throw new Error('Cannot cancel terminal task');
       }
-      
+
       task.state = TaskState.CANCELLED;
       task.updated_at = new Date().toISOString();
-      
+
       if (subscriptions.has(taskId)) {
         subscriptions.get(taskId).forEach(cb => cb(task));
       }
-      
+
       return task;
     },
-    
+
     subscribeToTask(taskId, callback) {
       if (!subscriptions.has(taskId)) {
         subscriptions.set(taskId, []);
       }
       subscriptions.get(taskId).push(callback);
-      
+
       return () => {
         const subs = subscriptions.get(taskId);
         const idx = subs.indexOf(callback);
         if (idx > -1) subs.splice(idx, 1);
       };
     },
-    
+
     transitionTask(taskId, newState, metadata = {}) {
       const task = tasks.get(taskId);
       if (!task) {
         throw new Error('Task not found: ' + taskId);
       }
-      
+
       const validNext = VALID_TRANSITIONS[task.state] || [];
       if (!validNext.includes(newState)) {
         throw new Error('Invalid transition: ' + task.state + ' -> ' + newState);
       }
-      
+
       task.state = newState;
       task.metadata = { ...task.metadata, ...metadata };
       task.updated_at = new Date().toISOString();
-      
+
       if (subscriptions.has(taskId)) {
         subscriptions.get(taskId).forEach(cb => cb(task));
       }
-      
+
       return task;
     },
-    
+
     addArtifact(taskId, artifact) {
       const task = tasks.get(taskId);
       if (!task) {
         throw new Error('Task not found: ' + taskId);
       }
-      
+
       task.artifacts.push(artifact);
       task.updated_at = new Date().toISOString();
-      
+
       return task;
     },
-    
+
     clear() {
       tasks.clear();
       subscriptions.clear();
-    }
+    },
   };
 }
 
@@ -461,19 +467,29 @@ export function createMockA2AEndpoint(options = {}) {
  */
 export function validateA2AAgentCard(card) {
   const errors = [];
-  
+
   if (!card) {
     return { valid: false, errors: ['AgentCard is null or undefined'] };
   }
-  
-  const required = ['protocol_version', 'name', 'description', 'version', 'supported_interfaces', 'capabilities', 'default_input_modes', 'default_output_modes', 'skills'];
-  
+
+  const required = [
+    'protocol_version',
+    'name',
+    'description',
+    'version',
+    'supported_interfaces',
+    'capabilities',
+    'default_input_modes',
+    'default_output_modes',
+    'skills',
+  ];
+
   for (const field of required) {
     if (card[field] === undefined || card[field] === null) {
       errors.push('Missing required field: ' + field);
     }
   }
-  
+
   if (card.supported_interfaces && !Array.isArray(card.supported_interfaces)) {
     errors.push('supported_interfaces must be an array');
   }
@@ -483,7 +499,7 @@ export function validateA2AAgentCard(card) {
   if (card.capabilities && typeof card.capabilities !== 'object') {
     errors.push('capabilities must be an object');
   }
-  
+
   return { valid: errors.length === 0, errors };
 }
 
@@ -492,17 +508,17 @@ export function validateA2AAgentCard(card) {
  */
 export function validateA2AMessage(message) {
   const errors = [];
-  
+
   if (!message) {
     return { valid: false, errors: ['Message is null or undefined'] };
   }
-  
+
   if (!message.role) {
     errors.push('Missing required field: role');
   } else if (!Object.values(Role).includes(message.role)) {
     errors.push('Invalid role: ' + message.role);
   }
-  
+
   if (!message.parts) {
     errors.push('Missing required field: parts');
   } else if (!Array.isArray(message.parts)) {
@@ -515,13 +531,13 @@ export function validateA2AMessage(message) {
       const hasText = 'text' in part;
       const hasFile = 'file' in part;
       const hasData = 'data' in part;
-      
+
       if (!hasText && !hasFile && !hasData) {
         errors.push('Part ' + i + ' must have text, file, or data');
       }
     }
   }
-  
+
   return { valid: errors.length === 0, errors };
 }
 
@@ -530,29 +546,29 @@ export function validateA2AMessage(message) {
  */
 export function validateA2ATask(task) {
   const errors = [];
-  
+
   if (!task) {
     return { valid: false, errors: ['Task is null or undefined'] };
   }
-  
+
   if (!task.id) {
     errors.push('Missing required field: id');
   }
-  
+
   if (!task.state) {
     errors.push('Missing required field: state');
   } else if (!Object.values(TaskState).includes(task.state)) {
     errors.push('Invalid state: ' + task.state);
   }
-  
+
   if (task.messages && !Array.isArray(task.messages)) {
     errors.push('messages must be an array');
   }
-  
+
   if (task.artifacts && !Array.isArray(task.artifacts)) {
     errors.push('artifacts must be an array');
   }
-  
+
   return { valid: errors.length === 0, errors };
 }
 
@@ -659,21 +675,21 @@ export function mockFeatureFlags(flagOverrides = {}) {
     task_state_manager: false,
     push_notifications: false,
     streaming_support: false,
-    external_federation: false
+    external_federation: false,
   };
-  
+
   const flags = { ...defaultFlags, ...flagOverrides };
   const auditLog = [];
-  
+
   return {
     isEnabled(flagName, env = 'dev') {
       return flags[flagName] || false;
     },
-    
+
     getFlags(env = 'dev') {
       return { ...flags };
     },
-    
+
     validateDependencies(flagName, env = 'dev') {
       const deps = {
         agent_card_discovery: ['agent_card_generation'],
@@ -682,23 +698,23 @@ export function mockFeatureFlags(flagOverrides = {}) {
         task_state_manager: ['a2a_message_wrapper'],
         push_notifications: ['task_state_manager'],
         streaming_support: ['a2a_message_wrapper', 'task_state_manager'],
-        external_federation: ['agent_card_discovery', 'a2a_message_wrapper', 'task_state_manager']
+        external_federation: ['agent_card_discovery', 'a2a_message_wrapper', 'task_state_manager'],
       };
-      
+
       const flagDeps = deps[flagName] || [];
       const missing = flagDeps.filter(d => !flags[d]);
-      
+
       return { valid: missing.length === 0, missingDependencies: missing };
     },
-    
+
     getFlagDetails(flagName) {
       return {
         enabled: flags[flagName] || false,
         phase: 'test',
-        dependencies: []
+        dependencies: [],
       };
     },
-    
+
     updateFlag(flagName, enabled, env = null, user = 'test') {
       flags[flagName] = enabled;
       auditLog.push({
@@ -706,25 +722,25 @@ export function mockFeatureFlags(flagOverrides = {}) {
         flag: flagName,
         action: enabled ? 'enable' : 'disable',
         user,
-        env: env || 'global'
+        env: env || 'global',
       });
     },
-    
+
     getAuditLog(flagName = null) {
       if (flagName) {
         return auditLog.filter(e => e.flag === flagName);
       }
       return [...auditLog];
     },
-    
+
     _setFlag(flagName, value) {
       flags[flagName] = value;
     },
-    
+
     _reset() {
-      Object.keys(flags).forEach(k => flags[k] = defaultFlags[k] || false);
+      Object.keys(flags).forEach(k => (flags[k] = defaultFlags[k] || false));
       auditLog.length = 0;
-    }
+    },
   };
 }
 
@@ -754,7 +770,7 @@ export async function waitForTaskState(endpoint, taskId, state, timeout = 5000) 
     const task = endpoint.getTask(taskId);
     return task && task.state === state;
   }, timeout);
-  
+
   return success ? endpoint.getTask(taskId) : null;
 }
 
@@ -766,7 +782,7 @@ export async function waitForTaskCompletion(endpoint, taskId, timeout = 5000) {
     const task = endpoint.getTask(taskId);
     return task && TERMINAL_STATES.includes(task.state);
   }, timeout);
-  
+
   return success ? endpoint.getTask(taskId) : null;
 }
 
@@ -780,21 +796,21 @@ export default {
   Role,
   TERMINAL_STATES,
   VALID_TRANSITIONS,
-  
+
   // UUID
   generateUUID,
-  
+
   // AgentCard
   mockAgentCard,
   mockAgentCardFromDefinition,
-  
+
   // Message
   mockMessage,
   mockTextMessage,
   mockFileMessage,
   mockDataMessage,
   mockMultiPartMessage,
-  
+
   // Task
   mockTask,
   mockSubmittedTask,
@@ -805,16 +821,16 @@ export default {
   mockRejectedTask,
   mockInputRequiredTask,
   mockAuthRequiredTask,
-  
+
   // Endpoint
   createMockA2AEndpoint,
-  
+
   // Validation
   validateA2AAgentCard,
   validateA2AMessage,
   validateA2ATask,
   validateA2ASchema,
-  
+
   // Assertions
   assertAgentCardValid,
   assertMessageValid,
@@ -823,12 +839,12 @@ export default {
   assertValidTransition,
   assertTaskTerminal,
   assertTaskNotTerminal,
-  
+
   // Feature Flags
   mockFeatureFlags,
-  
+
   // Helpers
   waitFor,
   waitForTaskState,
-  waitForTaskCompletion
+  waitForTaskCompletion,
 };

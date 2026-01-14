@@ -121,10 +121,10 @@ export class A2AMessageWrapper {
     const textContent = this.convertPartsToText(message.parts);
 
     // Extract data from parts
-    const dataParts = message.parts.filter((p) => p.data);
+    const dataParts = message.parts.filter(p => p.data);
 
     // Extract files from parts
-    const fileParts = message.parts.filter((p) => p.file);
+    const fileParts = message.parts.filter(p => p.file);
 
     // Build internal format
     const prompt = {
@@ -133,8 +133,8 @@ export class A2AMessageWrapper {
       taskId: message.taskId,
       role: message.role === Role.USER ? 'user' : 'agent',
       content: textContent,
-      data: dataParts.length > 0 ? dataParts.map((p) => p.data) : undefined,
-      files: fileParts.length > 0 ? fileParts.map((p) => p.file) : undefined,
+      data: dataParts.length > 0 ? dataParts.map(p => p.data) : undefined,
+      files: fileParts.length > 0 ? fileParts.map(p => p.file) : undefined,
       metadata: message.metadata || {},
     };
 
@@ -171,8 +171,8 @@ export class A2AMessageWrapper {
     }
 
     return parts
-      .filter((p) => p.text)
-      .map((p) => p.text)
+      .filter(p => p.text)
+      .map(p => p.text)
       .join('\n\n');
   }
 
@@ -274,7 +274,7 @@ export class A2AMessageWrapper {
     }
 
     // Convert parts to A2A format
-    const a2aParts = parts.map((part) => {
+    const a2aParts = parts.map(part => {
       if (typeof part === 'string') {
         return this.convertTextToPart(part);
       } else if (part.file) {

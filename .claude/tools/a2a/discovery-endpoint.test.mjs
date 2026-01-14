@@ -16,7 +16,7 @@ import {
   serveAgentCards,
   createDiscoveryServer,
   clearResponseCache,
-  getResponseCacheStats
+  getResponseCacheStats,
 } from './discovery-endpoint.mjs';
 
 // Test suite
@@ -31,9 +31,9 @@ function test(name, fn) {
 // Helper: Make HTTP request
 function makeRequest(url, options = {}) {
   return new Promise((resolve, reject) => {
-    const req = http.request(url, options, (res) => {
+    const req = http.request(url, options, res => {
       let data = '';
-      res.on('data', chunk => data += chunk);
+      res.on('data', chunk => (data += chunk));
       res.on('end', () => {
         try {
           const body = data ? JSON.parse(data) : null;
@@ -54,7 +54,7 @@ function makeRequest(url, options = {}) {
 test('serveAgentCards - feature flag enabled', async () => {
   // Mock feature flags
   const originalIsEnabled = global.isEnabled;
-  global.isEnabled = (flag) => flag === 'agent_card_discovery' || flag === 'agent_card_generation';
+  global.isEnabled = flag => flag === 'agent_card_discovery' || flag === 'agent_card_generation';
 
   try {
     const server = createDiscoveryServer({ port: 3001, host: 'localhost' });
@@ -62,7 +62,9 @@ test('serveAgentCards - feature flag enabled', async () => {
     // Wait for server to start
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const response = await makeRequest('http://localhost:3001/.well-known/agent-card.json', { method: 'GET' });
+    const response = await makeRequest('http://localhost:3001/.well-known/agent-card.json', {
+      method: 'GET',
+    });
 
     assert.strictEqual(response.statusCode, 200);
     assert.strictEqual(response.headers['content-type'], 'application/json');
@@ -98,7 +100,9 @@ test('serveAgentCards - method not allowed (POST)', async () => {
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const response = await makeRequest('http://localhost:3003/.well-known/agent-card.json', { method: 'POST' });
+    const response = await makeRequest('http://localhost:3003/.well-known/agent-card.json', {
+      method: 'POST',
+    });
 
     assert.strictEqual(response.statusCode, 405);
     assert.ok(response.body.error);
@@ -126,13 +130,17 @@ test('serveAgentCards - caching', async () => {
     await new Promise(resolve => setTimeout(resolve, 100));
 
     // First request (cache miss)
-    const response1 = await makeRequest('http://localhost:3004/.well-known/agent-card.json', { method: 'GET' });
+    const response1 = await makeRequest('http://localhost:3004/.well-known/agent-card.json', {
+      method: 'GET',
+    });
 
     assert.strictEqual(response1.statusCode, 200);
     assert.strictEqual(response1.headers['x-cache-hit'], 'false');
 
     // Second request (cache hit)
-    const response2 = await makeRequest('http://localhost:3004/.well-known/agent-card.json', { method: 'GET' });
+    const response2 = await makeRequest('http://localhost:3004/.well-known/agent-card.json', {
+      method: 'GET',
+    });
 
     assert.strictEqual(response2.statusCode, 200);
     assert.strictEqual(response2.headers['x-cache-hit'], 'true');
@@ -165,7 +173,9 @@ test('serveAgentCards - performance target', async () => {
 
     // Second request (from cache) - measure performance
     const startTime = Date.now();
-    const response = await makeRequest('http://localhost:3005/.well-known/agent-card.json', { method: 'GET' });
+    const response = await makeRequest('http://localhost:3005/.well-known/agent-card.json', {
+      method: 'GET',
+    });
     const requestTime = Date.now() - startTime;
 
     const serverResponseTime = parseInt(response.headers['x-response-time']);
@@ -222,13 +232,17 @@ test('cache clear endpoint', async () => {
     await makeRequest('http://localhost:3007/.well-known/agent-card.json', { method: 'GET' });
 
     // Clear cache
-    const clearResponse = await makeRequest('http://localhost:3007/cache/clear', { method: 'POST' });
+    const clearResponse = await makeRequest('http://localhost:3007/cache/clear', {
+      method: 'POST',
+    });
 
     assert.strictEqual(clearResponse.statusCode, 200);
     assert.strictEqual(clearResponse.body.status, 'success');
 
     // Next request should be cache miss
-    const nextResponse = await makeRequest('http://localhost:3007/.well-known/agent-card.json', { method: 'GET' });
+    const nextResponse = await makeRequest('http://localhost:3007/.well-known/agent-card.json', {
+      method: 'GET',
+    });
 
     assert.strictEqual(nextResponse.headers['x-cache-hit'], 'false');
 
@@ -328,7 +342,9 @@ test('Cache-Control header', async () => {
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const response = await makeRequest('http://localhost:3010/.well-known/agent-card.json', { method: 'GET' });
+    const response = await makeRequest('http://localhost:3010/.well-known/agent-card.json', {
+      method: 'GET',
+    });
 
     assert.strictEqual(response.statusCode, 200);
     assert.ok(response.headers['cache-control']);
@@ -353,7 +369,9 @@ test('Response metadata', async () => {
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const response = await makeRequest('http://localhost:3011/.well-known/agent-card.json', { method: 'GET' });
+    const response = await makeRequest('http://localhost:3011/.well-known/agent-card.json', {
+      method: 'GET',
+    });
 
     assert.strictEqual(response.statusCode, 200);
     assert.ok(response.body.metadata);

@@ -5,6 +5,7 @@
 Feature flags enable gradual, safe rollout of A2A protocol integration components with instant rollback capability.
 
 **Key Benefits**:
+
 - ✅ Granular control over 8 A2A components
 - ✅ Environment-aware (dev, staging, prod)
 - ✅ Instant rollback without redeployment
@@ -108,16 +109,16 @@ console.log('Disabled:', !manager.isEnabled('streaming_support', 'prod'));
 
 ## Available Flags
 
-| Flag | Phase | Dependencies | Default |
-|------|-------|--------------|---------|
-| `agent_card_generation` | POC | None | OFF |
-| `agent_card_discovery` | POC | agent_card_generation | OFF |
-| `memory_a2a_bridge` | Memory | agent_card_generation | OFF |
-| `a2a_message_wrapper` | Lifecycle | agent_card_generation | OFF |
-| `task_state_manager` | Lifecycle | a2a_message_wrapper | OFF |
-| `push_notifications` | External | task_state_manager | OFF |
-| `streaming_support` | External | a2a_message_wrapper, task_state_manager | OFF |
-| `external_federation` | External | agent_card_discovery, a2a_message_wrapper, task_state_manager | OFF |
+| Flag                    | Phase     | Dependencies                                                  | Default |
+| ----------------------- | --------- | ------------------------------------------------------------- | ------- |
+| `agent_card_generation` | POC       | None                                                          | OFF     |
+| `agent_card_discovery`  | POC       | agent_card_generation                                         | OFF     |
+| `memory_a2a_bridge`     | Memory    | agent_card_generation                                         | OFF     |
+| `a2a_message_wrapper`   | Lifecycle | agent_card_generation                                         | OFF     |
+| `task_state_manager`    | Lifecycle | a2a_message_wrapper                                           | OFF     |
+| `push_notifications`    | External  | task_state_manager                                            | OFF     |
+| `streaming_support`     | External  | a2a_message_wrapper, task_state_manager                       | OFF     |
+| `external_federation`   | External  | agent_card_discovery, a2a_message_wrapper, task_state_manager | OFF     |
 
 ---
 
@@ -320,13 +321,13 @@ if (!check.canEnable) {
 
 ## Files and Locations
 
-| File | Purpose |
-|------|---------|
-| `.claude/config/feature-flags.json` | Configuration file (all flags) |
-| `.claude/tools/feature-flags-manager.mjs` | Manager module (API) |
-| `.claude/context/logs/feature-flags-audit.log` | Audit trail |
-| `.claude/schemas/feature-flags.schema.json` | JSON Schema validation |
-| `.claude/context/reports/feature-flags-implementation-report.md` | Full documentation |
+| File                                                             | Purpose                        |
+| ---------------------------------------------------------------- | ------------------------------ |
+| `.claude/config/feature-flags.json`                              | Configuration file (all flags) |
+| `.claude/tools/feature-flags-manager.mjs`                        | Manager module (API)           |
+| `.claude/context/logs/feature-flags-audit.log`                   | Audit trail                    |
+| `.claude/schemas/feature-flags.schema.json`                      | JSON Schema validation         |
+| `.claude/context/reports/feature-flags-implementation-report.md` | Full documentation             |
 
 ---
 

@@ -367,7 +367,7 @@ describe('A2A Message Wrapper', () => {
       const result = wrapper.validateMessage(message);
 
       assert.strictEqual(result.valid, false);
-      assert.ok(result.errors.some((e) => e.includes('role')));
+      assert.ok(result.errors.some(e => e.includes('role')));
     });
 
     it('should detect invalid role', () => {
@@ -380,7 +380,7 @@ describe('A2A Message Wrapper', () => {
       const result = wrapper.validateMessage(message);
 
       assert.strictEqual(result.valid, false);
-      assert.ok(result.errors.some((e) => e.includes('Invalid role')));
+      assert.ok(result.errors.some(e => e.includes('Invalid role')));
     });
 
     it('should detect missing parts', () => {
@@ -392,7 +392,7 @@ describe('A2A Message Wrapper', () => {
       const result = wrapper.validateMessage(message);
 
       assert.strictEqual(result.valid, false);
-      assert.ok(result.errors.some((e) => e.includes('parts')));
+      assert.ok(result.errors.some(e => e.includes('parts')));
     });
 
     it('should detect empty parts array', () => {
@@ -405,7 +405,7 @@ describe('A2A Message Wrapper', () => {
       const result = wrapper.validateMessage(message);
 
       assert.strictEqual(result.valid, false);
-      assert.ok(result.errors.some((e) => e.includes('at least one element')));
+      assert.ok(result.errors.some(e => e.includes('at least one element')));
     });
 
     it('should detect invalid parts', () => {
@@ -418,7 +418,7 @@ describe('A2A Message Wrapper', () => {
       const result = wrapper.validateMessage(message);
 
       assert.strictEqual(result.valid, false);
-      assert.ok(result.errors.some((e) => e.includes('must have text, file, or data')));
+      assert.ok(result.errors.some(e => e.includes('must have text, file, or data')));
     });
   });
 

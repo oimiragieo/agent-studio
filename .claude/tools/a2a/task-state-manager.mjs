@@ -309,11 +309,11 @@ export class TaskStateManager {
    * @returns {Array} Tasks
    */
   listTasks(sessionId, filters = {}) {
-    let tasks = Array.from(this.tasks.values()).filter((t) => t.session_id === sessionId);
+    let tasks = Array.from(this.tasks.values()).filter(t => t.session_id === sessionId);
 
     // Apply state filter
     if (filters.state) {
-      tasks = tasks.filter((t) => t.state === filters.state);
+      tasks = tasks.filter(t => t.state === filters.state);
     }
 
     // Apply limit
