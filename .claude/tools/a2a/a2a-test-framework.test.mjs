@@ -1,6 +1,6 @@
 /**
  * A2A Test Framework Validation Tests
- * 
+ *
  * Validates the A2A test utilities and fixtures meet requirements.
  */
 
@@ -43,7 +43,7 @@ import {
   mockFeatureFlags,
   waitFor,
   waitForTaskState,
-  waitForTaskCompletion
+  waitForTaskCompletion,
 } from './test-utils.mjs';
 
 import { createRequire } from 'module';
@@ -130,7 +130,10 @@ describe('Message Mocking', () => {
   });
 
   it('should create valid multi-part message', () => {
-    const msg = mockMultiPartMessage([{ text: 'Check:' }, { file: { name: 'data.json', mime_type: 'application/json' } }]);
+    const msg = mockMultiPartMessage([
+      { text: 'Check:' },
+      { file: { name: 'data.json', mime_type: 'application/json' } },
+    ]);
     assertMessageValid(msg);
     assert.equal(msg.parts.length, 2);
   });
@@ -165,8 +168,12 @@ describe('Task Mocking', () => {
 });
 describe('Mock A2A Endpoint', () => {
   let endpoint;
-  before(() => { endpoint = createMockA2AEndpoint(); });
-  after(() => { endpoint.clear(); });
+  before(() => {
+    endpoint = createMockA2AEndpoint();
+  });
+  after(() => {
+    endpoint.clear();
+  });
 
   it('should return agent card', () => {
     assertAgentCardValid(endpoint.getAgentCard());
@@ -218,7 +225,10 @@ describe('Mock A2A Endpoint', () => {
   it('should reject invalid state transitions', () => {
     endpoint.clear();
     const task = endpoint.sendMessage({ message: mockTextMessage('Invalid') });
-    assert.throws(() => endpoint.transitionTask(task.id, TaskState.COMPLETED), /Invalid transition/);
+    assert.throws(
+      () => endpoint.transitionTask(task.id, TaskState.COMPLETED),
+      /Invalid transition/
+    );
   });
 });
 describe('Validation Functions', () => {
@@ -375,7 +385,15 @@ describe('Test Fixtures Validation', () => {
 
 describe('Utility Export Validation', () => {
   it('should export at least 7 utilities', () => {
-    const exports = [createMockA2AEndpoint, mockAgentCard, mockMessage, mockTask, validateA2ASchema, assertAgentCardValid, mockFeatureFlags];
+    const exports = [
+      createMockA2AEndpoint,
+      mockAgentCard,
+      mockMessage,
+      mockTask,
+      validateA2ASchema,
+      assertAgentCardValid,
+      mockFeatureFlags,
+    ];
     assert.ok(exports.every(e => typeof e === 'function'));
   });
 });

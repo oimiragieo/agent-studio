@@ -635,14 +635,14 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 
 ### 2026-01: Google A2A Protocol Integration
 
-| Feature | Purpose | Documentation |
-| --- | --- | --- |
-| **A2A v0.3.0 Compliance** | Full Google A2A protocol integration for agent interoperability | `.claude/context/reports/a2a-integration-completion-report.md` |
-| **Agent Discovery** | AgentCard generation and discovery endpoint | `.claude/context/reports/phase-4-1-poc-implementation-report.md` |
-| **Memory Bridge** | Memory handoff in A2A Artifact format (200x faster) | `.claude/context/reports/phase-4-2-memory-layer-implementation-report.md` |
-| **Task Lifecycle** | 8-state task management with message wrapper | `.claude/context/reports/phase-4-3-task-lifecycle-implementation-report.md` |
-| **External Federation** | External agent discovery, streaming, webhooks | `.claude/context/reports/phase-4-4-external-federation-implementation-report.md` |
-| **290 A2A Tests** | Comprehensive test coverage with 100% backward compatibility | Various validation reports in `.claude/context/reports/` |
+| Feature                   | Purpose                                                         | Documentation                                                                    |
+| ------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **A2A v0.3.0 Compliance** | Full Google A2A protocol integration for agent interoperability | `.claude/context/reports/a2a-integration-completion-report.md`                   |
+| **Agent Discovery**       | AgentCard generation and discovery endpoint                     | `.claude/context/reports/phase-4-1-poc-implementation-report.md`                 |
+| **Memory Bridge**         | Memory handoff in A2A Artifact format (200x faster)             | `.claude/context/reports/phase-4-2-memory-layer-implementation-report.md`        |
+| **Task Lifecycle**        | 8-state task management with message wrapper                    | `.claude/context/reports/phase-4-3-task-lifecycle-implementation-report.md`      |
+| **External Federation**   | External agent discovery, streaming, webhooks                   | `.claude/context/reports/phase-4-4-external-federation-implementation-report.md` |
+| **290 A2A Tests**         | Comprehensive test coverage with 100% backward compatibility    | Various validation reports in `.claude/context/reports/`                         |
 
 ### Phase 2.1.2: Codex Skills & Hook Recovery
 

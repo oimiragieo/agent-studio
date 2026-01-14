@@ -139,8 +139,8 @@ describe('FederationManager', () => {
       const result = await manager.executeExternalTask(agentUrl, message);
 
       assert.equal(result.id, 'task-123');
-      assert.ok(fetchMock.calls.some((c) => c.url.includes('agent-card.json')));
-      assert.ok(fetchMock.calls.some((c) => c.url.includes('sendMessage')));
+      assert.ok(fetchMock.calls.some(c => c.url.includes('agent-card.json')));
+      assert.ok(fetchMock.calls.some(c => c.url.includes('sendMessage')));
     });
 
     it('should throw when federation disabled', async () => {
@@ -296,15 +296,11 @@ describe('FederationManager', () => {
         json: async () => ({ task }),
       });
 
-      const result = await manager.sendMessageToExternalAgent(
-        agentUrl,
-        agentCard,
-        message
-      );
+      const result = await manager.sendMessageToExternalAgent(agentUrl, agentCard, message);
 
       assert.equal(result.id, task.id);
 
-      const call = fetchMock.calls.find((c) => c.url.includes('sendMessage'));
+      const call = fetchMock.calls.find(c => c.url.includes('sendMessage'));
       assert.ok(call);
       assert.equal(call.options.method, 'POST');
     });
@@ -321,11 +317,7 @@ describe('FederationManager', () => {
 
       await assert.rejects(
         async () => {
-          await manager.sendMessageToExternalAgent(
-            agentUrl,
-            agentCard,
-            mockMessage()
-          );
+          await manager.sendMessageToExternalAgent(agentUrl, agentCard, mockMessage());
         },
         { message: /External agent returned HTTP 500/ }
       );
@@ -344,11 +336,7 @@ describe('FederationManager', () => {
 
       await assert.rejects(
         async () => {
-          await manager.sendMessageToExternalAgent(
-            agentUrl,
-            agentCard,
-            mockMessage()
-          );
+          await manager.sendMessageToExternalAgent(agentUrl, agentCard, mockMessage());
         },
         { message: /Invalid task response/ }
       );
@@ -529,11 +517,10 @@ describe('FederationManager', () => {
         json: async () => ({ task: mockTask() }),
       });
 
-      const result = await manager.executeOnBestAgent(
-        agentUrls,
-        mockMessage(),
-        { streaming: true, push_notifications: true }
-      );
+      const result = await manager.executeOnBestAgent(agentUrls, mockMessage(), {
+        streaming: true,
+        push_notifications: true,
+      });
 
       assert.equal(result.selected_agent.name, 'full-featured-agent');
       assert.equal(result.candidates, 3);
@@ -542,7 +529,7 @@ describe('FederationManager', () => {
     it('should throw when no agents discovered', async () => {
       const agentUrls = ['https://error1.com', 'https://error2.com'];
 
-      agentUrls.forEach((url) => {
+      agentUrls.forEach(url => {
         fetchMock.responses.set(`${url}/.well-known/agent-card.json`, {
           ok: false,
           status: 500,

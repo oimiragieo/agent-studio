@@ -55,7 +55,8 @@ export class ExternalAgentDiscovery {
   async discoverAgent(url, options = {}) {
     const startTime = Date.now();
 
-    const enabled = this.featureFlags.isEnabled?.('external_federation') ?? this.featureFlags.external_federation;
+    const enabled =
+      this.featureFlags.isEnabled?.('external_federation') ?? this.featureFlags.external_federation;
     if (!enabled) {
       throw new Error('external_federation feature flag is disabled');
     }
@@ -67,9 +68,7 @@ export class ExternalAgentDiscovery {
     const cached = this.getCachedAgentCard(normalizedUrl);
     if (cached && !options.forceRefresh) {
       const duration = Date.now() - startTime;
-      console.log(
-        `[External Discovery] Cache hit for ${normalizedUrl} (${duration}ms)`
-      );
+      console.log(`[External Discovery] Cache hit for ${normalizedUrl} (${duration}ms)`);
       return cached;
     }
 
@@ -77,10 +76,7 @@ export class ExternalAgentDiscovery {
     const agentCardUrl = this.buildAgentCardUrl(normalizedUrl);
 
     try {
-      const response = await this.fetchWithTimeout(
-        agentCardUrl,
-        options.timeout || this.timeout
-      );
+      const response = await this.fetchWithTimeout(agentCardUrl, options.timeout || this.timeout);
 
       if (!response.ok) {
         throw new Error(
@@ -90,9 +86,7 @@ export class ExternalAgentDiscovery {
 
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        throw new Error(
-          `Invalid content type: expected application/json, got ${contentType}`
-        );
+        throw new Error(`Invalid content type: expected application/json, got ${contentType}`);
       }
 
       const data = await response.json();
@@ -103,9 +97,7 @@ export class ExternalAgentDiscovery {
       // Validate AgentCard
       const validation = this.validateExternalAgentCard(agentCard);
       if (!validation.valid) {
-        throw new Error(
-          `Invalid AgentCard: ${validation.errors.join(', ')}`
-        );
+        throw new Error(`Invalid AgentCard: ${validation.errors.join(', ')}`);
       }
 
       // Add discovery metadata
@@ -125,13 +117,8 @@ export class ExternalAgentDiscovery {
 
       return agentCard;
     } catch (error) {
-      console.error(
-        `[External Discovery] Failed to discover ${normalizedUrl}:`,
-        error
-      );
-      throw new Error(
-        `External agent discovery failed: ${error.message}`
-      );
+      console.error(`[External Discovery] Failed to discover ${normalizedUrl}:`, error);
+      throw new Error(`External agent discovery failed: ${error.message}`);
     }
   }
 
@@ -207,10 +194,7 @@ export class ExternalAgentDiscovery {
     }
 
     // Validate array fields
-    if (
-      agentCard.supported_interfaces &&
-      !Array.isArray(agentCard.supported_interfaces)
-    ) {
+    if (agentCard.supported_interfaces && !Array.isArray(agentCard.supported_interfaces)) {
       errors.push('supported_interfaces must be an array');
     }
 
@@ -219,21 +203,13 @@ export class ExternalAgentDiscovery {
     }
 
     // Validate capabilities
-    if (
-      agentCard.capabilities &&
-      typeof agentCard.capabilities !== 'object'
-    ) {
+    if (agentCard.capabilities && typeof agentCard.capabilities !== 'object') {
       errors.push('capabilities must be an object');
     }
 
     // Validate protocol version
-    if (
-      agentCard.protocol_version &&
-      !agentCard.protocol_version.startsWith('0.3')
-    ) {
-      errors.push(
-        `Unsupported protocol version: ${agentCard.protocol_version} (expected 0.3.x)`
-      );
+    if (agentCard.protocol_version && !agentCard.protocol_version.startsWith('0.3')) {
+      errors.push(`Unsupported protocol version: ${agentCard.protocol_version} (expected 0.3.x)`);
     }
 
     return { valid: errors.length === 0, errors };
@@ -247,20 +223,17 @@ export class ExternalAgentDiscovery {
    */
   listExternalAgents(filters = {}) {
     const agents = Array.from(this.cache.values())
-      .map((entry) => entry.agentCard)
-      .filter((card) => {
+      .map(entry => entry.agentCard)
+      .filter(card => {
         // Filter by capability
-        if (
-          filters.capability &&
-          !card.capabilities[filters.capability]
-        ) {
+        if (filters.capability && !card.capabilities[filters.capability]) {
           return false;
         }
 
         // Filter by skill
         if (filters.skill) {
           const hasSkill = card.skills.some(
-            (s) => s.name === filters.skill || s.id === filters.skill
+            s => s.name === filters.skill || s.id === filters.skill
           );
           if (!hasSkill) return false;
         }
@@ -360,9 +333,7 @@ export class ExternalAgentDiscovery {
   async discoverMultipleAgents(urls, options = {}) {
     const startTime = Date.now();
 
-    const results = await Promise.allSettled(
-      urls.map((url) => this.discoverAgent(url, options))
-    );
+    const results = await Promise.allSettled(urls.map(url => this.discoverAgent(url, options)));
 
     const discovered = [];
     const failed = [];

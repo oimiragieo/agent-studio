@@ -129,7 +129,7 @@ export class FeatureFlagsManager {
 
     return {
       valid: missingDependencies.length === 0,
-      missingDependencies
+      missingDependencies,
     };
   }
 
@@ -231,7 +231,7 @@ export class FeatureFlagsManager {
       flag: flagName,
       action,
       user,
-      metadata
+      metadata,
     };
 
     const logLine = JSON.stringify(logEntry) + '\n';
@@ -324,7 +324,10 @@ export class FeatureFlagsManager {
 
     try {
       const logData = fs.readFileSync(this.auditLogPath, 'utf8');
-      const lines = logData.trim().split('\n').filter(line => line.length > 0);
+      const lines = logData
+        .trim()
+        .split('\n')
+        .filter(line => line.length > 0);
 
       let entries = lines.map(line => JSON.parse(line));
 
@@ -370,7 +373,9 @@ export class FeatureFlagsManager {
       for (const [otherFlagName, otherFlag] of Object.entries(this.config.flags)) {
         if (otherFlag.rollout_order < rolloutOrder) {
           if (!this.isEnabled(otherFlagName, environment)) {
-            console.warn(`Flag "${otherFlagName}" (order ${otherFlag.rollout_order}) should be enabled before "${flagName}" (order ${rolloutOrder})`);
+            console.warn(
+              `Flag "${otherFlagName}" (order ${otherFlag.rollout_order}) should be enabled before "${flagName}" (order ${rolloutOrder})`
+            );
           }
         }
       }
@@ -378,7 +383,7 @@ export class FeatureFlagsManager {
 
     return {
       canEnable: blockers.length === 0,
-      blockers
+      blockers,
     };
   }
 
@@ -408,7 +413,9 @@ export class FeatureFlagsManager {
 
     for (const phase of phases) {
       const phaseFlags = this.getFlagsByPhase(phase);
-      const enabledCount = phaseFlags.filter(flagName => this.isEnabled(flagName, environment)).length;
+      const enabledCount = phaseFlags.filter(flagName =>
+        this.isEnabled(flagName, environment)
+      ).length;
 
       status[phase] = {
         total: phaseFlags.length,
@@ -417,8 +424,8 @@ export class FeatureFlagsManager {
         complete: enabledCount === phaseFlags.length,
         flags: phaseFlags.map(flagName => ({
           name: flagName,
-          enabled: this.isEnabled(flagName, environment)
-        }))
+          enabled: this.isEnabled(flagName, environment),
+        })),
       };
     }
 
@@ -491,5 +498,5 @@ export default {
   isEnabled,
   validateDependencies,
   getFlags,
-  auditLog
+  auditLog,
 };

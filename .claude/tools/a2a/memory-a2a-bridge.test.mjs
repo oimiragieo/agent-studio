@@ -121,11 +121,7 @@ describe('Memory-A2A Bridge - Legacy to A2A Conversion', () => {
 
     assert.equal(dataParts.length, 1, 'Should have 1 DataPart');
     assert.ok(dataParts[0].data.entities, 'DataPart should have entities');
-    assert.equal(
-      dataParts[0].data.entities.length,
-      2,
-      'DataPart should have 2 entities'
-    );
+    assert.equal(dataParts[0].data.entities.length, 2, 'DataPart should have 2 entities');
   });
 
   it('should include metadata in artifact', async () => {
@@ -372,10 +368,9 @@ describe('Memory-A2A Bridge - Feature Flags', () => {
       featureFlags: { memory_a2a_bridge: false },
     });
 
-    await assert.rejects(
-      async () => await bridge.toA2AArtifact(MOCK_HANDOFF),
-      { message: /feature flag is disabled/ }
-    );
+    await assert.rejects(async () => await bridge.toA2AArtifact(MOCK_HANDOFF), {
+      message: /feature flag is disabled/,
+    });
   });
 
   it('should respect feature flag for fromA2AArtifact', async () => {
@@ -385,10 +380,9 @@ describe('Memory-A2A Bridge - Feature Flags', () => {
 
     const artifact = { artifactId: 'test', parts: [] };
 
-    await assert.rejects(
-      async () => await bridge.fromA2AArtifact(artifact),
-      { message: /feature flag is disabled/ }
-    );
+    await assert.rejects(async () => await bridge.fromA2AArtifact(artifact), {
+      message: /feature flag is disabled/,
+    });
   });
 
   it('should work when feature flag enabled', async () => {
@@ -460,10 +454,9 @@ describe('Memory-A2A Bridge - Memory Handoff Service Integration', () => {
       featureFlags: { memory_a2a_bridge: true },
     });
 
-    await assert.rejects(
-      async () => await bridge.prepareA2AHandoff({}),
-      { message: /memoryHandoffService not configured/ }
-    );
+    await assert.rejects(async () => await bridge.prepareA2AHandoff({}), {
+      message: /memoryHandoffService not configured/,
+    });
   });
 
   it('should throw error if applyA2AHandoff called without service', async () => {
@@ -473,10 +466,9 @@ describe('Memory-A2A Bridge - Memory Handoff Service Integration', () => {
 
     const artifact = { artifactId: 'test', parts: [], metadata: {} };
 
-    await assert.rejects(
-      async () => await bridge.applyA2AHandoff(artifact),
-      { message: /memoryHandoffService not configured/ }
-    );
+    await assert.rejects(async () => await bridge.applyA2AHandoff(artifact), {
+      message: /memoryHandoffService not configured/,
+    });
   });
 });
 

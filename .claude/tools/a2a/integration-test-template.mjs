@@ -1,8 +1,8 @@
 /**
  * A2A Integration Test Template
- * 
+ *
  * Demonstrates the full A2A discovery -> message -> task flow for testing.
- * 
+ *
  * @module a2a-integration-test-template
  */
 
@@ -18,7 +18,7 @@ import {
   createMockA2AEndpoint,
   assertAgentCardValid,
   assertTaskState,
-  mockFeatureFlags
+  mockFeatureFlags,
 } from './test-utils.mjs';
 
 const TEST_CONFIG = {
@@ -29,8 +29,8 @@ const TEST_CONFIG = {
     agent_card_generation: true,
     agent_card_discovery: true,
     a2a_message_wrapper: true,
-    task_state_manager: true
-  }
+    task_state_manager: true,
+  },
 };
 
 describe('A2A Integration Test Template', () => {
@@ -45,13 +45,24 @@ describe('A2A Integration Test Template', () => {
         description: TEST_CONFIG.agentDescription,
         version: TEST_CONFIG.agentVersion,
         capabilities: { streaming: true, push_notifications: true, state_transition_history: true },
-        skills: [{ id: 'integration-skill', name: 'Integration Testing', description: 'Test skill', tags: ['testing'] }]
-      })
+        skills: [
+          {
+            id: 'integration-skill',
+            name: 'Integration Testing',
+            description: 'Test skill',
+            tags: ['testing'],
+          },
+        ],
+      }),
     });
   });
 
-  after(() => { endpoint.clear(); });
-  beforeEach(() => { endpoint.clear(); });
+  after(() => {
+    endpoint.clear();
+  });
+  beforeEach(() => {
+    endpoint.clear();
+  });
 
   describe('Phase 1: Agent Discovery', () => {
     it('should discover agent via AgentCard endpoint', () => {
@@ -90,7 +101,7 @@ describe('A2A Integration Test Template', () => {
     it('should send multi-part message', () => {
       const message = mockMultiPartMessage([
         { text: 'Process config:' },
-        { data: { test_count: 10 } }
+        { data: { test_count: 10 } },
       ]);
       const task = endpoint.sendMessage({ message });
       assert.equal(task.messages[0].parts.length, 2);
@@ -100,7 +111,10 @@ describe('A2A Integration Test Template', () => {
       const task = endpoint.sendMessage({ message: mockTextMessage('Start') });
       endpoint.transitionTask(task.id, TaskState.WORKING);
       endpoint.transitionTask(task.id, TaskState.INPUT_REQUIRED);
-      const updated = endpoint.sendMessage({ message: mockTextMessage('Continue'), task_id: task.id });
+      const updated = endpoint.sendMessage({
+        message: mockTextMessage('Continue'),
+        task_id: task.id,
+      });
       assertTaskState(updated, TaskState.WORKING);
       assert.equal(updated.messages.length, 2);
     });
@@ -136,7 +150,10 @@ describe('A2A Integration Test Template', () => {
 
     it('should prevent invalid state transitions', () => {
       const task = endpoint.sendMessage({ message: mockTextMessage('Invalid') });
-      assert.throws(() => endpoint.transitionTask(task.id, TaskState.COMPLETED), /Invalid transition/);
+      assert.throws(
+        () => endpoint.transitionTask(task.id, TaskState.COMPLETED),
+        /Invalid transition/
+      );
     });
 
     it('should prevent operations on terminal states', () => {
@@ -150,7 +167,7 @@ describe('A2A Integration Test Template', () => {
     it('should subscribe to task updates', () => {
       const updates = [];
       const task = endpoint.sendMessage({ message: mockTextMessage('Subscribe') });
-      const unsubscribe = endpoint.subscribeToTask(task.id, (t) => updates.push(t.state));
+      const unsubscribe = endpoint.subscribeToTask(task.id, t => updates.push(t.state));
       endpoint.transitionTask(task.id, TaskState.WORKING);
       endpoint.transitionTask(task.id, TaskState.COMPLETED);
       assert.equal(updates.length, 2);
@@ -162,7 +179,7 @@ describe('A2A Integration Test Template', () => {
     it('should unsubscribe from task updates', () => {
       const updates = [];
       const task = endpoint.sendMessage({ message: mockTextMessage('Unsub') });
-      const unsubscribe = endpoint.subscribeToTask(task.id, (t) => updates.push(t.state));
+      const unsubscribe = endpoint.subscribeToTask(task.id, t => updates.push(t.state));
       endpoint.transitionTask(task.id, TaskState.WORKING);
       unsubscribe();
       endpoint.transitionTask(task.id, TaskState.COMPLETED);

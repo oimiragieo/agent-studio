@@ -23,7 +23,13 @@ import { FeatureFlagsManager } from './feature-flags-manager.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TEST_CONFIG_PATH = path.join(__dirname, '..', 'context', 'tmp', 'tmp-test-feature-flags.json');
+const TEST_CONFIG_PATH = path.join(
+  __dirname,
+  '..',
+  'context',
+  'tmp',
+  'tmp-test-feature-flags.json'
+);
 const TEST_AUDIT_LOG_PATH = path.join(__dirname, '..', 'context', 'tmp', 'tmp-test-audit.log');
 
 /**
@@ -43,12 +49,12 @@ function createTestConfig() {
         environments: {
           dev: true,
           staging: false,
-          prod: false
+          prod: false,
         },
         metadata: {
           owner: 'developer',
-          risk_level: 'low'
-        }
+          risk_level: 'low',
+        },
       },
       test_flag_b: {
         enabled: false,
@@ -59,12 +65,12 @@ function createTestConfig() {
         environments: {
           dev: false,
           staging: false,
-          prod: false
+          prod: false,
         },
         metadata: {
           owner: 'developer',
-          risk_level: 'medium'
-        }
+          risk_level: 'medium',
+        },
       },
       test_flag_c: {
         enabled: true,
@@ -75,12 +81,12 @@ function createTestConfig() {
         environments: {
           dev: true,
           staging: true,
-          prod: false
+          prod: false,
         },
         metadata: {
           owner: 'architect',
-          risk_level: 'low'
-        }
+          risk_level: 'low',
+        },
       },
       test_flag_d: {
         enabled: false,
@@ -91,24 +97,24 @@ function createTestConfig() {
         environments: {
           dev: false,
           staging: false,
-          prod: false
+          prod: false,
         },
         metadata: {
           owner: 'developer',
-          risk_level: 'high'
-        }
-      }
+          risk_level: 'high',
+        },
+      },
     },
     audit: {
       enabled: true,
       log_path: TEST_AUDIT_LOG_PATH,
-      retention_days: 90
+      retention_days: 90,
     },
     validation_rules: {
       dependency_check: true,
       environment_validation: true,
-      rollout_order_enforcement: true
-    }
+      rollout_order_enforcement: true,
+    },
   };
 }
 
@@ -150,7 +156,7 @@ describe('FeatureFlagsManager', () => {
     setupTestEnvironment();
     manager = new FeatureFlagsManager({
       configPath: TEST_CONFIG_PATH,
-      auditLogPath: TEST_AUDIT_LOG_PATH
+      auditLogPath: TEST_AUDIT_LOG_PATH,
     });
   });
 
@@ -208,30 +214,53 @@ describe('FeatureFlagsManager', () => {
     it('should return valid=true when flag has no dependencies', () => {
       const result = manager.validateDependencies('test_flag_a', 'dev');
       assert.strictEqual(result.valid, true, 'Flag with no dependencies should be valid');
-      assert.strictEqual(result.missingDependencies.length, 0, 'Should have no missing dependencies');
+      assert.strictEqual(
+        result.missingDependencies.length,
+        0,
+        'Should have no missing dependencies'
+      );
     });
 
     it('should return valid=true when all dependencies are enabled', () => {
       // test_flag_b depends on test_flag_a, which is enabled in dev
       const result = manager.validateDependencies('test_flag_b', 'dev');
       assert.strictEqual(result.valid, true, 'Flag with satisfied dependencies should be valid');
-      assert.strictEqual(result.missingDependencies.length, 0, 'Should have no missing dependencies');
+      assert.strictEqual(
+        result.missingDependencies.length,
+        0,
+        'Should have no missing dependencies'
+      );
     });
 
     it('should return valid=false when dependencies are missing', () => {
       // test_flag_b depends on test_flag_a, which is disabled in staging
       const result = manager.validateDependencies('test_flag_b', 'staging');
-      assert.strictEqual(result.valid, false, 'Flag with unsatisfied dependencies should be invalid');
+      assert.strictEqual(
+        result.valid,
+        false,
+        'Flag with unsatisfied dependencies should be invalid'
+      );
       assert.strictEqual(result.missingDependencies.length, 1, 'Should have 1 missing dependency');
-      assert.strictEqual(result.missingDependencies[0], 'test_flag_a', 'Should identify missing dependency');
+      assert.strictEqual(
+        result.missingDependencies[0],
+        'test_flag_a',
+        'Should identify missing dependency'
+      );
     });
 
     it('should return valid=false when multiple dependencies are missing', () => {
       // test_flag_d depends on test_flag_b and test_flag_c
       // In prod: test_flag_b is disabled, test_flag_c is disabled
       const result = manager.validateDependencies('test_flag_d', 'prod');
-      assert.strictEqual(result.valid, false, 'Flag with multiple unsatisfied dependencies should be invalid');
-      assert.ok(result.missingDependencies.length >= 1, 'Should have at least 1 missing dependency');
+      assert.strictEqual(
+        result.valid,
+        false,
+        'Flag with multiple unsatisfied dependencies should be invalid'
+      );
+      assert.ok(
+        result.missingDependencies.length >= 1,
+        'Should have at least 1 missing dependency'
+      );
     });
 
     it('should throw error for nonexistent flag', () => {
@@ -269,7 +298,11 @@ describe('FeatureFlagsManager', () => {
       const details = manager.getFlagDetails('test_flag_a');
 
       assert.strictEqual(typeof details, 'object', 'Should return object');
-      assert.strictEqual(details.description, 'Test flag A - no dependencies', 'Should have description');
+      assert.strictEqual(
+        details.description,
+        'Test flag A - no dependencies',
+        'Should have description'
+      );
       assert.strictEqual(details.phase, 'POC', 'Should have phase');
       assert.strictEqual(details.rollout_order, 1, 'Should have rollout_order');
       assert.ok(Array.isArray(details.dependencies), 'Should have dependencies array');
@@ -338,7 +371,10 @@ describe('FeatureFlagsManager', () => {
 
       const entries = manager.getAuditLog('test_flag_a');
       assert.strictEqual(entries.length, 2, 'Should return 2 entries for test_flag_a');
-      assert.ok(entries.every(e => e.flag === 'test_flag_a'), 'All entries should be for test_flag_a');
+      assert.ok(
+        entries.every(e => e.flag === 'test_flag_a'),
+        'All entries should be for test_flag_a'
+      );
     });
 
     it('should limit number of entries returned', () => {
@@ -366,20 +402,40 @@ describe('FeatureFlagsManager', () => {
 
   describe('updateFlag()', () => {
     it('should update global enabled state', () => {
-      assert.strictEqual(manager.isEnabled('test_flag_b', 'staging'), false, 'Initial state should be false');
+      assert.strictEqual(
+        manager.isEnabled('test_flag_b', 'staging'),
+        false,
+        'Initial state should be false'
+      );
 
       manager.updateFlag('test_flag_b', true, null, 'test-user');
 
-      assert.strictEqual(manager.config.flags.test_flag_b.enabled, true, 'Global enabled should be true');
+      assert.strictEqual(
+        manager.config.flags.test_flag_b.enabled,
+        true,
+        'Global enabled should be true'
+      );
     });
 
     it('should update environment-specific state', () => {
-      assert.strictEqual(manager.isEnabled('test_flag_b', 'staging'), false, 'Initial state should be false');
+      assert.strictEqual(
+        manager.isEnabled('test_flag_b', 'staging'),
+        false,
+        'Initial state should be false'
+      );
 
       manager.updateFlag('test_flag_b', true, 'staging', 'test-user');
 
-      assert.strictEqual(manager.isEnabled('test_flag_b', 'staging'), true, 'Staging should be enabled');
-      assert.strictEqual(manager.isEnabled('test_flag_b', 'prod'), false, 'Prod should remain disabled');
+      assert.strictEqual(
+        manager.isEnabled('test_flag_b', 'staging'),
+        true,
+        'Staging should be enabled'
+      );
+      assert.strictEqual(
+        manager.isEnabled('test_flag_b', 'prod'),
+        false,
+        'Prod should remain disabled'
+      );
     });
 
     it('should create audit log entry', () => {
@@ -430,13 +486,21 @@ describe('FeatureFlagsManager', () => {
   describe('canEnableFlag()', () => {
     it('should return canEnable=true when dependencies satisfied', () => {
       const result = manager.canEnableFlag('test_flag_b', 'dev');
-      assert.strictEqual(result.canEnable, true, 'Should be able to enable when dependencies satisfied');
+      assert.strictEqual(
+        result.canEnable,
+        true,
+        'Should be able to enable when dependencies satisfied'
+      );
       assert.strictEqual(result.blockers.length, 0, 'Should have no blockers');
     });
 
     it('should return canEnable=false when dependencies missing', () => {
       const result = manager.canEnableFlag('test_flag_d', 'prod');
-      assert.strictEqual(result.canEnable, false, 'Should not be able to enable when dependencies missing');
+      assert.strictEqual(
+        result.canEnable,
+        false,
+        'Should not be able to enable when dependencies missing'
+      );
       assert.ok(result.blockers.length > 0, 'Should have blockers');
     });
   });

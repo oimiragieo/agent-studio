@@ -86,7 +86,7 @@ export function parseAgentDefinition(filePath) {
     goal: goalMatch ? goalMatch[1].trim() : '',
     backstory: backstoryMatch ? backstoryMatch[1].trim() : '',
     capabilities: extractCapabilities(frontmatter, markdownContent),
-    version: '1.0.0' // Default version
+    version: '1.0.0', // Default version
   };
 }
 
@@ -102,7 +102,7 @@ function extractCapabilities(frontmatter, markdownContent) {
     streaming: false,
     push_notifications: false,
     state_transition_history: true,
-    extensions: []
+    extensions: [],
   };
 }
 
@@ -123,7 +123,7 @@ export function extractSkills(agentDef) {
       tags: [agentDef.name, agentDef.priority],
       examples: [agentDef.goal || agentDef.description],
       inputModes: ['text'],
-      outputModes: ['text', 'data']
+      outputModes: ['text', 'data'],
     };
     skills.push(primarySkill);
   }
@@ -139,7 +139,7 @@ export function extractSkills(agentDef) {
         tags: [tool.toLowerCase(), agentDef.name],
         examples: [`Use ${tool} to accomplish ${agentDef.name} objectives`],
         inputModes: ['text'],
-        outputModes: tool === 'Write' || tool === 'Edit' ? ['file', 'text'] : ['text']
+        outputModes: tool === 'Write' || tool === 'Edit' ? ['file', 'text'] : ['text'],
       }));
 
     skills.push(...toolSkills);
@@ -172,14 +172,14 @@ export function generateAgentCard(agentDef, options = {}) {
     capabilities: agentDef.capabilities,
     default_input_modes: ['text', 'data'],
     default_output_modes: ['text', 'data', 'file'],
-    skills: skills
+    skills: skills,
   };
 
   // Add optional fields
   if (options.includeProvider !== false) {
     agentCard.provider = {
       organization: 'LLM-Rules System',
-      url: baseUrl
+      url: baseUrl,
     };
   }
 
@@ -189,9 +189,9 @@ export function generateAgentCard(agentDef, options = {}) {
         {
           type: 'http',
           scheme: 'Bearer',
-          bearer_format: 'JWT'
-        }
-      ]
+          bearer_format: 'JWT',
+        },
+      ],
     };
   }
 
@@ -209,13 +209,14 @@ export function generateAllAgentCards(options = {}) {
   // Check cache
   const cacheKey = 'all-agent-cards';
   const cached = cache.get(cacheKey);
-  if (cached && (Date.now() - cached.timestamp) < CACHE_TTL_MS) {
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
     return cached.cards;
   }
 
   // Find all agent definition files
   const agentsDir = path.join(__dirname, '..', '..', 'agents');
-  const agentFiles = fs.readdirSync(agentsDir)
+  const agentFiles = fs
+    .readdirSync(agentsDir)
     .filter(file => file.endsWith('.md'))
     .map(file => path.join(agentsDir, file));
 
@@ -239,7 +240,7 @@ export function generateAllAgentCards(options = {}) {
     cards: agentCards,
     timestamp: Date.now(),
     generationTime,
-    errors
+    errors,
   });
 
   if (errors.length > 0) {
@@ -267,7 +268,7 @@ export function generateAgentCardIfEnabled(agentName, options = {}) {
   // Check cache
   const cacheKey = `agent-${agentName}`;
   const cached = cache.get(cacheKey);
-  if (cached && (Date.now() - cached.timestamp) < CACHE_TTL_MS) {
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
     return cached.card;
   }
 
@@ -289,7 +290,7 @@ export function generateAgentCardIfEnabled(agentName, options = {}) {
   cache.set(cacheKey, {
     card: agentCard,
     timestamp: Date.now(),
-    generationTime
+    generationTime,
   });
 
   return agentCard;
@@ -315,9 +316,9 @@ export function getCacheStats() {
     entries: entries.map(([key, value]) => ({
       key,
       age_ms: now - value.timestamp,
-      expired: (now - value.timestamp) >= CACHE_TTL_MS
+      expired: now - value.timestamp >= CACHE_TTL_MS,
     })),
-    ttl_ms: CACHE_TTL_MS
+    ttl_ms: CACHE_TTL_MS,
   };
 }
 
@@ -328,5 +329,5 @@ export default {
   generateAllAgentCards,
   generateAgentCardIfEnabled,
   clearCache,
-  getCacheStats
+  getCacheStats,
 };

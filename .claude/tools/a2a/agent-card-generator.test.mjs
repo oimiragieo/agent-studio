@@ -22,12 +22,9 @@ import {
   generateAllAgentCards,
   generateAgentCardIfEnabled,
   clearCache,
-  getCacheStats
+  getCacheStats,
 } from './agent-card-generator.mjs';
-import {
-  validateA2AAgentCard,
-  assertAgentCardValid
-} from './test-utils.mjs';
+import { validateA2AAgentCard, assertAgentCardValid } from './test-utils.mjs';
 import { mockFeatureFlags } from './test-utils.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -104,7 +101,7 @@ test('extractSkills - basic extraction', () => {
     description: 'Full-stack developer',
     tools: ['Read', 'Write', 'Edit'],
     priority: 'medium',
-    goal: 'Implement features'
+    goal: 'Implement features',
   };
 
   const skills = extractSkills(agentDef);
@@ -126,7 +123,7 @@ test('extractSkills - no tools', () => {
     name: 'simple-agent',
     description: 'Simple agent',
     tools: [],
-    priority: 'low'
+    priority: 'low',
   };
 
   const skills = extractSkills(agentDef);
@@ -148,8 +145,8 @@ test('generateAgentCard - valid AgentCard', () => {
     capabilities: {
       streaming: false,
       push_notifications: false,
-      state_transition_history: true
-    }
+      state_transition_history: true,
+    },
   };
 
   const agentCard = generateAgentCard(agentDef);
@@ -176,15 +173,15 @@ test('generateAgentCard - with options', () => {
     capabilities: {
       streaming: false,
       push_notifications: false,
-      state_transition_history: true
-    }
+      state_transition_history: true,
+    },
   };
 
   const agentCard = generateAgentCard(agentDef, {
     baseUrl: 'https://custom.example.com',
     protocolVersion: '0.3.0',
     includeProvider: true,
-    includeAuthentication: true
+    includeAuthentication: true,
   });
 
   assert.ok(agentCard.url.startsWith('https://custom.example.com'));
@@ -233,7 +230,9 @@ test('generateAllAgentCards - performance target', () => {
 
   const perCardTime = totalTime / agentCards.length;
 
-  console.log(`  Generated ${agentCards.length} AgentCards in ${totalTime}ms (${perCardTime.toFixed(2)}ms per card)`);
+  console.log(
+    `  Generated ${agentCards.length} AgentCards in ${totalTime}ms (${perCardTime.toFixed(2)}ms per card)`
+  );
 
   assert.ok(perCardTime < 50, `Per-card generation time ${perCardTime}ms exceeds 50ms target`);
 });

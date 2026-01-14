@@ -60,9 +60,10 @@ export class MemoryA2ABridge {
     const memoryParts = await this.convertMemoriesToParts(handoff.memories);
 
     // Convert entities to DataPart (if present)
-    const entityParts = handoff.entities && handoff.entities.length > 0
-      ? [await this.convertEntitiesToDataPart(handoff.entities)]
-      : [];
+    const entityParts =
+      handoff.entities && handoff.entities.length > 0
+        ? [await this.convertEntitiesToDataPart(handoff.entities)]
+        : [];
 
     // Build A2A Artifact
     const artifact = {
@@ -106,9 +107,7 @@ export class MemoryA2ABridge {
     }
 
     // Extract TextParts → memories
-    const memories = await this.convertPartsToMemories(
-      artifact.parts.filter(p => p.text)
-    );
+    const memories = await this.convertPartsToMemories(artifact.parts.filter(p => p.text));
 
     // Extract DataParts → entities
     const entities = await this.convertDataPartToEntities(
@@ -154,9 +153,7 @@ export class MemoryA2ABridge {
     const textContent = memories
       .map(memory => {
         const roleLabel = memory.role || 'unknown';
-        const timestamp = memory.timestamp
-          ? new Date(memory.timestamp).toISOString()
-          : 'unknown';
+        const timestamp = memory.timestamp ? new Date(memory.timestamp).toISOString() : 'unknown';
         const tier = memory.tier || 'conversation';
         const relevance = memory.relevanceScore
           ? `relevance: ${memory.relevanceScore.toFixed(2)}`

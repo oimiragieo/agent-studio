@@ -255,7 +255,7 @@ describe('ExternalAgentDiscovery', () => {
       // Cache manually with expired timestamp
       discovery.cache.set(url, {
         agentCard,
-        timestamp: Date.now() - (31 * 60 * 1000), // 31 minutes ago
+        timestamp: Date.now() - 31 * 60 * 1000, // 31 minutes ago
       });
 
       const cached = discovery.getCachedAgentCard(url);
@@ -284,7 +284,7 @@ describe('ExternalAgentDiscovery', () => {
       const result = discovery.validateExternalAgentCard(invalidCard);
 
       assert.equal(result.valid, false);
-      assert.ok(result.errors.some((e) => e.includes('Missing required field')));
+      assert.ok(result.errors.some(e => e.includes('Missing required field')));
     });
 
     it('should detect invalid array fields', () => {
@@ -294,7 +294,7 @@ describe('ExternalAgentDiscovery', () => {
       const result = discovery.validateExternalAgentCard(invalidCard);
 
       assert.equal(result.valid, false);
-      assert.ok(result.errors.some((e) => e.includes('must be an array')));
+      assert.ok(result.errors.some(e => e.includes('must be an array')));
     });
 
     it('should detect unsupported protocol version', () => {
@@ -302,7 +302,7 @@ describe('ExternalAgentDiscovery', () => {
       const result = discovery.validateExternalAgentCard(invalidCard);
 
       assert.equal(result.valid, false);
-      assert.ok(result.errors.some((e) => e.includes('Unsupported protocol version')));
+      assert.ok(result.errors.some(e => e.includes('Unsupported protocol version')));
     });
   });
 
@@ -353,7 +353,7 @@ describe('ExternalAgentDiscovery', () => {
     it('should discover multiple agents in parallel', async () => {
       const urls = ['https://a1.com', 'https://a2.com', 'https://a3.com'];
 
-      urls.forEach((url) => {
+      urls.forEach(url => {
         const agentCard = mockAgentCard({ name: `agent-${url}` });
         fetchMock.responses.set(`${url}/.well-known/agent-card.json`, {
           ok: true,

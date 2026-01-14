@@ -62,7 +62,7 @@ describe('StreamingHandler', () => {
       const message = mockMessage({ messageId: 'msg-1', taskId: 'task-1' });
       const events = [];
 
-      const stream = handler.startStreamingMessage(message, (event) => {
+      const stream = handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
@@ -103,11 +103,9 @@ describe('StreamingHandler', () => {
     });
 
     it('should use custom stream ID', () => {
-      const stream = handler.startStreamingMessage(
-        mockMessage(),
-        () => {},
-        { streamId: 'custom-stream-1' }
-      );
+      const stream = handler.startStreamingMessage(mockMessage(), () => {}, {
+        streamId: 'custom-stream-1',
+      });
 
       assert.equal(stream.stream_id, 'custom-stream-1');
     });
@@ -124,14 +122,14 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      handler.startStreamingMessage(message, (event) => {
+      handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
       // Wait for heartbeat
-      await new Promise((r) => setTimeout(r, 150));
+      await new Promise(r => setTimeout(r, 150));
 
-      const heartbeats = events.filter((e) => e.type === StreamEventType.HEARTBEAT);
+      const heartbeats = events.filter(e => e.type === StreamEventType.HEARTBEAT);
       assert.ok(heartbeats.length > 0, 'Should receive heartbeat events');
     });
 
@@ -139,14 +137,14 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      handler.startStreamingMessage(message, (event) => {
+      handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
       // Wait for timeout (5s)
-      await new Promise((r) => setTimeout(r, 5500));
+      await new Promise(r => setTimeout(r, 5500));
 
-      const completeEvents = events.filter((e) => e.type === StreamEventType.COMPLETE);
+      const completeEvents = events.filter(e => e.type === StreamEventType.COMPLETE);
       assert.ok(completeEvents.length > 0, 'Should receive complete event on timeout');
     });
   });
@@ -156,7 +154,7 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      const stream = handler.startStreamingMessage(message, (event) => {
+      const stream = handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
@@ -174,7 +172,7 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      const stream = handler.startStreamingMessage(message, (event) => {
+      const stream = handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
@@ -190,7 +188,7 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      const stream = handler.startStreamingMessage(message, (event) => {
+      const stream = handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
@@ -252,14 +250,14 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      const stream = handler.startStreamingMessage(message, (event) => {
+      const stream = handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
       const closed = handler.closeStream(stream.stream_id);
 
       assert.equal(closed, true);
-      const completeEvent = events.find((e) => e.type === StreamEventType.COMPLETE);
+      const completeEvent = events.find(e => e.type === StreamEventType.COMPLETE);
       assert.ok(completeEvent);
     });
 
@@ -295,13 +293,13 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      const stream = handler.startStreamingMessage(message, (event) => {
+      const stream = handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
       handler.closeStream(stream.stream_id, 'client_disconnect');
 
-      const completeEvent = events.find((e) => e.type === StreamEventType.COMPLETE);
+      const completeEvent = events.find(e => e.type === StreamEventType.COMPLETE);
       assert.equal(completeEvent.reason, 'client_disconnect');
     });
   });
@@ -405,7 +403,7 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      const stream = handler.startStreamingMessage(message, (event) => {
+      const stream = handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
@@ -430,7 +428,7 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      const stream = handler.startStreamingMessage(message, (event) => {
+      const stream = handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
@@ -454,7 +452,7 @@ describe('StreamingHandler', () => {
       const events = [];
       const message = mockMessage();
 
-      const stream = handler.startStreamingMessage(message, (event) => {
+      const stream = handler.startStreamingMessage(message, event => {
         events.push(event);
       });
 
@@ -488,14 +486,14 @@ describe('StreamingHandler', () => {
       const events1 = [];
       const events2 = [];
 
-      handler.startStreamingMessage(mockMessage(), (e) => events1.push(e));
-      handler.startStreamingMessage(mockMessage(), (e) => events2.push(e));
+      handler.startStreamingMessage(mockMessage(), e => events1.push(e));
+      handler.startStreamingMessage(mockMessage(), e => events2.push(e));
 
       handler.clearStreams();
 
       // Both should receive complete events
-      assert.ok(events1.some((e) => e.type === StreamEventType.COMPLETE));
-      assert.ok(events2.some((e) => e.type === StreamEventType.COMPLETE));
+      assert.ok(events1.some(e => e.type === StreamEventType.COMPLETE));
+      assert.ok(events2.some(e => e.type === StreamEventType.COMPLETE));
     });
   });
 

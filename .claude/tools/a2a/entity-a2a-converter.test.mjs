@@ -38,9 +38,7 @@ const MOCK_ENTITIES = [
     type: 'api',
     value: 'rate-limiting',
     attributes: { limit: '100/min', strategy: 'sliding-window' },
-    relationships: [
-      { entity_id_2: 'entity-1', relationship_type: 'depends_on', strength: 0.8 },
-    ],
+    relationships: [{ entity_id_2: 'entity-1', relationship_type: 'depends_on', strength: 0.8 }],
     occurrence_count: 3,
     confidence: 0.88,
     context: 'API rate limiting',
@@ -84,11 +82,7 @@ describe('Entity-A2A Converter - Entity to DataPart', () => {
   it('should preserve entity name', async () => {
     const dataPart = await converter.toA2ADataPart(MOCK_ENTITIES);
 
-    assert.equal(
-      dataPart.data.entities[0].name,
-      'authentication',
-      'Should preserve entity name'
-    );
+    assert.equal(dataPart.data.entities[0].name, 'authentication', 'Should preserve entity name');
   });
 
   it('should convert attributes', async () => {
@@ -120,7 +114,11 @@ describe('Entity-A2A Converter - Entity to DataPart', () => {
   it('should convert mentions', async () => {
     const dataPart = await converter.toA2ADataPart(MOCK_ENTITIES);
 
-    assert.equal(dataPart.data.entities[0].mentions, 5, 'Should convert occurrence_count to mentions');
+    assert.equal(
+      dataPart.data.entities[0].mentions,
+      5,
+      'Should convert occurrence_count to mentions'
+    );
   });
 
   it('should include metadata', async () => {
@@ -151,10 +149,9 @@ describe('Entity-A2A Converter - Entity to DataPart', () => {
   });
 
   it('should throw error for non-array input', async () => {
-    await assert.rejects(
-      async () => await converter.toA2ADataPart('not-an-array'),
-      { message: /Entities must be an array/ }
-    );
+    await assert.rejects(async () => await converter.toA2ADataPart('not-an-array'), {
+      message: /Entities must be an array/,
+    });
   });
 });
 
@@ -225,27 +222,21 @@ describe('Entity-A2A Converter - DataPart to Entity', () => {
     const entities = await converter.fromA2ADataPart(dataPart);
 
     assert.equal(entities[0].confidence, 0.95, 'Should extract confidence');
-    assert.equal(
-      entities[0].context,
-      'User authentication system',
-      'Should extract context'
-    );
+    assert.equal(entities[0].context, 'User authentication system', 'Should extract context');
   });
 
   it('should throw error for invalid DataPart', async () => {
-    await assert.rejects(
-      async () => await converter.fromA2ADataPart(null),
-      { message: /data object required/ }
-    );
+    await assert.rejects(async () => await converter.fromA2ADataPart(null), {
+      message: /data object required/,
+    });
   });
 
   it('should throw error for DataPart without entities', async () => {
     const invalidDataPart = { data: {} };
 
-    await assert.rejects(
-      async () => await converter.fromA2ADataPart(invalidDataPart),
-      { message: /validation failed/ }
-    );
+    await assert.rejects(async () => await converter.fromA2ADataPart(invalidDataPart), {
+      message: /validation failed/,
+    });
   });
 });
 
@@ -322,9 +313,7 @@ describe('Entity-A2A Converter - Schema Validation', () => {
   it('should validate valid DataPart', () => {
     const validDataPart = {
       data: {
-        entities: [
-          { entityId: 'e1', entityType: 'test', name: 'Test' },
-        ],
+        entities: [{ entityId: 'e1', entityType: 'test', name: 'Test' }],
       },
     };
 
@@ -437,10 +426,9 @@ describe('Entity-A2A Converter - Merge DataParts', () => {
   });
 
   it('should throw error for non-array input', async () => {
-    await assert.rejects(
-      async () => await converter.mergeDataParts('not-an-array'),
-      { message: /dataParts must be an array/ }
-    );
+    await assert.rejects(async () => await converter.mergeDataParts('not-an-array'), {
+      message: /dataParts must be an array/,
+    });
   });
 });
 
