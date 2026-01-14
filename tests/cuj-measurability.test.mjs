@@ -29,20 +29,63 @@ const definitionContent = fs.readFileSync(DEFINITION_PATH, 'utf-8');
 // Shared measurable keywords (from cuj-validator-unified.mjs)
 const measurableKeywords = [
   // File references
-  '.json', '.md', '.yaml', 'schema', 'artifact', 'manifest',
+  '.json',
+  '.md',
+  '.yaml',
+  'schema',
+  'artifact',
+  'manifest',
   // Validation terms
-  'validated', 'validation', 'passes', 'fails', 'gate',
+  'validated',
+  'validation',
+  'passes',
+  'fails',
+  'gate',
   // Numeric/threshold
-  'time', 'seconds', 'minutes', 'hours', 'count', 'number', 'total', 'size',
-  'percentage', '%', 'ratio', 'score', 'rating', '>=', '<=', '>',
+  'time',
+  'seconds',
+  'minutes',
+  'hours',
+  'count',
+  'number',
+  'total',
+  'size',
+  'percentage',
+  '%',
+  'ratio',
+  'score',
+  'rating',
+  '>=',
+  '<=',
+  '>',
   // Status/boolean
-  'exists', 'present', 'contains', 'includes', 'true', 'false',
-  'exit code', 'status code', 'response code',
+  'exists',
+  'present',
+  'contains',
+  'includes',
+  'true',
+  'false',
+  'exit code',
+  'status code',
+  'response code',
   // Data structure
-  'array', 'field', 'populated', 'empty', 'null', 'undefined',
+  'array',
+  'field',
+  'populated',
+  'empty',
+  'null',
+  'undefined',
   // Weak indicators
-  'equal', 'greater', 'less', 'than', 'valid', 'invalid',
-  'deployed', 'running', 'coverage', 'response',
+  'equal',
+  'greater',
+  'less',
+  'than',
+  'valid',
+  'invalid',
+  'deployed',
+  'running',
+  'coverage',
+  'response',
 ];
 
 // Shared non-measurable patterns
@@ -168,12 +211,7 @@ describe('CUJ Measurability Validation', () => {
     });
 
     it('should detect subjective assessments', () => {
-      const criteria = [
-        'Standards met',
-        'Accurate results',
-        'Ensured quality',
-        'Correct behavior',
-      ];
+      const criteria = ['Standards met', 'Accurate results', 'Ensured quality', 'Correct behavior'];
 
       criteria.forEach(criterion => {
         const category = categorizeCriterion(criterion);
@@ -259,9 +297,21 @@ describe('CUJ Measurability Validation', () => {
 
     it('should have all non-measurable patterns documented', () => {
       const patternWords = [
-        'improved', 'faster', 'better', 'working', 'ensured',
-        'correct', 'functional', 'successful', 'accurate', 'met',
-        'standards', 'quality', 'clean', 'maintainable', 'reliable',
+        'improved',
+        'faster',
+        'better',
+        'working',
+        'ensured',
+        'correct',
+        'functional',
+        'successful',
+        'accurate',
+        'met',
+        'standards',
+        'quality',
+        'clean',
+        'maintainable',
+        'reliable',
       ];
 
       const missingPatterns = [];

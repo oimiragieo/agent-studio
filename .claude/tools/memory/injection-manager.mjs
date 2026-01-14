@@ -13,10 +13,25 @@
  * Phase 2.4 Enhancement:
  * - Combines FTS5 keyword search (60% weight) + semantic search (40% weight)
  * - Merged results ranked by combined score
+ *
+ * Phase 3 Enhancement (Enhanced Context Injection):
+ * - Multi-factor relevance scoring (semantic + recency + tier + entity)
+ * - Dynamic token budget management
+ * - Query-aware memory retrieval
+ * - Enable via USE_ENHANCED_INJECTION flag
  */
 
 import { createMemoryDatabase } from './database.mjs';
 import { createSemanticMemoryService } from './semantic-memory.mjs';
+import { createEntityMemory } from './entity-memory.mjs';
+import { createEnhancedContextInjector } from './enhanced-context-injector.mjs';
+
+/**
+ * Feature flag: Enable Phase 3 enhanced context injection
+ * Set to true to use multi-factor scoring and query-aware retrieval
+ * Set to false for backward compatibility with Phase 2.4
+ */
+export const USE_ENHANCED_INJECTION = process.env.USE_ENHANCED_INJECTION !== 'false';
 
 /**
  * Memory Injection Manager
@@ -29,6 +44,8 @@ export class MemoryInjectionManager {
   constructor(database = null, options = {}) {
     this.db = database;
     this.semanticMemory = null; // Will be initialized on demand
+    this.entityMemory = null; // Entity memory manager
+    this.enhancedInjector = null; // Phase 3 enhanced injector (lazy-loaded)
     this.options = {
       tokenBudget: options.tokenBudget || 0.2, // 20% of remaining context
       maxMemoryAge: options.maxMemoryAge || 7, // days
@@ -36,8 +53,10 @@ export class MemoryInjectionManager {
       maxTokens: options.maxTokens || 40000, // Hard cap
       latencyBudget: options.latencyBudget || 100, // ms
       semanticSearchEnabled: options.semanticSearchEnabled !== false, // Enable by default
+      entityMemoryEnabled: options.entityMemoryEnabled !== false, // Enable entity memory
       ftsWeight: options.ftsWeight || 0.6, // FTS5 weight in combined search
       semanticWeight: options.semanticWeight || 0.4, // Semantic weight in combined search
+      useEnhancedInjection: options.useEnhancedInjection !== false && USE_ENHANCED_INJECTION, // Phase 3 flag
       ...options,
     };
 
@@ -75,10 +94,47 @@ export class MemoryInjectionManager {
         this.options.semanticSearchEnabled = false;
       }
     }
+
+    // Initialize entity memory if enabled
+    if (this.options.entityMemoryEnabled && !this.entityMemory) {
+      try {
+        this.entityMemory = createEntityMemory(this.db);
+        await this.entityMemory.initialize();
+        console.log('[Memory Injection] Entity memory enabled');
+      } catch (error) {
+        console.warn('[Memory Injection] Entity memory initialization failed:', error.message);
+        this.options.entityMemoryEnabled = false;
+      }
+    }
+
+    // Initialize Phase 3 enhanced injector if enabled
+    if (this.options.useEnhancedInjection && !this.enhancedInjector) {
+      try {
+        this.enhancedInjector = createEnhancedContextInjector({
+          database: this.db,
+          semanticMemory: this.semanticMemory,
+          entityMemory: this.entityMemory,
+          tokenBudget: this.options.tokenBudget,
+          maxTokens: this.options.maxTokens,
+          minRelevance: this.options.relevanceThreshold,
+        });
+        await this.enhancedInjector.initialize();
+        console.log('[Memory Injection] Phase 3 enhanced injection enabled');
+      } catch (error) {
+        console.warn(
+          '[Memory Injection] Enhanced injection initialization failed, using Phase 2.4:',
+          error.message
+        );
+        this.options.useEnhancedInjection = false;
+      }
+    }
   }
 
   /**
    * Inject relevant memory before tool execution
+   *
+   * Routes to Phase 3 enhanced injector if enabled, otherwise uses Phase 2.4 logic
+   * Phase 4: Check for agent-to-agent handoff context before normal injection
    *
    * @param {object} context - Execution context
    * @returns {Promise<object>} Memory injection result
@@ -91,6 +147,27 @@ export class MemoryInjectionManager {
       if (!this.db?.isInitialized) {
         await this.initialize();
       }
+
+      // Phase 4: Check for pending agent-to-agent handoff
+      const handoffContext = await this.checkAndApplyHandoff(context);
+
+      if (handoffContext) {
+        console.log('[Memory Injection] Applied agent-to-agent handoff context');
+        return {
+          memory: handoffContext.context.context,
+          tokensUsed: handoffContext.context.tokensUsed,
+          sources: [{ type: 'handoff', handoffId: handoffContext.handoffId }],
+          handoff: true,
+          duration: Date.now() - startTime,
+        };
+      }
+
+      // Route to Phase 3 enhanced injector if enabled
+      if (this.options.useEnhancedInjection && this.enhancedInjector) {
+        return await this.enhancedInjector.injectEnhancedMemory(context);
+      }
+
+      // Fall back to Phase 2.4 logic below
 
       const {
         sessionId,
@@ -682,6 +759,151 @@ export class MemoryInjectionManager {
       hash = hash & hash; // Convert to 32bit integer
     }
     return hash.toString(36);
+  }
+
+  /**
+   * Inject entity context into tool execution
+   *
+   * Retrieves relevant entities and formats them for context injection
+   *
+   * @param {Array} entities - Entity IDs or search terms
+   * @param {number} maxTokens - Maximum tokens for entity context
+   * @returns {Promise<object>} Entity context injection result
+   */
+  async injectEntityContext(entities, maxTokens = 5000) {
+    if (!this.options.entityMemoryEnabled || !this.entityMemory) {
+      return {
+        context: null,
+        tokensUsed: 0,
+        entities: [],
+      };
+    }
+
+    try {
+      const entityData = [];
+      let tokensUsed = 0;
+
+      // Resolve entities (IDs or search terms)
+      for (const entity of entities) {
+        if (tokensUsed >= maxTokens) {
+          break;
+        }
+
+        let entityObj;
+
+        // If entity is an ID, get directly
+        if (typeof entity === 'string' && entity.match(/^[0-9a-f-]{36}$/i)) {
+          entityObj = await this.entityMemory.getEntity(entity);
+        } else {
+          // Search for entity
+          const results = await this.entityMemory.searchEntities(entity, null, 1);
+          entityObj = results[0] || null;
+        }
+
+        if (!entityObj) {
+          continue;
+        }
+
+        // Format entity for context
+        const formatted = this.formatEntityForContext(entityObj);
+        const estimatedTokens = this.estimateTokens(formatted);
+
+        if (tokensUsed + estimatedTokens <= maxTokens) {
+          entityData.push(formatted);
+          tokensUsed += estimatedTokens;
+        }
+      }
+
+      // Build context string
+      const context =
+        entityData.length > 0 ? `\n## Known Entities\n\n${entityData.join('\n\n')}\n` : null;
+
+      return {
+        context,
+        tokensUsed,
+        entities: entityData.length,
+      };
+    } catch (error) {
+      console.error('[Memory Injection] Entity context injection failed:', error.message);
+      return {
+        context: null,
+        tokensUsed: 0,
+        entities: [],
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Format entity for context injection
+   *
+   * @param {object} entity - Entity object
+   * @returns {string} Formatted entity context
+   */
+  formatEntityForContext(entity) {
+    const parts = [`**${entity.value}** (${entity.type})`];
+
+    // Add metadata if available
+    if (entity.metadata && Object.keys(entity.metadata).length > 0) {
+      const metadataStr = Object.entries(entity.metadata)
+        .filter(([key]) => key !== 'confidence' && key !== 'context')
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(', ');
+
+      if (metadataStr) {
+        parts.push(`- ${metadataStr}`);
+      }
+    }
+
+    // Add relationships if available
+    if (entity.relationships && entity.relationships.length > 0) {
+      const relSummary = entity.relationships
+        .slice(0, 5) // Limit to 5 most important relationships
+        .map(rel => `${rel.relationship_type}: ${rel.related_value}`)
+        .join(', ');
+
+      parts.push(`- Related: ${relSummary}`);
+    }
+
+    // Add occurrence info
+    if (entity.occurrence_count > 1) {
+      parts.push(`- Mentioned ${entity.occurrence_count} times`);
+    }
+
+    return parts.join('\n');
+  }
+
+  /**
+   * Check for and apply agent-to-agent handoff context (Phase 4)
+   *
+   * @param {object} context - Execution context
+   * @returns {Promise<object|null>} Handoff context if exists
+   */
+  async checkAndApplyHandoff(context) {
+    try {
+      const { sessionId, agentId } = context;
+
+      if (!sessionId || !agentId) {
+        return null;
+      }
+
+      // Check for pending handoff
+      const { createMemoryHandoffService } = await import('./memory-handoff-service.mjs');
+      const handoffService = createMemoryHandoffService({ database: this.db });
+      await handoffService.initialize();
+
+      const pendingHandoff = await handoffService.checkPendingHandoff(sessionId, agentId);
+
+      if (!pendingHandoff) {
+        return null;
+      }
+
+      // Apply handoff context
+      return await handoffService.applyHandoffContext(pendingHandoff.handoff_id);
+    } catch (error) {
+      console.warn('[Memory Injection] Handoff check failed:', error.message);
+      return null;
+    }
   }
 }
 

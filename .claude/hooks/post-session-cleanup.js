@@ -13,10 +13,10 @@
  * Note: Runs after each tool execution to catch SLOP immediately
  */
 
-import { unlink, readdir, stat, readFile, writeFile, mkdir } from 'fs/promises';
+import { unlink, readdir, stat, readFile, writeFile, mkdir, rm } from 'fs/promises';
 import { join, resolve, dirname, basename } from 'path';
 import { fileURLToPath } from 'url';
-import { existsSync } from 'fs';
+import { existsSync, lstatSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -134,7 +134,13 @@ async function cleanupFile(filePath) {
     }
 
     if (shouldClean) {
-      await unlink(fullPath);
+      // Check if it's a directory or file
+      const stats = lstatSync(fullPath);
+      if (stats.isDirectory()) {
+        await rm(fullPath, { recursive: true, force: true });
+      } else {
+        await unlink(fullPath);
+      }
       return {
         file: filePath,
         reason: reason,
@@ -147,6 +153,49 @@ async function cleanupFile(filePath) {
     // Fail silently - don't block on cleanup errors
     return null;
   }
+}
+
+/**
+ * Cleanup tmpclaude-* files and directories from project root
+ */
+async function cleanupTmpclaudeFiles() {
+  const projectRoot = resolve(__dirname, '../..');
+  const cleaned = [];
+
+  try {
+    // Read project root directory
+    const entries = await readdir(projectRoot);
+
+    for (const entry of entries) {
+      // Match tmpclaude-* pattern
+      if (entry.startsWith('tmpclaude-') && entry.includes('-cwd')) {
+        const entryPath = join(projectRoot, entry);
+        const fullPath = resolve(entryPath);
+
+        try {
+          // Check if it's a directory or file
+          const stats = lstatSync(fullPath);
+          if (stats.isDirectory()) {
+            await rm(fullPath, { recursive: true, force: true });
+          } else {
+            await unlink(fullPath);
+          }
+
+          cleaned.push({
+            file: entry,
+            reason: 'tmpclaude_file',
+            cleaned_at: new Date().toISOString(),
+          });
+        } catch (error) {
+          // Fail silently for individual files - continue with others
+        }
+      }
+    }
+  } catch (error) {
+    // Fail silently - cleanup is non-critical
+  }
+
+  return cleaned;
 }
 
 /**
@@ -164,30 +213,43 @@ async function main() {
     const toolName = data.tool_name || '';
     const toolInput = data.tool_input || {};
 
-    // Only cleanup after Write operations
+    const cleanedItems = [];
+
+    // Cleanup after Write operations
     if (toolName === 'Write') {
       const filePath = toolInput.file_path || toolInput.path || '';
 
       if (filePath) {
         const cleaned = await cleanupFile(filePath);
-
         if (cleaned) {
-          // Log cleanup
-          const log = await loadCleanupLog();
-          log.cleaned_files.push(cleaned);
-          log.last_cleanup = new Date().toISOString();
-          await saveCleanupLog(log);
-
-          // Output warning (non-blocking)
-          console.error(
-            JSON.stringify({
-              action: 'cleaned',
-              file: cleaned.file,
-              reason: cleaned.reason,
-              message: `Cleaned up SLOP file: ${cleaned.file} (${cleaned.reason})`,
-            })
-          );
+          cleanedItems.push(cleaned);
         }
+      }
+    }
+
+    // Cleanup tmpclaude-* files after Bash commands
+    if (toolName === 'Bash') {
+      const tmpclaudeCleaned = await cleanupTmpclaudeFiles();
+      cleanedItems.push(...tmpclaudeCleaned);
+    }
+
+    // Log all cleaned items
+    if (cleanedItems.length > 0) {
+      const log = await loadCleanupLog();
+      log.cleaned_files.push(...cleanedItems);
+      log.last_cleanup = new Date().toISOString();
+      await saveCleanupLog(log);
+
+      // Output cleanup summary (non-blocking)
+      for (const cleaned of cleanedItems) {
+        console.error(
+          JSON.stringify({
+            action: 'cleaned',
+            file: cleaned.file,
+            reason: cleaned.reason,
+            message: `Cleaned up ${cleaned.reason === 'tmpclaude_file' ? 'tmpclaude file' : 'SLOP file'}: ${cleaned.file} (${cleaned.reason})`,
+          })
+        );
       }
     }
 

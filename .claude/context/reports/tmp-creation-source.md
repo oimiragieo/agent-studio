@@ -26,6 +26,7 @@
 **Location**: Project root (incorrect - should use OS temp directory)
 
 **Evidence**:
+
 - Git status shows 200+ `tmpclaude-*` directories as untracked
 - Pattern matches `mkdtemp()` output format: `tmpclaude-<4hex>-cwd`
 - Files created ONLY during active Claude Code sessions using Bash tool
@@ -34,6 +35,7 @@
 ### 2. Why Was It Creating Them?
 
 **Bash Tool Working Directory Behavior**:
+
 - Each Bash tool call gets isolated working directory
 - Claude Code creates temp directory for command execution
 - Directory persists after command completes (not auto-cleaned)
@@ -41,6 +43,7 @@
 - Should use: OS temp directory (`/tmp` or `%TEMP%`) ✅
 
 **Session Behavior**:
+
 - New directory created for EACH Bash tool call
 - Accumulates during long sessions with many Bash commands
 - No automatic cleanup mechanism
@@ -53,6 +56,7 @@
 **Conclusion**: NO new directories created
 
 **Commands Executed**:
+
 ```bash
 # Baseline
 find . -maxdepth 1 -type d -name "tmpclaude-*" | wc -l
@@ -70,6 +74,7 @@ find . -maxdepth 1 -type d -name "tmpclaude-*" | wc -l
 ### Why This Happened
 
 Claude Code's Bash tool implementation:
+
 1. Creates isolated working directory for each command
 2. Uses `mkdtemp("tmpclaude-XXXXXX")` pattern
 3. Defaults to current directory (project root) instead of OS temp
@@ -79,6 +84,7 @@ Claude Code's Bash tool implementation:
 ### What Triggers Creation
 
 **EVERY Bash tool call** creates a new directory:
+
 - `ls`, `grep`, `find`, `node`, `npm`, `git` - ALL create temp dirs
 - Each tool call = new `tmpclaude-<hex>-cwd` directory
 - Heavy Bash usage = rapid accumulation
@@ -86,6 +92,7 @@ Claude Code's Bash tool implementation:
 ### Why It Stopped
 
 **Session Activity Ceased**:
+
 - No new Bash tool calls being made
 - No active Claude Code commands executing
 - Session either ended or in idle state
@@ -103,6 +110,7 @@ Claude Code's Bash tool implementation:
 ### Permanent Prevention
 
 **Option 1: Configure Claude Code Temp Directory** (RECOMMENDED)
+
 ```bash
 # Set environment variable for Claude Code
 export TMPDIR=/tmp  # Unix/macOS
@@ -113,16 +121,19 @@ set TMPDIR=%TEMP%   # Windows
 ```
 
 **Option 2: Add Cleanup Hook**
+
 - Create post-session cleanup script
 - Add to `.claude/hooks/PostToolUse`
 - Auto-delete `tmpclaude-*` directories after each Bash call
 
 **Option 3: .gitignore Prevention**
+
 - Already in place: `tmpclaude-*` ignored
 - Prevents accidental commits
 - Does NOT prevent creation
 
 **Option 4: Monitor and Alert**
+
 - Script to detect threshold (e.g., >50 temp dirs)
 - Alert user to run cleanup
 - Prevent accumulation before issue
@@ -141,6 +152,7 @@ set TMPDIR=%TEMP%   # Windows
 **Answer**: Nothing breaks.
 
 **Explanation**:
+
 - Temp directories are per-command isolation
 - Created fresh for each Bash call
 - Never reused across commands
@@ -150,6 +162,7 @@ set TMPDIR=%TEMP%   # Windows
 ### Safe to Delete?
 
 **YES** - Safe to delete all `tmpclaude-*` directories:
+
 - Not used after command completes
 - No persistent state stored
 - No references in code
@@ -160,6 +173,7 @@ set TMPDIR=%TEMP%   # Windows
 ## Verification Commands
 
 ### Check if Creation Stopped
+
 ```bash
 # Before
 find . -maxdepth 1 -type d -name "tmpclaude-*" | wc -l
@@ -174,6 +188,7 @@ find . -maxdepth 1 -type d -name "tmpclaude-*" | wc -l
 ```
 
 ### Verify No Active Processes
+
 ```bash
 # Windows
 tasklist | findstr /i "claude"

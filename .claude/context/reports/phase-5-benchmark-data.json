@@ -1,0 +1,113 @@
+{
+  "scenarios": {
+    "singleAgentHandoff": {
+      "name": "Single Agent Handoff",
+      "target": "<200ms p95",
+      "p50": 0.4158,
+      "p95": 0.6939,
+      "p99": 1.8549,
+      "avg": 0.5330579999999998,
+      "min": 0.3421,
+      "max": 6.6079,
+      "count": 100,
+      "meetsTarget": true,
+      "rawTimingsCount": 100
+    },
+    "multiAgentChain": {
+      "name": "Multi-Agent Chain",
+      "target": "<600ms p95",
+      "handoffsPerChain": 3,
+      "p50": 2.1269,
+      "p95": 3.5256,
+      "p99": 10.7652,
+      "avg": 2.418937000000001,
+      "min": 1.425,
+      "max": 10.782,
+      "count": 100,
+      "meetsTarget": true,
+      "rawTimingsCount": 100
+    },
+    "sessionResume": {
+      "name": "Session Resume",
+      "target": "<1000ms p95",
+      "memoriesResumed": 100,
+      "entitiesResumed": 0,
+      "p50": 0.27,
+      "p95": 0.4523,
+      "p99": 1.5188,
+      "avg": 0.3684420000000001,
+      "min": 0.2101,
+      "max": 6.2718,
+      "count": 100,
+      "meetsTarget": true,
+      "rawTimingsCount": 100
+    },
+    "entityDeduplication": {
+      "name": "Entity Deduplication",
+      "target": "<10ms p95",
+      "entitiesProcessed": 1000,
+      "uniqueEntities": 9,
+      "totalMerges": 955,
+      "p50": 0.3282,
+      "p95": 0.5058,
+      "p99": 2.2925,
+      "avg": 0.39709829999999946,
+      "min": 0.2553,
+      "max": 7.5698,
+      "count": 1000,
+      "meetsTarget": true,
+      "rawTimingsCount": 1000
+    },
+    "cacheEffectiveness": {
+      "name": "Cache Effectiveness",
+      "target": ">=50% hit rate",
+      "queriesExecuted": 100,
+      "cacheHits": 100,
+      "cacheMisses": 5,
+      "cacheHitRate": "95.24",
+      "p50": 0.0017,
+      "p95": 0.005,
+      "p99": 0.0067,
+      "avg": 0.0017850000000000006,
+      "min": 0.0006,
+      "max": 0.0077,
+      "count": 100,
+      "meetsTarget": true,
+      "rawTimingsCount": 100
+    },
+    "circularDetection": {
+      "name": "Circular Handoff Detection",
+      "target": "<100ms p95",
+      "agentsInGraph": 5,
+      "p50": 0.4395,
+      "p95": 0.7944,
+      "p99": 0.8437,
+      "avg": 0.493745,
+      "min": 0.4166,
+      "max": 0.9651,
+      "count": 100,
+      "meetsTarget": true,
+      "rawTimingsCount": 100
+    }
+  },
+  "metadata": {
+    "timestamp": "2026-01-13T18:45:02.580Z",
+    "nodeVersion": "v22.17.1",
+    "platform": "win32",
+    "arch": "x64",
+    "iterations": 100,
+    "warmupIterations": 10
+  },
+  "summary": {
+    "scenariosCompleted": 6,
+    "scenariosMeetingTargets": 6,
+    "totalExecutionTimeMs": 897,
+    "passRate": "100.0%",
+    "benchmarkResults": {
+      "handoff_p95": 0.6939,
+      "resume_p95": 0.4523,
+      "injection_p95": 0.005,
+      "cache_hit_rate": 95.24
+    }
+  }
+}

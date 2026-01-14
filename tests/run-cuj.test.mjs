@@ -28,14 +28,24 @@ function runCuj(args, options = {}) {
     let stdout = '';
     let stderr = '';
     let killed = false;
-    const timeoutId = setTimeout(() => { killed = true; child.kill('SIGTERM'); }, timeout);
-    child.stdout.on('data', (data) => { stdout += data.toString(); });
-    child.stderr.on('data', (data) => { stderr += data.toString(); });
+    const timeoutId = setTimeout(() => {
+      killed = true;
+      child.kill('SIGTERM');
+    }, timeout);
+    child.stdout.on('data', data => {
+      stdout += data.toString();
+    });
+    child.stderr.on('data', data => {
+      stderr += data.toString();
+    });
     child.on('exit', (code, signal) => {
       clearTimeout(timeoutId);
-      resolve({ code: killed ? -1 : (code || 0), stdout, stderr, signal });
+      resolve({ code: killed ? -1 : code || 0, stdout, stderr, signal });
     });
-    child.on('error', (error) => { clearTimeout(timeoutId); reject(error); });
+    child.on('error', error => {
+      clearTimeout(timeoutId);
+      reject(error);
+    });
   });
 }
 

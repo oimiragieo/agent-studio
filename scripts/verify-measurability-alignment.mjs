@@ -39,7 +39,9 @@ try {
   registryStats = {
     totalCriteria: doctorResult.doctor?.stats?.totalRegistryCriteria || 0,
     measurable: doctorResult.doctor?.stats?.measurableRegistryCriteria || 0,
-    nonMeasurablePercent: parseFloat(doctorResult.doctor?.stats?.registryNonMeasurablePercent || '0'),
+    nonMeasurablePercent: parseFloat(
+      doctorResult.doctor?.stats?.registryNonMeasurablePercent || '0'
+    ),
   };
 
   console.log(`   ✓ Registry Stats:`);
@@ -85,13 +87,17 @@ console.log('📈 Alignment Analysis\n');
 console.log('Scope Difference:');
 console.log(`  Registry: ${registryStats.totalCriteria} criteria (high-level expected_outputs)`);
 console.log(`  Markdown: ${markdownStats.totalCriteria} criteria (detailed success criteria)`);
-console.log(`  Ratio: ${(markdownStats.totalCriteria / registryStats.totalCriteria).toFixed(2)}x more detailed in markdown\n`);
+console.log(
+  `  Ratio: ${(markdownStats.totalCriteria / registryStats.totalCriteria).toFixed(2)}x more detailed in markdown\n`
+);
 
 console.log('Non-Measurable Percentage:');
 console.log(`  Registry: ${registryStats.nonMeasurablePercent}%`);
 console.log(`  Markdown: ${markdownStats.nonMeasurablePercent}%`);
 
-const percentageDiff = Math.abs(registryStats.nonMeasurablePercent - markdownStats.nonMeasurablePercent);
+const percentageDiff = Math.abs(
+  registryStats.nonMeasurablePercent - markdownStats.nonMeasurablePercent
+);
 console.log(`  Difference: ${percentageDiff.toFixed(1)}%\n`);
 
 // Alignment verdict
@@ -99,11 +105,20 @@ console.log('Alignment Status:');
 
 const THRESHOLD = 30; // Target: <= 30% non-measurable
 
-if (registryStats.nonMeasurablePercent <= THRESHOLD && markdownStats.nonMeasurablePercent <= THRESHOLD) {
+if (
+  registryStats.nonMeasurablePercent <= THRESHOLD &&
+  markdownStats.nonMeasurablePercent <= THRESHOLD
+) {
   console.log('  ✅ Both sources meet target (<= 30% non-measurable)');
-} else if (registryStats.nonMeasurablePercent > THRESHOLD && markdownStats.nonMeasurablePercent <= THRESHOLD) {
+} else if (
+  registryStats.nonMeasurablePercent > THRESHOLD &&
+  markdownStats.nonMeasurablePercent <= THRESHOLD
+) {
   console.log('  ⚠️  Registry needs improvement (markdown already meets target)');
-} else if (registryStats.nonMeasurablePercent <= THRESHOLD && markdownStats.nonMeasurablePercent > THRESHOLD) {
+} else if (
+  registryStats.nonMeasurablePercent <= THRESHOLD &&
+  markdownStats.nonMeasurablePercent > THRESHOLD
+) {
   console.log('  ⚠️  Markdown needs improvement (registry already meets target)');
 } else {
   console.log('  ❌ Both sources need improvement (> 30% non-measurable)');

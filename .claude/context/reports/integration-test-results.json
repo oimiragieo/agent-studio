@@ -1,0 +1,135 @@
+{
+  "testSuite": "Phase 5 Wave 2 Integration Tests",
+  "timestamp": "2026-01-13T18:50:14.912Z",
+  "duration": 119,
+  "summary": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "passRate": "100.0%"
+  },
+  "scenarios": [
+    {
+      "name": "Multi-Agent Workflow",
+      "status": "PASSED",
+      "duration": 6
+    },
+    {
+      "name": "Session Resume",
+      "status": "PASSED",
+      "duration": 4
+    },
+    {
+      "name": "Entity Deduplication",
+      "status": "PASSED",
+      "duration": 2
+    },
+    {
+      "name": "Tier Promotion",
+      "status": "PASSED",
+      "duration": 3
+    },
+    {
+      "name": "Handoff with Entities",
+      "status": "PASSED",
+      "duration": 3
+    },
+    {
+      "name": "Token Budget",
+      "status": "PASSED",
+      "duration": 15
+    },
+    {
+      "name": "Full E2E Workflow",
+      "status": "PASSED",
+      "duration": 4
+    },
+    {
+      "name": "Performance Benchmarks",
+      "status": "PASSED",
+      "duration": 11,
+      "benchmarks": {
+        "memoryStorage": 0.3,
+        "collaborationRegistration": 0.2,
+        "entityLookup": 0.6,
+        "checkpointCreation": 0
+      }
+    },
+    {
+      "name": "Cross-Tier Search",
+      "status": "PASSED",
+      "duration": 3,
+      "resultCount": 2
+    },
+    {
+      "name": "Memory Expiration",
+      "status": "PASSED",
+      "duration": 2
+    },
+    {
+      "name": "Multiple Resume Points",
+      "status": "PASSED",
+      "duration": 6
+    },
+    {
+      "name": "Entity Statistics",
+      "status": "PASSED",
+      "duration": 1,
+      "stats": {
+        "globalEntities": [
+          {
+            "type": "database",
+            "count": 2,
+            "total_occurrences": 2,
+            "total_merges": 0,
+            "avg_version": 1
+          },
+          {
+            "type": "framework",
+            "count": 1,
+            "total_occurrences": 2,
+            "total_merges": 1,
+            "avg_version": 2
+          },
+          {
+            "type": "language",
+            "count": 1,
+            "total_occurrences": 2,
+            "total_merges": 1,
+            "avg_version": 2
+          },
+          {
+            "type": "technology",
+            "count": 3,
+            "total_occurrences": 3,
+            "total_merges": 0,
+            "avg_version": 1
+          },
+          {
+            "type": "test",
+            "count": 1,
+            "total_occurrences": 10,
+            "total_merges": 9,
+            "avg_version": 10
+          }
+        ],
+        "timestamp": "2026-01-13T18:50:14.891Z"
+      }
+    },
+    {
+      "name": "Collaboration Chain Analysis",
+      "status": "PASSED",
+      "duration": 2
+    },
+    {
+      "name": "Relevance Scoring",
+      "status": "PASSED",
+      "duration": 3
+    },
+    {
+      "name": "Concurrent Operations",
+      "status": "PASSED",
+      "duration": 11
+    }
+  ]
+}

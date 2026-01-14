@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 async function main() {
   const cujDir = path.join(__dirname, '..', '.claude', 'docs', 'cujs');
   const files = await fs.readdir(cujDir);
-  const cujFiles = files.filter((f) => f.startsWith('CUJ-') && f.endsWith('.md')).sort();
+  const cujFiles = files.filter(f => f.startsWith('CUJ-') && f.endsWith('.md')).sort();
 
   console.log('CUJ Execution Mode Validation Report');
   console.log('='.repeat(80));
@@ -62,25 +62,25 @@ async function main() {
 
   // Display results
   console.log(`✅ Valid Workflow Mode: ${results.workflow.length}`);
-  results.workflow.forEach((r) => console.log(`   ${r.file} → ${r.workflow}`));
+  results.workflow.forEach(r => console.log(`   ${r.file} → ${r.workflow}`));
 
   console.log(`\n✅ Plan Mode: ${results.planMode.length}`);
-  results.planMode.forEach((f) => console.log(`   ${f}`));
+  results.planMode.forEach(f => console.log(`   ${f}`));
 
   console.log(`\n✅ Subagent Only: ${results.subagentOnly.length}`);
-  results.subagentOnly.forEach((f) => console.log(`   ${f}`));
+  results.subagentOnly.forEach(f => console.log(`   ${f}`));
 
   console.log(`\n✅ Skill Only: ${results.skillOnly.length}`);
-  results.skillOnly.forEach((f) => console.log(`   ${f}`));
+  results.skillOnly.forEach(f => console.log(`   ${f}`));
 
   if (results.missing.length > 0) {
     console.log(`\n❌ Missing Execution Mode: ${results.missing.length}`);
-    results.missing.forEach((f) => console.log(`   ${f}`));
+    results.missing.forEach(f => console.log(`   ${f}`));
   }
 
   if (results.invalid.length > 0) {
     console.log(`\n⚠️  Invalid/Incomplete: ${results.invalid.length}`);
-    results.invalid.forEach((r) => console.log(`   ${r.file}: ${r.reason}`));
+    results.invalid.forEach(r => console.log(`   ${r.file}: ${r.reason}`));
   }
 
   console.log('\n' + '='.repeat(80));

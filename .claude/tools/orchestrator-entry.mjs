@@ -25,6 +25,7 @@ import { routeWorkflow } from './workflow-router.mjs';
 import { updateRunSummary } from './dashboard-generator.mjs';
 import { detectAllSkills } from './skill-trigger-detector.mjs';
 import { AgentSupervisor } from './workers/supervisor.mjs';
+import { OutputValidator } from './output-validator.mjs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 // Generate simple UUID-like ID
@@ -279,6 +280,73 @@ async function detectAndLogSkills(agentType, taskDescription, runId) {
       all: [],
       matchedTriggers: [],
       error: error.message,
+    };
+  }
+}
+
+/**
+ * Validate agent output against schema
+ * @param {Object} output - Agent output to validate
+ * @param {Object|string} validationSchema - JSON schema or path to schema file
+ * @param {Object} options - Validation options
+ * @returns {Promise<Object>} Validation result
+ */
+async function validateAgentOutput(output, validationSchema, options = {}) {
+  const { agentType = 'unknown', retryOnFailure = false, runId = null } = options;
+
+  try {
+    const validator = new OutputValidator();
+    let schema = validationSchema;
+
+    // Load schema from file if string path provided
+    if (typeof validationSchema === 'string') {
+      const schemaPath = validationSchema.startsWith('.')
+        ? join(__dirname, '..', validationSchema)
+        : validationSchema;
+      const schemaContent = await readFile(schemaPath, 'utf-8');
+      schema = JSON.parse(schemaContent);
+    }
+
+    // Validate output
+    const result = validator.validateWithReport(output, schema);
+
+    // Log validation result
+    if (result.valid) {
+      console.log(`[Orchestrator Entry] ✅ ${agentType} output validation passed`);
+    } else {
+      console.warn(`[Orchestrator Entry] ❌ ${agentType} output validation failed:`);
+      console.warn(result.report);
+    }
+
+    // Save validation report if runId provided
+    if (runId) {
+      const runDirs = getRunDirectoryStructure(runId);
+      const validationPath = join(runDirs.artifacts_dir, `${agentType}-validation.json`);
+
+      await writeFile(
+        validationPath,
+        JSON.stringify(
+          {
+            agent: agentType,
+            validation_timestamp: new Date().toISOString(),
+            valid: result.valid,
+            errors: result.errors || [],
+            schema_used: typeof validationSchema === 'string' ? validationSchema : 'inline',
+          },
+          null,
+          2
+        ),
+        'utf-8'
+      );
+    }
+
+    return result;
+  } catch (error) {
+    console.error(`[Orchestrator Entry] Validation error: ${error.message}`);
+    return {
+      valid: false,
+      errors: [{ path: 'root', message: error.message, code: 'validation_error' }],
+      report: `❌ Validation failed: ${error.message}`,
     };
   }
 }
@@ -904,7 +972,7 @@ process.on('SIGTERM', async () => {
 });
 
 // Export helper functions for testing
-export { detectRuntime, initializeSupervisor, isLongRunningTask };
+export { detectRuntime, initializeSupervisor, isLongRunningTask, validateAgentOutput };
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {

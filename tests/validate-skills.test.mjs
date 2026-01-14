@@ -128,7 +128,7 @@ async function validateSkill(skillName, frontmatter) {
 
   try {
     // Import js-yaml dynamically (same as validate-config.mjs)
-    const yaml = await import('js-yaml').then((m) => m.default).catch(() => null);
+    const yaml = await import('js-yaml').then(m => m.default).catch(() => null);
 
     const normalizedContent = frontmatter.replace(/\r\n/g, '\n');
     if (!normalizedContent.startsWith('---\n')) {
@@ -204,9 +204,7 @@ async function validateSkill(skillName, frontmatter) {
       const recommendedFields = ['allowed-tools:', 'version:'];
       for (const field of recommendedFields) {
         if (!frontmatterContent.includes(field)) {
-          warnings.push(
-            `Skill ${skillName}: Missing recommended field: ${field.replace(':', '')}`
-          );
+          warnings.push(`Skill ${skillName}: Missing recommended field: ${field.replace(':', '')}`);
         }
       }
     }
@@ -238,7 +236,7 @@ describe('Skill Validation', () => {
       const { errors } = await validateSkill('no-name', SKILL_SAMPLES.missingName);
       assert.ok(errors.length > 0, 'Should have errors');
       assert.ok(
-        errors.some((e) => e.includes('Missing required field: name')),
+        errors.some(e => e.includes('Missing required field: name')),
         'Should error on missing name'
       );
     });
@@ -247,7 +245,7 @@ describe('Skill Validation', () => {
       const { errors } = await validateSkill('no-description', SKILL_SAMPLES.missingDescription);
       assert.ok(errors.length > 0, 'Should have errors');
       assert.ok(
-        errors.some((e) => e.includes('Missing required field: description')),
+        errors.some(e => e.includes('Missing required field: description')),
         'Should error on missing description'
       );
     });
@@ -261,7 +259,7 @@ describe('Skill Validation', () => {
       );
       assert.strictEqual(errors.length, 0, 'Should have no errors');
       assert.ok(
-        warnings.some((w) => w.includes('Missing recommended field: version')),
+        warnings.some(w => w.includes('Missing recommended field: version')),
         'Should warn about missing version'
       );
     });
@@ -273,7 +271,7 @@ describe('Skill Validation', () => {
       );
       assert.strictEqual(errors.length, 0, 'Should have no errors');
       assert.ok(
-        warnings.some((w) => w.includes('Missing recommended field: allowed-tools')),
+        warnings.some(w => w.includes('Missing recommended field: allowed-tools')),
         'Should warn about missing allowed-tools'
       );
     });
@@ -283,11 +281,11 @@ describe('Skill Validation', () => {
       assert.strictEqual(errors.length, 0, 'Should have no errors');
       assert.strictEqual(warnings.length, 2, 'Should have 2 warnings');
       assert.ok(
-        warnings.some((w) => w.includes('Missing recommended field: version')),
+        warnings.some(w => w.includes('Missing recommended field: version')),
         'Should warn about version'
       );
       assert.ok(
-        warnings.some((w) => w.includes('Missing recommended field: allowed-tools')),
+        warnings.some(w => w.includes('Missing recommended field: allowed-tools')),
         'Should warn about allowed-tools'
       );
     });
@@ -297,7 +295,7 @@ describe('Skill Validation', () => {
     it('should error when context:fork is not boolean', async () => {
       const { errors } = await validateSkill('invalid-fork', SKILL_SAMPLES.invalidContextFork);
       assert.ok(
-        errors.some((e) => e.includes('context:fork must be boolean')),
+        errors.some(e => e.includes('context:fork must be boolean')),
         'Should error on invalid context:fork type'
       );
     });
@@ -305,7 +303,7 @@ describe('Skill Validation', () => {
     it('should error when model is not valid', async () => {
       const { errors } = await validateSkill('invalid-model', SKILL_SAMPLES.invalidModel);
       assert.ok(
-        errors.some((e) => e.includes('model must be one of: haiku, sonnet, opus')),
+        errors.some(e => e.includes('model must be one of: haiku, sonnet, opus')),
         'Should error on invalid model'
       );
     });
@@ -321,7 +319,7 @@ describe('Skill Validation', () => {
       const { errors, warnings } = await validateSkill('expected-name', SKILL_SAMPLES.nameMismatch);
       assert.strictEqual(errors.length, 0, 'Should have no errors');
       assert.ok(
-        warnings.some((w) => w.includes("doesn't match directory name")),
+        warnings.some(w => w.includes("doesn't match directory name")),
         'Should warn about name mismatch'
       );
     });
@@ -329,7 +327,7 @@ describe('Skill Validation', () => {
     it('should not warn when names match', async () => {
       const { warnings } = await validateSkill('test-skill', SKILL_SAMPLES.completeSkill);
       assert.ok(
-        !warnings.some((w) => w.includes("doesn't match directory name")),
+        !warnings.some(w => w.includes("doesn't match directory name")),
         'Should not warn when names match'
       );
     });
@@ -345,7 +343,7 @@ describe('Skill Validation', () => {
       // Warnings for recommended fields
       assert.ok(warnings.length > 0, 'Should have warnings');
       assert.ok(
-        warnings.every((w) => w.includes('Missing recommended field')),
+        warnings.every(w => w.includes('Missing recommended field')),
         'All warnings should be about recommended fields'
       );
     });
@@ -354,7 +352,7 @@ describe('Skill Validation', () => {
       const { errors } = await validateSkill('no-name', SKILL_SAMPLES.missingName);
       assert.ok(errors.length > 0, 'Should have errors');
       assert.ok(
-        errors.some((e) => e.includes('Missing required field')),
+        errors.some(e => e.includes('Missing required field')),
         'Should have required field errors'
       );
     });
@@ -439,7 +437,7 @@ description: test
 # Content without closing marker`;
       const { errors } = await validateSkill('no-closing', noClosing);
       assert.ok(
-        errors.some((e) => e.includes('missing closing ---')),
+        errors.some(e => e.includes('missing closing ---')),
         'Should error on missing closing marker'
       );
     });

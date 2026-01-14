@@ -25,6 +25,7 @@ This report analyzes LLM interaction patterns from CrewAI and compares them to t
 4. Compared against CrewAI architectural patterns (based on framework knowledge)
 
 **Key Observations**:
+
 - LLM-RULES uses system_prompt pattern with role definition
 - Evaluation uses LLM-as-judge for quality assessment
 - Context management is sophisticated (context:fork, lazy loading)
@@ -32,6 +33,7 @@ This report analyzes LLM interaction patterns from CrewAI and compares them to t
 - Missing: Structured output parsing, agent memory persistence, task delegation chains
 
 **CrewAI Patterns to Extract**:
+
 1. Agent role-goal-backstory triplet
 2. Task expected_output schemas
 3. Sequential vs hierarchical process flows
@@ -40,7 +42,7 @@ This report analyzes LLM interaction patterns from CrewAI and compares them to t
 6. Delegation mechanisms
 7. Context window management
 8. Output parsing and validation
-</thinking>
+   </thinking>
 
 ---
 
@@ -49,6 +51,7 @@ This report analyzes LLM interaction patterns from CrewAI and compares them to t
 ### Pattern 1: Role-Goal-Backstory (RGB) Triplet
 
 **CrewAI Pattern**:
+
 ```python
 Agent(
     role="Senior Data Analyst",
@@ -58,6 +61,7 @@ Agent(
 ```
 
 **Current LLM-RULES Pattern**:
+
 ```python
 system_prompt = """You are [Your Agent Name], [brief description of purpose]."""
 ```
@@ -71,6 +75,7 @@ system_prompt = """You are [Your Agent Name], [brief description of purpose]."""
 ### Pattern 2: Expected Output Schemas
 
 **CrewAI Pattern**:
+
 ```python
 Task(
     description="Analyze the market data",
@@ -79,6 +84,7 @@ Task(
 ```
 
 **Current LLM-RULES Pattern**:
+
 ```python
 # From rag-eval.py
 prompt = f"""Format as JSON:
@@ -100,8 +106,10 @@ prompt = f"""Format as JSON:
 **CrewAI Pattern**: Implicit reasoning through task decomposition and agent delegation.
 
 **Current LLM-RULES Pattern**:
+
 ```markdown
 # From router-test-prompts.md
+
 "reasoning": "Complex security audit requiring cross-module analysis"
 ```
 
@@ -116,8 +124,10 @@ prompt = f"""Format as JSON:
 **CrewAI Pattern**: Examples embedded in task descriptions.
 
 **Current LLM-RULES Pattern**:
+
 ```markdown
 # From llm-architect.md
+
 - Start with clear role definition
 - Use structured output formats (JSON, XML)
 - Include relevant examples (3-5 for few-shot)
@@ -132,6 +142,7 @@ prompt = f"""Format as JSON:
 ### Pattern 5: Hierarchical Delegation
 
 **CrewAI Pattern**:
+
 ```python
 Crew(
     agents=[manager, analyst, writer],
@@ -141,8 +152,10 @@ Crew(
 ```
 
 **Current LLM-RULES Pattern**:
+
 ```markdown
 # From CLAUDE.md
+
 Flow: Request -> Master Orchestrator -> Spawn Planner -> Rate Plan -> Delegate to Agents
 ```
 
@@ -155,6 +168,7 @@ Flow: Request -> Master Orchestrator -> Spawn Planner -> Rate Plan -> Delegate t
 ### Pattern 6: Task Dependency Chains
 
 **CrewAI Pattern**:
+
 ```python
 Task(
     description="Summarize findings",
@@ -163,6 +177,7 @@ Task(
 ```
 
 **Current LLM-RULES Pattern**:
+
 ```yaml
 # From workflows
 - step: 1
@@ -181,6 +196,7 @@ Task(
 ### Pattern 7: Tool Integration Wrappers
 
 **CrewAI Pattern**:
+
 ```python
 @tool("Search Tool")
 def search_tool(query: str) -> str:
@@ -189,6 +205,7 @@ def search_tool(query: str) -> str:
 ```
 
 **Current LLM-RULES Pattern**:
+
 ```python
 # From sequential-thinking/executor.py
 async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -207,6 +224,7 @@ async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str
 ### Pattern 8: Agent Memory Systems
 
 **CrewAI Pattern**:
+
 ```python
 Crew(
     memory=True,
@@ -217,6 +235,7 @@ Crew(
 ```
 
 **Current LLM-RULES Pattern**:
+
 ```yaml
 # From config.yaml references
 context_editing:
@@ -245,11 +264,13 @@ context_editing:
 
 ### Strategy 2: Context Window Chunking
 
-**CrewAI Pattern**: 
+**CrewAI Pattern**:
+
 - Default context summarization at token limits
 - Conversation history truncation
 
 **LLM-RULES Pattern**:
+
 ```yaml
 # From CONTEXT_OPTIMIZATION.md
 context_editing:
@@ -267,9 +288,10 @@ context_editing:
 **CrewAI**: No equivalent feature.
 
 **LLM-RULES Pattern**:
+
 ```yaml
 # From SKILL.md frontmatter
-context:fork: true  # 80% token savings for subagents
+context:fork: true # 80% token savings for subagents
 ```
 
 **Assessment**: LLM-RULES innovation - 80% reduction in skill context bloat.
@@ -281,6 +303,7 @@ context:fork: true  # 80% token savings for subagents
 **CrewAI**: Single execution context.
 
 **LLM-RULES Pattern**:
+
 ```
 .claude/projects/{project-name}/
 ├── phase-01-planning/ (1-3k lines)
@@ -297,9 +320,12 @@ context:fork: true  # 80% token savings for subagents
 **CrewAI**: No explicit handoff mechanism.
 
 **LLM-RULES Pattern**:
+
 ```markdown
 # From CONTEXT_OPTIMIZATION.md
+
 Process:
+
 1. Monitor context usage continuously
 2. At 90% (180k tokens), trigger handoff
 3. Update all state via subagents
@@ -351,6 +377,7 @@ Opus (2): plan-generator, response-rater
 ### Technique 3: Rule Consolidation
 
 **LLM-RULES Pattern**: Master rule files replace duplicates.
+
 - TECH_STACK_NEXTJS.md replaces 30+ variants
 - PROTOCOL_ENGINEERING.md replaces 10+ files
 
@@ -382,13 +409,13 @@ def check_semantic_cache(query: str, threshold: float = 0.95):
 **CrewAI**: Pydantic model validation.  
 **LLM-RULES**: JSON schema extraction from markdown code blocks.
 
-```python
+````python
 # From agent-eval.py
 if "```json" in content:
     json_start = content.find("```json") + 7
     json_end = content.find("```", json_start)
     content = content[json_start:json_end].strip()
-```
+````
 
 **Recommendation**: Add Zod schema validation for structured outputs.
 
@@ -401,6 +428,7 @@ if "```json" in content:
 
 ```markdown
 # From CLAUDE.md
+
 Make all independent tool calls in parallel. Prioritize calling tools
 simultaneously whenever actions can be done in parallel.
 ```
@@ -411,16 +439,16 @@ simultaneously whenever actions can be done in parallel.
 
 ## Section 5: Comparison Summary
 
-| Category | CrewAI | LLM-RULES | Winner |
-|----------|--------|-----------|--------|
-| Prompt Structure | RGB Triplet | System prompt | CrewAI (more structured) |
-| Task Definition | Pydantic models | YAML workflows | LLM-RULES (more maintainable) |
-| Context Management | Basic summarization | context:fork, phases | LLM-RULES (80% savings) |
-| Token Optimization | Limited | Comprehensive | LLM-RULES (85% tool savings) |
-| Agent Memory | Short/Long/Entity | Context editing only | CrewAI (persistent memory) |
-| Delegation | Hierarchical/Sequential | Master orchestrator | Tie (different approaches) |
-| Tool Integration | @tool decorator | MCP + Skills | LLM-RULES (90% savings) |
-| Evaluation | No built-in | LLM-as-judge | LLM-RULES |
+| Category           | CrewAI                  | LLM-RULES            | Winner                        |
+| ------------------ | ----------------------- | -------------------- | ----------------------------- |
+| Prompt Structure   | RGB Triplet             | System prompt        | CrewAI (more structured)      |
+| Task Definition    | Pydantic models         | YAML workflows       | LLM-RULES (more maintainable) |
+| Context Management | Basic summarization     | context:fork, phases | LLM-RULES (80% savings)       |
+| Token Optimization | Limited                 | Comprehensive        | LLM-RULES (85% tool savings)  |
+| Agent Memory       | Short/Long/Entity       | Context editing only | CrewAI (persistent memory)    |
+| Delegation         | Hierarchical/Sequential | Master orchestrator  | Tie (different approaches)    |
+| Tool Integration   | @tool decorator         | MCP + Skills         | LLM-RULES (90% savings)       |
+| Evaluation         | No built-in             | LLM-as-judge         | LLM-RULES                     |
 
 ---
 
@@ -479,6 +507,7 @@ simultaneously whenever actions can be done in parallel.
 ## Validation
 
 This report meets all success criteria:
+
 - [x] Documented 8 prompt engineering patterns
 - [x] Identified 5 context management strategies
 - [x] Extracted 6 token optimization techniques

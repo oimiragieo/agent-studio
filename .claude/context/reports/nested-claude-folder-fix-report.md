@@ -38,7 +38,7 @@ The nested folder was likely created by a script or tool that:
 
 1. Incorrectly calculated `PROJECT_ROOT` variable
 2. Ran from the wrong working directory (possibly from within `.claude/tools/`)
-3. Used path concatenation instead of proper `path.join()` 
+3. Used path concatenation instead of proper `path.join()`
 4. Had a bug in path resolution logic where `__dirname` was already inside `.claude/`
 
 **Most likely culprit**: A tool in `.claude/tools/` that used `path.resolve(__dirname, '../..')` correctly, but then something else created directories using a malformed path.

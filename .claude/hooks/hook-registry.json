@@ -62,8 +62,8 @@
       "path": ".claude/hooks/post-session-cleanup.js",
       "enabled": true,
       "priority": 2,
-      "matcher": "Write|Edit",
-      "description": "Cleans up SLOP files after file operations"
+      "matcher": "Write|Edit|Bash",
+      "description": "Cleans up SLOP files and tmpclaude-* files after file operations and Bash commands"
     },
     {
       "name": "memory-capture",

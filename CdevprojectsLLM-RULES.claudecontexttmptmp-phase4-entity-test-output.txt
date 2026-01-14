@@ -1,0 +1,1 @@
+Could not find '.claude/tools/memory/shared-entity-registry.test.mjs'

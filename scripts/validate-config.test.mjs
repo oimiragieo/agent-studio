@@ -45,7 +45,7 @@ function createTestDir() {
 
   // Create required directories using Node.js API (Windows-compatible)
   const dirs = ['.claude/agents', '.claude/skills', '.claude/workflows', '.claude/schemas'];
-  dirs.forEach((dir) => {
+  dirs.forEach(dir => {
     mkdirSync(join(tempDir, dir), { recursive: true });
   });
 
@@ -110,7 +110,10 @@ testRunner.test('Valid Claude Code MCP structure with nested mcpServers', () => 
   rmSync(dir, { recursive: true, force: true });
 
   assert.ok(result.output.includes('✓ .mcp.json validated'), 'Should validate successfully');
-  assert.ok(!result.output.includes('Server betaFeatures'), 'Should not treat betaFeatures as server');
+  assert.ok(
+    !result.output.includes('Server betaFeatures'),
+    'Should not treat betaFeatures as server'
+  );
   assert.ok(!result.output.includes('Server toolSearch'), 'Should not treat toolSearch as server');
 });
 
@@ -128,7 +131,10 @@ testRunner.test('betaFeatures should not be treated as MCP server', () => {
   const result = runValidation(dir);
   rmSync(dir, { recursive: true, force: true });
 
-  assert.ok(!result.output.includes('Server betaFeatures'), 'betaFeatures should be ignored as server');
+  assert.ok(
+    !result.output.includes('Server betaFeatures'),
+    'betaFeatures should be ignored as server'
+  );
   assert.ok(result.output.includes('✓ .mcp.json validated'), 'Should validate successfully');
 });
 
@@ -168,7 +174,10 @@ testRunner.test('betaFeatures must be an array', () => {
   rmSync(dir, { recursive: true, force: true });
 
   assert.ok(!result.success, 'Validation should fail');
-  assert.ok(result.output.includes('betaFeatures must be an array'), 'Should error on invalid betaFeatures type');
+  assert.ok(
+    result.output.includes('betaFeatures must be an array'),
+    'Should error on invalid betaFeatures type'
+  );
 });
 
 // Test 5: Invalid toolSearch type
@@ -186,7 +195,10 @@ testRunner.test('toolSearch must be an object', () => {
   rmSync(dir, { recursive: true, force: true });
 
   assert.ok(!result.success, 'Validation should fail');
-  assert.ok(result.output.includes('toolSearch must be an object'), 'Should error on invalid toolSearch type');
+  assert.ok(
+    result.output.includes('toolSearch must be an object'),
+    'Should error on invalid toolSearch type'
+  );
 });
 
 // Test 6: Invalid toolSearch.enabled type
@@ -206,7 +218,10 @@ testRunner.test('toolSearch.enabled must be boolean', () => {
   rmSync(dir, { recursive: true, force: true });
 
   assert.ok(!result.success, 'Validation should fail');
-  assert.ok(result.output.includes('toolSearch.enabled must be a boolean'), 'Should error on invalid enabled type');
+  assert.ok(
+    result.output.includes('toolSearch.enabled must be a boolean'),
+    'Should error on invalid enabled type'
+  );
 });
 
 // Test 7: Invalid toolSearch.autoEnableThreshold type
@@ -247,7 +262,10 @@ testRunner.test('Unknown top-level keys should produce warning', () => {
   rmSync(dir, { recursive: true, force: true });
 
   // Warnings don't cause validation failure, but should be in output
-  assert.ok(result.output.includes('Unknown top-level keys: unknownKey'), 'Should warn about unknown keys');
+  assert.ok(
+    result.output.includes('Unknown top-level keys: unknownKey'),
+    'Should warn about unknown keys'
+  );
 });
 
 // Test 9: Valid stdio server
@@ -289,7 +307,10 @@ testRunner.test('stdio server missing command should warn', () => {
   rmSync(dir, { recursive: true, force: true });
 
   // Warnings don't cause validation failure, but should be in output
-  assert.ok(result.output.includes('missing required field: command'), 'Should warn about missing command');
+  assert.ok(
+    result.output.includes('missing required field: command'),
+    'Should warn about missing command'
+  );
 });
 
 // Test 11: Invalid mcpServers type
@@ -306,7 +327,10 @@ testRunner.test('mcpServers must be an object', () => {
   rmSync(dir, { recursive: true, force: true });
 
   assert.ok(!result.success, 'Validation should fail');
-  assert.ok(result.output.includes('mcpServers must be an object'), 'Should error on invalid mcpServers type');
+  assert.ok(
+    result.output.includes('mcpServers must be an object'),
+    'Should error on invalid mcpServers type'
+  );
 });
 
 // Test 12: Empty mcpServers is valid
@@ -368,7 +392,10 @@ testRunner.test('Complete real-world MCP config validates correctly', () => {
   rmSync(dir, { recursive: true, force: true });
 
   assert.ok(result.output.includes('✓ .mcp.json validated'), 'Complete config should validate');
-  assert.ok(!result.output.includes('Server betaFeatures'), 'Should not treat betaFeatures as server');
+  assert.ok(
+    !result.output.includes('Server betaFeatures'),
+    'Should not treat betaFeatures as server'
+  );
   assert.ok(!result.output.includes('Server toolSearch'), 'Should not treat toolSearch as server');
 });
 
