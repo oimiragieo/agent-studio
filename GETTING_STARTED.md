@@ -42,10 +42,10 @@ Your project should look like this:
 your-project/
 ├── CLAUDE.md           # Root instructions (required)
 ├── .claude/            # Configuration directory
-│   ├── agents/         # 35 specialized agents
+│   ├── agents/         # 34 specialized agents
 │   ├── skills/         # 108 utility skills
 │   ├── workflows/      # 14 workflow definitions
-│   ├── hooks/          # Security and audit hooks
+│   ├── hooks/          # 6 PreToolUse and PostToolUse hooks
 │   ├── commands/       # 13 slash commands
 │   ├── tools/          # Enterprise tools (cost, sessions, analytics)
 │   │   ├── a2a/        # A2A Protocol Integration (12 modules)
@@ -71,15 +71,75 @@ your-project/
 
 ### Step 3: Enable Hooks (Recommended)
 
-1. Open Claude Code in your project
-2. Go to **Preferences > Claude Code > Hooks**
-3. Point to `.claude/hooks` directory
-4. Enable security hooks
+**IMPORTANT**: Hooks must be registered in `settings.json` to execute properly.
 
-**Available Hooks:**
+#### Step 3a: Register Hooks in settings.json (REQUIRED)
 
-- **security-pre-tool.sh** (PreToolUse): Blocks dangerous commands, protects sensitive files, prevents force pushes
-- **audit-post-tool.sh** (PostToolUse): Logs all tool executions for audit trail
+Edit `.claude/settings.json` and add hook registrations:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "command": "node .claude/hooks/orchestrator-enforcement-hook.mjs"
+      },
+      {
+        "command": "bash .claude/hooks/security-pre-tool.mjs"
+      },
+      {
+        "command": "node .claude/hooks/skill-injection-hook.mjs"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "command": "bash .claude/hooks/audit-post-tool.mjs"
+      },
+      {
+        "command": "node .claude/hooks/skill-injection-hook.mjs"
+      }
+    ]
+  }
+}
+```
+
+**Available Hooks (6 total):**
+
+| Hook                                | Event       | Purpose                                             | Location                                          |
+| ----------------------------------- | ----------- | --------------------------------------------------- | ------------------------------------------------- |
+| `orchestrator-enforcement-hook.mjs` | PreToolUse  | Enforces orchestrator delegation rules              | `.claude/hooks/orchestrator-enforcement-hook.mjs` |
+| `security-pre-tool.mjs`             | PreToolUse  | Blocks dangerous commands, protects sensitive files | `.claude/hooks/security-pre-tool.mjs`             |
+| `skill-injection-hook.mjs`          | PreToolUse  | Injects skills into Task calls                      | `.claude/hooks/skill-injection-hook.mjs`          |
+| `audit-post-tool.mjs`               | PostToolUse | Logs all tool executions for audit trail            | `.claude/hooks/audit-post-tool.mjs`               |
+| `skill-injection-hook.mjs`          | PostToolUse | Validates injected skills                           | `.claude/hooks/skill-injection-hook.mjs`          |
+| `file-path-validator.mjs`           | PreToolUse  | Validates file paths (optional)                     | `.claude/hooks/file-path-validator.mjs`           |
+
+#### Step 3b: Verify Hooks Execute
+
+After registering hooks, verify they execute correctly:
+
+```bash
+# Test orchestrator enforcement hook
+echo '{"tool_name":"Edit","tool_input":{"file_path":"test.txt"}}' | node .claude/hooks/orchestrator-enforcement-hook.mjs
+# Expected: {"decision": "block", "reason": "Orchestrators cannot edit files directly"}
+
+# Test security hook blocks dangerous command
+echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /"}}' | bash .claude/hooks/security-pre-tool.mjs
+# Expected: {"decision": "block", "reason": "Blocked dangerous command pattern: rm -rf /"}
+
+# Test audit hook logs execution
+echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/audit-post-tool.mjs
+cat ~/.claude/audit/tool-usage.log
+```
+
+**Troubleshooting Hook Registration Issues:**
+
+| Issue                         | Solution                                                        |
+| ----------------------------- | --------------------------------------------------------------- |
+| Hooks not executing           | Verify hooks array in settings.json contains correct file paths |
+| Permission denied (Linux/Mac) | Run `chmod +x .claude/hooks/*.mjs .claude/hooks/*.sh`           |
+| Module not found errors       | Ensure Node.js 18+ installed, verify hook files exist           |
+| Windows path issues           | Use forward slashes in paths: `.claude/hooks/hook-name.mjs`     |
 
 See `.claude/hooks/README.md` for detailed hook documentation.
 
@@ -390,7 +450,7 @@ pnpm validate:all      # Full validation (includes workflows, references, CUJs, 
 
 **Key Capabilities:**
 
-- **Agent Discovery**: AgentCard generation for all 35 agents at `/.well-known/agent-card.json`
+- **Agent Discovery**: AgentCard generation for all 34 agents at `/.well-known/agent-card.json`
 - **External Federation**: Discover and communicate with external A2A-compliant agents
 - **Memory Integration**: Memory handoff in A2A Artifact format (200x faster than target)
 - **Task Lifecycle**: 8-state task management (SUBMITTED → WORKING → COMPLETED/etc.)
@@ -423,9 +483,9 @@ pnpm test:a2a:federation   # External federation (102 tests)
 
 ---
 
-### 35 Specialized Agents (NEW: Planner Agent!)
+### 34 Specialized Agents
 
-**NEW**: Planner agent creates comprehensive plans before execution!
+**Total: 34 specialized agents across 5 categories**
 
 | Agent                  | Purpose                | Trigger Keywords                           |
 | ---------------------- | ---------------------- | ------------------------------------------ |
@@ -456,7 +516,7 @@ pnpm test:a2a:federation   # External federation (102 tests)
 | compliance-auditor     | Regulatory compliance  | "gdpr", "hipaa", "soc2"                    |
 | incident-responder     | Crisis management      | "incident", "outage", "post-mortem"        |
 
-### 10 Workflows
+### 14 Workflows
 
 | Workflow                 | Use Case                                | Steps                                                                                                                    | Iterative                            |
 | ------------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
@@ -492,9 +552,7 @@ pnpm test:a2a:federation   # External federation (102 tests)
 | `/incident`      | Incident response workflow                    | `/incident`                                             |
 | `/ui-perfection` | UI/UX iterative perfection loop (95%+ target) | `/ui-perfection --component UserProfile.tsx --score 98` |
 
-### 13 Utility Skills (Cross-Platform)
-
-**NEW**: 5 new skills added for planning, diagrams, testing, dependencies, and documentation!
+### 15 Core Utility Skills (Cross-Platform)
 
 Skills work across all three platforms with consistent functionality.
 
@@ -850,7 +908,7 @@ node .claude/tools/workflow_runner.js \
 
 ## Customer User Journeys (CUJs)
 
-We have **48 documented Customer User Journeys** that show complete workflows from start to finish (CUJ-031/032/033 are reserved/removed):
+We have **62 documented Customer User Journeys** that show complete workflows from start to finish:
 
 - **Onboarding & Setup** (CUJ-001 to CUJ-003)
 - **Planning & Architecture** (CUJ-004 to CUJ-008)
@@ -860,7 +918,7 @@ We have **48 documented Customer User Journeys** that show complete workflows fr
 - **Specialized Workflows** (CUJ-019 to CUJ-022)
 - **Maintenance & Operations** (CUJ-023 to CUJ-024)
 
-See `.claude/docs/cujs/CUJ-INDEX.md` for the complete index and individual CUJ files for detailed workflows.
+See `.claude/docs/cujs/CUJ-INDEX.md` for the complete index and individual CUJ files for detailed workflows (62 total).
 
 ## Example Prompts & Workflows
 
@@ -1061,7 +1119,7 @@ See `.claude/docs/cujs/CUJ-INDEX.md` for the complete index and individual CUJ f
 
 **What Happens:**
 
-- A2A agent-card-generator creates cards for all 35 agents
+- A2A agent-card-generator creates cards for all 34 agents
 - Served at `/.well-known/agent-card.json`
 - Includes capabilities, skills, security metadata
 
@@ -1212,26 +1270,56 @@ See `.claude/commands/` for all available commands.
 
 ### Hooks Not Running
 
-1. Enable hooks in Preferences > Claude Code > Hooks
-2. Point to `.claude/hooks` directory
-3. Check hook files are executable (Linux/Mac)
+**Problem**: Hooks are not executing when tools are called
 
-**Available Hooks:**
+**Solutions**:
 
-- **security-pre-tool.sh** (PreToolUse): Blocks dangerous commands before execution
-- **audit-post-tool.sh** (PostToolUse): Logs all tool executions for audit trail
+1. **Verify hooks registered in settings.json**:
+   - Check `.claude/settings.json` has `hooks` object with PreToolUse and PostToolUse arrays
+   - Verify all 6 hooks are listed with correct paths
+   - Example: `"command": "node .claude/hooks/orchestrator-enforcement-hook.mjs"`
 
-**Testing Hooks:**
+2. **Check hook files exist**:
 
-```bash
-# Test security hook blocks dangerous command
-echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /"}}' | bash .claude/hooks/security-pre-tool.sh
-# Expected: {"decision": "block", "reason": "Blocked dangerous command pattern"}
+   ```bash
+   ls .claude/hooks/
+   # Should see: orchestrator-enforcement-hook.mjs, security-pre-tool.mjs,
+   # skill-injection-hook.mjs, audit-post-tool.mjs, file-path-validator.mjs
+   ```
 
-# Test audit hook logs execution
-echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/audit-post-tool.sh
-cat ~/.claude/audit/tool-usage.log
-```
+3. **Make hooks executable (Linux/Mac)**:
+
+   ```bash
+   chmod +x .claude/hooks/*.mjs .claude/hooks/*.sh
+   ```
+
+4. **Test hooks manually**:
+
+   ```bash
+   # Test orchestrator enforcement hook
+   echo '{"tool_name":"Edit","tool_input":{"file_path":"test.txt"}}' | node .claude/hooks/orchestrator-enforcement-hook.mjs
+   # Expected: {"decision": "block", "reason": "Orchestrators cannot edit files directly"}
+
+   # Test security hook
+   echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /"}}' | bash .claude/hooks/security-pre-tool.mjs
+   # Expected: {"decision": "block", "reason": "Blocked dangerous command pattern: rm -rf /"}
+
+   # Test audit hook
+   echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/audit-post-tool.mjs
+   cat ~/.claude/audit/tool-usage.log
+   ```
+
+5. **Restart Claude Code after registering hooks**
+
+**Hook Registration Issues**:
+
+| Issue                      | Solution                                              |
+| -------------------------- | ----------------------------------------------------- |
+| Hooks not in settings.json | Add hooks object with PreToolUse/PostToolUse arrays   |
+| Wrong file paths           | Use `.claude/hooks/<hook-name>.mjs` format            |
+| Permission denied          | Run `chmod +x` on hook files (Linux/Mac)              |
+| Module not found           | Ensure Node.js 18+ installed, verify hook files exist |
+| Windows path issues        | Use forward slashes: `.claude/hooks/hook-name.mjs`    |
 
 ### Slash Commands Not Found
 
@@ -1284,7 +1372,7 @@ cat ~/.claude/audit/tool-usage.log
 
    ```bash
    ls .claude/agents/
-   # Should see 35 agent .md files
+   # Should see 34 agent .md files
    ```
 
 3. Verify AgentCard schema:
@@ -1341,12 +1429,23 @@ cat ~/.claude/audit/tool-usage.log
 
 ### Available Hooks
 
-The Agent Studio system includes two native Claude Code hooks that provide security and audit capabilities:
+The Agent Studio system includes six native Claude Code hooks that provide orchestrator enforcement, security, skill injection, and audit capabilities:
 
-**1. security-pre-tool.sh (PreToolUse Hook)**
+**1. orchestrator-enforcement-hook.mjs (PreToolUse Hook)**
+
+- **Purpose**: Enforces orchestrator delegation rules (blocks Edit, Write, Grep, Glob)
+- **Location**: `.claude/hooks/orchestrator-enforcement-hook.mjs`
+- **When it runs**: Before every tool execution (orchestrators only)
+- **Blocks**:
+  - Edit, Write tools (orchestrators cannot edit files)
+  - Grep, Glob tools (orchestrators cannot search codebase)
+  - Bash with dangerous patterns (rm, git add/commit/push, npm run)
+  - Read beyond 2 files (except coordination files)
+
+**2. security-pre-tool.mjs (PreToolUse Hook)**
 
 - **Purpose**: Validates and blocks dangerous operations before execution
-- **Location**: `.claude/hooks/security-pre-tool.sh`
+- **Location**: `.claude/hooks/security-pre-tool.mjs`
 - **When it runs**: Before every tool execution
 - **Blocks**:
   - Dangerous shell commands (`rm -rf /`, `sudo rm`, `mkfs`, `dd`, etc.)
@@ -1357,10 +1456,20 @@ The Agent Studio system includes two native Claude Code hooks that provide secur
   - Force push to main/master branches
   - PowerShell encoded commands (Windows)
 
-**2. audit-post-tool.sh (PostToolUse Hook)**
+**3. skill-injection-hook.mjs (PreToolUse Hook)**
+
+- **Purpose**: Injects skills into Task tool calls for context optimization
+- **Location**: `.claude/hooks/skill-injection-hook.mjs`
+- **When it runs**: Before Task tool execution
+- **Actions**:
+  - Discovers skills for target agent from skill-integration-matrix.json
+  - Injects required and triggered skills into task context
+  - Enables 80% token savings via context:fork feature
+
+**4. audit-post-tool.mjs (PostToolUse Hook)**
 
 - **Purpose**: Logs all tool executions for audit trail
-- **Location**: `.claude/hooks/audit-post-tool.sh`
+- **Location**: `.claude/hooks/audit-post-tool.mjs`
 - **When it runs**: After every tool execution
 - **Logs**:
   - Timestamp of execution
@@ -1368,51 +1477,98 @@ The Agent Studio system includes two native Claude Code hooks that provide secur
   - Stores in `~/.claude/audit/tool-usage.log`
   - Auto-rotates logs to prevent disk bloat (max 10MB)
 
+**5. skill-injection-hook.mjs (PostToolUse Hook)**
+
+- **Purpose**: Validates injected skills after Task execution
+- **Location**: `.claude/hooks/skill-injection-hook.mjs`
+- **When it runs**: After Task tool execution
+- **Actions**:
+  - Validates skill invocation results
+  - Logs skill usage metrics
+  - Records skill performance data
+
+**6. file-path-validator.mjs (PreToolUse Hook - Optional)**
+
+- **Purpose**: Validates file paths to prevent SLOP (files in wrong locations)
+- **Location**: `.claude/hooks/file-path-validator.mjs`
+- **When it runs**: Before Write, Edit tool execution
+- **Blocks**:
+  - Files in project root (except allowlist)
+  - Malformed Windows paths (e.g., `C:devprojects` missing separator)
+  - Nested .claude folders (e.g., `.claude/.claude/`)
+  - Files outside `.claude/context/` hierarchy
+
 ### Enabling Hooks
 
-**Method 1: Via Claude Code UI**
+**Method 1: Manual Configuration (Recommended)**
 
-1. Open Claude Code in your project
-2. Go to **Preferences > Claude Code > Hooks**
-3. Point to `.claude/hooks` directory
-4. Enable both hooks:
-   - PreToolUse: `.claude/hooks/security-pre-tool.sh`
-   - PostToolUse: `.claude/hooks/audit-post-tool.sh`
-
-**Method 2: Manual Configuration**
-Add to your Claude Code settings:
+Edit `.claude/settings.json` and add all hook registrations:
 
 ```json
 {
   "hooks": {
     "PreToolUse": [
       {
-        "command": "bash .claude/hooks/security-pre-tool.sh"
+        "command": "node .claude/hooks/orchestrator-enforcement-hook.mjs"
+      },
+      {
+        "command": "bash .claude/hooks/security-pre-tool.mjs"
+      },
+      {
+        "command": "node .claude/hooks/skill-injection-hook.mjs"
       }
     ],
     "PostToolUse": [
       {
-        "command": "bash .claude/hooks/audit-post-tool.sh"
+        "command": "bash .claude/hooks/audit-post-tool.mjs"
+      },
+      {
+        "command": "node .claude/hooks/skill-injection-hook.mjs"
       }
     ]
   }
 }
 ```
 
+**Optional**: Add file-path-validator to PreToolUse array:
+
+```json
+{
+  "command": "node .claude/hooks/file-path-validator.mjs"
+}
+```
+
+**Method 2: Via Claude Code UI**
+
+1. Open Claude Code in your project
+2. Go to **Preferences > Claude Code > Hooks**
+3. Point to `.claude/hooks` directory
+4. Enable hooks:
+   - PreToolUse: orchestrator-enforcement-hook.mjs, security-pre-tool.mjs, skill-injection-hook.mjs
+   - PostToolUse: audit-post-tool.mjs, skill-injection-hook.mjs
+
 ### Testing Hooks
 
 ```bash
+# Test orchestrator enforcement hook blocks Edit
+echo '{"tool_name":"Edit","tool_input":{"file_path":"test.txt"}}' | node .claude/hooks/orchestrator-enforcement-hook.mjs
+# Expected: {"decision": "block", "reason": "Orchestrators cannot edit files directly"}
+
 # Test security hook blocks dangerous command
-echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /"}}' | bash .claude/hooks/security-pre-tool.sh
+echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /"}}' | bash .claude/hooks/security-pre-tool.mjs
 # Expected: {"decision": "block", "reason": "Blocked dangerous command pattern: rm -rf /"}
 
 # Test security hook allows safe command
-echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/security-pre-tool.sh
+echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/security-pre-tool.mjs
 # Expected: {"decision": "allow"}
 
 # Test audit hook logs execution
-echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/audit-post-tool.sh
+echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/audit-post-tool.mjs
 cat ~/.claude/audit/tool-usage.log
+
+# Test skill injection hook
+echo '{"tool_name":"Task","tool_input":{"agent":"developer","task":"Implement feature X"}}' | node .claude/hooks/skill-injection-hook.mjs
+# Expected: Skills injected into task context
 ```
 
 ### Customizing Hooks
@@ -1637,10 +1793,14 @@ See `.claude/docs/ENTERPRISE_FEATURES.md` for complete enterprise feature docume
 
 ### All Hooks
 
-| Hook                   | Event       | Purpose                   | Location                             |
-| ---------------------- | ----------- | ------------------------- | ------------------------------------ |
-| `security-pre-tool.sh` | PreToolUse  | Blocks dangerous commands | `.claude/hooks/security-pre-tool.sh` |
-| `audit-post-tool.sh`   | PostToolUse | Logs tool executions      | `.claude/hooks/audit-post-tool.sh`   |
+| Hook                                 | Event       | Purpose                                | Location                                          |
+| ------------------------------------ | ----------- | -------------------------------------- | ------------------------------------------------- |
+| `orchestrator-enforcement-hook.mjs`  | PreToolUse  | Enforces orchestrator delegation rules | `.claude/hooks/orchestrator-enforcement-hook.mjs` |
+| `security-pre-tool.mjs`              | PreToolUse  | Blocks dangerous commands              | `.claude/hooks/security-pre-tool.mjs`             |
+| `skill-injection-hook.mjs`           | PreToolUse  | Injects skills into Task calls         | `.claude/hooks/skill-injection-hook.mjs`          |
+| `audit-post-tool.mjs`                | PostToolUse | Logs tool executions                   | `.claude/hooks/audit-post-tool.mjs`               |
+| `skill-injection-hook.mjs`           | PostToolUse | Validates injected skills              | `.claude/hooks/skill-injection-hook.mjs`          |
+| `file-path-validator.mjs` (optional) | PreToolUse  | Validates file paths to prevent SLOP   | `.claude/hooks/file-path-validator.mjs`           |
 
 ### All Enterprise Tools
 
@@ -1764,7 +1924,7 @@ See `.claude/docs/ENTERPRISE_FEATURES.md` for complete enterprise feature docume
 ## Support
 
 - **First-Time Users**: Start with `FIRST_TIME_USER.md`
-- **CUJ Documentation**: `.claude/docs/cujs/CUJ-INDEX.md` - All 47 user journeys
+- **CUJ Documentation**: `.claude/docs/cujs/CUJ-INDEX.md` - All 62 user journeys
 - **Onboarding Tool**: Run `node .claude/tools/onboarding.mjs` to validate setup
 - **A2A Integration**: `.claude/context/reports/a2a-integration-completion-report.md` - Complete A2A protocol documentation
 - **A2A Testing**: Run `pnpm test:a2a` to validate A2A integration (290 tests)

@@ -2,8 +2,12 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20%7C%20Cursor%20%7C%20Factory-purple.svg)]()
-[![Agents](https://img.shields.io/badge/Agents-35-green.svg)]()
-[![Skills](https://img.shields.io/badge/Skills-110-orange.svg)]()
+[![Agents](https://img.shields.io/badge/Agents-34-green.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-108-orange.svg)]()
+[![Workflows](https://img.shields.io/badge/Workflows-14-blue.svg)]()
+[![CUJs](https://img.shields.io/badge/CUJs-62-yellow.svg)]()
+[![Schemas](https://img.shields.io/badge/Schemas-93-purple.svg)]()
+[![Rules](https://img.shields.io/badge/Rules-1081%2B-red.svg)]()
 [![A2A Protocol](https://img.shields.io/badge/A2A%20v0.3.0-Compliant-brightgreen.svg)]()
 [![Tests](https://img.shields.io/badge/Tests-667%20Passing-success.svg)]()
 
@@ -17,34 +21,34 @@ A **production-ready, drop-in configuration bundle** for AI agent orchestration.
 
 ### Core Components
 
-- **35 specialized AI agents** with defined roles (core development, enterprise, code quality, specialized)
+- **34 specialized AI agents** with defined roles (core development, enterprise, code quality, specialized)
   - Each agent is a markdown file (`.claude/agents/<name>.md`) with instructions, capabilities, and tool permissions
   - Agents are activated automatically based on keywords, task analysis, or explicit workflow steps
 
-- **110 utility skills** for code generation, validation, planning, and recovery (108 Agent Studio + 2 Codex)
+- **108 utility skills** for code generation, validation, planning, and recovery (108 Agent Studio + 2 Codex)
   - Skills are markdown files (`.claude/skills/<name>/SKILL.md`) that provide reusable capabilities
   - Skills can be invoked directly or automatically injected into agent contexts
   - Two types: **Agent Studio Skills** (108 native) and **Codex Skills** (2 CLI-based multi-AI)
 
-- **20 workflow definitions** with enforcement gates and security validation
+- **14 workflow definitions** with enforcement gates and security validation
   - YAML files (`.claude/workflows/<name>.yaml`) defining multi-step, multi-agent processes
   - Workflows include plan rating gates, signoff validation, and error recovery
 
-- **61 Customer User Journeys (CUJs)** documenting complete workflows (2 reserved IDs: CUJ-031, CUJ-032, CUJ-033)
+- **62 Customer User Journeys (CUJs)** documenting complete workflows
   - Markdown files (`.claude/docs/cujs/CUJ-XXX.md`) documenting end-to-end user scenarios
   - CUJs map to workflows or skills, providing executable documentation
   - Machine-readable registry (`.claude/context/cuj-registry.json`) for programmatic access
-  - 54 workflow-based, 5 skill-only, 2 manual setup
+  - 54 workflow-based, 5 skill-only, 3 manual setup
 
-- **124 JSON schemas** for artifact validation
+- **93 JSON schemas** for artifact validation
   - Schema files (`.claude/schemas/<name>.schema.json`) for validating workflow artifacts
   - Ensures consistency and correctness of generated outputs
 
-- **151 technology rule packs** with dynamic discovery
+- **1081+ technology rule packs** with dynamic discovery
   - 8 master rules (core protocols) in `.claude/rules-master/`
-  - 143 library rules (tech-specific) in `.claude/rules-library/`
+  - 1073 library rules (tech-specific) in `.claude/rules-library/`
   - Dynamic rule index (`.claude/context/rule-index.json`) enables progressive disclosure
-  - Only 5-10 relevant rules loaded per task (not all 151)
+  - Only 5-10 relevant rules loaded per task (not all 1081)
 
 - **Enforcement system** with plan rating, signoffs, and security triggers
   - Plan rating: All plans must score ≥7/10 via `response-rater` skill
@@ -119,7 +123,7 @@ The system is **declarative** - you define what should happen (agents, workflows
 ### Google A2A Protocol Integration (2026-01)
 
 - **Full A2A v0.3.0 Compliance**: Standardized agent communication and external federation
-- **Agent Discovery**: AgentCard generation for all 35 agents, served at `/.well-known/agent-card.json`
+- **Agent Discovery**: AgentCard generation for all 34 agents, served at `/.well-known/agent-card.json`
 - **External Federation**: Discover and communicate with external A2A-compliant agents
 - **Memory Bridge**: Memory handoff in A2A Artifact format (200x faster than target)
 - **Task Lifecycle**: 8-state task management (SUBMITTED → WORKING → COMPLETED/etc.)
@@ -201,15 +205,15 @@ pnpm cuj CUJ-005          # Greenfield project planning
 
 ```
 .claude/
-├── agents/           # 35 specialized agent definitions (.md files)
+├── agents/           # 34 specialized agent definitions (.md files)
 ├── skills/           # 108 Agent Studio skills (each in own directory with SKILL.md)
 │   └── <skill-name>/
 │       └── SKILL.md  # Skill documentation and instructions
-├── workflows/        # 20 workflow definitions (.yaml files)
+├── workflows/        # 14 workflow definitions (.yaml files)
 ├── templates/        # 24 artifact templates (.md files)
-├── schemas/          # 124 JSON validation schemas (.schema.json files)
+├── schemas/          # 93 JSON validation schemas (.schema.json files)
 ├── rules-master/     # 8 master rules (core protocols)
-├── rules-library/    # 143 library rules (tech-specific)
+├── rules-library/    # 1073 library rules (tech-specific)
 ├── context/          # Enforcement matrices, security triggers, CUJ registry
 │   ├── cuj-registry.json      # Machine-readable CUJ catalog
 │   ├── skill-integration-matrix.json  # Agent-to-skill mappings
@@ -243,7 +247,7 @@ pnpm cuj CUJ-005          # Greenfield project planning
 │   └── post-session-cleanup.js            # Session cleanup
 ├── system/           # Guardrails, permissions, system config
 ├── docs/             # Comprehensive documentation
-│   ├── cujs/         # 61 Customer User Journey docs (2 reserved IDs)
+│   ├── cujs/         # 62 Customer User Journey docs
 │   ├── setup-guides/ # Setup and installation guides
 │   └── ...           # Additional documentation
 ├── .mcp.json         # MCP client configuration (connects to external servers)
@@ -261,7 +265,7 @@ codex-skills/         # CLI-based multi-AI skills (optional)
 └── response-rater/          # Multi-AI plan rating skill
 ```
 
-## Agents (35 Specialized Roles)
+## Agents (34 Specialized Roles)
 
 | Category                | Agents                                                                                                                                                                               |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -273,7 +277,7 @@ codex-skills/         # CLI-based multi-AI skills (optional)
 
 See `.claude/agents/` for detailed agent documentation.
 
-## Skills (110 Total: 108 Agent Studio + 2 Codex)
+## Skills (108 Total: 108 Agent Studio + 2 Codex)
 
 Skills provide 90%+ context savings vs MCP servers. Invoke with natural language or the Skill tool.
 
@@ -399,7 +403,7 @@ See `.claude/workflows/code-review-flow.yaml` for complete example.
 
 ## Workflows
 
-20 workflow definitions for complex multi-agent orchestration:
+14 workflow definitions for complex multi-agent orchestration:
 
 ### Automatic PR Workflow
 
@@ -487,6 +491,93 @@ node .claude/tools/enforcement-gate.mjs validate-all \
   --agents <agent1,agent2>
 ```
 
+## Orchestrator Enforcement System (4-Layer)
+
+**CRITICAL: Hooks are NOT registered in `settings.json` - they are managed independently via `.claude/hooks/` directory and executed by the hook system.**
+
+The Orchestrator Enforcement System uses a 4-layer architecture to ensure orchestrators delegate work rather than implement directly:
+
+### Layer 1: PreToolUse Hook (HARD BLOCK)
+
+**File**: `.claude/hooks/orchestrator-enforcement-hook.mjs`
+
+- Detects orchestrator via `CLAUDE_AGENT_ROLE` environment variable or session state
+- Blocks violations BEFORE tool executes (tool call is cancelled)
+- Logs all violations to `.claude/context/logs/orchestrator-violations.log`
+- Returns block message with correct delegation pattern
+
+**Blocked Tools for Orchestrators**:
+
+- Write, Edit, Grep, Glob - ALWAYS blocked (delegate to developer/analyst)
+- Bash - BLOCKED if contains dangerous keywords (rm, git add/commit/push, npm run, node .claude/tools/)
+- Read - BLOCKED on 3rd+ call (unless coordination file like plan.json, dashboard.md)
+
+**Allowed Tools**:
+
+- Task (unlimited) - Primary tool for spawning subagents
+- TodoWrite (unlimited) - Track progress
+- AskUserQuestion (unlimited) - Clarify requirements
+- Read (max 2 files) - Coordination files only
+
+### Layer 2: Agent Prompt Self-Check (PROACTIVE)
+
+**File**: `.claude/agents/orchestrator.md`, `.claude/agents/master-orchestrator.md`
+
+5-question verification before EVERY tool call:
+
+1. **Role Check**: Are you an orchestrator?
+2. **Tool Whitelist Check**: Is the tool on the whitelist?
+3. **Read Count Check**: Is this my 3rd+ Read call?
+4. **Bash Command Check**: Does command contain dangerous keywords?
+5. **Analysis Intent Check**: Are you about to analyze code patterns/structure/logic?
+
+Prompts agent to STOP and delegate proactively before violations occur.
+
+### Layer 3: PostToolUse Audit (DETECTION)
+
+**File**: `.claude/hooks/audit-post-tool.mjs`
+
+- Detects violations that bypassed Layer 1
+- Records tool usage metrics (tool name, timestamp, duration, result)
+- Maintains comprehensive audit trail at `.claude/context/logs/audit-post-tool.log`
+- Non-blocking - logs for analysis, doesn't prevent execution
+
+### Layer 4: Session Summary Report (SCORING)
+
+**Generated at session end**: `.claude/context/reports/orchestrator-compliance-<session_id>.json`
+
+- Calculates compliance score (0-100%) based on violation count
+- Categorizes violations by type (tool blacklist, read limit exceeded, dangerous bash)
+- Generates recommendations for improving compliance
+- Provides session analytics (total tool calls, violations, compliance trends)
+
+### Enforcement Architecture
+
+**Session State Management**:
+
+- Location: `.claude/context/tmp/orchestrator-session-state.json`
+- Tracks: read_count, violations, session_id, agent_role
+- Lifecycle: Created on first tool call, updated by hooks, archived at session end
+
+**Hook Execution Order**:
+
+1. `security-pre-tool.mjs` - Security validation (BLOCKING)
+2. `file-path-validator.js` - File path validation (BLOCKING)
+3. `orchestrator-enforcement-hook.mjs` - Orchestrator delegation rules (BLOCKING)
+4. `skill-injection-hook.js` - Automatic skill injection (AUGMENTING)
+5. **Tool Executes** (if not blocked)
+6. `audit-post-tool.mjs` - Audit logging (NON-BLOCKING)
+7. `post-session-cleanup.js` - Session cleanup (NON-BLOCKING)
+
+**IMPORTANT: Hooks are NOT in settings.json**:
+
+- Hooks are discovered automatically by scanning `.claude/hooks/` directory
+- Hook registration happens via filename patterns (`*-pre-tool.*`, `*-post-tool.*`)
+- No manual registration needed in `settings.json`
+- Hook system loads and executes hooks independently
+
+**Documentation**: See `.claude/docs/ORCHESTRATOR_ENFORCEMENT.md` for complete enforcement documentation.
+
 ## Key Tools
 
 The project includes **200+ utility tools** in `.claude/tools/`. Key tools include:
@@ -573,19 +664,72 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 
 ### Security & Enforcement Hooks
 
+**CRITICAL: Hooks are NOT registered in `settings.json` - they are managed independently via `.claude/hooks/` directory.**
+
 6 production hooks provide security validation, audit logging, and orchestrator enforcement:
 
-**PreToolUse Hooks (4 hooks):**
+**PreToolUse Hooks (4 hooks) - Execute BEFORE tool runs:**
 
-- **security-pre-tool.mjs**: Blocks dangerous commands and sensitive file operations
-- **file-path-validator.js**: Validates file paths to prevent SLOP (files in wrong locations)
-- **orchestrator-enforcement-hook.mjs**: Enforces orchestrator delegation rules (2-file Read limit, no Write/Edit/Grep/Glob)
-- **skill-injection-hook.js**: Automatically injects skills into Task tool calls
+1. **security-pre-tool.mjs** (BLOCKING) - Blocks dangerous commands and sensitive file operations
+   - Prevents `rm -rf`, `sudo rm`, `mkfs`, `dd`, and other destructive commands
+   - Blocks access to `.env*`, `secrets/`, credential files
+   - Validates command safety before execution
 
-**PostToolUse Hooks (2 hooks):**
+2. **file-path-validator.js** (BLOCKING) - Validates file paths to prevent SLOP (files in wrong locations)
+   - Ensures files go to correct `.claude/context/` subdirectories
+   - Blocks malformed Windows paths (e.g., `C:devprojects`)
+   - Prevents nested `.claude` folders
+   - Enforces root directory allowlist
 
-- **audit-post-tool.mjs**: Logs tool usage with performance metrics
-- **post-session-cleanup.js**: Automatic session cleanup for temporary files
+3. **orchestrator-enforcement-hook.mjs** (BLOCKING) - Enforces orchestrator delegation rules
+   - Blocks Write, Edit, Grep, Glob for orchestrators (must delegate)
+   - Enforces 2-file Read limit for orchestrators
+   - Blocks dangerous Bash commands for orchestrators
+   - Returns delegation instructions on violation
+
+4. **skill-injection-hook.js** (AUGMENTING) - Automatically injects skills into Task tool calls
+   - Detects skill triggers in task descriptions
+   - Loads and injects relevant skill content
+   - Enhances agent context with skill capabilities
+
+**PostToolUse Hooks (2 hooks) - Execute AFTER tool completes:**
+
+5. **audit-post-tool.mjs** (NON-BLOCKING) - Logs tool usage with performance metrics
+   - Records tool name, timestamp, duration, result
+   - Tracks orchestrator violations
+   - Maintains comprehensive audit trail
+
+6. **post-session-cleanup.js** (NON-BLOCKING) - Automatic session cleanup
+   - Removes temporary files (`tmp-*`) older than 1 hour
+   - Cleans orphaned session state
+   - Archives completed sessions
+
+**Hook Execution Order**:
+
+```
+┌─────────────────────────────────────────────┐
+│ PRETOOLUSE HOOKS (Sequential Execution)    │
+├─────────────────────────────────────────────┤
+│ 1. security-pre-tool.mjs       (BLOCKING)  │
+│ 2. file-path-validator.js      (BLOCKING)  │
+│ 3. orchestrator-enforcement    (BLOCKING)  │
+│ 4. skill-injection-hook.js     (AUGMENTING)│
+├─────────────────────────────────────────────┤
+│ TOOL EXECUTES (if not blocked)             │
+├─────────────────────────────────────────────┤
+│ POSTTOOLUSE HOOKS (Sequential Execution)   │
+├─────────────────────────────────────────────┤
+│ 5. audit-post-tool.mjs         (NON-BLOCK) │
+│ 6. post-session-cleanup.js     (NON-BLOCK) │
+└─────────────────────────────────────────────┘
+```
+
+**Hook Registration**:
+
+- Hooks are discovered automatically by scanning `.claude/hooks/` directory
+- No manual registration in `settings.json` required
+- Filename patterns determine hook type: `*-pre-tool.*`, `*-post-tool.*`
+- Hook system loads and executes hooks independently
 
 **Testing & Validation:**
 
@@ -594,7 +738,7 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 - See `.claude/docs/HOOK_TESTING_FRAMEWORK.md` for testing guide
 - See `.claude/docs/HOOK_RECOVERY_COMPLETE.md` for troubleshooting
 
-**Hook Documentation:** See `.claude/hooks/README.md` for complete hook documentation
+**Hook Documentation**: See `.claude/hooks/README.md` for complete hook documentation and `.claude/docs/ORCHESTRATOR_ENFORCEMENT.md` for enforcement details.
 
 ### Protected Operations
 
