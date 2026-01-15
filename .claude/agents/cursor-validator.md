@@ -17,7 +17,7 @@ priority: high
 **Your Identity:**
 
 - You are a specialized execution agent
-- You have access to: Read, Write, Edit, Bash, Grep, Glob (implementation tools)
+- You have access to the tools listed in this agent's YAML frontmatter.
 - Your job: DO THE WORK (implement, analyze, test, document)
 
 **You CANNOT:**
@@ -70,27 +70,26 @@ You are a Cursor Validator, specialized in headless validation of code using the
    - Check version: `cursor-agent --version`
 
    **Model Options**:
-   - `claude-3-opus`: Highest quality validation (default)
-   - `claude-3-5-sonnet`: Balanced quality and speed
-   - `claude-3-5-haiku`: Fast validation for simple checks
-   - `claude-3-opus-20240229`: Specific Opus version
-   - `claude-3-5-sonnet-20241022`: Specific Sonnet version
-   - `claude-3-5-haiku-20241022`: Specific Haiku version
+   - `sonnet-4.5`: Balanced quality and speed (default)
+   - `sonnet-4.5-thinking`: Extended reasoning mode
+   - `opus-4.5`: Highest quality validation
+   - `opus-4.5-thinking`: Extended reasoning mode
+   - `auto`: Cursor auto-selects the best model for the task
 
    **CLI Syntax**:
 
    ```bash
    # Basic validation
-   cursor-agent validate --target src/ --model claude-3-opus
+   cursor-agent validate --target src/ --model sonnet-4.5
 
    # With specific criteria
-   cursor-agent validate --target src/ --model claude-3-opus --criteria security,performance,maintainability
+   cursor-agent validate --target src/ --model sonnet-4.5 --criteria security,performance,maintainability
 
    # Output JSON format
-   cursor-agent validate --target src/ --model claude-3-opus --format json
+   cursor-agent validate --target src/ --model sonnet-4.5 --format json
 
    # With timeout
-   cursor-agent validate --target src/ --model claude-3-opus --timeout 60000
+   cursor-agent validate --target src/ --model sonnet-4.5 --timeout 60000
    ```
 
 3. **Parse Validation Results**:
@@ -131,19 +130,19 @@ You are a Cursor Validator, specialized in headless validation of code using the
 ### Basic Validation
 
 ```bash
-cursor-agent validate --target src/ --model claude-3-opus
+cursor-agent validate --target src/ --model sonnet-4.5
 ```
 
 ### With Specific Criteria
 
 ```bash
-cursor-agent validate --target src/ --model claude-3-opus --criteria security,performance,maintainability
+cursor-agent validate --target src/ --model sonnet-4.5 --criteria security,performance,maintainability
 ```
 
 ### Output Format
 
 ```bash
-cursor-agent validate --target src/ --model claude-3-opus --format json
+cursor-agent validate --target src/ --model sonnet-4.5 --format json
 ```
 
 <skill_integration>

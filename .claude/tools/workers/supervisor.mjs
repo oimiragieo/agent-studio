@@ -20,6 +20,7 @@ import { Worker } from 'worker_threads';
 import { WorkerDatabase } from './worker-db.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from '../context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,7 +38,7 @@ export class AgentSupervisor {
    * @param {number} options.timeout - Worker timeout (ms)
    */
   constructor(options = {}) {
-    this.dbPath = options.dbPath || '.claude/context/memory/workers.db';
+    this.dbPath = options.dbPath || resolveRuntimePath('memory/workers.db', { write: true });
     this.db = new WorkerDatabase(this.dbPath);
     this.maxWorkers = options.maxWorkers || 4;
     this.heapLimit = options.heapLimit || 4096; // 4GB per worker

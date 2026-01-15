@@ -120,7 +120,7 @@ async function runTests() {
     const session = await initializeRouterSession(sessionId, 'test prompt');
 
     assert(session.session_id === sessionId, 'Session ID matches');
-    assert(session.model === 'claude-3-5-haiku-20241022', 'Uses Haiku model by default');
+    assert(session.model === 'claude-haiku-4-5', 'Uses Haiku model by default');
     assert(session.role === 'router', 'Sets router role');
     assert(session.cost_tracking !== undefined, 'Initializes cost tracking');
     assert(session.routing_history !== undefined, 'Initializes routing history');
@@ -163,7 +163,7 @@ async function runTests() {
 
     const costResult = await trackCosts(
       sessionId,
-      'claude-3-5-haiku-20241022',
+      'claude-haiku-4-5',
       1000, // input tokens
       500 // output tokens
     );
@@ -173,7 +173,7 @@ async function runTests() {
     assert(costResult.this_request.output_tokens === 500, 'Tracks output tokens');
 
     // Add another request
-    await trackCosts(sessionId, 'claude-3-5-haiku-20241022', 2000, 1000);
+    await trackCosts(sessionId, 'claude-haiku-4-5', 2000, 1000);
 
     const summary = await getCostSummary(sessionId);
     assert(summary.total_input_tokens === 3000, 'Accumulates input tokens');
@@ -189,7 +189,7 @@ async function runTests() {
     // Haiku: $1/M input, $5/M output
     const result = await trackCosts(
       sessionId,
-      'claude-3-5-haiku-20241022',
+      'claude-haiku-4-5',
       1_000_000, // 1M input tokens
       1_000_000 // 1M output tokens
     );

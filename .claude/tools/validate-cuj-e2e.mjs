@@ -45,6 +45,11 @@ const args = process.argv.slice(2);
 const VERBOSE = args.includes('--verbose');
 const JSON_OUTPUT = args.includes('--json');
 const FIX_SUGGESTIONS = args.includes('--fix-suggestions');
+const CUJ_FILTER = (() => {
+  const idx = args.indexOf('--cuj');
+  if (idx === -1) return null;
+  return args[idx + 1] || null;
+})();
 
 // Help text
 if (args.includes('--help') || args.includes('-h')) {
@@ -188,7 +193,7 @@ function parseCUJIndex() {
     }
 
     // Skip separator line
-    if (inMappingTable && !headerPassed && line.includes('|---')) {
+    if (inMappingTable && !headerPassed && /^\|\s*-{3,}/.test(line)) {
       headerPassed = true;
       continue;
     }
@@ -644,7 +649,11 @@ async function validateCUJSystem() {
 
   // Step 4: Parse CUJ-INDEX.md
   const cujMapping = parseCUJIndex();
-  validationResults.summary.total_cujs = cujMapping.size;
+  validationResults.summary.total_cujs = CUJ_FILTER
+    ? cujMapping.has(CUJ_FILTER)
+      ? 1
+      : 0
+    : cujMapping.size;
 
   if (cujMapping.size === 0) {
     validationResults.errors.push({
@@ -658,13 +667,28 @@ async function validateCUJSystem() {
     return false;
   }
 
+  if (CUJ_FILTER) {
+    if (!cujMapping.has(CUJ_FILTER)) {
+      validationResults.errors.push({
+        step: 'CUJ filter',
+        error: `CUJ ${CUJ_FILTER} not found in CUJ-INDEX.md mapping table`,
+      });
+      return false;
+    }
+  }
+
   if (!JSON_OUTPUT) {
-    console.log(`Found ${cujMapping.size} CUJs in mapping table\n`);
+    console.log(
+      `Found ${cujMapping.size} CUJs in mapping table${
+        CUJ_FILTER ? ` (validating only ${CUJ_FILTER})` : ''
+      }\n`
+    );
   }
 
   // Step 5: Validate each CUJ
   let validatedCount = 0;
-  for (const [cujId, cujEntry] of cujMapping.entries()) {
+  const entries = CUJ_FILTER ? [[CUJ_FILTER, cujMapping.get(CUJ_FILTER)]] : cujMapping.entries();
+  for (const [cujId, cujEntry] of entries) {
     const status = validateCUJ(cujId, cujEntry);
     validationResults.details[cujId] = status;
     validatedCount++;

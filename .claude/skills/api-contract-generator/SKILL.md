@@ -1,6 +1,7 @@
 ---
 name: api-contract-generator
 description: Generates OpenAPI/Swagger schemas for API endpoints. Creates comprehensive API contracts from endpoint implementations, ensuring consistency between code and documentation.
+version: 1.0.0
 context:fork: true
 model: sonnet
 allowed-tools: read, write, grep, codebase_search

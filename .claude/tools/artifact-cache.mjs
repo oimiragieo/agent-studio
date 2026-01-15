@@ -12,6 +12,7 @@ import path from 'path';
 import { createHash } from 'crypto';
 import { fileURLToPath } from 'url';
 import { parseLargeJSON, shouldUseStreaming } from './streaming-json-parser.mjs';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,7 +31,7 @@ const MAX_CACHE_SIZE = 500; // Maximum entries per cache
 const MAX_CACHE_MEMORY_MB = 50; // Maximum memory usage in MB per cache
 
 // Cache directory for persistent workflow cache
-const CACHE_DIR = path.join(ROOT, '.claude/context/cache');
+const CACHE_DIR = resolveRuntimePath('cache', { write: true });
 
 /**
  * Ensure cache directory exists

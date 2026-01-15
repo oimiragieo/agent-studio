@@ -1,6 +1,7 @@
 ---
 name: google-drive
 description: Google Drive file operations and management
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

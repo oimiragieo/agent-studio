@@ -27,6 +27,7 @@ import {
   hasSecurityArchitectApproval,
   validateSecurityApproval,
 } from './security-enforcement.mjs';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -91,7 +92,7 @@ async function loadCrossCuttingTriggers() {
  */
 async function loadPlanReviewMatrix() {
   try {
-    const matrixPath = join(__dirname, '..', 'context', 'plan-review-matrix.json');
+    const matrixPath = resolveConfigPath('plan-review-matrix.json', { read: true });
     const content = await readFile(matrixPath, 'utf-8');
     return JSON.parse(content);
   } catch (error) {
@@ -105,7 +106,7 @@ async function loadPlanReviewMatrix() {
  */
 async function loadSignoffMatrix() {
   try {
-    const matrixPath = join(__dirname, '..', 'context', 'signoff-matrix.json');
+    const matrixPath = resolveConfigPath('signoff-matrix.json', { read: true });
     const content = await readFile(matrixPath, 'utf-8');
     return JSON.parse(content);
   } catch (error) {
@@ -119,7 +120,7 @@ async function loadSignoffMatrix() {
  */
 async function loadSecurityTriggersV2() {
   try {
-    const triggersPath = join(__dirname, '..', 'context', 'security-triggers-v2.json');
+    const triggersPath = resolveConfigPath('security-triggers-v2.json', { read: true });
     const content = await readFile(triggersPath, 'utf-8');
     return JSON.parse(content);
   } catch (error) {

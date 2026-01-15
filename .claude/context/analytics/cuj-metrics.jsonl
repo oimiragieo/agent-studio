@@ -1,6 +1,0 @@
-{"timestamp":"2026-01-09T16:48:32.283Z","cuj_id":"TEST-001","success":true,"duration_ms":1234,"error":null,"metadata":{}}
-{"timestamp":"2026-01-09T16:48:32.284Z","cuj_id":"TEST-001","success":true,"duration_ms":1456,"error":null,"metadata":{}}
-{"timestamp":"2026-01-09T16:48:32.284Z","cuj_id":"TEST-001","success":false,"duration_ms":2000,"error":"Test error","metadata":{}}
-{"timestamp":"2026-01-11T19:23:50.100Z","cuj_id":"TEST-001","success":true,"duration_ms":1234,"error":null,"metadata":{}}
-{"timestamp":"2026-01-11T19:23:50.101Z","cuj_id":"TEST-001","success":true,"duration_ms":1456,"error":null,"metadata":{}}
-{"timestamp":"2026-01-11T19:23:50.101Z","cuj_id":"TEST-001","success":false,"duration_ms":2000,"error":"Test error","metadata":{}}

@@ -26,10 +26,11 @@ import { EventEmitter } from 'events';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, '../..');
-const progressLogFile = path.join(projectRoot, '.claude/context/logs/progress.jsonl');
+const progressLogFile = resolveRuntimePath('logs/progress.jsonl', { write: true });
 
 /**
  * Global progress event emitter

@@ -1,6 +1,7 @@
 ---
 name: langchain-tools
 description: LangChain framework utilities for chains, agents, and RAG
+version: 1.0.0
 allowed-tools: [Bash, Read, Grep, Glob]
 category: ai-tools
 requires-env: []

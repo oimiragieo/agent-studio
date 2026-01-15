@@ -35,7 +35,8 @@ const __dirname = dirname(__filename);
 // Configuration
 const DEFAULT_MINIMUM_SCORE = 7;
 const MAX_RATING_ATTEMPTS = 3;
-const RATING_TIMEOUT_MS = 180000; // 3 minutes per provider
+const RATING_TIMEOUT_MS = 60000; // 60 seconds per provider (reduced from 3 minutes for faster feedback)
+const PLAN_RATING_TIMEOUT_MS = 60000; // 60 seconds for plan rating gate
 const DEFAULT_PROVIDERS = 'claude,gemini';
 
 // Paths
@@ -152,6 +153,16 @@ async function invokeResponseRater(planPath, options = {}) {
 
     console.log(`[Plan Rating] Invoking response-rater with providers: ${providers}`);
     console.log(`[Plan Rating] Plan file: ${planPath}`);
+    console.log(`[Plan Rating] Timeout: ${timeoutMs / 1000}s`);
+
+    // Progress indicator
+    let elapsedSeconds = 0;
+    const progressInterval = setInterval(() => {
+      elapsedSeconds += 5;
+      if (elapsedSeconds <= timeoutMs / 1000) {
+        console.log(`[Plan Rating] Rating plan... (${elapsedSeconds}s elapsed)`);
+      }
+    }, 5000);
 
     const child = spawn('node', args, {
       cwd: join(__dirname, '../..'),
@@ -171,10 +182,20 @@ async function invokeResponseRater(planPath, options = {}) {
     });
 
     child.on('error', error => {
-      reject(new Error(`Failed to spawn response-rater: ${error.message}`));
+      clearInterval(progressInterval);
+      if (error.code === 'ETIMEDOUT' || error.message.includes('timeout')) {
+        reject(
+          new Error(
+            `Plan rating timed out after ${timeoutMs / 1000}s. Consider using offline fallback or increasing timeout.`
+          )
+        );
+      } else {
+        reject(new Error(`Failed to spawn response-rater: ${error.message}`));
+      }
     });
 
     child.on('close', code => {
+      clearInterval(progressInterval);
       if (code !== 0) {
         // Check if any provider succeeded
         try {

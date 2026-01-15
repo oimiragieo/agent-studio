@@ -18,6 +18,7 @@ import { readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 import Ajv from 'ajv';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -29,7 +30,7 @@ const __dirname = dirname(__filename);
  */
 async function loadSignoffMatrix() {
   try {
-    const matrixPath = join(__dirname, '..', 'context', 'signoff-matrix.json');
+    const matrixPath = resolveConfigPath('signoff-matrix.json', { read: true });
     const content = await readFile(matrixPath, 'utf-8');
     return JSON.parse(content);
   } catch (error) {

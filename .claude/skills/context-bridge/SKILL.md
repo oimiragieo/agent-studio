@@ -21,7 +21,7 @@ Context Bridge - Synchronizes task state and metadata across Claude, Cursor, and
 1. **Identify Handoff**: When a user indicates they are switching platforms (e.g., "I'll finish this in Cursor"), invoke this skill.
 2. **Persist State**: Save the current plan, active artifacts, and next steps to `.claude/context/state.json`.
 3. **Sync Publishing Metadata**: 
-   - Read artifact registry from source platform (e.g., `.claude/context/runs/<run_id>/artifact-registry.json`)
+   - Read artifact registry from source platform (e.g., `.claude/context/runtime/runs/<run_id>/artifact-registry.json`)
    - Extract publishing metadata (published, published_at, publish_status, publish_targets, publish_attempts)
    - Validate metadata against `.claude/schemas/artifact-metadata.schema.json`
    - Sync to target platform (e.g., `.cursor/plans/artifacts/` or `.factory/context/artifacts/`)

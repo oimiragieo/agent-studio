@@ -8,8 +8,9 @@
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { resolveRuntimePath } from '../context-path-resolver.mjs';
 
-const MEMORY_DIR = '.claude/context/memory';
+const MEMORY_DIR = resolveRuntimePath('memory', { write: true });
 const MEMORY_FILE = join(MEMORY_DIR, 'memories.json');
 
 /**

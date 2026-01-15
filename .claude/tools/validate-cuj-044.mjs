@@ -6,6 +6,7 @@
 import { readFileSync, existsSync } from 'fs';
 import yaml from 'js-yaml';
 import { WorkflowTemplateEngine } from './workflow-template-engine.mjs';
+import { getCanonicalPath, resolveRuntimePath } from './context-path-resolver.mjs';
 
 console.log('🔍 CUJ-044 Validation\n');
 
@@ -77,8 +78,12 @@ console.log(testExists ? '  ✅ PASS' : '  ❌ FAIL');
 
 // Check 8: Implementation artifacts exist
 console.log('\nCheck 8: Implementation artifacts exist');
-const manifestExists = existsSync('.claude/context/artifacts/cuj-044-implementation-manifest.json');
-const reportExists = existsSync('.claude/context/reports/cuj-044-implementation-report.md');
+const manifestExists =
+  existsSync(getCanonicalPath('artifacts', 'generated', 'cuj-044-implementation-manifest.json')) ||
+  existsSync(getCanonicalPath('artifacts', 'cuj-044-implementation-manifest.json'));
+const reportExists = existsSync(
+  resolveRuntimePath('reports/cuj-044-implementation-report.md', { read: true })
+);
 const artifactsExist = manifestExists && reportExists;
 checks.push({ name: 'Implementation artifacts exist', passed: artifactsExist });
 console.log(`  ${manifestExists ? '✅' : '❌'} Manifest: ${manifestExists}`);

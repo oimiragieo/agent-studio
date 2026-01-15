@@ -9,7 +9,7 @@
  * 4. Ack: New orchestrator writes handoff-ack.json ("loaded successfully" + hash of handoff)
  * 5. Shutdown: Old orchestrator sees ack and marks itself shutdown (becomes read-only)
  *
- * Uses run directory structure: .claude/context/runs/<run_id>/
+ * Uses run directory structure: .claude/context/runtime/runs/<run_id>/
  *
  * Usage:
  *   node .claude/tools/orchestrator-handoff.mjs --run-id <id> [--spawn-cursor]

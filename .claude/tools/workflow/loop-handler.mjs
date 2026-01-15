@@ -131,11 +131,8 @@ async function loadArtifact(artifactPath) {
  * Save loop state to session
  */
 export async function saveLoopState(sessionId, loopType, loopState) {
-  const statePath = join(
-    process.cwd(),
-    '.claude/context/sessions',
-    `${sessionId}-${loopType}.json`
-  );
+  const sessionsDir = resolveRuntimePath('sessions', { write: true });
+  const statePath = join(sessionsDir, `${sessionId}-${loopType}.json`);
   await writeFile(statePath, JSON.stringify(loopState, null, 2), 'utf8');
 }
 
@@ -143,11 +140,8 @@ export async function saveLoopState(sessionId, loopType, loopState) {
  * Load loop state from session
  */
 export async function loadLoopState(sessionId, loopType) {
-  const statePath = join(
-    process.cwd(),
-    '.claude/context/sessions',
-    `${sessionId}-${loopType}.json`
-  );
+  const sessionsDir = resolveRuntimePath('sessions', { read: true });
+  const statePath = join(sessionsDir, `${sessionId}-${loopType}.json`);
   try {
     const content = await readFile(statePath, 'utf8');
     return JSON.parse(content);

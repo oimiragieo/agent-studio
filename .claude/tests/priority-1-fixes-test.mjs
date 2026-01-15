@@ -204,7 +204,7 @@ async function testArtifactPathConsistency() {
     const runPath = getArtifactPath('run-123', 'test.json');
     const normalizedRunPath = runPath.replace(/\\/g, '/');
     assert(
-      normalizedRunPath.includes('runs/run-123/artifacts/test.json'),
+      normalizedRunPath.includes('context/runtime/runs/run-123/artifacts/test.json'),
       'getArtifactPath generates run-specific path'
     );
 
@@ -212,8 +212,8 @@ async function testArtifactPathConsistency() {
     const legacyPath = getArtifactPath(null, 'test.json');
     const normalizedLegacyPath = legacyPath.replace(/\\/g, '/');
     assert(
-      normalizedLegacyPath.includes('.claude/context/artifacts/test.json') &&
-        !normalizedLegacyPath.includes('runs'),
+      normalizedLegacyPath.includes('.claude/context/artifacts/generated/test.json') &&
+        !normalizedLegacyPath.includes('runtime/runs'),
       'getArtifactPath generates legacy path when runId is null'
     );
 
@@ -221,7 +221,7 @@ async function testArtifactPathConsistency() {
     const reportPath = getReportPath('run-123', 'report.md');
     const normalizedReportPath = reportPath.replace(/\\/g, '/');
     assert(
-      normalizedReportPath.includes('runs/run-123/reports/report.md'),
+      normalizedReportPath.includes('context/runtime/runs/run-123/reports/report.md'),
       'getReportPath generates correct path'
     );
 
@@ -229,7 +229,7 @@ async function testArtifactPathConsistency() {
     const taskPath = getTaskPath('run-123', 'task.md');
     const normalizedTaskPath = taskPath.replace(/\\/g, '/');
     assert(
-      normalizedTaskPath.includes('runs/run-123/tasks/task.md'),
+      normalizedTaskPath.includes('context/runtime/runs/run-123/tasks/task.md'),
       'getTaskPath generates correct path'
     );
   } catch (error) {

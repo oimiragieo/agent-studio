@@ -79,7 +79,7 @@ The tool handles different CUJ execution modes:
 
 The tool integrates with:
 
-- **CUJ Registry**: Reads from `.claude/context/cuj-registry.json`
+- **CUJ Registry**: Reads from `.claude/context/config/cuj-registry.json` (canonical) or `.claude/context/cuj-registry.json` (legacy fallback)
 - **Workflow Runner**: Delegates to `workflow_runner.js` for workflow execution
 - **CUJ Validator**: Delegates to `validate-cuj-e2e.mjs` for validation
 
@@ -141,6 +141,6 @@ Validates the structure and configuration of CUJ-005 (Greenfield Project Plannin
 
 - **File**: `.claude/tools/run-cuj.mjs`
 - **Dependencies**: Node.js 18+, child_process, fs, path
-- **Registry**: `.claude/context/cuj-registry.json`
+- **Registry**: `.claude/context/config/cuj-registry.json` (canonical) or `.claude/context/cuj-registry.json` (legacy fallback)
 - **Workflows**: `.claude/workflows/*.yaml`
 - **Validator**: `.claude/tools/validate-cuj-e2e.mjs`

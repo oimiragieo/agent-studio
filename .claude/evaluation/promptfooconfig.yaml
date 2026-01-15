@@ -7,11 +7,11 @@ description: 'LLM-RULES Agent and Rule Compliance Evaluation'
 # Providers (Claude models)
 providers:
   - claude-sonnet-4-5:
-      id: anthropic:claude-sonnet-4-5-20250929
+      id: anthropic:messages:claude-sonnet-4-5
       config:
         apiKey: ${ANTHROPIC_API_KEY}
   - claude-opus-4-5:
-      id: anthropic:claude-opus-4-5-20251101
+      id: anthropic:messages:claude-opus-4-5-20251101
       config:
         apiKey: ${ANTHROPIC_API_KEY}
 
@@ -65,4 +65,3 @@ grading:
 # - .claude/evaluation/promptfoo_configs/rag_config.yaml - RAG evaluation with retrieval metrics
 # - .claude/evaluation/promptfoo_configs/classification_config.yaml - Classification evaluation
 # - .claude/evaluation/promptfoo_configs/text_to_sql_config.yaml - SQL generation evaluation
-

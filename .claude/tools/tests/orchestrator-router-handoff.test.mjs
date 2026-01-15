@@ -9,7 +9,14 @@
  * - Cost aggregation
  * - Backward compatibility (no routing decision)
  * - Skip redundant routing when router provides workflow
+ *
+ * Note: These tests verify routing and cost aggregation logic, not actual agent execution.
+ * Workflow execution is skipped in test mode to avoid requiring real agents.
  */
+
+// Set test mode to skip workflow execution (tests only verify routing/cost logic)
+process.env.NODE_ENV = 'test';
+process.env.SKIP_WORKFLOW_EXECUTION = 'true';
 
 import { strict as assert } from 'assert';
 import { processUserPrompt } from '../orchestrator-entry.mjs';
@@ -61,7 +68,7 @@ async function testRouterHandoff() {
   const sessionContext = {
     session_id: sessionId,
     router_classification: {
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5',
     },
     cost_tracking: {
       total_cost_usd: 0.00045,
@@ -70,7 +77,7 @@ async function testRouterHandoff() {
       model_usage: [
         {
           timestamp: new Date().toISOString(),
-          model: 'claude-3-5-haiku-20241022',
+          model: 'claude-haiku-4-5',
           input_tokens: 150,
           output_tokens: 100,
           cost_usd: 0.00045,
@@ -128,7 +135,7 @@ async function testSessionContextTransfer() {
   const sessionContext = {
     session_id: sessionId,
     router_classification: {
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5',
       intent: 'script',
     },
     cost_tracking: {
@@ -181,7 +188,7 @@ async function testCostAggregation() {
       total_output_tokens: 300,
       model_usage: [
         {
-          model: 'claude-3-5-haiku-20241022',
+          model: 'claude-haiku-4-5',
           input_tokens: 500,
           output_tokens: 300,
           cost_usd: 0.0015,

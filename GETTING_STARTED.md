@@ -419,7 +419,7 @@ pnpm test:a2a:lifecycle    # Task lifecycle (90 tests)
 pnpm test:a2a:federation   # External federation (102 tests)
 ```
 
-**Documentation**: See `.claude/context/reports/a2a-integration-completion-report.md` for comprehensive details.
+**Documentation**: See `.claude/context/runtime/reports/a2a-integration-completion-report.md` for comprehensive details.
 
 ---
 
@@ -598,7 +598,7 @@ For each step in the workflow YAML:
 
 **3. Prepare Inputs**
 
-- Load artifacts from previous steps (from `.claude/context/artifacts/`)
+- Load artifacts from previous steps (from `.claude/context/artifacts/generated/` or `.claude/context/artifacts/reference/`)
 - Resolve template variables (e.g., `{{workflow_id}}` → actual ID)
 - Pass user requirements and context
 
@@ -610,7 +610,7 @@ For each step in the workflow YAML:
 
 **5. Save Outputs**
 
-- Save artifacts to `.claude/context/artifacts/{artifact-name}.json`
+- Save artifacts to `.claude/context/artifacts/generated/{artifact-name}.json` (use resolver for path resolution)
 - Artifacts become inputs for subsequent steps
 - Special outputs:
   - `code-artifacts`: Code files/directories (not validated)
@@ -649,8 +649,8 @@ inputs:
 
 **How It Works:**
 
-1. Step 1 saves `project-brief.json` to `.claude/context/artifacts/`
-2. Step 2 reads `project-brief.json` from `.claude/context/artifacts/`
+1. Step 1 saves `project-brief.json` to `.claude/context/artifacts/generated/` (via resolver)
+2. Step 2 reads `project-brief.json` from `.claude/context/artifacts/generated/` (via resolver fallback)
 3. Agent in Step 2 uses the artifact as context for its work
 
 **Template Variables:**

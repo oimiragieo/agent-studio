@@ -8,12 +8,15 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import yaml from 'js-yaml';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const CONFIG_FILE = path.join(__dirname, '../config.yaml');
-const CACHE_FILE = path.join(__dirname, '../context/cache/loaded-context.json');
+function getCacheFilePath(options = { read: false }) {
+  return resolveRuntimePath('cache/loaded-context.json', options);
+}
 const MAX_CACHE_AGE = 3600000; // 1 hour in milliseconds
 
 const contextCache = new Map();
@@ -142,13 +145,14 @@ function getCachedContext(agentName) {
 
   // Check file cache
   try {
-    if (fs.existsSync(CACHE_FILE)) {
+    const cacheFile = getCacheFilePath({ read: true });
+    if (fs.existsSync(cacheFile)) {
       let cache;
       try {
-        const cacheContent = fs.readFileSync(CACHE_FILE, 'utf8');
+        const cacheContent = fs.readFileSync(cacheFile, 'utf8');
         cache = JSON.parse(cacheContent);
       } catch (error) {
-        console.warn(`⚠️  Invalid JSON in cache file ${CACHE_FILE}: ${error.message}`);
+        console.warn(`⚠️  Invalid JSON in cache file ${cacheFile}: ${error.message}`);
         console.warn(`   Cache file will be regenerated on next save.`);
         return null;
       }
@@ -180,18 +184,19 @@ function cacheContext(agentName, context) {
 
   // File cache
   try {
-    const dir = path.dirname(CACHE_FILE);
+    const cacheFile = getCacheFilePath({ read: false });
+    const dir = path.dirname(cacheFile);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
 
     let cache = {};
-    if (fs.existsSync(CACHE_FILE)) {
+    if (fs.existsSync(cacheFile)) {
       try {
-        const cacheContent = fs.readFileSync(CACHE_FILE, 'utf8');
+        const cacheContent = fs.readFileSync(cacheFile, 'utf8');
         cache = JSON.parse(cacheContent);
       } catch (error) {
-        console.warn(`⚠️  Invalid JSON in cache file ${CACHE_FILE}: ${error.message}`);
+        console.warn(`⚠️  Invalid JSON in cache file ${cacheFile}: ${error.message}`);
         console.warn(`   Starting with empty cache.`);
         cache = {};
       }
@@ -199,10 +204,10 @@ function cacheContext(agentName, context) {
 
     cache[agentName] = context;
 
-    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf8');
+    fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 2), 'utf8');
   } catch (error) {
     console.error(`❌ Error caching context for ${agentName}: ${error.message}`);
-    console.error(`   File: ${CACHE_FILE}`);
+    console.error(`   File: ${getCacheFilePath({ read: false })}`);
   }
 }
 
@@ -211,19 +216,21 @@ function cacheContext(agentName, context) {
  */
 function clearCachedContext(agentName) {
   try {
-    if (fs.existsSync(CACHE_FILE)) {
+    const cacheReadFile = getCacheFilePath({ read: true });
+    const cacheWriteFile = getCacheFilePath({ read: false });
+    if (fs.existsSync(cacheReadFile)) {
       let cache;
       try {
-        const cacheContent = fs.readFileSync(CACHE_FILE, 'utf8');
+        const cacheContent = fs.readFileSync(cacheReadFile, 'utf8');
         cache = JSON.parse(cacheContent);
       } catch (error) {
-        console.warn(`⚠️  Invalid JSON in cache file ${CACHE_FILE}: ${error.message}`);
+        console.warn(`⚠️  Invalid JSON in cache file ${cacheReadFile}: ${error.message}`);
         console.warn(`   Skipping cache clear.`);
         return;
       }
 
       delete cache[agentName];
-      fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf8');
+      fs.writeFileSync(cacheWriteFile, JSON.stringify(cache, null, 2), 'utf8');
     }
   } catch (error) {
     console.warn(`⚠️  Error clearing cache for ${agentName}: ${error.message}`);

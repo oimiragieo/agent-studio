@@ -26,9 +26,9 @@ A success criterion is **measurable** if it can be **objectively verified** thro
 ### File-Based Patterns
 
 ```
-✅ ".claude/context/artifacts/plan-*.json exists"
+✅ ".claude/context/artifacts/generated/plan-*.json exists"
 ✅ "dev-manifest.json validated against schema"
-✅ "Artifact saved to .claude/context/artifacts/"
+✅ "Artifact saved to .claude/context/artifacts/generated/"
 ✅ "Schema file present at .claude/schemas/workflow.schema.json"
 ✅ "Workflow file .claude/workflows/example.yaml created"
 ```

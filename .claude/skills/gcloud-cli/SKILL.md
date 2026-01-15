@@ -1,6 +1,7 @@
 ---
 name: gcloud-cli
 description: Google Cloud CLI operations and resource management
+version: 1.0.0
 allowed-tools: [Bash, Read]
 ---
 

@@ -229,7 +229,7 @@ After orchestrator processes a request, check:
      Matched triggers: plan_validation
    ```
 
-2. **Artifact file**: `.claude/context/runs/<run-id>/artifacts/skill-detection.json`
+2. **Artifact file**: `.claude/context/runtime/runs/<run-id>/artifacts/skill-detection.json`
 
 3. **Run summary**: Generated dashboard shows triggered skills
 

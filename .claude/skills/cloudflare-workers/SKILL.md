@@ -1,6 +1,7 @@
 ---
 name: cloudflare-workers
 description: Cloudflare Workers and edge functions
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

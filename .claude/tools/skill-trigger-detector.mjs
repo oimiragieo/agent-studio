@@ -23,6 +23,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -238,7 +239,7 @@ const TRIGGER_PATTERNS = {
  * @returns {Promise<Object>} The skill matrix
  */
 async function loadSkillMatrix() {
-  const matrixPath = path.join(__dirname, '../context/skill-integration-matrix.json');
+  const matrixPath = resolveConfigPath('skill-integration-matrix.json', { read: true });
   const content = await fs.readFile(matrixPath, 'utf-8');
   return JSON.parse(content);
 }

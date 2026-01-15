@@ -1,6 +1,7 @@
 ---
 name: clix-devflow
 description: CLI experience development flow and terminal tools
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob]
 ---
 

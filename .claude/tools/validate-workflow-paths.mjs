@@ -16,6 +16,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -100,10 +101,10 @@ function getAllWorkflowFiles() {
  * Validate CUJ registry
  */
 function validateCUJRegistry() {
-  const registryPath = path.resolve(PROJECT_ROOT, '.claude/context/cuj-registry.json');
+  const registryPath = resolveConfigPath('cuj-registry.json', { read: true });
 
   if (!fs.existsSync(registryPath)) {
-    log('❌ CUJ registry not found: .claude/context/cuj-registry.json', 'red');
+    log('❌ CUJ registry not found', 'red');
     return { valid: false, issues: [], cujs: [] };
   }
 
@@ -364,7 +365,7 @@ function findClosestWorkflow(targetPath, availableWorkflows) {
  * Fix double-prefix issues in CUJ registry
  */
 function fixCUJRegistry() {
-  const registryPath = path.resolve(PROJECT_ROOT, '.claude/context/cuj-registry.json');
+  const registryPath = resolveConfigPath('cuj-registry.json', { read: true });
 
   if (!fs.existsSync(registryPath)) {
     log('❌ CUJ registry not found', 'red');

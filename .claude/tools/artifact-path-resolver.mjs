@@ -27,6 +27,7 @@
 
 import { join, dirname, basename, extname } from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath, resolveArtifactPath } from './context-path-resolver.mjs';
 import { existsSync, mkdirSync, statSync, createReadStream, createWriteStream } from 'fs';
 import { readFile, writeFile, stat, rename, unlink } from 'fs/promises';
 import { createGzip, createGunzip, gzip, gunzip } from 'zlib';
@@ -41,6 +42,12 @@ const __dirname = dirname(__filename);
 
 const PROJECT_ROOT = join(__dirname, '../..');
 const CONTEXT_DIR = join(PROJECT_ROOT, '.claude/context');
+const HISTORY_DIR = join(CONTEXT_DIR, 'history');
+
+// Canonical global artifacts live under artifacts/generated (MCP artifacts root)
+const GENERATED_ARTIFACTS_DIR = dirname(
+  resolveArtifactPath({ kind: 'generated', filename: '.gitkeep' })
+);
 
 /**
  * Get artifact path based on run ID
@@ -53,7 +60,7 @@ const CONTEXT_DIR = join(PROJECT_ROOT, '.claude/context');
  * @example
  * // Run-specific artifact
  * getArtifactPath('run-123', 'plan.json')
- * // => '.claude/context/runs/run-123/artifacts/plan.json'
+ * // => '.claude/context/runtime/runs/run-123/artifacts/plan.json'
  *
  * // Legacy/default artifact
  * getArtifactPath(null, 'plan.json')
@@ -61,9 +68,17 @@ const CONTEXT_DIR = join(PROJECT_ROOT, '.claude/context');
  */
 export function getArtifactPath(runId, artifactName, category = 'artifacts') {
   if (runId) {
-    return join(CONTEXT_DIR, 'runs', runId, category, artifactName);
+    // Run-scoped artifacts belong under runtime runs directory
+    return resolveRuntimePath(join('runs', runId, category, artifactName), { write: true });
   }
-  return join(CONTEXT_DIR, category, artifactName);
+
+  // Global artifacts (MCP artifacts root): default to generated artifacts
+  if (category === 'artifacts') {
+    return join(GENERATED_ARTIFACTS_DIR, artifactName);
+  }
+
+  // Other global categories live under runtime root
+  return resolveRuntimePath(join(category, artifactName), { write: true });
 }
 
 /**
@@ -76,7 +91,7 @@ export function getArtifactPath(runId, artifactName, category = 'artifacts') {
  * @example
  * // Run-specific report
  * getReportPath('run-123', 'security-audit.md')
- * // => '.claude/context/runs/run-123/reports/security-audit.md'
+ * // => '.claude/context/runtime/runs/run-123/reports/security-audit.md'
  *
  * // Legacy/default report
  * getReportPath(null, 'security-audit.md')
@@ -96,7 +111,7 @@ export function getReportPath(runId, reportName) {
  * @example
  * // Run-specific task
  * getTaskPath('run-123', 'feature-implementation.md')
- * // => '.claude/context/runs/run-123/tasks/feature-implementation.md'
+ * // => '.claude/context/runtime/runs/run-123/tasks/feature-implementation.md'
  *
  * // Legacy/default task
  * getTaskPath(null, 'feature-implementation.md')
@@ -116,7 +131,7 @@ export function getTaskPath(runId, taskName) {
  * @example
  * // Run-specific gate
  * getGatePath('run-123', 'step-01-developer.json')
- * // => '.claude/context/runs/run-123/gates/step-01-developer.json'
+ * // => '.claude/context/runtime/runs/run-123/gates/step-01-developer.json'
  *
  * // Legacy/default gate
  * getGatePath(null, 'step-01-developer.json')
@@ -124,13 +139,13 @@ export function getTaskPath(runId, taskName) {
  */
 export function getGatePath(runId, gateName, workflowId = null) {
   if (runId) {
-    return join(CONTEXT_DIR, 'runs', runId, 'gates', gateName);
+    return resolveRuntimePath(join('runs', runId, 'gates', gateName), { write: true });
   }
-  // Legacy location requires workflowId
+  // Legacy location requires workflowId (history stays stable)
   if (!workflowId) {
     throw new Error('workflowId is required for legacy gate paths');
   }
-  return join(CONTEXT_DIR, 'history', 'gates', workflowId, gateName);
+  return join(HISTORY_DIR, 'gates', workflowId, gateName);
 }
 
 /**
@@ -143,7 +158,7 @@ export function getGatePath(runId, gateName, workflowId = null) {
  * @example
  * // Run-specific reasoning
  * getReasoningPath('run-123', 'developer.json')
- * // => '.claude/context/runs/run-123/reasoning/developer.json'
+ * // => '.claude/context/runtime/runs/run-123/reasoning/developer.json'
  *
  * // Legacy/default reasoning
  * getReasoningPath(null, 'developer.json')
@@ -151,13 +166,13 @@ export function getGatePath(runId, gateName, workflowId = null) {
  */
 export function getReasoningPath(runId, reasoningName, workflowId = null) {
   if (runId) {
-    return join(CONTEXT_DIR, 'runs', runId, 'reasoning', reasoningName);
+    return resolveRuntimePath(join('runs', runId, 'reasoning', reasoningName), { write: true });
   }
-  // Legacy location requires workflowId
+  // Legacy location requires workflowId (history stays stable)
   if (!workflowId) {
     throw new Error('workflowId is required for legacy reasoning paths');
   }
-  return join(CONTEXT_DIR, 'history', 'reasoning', workflowId, reasoningName);
+  return join(HISTORY_DIR, 'reasoning', workflowId, reasoningName);
 }
 
 /**
@@ -169,7 +184,15 @@ export function getReasoningPath(runId, reasoningName, workflowId = null) {
  * @returns {string} Full directory path
  */
 export function getArtifactDir(runId, category = 'artifacts', ensureExists = true) {
-  const dir = runId ? join(CONTEXT_DIR, 'runs', runId, category) : join(CONTEXT_DIR, category);
+  let dir;
+
+  if (runId) {
+    dir = resolveRuntimePath(join('runs', runId, category), { write: ensureExists });
+  } else if (category === 'artifacts') {
+    dir = GENERATED_ARTIFACTS_DIR;
+  } else {
+    dir = resolveRuntimePath(category, { write: ensureExists });
+  }
 
   if (ensureExists && !existsSync(dir)) {
     mkdirSync(dir, { recursive: true });

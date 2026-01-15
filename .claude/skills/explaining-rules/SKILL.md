@@ -1,6 +1,8 @@
 ---
 name: explaining-rules
 description: Explains which coding rules apply to files and why they matter. Uses the rule index to discover all available rules dynamically. Use when the user asks about rules, coding standards, or best practices.
+version: 1.0.0
+allowed-tools: read, grep, glob, search, codebase_search
 ---
 
 <identity>
@@ -22,7 +24,7 @@ Explaining Rules - Explains applicable coding rules by querying the rule index d
 
 Load the complete rule index to discover all available rules:
 
-- @.claude/context/rule-index.json
+- @.claude/context/config/rule-index.json
 
 The index contains metadata for all rules in `.claude/rules-master/` and `.claude/archive/`.
 

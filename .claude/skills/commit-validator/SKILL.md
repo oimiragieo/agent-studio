@@ -1,6 +1,7 @@
 ---
 name: commit-validator
 description: Validates commit messages against Conventional Commits specification using programmatic validation. Replaces the git-conventional-commit-messages text file with a tool that provides instant feedback.
+version: 1.0.0
 model: haiku
 allowed-tools: read, grep, bash
 ---

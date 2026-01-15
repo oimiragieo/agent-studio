@@ -86,7 +86,7 @@ Format as JSON:
     
     try:
         response = client.messages.create(
-            model="claude-sonnet-4-5-20250929",
+            model="claude-sonnet-4-5",
             max_tokens=1000,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -136,7 +136,7 @@ Expected Output:
     try:
         # Call agent (simplified - in practice would use Claude Code API)
         response = client.messages.create(
-            model=agent_config.get("model", "claude-sonnet-4-5-20250929"),
+            model=agent_config.get("model", "claude-sonnet-4-5"),
             max_tokens=4000,
             messages=[{"role": "user", "content": evaluation_prompt}]
         )
@@ -187,7 +187,7 @@ def main():
     # Load agent config
     config_path = args.config or ".claude/config.yaml"
     # In practice, would parse YAML config
-    agent_config = {"model": "claude-sonnet-4-5-20250929"}
+    agent_config = {"model": "claude-sonnet-4-5"}
     
     # Evaluate each task
     results = []

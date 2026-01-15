@@ -1,6 +1,7 @@
 ---
 name: notion-workspace
 description: Notion workspace operations - pages, databases, blocks, and search. Use for managing Notion pages, databases, and content.
+version: 1.0.0
 allowed-tools: bash, read, webfetch
 ---
 

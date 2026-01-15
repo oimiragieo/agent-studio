@@ -6,7 +6,7 @@ project_type: fullstack
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
+  checkpoint_dir: '.claude/context/runtime/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -19,7 +19,7 @@ fallback_agents:
   architect: [developer, security-architect]
   qa: [developer, code-reviewer]
   planner: [architect, pm]
-  analyst: [pm, architect]
+  business-analyst: [pm, architect]
   impact-analyzer: [architect, developer]
   refactoring-specialist: [developer, architect]
   security-architect: [compliance-auditor, code-reviewer]
@@ -73,7 +73,7 @@ steps:
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
+      - .claude/context/runtime/runs/{{run_id}}/plans/{{plan_id}}-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7
@@ -93,7 +93,7 @@ steps:
 
   - step: 1
     name: 'Codebase Discovery & Impact Analysis'
-    agent: analyst
+    agent: business-analyst
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - user_requirements
@@ -102,10 +102,10 @@ steps:
     outputs:
       - project-brief.json
       - impact-analysis.json
-      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-analyst.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-business-analyst.json
     validation:
       schema: .claude/schemas/project_brief.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
+      gate: .claude/context/history/gates/{{workflow_id}}/01-business-analyst.json
     notes: |
       Focus on understanding existing patterns, identifying risks,
       and documenting current architecture before proposing changes.

@@ -21,6 +21,7 @@ import { readFile, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { resolveConfigPath, resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,8 +29,10 @@ const __dirname = dirname(__filename);
 // Configuration paths
 const CONTEXT_DIR = join(__dirname, '..', 'context');
 const SKILLS_DIR = join(__dirname, '..', 'skills');
-const SUMMARIES_PATH = join(CONTEXT_DIR, 'skill-summaries.json');
-const SKILL_MATRIX_PATH = join(CONTEXT_DIR, 'skill-integration-matrix.json');
+// Use separate read/write paths to respect resolver contract
+const SUMMARIES_READ_PATH = resolveRuntimePath('skill-summaries.json', { read: true });
+const SUMMARIES_WRITE_PATH = resolveRuntimePath('skill-summaries.json', { read: false });
+const SKILL_MATRIX_PATH = resolveConfigPath('skill-integration-matrix.json', { read: true });
 
 // Optimization levels
 const OPTIMIZATION_LEVELS = {
@@ -331,8 +334,8 @@ async function generateAllSummaries() {
     }
   }
 
-  // Save summaries
-  await saveJson(SUMMARIES_PATH, {
+  // Save summaries (use write path)
+  await saveJson(SUMMARIES_WRITE_PATH, {
     version: '1.0.0',
     generated_at: new Date().toISOString(),
     total_skills: allSkills.size,
@@ -342,7 +345,7 @@ async function generateAllSummaries() {
   console.log(`\nSummary generation complete:`);
   console.log(`  - Processed: ${processed}`);
   console.log(`  - Failed: ${failed}`);
-  console.log(`  - Output: ${SUMMARIES_PATH}`);
+  console.log(`  - Output: ${SUMMARIES_WRITE_PATH}`);
 
   return summaries;
 }
@@ -362,8 +365,8 @@ export async function optimizeSkillContext(requiredSkills, triggeredSkills, opti
     prioritize = 'required', // 'required' | 'triggered' | 'all'
   } = options;
 
-  // Load skill summaries
-  const summariesData = await loadJson(SUMMARIES_PATH);
+  // Load skill summaries (use read path)
+  const summariesData = await loadJson(SUMMARIES_READ_PATH);
   if (!summariesData || !summariesData.summaries) {
     throw new Error('Skill summaries not found. Run --generate-summaries first.');
   }

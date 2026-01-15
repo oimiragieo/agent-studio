@@ -1,6 +1,7 @@
 ---
 name: cloud-run
 description: Google Cloud Run deployment and management. Deploy applications, list services, get logs, and manage GCP projects. Use for Cloud Run deployments, service monitoring, and GCP project management.
+version: 1.0.0
 context:fork: true
 allowed-tools: read, write, bash
 ---

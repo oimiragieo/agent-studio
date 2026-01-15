@@ -148,7 +148,7 @@ All commands output JSON conforming to `.claude/schemas/skill-scaffolder-output.
 
 ## How It Works
 
-1. **Load Rule Index**: Reads `.claude/context/rule-index.json` for rule discovery
+1. **Load Rule Index**: Reads `.claude/context/config/rule-index.json` for rule discovery
 2. **Detect Technology Stack**: Analyzes `package.json` to detect technologies
 3. **Query Relevant Rules**: Uses rule index to find applicable rules (progressive disclosure)
 4. **Extract Patterns**: Parses rule files for templates, code examples, and conventions
@@ -321,7 +321,7 @@ jobs:
 **"Failed to load rule index"**:
 
 - Run `pnpm index-rules` to generate the index
-- Ensure `.claude/context/rule-index.json` exists
+- Ensure `.claude/context/config/rule-index.json` exists
 
 **"No patterns applied"**:
 

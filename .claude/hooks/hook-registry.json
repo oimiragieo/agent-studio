@@ -3,11 +3,20 @@
   "version": "1.0.0",
   "hooks": [
     {
+      "name": "router-session-entry",
+      "type": "preToolUse",
+      "path": ".claude/hooks/router-session-entry.mjs",
+      "enabled": true,
+      "priority": 1,
+      "matcher": "*",
+      "description": "Intercepts user prompts and routes through Haiku router for cost optimization"
+    },
+    {
       "name": "security-validation",
       "type": "preToolUse",
       "path": ".claude/hooks/security-pre-tool.mjs",
       "enabled": true,
-      "priority": 1,
+      "priority": 2,
       "matcher": "Bash|Write|Edit",
       "description": "Validates tool usage for security (blocks dangerous commands)"
     },
@@ -16,7 +25,7 @@
       "type": "preToolUse",
       "path": ".claude/hooks/file-path-validator.js",
       "enabled": true,
-      "priority": 2,
+      "priority": 3,
       "matcher": "*",
       "description": "Validates file paths on all tools to prevent SLOP"
     },
@@ -25,7 +34,7 @@
       "type": "preToolUse",
       "path": ".claude/hooks/orchestrator-enforcement-hook.mjs",
       "enabled": true,
-      "priority": 3,
+      "priority": 4,
       "matcher": "Read|Write|Edit|Bash|Grep|Glob",
       "description": "Enforces orchestrator delegation rules"
     },
@@ -34,7 +43,7 @@
       "type": "preToolUse",
       "path": ".claude/hooks/skill-injection-hook.js",
       "enabled": true,
-      "priority": 4,
+      "priority": 5,
       "matcher": "Task",
       "description": "Injects skills into Task tool calls"
     },

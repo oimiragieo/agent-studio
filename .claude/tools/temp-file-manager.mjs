@@ -2,12 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { validateClaudePaths } from './path-validator.mjs';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
 const CLAUDE_DIR = path.join(PROJECT_ROOT, '.claude');
-const TEMP_DIR = path.join(PROJECT_ROOT, '.claude/context/tmp');
+const TEMP_DIR = resolveRuntimePath('tmp', { write: true });
 
 // Safeguard: Validate paths to prevent nested .claude folders
 validateClaudePaths({
@@ -17,7 +18,7 @@ validateClaudePaths({
 });
 
 /**
- * Centralized temp file manager - ensures all temp files go to .claude/context/tmp/
+ * Centralized temp file manager - ensures all temp files go to .claude/context/runtime/tmp/
  * Never creates files in project root.
  */
 export class TempFileManager {

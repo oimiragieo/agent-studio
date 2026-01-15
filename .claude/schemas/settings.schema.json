@@ -23,11 +23,7 @@
           "type": "string",
           "description": "Default Claude model ID",
           "pattern": "^claude-[a-z0-9-]+$",
-          "examples": [
-            "claude-3-5-haiku-20241022",
-            "claude-sonnet-4-20250514",
-            "claude-opus-4-20241113"
-          ]
+          "examples": ["claude-haiku-4-5", "claude-sonnet-4-5", "claude-opus-4-5-20251101"]
         },
         "default_temperature": {
           "type": "number",

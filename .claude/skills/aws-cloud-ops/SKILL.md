@@ -1,6 +1,7 @@
 ---
 name: aws-cloud-ops
 description: AWS cloud operations for CloudWatch, S3, Lambda, EC2, and IAM
+version: 1.0.0
 allowed-tools: [Bash, Read]
 ---
 

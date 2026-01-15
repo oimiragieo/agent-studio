@@ -108,7 +108,10 @@
               "items": {
                 "type": "string"
               },
-              "default": [".claude/context/artifacts/", ".claude/context/runs/{run_id}/artifacts/"]
+              "default": [
+                ".claude/context/artifacts/",
+                ".claude/context/runtime/runs/{run_id}/artifacts/"
+              ]
             }
           }
         },
@@ -269,7 +272,7 @@
           "type": "object",
           "properties": {
             "required_path_pattern": {
-              "const": ".claude/context/runs/{run_id}/"
+              "const": ".claude/context/runtime/runs/{run_id}/"
             }
           }
         }

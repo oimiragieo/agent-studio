@@ -1,6 +1,7 @@
 ---
 name: algolia-search
 description: Algolia search indexing and querying
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

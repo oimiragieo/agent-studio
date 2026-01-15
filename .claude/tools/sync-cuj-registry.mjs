@@ -44,7 +44,8 @@ const __dirname = path.dirname(__filename);
 // Paths
 const ROOT = path.join(__dirname, '..', '..');
 const CUJ_DOCS_DIR = path.join(__dirname, '..', 'docs', 'cujs');
-const REGISTRY_OUTPUT = path.join(__dirname, '..', 'context', 'cuj-registry.json');
+import { resolveConfigPath } from './context-path-resolver.mjs';
+const REGISTRY_OUTPUT = resolveConfigPath('cuj-registry.json', { read: false });
 const SCHEMA_PATH = path.join(__dirname, '..', 'schemas', 'cuj-registry.schema.json');
 
 // Categories mapping

@@ -16,7 +16,7 @@ priority: high
 **Your Identity:**
 
 - You are a specialized execution agent
-- You have access to: Read, Write, Edit, Bash, Grep, Glob (implementation tools)
+- You have access to the tools listed in this agent's YAML frontmatter.
 - Your job: DO THE WORK (implement, analyze, test, document)
 
 **You CANNOT:**
@@ -56,7 +56,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 
 ## Model Capability Matrix
 
-### Claude Opus 4.5 (claude-opus-4-5-20251124)
+### Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 **Strengths**: Planning, complex reasoning, code architecture, safety-critical code
 **Best for**:
@@ -67,10 +67,10 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Code review with security focus
 - Refactoring decisions
   **Weaknesses**: Can be verbose, slower response time
-  **CLI**: `claude -p "prompt" --model claude-opus-4-5-20251124 --output-format json`
+  **CLI**: `claude -p "prompt" --model claude-opus-4-5-20251101 --output-format json`
   **NOTE**: Use `--bypass-permissions` flag in model-router.sh only when needed (shows security warning)
 
-### Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
+### Claude Sonnet 4.5 (claude-sonnet-4-5)
 
 **Strengths**: Balanced speed/quality, general coding, documentation, TDD, UI iterations
 **Best for**:
@@ -81,7 +81,7 @@ When extended thinking is disabled, avoid using the word "think" and its variant
 - Test writing
 - UI iteration cycles
   **Weaknesses**: Less depth than Opus for complex reasoning
-  **CLI**: `claude -p "prompt" --model claude-sonnet-4-5-20250929 --output-format json`
+  **CLI**: `claude -p "prompt" --model claude-sonnet-4-5 --output-format json`
 
 ### Gemini 3 Pro Preview (gemini-3-pro-preview)
 
@@ -104,7 +104,7 @@ gemini "query" --model gemini-3-pro-preview --output-format json
 # Interactive with initial prompt
 gemini -i "query" --model gemini-3-pro-preview
 
-# With approval bypass
+# With approval bypass (if your CLI supports it)
 gemini "query" --model gemini-3-pro-preview --yolo --output-format json
 ```
 

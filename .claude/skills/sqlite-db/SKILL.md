@@ -1,6 +1,7 @@
 ---
 name: sqlite-db
 description: SQLite database operations and queries
+version: 1.0.0
 allowed-tools: [Bash, Read]
 ---
 

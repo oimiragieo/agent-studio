@@ -72,10 +72,10 @@ node .claude/tools/run-manager.mjs create \
 
 ```
 ✅ Run created: run-20260103-145023
-📁 State directory: .claude/context/runs/run-20260103-145023/
-📝 Artifacts: .claude/context/runs/run-20260103-145023/artifacts/
-🔒 Gates: .claude/context/runs/run-20260103-145023/gates/
-📋 Registry: .claude/context/runs/run-20260103-145023/artifact-registry.json
+📁 State directory: .claude/context/runtime/runs/run-20260103-145023/
+📝 Artifacts: .claude/context/runtime/runs/run-20260103-145023/artifacts/
+🔒 Gates: .claude/context/runtime/runs/run-20260103-145023/gates/
+📋 Registry: .claude/context/runtime/runs/run-20260103-145023/artifact-registry.json
 ```
 
 ### Execute Workflow Steps Sequentially
@@ -112,7 +112,7 @@ Creating project brief artifact...
 
 📤 Outputs:
 ✓ project-brief-run-20260103-145023.json
-  Location: .claude/context/runs/run-20260103-145023/artifacts/
+  Location: .claude/context/runtime/runs/run-20260103-145023/artifacts/
   Size: 4.2 KB
 
 🔍 Validating output...
@@ -124,7 +124,7 @@ Schema: .claude/schemas/project_brief.schema.json
 ✅ Validation passed
 
 📝 Gate file created:
-.claude/context/runs/run-20260103-145023/gates/00-analyst.json
+.claude/context/runtime/runs/run-20260103-145023/gates/00-analyst.json
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Step 0 complete (duration: 45s)
@@ -171,7 +171,7 @@ Creating PRD artifact...
 
 📤 Outputs:
 ✓ prd-run-20260103-145023.json
-  Location: .claude/context/runs/run-20260103-145023/artifacts/
+  Location: .claude/context/runtime/runs/run-20260103-145023/artifacts/
   Size: 12.8 KB
 
 🔍 Validating output...
@@ -183,7 +183,7 @@ Schema: .claude/schemas/prd.schema.json
 ✅ Validation passed
 
 📝 Gate file created:
-.claude/context/runs/run-20260103-145023/gates/01-pm.json
+.claude/context/runtime/runs/run-20260103-145023/gates/01-pm.json
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Step 1 complete (duration: 62s)
@@ -237,7 +237,7 @@ Creating architecture artifact...
 
 📤 Outputs:
 ✓ architecture-run-20260103-145023.json
-  Location: .claude/context/runs/run-20260103-145023/artifacts/
+  Location: .claude/context/runtime/runs/run-20260103-145023/artifacts/
   Size: 18.5 KB
 
 🔍 Validating output...
@@ -250,7 +250,7 @@ Schema: .claude/schemas/architecture.schema.json
 ✅ Validation passed
 
 📝 Gate file created:
-.claude/context/runs/run-20260103-145023/gates/02-architect.json
+.claude/context/runtime/runs/run-20260103-145023/gates/02-architect.json
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Step 2 complete (duration: 78s)
@@ -312,7 +312,7 @@ Creating schema artifact...
 
 📤 Outputs:
 ✓ database-schema-run-20260103-145023.json
-  Location: .claude/context/runs/run-20260103-145023/artifacts/
+  Location: .claude/context/runtime/runs/run-20260103-145023/artifacts/
   Size: 15.2 KB
 
 🔍 Validating output...
@@ -325,7 +325,7 @@ Schema: .claude/schemas/database_schema.schema.json
 ✅ Validation passed
 
 📝 Gate file created:
-.claude/context/runs/run-20260103-145023/gates/03-database-architect.json
+.claude/context/runtime/runs/run-20260103-145023/gates/03-database-architect.json
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Step 3 complete (duration: 52s)
@@ -395,7 +395,7 @@ Creating review report...
 
 📤 Outputs:
 ✓ code-review-report-run-20260103-145023.json
-  Location: .claude/context/runs/run-20260103-145023/artifacts/
+  Location: .claude/context/runtime/runs/run-20260103-145023/artifacts/
   Size: 16.9 KB
 
 🔍 Validating output...
@@ -407,7 +407,7 @@ Schema: .claude/schemas/code_review_report.schema.json
 ✅ Validation passed
 
 📝 Gate file created:
-.claude/context/runs/run-20260103-145023/gates/10-code-reviewer.json
+.claude/context/runtime/runs/run-20260103-145023/gates/10-code-reviewer.json
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Step 10 complete (duration: 89s)
@@ -421,7 +421,7 @@ Artifacts created: 11
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📋 Artifacts Summary:
-.claude/context/runs/run-20260103-145023/artifacts/
+.claude/context/runtime/runs/run-20260103-145023/artifacts/
 ├── project-brief-run-20260103-145023.json (4.2 KB)
 ├── prd-run-20260103-145023.json (12.8 KB)
 ├── architecture-run-20260103-145023.json (18.5 KB)
@@ -435,7 +435,7 @@ Artifacts created: 11
 └── code-review-report-run-20260103-145023.json (16.9 KB)
 
 Next steps:
-1. Review artifacts in .claude/context/runs/run-20260103-145023/artifacts/
+1. Review artifacts in .claude/context/runtime/runs/run-20260103-145023/artifacts/
 2. Deploy to staging: node .claude/tools/deploy.mjs --env staging
 3. Run integration tests: npm run test:integration
 ```
@@ -701,7 +701,7 @@ Next steps:
 ```bash
 # After Planner creates plan, Orchestrator uses response-rater
 node .claude/tools/response-rater.mjs \
-  --plan .claude/context/runs/run-20260103-160000/artifacts/plan.json \
+  --plan .claude/context/runtime/runs/run-20260103-160000/artifacts/plan.json \
   --providers claude,gemini \
   --rubric completeness,feasibility,risk_mitigation,agent_coverage,integration
 ```
@@ -796,7 +796,7 @@ Addressing integration (5.75→8.5):
 ```bash
 # Orchestrator re-rates improved plan
 node .claude/tools/response-rater.mjs \
-  --plan .claude/context/runs/run-20260103-160000/artifacts/plan-v2.json \
+  --plan .claude/context/runtime/runs/run-20260103-160000/artifacts/plan-v2.json \
   --providers claude,gemini \
   --rubric completeness,feasibility,risk_mitigation,agent_coverage,integration
 ```
@@ -843,7 +843,7 @@ Summary:
 ✓ Overall consensus: 6.45 → 8.25 (+1.8)
 
 Recording rating...
-📁 Location: .claude/context/runs/run-20260103-160000/plans/plan-run-20260103-160000-v2-rating.json
+📁 Location: .claude/context/runtime/runs/run-20260103-160000/plans/plan-run-20260103-160000-v2-rating.json
 
 {
   "plan_id": "plan-run-20260103-160000-v2",
@@ -1124,7 +1124,7 @@ ls .claude/workflows/*.yaml
 ```
 ❌ Error: Required artifact not found
 Step 2 requires: project-brief.json (from step 0)
-Location checked: .claude/context/runs/run-123/artifacts/project-brief.json
+Location checked: .claude/context/runtime/runs/run-123/artifacts/project-brief.json
 ```
 
 **Solution**:
@@ -1161,7 +1161,7 @@ Errors:
 
 ```bash
 # Read gate file for detailed feedback
-cat .claude/context/runs/run-123/gates/01-pm.json
+cat .claude/context/runtime/runs/run-123/gates/01-pm.json
 
 # Gate file contains:
 # {
@@ -1218,7 +1218,7 @@ ls .claude/agents/*.md
 
 ```bash
 # Check run state
-cat .claude/context/runs/run-123/artifact-registry.json
+cat .claude/context/runtime/runs/run-123/artifact-registry.json
 
 # Check agent logs (if available)
 tail -f .claude/logs/workflow-run-123.log
@@ -1242,7 +1242,7 @@ tail -f .claude/logs/workflow-run-123.log
 
 ```bash
 # Check current context usage (approximation)
-wc -l .claude/context/runs/run-123/artifacts/*.json
+wc -l .claude/context/runtime/runs/run-123/artifacts/*.json
 ```
 
 **Solutions**:
@@ -1263,7 +1263,7 @@ wc -l .claude/context/runs/run-123/artifacts/*.json
 
 ```bash
 # Read gate file for detailed errors
-cat .claude/context/runs/run-123/gates/01-pm.json
+cat .claude/context/runtime/runs/run-123/gates/01-pm.json
 
 # Check schema for requirements
 cat .claude/schemas/prd.schema.json
@@ -1304,22 +1304,22 @@ stat .claude/context/rule-index.json
 
 ```bash
 # List all runs
-ls .claude/context/runs/
+ls .claude/context/runtime/runs/
 
 # View run artifacts
-ls .claude/context/runs/run-123/artifacts/
+ls .claude/context/runtime/runs/run-123/artifacts/
 
 # View run gates
-ls .claude/context/runs/run-123/gates/
+ls .claude/context/runtime/runs/run-123/gates/
 
 # View artifact registry
-cat .claude/context/runs/run-123/artifact-registry.json
+cat .claude/context/runtime/runs/run-123/artifact-registry.json
 
 # Validate specific artifact against schema
 node .claude/tools/gates/gate.mjs \
   --schema .claude/schemas/prd.schema.json \
-  --input .claude/context/runs/run-123/artifacts/prd.json \
-  --gate .claude/context/runs/run-123/gates/01-pm.json
+  --input .claude/context/runtime/runs/run-123/artifacts/prd.json \
+  --gate .claude/context/runtime/runs/run-123/gates/01-pm.json
 
 # Simulate CUJ execution
 node .claude/tools/cuj-validator.mjs \
@@ -1371,10 +1371,10 @@ ls .claude/skills/*/SKILL.md
 
 ### Artifact Locations
 
-| Run Mode              | Artifacts                                  | Gates                                          | Registry                                               |
-| --------------------- | ------------------------------------------ | ---------------------------------------------- | ------------------------------------------------------ |
-| **New (Recommended)** | `.claude/context/runs/<run_id>/artifacts/` | `.claude/context/runs/<run_id>/gates/`         | `.claude/context/runs/<run_id>/artifact-registry.json` |
-| **Legacy**            | `.claude/context/artifacts/`               | `.claude/context/history/gates/<workflow_id>/` | `.claude/context/session.json`                         |
+| Run Mode              | Artifacts                                          | Gates                                          | Registry                                                       |
+| --------------------- | -------------------------------------------------- | ---------------------------------------------- | -------------------------------------------------------------- |
+| **New (Recommended)** | `.claude/context/runtime/runs/<run_id>/artifacts/` | `.claude/context/runtime/runs/<run_id>/gates/` | `.claude/context/runtime/runs/<run_id>/artifact-registry.json` |
+| **Legacy**            | `.claude/context/artifacts/`                       | `.claude/context/history/gates/<workflow_id>/` | `.claude/context/session.json`                                 |
 
 ---
 

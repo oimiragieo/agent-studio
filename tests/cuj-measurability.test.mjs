@@ -331,8 +331,10 @@ describe('CUJ Measurability Validation', () => {
   });
 
   describe('Real-World CUJ Validation', () => {
-    it('should validate CUJ-064 expected_outputs', () => {
-      const registryPath = path.join(ROOT, '.claude/context/cuj-registry.json');
+    it('should validate CUJ-064 expected_outputs', async () => {
+      // Use resolver to get canonical config path
+      const { resolveConfigPath } = await import('../.claude/tools/context-path-resolver.mjs');
+      const registryPath = resolveConfigPath('cuj-registry.json', { read: true });
 
       if (!fs.existsSync(registryPath)) {
         console.log('⚠️  Registry not found, skipping real-world validation');

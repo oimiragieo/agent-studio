@@ -1,6 +1,7 @@
 ---
 name: ansible-config
 description: Ansible configuration management and automation with safety controls
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob]
 ---
 

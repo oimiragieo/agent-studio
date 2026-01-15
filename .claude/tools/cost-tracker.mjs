@@ -8,11 +8,14 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const COST_HISTORY_FILE = path.join(__dirname, '../context/history/cost-tracking.json');
+function getCostHistoryPath(options = { read: false }) {
+  return resolveRuntimePath('history/cost-tracking.json', options);
+}
 const COST_CONFIG = {
   // Claude 3.5 Sonnet pricing (as of 2024)
   inputTokens: {
@@ -243,13 +246,9 @@ function groupBy(records, groupField, sumField) {
  */
 function loadHistory() {
   try {
-    const dir = path.dirname(COST_HISTORY_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    if (fs.existsSync(COST_HISTORY_FILE)) {
-      const data = fs.readFileSync(COST_HISTORY_FILE, 'utf8');
+    const historyPath = getCostHistoryPath({ read: true });
+    if (fs.existsSync(historyPath)) {
+      const data = fs.readFileSync(historyPath, 'utf8');
       return JSON.parse(data);
     }
   } catch (error) {
@@ -264,12 +263,8 @@ function loadHistory() {
  */
 function saveHistory(history) {
   try {
-    const dir = path.dirname(COST_HISTORY_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    fs.writeFileSync(COST_HISTORY_FILE, JSON.stringify(history, null, 2), 'utf8');
+    const historyPath = getCostHistoryPath({ read: false });
+    fs.writeFileSync(historyPath, JSON.stringify(history, null, 2), 'utf8');
   } catch (error) {
     console.error('Error saving cost history:', error);
   }

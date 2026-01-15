@@ -1,6 +1,7 @@
 ---
 name: vercel-workflow-builder
 description: Vercel deployment workflow builder and CI/CD
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

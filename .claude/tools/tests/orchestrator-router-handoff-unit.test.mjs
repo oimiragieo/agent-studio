@@ -15,6 +15,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Set test mode environment variables to skip workflow execution
+process.env.NODE_ENV = 'test';
+process.env.SKIP_WORKFLOW_EXECUTION = 'true';
+
 // Import the module (use file:// URL for Windows compatibility)
 import { pathToFileURL } from 'url';
 const orchestratorEntryPath = join(__dirname, '..', 'orchestrator-entry.mjs');
@@ -46,7 +50,7 @@ async function testRoutingDecisionAccepted() {
   const sessionContext = {
     session_id: sessionId,
     router_classification: {
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5',
     },
     cost_tracking: {
       total_cost_usd: 0.00045,
@@ -81,7 +85,7 @@ async function testRoutingDecisionAccepted() {
   );
   assert.strictEqual(
     runRecord.metadata.routerHandoff.routerModel,
-    'claude-3-5-haiku-20241022',
+    'claude-haiku-4-5',
     'Router model should match'
   );
 
@@ -108,7 +112,7 @@ async function testSessionContextExtraction() {
   const sessionContext = {
     session_id: sessionId,
     router_classification: {
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5',
       intent: 'script',
     },
     cost_tracking: {
@@ -117,7 +121,7 @@ async function testSessionContextExtraction() {
       total_output_tokens: 50,
       model_usage: [
         {
-          model: 'claude-3-5-haiku-20241022',
+          model: 'claude-haiku-4-5',
           input_tokens: 80,
           output_tokens: 50,
           cost_usd: 0.0002,
@@ -199,7 +203,7 @@ async function testCostAggregationFunction() {
     total_output_tokens: 150,
     model_usage: [
       {
-        model: 'claude-3-5-haiku-20241022',
+        model: 'claude-haiku-4-5',
         input_tokens: 200,
         output_tokens: 150,
         cost_usd: 0.0005,
@@ -230,7 +234,7 @@ async function testCostAggregationFunction() {
 
   // Load run record to check if costs were stored
   const runManagerPath = join(__dirname, '..', 'run-manager.mjs');
-  const { readRun } = await import(runManagerPath);
+  const { readRun } = await import(pathToFileURL(runManagerPath).href);
   const runRecord = await readRun(runId);
 
   // Verify costs were transferred to metadata

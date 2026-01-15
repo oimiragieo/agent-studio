@@ -182,7 +182,7 @@ async function runTests() {
 
   const result7 = await runHook({
     tool: 'Read',
-    tool_input: { file_path: '.claude/context/runs/abc/plan-abc.json' },
+    tool_input: { file_path: '.claude/context/runtime/runs/abc/plan-abc.json' },
   });
   assert(result7.decision === 'allow', 'Should allow coordination files');
   cleanupSession();

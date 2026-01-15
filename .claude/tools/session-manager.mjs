@@ -8,11 +8,12 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const SESSIONS_DIR = path.join(__dirname, '../context/sessions');
+const SESSIONS_DIR = resolveRuntimePath('sessions', { write: true });
 const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 /**

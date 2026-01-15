@@ -7,7 +7,7 @@ publish_policy: auto-on-pass # Automatically publish artifacts after validation 
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
+  checkpoint_dir: '.claude/context/runtime/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -20,8 +20,8 @@ fallback_agents:
   architect: [developer, security-architect]
   qa: [developer, code-reviewer]
   planner: [architect, pm]
-  analyst: [pm, architect]
-  pm: [analyst, ux-expert]
+  business-analyst: [pm, architect]
+  pm: [business-analyst, ux-expert]
   ux-expert: [pm, accessibility-expert]
   database-architect: [architect, developer]
   security-architect: [compliance-auditor, code-reviewer]
@@ -79,7 +79,7 @@ steps:
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
+      - .claude/context/runtime/runs/{{run_id}}/plans/{{plan_id}}-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7
@@ -100,16 +100,16 @@ steps:
   - step: 0.5
     publish_targets: ['project_feed', 'cursor']
     name: 'Feature Distillation'
-    agent: analyst
+    agent: business-analyst
     condition: 'file_size(user_requirements) > 15KB'
     inputs:
       - user_requirements (markdown file)
     outputs:
       - features-distilled.json
-      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.5-analyst.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.5-business-analyst.json
     validation:
       schema: .claude/schemas/features_distilled.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/00.5-analyst.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.5-business-analyst.json
       custom_checks:
         - all_critical_features_preserved
         - acceptance_criteria_included
@@ -125,7 +125,7 @@ steps:
   - step: 1
     publish_targets: ['project_feed', 'cursor']
     name: 'Project Discovery'
-    agent: analyst
+    agent: business-analyst
     parallel: true
     parallel_group: 1 # Parallel group 1: Discovery + PRD + UX
     inputs:
@@ -134,10 +134,10 @@ steps:
       - business_objectives
     outputs:
       - project-brief.json
-      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-analyst.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-business-analyst.json
     validation:
       schema: .claude/schemas/project_brief.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/01-analyst.json
+      gate: .claude/context/history/gates/{{workflow_id}}/01-business-analyst.json
 
   - step: 2
     publish_targets: ['project_feed', 'cursor']

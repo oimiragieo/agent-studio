@@ -1,6 +1,7 @@
 ---
 name: n8n-workflow
 description: n8n workflow automation and integration platform
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

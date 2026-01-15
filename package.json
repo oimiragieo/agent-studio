@@ -15,7 +15,7 @@
     "validate": "node --max-old-space-size=4096 --expose-gc scripts/validate-config.mjs && node --max-old-space-size=4096 --expose-gc scripts/validate-model-names.mjs",
     "validate:full": "pnpm validate && node --max-old-space-size=4096 --expose-gc scripts/validate-workflow.mjs && node --max-old-space-size=4096 --expose-gc scripts/validate-all-references.mjs && pnpm validate:cujs && pnpm validate:index && pnpm index-rules",
     "validate:verbose": "node --max-old-space-size=4096 --expose-gc scripts/validate-config.mjs --verbose && node --max-old-space-size=4096 --expose-gc scripts/validate-model-names.mjs --verbose",
-    "validate:sync": "bash scripts/validate-sync.sh",
+    "validate:sync": "bash scripts/validation/validate-sync.sh",
     "validate:models": "node --max-old-space-size=4096 --expose-gc scripts/validate-model-names.mjs",
     "validate:workflow": "node --max-old-space-size=4096 --expose-gc scripts/validate-workflow.mjs",
     "validate:references": "node --max-old-space-size=4096 --expose-gc scripts/validate-all-references.mjs",
@@ -42,11 +42,14 @@
     "validate:workflow-gates": "node --max-old-space-size=4096 --expose-gc .claude/tools/validate-workflow-rating-gates.mjs",
     "test:codex-integration": "node .claude/tools/test-codex-skills-integration.mjs",
     "test:codex-integration:mock": "node .claude/tools/test-codex-skills-integration.mjs --mock",
-    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test": "node .claude/tests/test-all-hooks.mjs && node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:hooks": "node .claude/tests/test-all-hooks.mjs",
+    "test:hooks:memory": "node .claude/tests/test-hook-memory.mjs",
+    "test:hooks:stress": "node .claude/tests/test-hook-stress.mjs",
     "test:unit": "node --test --test-concurrency=1 tests/validate-cujs.test.mjs tests/validate-skills.test.mjs tests/run-cuj.test.mjs tests/cuj-measurability.test.mjs",
     "test:integration": "node --test tests/integration/*.test.mjs",
     "test:tools": "node --test --test-concurrency=1 .claude/tools/*.test.mjs .claude/tools/tests/*.test.mjs",
-    "test:all": "pnpm test:unit && pnpm test:integration && pnpm test:tools",
+    "test:all": "pnpm test:hooks && pnpm test:unit && pnpm test:integration && pnpm test:tools",
     "test:ci": "node --test --test-concurrency=1 --test-reporter=spec tests/*.test.mjs tests/integration/*.test.mjs",
     "test:coverage": "node --test --test-concurrency=1 --experimental-test-coverage tests/*.test.mjs"
   },
@@ -65,20 +68,20 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.24.0",
+    "@anthropic-ai/sdk": "^0.24.3",
     "ajv-formats": "^3.0.1",
     "better-sqlite3": "11.10.0",
     "glob": "^13.0.0",
     "hnswlib-node": "^3.0.0",
-    "openai": "^4.70.0",
-    "ws": "^8.14.0",
-    "zod": "^4.0.0"
+    "openai": "^4.104.0",
+    "ws": "^8.19.0",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
-    "ajv": "^8.12.0",
-    "js-yaml": "^4.1.0",
+    "ajv": "^8.17.1",
+    "js-yaml": "^4.1.1",
     "prettier": "^3.7.4",
     "stream-chain": "^2.2.5",
-    "stream-json": "^1.8.0"
+    "stream-json": "^1.9.1"
   }
 }

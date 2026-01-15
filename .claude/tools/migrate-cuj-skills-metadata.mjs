@@ -7,9 +7,11 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const registryPath = path.join(__dirname, '../context/cuj-registry.json');
+const registryReadPath = resolveConfigPath('cuj-registry.json', { read: true });
+const registryWritePath = resolveConfigPath('cuj-registry.json', { read: false });
 
 // Skill type mapping: Codex skills require CLI tools
 const skillTypeMap = {
@@ -103,7 +105,7 @@ function migrateCUJ(cuj) {
  */
 function migrateRegistry() {
   console.log('Loading CUJ registry...');
-  const registry = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+  const registry = JSON.parse(fs.readFileSync(registryReadPath, 'utf-8'));
 
   console.log(`Migrating ${registry.cujs.length} CUJs...`);
 
@@ -129,7 +131,7 @@ function migrateRegistry() {
 
   // Write back to file
   console.log('Writing updated registry...');
-  fs.writeFileSync(registryPath, JSON.stringify(updatedRegistry, null, 2));
+  fs.writeFileSync(registryWritePath, JSON.stringify(updatedRegistry, null, 2));
 
   console.log(`✅ Migration complete!`);
   console.log(`   Migrated: ${migrated} CUJs`);

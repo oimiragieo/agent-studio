@@ -34,7 +34,7 @@ models:
     cli_name: sonnet
     # Released Sept 29, 2025 - Fast daily driver
     # NOTE: --permission-mode bypassPermissions removed for security (Nov 28, 2025)
-    command: 'claude -p "$PROMPT" --model claude-sonnet-4-5-20250929 --output-format json'
+    command: 'claude -p "$PROMPT" --model claude-sonnet-4-5 --output-format json'
     strengths:
       - extreme_speed
       - high_precision_coding

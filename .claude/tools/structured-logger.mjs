@@ -22,6 +22,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -55,11 +56,10 @@ function sanitize(data) {
 export class StructuredLogger {
   /**
    * Initialize logger with log directory
-   * @param {string} logDir - Directory for log files
+   * @param {string} logDir - Directory for log files (relative to runtime, e.g., 'logs')
    */
-  constructor(logDir = '.claude/context/logs') {
-    const projectRoot = path.join(__dirname, '../..');
-    this.logDir = path.join(projectRoot, logDir);
+  constructor(logDir = 'logs') {
+    this.logDir = resolveRuntimePath(logDir, { write: true });
 
     // Ensure log directory exists
     if (!fs.existsSync(this.logDir)) {

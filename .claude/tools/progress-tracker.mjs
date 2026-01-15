@@ -8,10 +8,10 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const ROOT = path.join(__dirname, '..');
 
 /**
  * Generate progress bar
@@ -44,10 +44,7 @@ export function generateProgressBar(current, total = null, width = 40) {
  * @param {Object} metadata - Additional metadata
  */
 export async function trackProgress(workflowId, currentStep, totalSteps, stepName, metadata = {}) {
-  const progressDir = path.join(ROOT, '.claude/context/progress');
-  await fs.mkdir(progressDir, { recursive: true });
-
-  const progressFile = path.join(progressDir, `${workflowId}.json`);
+  const progressFile = resolveRuntimePath(`progress/${workflowId}.json`, { read: false });
 
   const progress = {
     workflowId,
@@ -72,7 +69,7 @@ export async function trackProgress(workflowId, currentStep, totalSteps, stepNam
  * @returns {Promise<Object|null>} Progress data or null if not found
  */
 export async function getProgress(workflowId) {
-  const progressFile = path.join(ROOT, '.claude/context/progress', `${workflowId}.json`);
+  const progressFile = resolveRuntimePath(`progress/${workflowId}.json`, { read: true });
 
   try {
     const content = await fs.readFile(progressFile, 'utf-8');

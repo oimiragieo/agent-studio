@@ -7,16 +7,21 @@
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { existsSync } from 'fs';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
-const PLANS_DIR = '.claude/context/plans';
+function getPlansDir(options = { read: false }) {
+  return resolveRuntimePath('plans', options);
+}
 const MAX_MASTER_PLAN_SIZE = 5000; // 5KB
 const MAX_PHASE_PLAN_SIZE = 20000; // 20KB
 
 // Ensure plans directory exists
 async function ensurePlansDir() {
-  if (!existsSync(PLANS_DIR)) {
-    await mkdir(PLANS_DIR, { recursive: true });
+  const plansDir = getPlansDir({ read: false });
+  if (!existsSync(plansDir)) {
+    await mkdir(plansDir, { recursive: true });
   }
+  return plansDir;
 }
 
 /**
@@ -25,10 +30,10 @@ async function ensurePlansDir() {
  * @returns {Promise<string>} Path to master plan file
  */
 export async function createMasterPlan(planData) {
-  await ensurePlansDir();
+  const plansDir = await ensurePlansDir();
 
   const planId = planData.planId || `plan-${Date.now()}`;
-  const masterPlanPath = join(PLANS_DIR, `${planId}.md`);
+  const masterPlanPath = join(plansDir, `${planId}.md`);
 
   const masterPlan = {
     metadata: {
@@ -77,7 +82,7 @@ ${masterPlan.phases
   await writeFile(masterPlanPath, markdown, 'utf-8');
 
   // Also save JSON for programmatic access
-  const jsonPath = join(PLANS_DIR, `${planId}.json`);
+  const jsonPath = join(plansDir, `${planId}.json`);
   await writeFile(jsonPath, JSON.stringify(masterPlan, null, 2), 'utf-8');
 
   return masterPlanPath;
@@ -90,10 +95,10 @@ ${masterPlan.phases
  * @returns {Promise<string>} Path to phase plan file
  */
 export async function createPhasePlan(phaseData, masterPlanId) {
-  await ensurePlansDir();
+  const plansDir = await ensurePlansDir();
 
   const phaseId = phaseData.phaseId || `phase-${Date.now()}`;
-  const phasePlanPath = join(PLANS_DIR, `${masterPlanId}-${phaseId}.json`);
+  const phasePlanPath = join(plansDir, `${masterPlanId}-${phaseId}.json`);
 
   const phasePlan = {
     metadata: {
@@ -144,7 +149,8 @@ export async function createPhasePlan(phaseData, masterPlanId) {
  * @returns {Promise<Object>} Master plan data
  */
 export async function getMasterPlan(planId) {
-  const jsonPath = join(PLANS_DIR, `${planId}.json`);
+  const plansDir = getPlansDir({ read: true });
+  const jsonPath = join(plansDir, `${planId}.json`);
   const content = await readFile(jsonPath, 'utf-8');
   return JSON.parse(content);
 }
@@ -155,7 +161,8 @@ export async function getMasterPlan(planId) {
  * @returns {Promise<Object>} Phase plan data
  */
 export async function getPhasePlan(phaseId) {
-  const phasePlanPath = join(PLANS_DIR, `${phaseId}.json`);
+  const plansDir = getPlansDir({ read: true });
+  const phasePlanPath = join(plansDir, `${phaseId}.json`);
   const content = await readFile(phasePlanPath, 'utf-8');
   return JSON.parse(content);
 }
@@ -166,7 +173,8 @@ export async function getPhasePlan(phaseId) {
  * @returns {Promise<number>} Size in bytes
  */
 export async function getPhasePlanSize(phaseId) {
-  const phasePlanPath = join(PLANS_DIR, `${phaseId}.json`);
+  const plansDir = getPlansDir({ read: true });
+  const phasePlanPath = join(plansDir, `${phaseId}.json`);
   const content = await readFile(phasePlanPath, 'utf-8');
   return Buffer.byteLength(content, 'utf-8');
 }
@@ -197,7 +205,8 @@ export async function optimizePhasePlanSize(phaseId) {
   phasePlan.metadata.lastUpdated = new Date().toISOString();
 
   // Save optimized plan
-  const phasePlanPath = join(PLANS_DIR, `${phaseId}.json`);
+  const plansDir = await ensurePlansDir();
+  const phasePlanPath = join(plansDir, `${phaseId}.json`);
   await writeFile(phasePlanPath, JSON.stringify(phasePlan, null, 2), 'utf-8');
 }
 

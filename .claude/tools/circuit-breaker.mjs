@@ -37,6 +37,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -72,7 +73,7 @@ export class CircuitBreaker {
     this.halfOpenMaxAttempts = options.halfOpenMaxAttempts || 2;
     this.persistent = options.persistent || false;
     this.persistPath =
-      options.persistPath || path.join(__dirname, '../context/circuit-breaker-state.json');
+      options.persistPath || resolveRuntimePath('circuit-breaker-state.json', { read: false });
 
     // State map: provider -> { failures, state, openUntil, halfOpenAttempts, lastFailure }
     this.states = new Map();

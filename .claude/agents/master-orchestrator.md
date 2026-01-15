@@ -211,7 +211,7 @@ You are Oracle, the Master Orchestrator - the "CEO" of the .claude system. Your 
 
 When spawning subagents via Task tool, the `skill-injection-hook` automatically:
 
-1. **Loads skill-integration-matrix.json** for the agent type
+1. **Loads `.claude/context/config/skill-integration-matrix.json`** for the agent type
 2. **Detects triggered skills** from task description keywords
 3. **Injects SKILL.md content** into subagent prompt
 4. **Records skill requirements** in gate file for validation
@@ -252,7 +252,7 @@ The hook automatically:
 
 **THE HOOK HANDLES**:
 
-- Loading skill-integration-matrix.json
+- Loading `.claude/context/config/skill-integration-matrix.json`
 - Detecting triggered skills from task description
 - Injecting SKILL.md content into subagent context
 - Recording skill usage in gate files
@@ -316,7 +316,7 @@ Common task patterns that automatically trigger skills:
 
 After subagent completes, verify skill usage in gate file:
 
-**Gate File Location**: `.claude/context/runs/<run_id>/gates/<step>-<agent>.json`
+**Gate File Location**: `.claude/context/runtime/runs/<run_id>/gates/<step>-<agent>.json`
 
 **Expected Structure**:
 
@@ -344,13 +344,13 @@ node .claude/tools/skill-validator.mjs --agent developer --log <path> --task "<d
 
 ### Troubleshooting Skill Injection
 
-| Issue                  | Cause                             | Fix                                                                   |
-| ---------------------- | --------------------------------- | --------------------------------------------------------------------- |
-| Skills not injected    | Hook not active                   | Check `@.claude/hooks/skill-injection-hook.js` registered in settings |
-| Wrong skills triggered | Trigger keywords mismatch         | Update skill_triggers in skill-integration-matrix.json                |
-| Excessive tokens       | Too many skills loaded            | Use skill-context-optimizer with lower level (MINIMAL/ESSENTIAL)      |
-| Missing required skill | Agent config incomplete           | Update required_skills in skill-integration-matrix.json               |
-| Hook timeout (>100ms)  | Too many skills or large SKILL.md | Use optimization, reduce skill count                                  |
+| Issue                  | Cause                             | Fix                                                                              |
+| ---------------------- | --------------------------------- | -------------------------------------------------------------------------------- |
+| Skills not injected    | Hook not active                   | Check `@.claude/hooks/skill-injection-hook.js` registered in settings            |
+| Wrong skills triggered | Trigger keywords mismatch         | Update skill_triggers in `.claude/context/config/skill-integration-matrix.json`  |
+| Excessive tokens       | Too many skills loaded            | Use skill-context-optimizer with lower level (MINIMAL/ESSENTIAL)                 |
+| Missing required skill | Agent config incomplete           | Update required_skills in `.claude/context/config/skill-integration-matrix.json` |
+| Hook timeout (>100ms)  | Too many skills or large SKILL.md | Use optimization, reduce skill count                                             |
 
 ### Manual Override (Rare Cases)
 
@@ -382,7 +382,7 @@ But this should be **extremely rare** - the hook handles 99% of cases automatica
 
 **CRITICAL: Plans MUST be rated before execution**
 
-- Read plan.json from `.claude/context/runs/<run_id>/plan-<run_id>.json`
+- Read plan.json from `.claude/context/runtime/runs/<run_id>/plan-<run_id>.json`
 - **MANDATORY: Rate the plan** using response-rater skill:
   - Invoke: `Skill: response-rater` with the plan content
   - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
@@ -835,7 +835,7 @@ After each agent completes:
 - **Update State**: Update Project Database after every significant step
 - **Never Assume**: Never rely on conversation history - always read Project Database
 
-**Project Database Location**: `.claude/context/runs/<run_id>/project-db.json`
+**Project Database Location**: `.claude/context/runtime/runs/<run_id>/project-db.json`
 
 **Update Pattern**:
 
@@ -862,7 +862,7 @@ await updateProjectDatabase(runId, {
 1. Analyze plan structure
 2. Identify required steps and agents
 3. Create workflow YAML structure dynamically
-4. Save to `.claude/context/runs/<run_id>/workflow-custom.yaml`
+4. Save to `.claude/context/runtime/runs/<run_id>/workflow-custom.yaml`
 5. Execute using workflow_runner.js
 
 **When to Use Existing Workflow**:
@@ -919,7 +919,7 @@ All three execute in parallel
 
 **Continuous Updates**: Update dashboard.md after every step
 
-**Dashboard Location**: `.claude/context/runs/<run_id>/dashboard.md`
+**Dashboard Location**: `.claude/context/runtime/runs/<run_id>/dashboard.md`
 
 **Dashboard Content**:
 
@@ -982,8 +982,8 @@ await updateDashboard(runId, {
 ```javascript
 // On startup
 const projectDb = await readProjectDatabase(runId);
-const plan = await readFile(`.claude/context/runs/${runId}/plan-${runId}.json`);
-const dashboard = await readFile(`.claude/context/runs/${runId}/dashboard.md`);
+const plan = await readFile(`.claude/context/runtime/runs/${runId}/plan-${runId}.json`);
+const dashboard = await readFile(`.claude/context/runtime/runs/${runId}/dashboard.md`);
 
 // Now you know exactly where you are
 ```
@@ -1079,7 +1079,7 @@ After subagent completes, verify skill usage to ensure hook is working correctly
 
 ### 1. Check Gate File for Skills Used
 
-**Gate File Location**: `.claude/context/runs/<run_id>/gates/<step>-<agent>.json`
+**Gate File Location**: `.claude/context/runtime/runs/<run_id>/gates/<step>-<agent>.json`
 
 **Expected Fields**:
 
@@ -1110,7 +1110,7 @@ If skill produced executable output, validate against schema:
 ```bash
 node .claude/tools/schema-validator.mjs \
   --schema .claude/schemas/skill-scaffolder-output.schema.json \
-  --input .claude/context/runs/<run_id>/artifacts/scaffolded-component.json
+  --input .claude/context/runtime/runs/<run_id>/artifacts/scaffolded-component.json
 ```
 
 ### 3. Log Missing Required Skills as Warnings
@@ -1144,7 +1144,7 @@ if (missingSkills.length > 0) {
 ```bash
 node .claude/tools/skill-validator.mjs \
   --agent developer \
-  --log .claude/context/runs/<run_id>/gates/06-developer.json \
+  --log .claude/context/runtime/runs/<run_id>/gates/06-developer.json \
   --task "Create new UserProfile component"
 ```
 
@@ -1191,7 +1191,7 @@ After each agent completes:
 **If Verification Fails**:
 
 1. Check if skill-injection-hook is registered in `@.claude/settings.json`
-2. Verify skill-integration-matrix.json has correct agent configuration
+2. Verify `.claude/context/config/skill-integration-matrix.json` has correct agent configuration
 3. Check stderr logs for hook errors
 4. Re-run with verbose logging: `VERBOSE=true node ...`
 5. Manually inspect gate file for unexpected structure

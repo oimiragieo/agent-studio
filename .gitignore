@@ -7,7 +7,22 @@
 
 # Claude Code Session Data
 .claude/context/session.json
-.claude/context/artifacts/*.json
+# Artifacts: generated (runtime) vs reference (version-controlled)
+.claude/context/artifacts/generated/
+!.claude/context/artifacts/reference/
+
+# Runtime data (gitignored) - NEW PATTERNS
+.claude/context/runtime/
+.claude/context/analytics/
+.claude/context/audit/
+.claude/context/reports/
+.claude/context/tasks/
+.claude/context/todos/
+
+# Config data (version-controlled) - NEW PATTERNS
+!.claude/context/config/
+
+# Legacy patterns (to be removed after cutover)
 .claude/context/history/reasoning/**/*.json
 .claude/context/history/gates/**/*.json
 .claude/context/blackboard/*.json

@@ -1,6 +1,7 @@
 ---
 name: mongodb-atlas
 description: MongoDB Atlas cloud database operations
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

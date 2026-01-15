@@ -1,6 +1,7 @@
 ---
 name: linear-pm
 description: Linear project management - issues, projects, cycles, and roadmaps. Use for Linear-related tasks like managing issues, tracking sprints, and organizing projects.
+version: 1.0.0
 allowed-tools: read, bash, webfetch
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: conflict-resolution
 description: Multi-agent conflict resolution protocol for detecting and resolving conflicts when multiple agents produce conflicting outputs or requirements. Handles technical, requirements, design, and data conflicts.
+version: 1.0.0
 allowed-tools: read, grep, search
 ---
 

@@ -244,7 +244,7 @@ node .claude/tools/enforcement-gate.mjs validate-plan \
 
 ```
 Skill: response-rater
-Plan: .claude/context/artifacts/plan-greenfield-001.md
+Plan: .claude/context/artifacts/generated/plan-greenfield-001.md
 Threshold: 7
 Rubric: completeness, feasibility, risk_mitigation, agent_coverage, integration, testing, documentation
 ```

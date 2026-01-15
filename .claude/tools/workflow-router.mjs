@@ -70,7 +70,7 @@ Output ONLY valid JSON, no markdown, no explanation.`;
     const anthropic = new Anthropic();
 
     const message = await anthropic.messages.create({
-      model: 'claude-haiku-4-20250514',
+      model: 'claude-haiku-4-5',
       max_tokens: 1000,
       messages: [
         {
@@ -94,7 +94,7 @@ Output ONLY valid JSON, no markdown, no explanation.`;
     try {
       // Escape prompt for shell
       const escapedPrompt = fullPrompt.replace(/"/g, '\\"').replace(/\$/g, '\\$');
-      const command = `claude -p "${escapedPrompt}" --model claude-haiku-4-20250514 --output-format json`;
+      const command = `claude -p "${escapedPrompt}" --model claude-haiku-4-5 --output-format json`;
 
       const { stdout, stderr } = await execAsync(command, {
         cwd: resolve(__dirname, '../..'),

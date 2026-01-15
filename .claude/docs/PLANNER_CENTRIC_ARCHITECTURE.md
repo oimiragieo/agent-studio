@@ -136,7 +136,7 @@ Phase 3: Polish (2,000-3,000 lines)
 ### Step-by-Step Validation
 
 1. **Planner produces plan artifact**
-   - Saved to `.claude/context/runs/<run_id>/plans/<plan_id>.json`
+   - Saved to `.claude/context/runtime/runs/<run_id>/plans/<plan_id>.json`
    - Conforms to `.claude/schemas/plan.schema.json`
 
 2. **Orchestrator invokes response-rater skill**
@@ -251,7 +251,7 @@ All workflows follow this pattern:
 Plans are stored in a hierarchical structure:
 
 ```
-.claude/context/runs/<run_id>/
+.claude/context/runtime/runs/<run_id>/
 ├── plans/
 │   ├── <plan_id>.json              # Master plan
 │   ├── <plan_id>-rating.json       # Plan rating
@@ -318,7 +318,7 @@ When context is lost during execution:
    Run ID: abc123
    ```
 
-   - Loads plan from `.claude/context/runs/<run_id>/plans/`
+   - Loads plan from `.claude/context/runtime/runs/<run_id>/plans/`
    - Reads artifact registry
    - Reconstructs workflow state
 

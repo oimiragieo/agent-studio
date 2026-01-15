@@ -13,6 +13,7 @@
 import { readFile, readdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,7 +24,7 @@ const __dirname = dirname(__filename);
  */
 async function loadSecurityTriggersV2() {
   try {
-    const triggersPath = join(__dirname, '..', 'context', 'security-triggers-v2.json');
+    const triggersPath = resolveConfigPath('security-triggers-v2.json', { read: true });
     const content = await readFile(triggersPath, 'utf-8');
     return JSON.parse(content);
   } catch (error) {
@@ -128,6 +129,8 @@ export async function checkSecurityTriggers(taskDescription) {
 export async function hasSecurityArchitectApproval(workflowId) {
   try {
     // Check gate files for security signoff
+    // Note: history/gates stays stable per plan (Option A), so use direct path
+    // If this moves to runtime/history/gates in future, update to use resolveRuntimePath
     const gatePath = join(__dirname, '..', 'context', 'history', 'gates', workflowId);
     const gateFiles = await readdir(gatePath);
 

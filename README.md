@@ -33,7 +33,7 @@ A **production-ready, drop-in configuration bundle** for AI agent orchestration.
 - **61 Customer User Journeys (CUJs)** documenting complete workflows (2 reserved IDs: CUJ-031, CUJ-032, CUJ-033)
   - Markdown files (`.claude/docs/cujs/CUJ-XXX.md`) documenting end-to-end user scenarios
   - CUJs map to workflows or skills, providing executable documentation
-  - Machine-readable registry (`.claude/context/cuj-registry.json`) for programmatic access
+  - Machine-readable registry (`.claude/context/config/cuj-registry.json`) for programmatic access
   - 54 workflow-based, 5 skill-only, 2 manual setup
 
 - **124 JSON schemas** for artifact validation
@@ -43,7 +43,7 @@ A **production-ready, drop-in configuration bundle** for AI agent orchestration.
 - **151 technology rule packs** with dynamic discovery
   - 8 master rules (core protocols) in `.claude/rules-master/`
   - 143 library rules (tech-specific) in `.claude/rules-library/`
-  - Dynamic rule index (`.claude/context/rule-index.json`) enables progressive disclosure
+  - Dynamic rule index (`.claude/context/config/rule-index.json`) enables progressive disclosure
   - Only 5-10 relevant rules loaded per task (not all 151)
 
 - **Enforcement system** with plan rating, signoffs, and security triggers
@@ -250,11 +250,14 @@ pnpm cuj CUJ-005          # Greenfield project planning
 ├── config.yaml       # Agent routing and workflow configuration
 └── CLAUDE.md         # Core instructions (authoritative, referenced by agents)
 
-scripts/              # Utility scripts (validation, generation, migration)
-├── validate-config.mjs       # Configuration validation
-├── validate-cujs.mjs         # CUJ file validation
-├── generate-rule-index.mjs  # Rule index generation
-└── ...                      # 20+ more scripts
+scripts/              # Utility scripts (organized by category)
+├── validation/       # Validation scripts
+├── generation/       # Generation scripts
+├── migration/        # Migration scripts
+├── maintenance/      # Maintenance scripts
+├── testing/          # Testing scripts
+├── installation/     # Installation scripts
+└── utilities/        # Utility scripts
 
 codex-skills/         # CLI-based multi-AI skills (optional)
 ├── multi-ai-code-review/    # Multi-AI code review skill
@@ -553,7 +556,7 @@ See `.claude/tools/` directory for complete list of 200+ tools.
 
 Dynamic rule discovery system enabling Skills to find relevant rules without hard-coding:
 
-1. **Index Generation**: `pnpm index-rules` scans all rules and generates `.claude/context/rule-index.json`
+1. **Index Generation**: `pnpm index-rules` scans all rules and generates `.claude/context/config/rule-index.json`
 2. **Rule Discovery**: Skills load index and query `technology_map`
 3. **Progressive Disclosure**: Only 5-10 relevant rules loaded (not all 1,081)
 4. **Self-Healing**: Regenerate index if rule not found
@@ -622,27 +625,27 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 
 ### A2A Protocol Documentation (NEW)
 
-- **Completion Report**: `.claude/context/reports/a2a-integration-completion-report.md` - Comprehensive overview of A2A integration
-- **Protocol Analysis**: `.claude/context/reports/a2a-protocol-analysis.md` - Detailed A2A v0.3.0 protocol analysis
-- **Architecture**: `.claude/context/artifacts/a2a-integration-architecture.md` - A2A system architecture design
-- **Phase 4.1 (POC)**: `.claude/context/reports/phase-4-1-poc-implementation-report.md` - AgentCard generation and discovery
-- **Phase 4.2 (Memory)**: `.claude/context/reports/phase-4-2-memory-layer-implementation-report.md` - Memory-A2A bridge
-- **Phase 4.3 (Lifecycle)**: `.claude/context/reports/phase-4-3-task-lifecycle-implementation-report.md` - Task management
-- **Phase 4.4 (Federation)**: `.claude/context/reports/phase-4-4-external-federation-implementation-report.md` - External federation
-- **Validation Reports**: `.claude/context/reports/phase-*-validation-report.md` - Test results and validation
+- **Completion Report**: `.claude/context/runtime/reports/a2a-integration-completion-report.md` - Comprehensive overview of A2A integration
+- **Protocol Analysis**: `.claude/context/runtime/reports/a2a-protocol-analysis.md` - Detailed A2A v0.3.0 protocol analysis
+- **Architecture**: `.claude/context/artifacts/reference/a2a-integration-architecture.md` - A2A system architecture design
+- **Phase 4.1 (POC)**: `.claude/context/runtime/reports/phase-4-1-poc-implementation-report.md` - AgentCard generation and discovery
+- **Phase 4.2 (Memory)**: `.claude/context/runtime/reports/phase-4-2-memory-layer-implementation-report.md` - Memory-A2A bridge
+- **Phase 4.3 (Lifecycle)**: `.claude/context/runtime/reports/phase-4-3-task-lifecycle-implementation-report.md` - Task management
+- **Phase 4.4 (Federation)**: `.claude/context/runtime/reports/phase-4-4-external-federation-implementation-report.md` - External federation
+- **Validation Reports**: `.claude/context/runtime/reports/phase-*-validation-report.md` - Test results and validation
 
 ## New Features
 
 ### 2026-01: Google A2A Protocol Integration
 
-| Feature                   | Purpose                                                         | Documentation                                                                    |
-| ------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| **A2A v0.3.0 Compliance** | Full Google A2A protocol integration for agent interoperability | `.claude/context/reports/a2a-integration-completion-report.md`                   |
-| **Agent Discovery**       | AgentCard generation and discovery endpoint                     | `.claude/context/reports/phase-4-1-poc-implementation-report.md`                 |
-| **Memory Bridge**         | Memory handoff in A2A Artifact format (200x faster)             | `.claude/context/reports/phase-4-2-memory-layer-implementation-report.md`        |
-| **Task Lifecycle**        | 8-state task management with message wrapper                    | `.claude/context/reports/phase-4-3-task-lifecycle-implementation-report.md`      |
-| **External Federation**   | External agent discovery, streaming, webhooks                   | `.claude/context/reports/phase-4-4-external-federation-implementation-report.md` |
-| **290 A2A Tests**         | Comprehensive test coverage with 100% backward compatibility    | Various validation reports in `.claude/context/reports/`                         |
+| Feature                   | Purpose                                                         | Documentation                                                                            |
+| ------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **A2A v0.3.0 Compliance** | Full Google A2A protocol integration for agent interoperability | `.claude/context/runtime/reports/a2a-integration-completion-report.md`                   |
+| **Agent Discovery**       | AgentCard generation and discovery endpoint                     | `.claude/context/runtime/reports/phase-4-1-poc-implementation-report.md`                 |
+| **Memory Bridge**         | Memory handoff in A2A Artifact format (200x faster)             | `.claude/context/runtime/reports/phase-4-2-memory-layer-implementation-report.md`        |
+| **Task Lifecycle**        | 8-state task management with message wrapper                    | `.claude/context/runtime/reports/phase-4-3-task-lifecycle-implementation-report.md`      |
+| **External Federation**   | External agent discovery, streaming, webhooks                   | `.claude/context/runtime/reports/phase-4-4-external-federation-implementation-report.md` |
+| **290 A2A Tests**         | Comprehensive test coverage with 100% backward compatibility    | Various validation reports in `.claude/context/runtime/reports/`                         |
 
 ### Phase 2.1.2: Codex Skills & Hook Recovery
 

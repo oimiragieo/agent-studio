@@ -8,12 +8,13 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const EVALS_DIR = path.join(__dirname, '../context/evals');
-const RESULTS_DIR = path.join(__dirname, '../context/evals/results');
+const EVALS_DIR = resolveRuntimePath('evals', { read: false });
+const RESULTS_DIR = resolveRuntimePath('evals/results', { read: false });
 
 /**
  * Define success criteria for evaluation

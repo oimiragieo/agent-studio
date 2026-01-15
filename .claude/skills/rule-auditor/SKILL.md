@@ -103,7 +103,7 @@ Rule Auditor - Automatically validates code against your project's coding standa
 
 Load the rule index to discover all available rules dynamically:
 
-- @.claude/context/rule-index.json
+- @.claude/context/config/rule-index.json
 
 The index contains metadata for all 1,081+ rules in `.claude/rules-master/` and `.claude/rules-library/` (formerly archive).
 

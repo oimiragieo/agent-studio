@@ -6,6 +6,7 @@ import { existsSync, readFileSync, readdirSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,7 +16,7 @@ const CUJ_DIR = path.join(ROOT, '.claude/docs/cujs');
 const WORKFLOWS_DIR = path.join(ROOT, '.claude/workflows');
 const SCHEMAS_DIR = path.join(ROOT, '.claude/schemas');
 const SKILLS_DIR = path.join(ROOT, '.claude/skills');
-const REGISTRY_PATH = path.join(ROOT, '.claude/context/cuj-registry.json');
+const REGISTRY_PATH = resolveConfigPath('cuj-registry.json', { read: true });
 const INDEX_PATH = path.join(ROOT, '.claude/docs/cujs/CUJ-INDEX.md');
 
 const colors = {

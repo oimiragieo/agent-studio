@@ -80,7 +80,7 @@ When all 3 attempts fail to achieve minimum score:
 
 2. **If user chooses force-proceed**:
    - **Document risk**: Record in workflow reasoning file
-   - **Log decision**: Save to `.claude/context/runs/<run_id>/force-proceed-{{workflow_id}}.json`
+   - **Log decision**: Save to `.claude/context/runtime/runs/<run_id>/force-proceed-{{workflow_id}}.json`
    - **Require acknowledgment**: User must explicitly acknowledge risks
    - **Heightened monitoring**: Flag workflow for close monitoring during execution
 
@@ -343,7 +343,7 @@ steps:
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/<run_id>/plans/<plan_id>-rating.json
+      - .claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7
@@ -369,7 +369,7 @@ steps:
 
 2. **Process rating results**:
    - Extract overall score and rubric scores
-   - Save rating to `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+   - Save rating to `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
    - Document rating in reasoning file
 
 3. **Decision logic**:
@@ -393,16 +393,16 @@ steps:
    ```
 
 4. **Retry handling**:
-   - Track retry counter in run state (`.claude/context/runs/<run_id>/state.json`)
+   - Track retry counter in run state (`.claude/context/runtime/runs/<run_id>/state.json`)
    - Increment counter after each failed rating
    - Reset counter after successful rating
    - Escalate to user after 3 failed attempts
 
 ### Rating File Location
 
-**Standard path**: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+**Standard path**: `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
 
-**Example**: `.claude/context/runs/run-001/plans/plan-greenfield-2025-01-06-rating.json`
+**Example**: `.claude/context/runtime/runs/run-001/plans/plan-greenfield-2025-01-06-rating.json`
 
 **Format**:
 
@@ -437,20 +437,20 @@ steps:
 ```bash
 # Standard plan rating
 node .claude/skills/response-rater/scripts/rate.cjs \
-  --response-file .claude/context/artifacts/plan-greenfield-2025-01-06.json \
+  --response-file .claude/context/artifacts/generated/plan-greenfield-2025-01-06.json \
   --providers claude,gemini \
   --template plan-review
 
 # Enterprise plan rating (3 providers, higher timeout)
 node .claude/skills/response-rater/scripts/rate.cjs \
-  --response-file .claude/context/artifacts/plan-enterprise-migration.json \
+  --response-file .claude/context/artifacts/generated/plan-enterprise-migration.json \
   --providers claude,gemini,codex \
   --template plan-review \
   --timeout 300000
 
 # Critical plan rating (all providers, maximum timeout)
 node .claude/skills/response-rater/scripts/rate.cjs \
-  --response-file .claude/context/artifacts/plan-security-audit.json \
+  --response-file .claude/context/artifacts/generated/plan-security-audit.json \
   --providers claude,gemini,codex,cursor,copilot \
   --template plan-review \
   --timeout 600000

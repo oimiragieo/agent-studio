@@ -13,10 +13,11 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, '../..');
-const metricsFile = path.join(projectRoot, '.claude/context/analytics/cuj-metrics.jsonl');
+const metricsFile = resolveRuntimePath('analytics/cuj-metrics.jsonl', { write: true });
 
 /**
  * Sanitize error messages (remove sensitive data)

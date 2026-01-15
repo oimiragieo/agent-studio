@@ -120,22 +120,75 @@ export class CLIAdapter extends AgentExecutorAdapter {
   }
 
   async execute({ agent, systemPrompt, messages, tools, runId, step }) {
-    const { exec } = await import('child_process');
-    const { promisify } = await import('util');
-    const execAsync = promisify(exec);
+    const { spawn } = await import('child_process');
+    const { writeFile, unlink } = await import('fs/promises');
+    const { tmpdir } = await import('os');
+    const { join } = await import('path');
 
     const startTime = Date.now();
 
-    // Build command to invoke agent via CLI
+    // Build prompt content
     const agentPrompt = `${systemPrompt}\n\n${messages.map(m => `${m.role}: ${m.content}`).join('\n\n')}`;
-    const command = `claude -p "${agentPrompt.replace(/"/g, '\\"')}" --agent ".claude/agents/${agent}.md"`;
+
+    // Use temporary file for long prompts to avoid Windows command line length limits
+    const tempPromptFile = join(
+      tmpdir(),
+      `claude-prompt-${Date.now()}-${Math.random().toString(36).substring(7)}.txt`
+    );
+    await writeFile(tempPromptFile, agentPrompt, 'utf-8');
 
     try {
-      const { stdout, stderr } = await execAsync(command, {
-        cwd: resolve(__dirname, '../..'),
-        maxBuffer: 10 * 1024 * 1024,
-        timeout: 300000, // 5 minutes
+      // Use spawn with separate arguments to avoid command line length limits
+      const { stdout, stderr } = await new Promise((resolve, reject) => {
+        const child = spawn(
+          'claude',
+          ['-p', `@${tempPromptFile}`, '--agent', `.claude/agents/${agent}.md`],
+          {
+            cwd: resolve(__dirname, '../..'),
+            stdio: ['ignore', 'pipe', 'pipe'],
+            shell: false,
+          }
+        );
+
+        let stdoutData = '';
+        let stderrData = '';
+        const timeout = setTimeout(() => {
+          child.kill();
+          reject(new Error('Command timeout after 5 minutes'));
+        }, 300000);
+
+        child.stdout.on('data', data => {
+          stdoutData += data.toString();
+        });
+
+        child.stderr.on('data', data => {
+          stderrData += data.toString();
+        });
+
+        child.on('close', code => {
+          clearTimeout(timeout);
+          if (code === 0) {
+            resolve({ stdout: stdoutData, stderr: stderrData });
+          } else {
+            const error = new Error(`Command failed with exit code ${code}`);
+            error.stdout = stdoutData;
+            error.stderr = stderrData;
+            reject(error);
+          }
+        });
+
+        child.on('error', error => {
+          clearTimeout(timeout);
+          reject(error);
+        });
       });
+
+      // Cleanup temp file
+      try {
+        await unlink(tempPromptFile);
+      } catch (cleanupError) {
+        // Ignore cleanup errors
+      }
 
       return {
         status: 'completed',
@@ -153,6 +206,13 @@ export class CLIAdapter extends AgentExecutorAdapter {
         duration_ms: Date.now() - startTime,
       };
     } catch (error) {
+      // Cleanup temp file on error
+      try {
+        await unlink(tempPromptFile);
+      } catch (cleanupError) {
+        // Ignore cleanup errors
+      }
+
       return {
         status: 'failed',
         artifacts_written: [],

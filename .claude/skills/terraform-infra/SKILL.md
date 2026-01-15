@@ -1,6 +1,7 @@
 ---
 name: terraform-infra
 description: Terraform infrastructure operations with safety controls
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob]
 ---
 

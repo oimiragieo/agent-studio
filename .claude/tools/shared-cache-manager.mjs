@@ -25,12 +25,13 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Configuration
-const CACHE_DIR = join(__dirname, '../context/tmp');
+const CACHE_DIR = resolveRuntimePath('cache/shared', { read: false });
 const CACHE_FILE = join(CACHE_DIR, 'skill-cache-shared.json');
 const LOCK_FILE = join(CACHE_DIR, 'skill-cache.lock');
 const CACHE_VERSION = '1.0.0';

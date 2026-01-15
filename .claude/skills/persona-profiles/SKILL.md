@@ -1,6 +1,7 @@
 ---
 name: persona-profiles
 description: User persona management and profile generation
+version: 1.0.0
 allowed-tools: [Bash, Read, Write]
 ---
 

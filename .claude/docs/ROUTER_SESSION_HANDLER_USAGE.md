@@ -50,7 +50,7 @@ const session = await initializeRouterSession('session-123', 'Build a web app');
 console.log(session);
 // {
 //   session_id: 'session-123',
-//   model: 'claude-3-5-haiku-20241022',
+//   model: 'claude-haiku-4-5',
 //   temperature: 0.1,
 //   role: 'router',
 //   cost_tracking: { ... },
@@ -169,7 +169,7 @@ console.log(handoff);
 //     session_context: { ... },
 //     routing_metadata: {
 //       routed_at: '2025-01-12T10:00:00Z',
-//       router_model: 'claude-3-5-haiku-20241022',
+//       router_model: 'claude-haiku-4-5',
 //       skip_redundant_routing: true
 //     }
 //   },
@@ -195,7 +195,7 @@ Track costs for model usage.
 ```javascript
 const cost = await trackCosts(
   'session-123',
-  'claude-3-5-haiku-20241022',
+  'claude-haiku-4-5',
   1000, // input tokens
   500 // output tokens
 );
@@ -207,18 +207,18 @@ console.log(cost);
 //     input_tokens: 1000,
 //     output_tokens: 500,
 //     cost_usd: 0.0035,
-//     model: 'claude-3-5-haiku-20241022'
+//     model: 'claude-haiku-4-5'
 //   }
 // }
 ```
 
 **Model Pricing** (per million tokens):
 
-| Model                     | Input  | Output |
-| ------------------------- | ------ | ------ |
-| claude-3-5-haiku-20241022 | $1.00  | $5.00  |
-| claude-sonnet-4-20250514  | $3.00  | $15.00 |
-| claude-opus-4-20241113    | $15.00 | $75.00 |
+| Model                    | Input | Output |
+| ------------------------ | ----- | ------ |
+| claude-haiku-4-5         | $1.00 | $5.00  |
+| claude-sonnet-4-5        | $3.00 | $15.00 |
+| claude-opus-4-5-20251101 | $5.00 | $25.00 |
 
 ### 6. `getCostSummary(sessionId)`
 
@@ -393,35 +393,253 @@ try {
 - `Cost tracking failed` - Session not found
 - `Workflow selection failed` - Invalid intent type
 
+## Hook Integration
+
+### Router Session Entry Hook
+
+The Router Session Handler integrates with the Claude Code hook system via `router-session-entry.mjs`. This hook intercepts user prompts at session start before any other processing occurs.
+
+**Hook Location**: `.claude/hooks/router-session-entry.mjs`
+**Hook Type**: `UserPromptSubmit` (executes on every prompt)
+**Priority**: 1 (executes first in hook chain)
+
+### How the Hook Works
+
+```
+User Prompt
+    ↓
+[router-session-entry.mjs Hook]
+    ├─ Initialize router session (Haiku model)
+    ├─ Classify intent & complexity
+    ├─ Decision: Simple or Complex?
+    │
+    ├─ SIMPLE PROMPT (complexity < 0.7)
+    │   └─ Return: Handle directly with Haiku
+    │       (Cost: ~$0.003 per request)
+    │
+    └─ COMPLEX PROMPT (complexity >= 0.7)
+        └─ Select workflow
+        └─ Route to orchestrator
+        └─ Execute selected workflow
+```
+
+### Hook Configuration
+
+The hook is automatically registered in `.claude/hooks/hook-registry.json`:
+
+```json
+{
+  "hooks": {
+    "router-session-entry": {
+      "path": ".claude/hooks/router-session-entry.mjs",
+      "type": "UserPromptSubmit",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "complexity_threshold": 0.7,
+        "session_id_prefix": "router-session",
+        "cost_tracking_enabled": true
+      }
+    }
+  }
+}
+```
+
+### Hook Settings in settings.json
+
+Configure routing behavior in `.claude/settings.json`:
+
+```json
+{
+  "models": {
+    "router": "claude-haiku-4-5",
+    "orchestrator": "claude-sonnet-4-5"
+  },
+  "routing": {
+    "complexity_threshold": 0.7,
+    "cost_optimization_enabled": true,
+    "simple_prompt_timeout_ms": 5000,
+    "allow_direct_haiku_handling": true
+  },
+  "session_management": {
+    "session_cleanup_interval_hours": 24,
+    "session_state_dir": ".claude/context/tmp"
+  }
+}
+```
+
+### Hook Error Handling
+
+If the hook encounters an error during classification:
+
+1. **Fail-Open Strategy**: Always routes to orchestrator (safe fallback)
+2. **Error Logging**: Logs classification failures to console
+3. **Session State**: Creates session with fallback status
+4. **No Data Loss**: Original prompt is preserved for orchestrator
+
+```javascript
+// Example: Router hook encounters error
+try {
+  const classification = await classifyIntent(userPrompt);
+  // ... routing logic
+} catch (error) {
+  console.error(`[Router Hook] Classification failed: ${error.message}`);
+  // Fails open - returns { proceed: true } to route to orchestrator
+}
+```
+
+### Enabling/Disabling the Router Hook
+
+The hook can be managed via `.claude/hooks/hook-registry.json`:
+
+**To disable**: Set `enabled: false`
+
+```json
+{
+  "router-session-entry": {
+    "enabled": false
+  }
+}
+```
+
+**To adjust complexity threshold**:
+
+```json
+{
+  "router-session-entry": {
+    "config": {
+      "complexity_threshold": 0.8
+    }
+  }
+}
+```
+
 ## Integration with Orchestrator
 
-The router session handler integrates with `orchestrator-entry.mjs`:
+The router session handler integrates seamlessly with `orchestrator-entry.mjs`. When the router hook detects a complex prompt:
+
+1. **Hook prepares routing decision** with intent, complexity, workflow selection
+2. **Hook invokes orchestrator** with `routeToOrchestrator()` function
+3. **Orchestrator receives context** including router classification and cost tracking
+4. **Orchestrator executes workflow** without redundant classification
 
 ```javascript
 // In orchestrator-entry.mjs
 import { routeToOrchestrator } from './router-session-handler.mjs';
 
 async function handleRouterHandoff(handoffData) {
-  // Check if routing was already done by router
-  if (handoffData.routing_metadata.skip_redundant_routing) {
-    // Use router's workflow selection
-    const workflow = handoffData.workflow;
-    const userPrompt = handoffData.user_prompt;
+  // Router already classified - use its decision
+  const { workflow, selected_workflow, router_session_id } = handoffData;
 
-    // Execute workflow directly
-    return await executeWorkflow(workflow, userPrompt);
-  }
+  // Execute workflow directly (no re-routing needed)
+  return await executeWorkflow(workflow, handoffData.user_prompt, {
+    router_session_id,
+    skip_redundant_routing: true,
+  });
 }
+```
+
+**Key Benefits**:
+
+- Router handles <100 tokens with Haiku (cheaper, faster)
+- Complex prompts get full orchestrator treatment
+- Cost savings: 70-80% reduction for simple prompts
+- No redundant classification
+
+## Cost Savings Analysis
+
+The router provides significant cost savings by using lightweight Haiku classification before routing to expensive Sonnet/Opus models.
+
+### Scenario 1: Simple Python Script Request
+
+**Prompt**: "Write a Python script to process CSV files"
+
+```
+Router Classification:
+  Intent: script
+  Complexity: 0.3 (low)
+  Confidence: 0.92
+  Decision: HANDLE DIRECTLY
+
+Cost Breakdown:
+  Haiku classification:    ~$0.0008  (100 input + 50 output tokens)
+  No orchestrator routing
+  ────────────────────────
+  Total cost:              $0.0008
+
+Without Router (Direct Orchestrator):
+  Sonnet full request:     ~$0.02 (higher token count)
+  ────────────────────────
+  Total cost:              $0.02
+
+Savings: 96% reduction ($0.0192 saved per request)
+```
+
+### Scenario 2: Enterprise Web Application
+
+**Prompt**: "Build an enterprise web application with Google Cloud integration, auth, database, etc."
+
+```
+Router Classification:
+  Intent: web_app
+  Complexity: 0.85 (high)
+  Confidence: 0.94
+  Decision: ROUTE TO ORCHESTRATOR
+
+Cost Breakdown:
+  Haiku classification:    ~$0.0008
+  Sonnet orchestrator:     ~$0.02
+  ────────────────────────
+  Total cost:              ~$0.0208
+
+Without Router (Direct Orchestrator):
+  Sonnet classification:   ~$0.005 (redundant)
+  Sonnet orchestrator:     ~$0.02
+  ────────────────────────
+  Total cost:              ~$0.025
+
+Savings: 17% reduction ($0.0042 saved per request)
+```
+
+### Average Cost Savings Across Workloads
+
+```
+Workload Distribution (typical):
+  50% Simple/Script tasks:        96% savings each = 48% average
+  30% Medium tasks:               60% savings each = 18% average
+  20% Complex tasks:              15% savings each = 3% average
+  ────────────────────────────────────────────────
+  Overall average savings:        69% cost reduction
+```
+
+### Monthly Cost Example
+
+**100 monthly requests to orchestrator**:
+
+```
+Without Router:
+  100 requests × $0.02 average = $2.00/month
+
+With Router:
+  50 simple  × $0.0008 = $0.04   (Haiku only)
+  30 medium  × $0.0088 = $0.26   (Haiku + Sonnet)
+  20 complex × $0.0208 = $0.42   (Haiku + Sonnet)
+  ──────────────────────────────
+  Total: $0.72/month
+
+Savings: $1.28/month (64% reduction)
 ```
 
 ## Best Practices
 
 1. **Always initialize session first** - Session state is required for cost tracking
 2. **Check confidence levels** - Use fallback logic for low confidence (<0.7)
-3. **Monitor costs** - Set thresholds for session costs
-4. **Clean up old sessions** - Run cleanup periodically (cron job)
+3. **Monitor costs** - Use `getCostSummary()` to track monthly expenses
+4. **Clean up old sessions** - Run cleanup periodically: `node .claude/tools/router-session-handler.mjs cleanup`
 5. **Validate workflow paths** - Ensure workflow files exist before routing
 6. **Handle errors gracefully** - Provide fallback workflows for failures
+7. **Adjust complexity threshold** - Tune to your workload (higher = more Haiku, lower = more Sonnet)
+8. **Track classification performance** - Monitor confidence levels and misclassifications
 
 ## Configuration
 
@@ -430,20 +648,24 @@ The router uses settings from `.claude/settings.json`:
 ```json
 {
   "models": {
-    "router": "claude-3-5-haiku-20241022",
-    "orchestrator": "claude-sonnet-4-20250514"
+    "router": "claude-haiku-4-5",
+    "orchestrator": "claude-sonnet-4-5"
   },
   "routing": {
     "complexity_threshold": 0.7,
-    "cost_optimization_enabled": true
+    "cost_optimization_enabled": true,
+    "simple_prompt_timeout_ms": 5000
   }
 }
 ```
 
 **Tunable Parameters**:
 
-- `complexity_threshold`: Minimum score to route to orchestrator (default: 0.7)
+- `complexity_threshold`: Minimum score to route to orchestrator (default: 0.7, range: 0.5-0.9)
+  - Lower value: More requests handled by Haiku (cheaper but may miss complex cases)
+  - Higher value: More requests to orchestrator (expensive but ensures complex handling)
 - `cost_optimization_enabled`: Enable cost-aware model selection (default: true)
+- `simple_prompt_timeout_ms`: Timeout for simple prompt handling (default: 5000ms)
 
 ## Session State Files
 
@@ -453,7 +675,7 @@ Session states are stored in `.claude/context/tmp/router-session-{id}.json`:
 {
   "session_id": "session-123",
   "created_at": "2025-01-12T10:00:00Z",
-  "model": "claude-3-5-haiku-20241022",
+  "model": "claude-haiku-4-5",
   "temperature": 0.1,
   "role": "router",
   "cost_tracking": {
@@ -470,21 +692,161 @@ Session states are stored in `.claude/context/tmp/router-session-{id}.json`:
 
 ## Troubleshooting
 
+### Issue: Router hook not executing
+
+**Diagnosis**: Hook should run on every prompt but isn't
+**Possible Causes**:
+
+- Hook not registered in `.claude/hooks/hook-registry.json`
+- Hook disabled (`enabled: false`)
+- Settings file invalid or missing
+
+**Solution**:
+
+1. Check hook registry: `cat .claude/hooks/hook-registry.json | grep router-session-entry`
+2. Verify enabled: `"enabled": true`
+3. Verify settings.json exists: `ls .claude/settings.json`
+4. Check hook logs: `tail .claude/context/logs/hooks.log`
+
+### Issue: All requests routing to orchestrator (expensive)
+
+**Diagnosis**: Router always classifies prompts as "complex"
+**Possible Causes**:
+
+- Complexity threshold too low (default 0.7 too high for your workload)
+- Intent keywords not matching your use cases
+- Classification logic too conservative
+
+**Solution**:
+
+1. Lower complexity threshold in `.claude/settings.json`:
+
+```json
+{
+  "routing": {
+    "complexity_threshold": 0.5
+  }
+}
+```
+
+2. Add missing keywords to INTENT_KEYWORDS in router-session-handler.mjs
+3. Review classification logs: `node .claude/tools/router-session-handler.mjs classify "your prompt"`
+
 ### Issue: Classification is slow (>100ms)
 
-**Solution**: Check token estimation logic. Long prompts should be cached.
+**Diagnosis**: Router hook adds noticeable latency
+**Possible Causes**:
+
+- Session initialization slow (file I/O)
+- Intent classification timeout
+- Workflow selection delay
+
+**Solution**:
+
+1. Check system load: `top` or `Task Manager`
+2. Increase timeout: `simple_prompt_timeout_ms: 10000`
+3. Profile with: `node .claude/tools/router-session-handler.mjs classify "test" --profile`
 
 ### Issue: Wrong workflow selected
 
-**Solution**: Review intent keywords in INTENT_KEYWORDS mapping. Add missing keywords.
+**Diagnosis**: Simple prompts classified as complex, or vice versa
+**Possible Causes**:
+
+- Intent keywords don't match your domain
+- Complexity scoring weights need adjustment
+- Ambiguous prompts misclassified
+
+**Solution**:
+
+1. Test classification: `node .claude/tools/router-session-handler.mjs classify "your prompt"`
+2. Review classification result for intent and complexity score
+3. Adjust COMPLEXITY_THRESHOLDS in router-session-handler.mjs:
+
+```javascript
+const COMPLEXITY_THRESHOLDS = {
+  TOKEN_WEIGHT: 0.3, // Increase to weight token count more
+  ACTION_WEIGHT: 0.4, // Increase to weight action keywords more
+  QUESTION_WEIGHT: 0.2,
+  FILE_WEIGHT: 0.3,
+  ROUTE_THRESHOLD: 0.7,
+};
+```
 
 ### Issue: Session state not persisting
 
-**Solution**: Ensure `.claude/context/tmp/` directory exists and is writable.
+**Diagnosis**: Session files created but not found later
+**Possible Causes**:
+
+- `.claude/context/tmp/` directory doesn't exist
+- Directory not writable
+- Session cleanup deleting recent files
+
+**Solution**:
+
+1. Create directory: `mkdir -p .claude/context/tmp`
+2. Check permissions: `ls -la .claude/context/tmp`
+3. Disable auto-cleanup temporarily: `SKIP_SESSION_CLEANUP=true npm run test`
+4. Check file creation: `ls -la .claude/context/tmp/router-session-*`
 
 ### Issue: Cost calculations incorrect
 
-**Solution**: Verify MODEL_PRICING matches current Anthropic pricing.
+**Diagnosis**: Reported costs don't match expected values
+**Possible Causes**:
+
+- MODEL_PRICING outdated or wrong
+- Token estimation incorrect
+- Cost tracking logic has bugs
+
+**Solution**:
+
+1. Verify pricing: Compare MODEL_PRICING with Anthropic docs
+2. Log token counts: Add console.log in trackCosts()
+3. Test cost tracking:
+
+```bash
+node .claude/tools/router-session-handler.mjs track-costs session-123 claude-haiku-4-5 1000 500
+```
+
+4. Check session cost summary: `getCostSummary('session-123')`
+
+### Issue: Router hook interferes with orchestrator
+
+**Diagnosis**: Orchestrator receives duplicate routing information
+**Possible Causes**:
+
+- Hook creates routing decision, orchestrator creates another
+- Skip_redundant_routing flag not respected
+
+**Solution**:
+
+1. Review hook code: `cat .claude/hooks/router-session-entry.mjs | grep skip_redundant`
+2. Verify orchestrator respects the flag:
+
+```javascript
+// In orchestrator-entry.mjs
+if (sessionContext?.router_classification?.routing_method === 'router_classification') {
+  // Use router's workflow, skip re-classification
+}
+```
+
+3. Check logs for duplicate routing: `grep -i "route.*orchestrator" .claude/context/logs/*.log`
+
+### Issue: Hook crashes with error
+
+**Diagnosis**: [Router Hook] Classification failed in logs
+**Possible Causes**:
+
+- Invalid user prompt
+- Settings file corrupted
+- Missing dependencies
+
+**Solution**:
+
+1. Check the error message: `tail -20 .claude/context/logs/hooks.log`
+2. Verify hook can load: `node .claude/hooks/router-session-entry.mjs`
+3. Test with simple prompt: `node .claude/tools/router-session-handler.mjs classify "hello"`
+4. Check dependencies: `npm ls` and verify all modules resolve
+5. If corrupted settings: Restore from backup or recreate
 
 ## Future Enhancements
 

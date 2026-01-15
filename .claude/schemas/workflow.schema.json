@@ -302,7 +302,7 @@
               "enforce": true,
               "min_compliance_score": 100,
               "allow_unexpected": true,
-              "report_path": ".claude/context/runs/{{run_id}}/skill-compliance-{{step}}.json"
+              "report_path": ".claude/context/runtime/runs/{{run_id}}/skill-compliance-{{step}}.json"
             },
             {
               "enforce": false,

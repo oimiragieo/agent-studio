@@ -1,6 +1,7 @@
 ---
 name: slack-notifications
 description: Slack messaging, channels, and notifications - send messages, manage channels, interact with users, upload files, and add reactions. Use for team communication, incident notifications, and workflow alerts.
+version: 1.0.0
 allowed-tools: bash, read, webfetch
 ---
 

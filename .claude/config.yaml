@@ -4,7 +4,7 @@
 #
 # Model names are set to actual Claude API model identifiers.
 # If your Claude API uses different model names, update these accordingly.
-# Current model names: claude-3-opus-20240229, claude-3-5-sonnet-20241022, claude-3-5-haiku-20241022
+# Current model names: claude-opus-4-5-20251101, claude-sonnet-4-5, claude-haiku-4-5
 
 # Global Tool Registry (Active MCPs)
 mcp_registry:
@@ -47,7 +47,7 @@ agent_routing:
   router:
     trigger_words: [] # Always triggered first for workflow selection
     complexity: low
-    model: claude-3-5-haiku-20241022
+    model: claude-haiku-4-5
     temperature: 0.1
     priority: highest
     context_strategy: minimal
@@ -64,12 +64,12 @@ agent_routing:
       - 'planning'
       - 'comprehensive plan'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.5
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
-  analyst:
+  business-analyst:
     trigger_words:
       - 'market research'
       - 'competitive analysis'
@@ -81,7 +81,7 @@ agent_routing:
       - 'discovery'
       - 'brownfield'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.7
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
@@ -101,7 +101,7 @@ agent_routing:
       - 'scrum'
       - 'agile'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.7
     context_files:
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
@@ -118,7 +118,7 @@ agent_routing:
       - 'security architecture'
       - 'integration'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.5
     extended_thinking: true
     context_files:
@@ -144,7 +144,7 @@ agent_routing:
       - 'backup'
       - 'data architecture'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.5
     extended_thinking: true
     context_files:
@@ -164,7 +164,7 @@ agent_routing:
       - 'shadcn'
       - 'component'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.3
     context_files:
       - .claude/rules-master/TECH_STACK_NEXTJS.md
@@ -183,7 +183,7 @@ agent_routing:
       - 'regression'
       - 'smoke test'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.4
     extended_thinking: true
     context_files:
@@ -206,7 +206,7 @@ agent_routing:
       - 'tailwind'
       - 'css'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.7
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
@@ -220,7 +220,7 @@ agent_routing:
       - 'workflow'
       - 'project planning'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.6
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
@@ -240,7 +240,7 @@ agent_routing:
       - 'get second opinion'
       - 'synthesize models'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.4
     tools:
       - Read
@@ -264,7 +264,7 @@ agent_routing:
       - 'smart contract'
       - 'solidity'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.4
     extended_thinking: true
     context_files:
@@ -291,7 +291,7 @@ agent_routing:
       - 'versioning'
       - 'rollout'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.4
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
@@ -308,7 +308,7 @@ agent_routing:
       - 'technical writing'
       - 'markdown'
     complexity: low
-    model: claude-3-5-haiku-20241022
+    model: claude-haiku-4-5
     temperature: 0.7
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
@@ -329,7 +329,7 @@ agent_routing:
       - 'conversational ai'
       - 'prompt template'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.6
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
@@ -345,7 +345,7 @@ agent_routing:
       - 'audit code'
       - 'git diff'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.3
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
@@ -363,7 +363,7 @@ agent_routing:
       - 'hard to understand'
       - 'junior developer'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.3
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
@@ -381,7 +381,7 @@ agent_routing:
       - 'memory leak'
       - 'bottleneck'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.4
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
@@ -398,7 +398,7 @@ agent_routing:
       - 'endpoint design'
       - 'api versioning'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.5
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
@@ -415,7 +415,7 @@ agent_routing:
       - 'rewrite'
       - 'obsolete'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.5
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
@@ -431,7 +431,7 @@ agent_routing:
       - 'keyboard navigation'
       - 'color contrast'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.4
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
@@ -448,7 +448,7 @@ agent_routing:
       - 'ccpa'
       - 'audit'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.3
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
@@ -466,7 +466,7 @@ agent_routing:
       - 'crisis'
       - 'runbook'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.2
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
@@ -482,7 +482,7 @@ agent_routing:
       - 'solid principles'
       - 'design patterns'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.4
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
@@ -499,14 +499,14 @@ agent_routing:
       - 'app store'
       - 'mobile app'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.5
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
 
   master-orchestrator:
     trigger_words: [] # Master orchestrator is the entry point for all requests
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.6
     extended_thinking: true
     priority: highest
@@ -528,7 +528,7 @@ agent_routing:
       - 'cloud sql'
       - 'cloud run'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.3
     context_files:
       - .claude/rules-master/PROTOCOL_ENGINEERING.md
@@ -544,7 +544,7 @@ agent_routing:
       - 'change impact'
       - 'migration risk'
     complexity: high
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.3
     extended_thinking: true
     context_strategy: 'lazy_load' # Load context files only when agent activates, cache loaded contexts, clear after completion
@@ -557,7 +557,7 @@ agent_routing:
       - 'react hooks'
       - 'component library'
     complexity: medium
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.3
     context_files:
       - .claude/rules-master/TECH_STACK_NEXTJS.md
@@ -570,7 +570,7 @@ router_session:
   enabled: true
 
   # Model configuration for router sessions
-  model: claude-3-5-haiku-20241022 # Primary model for lightweight routing and classification
+  model: claude-haiku-4-5 # Primary model for lightweight routing and classification
   temperature: 0.1 # Low temperature for deterministic routing decisions
   max_tokens: 2000 # Sufficient for classification and routing logic
 
@@ -579,14 +579,14 @@ router_session:
   escalation:
     complexity_threshold: 0.7 # Complexity score above this triggers escalation (0.0-1.0)
     confidence_threshold: 0.85 # Confidence score below this triggers escalation (0.0-1.0)
-    orchestrator_model: claude-sonnet-4-20250514 # Model for standard orchestration tasks
-    complex_model: claude-opus-4-20241113 # Model for high-complexity tasks requiring extended thinking
+    orchestrator_model: claude-sonnet-4-5 # Model for standard orchestration tasks
+    complex_model: claude-opus-4-5-20251101 # Model for high-complexity tasks requiring extended thinking
 
   # Cost tracking configuration
   # Monitors API usage and costs for router sessions to optimize spend
   cost_tracking:
     enabled: true # Enable cost tracking and logging
-    log_file: .claude/context/logs/router-costs.log # Cost log location
+    log_file: .claude/context/runtime/logs/router-costs.log # Cost log location
     aggregation_interval_ms: 60000 # Aggregate costs every 60 seconds (1 minute)
     alert_threshold_usd: 10.0 # Alert when cumulative cost exceeds this threshold
 
@@ -797,19 +797,19 @@ intelligent_routing:
 # Model Configuration by Complexity
 model_config:
   high_complexity:
-    model: claude-3-opus-20240229
+    model: claude-opus-4-5-20251101
     temperature: 0.4
     max_tokens: 8192
     use_extended_thinking: true
 
   medium_complexity:
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-5
     temperature: 0.7
     max_tokens: 8192
     use_extended_thinking: false
 
   low_complexity:
-    model: claude-3-5-haiku-20241022
+    model: claude-haiku-4-5
     temperature: 0.5
     max_tokens: 4096
     use_extended_thinking: false

@@ -20,7 +20,7 @@ Added a new validation step after every Step 0 planning phase:
 - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
 - If score < 7: Return to Planner with feedback
 - If score >= 7: Proceed to execution
-- Records rating in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+- Records rating in `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
 ```
 
 ### 2. Updated Success Criteria
@@ -28,7 +28,7 @@ Added a new validation step after every Step 0 planning phase:
 Added plan rating validation criteria to all affected CUJs:
 
 ```markdown
-- [ ] Plan rating >= 7/10 (recorded in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`)
+- [ ] Plan rating >= 7/10 (recorded in `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`)
 - [ ] Rating recorded in run state (validation: rating file exists)
 ```
 

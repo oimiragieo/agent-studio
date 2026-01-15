@@ -1,6 +1,7 @@
 ---
 name: gemini-ssh
 description: AI-assisted SSH operations with Gemini
+version: 1.0.0
 allowed-tools: [Bash, Read]
 ---
 

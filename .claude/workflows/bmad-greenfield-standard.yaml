@@ -6,7 +6,7 @@ method: standard
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
+  checkpoint_dir: '.claude/context/runtime/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -19,8 +19,8 @@ fallback_agents:
   architect: [developer, security-architect]
   qa: [developer, code-reviewer]
   planner: [architect, pm]
-  analyst: [pm, architect]
-  pm: [analyst, ux-expert]
+  business-analyst: [pm, architect]
+  pm: [business-analyst, ux-expert]
   ux-expert: [pm, accessibility-expert]
   database-architect: [architect, developer]
   security-architect: [compliance-auditor, code-reviewer]
@@ -67,36 +67,36 @@ phases:
       type: include_discovery
       if_yes:
         - step: 1.1
-          agent: analyst
+          agent: business-analyst
           task: Brainstorm
           inputs: []
           outputs:
             - brainstorm.json
-            - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-analyst-brainstorm.json
+            - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-business-analyst-brainstorm.json
           validation:
-            gate: .claude/context/history/gates/{{workflow_id}}/01-analyst-brainstorm.json
+            gate: .claude/context/history/gates/{{workflow_id}}/01-business-analyst-brainstorm.json
         - step: 1.2
-          agent: analyst
+          agent: business-analyst
           task: Research
           inputs:
             - brainstorm.json (from step 1.1)
           outputs:
             - research.json
-            - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-analyst-research.json
+            - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-business-analyst-research.json
           validation:
-            gate: .claude/context/history/gates/{{workflow_id}}/01-analyst-research.json
+            gate: .claude/context/history/gates/{{workflow_id}}/01-business-analyst-research.json
         - step: 1.3
-          agent: analyst
+          agent: business-analyst
           task: Product Brief
           inputs:
             - brainstorm.json (from step 1.1)
             - research.json (from step 1.2)
           outputs:
             - product-brief.json
-            - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-analyst-brief.json
+            - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-business-analyst-brief.json
           validation:
             schema: .claude/schemas/project_brief.schema.json
-            gate: .claude/context/history/gates/{{workflow_id}}/01-analyst-brief.json
+            gate: .claude/context/history/gates/{{workflow_id}}/01-business-analyst-brief.json
       if_no:
         - skip_to: phase_2
 

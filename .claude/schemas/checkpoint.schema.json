@@ -79,7 +79,7 @@
             "description": "Absolute or relative path to artifact file",
             "examples": [
               ".claude/context/artifacts/plan-greenfield.json",
-              ".claude/context/runs/run-001/artifacts/system-architecture.json"
+              ".claude/context/runtime/runs/run-001/artifacts/system-architecture.json"
             ]
           },
           "hash": {
@@ -185,14 +185,14 @@
       "artifacts": [
         {
           "name": "plan.json",
-          "path": ".claude/context/runs/run-greenfield-001/artifacts/plan.json",
+          "path": ".claude/context/runtime/runs/run-greenfield-001/artifacts/plan.json",
           "hash": "a1b2c3d4e5f6...",
           "size": 4096,
           "created_at": "2026-01-06T10:15:00Z"
         },
         {
           "name": "system-architecture.json",
-          "path": ".claude/context/runs/run-greenfield-001/artifacts/system-architecture.json",
+          "path": ".claude/context/runtime/runs/run-greenfield-001/artifacts/system-architecture.json",
           "hash": "f6e5d4c3b2a1...",
           "size": 8192,
           "created_at": "2026-01-06T10:25:00Z"

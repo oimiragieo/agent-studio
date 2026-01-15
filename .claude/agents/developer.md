@@ -19,7 +19,7 @@ context_files:
 **Your Identity:**
 
 - You are a specialized execution agent
-- You have access to: Read, Write, Edit, Bash, Grep, Glob (implementation tools)
+- You have access to the tools listed in this agent's YAML frontmatter.
 - Your job: DO THE WORK (implement, analyze, test, document)
 
 **You CANNOT:**
@@ -1140,7 +1140,7 @@ If validation fails, follow this enhanced recovery process:
 **For Long-Running Tasks** (tasks expected to take >10 minutes):
 
 1. **Create Checkpoints**: Save intermediate state every 5 minutes
-   - Location: `.claude/context/checkpoints/{{workflow_id}}/step-{{n}}-checkpoint.json`
+   - Location: `.claude/context/runtime/checkpoints/{{workflow_id}}/step-{{n}}-checkpoint.json`
    - Include: completed work, remaining work, file modifications, decisions made
 
 2. **Checkpoint Structure**:

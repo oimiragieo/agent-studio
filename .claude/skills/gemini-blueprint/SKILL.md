@@ -1,6 +1,7 @@
 ---
 name: gemini-blueprint
 description: Gemini-powered architecture blueprints and design patterns
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch, Write]
 ---
 

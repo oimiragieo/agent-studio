@@ -16,11 +16,12 @@ import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { resolveRuntimePath } from '../../tools/context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const SESSIONS_DIR = join(__dirname, '../../../context/sessions');
+const SESSIONS_DIR = resolveRuntimePath('sessions', { write: true });
 const SETTINGS_PATH = join(__dirname, '../../../settings.json');
 const ROUTER_TEMPLATE_PATH = join(__dirname, '../../../templates/user-session-router.md');
 
@@ -46,12 +47,12 @@ export async function loadSettings() {
   // Return defaults if settings.json not found
   return {
     models: {
-      router: 'claude-3-5-haiku-20241022',
-      orchestrator: 'claude-sonnet-4-20250514',
-      complex: 'claude-opus-4-20241113',
+      router: 'claude-haiku-4-5',
+      orchestrator: 'claude-sonnet-4-5',
+      complex: 'claude-opus-4-5-20251101',
     },
     session: {
-      default_model: 'claude-3-5-haiku-20241022',
+      default_model: 'claude-haiku-4-5',
       default_temperature: 0.1,
       default_role: 'router',
       router_enabled: true,
@@ -90,15 +91,15 @@ export async function loadRouterTemplate() {
  */
 function getModelForRole(role, settings) {
   if (role === 'router') {
-    return settings.models?.router || 'claude-3-5-haiku-20241022';
+    return settings.models?.router || 'claude-haiku-4-5';
   } else if (role === 'orchestrator') {
-    return settings.models?.orchestrator || 'claude-sonnet-4-20250514';
+    return settings.models?.orchestrator || 'claude-sonnet-4-5';
   } else if (role === 'complex') {
-    return settings.models?.complex || 'claude-opus-4-20241113';
+    return settings.models?.complex || 'claude-opus-4-5-20251101';
   }
 
   // Default to router model
-  return settings.session?.default_model || 'claude-3-5-haiku-20241022';
+  return settings.session?.default_model || 'claude-haiku-4-5';
 }
 
 // ===========================

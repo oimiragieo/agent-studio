@@ -1,6 +1,7 @@
 ---
 name: e2e-uuv-testing
 description: End-to-end testing with UUV (Useful User Verification)
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob]
 ---
 

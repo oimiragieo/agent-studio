@@ -20,7 +20,7 @@ RATING_GATE_TEXT = """
 - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
 - If score < 7: Return to Planner with feedback
 - If score >= 7: Proceed to execution
-- Records rating in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+- Records rating in `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
 """
 
 def fix_cuj_025(filepath):

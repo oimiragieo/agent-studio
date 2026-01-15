@@ -1,6 +1,7 @@
 ---
 name: sentry-monitoring
 description: Sentry error tracking and performance monitoring for real-time visibility into application errors, performance issues, and release health
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

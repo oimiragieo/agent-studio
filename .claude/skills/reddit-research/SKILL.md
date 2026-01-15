@@ -1,6 +1,7 @@
 ---
 name: reddit-research
 description: Reddit API for market research and sentiment analysis
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

@@ -178,8 +178,8 @@ ls -lt .claude/context/ | head -20
 **Priority order for state recovery**:
 
 1. **Run State** (if using run-manager):
-   - `.claude/context/runs/<run_id>/state.json`
-   - `.claude/context/runs/<run_id>/artifact-registry.json`
+   - `.claude/context/runtime/runs/<run_id>/state.json`
+   - `.claude/context/runtime/runs/<run_id>/artifact-registry.json`
 
 2. **Session State** (legacy):
    - `.claude/context/session.json`
@@ -200,7 +200,7 @@ ls -lt .claude/context/ | head -20
 ls -lt .claude/context/artifacts/
 
 # Check for plans
-ls -lt .claude/context/artifacts/plan-*.json
+ls -lt .claude/context/artifacts/generated/plan-*.json
 
 # Check for manifests
 ls -lt .claude/context/artifacts/*-manifest.json
@@ -256,14 +256,14 @@ const recoveryResult = await invokeSkill('recovery', {
 ```javascript
 async function agentTask(taskId) {
   // ALWAYS load state from file system
-  const state = await loadStateFromFile(`.claude/context/runs/${runId}/state.json`);
+  const state = await loadStateFromFile(`.claude/context/runtime/runs/${runId}/state.json`);
   const artifacts = await loadArtifacts(`.claude/context/artifacts/`);
 
   // Execute task using loaded state
   const result = await executeTask(state, artifacts);
 
   // Save updated state
-  await saveStateToFile(`.claude/context/runs/${runId}/state.json`, state);
+  await saveStateToFile(`.claude/context/runtime/runs/${runId}/state.json`, state);
 
   return result;
 }
@@ -273,7 +273,7 @@ async function agentTask(taskId) {
 
 ```javascript
 async function longRunningTask(taskId) {
-  const checkpointPath = `.claude/context/checkpoints/${taskId}-checkpoint.json`;
+  const checkpointPath = `.claude/context/runtime/checkpoints/${taskId}-checkpoint.json`;
 
   for (const step of steps) {
     // Execute step
@@ -316,7 +316,7 @@ async function idempotentWrite(filePath, content) {
 
 When recovering mid-workflow:
 
-1. **Read workflow state** - `.claude/context/runs/<run_id>/state.json`
+1. **Read workflow state** - `.claude/context/runtime/runs/<run_id>/state.json`
 2. **Check completed steps** - Artifact registry or gate files
 3. **Resume from current step** - Use checkpoint or re-execute
 

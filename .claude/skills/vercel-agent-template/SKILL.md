@@ -1,6 +1,7 @@
 ---
 name: vercel-agent-template
 description: Agent scaffolding and template generation for Vercel deployments
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob, Write]
 ---
 

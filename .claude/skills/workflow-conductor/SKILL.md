@@ -1,6 +1,7 @@
 ---
 name: workflow-conductor
 description: Workflow orchestration and automation engine
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob]
 ---
 

@@ -126,7 +126,7 @@ node test-audit.mjs
 
 ## How It Works
 
-1. **Load Rule Index**: Reads `.claude/context/rule-index.json` to discover all 1,081+ rules
+1. **Load Rule Index**: Reads `.claude/context/config/rule-index.json` to discover all 1,081+ rules
 2. **Detect Technologies**: Analyzes file extensions, imports, and content to detect technologies
 3. **Query Technology Map**: Finds relevant rules from `technology_map` based on detected technologies
 4. **Extract Validation Patterns**: Parses `<validation>` blocks in rule files for forbidden patterns

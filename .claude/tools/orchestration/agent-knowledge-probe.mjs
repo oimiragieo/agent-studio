@@ -10,11 +10,12 @@ import { readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { resolveRuntimePath } from '../context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const KB_DIR = join(__dirname, '../../../context/knowledge-bases');
+const KB_DIR = resolveRuntimePath('orchestration/knowledge-bases', { read: true });
 
 /**
  * Load agent knowledge base

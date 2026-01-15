@@ -157,6 +157,7 @@ describe('FeatureFlagsManager', () => {
     manager = new FeatureFlagsManager({
       configPath: TEST_CONFIG_PATH,
       auditLogPath: TEST_AUDIT_LOG_PATH,
+      suppressWarnings: true, // Suppress warnings during tests
     });
   });
 

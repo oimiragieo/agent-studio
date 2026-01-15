@@ -46,6 +46,11 @@ import {
   getRunDirectoryStructure,
 } from './run-manager.mjs';
 import { resolveArtifactPath, resolveGatePath, resolveReasoningPath } from './path-resolver.mjs';
+import {
+  resolveConfigPath,
+  resolveRuntimePath,
+  getCanonicalPath,
+} from './context-path-resolver.mjs';
 import { enforceArtifactContract } from './artifact-validator.mjs';
 import { updateRunSummary } from './dashboard-generator.mjs';
 import { executeAgent } from './agent-executor.mjs';
@@ -600,10 +605,23 @@ function validateTemplateVariableSyntax(str) {
   if (unclosedMatches) {
     errors.push(`Unclosed template variable: ${unclosedMatches[0]}`);
   }
+
   // Check for closing braces without opening
-  const orphanedCloses = str.match(/^[^}]*\}\}/g);
-  if (orphanedCloses) {
-    errors.push(`Orphaned closing braces: ${orphanedCloses[0]}`);
+  // Look for }} that appears before any {{, or }} that doesn't have a matching {{ before it
+  let openCount = 0;
+  for (let i = 0; i < str.length - 1; i++) {
+    if (str.substring(i, i + 2) === '{{') {
+      openCount++;
+      i++; // Skip next char
+    } else if (str.substring(i, i + 2) === '}}') {
+      if (openCount === 0) {
+        // Found }} without matching {{
+        errors.push(`Orphaned closing braces: ${str.substring(Math.max(0, i - 10), i + 2)}`);
+        break;
+      }
+      openCount--;
+      i++; // Skip next char
+    }
   }
 
   return {
@@ -680,6 +698,26 @@ function parseArtifactReference(input) {
     };
   }
 
+  // Pattern 3: code-artifacts (from step X) or code-artifacts (from step X, optional)
+  match = input.match(/^code-artifacts\s*\(from step (\d+(?:\.\d+)?)(?:,\s*optional)?\)$/);
+  if (match) {
+    return {
+      artifact: 'code-artifacts',
+      fromStep: match[1],
+      optional: input.includes('optional'),
+    };
+  }
+
+  // Pattern 4: code-artifacts (optional, from step X)
+  match = input.match(/^code-artifacts\s*\(optional,\s*from step (\d+(?:\.\d+)?)\)$/);
+  if (match) {
+    return {
+      artifact: 'code-artifacts',
+      fromStep: match[1],
+      optional: true,
+    };
+  }
+
   // If no "from step" pattern, it's a direct artifact name
   if (input.endsWith('.json')) {
     return {
@@ -694,6 +732,7 @@ function parseArtifactReference(input) {
 
 /**
  * Validate step dependencies before execution
+ * Enhanced to check artifact registry for pre-flight validation
  */
 function validateStepDependencies(workflow, stepNumber, workflowId, storyId = null, epicId = null) {
   const step = findStepInWorkflow(workflow, stepNumber);
@@ -703,7 +742,22 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
 
   const missing = [];
   const errors = [];
-  const artifactsDir = resolve(process.cwd(), '.claude/context/artifacts');
+  const artifactsDir = getCanonicalPath('artifacts');
+
+  // Try to read artifact registry for this run to check if artifacts were actually created
+  let artifactRegistry = null;
+  try {
+    // Extract runId from workflowId if possible, or use workflowId as runId
+    const runId = workflowId;
+    // Use synchronous read for validation (registry is small)
+    const runDirs = getRunDirectoryStructure(runId);
+    if (existsSync(runDirs.artifact_registry)) {
+      artifactRegistry = JSON.parse(readFileSync(runDirs.artifact_registry, 'utf-8'));
+    }
+  } catch (error) {
+    // Registry not available yet (first step) - this is OK, we'll check file system
+    artifactRegistry = null;
+  }
 
   // Check tool file exists if specified (tool-based steps)
   if (step.tool) {
@@ -717,30 +771,37 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
 
   // Check agent file exists
   if (step.agent) {
-    const agentFile = resolve(process.cwd(), `.claude/agents/${step.agent}.md`);
-    if (!existsSync(agentFile)) {
-      errors.push(`Agent file not found: .claude/agents/${step.agent}.md`);
+    // Template workflows may intentionally use placeholder agents (e.g., {{primary_agent}})
+    if (workflow?.template === true && /\{\{[^}]+\}\}/.test(step.agent)) {
+      console.warn(
+        `⚠️  Warning: Step ${stepNumber} uses dynamic agent '${step.agent}' in template workflow; skipping agent file existence check`
+      );
     } else {
-      // Check required template files for this agent
-      try {
-        const requiredTemplates = getRequiredTemplates(step.agent);
-        for (const templatePath of requiredTemplates) {
-          const fullTemplatePath = resolve(process.cwd(), templatePath);
-          if (!existsSync(fullTemplatePath)) {
-            errors.push(
-              `Required template file not found for agent ${step.agent}: ${templatePath}`
-            );
-            errors.push(`   Resolved path: ${fullTemplatePath}`);
-            errors.push(
-              `   This template is referenced in the agent's instructions and should exist.`
-            );
+      const agentFile = resolve(process.cwd(), `.claude/agents/${step.agent}.md`);
+      if (!existsSync(agentFile)) {
+        errors.push(`Agent file not found: .claude/agents/${step.agent}.md`);
+      } else {
+        // Check required template files for this agent
+        try {
+          const requiredTemplates = getRequiredTemplates(step.agent);
+          for (const templatePath of requiredTemplates) {
+            const fullTemplatePath = resolve(process.cwd(), templatePath);
+            if (!existsSync(fullTemplatePath)) {
+              errors.push(
+                `Required template file not found for agent ${step.agent}: ${templatePath}`
+              );
+              errors.push(`   Resolved path: ${fullTemplatePath}`);
+              errors.push(
+                `   This template is referenced in the agent's instructions and should exist.`
+              );
+            }
           }
+        } catch (error) {
+          // Template registry not available - log warning but don't fail
+          console.warn(
+            `⚠️  Warning: Could not validate templates for agent ${step.agent}: ${error.message}`
+          );
         }
-      } catch (error) {
-        // Template registry not available - log warning but don't fail
-        console.warn(
-          `⚠️  Warning: Could not validate templates for agent ${step.agent}: ${error.message}`
-        );
       }
     }
   }
@@ -763,6 +824,28 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
         const sourceStep = findStepInWorkflow(workflow, ref.fromStep);
         if (!sourceStep) {
           errors.push(`Input '${input}' references step ${ref.fromStep} which does not exist`);
+          continue;
+        }
+
+        // Special handling for code-artifacts (directory/collection, not a file)
+        if (ref.artifact === 'code-artifacts') {
+          // Check if source step outputs code-artifacts
+          let hasCodeArtifacts = false;
+          if (sourceStep.outputs && Array.isArray(sourceStep.outputs)) {
+            for (const output of sourceStep.outputs) {
+              if (typeof output === 'string' && output === 'code-artifacts') {
+                hasCodeArtifacts = true;
+                break;
+              }
+            }
+          }
+
+          if (!hasCodeArtifacts && !ref.optional) {
+            errors.push(
+              `Step ${stepNumber}: References artifact 'code-artifacts' from step ${ref.fromStep}, but step ${ref.fromStep} does not create it`
+            );
+          }
+          // Skip file existence check for code-artifacts (it's a directory/collection)
           continue;
         }
 
@@ -1612,8 +1695,9 @@ function shouldDistillFeatures(workflow, workflowId, userRequirementsPath = null
   // Priority 4: Fallback to hardcoded paths
   if (!filePath) {
     const possiblePaths = [
-      resolve(__dirname, '../../context/artifacts/user_requirements.md'),
-      resolve(__dirname, '../../context/artifacts/user-requirements.md'),
+      // Use resolver for artifacts path (artifacts stay in same location)
+      getCanonicalPath('artifacts', 'user_requirements.md'),
+      getCanonicalPath('artifacts', 'user-requirements.md'),
       resolve(process.cwd(), 'user_requirements.md'),
       resolve(process.cwd(), 'user-requirements.md'),
       resolve(process.cwd(), 'features.md'),
@@ -1708,6 +1792,7 @@ function getStepInfo(workflow, stepNumber) {
   return {
     name: step.name || null,
     agent: step.agent || null,
+    condition: step.condition || null,
   };
 }
 
@@ -1758,8 +1843,7 @@ async function handleLoop(workflowPath, loopType, workflowId, context = {}) {
     const loopState = await initializeLoop(loopType, {
       epic_index: context.epic_index || 0,
       epics_stories_path:
-        context.epics_stories_path ||
-        resolve(process.cwd(), '.claude/context/artifacts/epics-stories.json'),
+        context.epics_stories_path || getCanonicalPath('artifacts', 'epics-stories.json'),
     });
 
     console.log(`   Total Items: ${loopState.total_items}`);
@@ -1825,7 +1909,7 @@ async function performDryRun(workflowPath, workflowId) {
     missing_dependencies: [],
     errors: [],
     warnings: [],
-    temp_dir: resolve(process.cwd(), '.claude/context/temp-runs', workflowId),
+    temp_dir: getCanonicalPath('runtime', 'temp-runs', workflowId),
   };
 
   console.log('\n🔍 DRY-RUN VALIDATION');
@@ -1865,15 +1949,24 @@ async function performDryRun(workflowPath, workflowId) {
 
       // Validate agent exists
       if (agentName) {
-        const agentPath = resolve(process.cwd(), `.claude/agents/${agentName}.md`);
-        if (existsSync(agentPath)) {
-          console.log(`  ✅ Agent: ${agentName}`);
+        if (workflow?.template === true && /\{\{[^}]+\}\}/.test(agentName)) {
+          console.log(`  ⚠️  Agent: ${agentName} (template placeholder)`);
           report.agents_verified.push(agentName);
+          const vars = detectUninterpolatedVariables(agentName);
+          report.warnings.push(
+            `Step ${stepNum}: Agent uses template variable(s) ${vars.join(', ')}; skipping existence check in dry-run`
+          );
         } else {
-          const error = `Agent file not found: .claude/agents/${agentName}.md`;
-          console.error(`  ❌ ${error}`);
-          report.errors.push(error);
-          report.valid = false;
+          const agentPath = resolve(process.cwd(), `.claude/agents/${agentName}.md`);
+          if (existsSync(agentPath)) {
+            console.log(`  ✅ Agent: ${agentName}`);
+            report.agents_verified.push(agentName);
+          } else {
+            const error = `Agent file not found: .claude/agents/${agentName}.md`;
+            console.error(`  ❌ ${error}`);
+            report.errors.push(error);
+            report.valid = false;
+          }
         }
       }
 
@@ -1990,7 +2083,7 @@ async function performDryRun(workflowPath, workflowId) {
  * @returns {Object} CUJ definition with workflow path and success criteria
  */
 function loadCUJDefinition(cujId) {
-  const cujRegistryPath = resolve(process.cwd(), '.claude/context/cuj-registry.json');
+  const cujRegistryPath = resolveConfigPath('cuj-registry.json', { read: true });
   const cujIndexPath = resolve(process.cwd(), '.claude/docs/cujs/CUJ-INDEX.md');
   const cujFilePath = resolve(process.cwd(), `.claude/docs/cujs/${cujId}.md`);
 
@@ -2747,6 +2840,11 @@ async function executeWorkflowStepValidation(
     process.exit(1);
   }
 
+  // Get step name and agent from workflow for better error messages
+  const stepInfo = getStepInfo(workflow, args.step);
+  const stepName = stepInfo?.name || `Step ${args.step}`;
+  const agentName = stepInfo?.agent || 'unknown';
+
   // Gate and output are required, schema is optional
   if (!config.gate || !config.output) {
     console.error(
@@ -2793,7 +2891,7 @@ async function executeWorkflowStepValidation(
   // Ensure artifact registry is initialized before step execution
   if (runId) {
     try {
-      const workflowName = basename(workflowPath, '.yaml');
+      const workflowName = basename(args.workflow || 'workflow', '.yaml');
       await ensureArtifactRegistry(runId, workflowName, isDryRun);
     } catch (error) {
       console.error(`❌ Error: Failed to ensure artifact registry: ${error.message}`);
@@ -2807,7 +2905,7 @@ async function executeWorkflowStepValidation(
     gateDir = runDirs.gates_dir;
   } else {
     // Legacy paths
-    artifactsDir = resolve(process.cwd(), '.claude/context/artifacts');
+    artifactsDir = getCanonicalPath('artifacts');
     gateDir = resolve(process.cwd(), '.claude/context/history/gates', workflowId);
   }
 
@@ -2876,7 +2974,7 @@ async function executeWorkflowStepValidation(
   if (config.schema && schemaPath && !existsSync(schemaPath)) {
     console.error(`\n❌ Error: Schema file not found: ${config.schema}`);
     console.error(`   Resolved path: ${schemaPath}`);
-    console.error(`   Workflow: ${workflowPath}`);
+    console.error(`   Workflow: ${args.workflow}`);
     console.error(`   Step: ${args.step} (${stepName})`);
     console.error(`   Agent: ${agentName}`);
     console.error(`\n   Common causes:`);
@@ -2962,10 +3060,6 @@ async function executeWorkflowStepValidation(
     console.log(`✓ Would create artifacts directory: ${artifactsDir}`);
     console.log(`✓ Would create gate directory: ${gateDir}`);
   }
-
-  // Get step name and agent from workflow for better error messages
-  // (stepInfo already retrieved above for context monitoring)
-  const stepName = stepInfo?.name || `Step ${args.step}`;
 
   // Declare execution result at higher scope for skill validation
   let executionResult = null;

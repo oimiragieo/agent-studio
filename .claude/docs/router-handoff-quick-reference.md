@@ -30,7 +30,7 @@ const result = await processUserPrompt(
     sessionContext: {
       session_id: 'router-sess-123',
       router_classification: {
-        model: 'claude-3-5-haiku-20241022',
+        model: 'claude-haiku-4-5',
       },
       cost_tracking: {
         total_cost_usd: 0.00045,
@@ -232,7 +232,7 @@ const routerCosts = {
   total_output_tokens: 100,
   model_usage: [
     {
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5',
       cost_usd: 0.00045,
     },
   ],
@@ -270,7 +270,7 @@ const result = await processUserPrompt(
     sessionContext: {
       session_id: 'router-sess-123',
       router_classification: {
-        model: 'claude-3-5-haiku-20241022',
+        model: 'claude-haiku-4-5',
         intent: 'web_app',
       },
       cost_tracking: routerCosts,
@@ -285,7 +285,7 @@ console.log(runRecord.metadata.routerHandoff);
 // {
 //   timestamp: '2025-01-12T10:00:00Z',
 //   sessionId: 'router-sess-123',
-//   routerModel: 'claude-3-5-haiku-20241022',
+//   routerModel: 'claude-haiku-4-5',
 //   routingDecision: { ... },
 //   accumulatedCosts: { ... }
 // }

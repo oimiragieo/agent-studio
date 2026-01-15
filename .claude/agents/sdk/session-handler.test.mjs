@@ -55,12 +55,12 @@ describe('SDK Session Handler - Settings Integration', () => {
 
       assert.strictEqual(
         settings.models.router,
-        'claude-3-5-haiku-20241022',
+        'claude-haiku-4-5',
         'Default router model should be Haiku'
       );
       assert.strictEqual(
         settings.models.orchestrator,
-        'claude-sonnet-4-20250514',
+        'claude-sonnet-4-5',
         'Default orchestrator model should be Sonnet'
       );
     });
@@ -130,7 +130,7 @@ describe('SDK Session Handler - Router Session Creation', () => {
       assert.ok(session, 'Session should be created');
       assert.strictEqual(session.agent, 'router', 'Agent should be router');
       assert.strictEqual(session.role, 'router', 'Role should be router');
-      assert.strictEqual(session.model, 'claude-3-5-haiku-20241022', 'Model should be Haiku');
+      assert.strictEqual(session.model, 'claude-haiku-4-5', 'Model should be Haiku');
       assert.strictEqual(
         session.metadata.initial_prompt,
         prompt,
@@ -186,7 +186,7 @@ describe('SDK Session Handler - Router Session Creation', () => {
       assert.ok(session, 'Session should be created');
       assert.strictEqual(session.agent, 'orchestrator', 'Agent should be orchestrator');
       assert.strictEqual(session.role, 'orchestrator', 'Role should be orchestrator');
-      assert.strictEqual(session.model, 'claude-sonnet-4-20250514', 'Model should be Sonnet');
+      assert.strictEqual(session.model, 'claude-sonnet-4-5', 'Model should be Sonnet');
     });
 
     it('should NOT include router-specific fields', async () => {
@@ -221,11 +221,7 @@ describe('SDK Session Handler - Router Session Creation', () => {
       const session = await createSDKSession('unknown-agent');
 
       assert.strictEqual(session.role, 'router', 'Unknown agent should default to router role');
-      assert.strictEqual(
-        session.model,
-        'claude-3-5-haiku-20241022',
-        'Should use Haiku model for router'
-      );
+      assert.strictEqual(session.model, 'claude-haiku-4-5', 'Should use Haiku model for router');
     });
 
     it('should preserve backward compatibility', async () => {
@@ -267,7 +263,7 @@ describe('SDK Session Handler - Session Retrieval', () => {
 
       assert.ok(modelInfo, 'Model info should be returned');
       assert.strictEqual(modelInfo.role, 'router', 'Role should be router');
-      assert.strictEqual(modelInfo.model, 'claude-3-5-haiku-20241022', 'Model should be Haiku');
+      assert.strictEqual(modelInfo.model, 'claude-haiku-4-5', 'Model should be Haiku');
       assert.strictEqual(modelInfo.router_enabled, true, 'Router should be enabled');
     });
 
@@ -277,7 +273,7 @@ describe('SDK Session Handler - Session Retrieval', () => {
 
       assert.ok(modelInfo, 'Model info should be returned');
       assert.strictEqual(modelInfo.role, 'orchestrator', 'Role should be orchestrator');
-      assert.strictEqual(modelInfo.model, 'claude-sonnet-4-20250514', 'Model should be Sonnet');
+      assert.strictEqual(modelInfo.model, 'claude-sonnet-4-5', 'Model should be Sonnet');
     });
 
     it('should return null for non-existent session', async () => {
@@ -302,7 +298,7 @@ describe('SDK Session Handler - Integration Tests', () => {
 
     // Verify creation
     assert.strictEqual(created.role, 'router', 'Should create router session');
-    assert.strictEqual(created.model, 'claude-3-5-haiku-20241022', 'Should use Haiku');
+    assert.strictEqual(created.model, 'claude-haiku-4-5', 'Should use Haiku');
 
     // Load session
     const loaded = await loadSDKSession(created.session_id);
@@ -322,7 +318,7 @@ describe('SDK Session Handler - Integration Tests', () => {
 
     // Verify creation
     assert.strictEqual(created.role, 'orchestrator', 'Should create orchestrator session');
-    assert.strictEqual(created.model, 'claude-sonnet-4-20250514', 'Should use Sonnet');
+    assert.strictEqual(created.model, 'claude-sonnet-4-5', 'Should use Sonnet');
 
     // Load and verify
     const loaded = await loadSDKSession(created.session_id);

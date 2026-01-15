@@ -1,6 +1,7 @@
 ---
 name: billing-integration
 description: Generic billing and subscription management integration
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 
