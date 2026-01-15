@@ -16,6 +16,7 @@ import Database from 'better-sqlite3';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
+import { resolveRuntimePath } from '../context-path-resolver.mjs';
 
 /**
  * Worker Database Manager
@@ -26,7 +27,7 @@ export class WorkerDatabase {
    * Initialize database connection
    * @param {string} dbPath - Path to SQLite database file
    */
-  constructor(dbPath = '.claude/context/memory/workers.db') {
+  constructor(dbPath = resolveRuntimePath('memory/workers.db', { write: true })) {
     // Ensure directory exists
     const dbDir = dirname(dbPath);
     if (!existsSync(dbDir)) {

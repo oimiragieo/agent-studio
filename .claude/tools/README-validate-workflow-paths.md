@@ -304,7 +304,7 @@ CUJ-019.md (line 151):
 
 ### Files Scanned
 
-- `.claude/context/cuj-registry.json` - CUJ registry with workflow mappings
+- `.claude/context/config/cuj-registry.json` (canonical) or `.claude/context/cuj-registry.json` (legacy fallback) - CUJ registry with workflow mappings
 - `.claude/docs/cujs/CUJ-*.md` - Individual CUJ documentation files
 - `.claude/workflows/*.yaml` - Available workflow files
 

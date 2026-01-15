@@ -11,6 +11,7 @@
 
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { getCanonicalPath } from '../context-path-resolver.mjs';
 
 /**
  * Validate infrastructure config for security compliance
@@ -318,7 +319,8 @@ function findInvalidConnectionStrings(data) {
 // CLI usage
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2);
-  const configPath = args[0] || '.claude/context/artifacts/infrastructure-config.json';
+  const configPath =
+    args[0] || getCanonicalPath('artifacts', 'reference', 'infrastructure-config.json');
 
   const result = validateInfrastructureSecurity(resolve(process.cwd(), configPath));
 

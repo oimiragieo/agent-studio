@@ -92,7 +92,7 @@ Summarizer helps technical writer:
 
 Summaries can be published as artifacts:
 
-- Save to `.claude/context/runs/{run-id}/artifacts/` (use `path-resolver.mjs` to resolve paths)
+- Save to `.claude/context/runtime/runs/{run-id}/artifacts/` (use `path-resolver.mjs` to resolve paths)
 - Register in artifact registry via `run-manager.mjs`
 - Reference in workflow outputs
 

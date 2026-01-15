@@ -20,10 +20,10 @@ RATING_GATE_TEXT = """
 - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
 - If score < 7: Return to Planner with feedback
 - If score >= 7: Proceed to execution
-- Records rating in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+- Records rating in `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
 """
 
-SUCCESS_CRITERIA_ADDITIONS = """- [ ] Plan rating >= 7/10 (recorded in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`)
+SUCCESS_CRITERIA_ADDITIONS = """- [ ] Plan rating >= 7/10 (recorded in `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`)
 - [ ] Rating recorded in run state (validation: rating file exists)
 """
 

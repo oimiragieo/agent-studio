@@ -51,17 +51,19 @@ import {
   invalidateArtifact,
 } from './.claude/tools/artifact-cache.mjs';
 
-// Load artifact with caching
-const artifact = await loadArtifact('.claude/context/artifacts/plan.json');
+// Load artifact with caching (use resolver for path resolution)
+import { resolveArtifactPath } from './context-path-resolver.mjs';
+const planPath = resolveArtifactPath({ kind: 'generated', filename: 'plan.json' });
+const artifact = await loadArtifact(planPath);
 
 // Manually cache an artifact
-await cacheArtifact('.claude/context/artifacts/plan.json', planData, 300000); // 5 min TTL
+await cacheArtifact(planPath, planData, 300000); // 5 min TTL
 
 // Get cached artifact (returns null if not cached or expired)
-const cached = await getCachedArtifact('.claude/context/artifacts/plan.json');
+const cached = await getCachedArtifact(planPath);
 
 // Invalidate specific artifact
-invalidateArtifact('.claude/context/artifacts/plan.json');
+invalidateArtifact(planPath);
 
 // Invalidate all file cache
 invalidateArtifact();
@@ -293,8 +295,10 @@ async function executeWorkflowStep(workflowId, stepNumber, inputs) {
 ```javascript
 import { loadArtifact } from './.claude/tools/artifact-cache.mjs';
 
+import { resolveArtifactPath } from './context-path-resolver.mjs';
+
 async function loadPlanArtifact(planId) {
-  const artifactPath = `.claude/context/artifacts/plan-${planId}.json`;
+  const artifactPath = resolveArtifactPath({ kind: 'generated', filename: `plan-${planId}.json` });
 
   try {
     // loadArtifact automatically uses cache if available

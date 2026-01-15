@@ -21,7 +21,7 @@ const __dirname = dirname(__filename);
  * Run Cursor validator
  */
 async function runCursorValidator(target, options = {}) {
-  const model = options.model || 'claude-3-opus';
+  const model = options.model || 'claude-opus-4-5-20251101';
   const criteria = options.criteria || 'security,performance,maintainability';
 
   try {

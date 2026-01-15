@@ -15,6 +15,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -123,7 +124,7 @@ function createCheckpointStep(position, prevSteps) {
     inputs:
 ${inputs.map(i => `      - ${i.replace(/.+\//, '')}`).join('\n') || '      - None'}
     outputs:
-      - .claude/context/runs/{{run_id}}/checkpoints/checkpoint-${position.phase}.json
+      - .claude/context/runtime/runs/{{run_id}}/checkpoints/checkpoint-${position.phase}.json
     checkpoint_data:
       phase: "${position.phase}"
       completed_steps: [${prevSteps
@@ -225,7 +226,9 @@ function addCheckpointsToWorkflow(workflowPath, dryRun = false) {
       checkpoint_yaml: checkpointSteps.join('\n'),
     };
 
-    const summaryFile = path.resolve(__dirname, '../context/tmp/tmp-checkpoint-additions.json');
+    const summaryFile = resolveRuntimePath('tmp/tmp-checkpoint-additions.json', {
+      read: false,
+    });
     const summaries = fs.existsSync(summaryFile)
       ? JSON.parse(fs.readFileSync(summaryFile, 'utf8'))
       : [];

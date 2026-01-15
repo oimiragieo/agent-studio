@@ -1,6 +1,7 @@
 ---
 name: firebase-services
 description: Firebase Firestore, Auth, and Cloud Functions
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

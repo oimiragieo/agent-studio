@@ -14,10 +14,11 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, '../..');
-const healthFile = path.join(projectRoot, '.claude/context/analytics/provider-health.jsonl');
+const healthFile = resolveRuntimePath('analytics/provider-health.jsonl', { write: true });
 
 /**
  * Provider Health Monitor

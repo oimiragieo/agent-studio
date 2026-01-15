@@ -1,6 +1,8 @@
 ---
 name: recommending-rules
 description: Analyzes codebase to find gaps in rule coverage and suggests rule improvements. Compares codebase against all indexed rules to identify missing standards. Use when setting up new projects or reviewing rule coverage.
+version: 1.0.0
+allowed-tools: read, grep, glob, search, codebase_search
 ---
 
 <identity>
@@ -22,7 +24,7 @@ Recommending Rules - Analyzes codebase to identify gaps in rule coverage by comp
 
 Load the complete rule index:
 
-- @.claude/context/rule-index.json
+- @.claude/context/config/rule-index.json
 
 This contains all 1,081+ available rules.
 

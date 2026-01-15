@@ -1,6 +1,7 @@
 ---
 name: brave-search
 description: Brave Search API for web and news search
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

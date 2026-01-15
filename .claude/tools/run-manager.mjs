@@ -2,7 +2,7 @@
 /**
  * Run Manager - Single source of truth for workflow execution state
  *
- * Manages canonical run records in .claude/context/runs/<run_id>/
+ * Manages canonical run records in .claude/context/runtime/runs/<run_id>/
  * Replaces competing sources of truth (workflow YAML, plan artifacts, hierarchical plans)
  *
  * Usage:
@@ -18,11 +18,12 @@ import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
 import { randomUUID } from 'crypto';
 import { initializeProjectDatabase, updateProjectDatabase } from './project-db.mjs';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const RUNS_DIR = join(__dirname, '..', 'context', 'runs');
+const RUNS_DIR = resolveRuntimePath('runs', { write: true });
 
 /**
  * Generate a collision-resistant run ID suitable for directory names.
@@ -516,6 +517,7 @@ export async function createRun(runId, options = {}) {
       user_request: options.userRequest || '',
       confidence: options.confidence || null,
       missing_inputs: options.missingInputs || [],
+      ...(options.routerHandoff && { routerHandoff: options.routerHandoff }),
     },
   };
 
@@ -592,6 +594,12 @@ export async function updateRun(runId, updates) {
 
   try {
     const runRecord = await readRun(runId);
+
+    // Merge updates, but preserve nested objects like metadata
+    if (updates.metadata && runRecord.metadata) {
+      // Deep merge metadata to preserve existing fields like routerHandoff
+      updates.metadata = { ...runRecord.metadata, ...updates.metadata };
+    }
 
     // Merge updates
     Object.assign(runRecord, updates);

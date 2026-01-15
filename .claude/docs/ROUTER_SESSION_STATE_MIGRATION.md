@@ -107,12 +107,12 @@ import { initSession } from './.claude/tools/session-state.mjs';
 // Initialize router session
 const session = initSession('router-123', 'router', {
   initialPrompt: 'User initial prompt',
-  model: 'claude-3-5-haiku-20241022', // Optional, defaults from settings
+  model: 'claude-haiku-4-5', // Optional, defaults from settings
 });
 
 // Session is ready to use
 console.log(session.session_id); // 'router-123'
-console.log(session.model); // 'claude-3-5-haiku-20241022'
+console.log(session.model); // 'claude-haiku-4-5'
 ```
 
 ### Backward Compatibility
@@ -158,7 +158,7 @@ import { updateModelUsage, getSessionCosts } from './.claude/tools/session-state
 // Track model usage
 const costSummary = updateModelUsage(
   'router-123',
-  'claude-3-5-haiku-20241022',
+  'claude-haiku-4-5',
   1000, // input tokens
   500 // output tokens
 );
@@ -168,7 +168,7 @@ console.log(costSummary);
 //   inputTokens: 1000,
 //   outputTokens: 500,
 //   costUSD: 0.0035,
-//   model: 'claude-3-5-haiku-20241022',
+//   model: 'claude-haiku-4-5',
 //   modelCategory: 'haiku'
 // }
 
@@ -352,11 +352,11 @@ Test 2: Initialize orchestrator session
 
 Model pricing (per million tokens):
 
-| Model                     | Input  | Output |
-| ------------------------- | ------ | ------ |
-| claude-3-5-haiku-20241022 | $1.00  | $5.00  |
-| claude-sonnet-4-20250514  | $3.00  | $15.00 |
-| claude-opus-4-20241113    | $15.00 | $75.00 |
+| Model                    | Input | Output |
+| ------------------------ | ----- | ------ |
+| claude-haiku-4-5         | $1.00 | $5.00  |
+| claude-sonnet-4-5        | $3.00 | $15.00 |
+| claude-opus-4-5-20251101 | $5.00 | $25.00 |
 
 **Example Cost Calculation**:
 

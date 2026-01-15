@@ -7,7 +7,7 @@ publish_policy: auto-on-pass
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
+  checkpoint_dir: '.claude/context/runtime/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -53,7 +53,7 @@ steps:
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
+      - .claude/context/runtime/runs/{{run_id}}/plans/{{plan_id}}-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7
@@ -75,17 +75,17 @@ steps:
 
   - step: 0.2
     name: 'Query Analysis'
-    agent: analyst
+    agent: business-analyst
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - user_search_query
       - search_context (optional)
     outputs:
       - analyzed-query.json
-      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.2-analyst.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.2-business-analyst.json
     validation:
       schema: .claude/schemas/search_query.schema.json
-      gate: .claude/context/history/gates/{{workflow_id}}/00.2-analyst.json
+      gate: .claude/context/history/gates/{{workflow_id}}/00.2-business-analyst.json
     description: |
       Analyze and enhance user search query:
       - Parse user's search intent
@@ -152,7 +152,7 @@ steps:
 
   - step: 3
     name: 'Format and Present Results'
-    agent: analyst
+    agent: business-analyst
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
       - search-results.json (from step 2)
@@ -161,9 +161,9 @@ steps:
     outputs:
       - formatted-results.json
       - result-summary.md
-      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-analyst.json
+      - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-business-analyst.json
     validation:
-      gate: .claude/context/history/gates/{{workflow_id}}/03-analyst.json
+      gate: .claude/context/history/gates/{{workflow_id}}/03-business-analyst.json
     description: |
       Format and present search results:
       - Organize results by relevance

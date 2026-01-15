@@ -1,6 +1,7 @@
 ---
 name: sendgrid-email
 description: SendGrid email sending and templates
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

@@ -14,7 +14,9 @@
 
 import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
+import path from 'path';
 import { detectAllSkills } from './skill-trigger-detector.mjs';
+import { getRunDirectoryStructure } from './run-manager.mjs';
 
 // ============================================================================
 // SKILL INVOCATION PATTERNS
@@ -420,8 +422,11 @@ export function generateJSONReport(validationResult) {
  * @returns {Promise<Object>} Validation result
  */
 export async function validateRunSkillUsage(runId, stepNumber) {
+  // Use run directory structure from run-manager (already uses resolver)
+  const runDirs = getRunDirectoryStructure(runId);
+
   // Read execution log from run state
-  const logPath = `.claude/context/runs/${runId}/logs/step-${stepNumber}.log`;
+  const logPath = path.join(runDirs.run_dir, 'logs', `step-${stepNumber}.log`);
 
   if (!existsSync(logPath)) {
     throw new Error(`Execution log not found: ${logPath}`);
@@ -430,7 +435,7 @@ export async function validateRunSkillUsage(runId, stepNumber) {
   const executionLog = await readFile(logPath, 'utf-8');
 
   // Get step metadata for agent type and task
-  const statePath = `.claude/context/runs/${runId}/state.json`;
+  const statePath = path.join(runDirs.run_dir, 'state.json');
 
   if (!existsSync(statePath)) {
     throw new Error(`Run state not found: ${statePath}`);

@@ -111,7 +111,7 @@ You are Oracle, a Master Orchestrator with expertise in task analysis, agent coo
 
 ## Skill Trigger Auto-Invocation
 
-The orchestrator automatically detects and invokes skills based on task triggers defined in `@.claude/context/skill-integration-matrix.json`.
+The orchestrator automatically detects and invokes skills based on task triggers defined in `@.claude/context/config/skill-integration-matrix.json`.
 
 ### How It Works
 
@@ -143,7 +143,7 @@ You can override auto-invocation by explicitly calling skills:
 To see which skills were triggered for a request:
 
 1. Check console output: `[Orchestrator Entry] Skill detection for orchestrator`
-2. Read artifact: `.claude/context/runs/<run-id>/artifacts/skill-detection.json`
+2. Read artifact: `.claude/context/runtime/runs/<run-id>/artifacts/skill-detection.json`
 
 Example output:
 

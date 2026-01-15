@@ -15,6 +15,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveConfigPath } from '../../tools/context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,7 +60,7 @@ function parseArgs(args) {
  * Load rule index
  */
 async function loadRuleIndex() {
-  const indexPath = path.join(ROOT, '.claude/context/rule-index.json');
+  const indexPath = resolveConfigPath('rule-index.json', { read: true });
   try {
     const content = await fs.readFile(indexPath, 'utf-8');
     return JSON.parse(content);

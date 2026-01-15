@@ -1,6 +1,7 @@
 ---
 name: vercel-agent-skills
 description: Vercel AI SDK agent skill management
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob, Write]
 ---
 

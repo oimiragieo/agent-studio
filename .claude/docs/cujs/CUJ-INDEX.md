@@ -903,15 +903,15 @@ Required Skill: 'recovery' (Claude-only)
 Current Platform: Cursor
 
 Fallback Procedure:
-1. Load checkpoint: .claude/context/runs/<run_id>/checkpoint.json
+1. Load checkpoint: .claude/context/runtime/runs/<run_id>/checkpoint.json
 2. Identify last successful step
 3. Check artifact registry for available artifacts
 4. Resume from last artifact using manual agent coordination
 5. Use Cursor Plan Mode to track recovery progress
 
 Recovery Steps:
-- List available checkpoints: ls .claude/context/runs/<run_id>/checkpoint*.json
-- Inspect checkpoint: cat .claude/context/runs/<run_id>/checkpoint.json
+- List available checkpoints: ls .claude/context/runtime/runs/<run_id>/checkpoint*.json
+- Inspect checkpoint: cat .claude/context/runtime/runs/<run_id>/checkpoint.json
 - Identify missing artifacts: grep -E "^status: (missing|pending)" artifact-registry.json
 - Regenerate missing artifacts via agent calls
 - Resume workflow from next step

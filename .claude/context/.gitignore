@@ -5,10 +5,14 @@
 session.json
 *.log
 
-# Artifacts (user-generated, may be large)
-artifacts/*.json
-artifacts/*.md
-artifacts/*.txt
+# Runtime directory (all runtime data)
+runtime/**/*
+
+# Generated artifacts (user-generated, may be large)
+artifacts/generated/**/*
+
+# Required reference artifacts at root (for backward compatibility with workflows)
+!artifacts/standard-plan-rubric.json
 
 # Reasoning history (can be regenerated)
 history/**/*.json
@@ -24,12 +28,31 @@ audit/**/*.log
 # Keep directory structure
 !.gitkeep
 !artifacts/.gitkeep
+!artifacts/reference/.gitkeep
 !history/reasoning/.gitkeep
 !history/gates/.gitkeep
 !audit/.gitkeep
+!runtime/.gitkeep
 
-# Rule index (pre-generated, should be committed)
+# Config directory (should be committed)
+!config/
+config/*.json
+!config/rule-index.json
+!config/cuj-registry.json
+!config/skill-integration-matrix.json
+!config/plan-review-matrix.json
+!config/signoff-matrix.json
+!config/security-triggers-v2.json
+
+# Reference artifacts (should be committed)
+!artifacts/reference/
+!artifacts/reference/**/*
+
+# Legacy paths (for backward compatibility during migration)
+# These will be removed after full migration
 !rule-index.json
-
-# Optional: Keep specific important artifacts
-# !artifacts/important-artifact.json
+!cuj-registry.json
+!skill-integration-matrix.json
+!plan-review-matrix.json
+!signoff-matrix.json
+!security-triggers-v2.json

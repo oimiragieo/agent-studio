@@ -26,6 +26,7 @@ import {
 } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,32 +35,40 @@ const __dirname = dirname(__filename);
 // Configuration & Constants
 // ===========================
 
-const SESSION_STATE_DIR = join(__dirname, '..', 'context', 'sessions');
-const ORCHESTRATOR_SESSION_PATH = join(
-  __dirname,
-  '..',
-  'context',
-  'tmp',
-  'orchestrator-session-state.json'
-);
+const SESSION_STATE_DIR = resolveRuntimePath('sessions', { write: true });
+const ORCHESTRATOR_SESSION_PATH = resolveRuntimePath('tmp/orchestrator-session-state.json', {
+  write: true,
+});
 const SETTINGS_PATH = join(__dirname, '..', 'settings.json');
 const LOCK_TIMEOUT_MS = 5000; // 5 seconds
 
-// Model pricing (per million tokens) - Updated Jan 2025
+// Model pricing (per million tokens) - Updated from Anthropic model announcements
 const MODEL_PRICING = {
-  'claude-3-5-haiku-20241022': {
+  'claude-haiku-4-5': {
     input: 1.0,
     output: 5.0,
   },
-  'claude-sonnet-4-20250514': {
+  'claude-sonnet-4-5': {
     input: 3.0,
     output: 15.0,
   },
-  'claude-opus-4-20241113': {
-    input: 15.0,
-    output: 75.0,
+  'claude-opus-4-5-20251101': {
+    input: 5.0,
+    output: 25.0,
   },
 };
+
+const MODEL_ALIASES = {
+  'claude-3-5-haiku-20241022': 'claude-haiku-4-5',
+  'claude-3-5-sonnet-20241022': 'claude-sonnet-4-5',
+  'claude-3-opus-20240229': 'claude-opus-4-5-20251101',
+  'claude-sonnet-4-20250514': 'claude-sonnet-4-5',
+  'claude-opus-4-20241113': 'claude-opus-4-5-20251101',
+};
+
+function normalizeModelId(modelId) {
+  return MODEL_ALIASES[modelId] || modelId;
+}
 
 // ===========================
 // Session Initialization
@@ -81,16 +90,16 @@ export function initSession(sessionId, agentRole = 'orchestrator', metadata = {}
   // Determine model based on role
   const defaultModel =
     agentRole === 'router'
-      ? settings.models?.router || 'claude-3-5-haiku-20241022'
-      : settings.models?.orchestrator || 'claude-sonnet-4-20250514';
+      ? normalizeModelId(settings.models?.router || 'claude-haiku-4-5')
+      : normalizeModelId(settings.models?.orchestrator || 'claude-sonnet-4-5');
 
   const state = {
     session_id: sessionId || `sess_${Date.now()}`,
     agent_role: agentRole,
-    model: metadata.model || defaultModel,
+    model: normalizeModelId(metadata.model || defaultModel),
     modelHistory: [
       {
-        model: metadata.model || defaultModel,
+        model: normalizeModelId(metadata.model || defaultModel),
         timestamp: new Date().toISOString(),
         reason: 'initial_session',
       },
@@ -275,7 +284,7 @@ export function recordRoutingDecision(sessionId, decision) {
  * Update model usage and calculate costs
  *
  * @param {string} sessionId - Session identifier
- * @param {string} model - Model identifier (e.g., 'claude-3-5-haiku-20241022')
+ * @param {string} model - Model identifier (e.g., 'claude-haiku-4-5')
  * @param {number} inputTokens - Input token count
  * @param {number} outputTokens - Output token count
  * @returns {Object} Cost summary for this update
@@ -286,12 +295,14 @@ export function updateModelUsage(sessionId, model, inputTokens, outputTokens) {
     throw new Error(`Session not found: ${sessionId}`);
   }
 
+  const normalizedModel = normalizeModelId(model);
+
   // Get pricing for model
-  const pricing = MODEL_PRICING[model];
+  const pricing = MODEL_PRICING[normalizedModel];
   if (!pricing) {
-    console.warn(`No pricing found for model: ${model}, using Haiku pricing`);
+    console.warn(`No pricing found for model: ${normalizedModel}, using Haiku pricing`);
   }
-  const modelPricing = pricing || MODEL_PRICING['claude-3-5-haiku-20241022'];
+  const modelPricing = pricing || MODEL_PRICING['claude-haiku-4-5'];
 
   // Calculate costs (pricing is per million tokens)
   const inputCost = (inputTokens / 1_000_000) * modelPricing.input;
@@ -300,9 +311,9 @@ export function updateModelUsage(sessionId, model, inputTokens, outputTokens) {
 
   // Determine model category (haiku, sonnet, opus)
   let modelCategory = 'haiku';
-  if (model.includes('sonnet')) {
+  if (normalizedModel.includes('sonnet')) {
     modelCategory = 'sonnet';
-  } else if (model.includes('opus')) {
+  } else if (normalizedModel.includes('opus')) {
     modelCategory = 'opus';
   }
 
@@ -313,13 +324,13 @@ export function updateModelUsage(sessionId, model, inputTokens, outputTokens) {
   state.costs.total += totalCost;
 
   // Record model usage in history
-  if (state.model !== model) {
+  if (state.model !== normalizedModel) {
     state.modelHistory.push({
-      model,
+      model: normalizedModel,
       timestamp: new Date().toISOString(),
       reason: 'model_switch',
     });
-    state.model = model;
+    state.model = normalizedModel;
   }
 
   state.updated_at = new Date().toISOString();
@@ -329,7 +340,7 @@ export function updateModelUsage(sessionId, model, inputTokens, outputTokens) {
     inputTokens,
     outputTokens,
     costUSD: totalCost,
-    model,
+    model: normalizedModel,
     modelCategory,
   };
 }
@@ -641,12 +652,12 @@ function loadSettings() {
   // Return defaults
   return {
     models: {
-      router: 'claude-3-5-haiku-20241022',
-      orchestrator: 'claude-sonnet-4-20250514',
-      complex: 'claude-opus-4-20241113',
+      router: 'claude-haiku-4-5',
+      orchestrator: 'claude-sonnet-4-5',
+      complex: 'claude-opus-4-5-20251101',
     },
     session: {
-      default_model: 'claude-3-5-haiku-20241022',
+      default_model: 'claude-haiku-4-5',
       default_temperature: 0.1,
       default_role: 'router',
     },

@@ -16,7 +16,7 @@ priority: medium
 **Your Identity:**
 
 - You are a specialized execution agent
-- You have access to: Read, Write, Edit, Bash, Grep, Glob (implementation tools)
+- You have access to the tools listed in this agent's YAML frontmatter.
 - Your job: DO THE WORK (implement, analyze, test, document)
 
 **You CANNOT:**
@@ -697,6 +697,36 @@ Write reasoning JSON to `.claude/context/history/reasoning/<workflow>/devops.jso
 ## Skill Usage for DevOps
 
 **Available Skills for DevOps**:
+
+### @azure-devops Skill
+
+**When to Use**:
+
+- Creating work items for bugs, features, or tasks
+- Querying work items with WIQL (Work Item Query Language)
+- Triggering Azure Pipelines for CI/CD
+- Managing Azure Repos and pull requests
+- Checking pipeline run status
+
+**How to Invoke**:
+
+- Natural language: "Create a work item for this bug", "Query active work items", "Trigger the production pipeline"
+- Claude: Use azure-devops skill with appropriate tool (create-work-item, query-work-items, run-pipeline, etc.)
+
+**Environment Requirements**:
+
+- `AZURE_DEVOPS_ORG_URL` must be set (e.g., `https://dev.azure.com/your-org`)
+- `AZURE_DEVOPS_PAT` must have required permissions (Work Items: Read & Write, Code: Read, Build: Read & Execute)
+
+**Example Usage**:
+
+```
+Use azure-devops skill to create a work item:
+- Type: Bug
+- Title: "Pipeline deployment failure"
+- Description: "Production deployment failed at step 3"
+- Project: "MyProject"
+```
 
 ### dependency-analyzer Skill
 

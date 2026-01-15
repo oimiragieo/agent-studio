@@ -16,10 +16,11 @@ import { spawn } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const rootDir = resolve(__dirname, '..');
+const projectRoot = resolve(__dirname, '../..');
 
 // Hook configurations
 const HOOKS = [
@@ -42,14 +43,14 @@ const TEST_INPUTS = [
   {
     tool_name: 'Write',
     tool_input: {
-      file_path: '.claude/context/artifacts/test.json',
+      file_path: '.claude/context/artifacts/generated/test.json',
       content: '{"test": true}'
     }
   },
   {
     tool_name: 'Read',
     tool_input: {
-      file_path: '.claude/context/artifacts/test.json'
+      file_path: '.claude/context/artifacts/generated/test.json'
     }
   },
   {
@@ -127,11 +128,11 @@ async function main() {
   const hooks = [
     {
       name: 'file-path-validator.js',
-      path: resolve(rootDir, '.claude/hooks/file-path-validator.js')
+      path: resolve(projectRoot, '.claude/hooks/file-path-validator.js')
     },
     {
       name: 'audit-post-tool.sh',
-      path: resolve(rootDir, '.claude/hooks/audit-post-tool.sh')
+      path: resolve(projectRoot, '.claude/hooks/audit-post-tool.sh')
     }
   ];
 
@@ -152,7 +153,9 @@ async function main() {
   }
 
   // Generate markdown report
-  const reportPath = resolve(rootDir, '.claude/context/reports/hook-performance-analysis.md');
+  const reportPath = resolveRuntimePath('reports/hook-performance-analysis.md', {
+    read: false,
+  });
   const reportContent = `# Hook Performance Analysis
 
 ## Summary

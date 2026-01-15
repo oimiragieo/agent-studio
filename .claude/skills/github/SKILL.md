@@ -1,6 +1,7 @@
 ---
 name: github
 description: GitHub API operations - repositories, issues, pull requests, actions, code security, discussions, gists, and more. Use for GitHub-related tasks like managing PRs, issues, searching code, and monitoring workflows.
+version: 1.0.0
 context:fork: true
 allowed-tools: read, write, bash
 ---

@@ -1,6 +1,7 @@
 ---
 name: claude-devtools
 description: Claude Code development tools and debugging utilities
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob]
 ---
 

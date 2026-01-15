@@ -1,6 +1,7 @@
 ---
 name: grafana-dashboards
 description: Grafana dashboard management, visualization, and alerting
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

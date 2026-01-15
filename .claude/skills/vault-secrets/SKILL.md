@@ -1,6 +1,7 @@
 ---
 name: vault-secrets
 description: HashiCorp Vault secrets management
+version: 1.0.0
 allowed-tools: [Bash, Read]
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: nextjs-devtools
 description: Next.js development tools for route analysis, component inspection, and build optimization
+version: 1.0.0
 allowed-tools: [Bash, Read, Grep, Glob]
 ---
 

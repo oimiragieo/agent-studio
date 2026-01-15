@@ -33,12 +33,44 @@ import {
 } from './memory-monitor.mjs';
 import { cleanupAllCaches, setupPeriodicCleanup } from './memory-cleanup.mjs';
 import { setupMemoryPressureHandling } from './memory-pressure-handler.mjs';
+import {
+  resolveConfigPath,
+  resolveRuntimePath,
+  migrateIfNeeded,
+  LEGACY_PATHS,
+} from './context-path-resolver.mjs';
+import { readRun } from './run-manager.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const execPromise = promisify(exec);
-const registryPath = path.join(__dirname, '../context/cuj-registry.json');
 const projectRoot = path.join(__dirname, '../..');
-const analyticsPath = path.join(__dirname, '../context/analytics/cuj-performance.json');
+const registryPath = resolveConfigPath('cuj-registry.json', { read: true });
+
+// CI-friendly flags for read-only operation - parse BEFORE any side effects
+const ciMode = process.argv.includes('--ci');
+const noAnalytics = process.argv.includes('--no-analytics') || ciMode;
+const noSideEffects = process.argv.includes('--no-side-effects') || ciMode;
+
+// Analytics path: use resolver for reads, but ensure writes go to canonical
+// Lazy evaluation to avoid dir creation at import time in --no-side-effects mode
+let analyticsPath = null;
+function getAnalyticsPath() {
+  if (analyticsPath) return analyticsPath;
+
+  const legacyAnalyticsPath = path.join(LEGACY_PATHS.runtime, 'analytics/cuj-performance.json');
+  const canonicalAnalyticsPath = !noSideEffects
+    ? resolveRuntimePath('analytics/cuj-performance.json', { read: false })
+    : null;
+
+  // Migrate analytics if needed (idempotent) - only if not in read-only mode
+  if (!noSideEffects) {
+    migrateIfNeeded(legacyAnalyticsPath, canonicalAnalyticsPath, { mergePolicy: 'prefer-newer' });
+  }
+
+  // For reads, use resolver (falls back to legacy if canonical doesn't exist)
+  analyticsPath = resolveRuntimePath('analytics/cuj-performance.json', { read: true });
+  return analyticsPath;
+}
 
 // Minimal lifecycle logging for integration tests + operational visibility
 let lifecycleCleanupLogged = false;
@@ -63,12 +95,9 @@ process.on('SIGTERM', () => {
 
 // Cache configuration
 const SKILL_CACHE_TTL_MS = 3600000; // 1 hour default
-const cacheEnabled = !process.argv.includes('--no-cache') && !process.env.NO_SKILL_CACHE;
-
-// CI-friendly flags for read-only operation
-const ciMode = process.argv.includes('--ci');
-const noAnalytics = process.argv.includes('--no-analytics') || ciMode;
-const noSideEffects = process.argv.includes('--no-side-effects') || ciMode;
+// Disable cache writes in CI/read-only mode to make --ci/--no-side-effects truly side-effect-free
+const cacheEnabled =
+  !process.argv.includes('--no-cache') && !process.env.NO_SKILL_CACHE && !noSideEffects;
 
 // Subagent spawning limits
 const MAX_CONCURRENT_SUBAGENTS = 3;
@@ -353,6 +382,7 @@ async function preflightCheck(cuj) {
  * Load performance metrics from analytics file
  */
 async function loadPerformanceMetrics() {
+  const analyticsPath = getAnalyticsPath();
   if (!fs.existsSync(analyticsPath)) {
     return { runs: [] };
   }
@@ -367,11 +397,19 @@ async function loadPerformanceMetrics() {
  * Save performance metrics to analytics file
  */
 function savePerformanceMetrics(metrics) {
-  const dir = path.dirname(analyticsPath);
+  // Respect --no-side-effects flag
+  if (noSideEffects) {
+    console.log('[--no-side-effects] Skipping performance metrics write');
+    return;
+  }
+
+  // Writes always go to canonical path (lazy evaluation)
+  const writePath = getAnalyticsPath();
+  const dir = path.dirname(writePath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  fs.writeFileSync(analyticsPath, JSON.stringify(metrics, null, 2));
+  fs.writeFileSync(writePath, JSON.stringify(metrics, null, 2));
 }
 
 /**
@@ -636,6 +674,32 @@ async function runCUJ(cujId) {
       console.log('[Memory] Cleanup successful, proceeding with spawn');
     }
 
+    // Initialize progress tracking
+    const { ProgressTracker } = await import('./progress-emitter.mjs');
+    const progressTracker = new ProgressTracker(runId, 11); // Estimate 11 steps (adjust based on workflow)
+    progressTracker.start();
+
+    // Track workflow execution progress
+    let currentStep = 0;
+    const stepProgressInterval = setInterval(async () => {
+      try {
+        const runRecord = await readRun(runId);
+        if (runRecord && runRecord.current_step) {
+          const newStep = parseInt(runRecord.current_step);
+          if (newStep !== currentStep) {
+            currentStep = newStep;
+            const stepInfo = runRecord.metadata?.step_info || {};
+            progressTracker.updateStep(
+              `Step ${currentStep}/11: ${stepInfo.name || 'Executing'} (${stepInfo.agent || 'agent'})`,
+              { step: currentStep, agent: stepInfo.agent }
+            );
+          }
+        }
+      } catch (error) {
+        // Progress tracking failed - not critical
+      }
+    }, 2000); // Check every 2 seconds
+
     const child = await spawnSubagentWithLimit([
       path.join(__dirname, 'workflow_runner.js'),
       '--workflow',
@@ -646,7 +710,24 @@ async function runCUJ(cujId) {
       runId, // Keep --id for backward compatibility
     ]);
 
+    // Track child process output for progress
+    let childOutput = '';
+    child.stdout?.on('data', data => {
+      childOutput += data.toString();
+      // Parse step progress from workflow runner output
+      const stepMatch = childOutput.match(/Step (\d+)\/(\d+)/);
+      if (stepMatch) {
+        const [, current, total] = stepMatch;
+        progressTracker.updateStep(`Step ${current}/${total}: Executing workflow step`, {
+          step: parseInt(current),
+          total: parseInt(total),
+        });
+      }
+    });
+
     child.on('exit', async code => {
+      clearInterval(stepProgressInterval);
+      progressTracker.complete();
       // Stop memory monitoring and cleanup
       stopMonitoring();
       if (stopCleanup) {
@@ -721,7 +802,7 @@ async function runCUJ(cujId) {
 
       // Only show analytics message if analytics were actually saved
       if (!noAnalytics) {
-        console.log(`📊 Performance data saved to ${analyticsPath}`);
+        console.log(`📊 Performance data saved to ${writePath}`);
       } else {
         console.log(`📊 Performance data not saved (analytics disabled)`);
       }
@@ -744,7 +825,33 @@ async function runCUJ(cujId) {
 // Parse arguments
 const args = process.argv.slice(2);
 
-if (args.length === 0 || args[0] === '--help') {
+function getFlagValue(flag) {
+  const idx = args.indexOf(flag);
+  if (idx === -1) return null;
+  return args[idx + 1] || null;
+}
+
+function hasFlag(flag) {
+  return args.includes(flag);
+}
+
+function getFirstPositional() {
+  // First arg that isn't a flag and isn't a flag value for known flags
+  // (minimal parsing; we explicitly handle flags that take a value)
+  const flagsWithValues = new Set(['--simulate', '--validate']);
+  for (let i = 0; i < args.length; i++) {
+    const token = args[i];
+    if (!token) continue;
+    if (token.startsWith('--')) {
+      if (flagsWithValues.has(token)) i++; // skip value
+      continue;
+    }
+    return token;
+  }
+  return null;
+}
+
+if (args.length === 0 || hasFlag('--help')) {
   console.log(`
 CUJ Command Wrapper
 
@@ -773,24 +880,20 @@ Examples:
 }
 
 (async () => {
-  if (args[0] === '--list') {
+  if (hasFlag('--list')) {
     await listCUJs();
-  } else if (args[0] === '--simulate') {
-    await simulateCUJ(args[1]);
-  } else if (args[0] === '--validate') {
-    validateCUJ(args[1]);
-  } else if (args[0] === '--cache-stats') {
+  } else if (hasFlag('--simulate')) {
+    await simulateCUJ(getFlagValue('--simulate'));
+  } else if (hasFlag('--validate')) {
+    validateCUJ(getFlagValue('--validate'));
+  } else if (hasFlag('--cache-stats')) {
     showCacheStats();
-  } else if (args[0] === '--no-cache') {
-    // --no-cache flag should be followed by CUJ ID
-    if (args[1]) {
-      console.log('🚫 Skill caching disabled for this run\n');
-      await runCUJ(args[1]);
-    } else {
-      console.error('Error: CUJ ID required after --no-cache');
+  } else {
+    const cujId = getFirstPositional();
+    if (!cujId) {
+      console.error('Error: CUJ ID required');
       process.exit(1);
     }
-  } else {
-    await runCUJ(args[0]);
+    await runCUJ(cujId);
   }
 })();

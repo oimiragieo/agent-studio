@@ -14,11 +14,12 @@ import path from 'path';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CACHE_DIR = path.join(process.cwd(), '.claude/context/cache/git');
+const CACHE_DIR = resolveRuntimePath('cache/git', { write: true });
 const DEFAULT_TTL_MS = 300000; // 5 minutes (git state changes frequently)
 const MAX_CACHE_SIZE = 100; // Maximum entries in memory cache
 

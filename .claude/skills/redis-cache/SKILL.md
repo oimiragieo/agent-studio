@@ -1,6 +1,7 @@
 ---
 name: redis-cache
 description: Redis caching operations and data structures
+version: 1.0.0
 allowed-tools: [Bash, Read]
 ---
 

@@ -28,154 +28,154 @@ const replacements = [
   // Specific artifact path patterns (most common)
   {
     from: /`plan-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/plan-<plan_id>.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/plan-<plan_id>.json`',
   },
   {
     from: /`plan-\{\{workflow_id\}\}\.md`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/plan-<plan_id>.md`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/plan-<plan_id>.md`',
   },
   {
     from: /`gates\/\{\{workflow_id\}\}\//g,
-    to: '`.claude/context/runs/<run_id>/gates/',
+    to: '`.claude/context/runtime/runs/<run_id>/gates/',
   },
   {
     from: /`gates\/00-planner\.json`/g,
-    to: '`.claude/context/runs/<run_id>/gates/00-planner.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/gates/00-planner.json`',
   },
 
   // Project brief patterns
   {
     from: /`project-brief-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/project-brief.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/project-brief.json`',
   },
 
   // PRD patterns
   {
     from: /`prd-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/prd.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/prd.json`',
   },
 
   // UI spec patterns
   {
     from: /`ui-spec-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/ui-spec.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/ui-spec.json`',
   },
 
   // Architecture patterns
   {
     from: /`architecture-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/architecture.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/architecture.json`',
   },
 
   // Database schema patterns
   {
     from: /`db-schema-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/db-schema.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/db-schema.json`',
   },
 
   // Test plan patterns
   {
     from: /`test-plan-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/test-plan.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/test-plan.json`',
   },
 
   // Dev manifest patterns
   {
     from: /`dev-manifest-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/dev-manifest.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/dev-manifest.json`',
   },
 
   // Documentation patterns
   {
     from: /`docs-\{\{workflow_id\}\}\.md`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/docs.md`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/docs.md`',
   },
 
   // API documentation patterns
   {
     from: /`api-docs-\{\{workflow_id\}\}\.md`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/api-docs.md`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/api-docs.md`',
   },
 
   // OpenAPI patterns
   {
     from: /`openapi-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/openapi.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/openapi.json`',
   },
 
   // Validation schema patterns
   {
     from: /`validation-schema-\{\{workflow_id\}\}\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/validation-schema.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/validation-schema.json`',
   },
 
   // Generic gates patterns
   {
     from: /`gates\/02-pm\.json`/g,
-    to: '`.claude/context/runs/<run_id>/gates/02-pm.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/gates/02-pm.json`',
   },
   {
     from: /validated by gate file/g,
-    to: 'validated by `.claude/context/runs/<run_id>/gates/<step>-<agent>.json`',
+    to: 'validated by `.claude/context/runtime/runs/<run_id>/gates/<step>-<agent>.json`',
   },
   {
     from: /All gate files in `gates\/` show/g,
-    to: 'All gate files in `.claude/context/runs/<run_id>/gates/` show',
+    to: 'All gate files in `.claude/context/runtime/runs/<run_id>/gates/` show',
   },
 
   // Second pass: Fix artifact names that still have -<run_id> suffix
   // These patterns handle artifacts that were already partially converted
   {
     from: /`plan-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/plan-<plan_id>.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/plan-<plan_id>.json`',
   },
   {
     from: /`plan-<run_id>\.md`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/plan-<plan_id>.md`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/plan-<plan_id>.md`',
   },
   {
     from: /`project-brief-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/project-brief.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/project-brief.json`',
   },
   {
     from: /`prd-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/prd.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/prd.json`',
   },
   {
     from: /`ui-spec-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/ui-spec.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/ui-spec.json`',
   },
   {
     from: /`architecture-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/architecture.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/architecture.json`',
   },
   {
     from: /`db-schema-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/db-schema.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/db-schema.json`',
   },
   {
     from: /`test-plan-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/test-plan.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/test-plan.json`',
   },
   {
     from: /`dev-manifest-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/dev-manifest.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/dev-manifest.json`',
   },
   {
     from: /`docs-<run_id>\.md`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/docs.md`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/docs.md`',
   },
   {
     from: /`api-docs-<run_id>\.md`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/api-docs.md`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/api-docs.md`',
   },
   {
     from: /`openapi-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/openapi.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/openapi.json`',
   },
   {
     from: /`validation-schema-<run_id>\.json`/g,
-    to: '`.claude/context/runs/<run_id>/artifacts/validation-schema.json`',
+    to: '`.claude/context/runtime/runs/<run_id>/artifacts/validation-schema.json`',
   },
 ];
 

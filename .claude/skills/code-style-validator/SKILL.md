@@ -1,6 +1,7 @@
 ---
 name: code-style-validator
 description: Programmatic code style validation using AST analysis. Complements (not replaces) code-style rules by providing automated checking and instant feedback.
+version: 1.0.0
 model: haiku
 allowed-tools: read, grep, bash, glob
 ---

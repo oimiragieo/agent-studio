@@ -1,6 +1,7 @@
 ---
 name: gemini-api-docs
 description: Gemini API documentation lookup and reference
+version: 1.0.0
 allowed-tools: [Read, WebFetch]
 ---
 

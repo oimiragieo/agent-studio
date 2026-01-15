@@ -1,6 +1,8 @@
 ---
 name: multi-ai-code-review
 description: Run multi-provider code reviews over git diffs/PR changes using headless AI CLIs (Claude Code `claude`, Google `gemini`, optionally GitHub `copilot`) and output structured findings + an optional synthesized report; use for security/bug/perf review of recent changes and for generating PR-ready review comments.
+version: 1.0.0
+allowed-tools: bash
 ---
 
 # Multi-AI Code Review

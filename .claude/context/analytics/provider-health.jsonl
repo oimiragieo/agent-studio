@@ -1,6 +1,0 @@
-{"timestamp":1767977312297,"iso_timestamp":"2026-01-09T16:48:32.297Z","provider":"test-provider","success":true,"latency_ms":100,"error":null,"metadata":{}}
-{"timestamp":1767977312298,"iso_timestamp":"2026-01-09T16:48:32.298Z","provider":"test-provider","success":true,"latency_ms":120,"error":null,"metadata":{}}
-{"timestamp":1767977312298,"iso_timestamp":"2026-01-09T16:48:32.298Z","provider":"test-provider","success":false,"latency_ms":5000,"error":"Timeout","metadata":{}}
-{"timestamp":1768159430121,"iso_timestamp":"2026-01-11T19:23:50.121Z","provider":"test-provider","success":true,"latency_ms":100,"error":null,"metadata":{}}
-{"timestamp":1768159430122,"iso_timestamp":"2026-01-11T19:23:50.122Z","provider":"test-provider","success":true,"latency_ms":120,"error":null,"metadata":{}}
-{"timestamp":1768159430123,"iso_timestamp":"2026-01-11T19:23:50.123Z","provider":"test-provider","success":false,"latency_ms":5000,"error":"Timeout","metadata":{}}

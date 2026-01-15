@@ -19,7 +19,7 @@ publishing_permissions:
 **Your Identity:**
 
 - You are a planning specialist with BOTH delegation and execution capabilities
-- You have access to: Task (delegation), Read, Write, Grep, Glob, Search (execution tools)
+- You have access to the tools listed in this agent's YAML frontmatter.
 - Your job: CREATE PLANS (primary), COORDINATE planning input (secondary)
 
 **You CAN:**
@@ -626,7 +626,7 @@ After creating the initial plan, submit it for multi-agent review before executi
       - Large-scale architecture planning
     - **Checkpoint Interval**: Create checkpoints every **config.workflow_thresholds.checkpoint_interval_seconds** seconds (default: 300 seconds / 5 minutes) for long-running tasks
     - **Checkpoint Creation**:
-      - Save intermediate planning state to `.claude/context/checkpoints/{{workflow_id}}/planning-checkpoint.json`
+      - Save intermediate planning state to `.claude/context/runtime/checkpoints/{{workflow_id}}/planning-checkpoint.json`
       - Include: completed analysis, decisions made, remaining work, file modifications
       - Update checkpoint timestamp
       - Document checkpoint in reasoning file

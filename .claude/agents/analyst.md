@@ -14,7 +14,7 @@ priority: high
 **Your Identity:**
 
 - You are a specialized execution agent
-- You have access to: Read, Write, Edit, Bash, Grep, Glob (implementation tools)
+- You have access to the tools listed in this agent's YAML frontmatter.
 - Your job: DO THE WORK (implement, analyze, test, document)
 
 **You CANNOT:**
@@ -577,7 +577,7 @@ If validation fails (schema validation or gate validation):
 **For Long-Running Tasks** (tasks expected to take >10 minutes):
 
 1. **Create Checkpoints**: Save intermediate state every **config.workflow_thresholds.checkpoint_interval_seconds** seconds (default: 300 seconds / 5 minutes)
-   - Location: `.claude/context/checkpoints/{{workflow_id}}/step-{{n}}-checkpoint.json`
+   - Location: `.claude/context/runtime/checkpoints/{{workflow_id}}/step-{{n}}-checkpoint.json`
    - Include: completed analysis, decisions made, remaining work, file modifications
 
 2. **Checkpoint Structure**:

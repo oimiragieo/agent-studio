@@ -7,7 +7,7 @@ publish_policy: auto-on-pass # Automatically publish artifacts after validation 
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
+  checkpoint_dir: '.claude/context/runtime/runs/{{run_id}}/checkpoints'
   test_mode: true # Enable test mode for recovery testing
   checkpoint_phases: [1, 3, 5] # Create checkpoints at these phase boundaries
 
@@ -93,7 +93,7 @@ steps:
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
+      - .claude/context/runtime/runs/{{run_id}}/plans/{{plan_id}}-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7
@@ -151,7 +151,7 @@ steps:
       - Verify checkpoint conforms to checkpoint.schema.json
       - Validate checkpoint includes all required fields
       - Check checkpoint includes completed steps, artifacts, state snapshot
-      - Save checkpoint to .claude/context/runs/{{run_id}}/checkpoints/
+      - Save checkpoint to .claude/context/runtime/runs/{{run_id}}/checkpoints/
 
   - step: 2
     name: 'Simulated Work - Phase 2'

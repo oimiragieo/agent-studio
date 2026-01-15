@@ -1,6 +1,7 @@
 ---
 name: elasticsearch-logs
 description: Elasticsearch log search and analysis
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

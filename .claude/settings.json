@@ -72,7 +72,7 @@
     "auto_save": true,
     "context_file": ".claude/context/session.json",
     "max_context_tokens": 100000,
-    "default_model": "claude-3-5-haiku-20241022",
+    "default_model": "claude-haiku-4-5",
     "default_temperature": 0.1,
     "default_role": "router",
     "router_enabled": true,
@@ -81,9 +81,9 @@
     "state_persistence": true
   },
   "models": {
-    "router": "claude-3-5-haiku-20241022",
-    "orchestrator": "claude-sonnet-4-20250514",
-    "complex": "claude-opus-4-20241113"
+    "router": "claude-haiku-4-5",
+    "orchestrator": "claude-sonnet-4-5",
+    "complex": "claude-opus-4-5-20251101"
   },
   "routing": {
     "complexity_threshold": 0.7,
@@ -119,7 +119,17 @@
     ]
   },
   "hooks": {
-    "PreToolUse": [],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/router-session-entry.mjs"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Bash|Write|Edit",

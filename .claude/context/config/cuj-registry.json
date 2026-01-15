@@ -1,0 +1,1869 @@
+{
+  "$schema": "../schemas/cuj-registry.schema.json",
+  "version": "1.0.0",
+  "generated": "2026-01-12T09:34:22.009Z",
+  "total_cujs": 61,
+  "cujs": [
+    {
+      "id": "CUJ-001",
+      "name": "First-Time Installation",
+      "description": "Successfully install and configure LLM-RULES in a new project.",
+      "category": "Onboarding & Setup",
+      "execution_mode": "manual-setup",
+      "workflow": null,
+      "agents": [],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "`.claude/CLAUDE.md` exists",
+        "`.claude/config.yaml` exists",
+        "Configuration validated (exit code 0)",
+        "Hook files present at .claude/hooks/ (optional)"
+      ],
+      "estimated_duration": "varies",
+      "file_path": ".claude/docs/cujs/CUJ-001.md"
+    },
+    {
+      "id": "CUJ-002",
+      "name": "Rule Configuration",
+      "description": "Auto-detect project tech stack and configure appropriate rules.",
+      "category": "Onboarding & Setup",
+      "execution_mode": "skill-only",
+      "workflow": null,
+      "agents": [],
+      "skills": ["rule-selector"],
+      "primary_skill": "rule-selector",
+      "schemas": [],
+      "triggers": [
+        "`/select-rules` command",
+        "Select rules for this project",
+        "Configure rules for my stack"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Updated `manifest.yaml` with selected rules",
+        "Rule configuration report artifact exists",
+        "manifest.yaml contains rules array"
+      ],
+      "estimated_duration": "2-60 seconds",
+      "file_path": ".claude/docs/cujs/CUJ-002.md"
+    },
+    {
+      "id": "CUJ-003",
+      "name": "Cross-Platform Setup",
+      "description": "Sync LLM-RULES configuration across Claude Code, Cursor, and Factory Droid.",
+      "category": "Onboarding & Setup",
+      "execution_mode": "skill-only",
+      "workflow": null,
+      "agents": [],
+      "skills": ["context-bridge"],
+      "primary_skill": "context-bridge",
+      "schemas": [],
+      "triggers": ["Sync to Cursor", "Bridge context to Factory", "Set up cross-platform"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Configuration files present",
+        "Platform adapter files present",
+        "Compatibility validation passes (exit code 0)"
+      ],
+      "estimated_duration": "2-60 seconds",
+      "file_path": ".claude/docs/cujs/CUJ-003.md"
+    },
+    {
+      "id": "CUJ-004",
+      "name": "New Feature Planning",
+      "description": "Create a comprehensive plan for implementing a new feature.",
+      "category": "Planning & Architecture",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "analyst", "pm", "architect"],
+      "skills": ["plan-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/plan.schema.json"],
+      "triggers": [
+        "I want to build a user dashboard",
+        "Plan feature X",
+        "Create plan for [feature]"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Plan markdown: `.claude/context/artifacts/plan-<id>.md`",
+        "Plan JSON: `.claude/context/artifacts/plan-<id>.json`",
+        "plan-*.json artifact validated against schema"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-004.md"
+    },
+    {
+      "id": "CUJ-005",
+      "name": "Greenfield Project Planning",
+      "description": "Plan and execute a complete new project from scratch.",
+      "category": "Planning & Architecture",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": [
+        "planner",
+        "analyst",
+        "pm",
+        "ux-expert",
+        "architect",
+        "database-architect",
+        "qa",
+        "developer",
+        "technical-writer"
+      ],
+      "skills": ["plan-generator", "scaffolder", "rule-auditor", "doc-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [
+        ".claude/schemas/project_brief.schema.json",
+        ".claude/schemas/system_architecture.schema.json",
+        ".claude/schemas/test_plan.schema.json"
+      ],
+      "triggers": ["Build a new e-commerce platform", "Create new project", "Greenfield project"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "project-brief.json artifact exists",
+        "prd.json artifact exists",
+        "ux-specifications.json artifact exists",
+        "Architecture documents validated against schema",
+        "Database schema artifact exists",
+        "test-plan.json artifact exists",
+        "Implementation code files present",
+        "Documentation files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-005.md"
+    },
+    {
+      "id": "CUJ-006",
+      "name": "Architecture Review",
+      "description": "Review and analyze existing system architecture.",
+      "category": "Planning & Architecture",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
+      "agents": ["planner", "architect"],
+      "skills": ["diagram-generator"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/architecture-review.schema.json"],
+      "triggers": ["Review my system architecture", "Analyze architecture", "Architecture review"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "architecture-review.json artifact validated against schema",
+        "Architecture diagram files present",
+        "recommendations.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-006.md"
+    },
+    {
+      "id": "CUJ-007",
+      "name": "Technical Debt Planning",
+      "description": "Plan refactoring of legacy code and technical debt.",
+      "category": "Planning & Architecture",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
+      "agents": ["planner", "refactoring-specialist"],
+      "skills": ["plan-generator"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/refactoring-plan.schema.json"],
+      "triggers": [
+        "Plan refactoring of legacy code",
+        "Technical debt planning",
+        "Refactoring plan"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "refactoring-plan.json artifact validated against schema",
+        "technical-debt-inventory.json artifact exists",
+        "migration-roadmap.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-007.md"
+    },
+    {
+      "id": "CUJ-008",
+      "name": "Database Schema Planning",
+      "description": "Design database schema for a feature or system.",
+      "category": "Planning & Architecture",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "database-architect"],
+      "skills": ["diagram-generator"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/database-schema.schema.json"],
+      "triggers": [
+        "Design database for user management",
+        "Create database schema",
+        "Database design"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "database-schema.json artifact validated against schema",
+        "ER diagram files present",
+        "Migration script files present",
+        "Schema documentation files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-008.md"
+    },
+    {
+      "id": "CUJ-009",
+      "name": "Component Scaffolding",
+      "description": "Generate rule-compliant component boilerplate.",
+      "category": "Development",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
+      "agents": ["developer"],
+      "skills": ["scaffolder", "rule-auditor", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Scaffold a UserProfile component",
+        "`/scaffold component UserProfile`",
+        "Generate component"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Component files present",
+        "Type definition files present",
+        "Test files present",
+        "Supporting files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-009.md"
+    },
+    {
+      "id": "CUJ-010",
+      "name": "API Endpoint Development",
+      "description": "Create a new API endpoint with proper structure.",
+      "category": "Development",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
+      "agents": ["developer", "technical-writer"],
+      "skills": ["scaffolder", "api-contract-generator", "doc-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/api-docs.schema.json", ".claude/schemas/openapi.schema.json"],
+      "triggers": ["Create /api/users endpoint", "Add API endpoint", "Generate API route"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "API route file present",
+        "Validation schema files present",
+        "API documentation files present",
+        "openapi.json artifact validated against schema"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-010.md"
+    },
+    {
+      "id": "CUJ-011",
+      "name": "Bug Fix Workflow",
+      "description": "Quickly fix a bug with validation.",
+      "category": "Development",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/quick-flow.yaml",
+      "agents": ["planner", "developer", "qa"],
+      "skills": ["rule-auditor", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": ["`/quick-ship Fix login button`", "Quick fix for [issue]", "Bug fix"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Fixed code files present",
+        "Test results artifact exists",
+        "Validation report artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-011.md"
+    },
+    {
+      "id": "CUJ-012",
+      "name": "Feature Implementation",
+      "description": "Implement a complete feature following best practices.",
+      "category": "Development",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "developer", "qa", "technical-writer"],
+      "skills": [
+        "plan-generator",
+        "scaffolder",
+        "test-generator",
+        "doc-generator",
+        "response-rater"
+      ],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": ["Implement user authentication", "Build [feature]", "Add [feature]"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Feature implementation files present",
+        "Test suite files present",
+        "Documentation files present",
+        "Usage example files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-012.md"
+    },
+    {
+      "id": "CUJ-013",
+      "name": "Code Review",
+      "description": "Comprehensive code review with systematic analysis.",
+      "category": "Quality Assurance",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-review-flow.yaml",
+      "agents": ["code-reviewer"],
+      "skills": ["rule-auditor", "response-rater", "multi-ai-code-review"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/code-review.schema.json"],
+      "triggers": ["`/review`", "`/review src/components/`", "Review this code"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "code-review.json artifact validated against schema",
+        "Issue list artifact exists",
+        "Fix suggestions artifact exists",
+        "multi-ai-review-report.json artifact exists (optional)"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-013.md"
+    },
+    {
+      "id": "CUJ-014",
+      "name": "Rule Compliance Audit",
+      "description": "Validate code against project rules and standards.",
+      "category": "Quality Assurance",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
+      "agents": [],
+      "skills": ["rule-auditor", "response-rater"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/skill-rule-auditor-output.schema.json"],
+      "triggers": ["`/audit src/components/`", "`/audit --format json`", "Audit this code"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "audit-report.json artifact validated against schema",
+        "Violation list artifact exists",
+        "Fix suggestions artifact exists",
+        "Compliance score >= 0 (numeric)"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-014.md"
+    },
+    {
+      "id": "CUJ-015",
+      "name": "Test Generation",
+      "description": "Generate comprehensive test suite for code.",
+      "category": "Quality Assurance",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
+      "agents": ["qa"],
+      "skills": ["test-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Generate tests for UserProfile",
+        "Create tests for [component]",
+        "Add test coverage"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Unit test files present",
+        "Integration test files present",
+        "E2E test files present (if applicable)",
+        "Test coverage report artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-015.md"
+    },
+    {
+      "id": "CUJ-016",
+      "name": "API Documentation",
+      "description": "Generate comprehensive API documentation.",
+      "category": "Documentation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
+      "agents": ["technical-writer"],
+      "skills": ["doc-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/api-docs.schema.json"],
+      "triggers": [
+        "Document the /api/users endpoint",
+        "Generate API docs",
+        "Create API documentation"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "API documentation files present",
+        "openapi.json artifact validated against schema",
+        "Code example files present",
+        "Interactive documentation files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-016.md"
+    },
+    {
+      "id": "CUJ-017",
+      "name": "Module Documentation",
+      "description": "Generate claude.md file for a module.",
+      "category": "Documentation",
+      "execution_mode": "skill-only",
+      "workflow": null,
+      "agents": ["technical-writer"],
+      "skills": ["claude-md-generator"],
+      "primary_skill": "claude-md-generator",
+      "schemas": [],
+      "triggers": [
+        "Document the auth module",
+        "Generate claude.md for [module]",
+        "Create module documentation"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "claude.md file exists",
+        "Module documentation files present",
+        "Usage example files present"
+      ],
+      "estimated_duration": "2-60 seconds",
+      "file_path": ".claude/docs/cujs/CUJ-017.md"
+    },
+    {
+      "id": "CUJ-018",
+      "name": "Architecture Documentation",
+      "description": "Document system architecture with diagrams.",
+      "category": "Documentation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
+      "agents": ["architect", "technical-writer"],
+      "skills": ["diagram-generator", "doc-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Document system architecture",
+        "Generate architecture docs",
+        "Create architecture documentation"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Architecture documentation files present",
+        "Architecture diagram files present",
+        "Component diagram files present",
+        "ADR template files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-018.md"
+    },
+    {
+      "id": "CUJ-019",
+      "name": "Performance Optimization",
+      "description": "Optimize performance of system or component.",
+      "category": "Specialized Workflows",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/performance-flow.yaml",
+      "agents": ["performance-engineer", "architect", "developer", "qa"],
+      "skills": ["response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "`/performance --target api/users`",
+        "Optimize performance",
+        "Performance tuning"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "performance-analysis.json artifact exists",
+        "optimization-plan.json artifact exists",
+        "Optimized code files present",
+        "Performance metrics artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-019.md"
+    },
+    {
+      "id": "CUJ-020",
+      "name": "Security Audit",
+      "description": "Audit system security and identify vulnerabilities.",
+      "category": "Specialized Workflows",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
+      "agents": ["security-architect"],
+      "skills": ["rule-auditor", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": ["Audit authentication security", "Security review", "Security audit"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "security-audit.json artifact exists",
+        "Vulnerability list artifact exists",
+        "remediation-plan.json artifact exists",
+        "Compliance checklist artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-020.md"
+    },
+    {
+      "id": "CUJ-021",
+      "name": "Mobile Development",
+      "description": "Develop mobile application features.",
+      "category": "Specialized Workflows",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/mobile-flow.yaml",
+      "agents": ["mobile-developer", "ux-expert", "developer", "qa"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": ["`/mobile`", "Mobile development", "iOS/Android feature"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Mobile implementation files present",
+        "Platform-specific code files present",
+        "Device testing results artifact exists",
+        "Mobile documentation files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-021.md"
+    },
+    {
+      "id": "CUJ-022",
+      "name": "AI System Development",
+      "description": "Develop AI/LLM features and systems.",
+      "category": "Specialized Workflows",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/ai-system-flow.yaml",
+      "agents": ["model-orchestrator", "llm-architect", "api-designer", "developer", "qa"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": ["`/ai-system`", "AI feature development", "LLM integration"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "ai-system-design.json artifact exists",
+        "RAG pipeline files present",
+        "Prompt template files present",
+        "AI API implementation files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-022.md"
+    },
+    {
+      "id": "CUJ-023",
+      "name": "Dependency Updates",
+      "description": "Safely update project dependencies.",
+      "category": "Maintenance & Operations",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
+      "agents": ["devops"],
+      "skills": ["dependency-analyzer", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Update dependencies safely",
+        "Check for dependency updates",
+        "Dependency management"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "dependency-report.json artifact exists",
+        "update-plan.json artifact exists",
+        "Updated dependency files present",
+        "Compatibility validation passes (exit code 0)"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-023.md"
+    },
+    {
+      "id": "CUJ-024",
+      "name": "Incident Response",
+      "description": "Respond to production incidents effectively.",
+      "category": "Maintenance & Operations",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/incident-flow.yaml",
+      "agents": ["incident-responder", "devops", "security-architect", "qa"],
+      "skills": ["recovery", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": ["`/incident`", "Production incident", "System outage"],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "incident-report.json artifact exists",
+        "root-cause-analysis.json artifact exists",
+        "post-mortem.json artifact exists",
+        "remediation-plan.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-024.md"
+    },
+    {
+      "id": "CUJ-025",
+      "name": "Large Requirements Document Processing",
+      "description": "Process a large requirements document (>15KB) without context window overflow.",
+      "category": "Advanced Workflows",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["analyst-(step-0.5)", "planner-(step-0)", "[other-agents]", "analyst"],
+      "skills": ["summarizer", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "User provides a markdown file > 15KB as requirements",
+        "Plan features from this document\" (with large file)",
+        "Automatic detection by workflow_runner.js"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "features-distilled.json artifact exists (Step 0.5)",
+        "plan-{{workflow_id}}.md artifact exists (Step 0)",
+        "plan-{{workflow_id}}.json artifact validated against schema (Step 0)"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-025.md"
+    },
+    {
+      "id": "CUJ-026",
+      "name": "Multi-Phase Project Planning",
+      "description": "Plan a large project that requires multiple phases to manage context and complexity.",
+      "category": "Advanced Workflows",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "orchestrator", "[phase-specific-agents]"],
+      "skills": ["plan-generator", "dependency-analyzer", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Plan a large-scale project with multiple phases",
+        "Project requires >3000 lines of code",
+        "Complex dependencies requiring phase separation"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "plan-{id}.md artifact exists (master plan)",
+        "plan-{id}-phase-1.json artifact validated against schema (phase 1)",
+        "plan-{id}-phase-2.json artifact validated against schema (phase 2)",
+        "Additional phase plan artifacts exist as needed"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-026.md"
+    },
+    {
+      "id": "CUJ-027",
+      "name": "Workflow Recovery After Context Loss",
+      "description": "Resume a workflow after context window exhaustion or session interruption.",
+      "category": "Advanced Workflows",
+      "execution_mode": "skill-only",
+      "workflow": null,
+      "agents": [
+        "orchestrator-(recovery)",
+        "planner-(stateless-update)",
+        "[resume-agents]",
+        "orchestrator"
+      ],
+      "skills": ["recovery"],
+      "primary_skill": "recovery",
+      "schemas": [],
+      "triggers": [
+        "Context window exhausted mid-workflow",
+        "Session interrupted",
+        "Need to resume from last completed step"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "plan-{id}.json artifact exists (with current status)",
+        "Workflow execution continues (exit code 0)",
+        "New artifacts from resumed steps present"
+      ],
+      "estimated_duration": "2-60 seconds",
+      "file_path": ".claude/docs/cujs/CUJ-027.md"
+    },
+    {
+      "id": "CUJ-028",
+      "name": "Infrastructure-First Development",
+      "description": "Define concrete infrastructure resources before implementation to prevent rework.",
+      "category": "Advanced Workflows",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": [
+        "architect",
+        "devops-(step-4.5)",
+        "database-architect",
+        "developer",
+        "cloud-integrator",
+        "gcp-cloud-agent"
+      ],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Build cloud-connected application",
+        "Greenfield project with cloud services",
+        "Need for concrete resource names upfront"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "infrastructure-config.json artifact exists (Step 4.5)",
+        "terraform-plan.json artifact exists (Step 4.5)",
+        "deployment-config.json artifact exists (Step 4.5)",
+        "Code files present using concrete resource names (Step 7)"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-028.md"
+    },
+    {
+      "id": "CUJ-029",
+      "name": "Cloud Integration Workflow",
+      "description": "Separate cloud integration from business logic implementation.",
+      "category": "Advanced Workflows",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["developer", "cloud-integrator", "model-orchestrator", "qa"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Implement cloud storage integration",
+        "Add GCP Pub/Sub to application",
+        "Business logic needs cloud services"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Business logic code files present (Step 7)",
+        "Cloud integration code files present (Step 7.5)",
+        "cloud-integration.json artifact exists (Step 7.5)",
+        "Emulator configuration files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-029.md"
+    },
+    {
+      "id": "CUJ-030",
+      "name": "Multi-AI Validation Workflow",
+      "description": "Validate code quality using multiple AI models for consensus.",
+      "category": "Advanced Workflows",
+      "execution_mode": "skill-only",
+      "workflow": null,
+      "agents": ["model-orchestrator", "[cursor/gemini/codex-validators]", "developer"],
+      "skills": ["multi-ai-code-review"],
+      "primary_skill": "multi-ai-code-review",
+      "schemas": [],
+      "triggers": [
+        "Validate the implementation",
+        "Step 8 in greenfield-fullstack workflow",
+        "Need for multi-model code review"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": ["validation-report.json", "consensus-issues.json", "disagreements.json"],
+      "estimated_duration": "2-60 seconds",
+      "file_path": ".claude/docs/cujs/CUJ-030.md"
+    },
+    {
+      "id": "CUJ-034",
+      "name": "Browser-Based UI Testing & Optimization",
+      "description": "Find bugs, test all UI features, compare with documentation, review logs, measure performance, and get optimization recommendations for a web application.  **Persona**: Developer",
+      "category": "Quality Assurance",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/browser-testing-flow.yaml",
+      "agents": [],
+      "skills": ["plan-generator", "response-rater", "artifact-publisher"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Find bugs using Chrome DevTools",
+        "Test all UI features",
+        "Test page and find issues",
+        "Browser test the application",
+        "Test UI and optimize",
+        "Find bugs browser",
+        "Test all features and compare with documentation",
+        "Review logs and optimize performance"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-034.md"
+    },
+    {
+      "id": "CUJ-035",
+      "name": "Planner-First Workflow Validation",
+      "description": "Validate the complete planner-first workflow process end-to-end, ensuring plans are created, artifacts flow correctly, and execution follows the plan.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "orchestrator"],
+      "skills": ["plan-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test planner-first workflow",
+        "Validate plan execution",
+        "Verify artifact flow"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "plan-{{workflow_id}}.md artifact exists",
+        "plan-{{workflow_id}}.json artifact validated against schema",
+        "Artifacts present as specified in plan",
+        "plan-execution-tracking-report.json artifact exists",
+        "artifact-flow-validation-report.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-035.md"
+    },
+    {
+      "id": "CUJ-036",
+      "name": "Validation Failure Recovery",
+      "description": "Test validation gate failures and retry logic to ensure the system handles validation errors gracefully and recovers automatically.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "qa"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test validation failure recovery",
+        "Validate retry logic",
+        "Test error recovery"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Test plan artifact exists with validation scenarios",
+        "Invalid artifacts present (for testing)",
+        "Gate files present with error details",
+        "Corrected artifacts present (after retries)",
+        "Retry attempt log files present",
+        "recovery-validation-report.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-036.md"
+    },
+    {
+      "id": "CUJ-037",
+      "name": "Multi-Phase Project Execution",
+      "description": "Test hierarchical planning with phase boundaries for large projects (>3000 lines), ensuring master plan and phase plans are structured correctly and only active phase plans are loaded.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "orchestrator"],
+      "skills": ["plan-generator", "dependency-analyzer", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Plan large project with phases",
+        "Test multi-phase execution",
+        "Validate phase boundaries"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "`plan-{{workflow_id}}.md` - Master plan (<5KB)",
+        "`plan-{{workflow_id}}-phase-1.json` - Phase 1 plan (<20KB)",
+        "`plan-{{workflow_id}}-phase-2.json` - Phase 2 plan (<20KB)",
+        "`plan-{{workflow_id}}-phase-N.json` - Additional phase plans (<20KB each)",
+        "Phase execution artifacts",
+        "Phase boundary validation report"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-037.md"
+    },
+    {
+      "id": "CUJ-038",
+      "name": "Optional Artifact Handling",
+      "description": "Test workflows with optional inputs to ensure graceful degradation when optional artifacts are missing and defaults are used appropriately.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "qa"],
+      "skills": ["optional-artifact-handler", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test optional artifact handling",
+        "Validate graceful degradation",
+        "Test missing optional inputs"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Plan artifact exists with optional artifact scenarios",
+        "Artifacts present (some optional, some required)",
+        "Reasoning files present documenting optional input handling",
+        "validation-report.json artifact exists confirming graceful degradation"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-038.md"
+    },
+    {
+      "id": "CUJ-039",
+      "name": "Cross-Agent Validation",
+      "description": "Test cross-agent validation protocol to ensure agents can validate each other's work, resolve conflicts, and enforce quality gates with multiple validators.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
+      "agents": ["planner", "primary-agent", "validator-agents", "facilitator-agent", "developer"],
+      "skills": ["conflict-resolution", "response-rater"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/prd.schema.json"],
+      "triggers": [
+        "Test cross-agent validation",
+        "Validate conflict resolution",
+        "Test quality gates"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Primary agent output artifact exists",
+        "Validation result artifacts exist from each validator",
+        "consensus-calculation-results.json artifact exists",
+        "Conflict resolution documentation files present",
+        "Quality gate evaluation artifact exists",
+        "validation-report.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-039.md"
+    },
+    {
+      "id": "CUJ-040",
+      "name": "Stateless Recovery Test",
+      "description": "Verify the system can recover from scratch without any conversation history, ensuring all agents read from file system state rather than relying on memory or chat history.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
+      "agents": ["orchestrator", "planner"],
+      "skills": ["recovery", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test stateless recovery",
+        "Verify file-based recovery",
+        "Test recovery from scratch",
+        "Context window exhausted and new session started",
+        "Session interrupted and resumed"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Initial workflow artifacts exist (project-brief.json, prd.json, etc.)",
+        "plan-{{workflow_id}}.json artifact exists",
+        "Gate files present for each completed step",
+        "Reasoning files present documenting stateless behavior",
+        "Updated plan document artifact exists after recovery",
+        "recovery-validation-report.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-040.md"
+    },
+    {
+      "id": "CUJ-041",
+      "name": "Complex Artifact Dependency Chain",
+      "description": "Test deep artifact dependency chains (A→B→C→D→E) to ensure artifacts are properly passed between workflow steps and the artifact registry tracks all dependencies correctly.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "analyst", "pm", "ux-expert", "architect", "developer", "orchestrator"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test complex artifact dependencies",
+        "Validate artifact dependency chain",
+        "Test deep dependency tracking"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Artifact A: `project-brief.json`",
+        "Artifact B: `prd.json` (depends on A)",
+        "Artifact C: `ui-spec.json` (depends on B)",
+        "Artifact D: `system-architecture.json` (depends on C)",
+        "Artifact E: `dev-manifest.json` (depends on D)",
+        "Artifact registry: `registry-{{workflow_id}}.json`",
+        "Dependency chain validation report"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-041.md"
+    },
+    {
+      "id": "CUJ-042",
+      "name": "Cursor Subagent Coordination",
+      "description": "Test Cursor-specific subagent workflows to ensure seamless coordination between Cursor subagents, proper use of Cursor Plan Mode, and correct artifact sharing via `.cursor/plans/`.",
+      "category": "Testing & Validation",
+      "execution_mode": "manual-setup",
+      "workflow": null,
+      "agents": ["planner", "orchestrator", "analyst", "pm", "architect", "developer"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test Cursor subagent coordination",
+        "Validate Cursor Plan Mode integration",
+        "Test Cursor subagent workflows"
+      ],
+      "platform_compatibility": {
+        "claude": false,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Plan artifacts in `.cursor/plans/`",
+        "Shared context: `.cursor/plans/current-context.json`",
+        "Artifacts: `.cursor/plans/artifacts/*.json`",
+        "Cursor Plan Mode artifacts",
+        "Coordination validation report"
+      ],
+      "estimated_duration": "varies",
+      "file_path": ".claude/docs/cujs/CUJ-042.md"
+    },
+    {
+      "id": "CUJ-043",
+      "name": "Workflow Interruption Recovery",
+      "description": "Test mid-workflow interruption and recovery to ensure no work is lost when workflows are interrupted mid-step, and the system can resume from checkpoints.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
+      "agents": ["planner", "orchestrator", "developer", "qa"],
+      "skills": ["recovery", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test workflow interruption recovery",
+        "Validate checkpoint protocol",
+        "Test mid-step recovery",
+        "Workflow interrupted by user",
+        "System crash or timeout",
+        "Network interruption"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Initial artifacts exist (project-brief.json, prd.json)",
+        "Checkpoint artifacts exist: `.claude/context/runtime/checkpoints/{{workflow_id}}/step-3-checkpoint.json`",
+        "Partial reasoning files present",
+        "Final artifacts present after resume",
+        "recovery-validation-report.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-043.md"
+    },
+    {
+      "id": "CUJ-044",
+      "name": "Agent Fallback Chain",
+      "description": "Test fallback agent routing when primary agents fail, ensuring fallback agents receive correct context, artifacts are preserved, and the system recovers gracefully.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/fallback-routing-flow.yaml",
+      "agents": ["planner", "primary-agent", "fallback-agent", "orchestrator"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test agent fallback routing",
+        "Validate fallback agent context",
+        "Test fallback chain recovery",
+        "Primary agent fails with non-recoverable error",
+        "Primary agent times out",
+        "Primary agent produces invalid output after retries"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Primary agent artifacts present (partial)",
+        "error-details.json artifact exists from primary agent",
+        "Fallback agent artifacts present (complete)",
+        "Fallback routing documentation files present",
+        "Updated plan document artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-044.md"
+    },
+    {
+      "id": "CUJ-045",
+      "name": "Missing Required Artifact Recovery",
+      "description": "Test recovery when required artifacts are missing, ensuring the system can detect missing artifacts, recreate them when possible, and recover gracefully.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
+      "agents": ["planner", "orchestrator", "qa"],
+      "skills": ["recovery", "optional-artifact-handler", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test missing artifact recovery",
+        "Validate artifact recreation protocol",
+        "Test recovery from missing artifacts",
+        "Required artifact deleted or corrupted",
+        "Previous step failed to create artifact",
+        "Artifact path incorrect"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Initial artifacts exist (project-brief.json, prd.json)",
+        "missing-artifact-detection-report.json artifact exists",
+        "Recreated artifact present",
+        "recovery-validation-report.json artifact exists",
+        "Final workflow output artifacts present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-045.md"
+    },
+    {
+      "id": "CUJ-046",
+      "name": "Feature Distillation Edge Cases",
+      "description": "Test feature distillation process with edge cases: very large documents, malformed markdown, missing critical information, multiple document formats, and validation failures.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "analyst", "qa"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test feature distillation with large document\" (>50KB)",
+        "Test feature distillation with malformed markdown",
+        "Test feature distillation edge cases",
+        "User provides problematic requirements document"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "features-distilled.json artifacts exist for each edge case scenario",
+        "edge-case-test-report.json artifact exists",
+        "Validation result artifacts exist for each scenario",
+        "Recovery documentation files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-046.md"
+    },
+    {
+      "id": "CUJ-047",
+      "name": "Multi-Agent Conflict Resolution",
+      "description": "Test conflict detection and resolution when multiple agents produce conflicting outputs, ensuring conflicts are detected, escalated appropriately, and resolved through consensus or authority.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/code-quality-flow.yaml",
+      "agents": ["planner", "orchestrator", "pm", "architect", "analyst", "ai-council"],
+      "skills": ["conflict-resolution", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test multi-agent conflict resolution",
+        "Test conflict detection between agents",
+        "Validate conflict resolution protocols",
+        "Agents produce conflicting requirements or decisions"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Conflicting agent output artifacts exist",
+        "conflict-detection-report.json artifact exists",
+        "resolution-decisions.json artifact exists",
+        "Updated artifacts present",
+        "Resolution documentation files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-047.md"
+    },
+    {
+      "id": "CUJ-048",
+      "name": "Artifact Registry Comprehensive Test",
+      "description": "Test artifact registry robustness: corruption recovery, concurrent artifact registration, validation failures, missing registry recovery, and registry synchronization.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
+      "agents": ["planner", "orchestrator"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test artifact registry robustness",
+        "Test registry corruption recovery",
+        "Validate registry synchronization",
+        "Registry corruption or synchronization issues detected"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Initial artifacts exist (project-brief.json, prd.json)",
+        "Registry integrity validation report artifacts exist",
+        "Recovered registry files present",
+        "Synchronization report artifacts exist",
+        "Final workflow output artifacts present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-048.md"
+    },
+    {
+      "id": "CUJ-049",
+      "name": "Cursor Plan Mode Deep Integration",
+      "description": "Test deep integration between Planner Agent (strategic planning) and Cursor Plan Mode (implementation planning), ensuring seamless handoff, artifact linking, and coordinated execution.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/cursor-plan-mode-integration-flow.yaml",
+      "agents": ["planner", "developer", "orchestrator"],
+      "skills": [],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test Cursor Plan Mode integration",
+        "Validate Planner Agent to Plan Mode handoff",
+        "Test strategic plan to implementation plan linking",
+        "User requests implementation after strategic plan created"
+      ],
+      "platform_compatibility": {
+        "claude": false,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Strategic plan artifact exists: `.claude/context/artifacts/plan-<id>.json`",
+        "Implementation plan artifact exists: `.cursor/plans/plan-<id>.json`",
+        "Linked artifacts with bidirectional references present",
+        "Implementation code files present",
+        "integration-validation-report.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-049.md"
+    },
+    {
+      "id": "CUJ-050",
+      "name": "End-to-End Workflow Robustness",
+      "description": "Test complete workflow resilience: multiple failure points, recovery at each stage, context loss at different points, validation failures throughout, and complete workflow completion after failures.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/enterprise-track.yaml",
+      "agents": ["planner", "orchestrator", "analyst", "pm", "architect", "developer", "qa"],
+      "skills": ["recovery", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test end-to-end workflow robustness",
+        "Test workflow recovery from multiple failures",
+        "Validate complete workflow resilience",
+        "Workflow encounters failures at various stages"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Initial artifacts exist (project-brief.json, prd.json, etc.)",
+        "Recovered artifacts present after each failure",
+        "Recovery documentation files present",
+        "Final workflow output artifacts present",
+        "end-to-end-resilience-report.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-050.md"
+    },
+    {
+      "id": "CUJ-051",
+      "name": "Artifact Publishing Validation",
+      "description": "Validate that artifact-publisher skill correctly publishes artifacts and integrates with artifact registry.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
+      "agents": ["planner", "qa"],
+      "skills": ["artifact-publisher", "plan-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test artifact publishing",
+        "Validate artifact-publisher integration",
+        "Check published artifacts"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Validation plan artifact exists: `plan-{{workflow_id}}.json`",
+        "Test artifacts exist: `test-plan.json`, `test-architecture.json`",
+        "publishing-validation-report.json artifact exists",
+        "Registry metadata artifact exists with publishing status",
+        "Error handling test result artifacts exist"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-051.md"
+    },
+    {
+      "id": "CUJ-052",
+      "name": "Artifact Registry Migration Test",
+      "description": "Test migration from legacy artifact-registry.mjs to run-manager.mjs, ensuring backward compatibility and data integrity.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/legacy-modernization-flow.yaml",
+      "agents": ["planner", "qa"],
+      "skills": ["plan-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test registry migration",
+        "Validate run-manager migration",
+        "Check registry consolidation"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Migration test plan artifact exists: `plan-{{workflow_id}}.json`",
+        "Legacy registry file exists: `.claude/context/registry/<workflow_id>/artifacts.json`",
+        "New registry file exists: `.claude/context/runtime/runs/<run_id>/artifact-registry.json`",
+        "migration-validation-report.json artifact exists",
+        "Backward compatibility test result artifacts exist"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-052.md"
+    },
+    {
+      "id": "CUJ-053",
+      "name": "Publishing Metadata Persistence Test",
+      "description": "Validate that publishing metadata persists correctly across workflow runs and system restarts.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
+      "agents": ["planner", "qa"],
+      "skills": ["artifact-publisher", "plan-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test publishing persistence",
+        "Validate publishing metadata storage",
+        "Check publishing status persistence"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Persistence test plan artifact exists: `plan-{{workflow_id}}.json`",
+        "Test artifacts present with publishing metadata",
+        "Registry files exist: `.claude/context/runtime/runs/<run_id>/artifact-registry.json`",
+        "publishing-persistence-report.json artifact exists"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-053.md"
+    },
+    {
+      "id": "CUJ-054",
+      "name": "Cross-Platform Publishing Sync Test",
+      "description": "Validate that publishing metadata syncs correctly across Claude, Cursor, and other platforms using context-bridge skill.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
+      "agents": ["planner", "qa"],
+      "skills": ["artifact-publisher", "context-bridge", "plan-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [".claude/schemas/artifact-metadata.schema.json"],
+      "triggers": [
+        "Test cross-platform publishing sync",
+        "Validate publishing metadata sync",
+        "Check platform publishing consistency"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Sync test plan artifact exists: `plan-{{workflow_id}}.json`",
+        "Claude registry file exists: `.claude/context/runtime/runs/<run_id>/artifact-registry.json`",
+        "Cursor artifacts exist: `.cursor/plans/artifacts/*.json`",
+        "cross-platform-sync-report.json artifact exists",
+        "Conflict resolution log files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-054.md"
+    },
+    {
+      "id": "CUJ-055",
+      "name": "Publishing Retry Logic Test",
+      "description": "Validate that publishing retry logic works correctly with exponential backoff and tracks all attempts in registry.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
+      "agents": ["planner", "qa"],
+      "skills": ["artifact-publisher", "plan-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test publishing retry logic",
+        "Validate retry with backoff",
+        "Check publishing retry tracking"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Retry test plan artifact exists: `plan-{{workflow_id}}.json`",
+        "Test artifacts present with various publishing scenarios",
+        "Registry files exist with retry attempt tracking: `.claude/context/runtime/runs/<run_id>/artifact-registry.json`",
+        "publishing-retry-report.json artifact exists",
+        "Timing measurement artifacts exist for backoff delays"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-055.md"
+    },
+    {
+      "id": "CUJ-056",
+      "name": "Workflow Recovery Protocol Test",
+      "description": "Test the recovery skill's ability to restore workflow state from file system artifacts after context loss or session interruption.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
+      "agents": ["planner", "orchestrator", "qa"],
+      "skills": ["recovery", "plan-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test recovery protocol",
+        "Validate workflow recovery",
+        "Check recovery from file system",
+        "Test stateless recovery from artifacts"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Recovery test plan artifact exists: `plan-{{workflow_id}}.json`",
+        "Initial workflow artifacts exist (project-brief.json, prd.json, etc.)",
+        "recovery-validation-report.json artifact exists",
+        "Recovered workflow state documentation files present",
+        "Completed workflow artifacts present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-056.md"
+    },
+    {
+      "id": "CUJ-057",
+      "name": "Plan Rating Validation",
+      "description": "Validate that the response-rater skill correctly enforces the minimum 7/10 plan quality score.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/greenfield-fullstack.yaml",
+      "agents": ["planner", "orchestrator", "developer", "qa"],
+      "skills": ["response-rater", "plan-generator"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test plan rating",
+        "Validate response-rater",
+        "Check plan enforcement",
+        "Test plan quality gates"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Test plan: `.claude/context/artifacts/test-plan-{id}.json`",
+        "Rating artifact: `.claude/context/runtime/runs/{run_id}/plans/{plan_id}-rating.json`",
+        "Validation report: `.claude/context/artifacts/rating-validation-{id}.json`"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-057.md"
+    },
+    {
+      "id": "CUJ-058",
+      "name": "Error Recovery and Workflow Resilience Validation",
+      "description": "Validate that workflows can recover from failures using retry logic, fallback agents, and checkpoint restoration.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/enterprise-track.yaml",
+      "agents": [],
+      "skills": ["recovery", "conflict-resolution", "optional-artifact-handler"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "`.claude/context/runtime/runs/{{run_id}}/checkpoints/step-{{n}}-checkpoint.json`: Checkpoint files for each step",
+        "`.claude/context/runtime/runs/{{run_id}}/recovery.json`: Recovery log with retry attempts and fallback activations",
+        "`.claude/context/runtime/runs/{{run_id}}/workflow-state.json`: Updated workflow state after recovery"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-058.md"
+    },
+    {
+      "id": "CUJ-059",
+      "name": "Workflow Performance Optimization",
+      "description": "Optimize workflow execution performance through parallel agent execution, checkpoint optimization, and resource management.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/performance-flow.yaml",
+      "agents": ["planner", "architect", "devops", "developer", "qa"],
+      "skills": [
+        "plan-generator",
+        "response-rater",
+        "dependency-analyzer",
+        "diagram-generator",
+        "recovery"
+      ],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Optimize workflow performance",
+        "Speed up workflow execution",
+        "Parallel agent execution",
+        "Reduce workflow latency"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Baseline metrics: `.claude/context/artifacts/performance-baseline-{id}.json`",
+        "Parallelization plan: `.claude/context/artifacts/parallel-execution-plan-{id}.json`",
+        "Checkpoint config: `.claude/context/artifacts/checkpoint-config-{id}.json`",
+        "Resource config: `.claude/context/artifacts/resource-config-{id}.json`",
+        "Performance report: `.claude/context/artifacts/performance-results-{id}.json`"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-059.md"
+    },
+    {
+      "id": "CUJ-060",
+      "name": "Cross-Platform CUJ Testing",
+      "description": "Validate that Customer User Journeys (CUJs) work consistently across Claude Code, Cursor, and Factory Droid platforms.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
+      "agents": ["planner", "devops", "qa", "analyst", "developer"],
+      "skills": ["context-bridge", "plan-generator", "response-rater", "artifact-publisher"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Test CUJ across platforms",
+        "Validate cross-platform CUJ consistency",
+        "Run CUJ on all platforms",
+        "Test platform compatibility"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Platform configs: `.claude/context/artifacts/platform-configs-{id}.json`",
+        "Test matrix: `.claude/context/artifacts/cuj-test-matrix-{id}.json`",
+        "Claude Code results: `.claude/context/artifacts/claude-code-results-{id}.json`",
+        "Cursor results: `.claude/context/artifacts/cursor-results-{id}.json`",
+        "Factory results: `.claude/context/artifacts/factory-results-{id}.json`",
+        "Comparison report: `.claude/context/artifacts/cross-platform-comparison-{id}.json`",
+        "Sync validation: `.claude/context/artifacts/context-sync-results-{id}.json`"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-060.md"
+    },
+    {
+      "id": "CUJ-061",
+      "name": "Artifact Publishing Workflow",
+      "description": "Publish workflow artifacts to the project feed for cross-platform visibility and collaboration.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/brownfield-fullstack.yaml",
+      "agents": ["planner", "developer", "qa"],
+      "skills": ["artifact-publisher", "context-bridge", "plan-generator", "response-rater"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Publish artifacts to project feed",
+        "Share artifacts with team",
+        "Make artifacts visible in project",
+        "Publish workflow results"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "artifact-inventory-{id}.json artifact exists",
+        "artifact-validation-{id}.json artifact exists",
+        "cross-platform-sync-{id}.json artifact exists",
+        "artifact-summary-{id}.md artifact exists",
+        "artifact-changelog-{id}.md artifact exists",
+        "Published artifacts present in project feed with sharing links"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-061.md"
+    },
+    {
+      "id": "CUJ-062",
+      "name": "Skill Integration Validation",
+      "description": "Validate that all skills (currently 43) are correctly integrated with their respective agents and trigger properly in workflows.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/automated-enterprise-flow.yaml",
+      "agents": ["planner", "developer", "qa"],
+      "skills": ["skill-manager", "plan-generator", "response-rater", "dependency-analyzer"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [
+        "Validate skill integration",
+        "Test all skills",
+        "Check skill-agent mapping",
+        "Verify skill invocations"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Skill inventory: `.claude/context/artifacts/skill-inventory-{id}.json`",
+        "Mapping validation: `.claude/context/artifacts/skill-mapping-validation-{id}.json`",
+        "Invocation results: `.claude/context/artifacts/skill-invocation-results-{id}.json`",
+        "Workflow integration: `.claude/context/artifacts/workflow-skill-integration-{id}.json`",
+        "Performance report: `.claude/context/artifacts/skill-performance-{id}.json`",
+        "Cross-platform report: `.claude/context/artifacts/skill-cross-platform-{id}.json`"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-062.md"
+    },
+    {
+      "id": "CUJ-063",
+      "name": "Error Recovery and Checkpoint Restoration",
+      "description": "Tests the error recovery mechanisms to ensure workflows can recover from failures gracefully.",
+      "category": "Testing & Validation",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/recovery-test-flow.yaml",
+      "agents": ["planner", "qa", "technical-writer"],
+      "skills": ["response-rater", "recovery"],
+      "primary_skill": null,
+      "schemas": [
+        ".claude/schemas/checkpoint.schema.json",
+        ".claude/schemas/fallback-agents.schema.json"
+      ],
+      "triggers": [
+        "Test error recovery mechanisms",
+        "Validate checkpoint restoration",
+        "Test workflow resilience"
+      ],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": false,
+        "factory": false
+      },
+      "expected_outputs": [
+        "Checkpoint files exist (`.claude/context/runtime/runs/<run_id>/checkpoints/checkpoint-phase-*.json`)",
+        "restoration-validation-report.json artifact exists",
+        "Fallback routing log file exists",
+        "Recovery documentation file exists (`.claude/context/logs/recovery.log`)",
+        "Recovery playbook files present"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-063.md"
+    },
+    {
+      "id": "CUJ-064",
+      "name": "Search Functionality",
+      "description": "Search codebase and documentation using Algolia-powered semantic search to quickly find relevant code patterns, documentation, and implementation examples.",
+      "category": "Search & Discovery",
+      "execution_mode": "workflow",
+      "workflow": ".claude/workflows/search-setup-flow.yaml",
+      "agents": [],
+      "skills": ["algolia-search", "repo-rag"],
+      "primary_skill": null,
+      "schemas": [],
+      "triggers": [],
+      "platform_compatibility": {
+        "claude": true,
+        "cursor": true,
+        "factory": false
+      },
+      "expected_outputs": [
+        "search-results.json artifact exists with structured search results",
+        "Matched document artifacts exist",
+        "Relevance score artifacts exist (numeric)",
+        "Code snippet artifacts present with context",
+        "File path and line number artifacts exist",
+        "search-metadata.json artifact exists with search execution metadata",
+        "Query parameter artifacts exist",
+        "Execution time artifacts exist (numeric)",
+        "Index statistics artifacts exist",
+        "Result count artifact exists (numeric)"
+      ],
+      "estimated_duration": "2-10 minutes",
+      "file_path": ".claude/docs/cujs/CUJ-064.md"
+    }
+  ]
+}

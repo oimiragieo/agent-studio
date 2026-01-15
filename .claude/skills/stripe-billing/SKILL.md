@@ -1,6 +1,7 @@
 ---
 name: stripe-billing
 description: Stripe payment and billing operations with progressive disclosure
+version: 1.0.0
 allowed-tools: [Bash, Read]
 ---
 

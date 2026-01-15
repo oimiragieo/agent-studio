@@ -184,57 +184,57 @@
       "properties": {
         "plan": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/plans/<plan_id>\\.json$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/plans/<plan_id>\\.json$",
           "description": "Path template for plan artifact. Placeholders: <run_id>, <plan_id>"
         },
         "plan_rating": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/plans/<plan_id>-rating\\.json$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating\\.json$",
           "description": "Path template for plan rating artifact. Placeholders: <run_id>, <plan_id>"
         },
         "plan_markdown": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/plans/<plan_id>\\.md$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/plans/<plan_id>\\.md$",
           "description": "Path template for plan markdown artifact. Placeholders: <run_id>, <plan_id>"
         },
         "manifest": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/artifacts/dev-manifest\\.json$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/artifacts/dev-manifest\\.json$",
           "description": "Path template for development manifest. Placeholder: <run_id>"
         },
         "reasoning": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/reasoning/<agent>\\.json$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/reasoning/<agent>\\.json$",
           "description": "Path template for agent reasoning files. Placeholders: <run_id>, <agent>"
         },
         "gate": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/gates/<step>-<agent>\\.json$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/gates/<step>-<agent>\\.json$",
           "description": "Path template for validation gate results. Placeholders: <run_id>, <step>, <agent>"
         },
         "checkpoint": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/checkpoint\\.json$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/checkpoint\\.json$",
           "description": "Path template for execution checkpoint. Placeholder: <run_id>"
         },
         "error_log": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/errors\\.log$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/errors\\.log$",
           "description": "Path template for error log. Placeholder: <run_id>"
         },
         "recovery_state": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/recovery-state\\.json$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/recovery-state\\.json$",
           "description": "Path template for recovery state. Placeholder: <run_id>"
         },
         "browser_session": {
           "type": "string",
-          "pattern": "^\\.claude/context/runs/<run_id>/browser-session\\.json$",
+          "pattern": "^\\.claude/context/runtime/runs/<run_id>/browser-session\\.json$",
           "description": "Path template for browser testing session data. Placeholder: <run_id>"
         }
       },
       "additionalProperties": false,
-      "description": "Standardized artifact path templates using <placeholder> format. All paths use .claude/context/runs/<run_id>/ structure for run isolation."
+      "description": "Standardized artifact path templates using <placeholder> format. All paths use .claude/context/runtime/runs/<run_id>/ structure for run isolation."
     }
   },
   "required": ["mode"],
@@ -367,15 +367,15 @@
       "requires_confirmation": false,
       "parallel_execution": false,
       "artifact_paths": {
-        "plan": ".claude/context/runs/<run_id>/plans/<plan_id>.json",
-        "plan_rating": ".claude/context/runs/<run_id>/plans/<plan_id>-rating.json",
-        "plan_markdown": ".claude/context/runs/<run_id>/plans/<plan_id>.md",
-        "manifest": ".claude/context/runs/<run_id>/artifacts/dev-manifest.json",
-        "reasoning": ".claude/context/runs/<run_id>/reasoning/<agent>.json",
-        "gate": ".claude/context/runs/<run_id>/gates/<step>-<agent>.json",
-        "checkpoint": ".claude/context/runs/<run_id>/checkpoint.json",
-        "error_log": ".claude/context/runs/<run_id>/errors.log",
-        "recovery_state": ".claude/context/runs/<run_id>/recovery-state.json"
+        "plan": ".claude/context/runtime/runs/<run_id>/plans/<plan_id>.json",
+        "plan_rating": ".claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json",
+        "plan_markdown": ".claude/context/runtime/runs/<run_id>/plans/<plan_id>.md",
+        "manifest": ".claude/context/runtime/runs/<run_id>/artifacts/dev-manifest.json",
+        "reasoning": ".claude/context/runtime/runs/<run_id>/reasoning/<agent>.json",
+        "gate": ".claude/context/runtime/runs/<run_id>/gates/<step>-<agent>.json",
+        "checkpoint": ".claude/context/runtime/runs/<run_id>/checkpoint.json",
+        "error_log": ".claude/context/runtime/runs/<run_id>/errors.log",
+        "recovery_state": ".claude/context/runtime/runs/<run_id>/recovery-state.json"
       }
     },
     {

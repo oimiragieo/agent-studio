@@ -1,7 +1,9 @@
 ---
 name: response-rater
 description: Run headless AI CLIs (Claude Code `claude`, Google `gemini`, optionally GitHub `copilot`) to rate an assistant response against a rubric and return actionable feedback plus a rewritten improved response; use for response quality audits, prompt/docs reviews, and "have another AI critique this answer" workflows.
+version: 1.0.0
 model: opus
+allowed-tools: bash
 ---
 
 # Response Rater

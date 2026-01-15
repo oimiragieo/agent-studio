@@ -152,7 +152,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 3. ⚠️ **Issue 2.1.2**: Rubric file path not validated before rating
 4. ✅ Response-rater skill invoked (Codex skill)
 5. ⚠️ **Issue 2.1.3**: If Codex skill fails, no fallback to single-provider rating
-6. ✅ Rating saved to `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+6. ✅ Rating saved to `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
 7. ✅ If score >= 7, proceed to Step 1
 
 **Step 1: Project Discovery**
@@ -404,7 +404,7 @@ This analysis walks through the application as if executing each CUJ scenario, i
 - **Impact**: Wastes time and API calls for unchanged plans
 - **Recommendation**:
   - Add plan hash-based caching
-  - Cache ratings in `.claude/context/runs/<run_id>/ratings/`
+  - Cache ratings in `.claude/context/runtime/runs/<run_id>/ratings/`
   - Invalidate cache on plan changes
 
 **Issue 4.1.3: Rubric File Not Validated**

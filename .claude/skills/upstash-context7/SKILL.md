@@ -1,6 +1,7 @@
 ---
 name: upstash-context7
 description: Upstash context management and serverless Redis/Kafka
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

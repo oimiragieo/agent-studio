@@ -159,6 +159,35 @@ When activated as the PM agent, systematically execute:
 
 **Available Skills for PM**:
 
+### @azure-devops Skill
+
+**When to Use**:
+
+- Creating work items for features, epics, or user stories
+- Querying work items with WIQL to track backlog
+- Updating work item status and linking related items
+- Managing work item hierarchies (epics → features → stories)
+
+**How to Invoke**:
+
+- Natural language: "Create a work item for this feature", "Query all active user stories", "Update work item status to Done"
+- Claude: Use azure-devops skill with appropriate tool (create-work-item, query-work-items, update-work-item, etc.)
+
+**Environment Requirements**:
+
+- `AZURE_DEVOPS_ORG_URL` must be set (e.g., `https://dev.azure.com/your-org`)
+- `AZURE_DEVOPS_PAT` must have Work Items: Read & Write permissions
+
+**Example Usage**:
+
+```
+Use azure-devops skill to create a work item:
+- Type: User Story
+- Title: "As a user, I want to login with email"
+- Description: "User story for email-based authentication"
+- Acceptance Criteria: "User can login with email and password"
+```
+
 ### plan-generator Skill
 
 **When to Use**:

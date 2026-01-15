@@ -31,8 +31,8 @@ declare -A MODEL_COMMANDS=(
     # Direct API models
     # NOTE: --permission-mode bypassPermissions removed for security
     # Use --bypass-permissions flag to enable (with warning)
-    ["opus"]="claude -p \"\$PROMPT\" --model claude-opus-4-5-20251124 --output-format json"
-    ["sonnet"]="claude -p \"\$PROMPT\" --model claude-sonnet-4-5-20250929 --output-format json"
+    ["opus"]="claude -p \"\$PROMPT\" --model claude-opus-4-5-20251101 --output-format json"
+    ["sonnet"]="claude -p \"\$PROMPT\" --model claude-sonnet-4-5 --output-format json"
     # Gemini - positional prompt (one-shot), -p is DEPRECATED
     ["gemini"]="gemini \"\$PROMPT\" --model gemini-3-pro-preview --output-format json"
     # Codex - use 'codex exec' for non-interactive, --json for structured output

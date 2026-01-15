@@ -28,13 +28,14 @@ import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parseLargeJSON, shouldUseStreaming } from './streaming-json-parser.mjs';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '../..');
 
 // File paths (use forward slashes for cross-platform compatibility)
-const REGISTRY_JSON_PATH = path.join(ROOT, '.claude/context/cuj-registry.json');
+const REGISTRY_JSON_PATH = resolveConfigPath('cuj-registry.json', { read: true });
 const INDEX_MD_PATH = path.join(ROOT, '.claude/docs/cujs/CUJ-INDEX.md');
 const CUJ_DOCS_DIR = path.join(ROOT, '.claude/docs/cujs');
 
@@ -424,7 +425,7 @@ export function getValidationMetadata() {
  * Generate standardized artifact path with placeholders
  *
  * Creates artifact paths using the canonical <placeholder> format.
- * All paths follow the .claude/context/runs/<run_id>/ structure.
+ * All paths follow the .claude/context/runtime/runs/<run_id>/ structure.
  *
  * @param {string} type - Artifact type (plan, plan_rating, manifest, reasoning, gate, checkpoint, error_log, recovery_state, browser_session)
  * @param {string} [runId='<run_id>'] - Run ID (defaults to placeholder)
@@ -436,21 +437,21 @@ export function getValidationMetadata() {
  *
  * @example
  * // With placeholders (for templates)
- * generateArtifactPath('plan'); // '.claude/context/runs/<run_id>/plans/<plan_id>.json'
- * generateArtifactPath('plan_rating'); // '.claude/context/runs/<run_id>/plans/<plan_id>-rating.json'
- * generateArtifactPath('reasoning'); // '.claude/context/runs/<run_id>/reasoning/<agent>.json'
- * generateArtifactPath('gate'); // '.claude/context/runs/<run_id>/gates/<step>-<agent>.json'
+ * generateArtifactPath('plan'); // '.claude/context/runtime/runs/<run_id>/plans/<plan_id>.json'
+ * generateArtifactPath('plan_rating'); // '.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json'
+ * generateArtifactPath('reasoning'); // '.claude/context/runtime/runs/<run_id>/reasoning/<agent>.json'
+ * generateArtifactPath('gate'); // '.claude/context/runtime/runs/<run_id>/gates/<step>-<agent>.json'
  *
  * @example
  * // With actual values (for runtime)
  * generateArtifactPath('plan', 'run-001', 'plan-greenfield');
- * // '.claude/context/runs/run-001/plans/plan-greenfield.json'
+ * // '.claude/context/runtime/runs/run-001/plans/plan-greenfield.json'
  *
  * generateArtifactPath('reasoning', 'run-001', null, 'developer');
- * // '.claude/context/runs/run-001/reasoning/developer.json'
+ * // '.claude/context/runtime/runs/run-001/reasoning/developer.json'
  *
  * generateArtifactPath('gate', 'run-001', null, 'developer', '06');
- * // '.claude/context/runs/run-001/gates/06-developer.json'
+ * // '.claude/context/runtime/runs/run-001/gates/06-developer.json'
  */
 export function generateArtifactPath(
   type,
@@ -460,16 +461,16 @@ export function generateArtifactPath(
   step = '<step>'
 ) {
   const artifactTemplates = {
-    plan: `.claude/context/runs/${runId}/plans/${planId}.json`,
-    plan_rating: `.claude/context/runs/${runId}/plans/${planId}-rating.json`,
-    plan_markdown: `.claude/context/runs/${runId}/plans/${planId}.md`,
-    manifest: `.claude/context/runs/${runId}/artifacts/dev-manifest.json`,
-    reasoning: `.claude/context/runs/${runId}/reasoning/${agent}.json`,
-    gate: `.claude/context/runs/${runId}/gates/${step}-${agent}.json`,
-    checkpoint: `.claude/context/runs/${runId}/checkpoint.json`,
-    error_log: `.claude/context/runs/${runId}/errors.log`,
-    recovery_state: `.claude/context/runs/${runId}/recovery-state.json`,
-    browser_session: `.claude/context/runs/${runId}/browser-session.json`,
+    plan: `.claude/context/runtime/runs/${runId}/plans/${planId}.json`,
+    plan_rating: `.claude/context/runtime/runs/${runId}/plans/${planId}-rating.json`,
+    plan_markdown: `.claude/context/runtime/runs/${runId}/plans/${planId}.md`,
+    manifest: `.claude/context/runtime/runs/${runId}/artifacts/dev-manifest.json`,
+    reasoning: `.claude/context/runtime/runs/${runId}/reasoning/${agent}.json`,
+    gate: `.claude/context/runtime/runs/${runId}/gates/${step}-${agent}.json`,
+    checkpoint: `.claude/context/runtime/runs/${runId}/checkpoint.json`,
+    error_log: `.claude/context/runtime/runs/${runId}/errors.log`,
+    recovery_state: `.claude/context/runtime/runs/${runId}/recovery-state.json`,
+    browser_session: `.claude/context/runtime/runs/${runId}/browser-session.json`,
   };
 
   if (!artifactTemplates[type]) {
@@ -493,8 +494,8 @@ export function generateArtifactPath(
  *
  * @example
  * const paths = getAllArtifactPaths('run-001', 'plan-greenfield');
- * console.log(paths.plan); // '.claude/context/runs/run-001/plans/plan-greenfield.json'
- * console.log(paths.checkpoint); // '.claude/context/runs/run-001/checkpoint.json'
+ * console.log(paths.plan); // '.claude/context/runtime/runs/run-001/plans/plan-greenfield.json'
+ * console.log(paths.checkpoint); // '.claude/context/runtime/runs/run-001/checkpoint.json'
  */
 export function getAllArtifactPaths(runId = '<run_id>', planId = '<plan_id>') {
   return {

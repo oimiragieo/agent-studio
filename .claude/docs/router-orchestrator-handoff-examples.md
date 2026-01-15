@@ -56,7 +56,7 @@ const result = await processUserPrompt(
     sessionContext: {
       session_id: 'router-sess-abc123',
       router_classification: {
-        model: 'claude-3-5-haiku-20241022',
+        model: 'claude-haiku-4-5',
         intent: 'web_app',
       },
       cost_tracking: {
@@ -66,7 +66,7 @@ const result = await processUserPrompt(
         model_usage: [
           {
             timestamp: '2025-01-12T10:00:00Z',
-            model: 'claude-3-5-haiku-20241022',
+            model: 'claude-haiku-4-5',
             input_tokens: 150,
             output_tokens: 100,
             cost_usd: 0.00045,
@@ -111,7 +111,7 @@ const result = await processUserPrompt(
       routerHandoff: {
         timestamp: '2025-01-12T10:00:05Z',
         sessionId: 'router-sess-abc123',
-        routerModel: 'claude-3-5-haiku-20241022',
+        routerModel: 'claude-haiku-4-5',
         routingDecision: { ... },
         accumulatedCosts: { ... }
       }
@@ -281,7 +281,7 @@ const result = await processUserPrompt(
     sessionContext: {
       session_id: 'router-sess-jkl012',
       router_classification: {
-        model: 'claude-3-5-haiku-20241022',
+        model: 'claude-haiku-4-5',
         intent: 'infrastructure',
         cloud_provider: 'gcp',
       },
@@ -383,7 +383,7 @@ const result = await processUserPrompt(
       model_usage: [
         {
           timestamp: '2025-01-12T10:00:00Z',
-          model: 'claude-3-5-haiku-20241022',
+          model: 'claude-haiku-4-5',
           input_tokens: 150,
           output_tokens: 100,
           cost_usd: 0.00045
@@ -397,7 +397,7 @@ const result = await processUserPrompt(
       model_usage: [
         {
           timestamp: '2025-01-12T10:00:05Z',
-          model: 'claude-sonnet-4-20250514',
+          model: 'claude-sonnet-4-5',
           input_tokens: 400,
           output_tokens: 300,
           cost_usd: 0.0012
@@ -480,7 +480,7 @@ const result = await processUserPrompt(
     routerHandoff: {
       timestamp: '2025-01-12T10:00:05Z',
       sessionId: 'router-sess-abc123',
-      routerModel: 'claude-3-5-haiku-20241022',
+      routerModel: 'claude-haiku-4-5',
       routingDecision: {
         intent: 'web_app',
         workflow: '@.claude/workflows/greenfield-fullstack.yaml',

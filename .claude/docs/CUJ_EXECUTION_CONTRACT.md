@@ -43,16 +43,16 @@ The execution contract is a structured definition that enables:
     "parallel_execution": false,
     "dependencies": ["CUJ-001", "CUJ-002"],
     "artifact_paths": {
-      "plan": ".claude/context/runs/<run_id>/plans/<plan_id>.json",
-      "plan_rating": ".claude/context/runs/<run_id>/plans/<plan_id>-rating.json",
-      "plan_markdown": ".claude/context/runs/<run_id>/plans/<plan_id>.md",
-      "manifest": ".claude/context/runs/<run_id>/artifacts/dev-manifest.json",
-      "reasoning": ".claude/context/runs/<run_id>/reasoning/<agent>.json",
-      "gate": ".claude/context/runs/<run_id>/gates/<step>-<agent>.json",
-      "checkpoint": ".claude/context/runs/<run_id>/checkpoint.json",
-      "error_log": ".claude/context/runs/<run_id>/errors.log",
-      "recovery_state": ".claude/context/runs/<run_id>/recovery-state.json",
-      "browser_session": ".claude/context/runs/<run_id>/browser-session.json"
+      "plan": ".claude/context/runtime/runs/<run_id>/plans/<plan_id>.json",
+      "plan_rating": ".claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json",
+      "plan_markdown": ".claude/context/runtime/runs/<run_id>/plans/<plan_id>.md",
+      "manifest": ".claude/context/runtime/runs/<run_id>/artifacts/dev-manifest.json",
+      "reasoning": ".claude/context/runtime/runs/<run_id>/reasoning/<agent>.json",
+      "gate": ".claude/context/runtime/runs/<run_id>/gates/<step>-<agent>.json",
+      "checkpoint": ".claude/context/runtime/runs/<run_id>/checkpoint.json",
+      "error_log": ".claude/context/runtime/runs/<run_id>/errors.log",
+      "recovery_state": ".claude/context/runtime/runs/<run_id>/recovery-state.json",
+      "browser_session": ".claude/context/runtime/runs/<run_id>/browser-session.json"
     }
   }
 }
@@ -295,7 +295,7 @@ CUJ IDs that must complete before this CUJ can execute.
 
 ### artifact_paths
 
-Standardized artifact path templates using `<placeholder>` format. All paths follow the `.claude/context/runs/<run_id>/` structure for run isolation.
+Standardized artifact path templates using `<placeholder>` format. All paths follow the `.claude/context/runtime/runs/<run_id>/` structure for run isolation.
 
 **Purpose**: Provides consistent artifact path conventions across all CUJs, enabling:
 
@@ -306,28 +306,28 @@ Standardized artifact path templates using `<placeholder>` format. All paths fol
 
 **Available Artifact Types**:
 
-| Artifact Type     | Path Template                                               | Description                           |
-| ----------------- | ----------------------------------------------------------- | ------------------------------------- |
-| `plan`            | `.claude/context/runs/<run_id>/plans/<plan_id>.json`        | Plan artifact (JSON)                  |
-| `plan_rating`     | `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json` | Plan rating from response-rater skill |
-| `plan_markdown`   | `.claude/context/runs/<run_id>/plans/<plan_id>.md`          | Plan artifact (Markdown)              |
-| `manifest`        | `.claude/context/runs/<run_id>/artifacts/dev-manifest.json` | Development manifest                  |
-| `reasoning`       | `.claude/context/runs/<run_id>/reasoning/<agent>.json`      | Agent reasoning files                 |
-| `gate`            | `.claude/context/runs/<run_id>/gates/<step>-<agent>.json`   | Validation gate results               |
-| `checkpoint`      | `.claude/context/runs/<run_id>/checkpoint.json`             | Execution checkpoint                  |
-| `error_log`       | `.claude/context/runs/<run_id>/errors.log`                  | Error log                             |
-| `recovery_state`  | `.claude/context/runs/<run_id>/recovery-state.json`         | Recovery state                        |
-| `browser_session` | `.claude/context/runs/<run_id>/browser-session.json`        | Browser testing session               |
+| Artifact Type     | Path Template                                                       | Description                           |
+| ----------------- | ------------------------------------------------------------------- | ------------------------------------- |
+| `plan`            | `.claude/context/runtime/runs/<run_id>/plans/<plan_id>.json`        | Plan artifact (JSON)                  |
+| `plan_rating`     | `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json` | Plan rating from response-rater skill |
+| `plan_markdown`   | `.claude/context/runtime/runs/<run_id>/plans/<plan_id>.md`          | Plan artifact (Markdown)              |
+| `manifest`        | `.claude/context/runtime/runs/<run_id>/artifacts/dev-manifest.json` | Development manifest                  |
+| `reasoning`       | `.claude/context/runtime/runs/<run_id>/reasoning/<agent>.json`      | Agent reasoning files                 |
+| `gate`            | `.claude/context/runtime/runs/<run_id>/gates/<step>-<agent>.json`   | Validation gate results               |
+| `checkpoint`      | `.claude/context/runtime/runs/<run_id>/checkpoint.json`             | Execution checkpoint                  |
+| `error_log`       | `.claude/context/runtime/runs/<run_id>/errors.log`                  | Error log                             |
+| `recovery_state`  | `.claude/context/runtime/runs/<run_id>/recovery-state.json`         | Recovery state                        |
+| `browser_session` | `.claude/context/runtime/runs/<run_id>/browser-session.json`        | Browser testing session               |
 
 **Example**:
 
 ```json
 {
   "artifact_paths": {
-    "plan": ".claude/context/runs/<run_id>/plans/<plan_id>.json",
-    "plan_rating": ".claude/context/runs/<run_id>/plans/<plan_id>-rating.json",
-    "manifest": ".claude/context/runs/<run_id>/artifacts/dev-manifest.json",
-    "checkpoint": ".claude/context/runs/<run_id>/checkpoint.json"
+    "plan": ".claude/context/runtime/runs/<run_id>/plans/<plan_id>.json",
+    "plan_rating": ".claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json",
+    "manifest": ".claude/context/runtime/runs/<run_id>/artifacts/dev-manifest.json",
+    "checkpoint": ".claude/context/runtime/runs/<run_id>/checkpoint.json"
   }
 }
 ```
@@ -346,11 +346,11 @@ import { generateArtifactPath, getAllArtifactPaths } from '.claude/tools/cuj-par
 
 // Generate single artifact path with placeholders
 const planPath = generateArtifactPath('plan');
-// Returns: '.claude/context/runs/<run_id>/plans/<plan_id>.json'
+// Returns: '.claude/context/runtime/runs/<run_id>/plans/<plan_id>.json'
 
 // Generate path with actual IDs
 const actualPlanPath = generateArtifactPath('plan', 'run-001', 'plan-greenfield');
-// Returns: '.claude/context/runs/run-001/plans/plan-greenfield.json'
+// Returns: '.claude/context/runtime/runs/run-001/plans/plan-greenfield.json'
 
 // Get all artifact paths for a run
 const allPaths = getAllArtifactPaths('run-001', 'plan-greenfield');

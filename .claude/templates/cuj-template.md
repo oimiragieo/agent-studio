@@ -51,7 +51,7 @@
 - Rubric: completeness, feasibility, risk mitigation, agent coverage, integration
 - If score < 7: Return to planner with feedback (max 3 attempts)
 - If score >= 7: Proceed to Step 1
-- Records rating in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+- Records rating in `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
 
 ### Step 1: [Step Name]
 
@@ -147,7 +147,7 @@ Examples:
 
 - `- [ ] Artifact created: plan-{{workflow_id}}.json (validated by gate file: gates/step-0.json)`
 - `- [ ] Schema validation passes: artifact matches .claude/schemas/plan.schema.json`
-- `- [ ] Registry entry created: artifact registered in .claude/context/runs/{{run_id}}/artifact-registry.json`
+- `- [ ] Registry entry created: artifact registered in .claude/context/runtime/runs/{{run_id}}/artifact-registry.json`
 - `- [ ] Gate file passes: gates/step-1.json has valid: true`
 
 - [ ] [Criterion 1: specific, measurable with artifact reference]
@@ -172,7 +172,7 @@ Examples:
 
 ### Rollback Procedures
 
-1. **Partial Completion**: Save checkpoint to `.claude/context/runs/{{run_id}}/checkpoint.json`
+1. **Partial Completion**: Save checkpoint to `.claude/context/runtime/runs/{{run_id}}/checkpoint.json`
 2. **Failed Validation**: Return to previous passing gate
 3. **Critical Failure**: Escalate to human with full context
 
@@ -185,9 +185,9 @@ Examples:
 
 ### Recovery Artifacts
 
-- Error log: `.claude/context/runs/{{run_id}}/errors.log`
-- Recovery state: `.claude/context/runs/{{run_id}}/recovery-state.json`
-- Checkpoint: `.claude/context/runs/{{run_id}}/checkpoint.json`
+- Error log: `.claude/context/runtime/runs/{{run_id}}/errors.log`
+- Recovery state: `.claude/context/runtime/runs/{{run_id}}/recovery-state.json`
+- Checkpoint: `.claude/context/runtime/runs/{{run_id}}/checkpoint.json`
 
 ## Related Documentation
 

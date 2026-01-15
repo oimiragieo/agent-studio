@@ -93,7 +93,7 @@ This template provides guidance for writing measurable, verifiable success crite
 **Examples**:
 | Criterion | Measurement | Target |
 |-----------|-------------|--------|
-| Plan quality | response-rater skill score | >= 7/10 (recorded in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`) |
+| Plan quality | response-rater skill score | >= 7/10 (recorded in `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`) |
 | Test coverage | Coverage percentage | >= 80% in coverage report |
 | Performance | Response time | < 200ms P95 |
 | Build success | Exit code | Exit code 0 |

@@ -20,6 +20,7 @@
 import { readFile, writeFile, mkdir, stat } from 'fs/promises';
 import { join, dirname, resolve, basename, extname, relative } from 'path';
 import { fileURLToPath } from 'url';
+import { resolveConfigPath } from '../../tools/context-path-resolver.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = resolve(__dirname, '../../../..');
@@ -90,7 +91,7 @@ Examples:
  */
 async function loadRuleIndex() {
   try {
-    const indexPath = join(PROJECT_ROOT, '.claude/context/rule-index.json');
+    const indexPath = resolveConfigPath('rule-index.json', { read: true });
     const content = await readFile(indexPath, 'utf-8');
     return JSON.parse(content);
   } catch (error) {

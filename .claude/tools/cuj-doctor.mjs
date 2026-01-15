@@ -14,12 +14,14 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { resolveConfigPath } from './context-path-resolver.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '../..');
 
 const CUJS_DIR = path.join(ROOT_DIR, '.claude/docs/cujs');
-const REGISTRY_PATH = path.join(ROOT_DIR, '.claude/context/cuj-registry.json');
+const REGISTRY_PATH = resolveConfigPath('cuj-registry.json', { read: true });
 const INDEX_PATH = path.join(ROOT_DIR, '.claude/docs/cujs/CUJ-INDEX.md');
 const WORKFLOWS_DIR = path.join(ROOT_DIR, '.claude/workflows');
 const SKILLS_DIR = path.join(ROOT_DIR, '.claude/skills');

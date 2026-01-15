@@ -108,7 +108,9 @@ describe('Validation Pipeline Integration', () => {
 
 describe('CUJ Execution Mode Normalization', () => {
   it('should have valid execution modes in registry', async () => {
-    const registryPath = path.join(ROOT, '.claude', 'context', 'cuj-registry.json');
+    // Use resolver to get canonical config path
+    const { resolveConfigPath } = await import('../../.claude/tools/context-path-resolver.mjs');
+    const registryPath = resolveConfigPath('cuj-registry.json', { read: true });
     if (!fs.existsSync(registryPath)) {
       console.log('Registry not found, skipping');
       return;

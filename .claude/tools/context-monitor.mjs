@@ -7,11 +7,14 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CONTEXT_HISTORY_FILE = path.join(__dirname, '../context/history/context-usage.json');
+function getContextHistoryPath(options = { read: false }) {
+  return resolveRuntimePath('history/context-usage.json', options);
+}
 const ALERT_THRESHOLD = 0.7; // Alert at 70% of max context
 
 /**
@@ -271,13 +274,9 @@ export function generateReport(agentName = null) {
  */
 function loadHistory() {
   try {
-    const dir = path.dirname(CONTEXT_HISTORY_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    if (fs.existsSync(CONTEXT_HISTORY_FILE)) {
-      const data = fs.readFileSync(CONTEXT_HISTORY_FILE, 'utf8');
+    const historyPath = getContextHistoryPath({ read: true });
+    if (fs.existsSync(historyPath)) {
+      const data = fs.readFileSync(historyPath, 'utf8');
       return JSON.parse(data);
     }
   } catch (error) {
@@ -292,12 +291,8 @@ function loadHistory() {
  */
 function saveHistory(history) {
   try {
-    const dir = path.dirname(CONTEXT_HISTORY_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    fs.writeFileSync(CONTEXT_HISTORY_FILE, JSON.stringify(history, null, 2), 'utf8');
+    const historyPath = getContextHistoryPath({ read: false });
+    fs.writeFileSync(historyPath, JSON.stringify(history, null, 2), 'utf8');
   } catch (error) {
     console.error('Error saving history:', error);
   }

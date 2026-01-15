@@ -9,13 +9,14 @@ import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { resolveRuntimePath } from '../context-path-resolver.mjs';
 // Import will be done dynamically to avoid circular dependencies
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const COST_LOG_DIR = join(__dirname, '../../../context/cost-logs');
-const COST_CONFIG_FILE = join(__dirname, '../../../context/cost-config.json');
+const COST_LOG_DIR = resolveRuntimePath('enterprise/cost-logs', { read: false });
+const COST_CONFIG_FILE = resolveRuntimePath('enterprise/cost-config.json', { read: true });
 
 /**
  * Estimate token count for a string (rough approximation)

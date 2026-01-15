@@ -1,6 +1,7 @@
 ---
 name: datadog-observability
 description: Datadog monitoring, APM, logs, and infrastructure observability
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

@@ -17,11 +17,12 @@ import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
 import yaml from 'js-yaml';
 import { getAllTools, getTool } from '../native/registry.mjs';
+import { resolveRuntimePath } from '../context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const GRAPH_DIR = join(__dirname, '../../../context/knowledge-graph');
+const GRAPH_DIR = resolveRuntimePath('orchestration/knowledge-graph', { read: false });
 const GRAPH_FILE = join(GRAPH_DIR, 'agent-tool-graph.json');
 const VECTOR_INDEX_FILE = join(GRAPH_DIR, 'vector-index.json');
 

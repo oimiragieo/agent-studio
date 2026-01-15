@@ -1,6 +1,7 @@
 ---
 name: google-datacommons
 description: Google Data Commons API for public datasets
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

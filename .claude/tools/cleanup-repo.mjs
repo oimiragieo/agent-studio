@@ -18,6 +18,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { glob } from 'glob';
+import { getCanonicalPath, LEGACY_PATHS } from './context-path-resolver.mjs';
 import readline from 'readline';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -86,13 +87,13 @@ const CLEANUP_PATTERNS = {
 
   // Temporary files in .claude/context/tmp/
   claudeTempFiles: {
-    pattern: '.claude/context/tmp/*.txt',
-    description: 'Temporary files in .claude/context/tmp/',
+    pattern: 'runtime tmp (*.txt)',
+    description: 'Temporary files in runtime tmp (plus legacy tmp during migration)',
   },
 
   // Old log files
   oldLogs: {
-    patterns: ['*.log', '.claude/context/logs/*.log', '.claude/context/logs/*.txt'],
+    patterns: ['*.log'],
     ageInHours: 168, // 7 days
     description: 'Log files older than 7 days',
   },
@@ -445,21 +446,24 @@ async function findClaudeTempFiles() {
   const results = [];
 
   try {
-    const tmpDir = path.join(projectRoot, '.claude', 'context', 'tmp');
+    const tmpDirs = [getCanonicalPath('runtime', 'tmp'), path.join(LEGACY_PATHS.runtime, 'tmp')];
+    const uniqueTmpDirs = Array.from(new Set(tmpDirs));
 
-    if (!fs.existsSync(tmpDir)) {
-      return results;
-    }
+    for (const tmpDir of uniqueTmpDirs) {
+      if (!fs.existsSync(tmpDir)) {
+        continue;
+      }
 
-    const pattern = path.join(tmpDir, '*.txt').replace(/\\/g, '/');
-    const matches = await glob(pattern, {
-      absolute: true,
-      dot: false,
-    });
+      const pattern = path.join(tmpDir, '*.txt').replace(/\\/g, '/');
+      const matches = await glob(pattern, {
+        absolute: true,
+        dot: false,
+      });
 
-    for (const match of matches) {
-      if (!isProtectedPath(match)) {
-        results.push(match);
+      for (const match of matches) {
+        if (!isProtectedPath(match)) {
+          results.push(match);
+        }
       }
     }
   } catch (error) {
@@ -490,9 +494,15 @@ async function findOldLogs() {
       }
     }
 
-    // .claude/context/logs/ files
-    const logsDir = path.join(projectRoot, '.claude', 'context', 'logs');
-    if (fs.existsSync(logsDir)) {
+    // Claude logs (canonical runtime + legacy during migration)
+    const logsDirs = [getCanonicalPath('runtime', 'logs'), path.join(LEGACY_PATHS.runtime, 'logs')];
+    const uniqueLogsDirs = Array.from(new Set(logsDirs));
+
+    for (const logsDir of uniqueLogsDirs) {
+      if (!fs.existsSync(logsDir)) {
+        continue;
+      }
+
       const logsPattern = path.join(logsDir, '*').replace(/\\/g, '/');
       const logsMatches = await glob(logsPattern, {
         absolute: true,

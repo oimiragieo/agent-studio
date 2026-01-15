@@ -1,6 +1,7 @@
 ---
 name: semgrep-security
 description: Semgrep code security scanning and SAST analysis
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob]
 ---
 

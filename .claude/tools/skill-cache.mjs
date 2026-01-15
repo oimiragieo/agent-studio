@@ -11,11 +11,23 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CACHE_DIR = path.join(process.cwd(), '.claude/context/cache/skills');
+// Lazy cache dir resolution to avoid dir creation at import time in --no-side-effects mode
+let CACHE_DIR = null;
+function getCacheDir() {
+  if (CACHE_DIR) return CACHE_DIR;
+  const skipDirCreation =
+    process.env.SKIP_WORKFLOW_EXECUTION === 'true' ||
+    process.env.NO_SIDE_EFFECTS === 'true' ||
+    process.argv.includes('--no-side-effects') ||
+    process.argv.includes('--ci');
+  CACHE_DIR = resolveRuntimePath('cache/skills', { write: !skipDirCreation });
+  return CACHE_DIR;
+}
 const DEFAULT_TTL_MS = 3600000; // 1 hour
 const MAX_CACHE_SIZE = 200; // Maximum cache files
 
@@ -66,12 +78,13 @@ function getCacheKey(skillName, params) {
  * @returns {number} Number of entries removed
  */
 function pruneCache() {
-  if (!fs.existsSync(CACHE_DIR)) {
+  const cacheDir = getCacheDir();
+  if (!fs.existsSync(cacheDir)) {
     return 0;
   }
 
   try {
-    const files = fs.readdirSync(CACHE_DIR);
+    const files = fs.readdirSync(cacheDir);
 
     if (files.length <= MAX_CACHE_SIZE) {
       return 0;
@@ -80,7 +93,7 @@ function pruneCache() {
     // Get file stats and sort by modification time (oldest first)
     const fileStats = files
       .map(file => {
-        const filePath = path.join(CACHE_DIR, file);
+        const filePath = path.join(cacheDir, file);
         try {
           const cached = JSON.parse(fs.readFileSync(filePath, 'utf8'));
           return {
@@ -131,7 +144,8 @@ function pruneCache() {
  */
 export function getCachedResult(skillName, params, ttlMs = DEFAULT_TTL_MS) {
   const cacheKey = getCacheKey(skillName, params);
-  const cachePath = path.join(CACHE_DIR, `${cacheKey}.json`);
+  const cacheDir = getCacheDir();
+  const cachePath = path.join(cacheDir, `${cacheKey}.json`);
 
   if (!fs.existsSync(cachePath)) {
     return null;
@@ -162,10 +176,12 @@ export function getCachedResult(skillName, params, ttlMs = DEFAULT_TTL_MS) {
  */
 export function setCachedResult(skillName, params, result) {
   const cacheKey = getCacheKey(skillName, params);
-  const cachePath = path.join(CACHE_DIR, `${cacheKey}.json`);
+  const cacheDir = getCacheDir();
+  const cachePath = path.join(cacheDir, `${cacheKey}.json`);
 
   try {
-    fs.mkdirSync(CACHE_DIR, { recursive: true });
+    const cacheDir = getCacheDir();
+    fs.mkdirSync(cacheDir, { recursive: true });
     fs.writeFileSync(
       cachePath,
       JSON.stringify(
@@ -192,19 +208,20 @@ export function setCachedResult(skillName, params, result) {
  * @param {string|null} skillName - Skill name to clear, or null for all
  */
 export function clearCache(skillName = null) {
-  if (!fs.existsSync(CACHE_DIR)) {
+  const cacheDir = getCacheDir();
+  if (!fs.existsSync(cacheDir)) {
     return;
   }
 
   try {
-    const files = fs.readdirSync(CACHE_DIR);
+    const files = fs.readdirSync(cacheDir);
     for (const file of files) {
       if (!skillName) {
         // Clear all
         fs.unlinkSync(path.join(CACHE_DIR, file));
       } else {
         // Clear specific skill (check file content)
-        const filePath = path.join(CACHE_DIR, file);
+        const filePath = path.join(cacheDir, file);
         const cached = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         if (cached.skillName === skillName) {
           fs.unlinkSync(filePath);
@@ -224,18 +241,19 @@ export function clearCache(skillName = null) {
  * @returns {object} Cache stats (total files, total size, oldest/newest)
  */
 export function getCacheStats() {
-  if (!fs.existsSync(CACHE_DIR)) {
+  const cacheDir = getCacheDir();
+  if (!fs.existsSync(cacheDir)) {
     return { files: 0, totalSize: 0, oldest: null, newest: null };
   }
 
   try {
-    const files = fs.readdirSync(CACHE_DIR);
+    const files = fs.readdirSync(cacheDir);
     let totalSize = 0;
     let oldest = Infinity;
     let newest = 0;
 
     for (const file of files) {
-      const filePath = path.join(CACHE_DIR, file);
+      const filePath = path.join(cacheDir, file);
       const stats = fs.statSync(filePath);
       totalSize += stats.size;
 
@@ -263,17 +281,18 @@ export function getCacheStats() {
  * @returns {number} Number of entries pruned
  */
 export function pruneExpiredCache(ttlMs = DEFAULT_TTL_MS) {
-  if (!fs.existsSync(CACHE_DIR)) {
+  const cacheDir = getCacheDir();
+  if (!fs.existsSync(cacheDir)) {
     return 0;
   }
 
   let pruned = 0;
   try {
-    const files = fs.readdirSync(CACHE_DIR);
+    const files = fs.readdirSync(cacheDir);
     const now = Date.now();
 
     for (const file of files) {
-      const filePath = path.join(CACHE_DIR, file);
+      const filePath = path.join(cacheDir, file);
       const cached = JSON.parse(fs.readFileSync(filePath, 'utf8'));
       const age = now - cached.timestamp;
 

@@ -16,11 +16,12 @@ import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { resolveRuntimePath } from '../context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const CACHE_DIR = join(__dirname, '../../../context/orchestration-cache');
+const CACHE_DIR = resolveRuntimePath('orchestration/orchestration-cache', { read: false });
 const CACHE_FILE = join(CACHE_DIR, 'semantic-cache.json');
 const CONFIDENCE_THRESHOLD = 0.7; // Threshold for triggering dynamic probing
 

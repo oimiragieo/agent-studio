@@ -1,6 +1,7 @@
 ---
 name: optional-artifact-handler
 description: Handles optional artifact inputs in workflows. Manages workflows that can proceed with or without optional artifacts, provides defaults when artifacts are missing, and documents optional artifact handling.
+version: 1.0.0
 allowed-tools: read, grep, glob
 ---
 

@@ -52,13 +52,13 @@ console.log('   ✅ Orchestrator routing recorded (complexity: 0.8, confidence: 
 
 // Example 4: Track Haiku Model Usage
 console.log('4. Track Haiku Model Usage');
-const cost1 = updateModelUsage(sessionId, 'claude-3-5-haiku-20241022', 1000, 500);
+const cost1 = updateModelUsage(sessionId, 'claude-haiku-4-5', 1000, 500);
 console.log(`   Input: 1000 tokens, Output: 500 tokens`);
 console.log(`   Cost: $${cost1.costUSD.toFixed(6)}\n`);
 
 // Example 5: Track Sonnet Model Usage (Model Switch)
 console.log('5. Track Sonnet Model Usage (Model Switch)');
-const cost2 = updateModelUsage(sessionId, 'claude-sonnet-4-20250514', 2000, 1000);
+const cost2 = updateModelUsage(sessionId, 'claude-sonnet-4-5', 2000, 1000);
 console.log(`   Input: 2000 tokens, Output: 1000 tokens`);
 console.log(`   Cost: $${cost2.costUSD.toFixed(6)}\n`);
 

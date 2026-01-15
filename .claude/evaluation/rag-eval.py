@@ -58,7 +58,7 @@ def evaluate_retrieval(query: str, expected_files: List[str], actual_files: List
         "extra_files": list(actual_set - expected_set)
     }
 
-def evaluate_end_to_end(query: str, ground_truth: str, actual_answer: str) -> Dict[str, Any]:
+def evaluate_end_to_end(query: str, ground_truth: str, actual_answer: str, model: str) -> Dict[str, Any]:
     """Evaluate end-to-end answer quality using model-based grading."""
     prompt = f"""Evaluate the following answer against the ground truth:
 
@@ -89,7 +89,7 @@ Format as JSON:
     
     try:
         response = client.messages.create(
-            model="claude-sonnet-4-5-20250929",
+            model=model,
             max_tokens=1000,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -152,7 +152,7 @@ def run_retrieval_evaluation(dataset: List[Dict[str, Any]]) -> Dict[str, Any]:
         "results": results
     }
 
-def run_end_to_end_evaluation(dataset: List[Dict[str, Any]]) -> Dict[str, Any]:
+def run_end_to_end_evaluation(dataset: List[Dict[str, Any]], model: str) -> Dict[str, Any]:
     """Run end-to-end evaluation on dataset."""
     results = []
     total_relevance = 0.0
@@ -168,7 +168,7 @@ def run_end_to_end_evaluation(dataset: List[Dict[str, Any]]) -> Dict[str, Any]:
         # For now, simulate answer (would use actual RAG)
         actual_answer = ""  # Would be populated by actual RAG
         
-        evaluation = evaluate_end_to_end(query, ground_truth, actual_answer)
+        evaluation = evaluate_end_to_end(query, ground_truth, actual_answer, model)
         results.append({
             "query": query,
             "evaluation": evaluation
@@ -195,6 +195,7 @@ def main():
     parser.add_argument("--mode", choices=["retrieval", "end_to_end", "both"], required=True, help="Evaluation mode")
     parser.add_argument("--dataset", required=True, help="Path to evaluation dataset (JSONL)")
     parser.add_argument("--output", required=True, help="Output file for results (JSON)")
+    parser.add_argument("--model", default=os.environ.get("RAG_EVAL_MODEL", "claude-sonnet-4-5"), help="Anthropic model id for grading (or set RAG_EVAL_MODEL)")
     
     args = parser.parse_args()
     
@@ -205,10 +206,10 @@ def main():
     if args.mode == "retrieval":
         results = run_retrieval_evaluation(dataset)
     elif args.mode == "end_to_end":
-        results = run_end_to_end_evaluation(dataset)
+        results = run_end_to_end_evaluation(dataset, args.model)
     else:  # both
         retrieval_results = run_retrieval_evaluation(dataset)
-        end_to_end_results = run_end_to_end_evaluation(dataset)
+        end_to_end_results = run_end_to_end_evaluation(dataset, args.model)
         results = {
             "retrieval": retrieval_results,
             "end_to_end": end_to_end_results

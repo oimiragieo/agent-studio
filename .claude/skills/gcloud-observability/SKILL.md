@@ -1,6 +1,7 @@
 ---
 name: gcloud-observability
 description: Google Cloud observability - logging, monitoring, tracing
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

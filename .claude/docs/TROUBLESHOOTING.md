@@ -5,7 +5,7 @@
 All errors are logged to:
 
 - `.claude/context/logs/errors.log` - Human-readable log
-- `.claude/context/runs/<run_id>/errors/` - Run-specific error files with full context
+- `.claude/context/runtime/runs/<run_id>/errors/` - Run-specific error files with full context
 
 ### View Recent Errors
 
@@ -124,9 +124,9 @@ fatal: not a git repository
    ```
 
 2. **Review specific step**:
-   - Check step artifacts in `.claude/context/runs/<run_id>/artifacts/`
-   - Check gate files in `.claude/context/runs/<run_id>/gates/`
-   - Check error files in `.claude/context/runs/<run_id>/errors/`
+   - Check step artifacts in `.claude/context/runtime/runs/<run_id>/artifacts/`
+   - Check gate files in `.claude/context/runtime/runs/<run_id>/gates/`
+   - Check error files in `.claude/context/runtime/runs/<run_id>/errors/`
 
 3. **Re-run with verbose logging**:
    ```bash
@@ -224,7 +224,7 @@ Errors are categorized for easier filtering:
    ```
 
 2. **Review error context**:
-   - Open `.claude/context/runs/<run_id>/errors/`
+   - Open `.claude/context/runtime/runs/<run_id>/errors/`
    - Find the error file by timestamp
    - Review `context`, `environment`, and `recovery` fields
 
@@ -233,7 +233,7 @@ Errors are categorized for easier filtering:
    - Follow the recommendation
 
 4. **Review workflow state**:
-   - Check `.claude/context/runs/<run_id>/`
+   - Check `.claude/context/runtime/runs/<run_id>/`
    - Review artifact registry
    - Check gate validation results
 

@@ -88,7 +88,7 @@ The Orchestrator Enforcement System is a **4-layer defense-in-depth** architectu
 - `artifact-registry.json`
 - `.claude/CLAUDE.md`
 - `.claude/agents/`
-- `.claude/context/runs/`
+- `.claude/context/runtime/runs/`
 
 ### 2. Agent Prompt Self-Check (Layer 2)
 

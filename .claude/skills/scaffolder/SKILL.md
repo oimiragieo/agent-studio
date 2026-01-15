@@ -39,7 +39,7 @@ Rule-Aware Scaffolder - Creates new code that automatically adheres to your proj
 
 Load the rule index to discover relevant rules dynamically:
 
-- @.claude/context/rule-index.json
+- @.claude/context/config/rule-index.json
 
 ### Step 2: Identify Target Framework and Query Index
 

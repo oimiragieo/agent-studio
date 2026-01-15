@@ -18,16 +18,17 @@ import { readFile, writeFile, mkdir, access } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import { resolveConfigPath, resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Configuration paths
+// Configuration paths (use resolver for config files)
 const CONTEXT_DIR = join(__dirname, '..', 'context');
-const RUNS_DIR = join(CONTEXT_DIR, 'runs');
-const PLAN_REVIEW_MATRIX_PATH = join(CONTEXT_DIR, 'plan-review-matrix.json');
-const SIGNOFF_MATRIX_PATH = join(CONTEXT_DIR, 'signoff-matrix.json');
-const SECURITY_TRIGGERS_PATH = join(CONTEXT_DIR, 'security-triggers-v2.json');
+const RUNS_DIR = resolveRuntimePath('runs', { read: true });
+const PLAN_REVIEW_MATRIX_PATH = resolveConfigPath('plan-review-matrix.json', { read: true });
+const SIGNOFF_MATRIX_PATH = resolveConfigPath('signoff-matrix.json', { read: true });
+const SECURITY_TRIGGERS_PATH = resolveConfigPath('security-triggers-v2.json', { read: true });
 
 // Default minimum score for plan rating
 const DEFAULT_MINIMUM_SCORE = 7;
@@ -1007,9 +1008,14 @@ export async function validateFileLocation(filePath, fileType = null, projectRoo
         result.blockers.push(`${fileType} files must be in ${requiredPath}`);
         result.suggestedPath = `${requiredPath}${basename}`;
       } else if (requiredPaths) {
-        const matchesAnyPath = requiredPaths.some(path =>
-          normalizedPath.includes(path.replace('{run_id}', ''))
-        );
+        // Check against both legacy and runtime paths
+        const matchesAnyPath = requiredPaths.some(pathPattern => {
+          const legacyPath = pathPattern.replace('{run_id}', '');
+          const runtimePath = pathPattern
+            .replace('{run_id}', '')
+            .replace('.claude/context/', '.claude/context/runtime/');
+          return normalizedPath.includes(legacyPath) || normalizedPath.includes(runtimePath);
+        });
         if (!matchesAnyPath) {
           result.blockers.push(`${fileType} files must be in one of: ${requiredPaths.join(', ')}`);
         }

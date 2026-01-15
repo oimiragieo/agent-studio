@@ -1,7 +1,9 @@
 ---
 name: skill-manager
 description: Create, validate, install, convert, port, and manage Claude Code skills. Use when users want to create a new skill, validate existing skills, install from GitHub, list skills, convert MCP servers to skills, or port skills between Claude and Gemini platforms. Covers the full skill lifecycle from creation to cross-platform distribution.
+version: 1.0.0
 context:fork: true
+allowed-tools: read, grep, glob, search, codebase_search, edit, write, bash
 ---
 
 # Skill Manager

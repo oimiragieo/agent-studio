@@ -454,7 +454,7 @@ Task: "Commit the changes with message: ..."
 - **CUJs**: 62 Customer User Journeys
 - **Schemas**: 93 JSON validation schemas for artifact validation
 - **Rules**: 1,081+ technology-specific rule packs (8 master + 1,073 rules-library)
-- **Rule Index**: Dynamic discovery system via `.claude/context/rule-index.json`
+- **Rule Index**: Dynamic discovery system via `.claude/context/config/rule-index.json`
 
 This CLAUDE.md is authoritative. Subdirectories extend these rules.
 
@@ -471,7 +471,7 @@ This CLAUDE.md is authoritative. Subdirectories extend these rules.
 
 The assistant is Claude, created by Anthropic. Current model: Claude Sonnet 4.5 (sonnet agents), Claude Opus 4.5 (opus agents), or Claude Haiku 4.5 (haiku agents).
 
-Default to Claude Sonnet 4.5 unless requested otherwise. Model string: `claude-sonnet-4-20250514`.
+Default to Claude Sonnet 4.5 unless requested otherwise. Model string: `claude-sonnet-4-5`.
 
 ## Agents (34 Roles)
 
@@ -495,7 +495,7 @@ Default to Claude Sonnet 4.5 unless requested otherwise. Model string: `claude-s
 
 Rule index enables dynamic discovery of 1,081+ rules without hard-coding. Skills load only relevant rules (5-10), not all 1,081.
 
-**Usage**: `pnpm index-rules` to generate `.claude/context/rule-index.json`. Skills query `technology_map` for relevant rules.
+**Usage**: `pnpm index-rules` to generate `.claude/context/config/rule-index.json`. Skills query `technology_map` for relevant rules.
 
 **Self-Healing**: If rule not found, run `pnpm index-rules` to regenerate.
 
@@ -537,9 +537,9 @@ Create run via: `node .claude/tools/run-manager.mjs create --run-id <id> --workf
 
 **Validate step**: `node .claude/tools/enforcement-gate.mjs validate-all --run-id <id> --workflow <name> --step <N>`
 
-**Key Points**: Sequential execution, each step activates agent. Artifacts in `.claude/context/runs/<run_id>/artifacts/`. Max 3 retries on failure. Security keywords trigger required agents (critical keywords → block execution).
+**Key Points**: Sequential execution, each step activates agent. Artifacts in `.claude/context/runtime/runs/<run_id>/artifacts/`. Max 3 retries on failure. Security keywords trigger required agents (critical keywords → block execution).
 
-**State**: Canonical location `.claude/context/runs/<run_id>/` (managed by run-manager.mjs). Legacy mode still supported.
+**State**: Canonical location `.claude/context/runtime/runs/<run_id>/` (managed by run-manager.mjs). Legacy mode still supported.
 
 **See @.claude/workflows/WORKFLOW-GUIDE.md for detailed docs.**
 

@@ -68,7 +68,7 @@ Before writing to a path, verify:
 | **Permissions**       | `.claude/system/permissions/`                   | `*.md`                              |
 | **Temporary Files**   | `.claude/context/tmp/`                          | `tmp-*.md`, `tmp-*.json`            |
 | **Logs**              | `.claude/context/logs/`                         | `*.log`, `*.txt`                    |
-| **Run State**         | `.claude/context/runs/<run_id>/`                | Various                             |
+| **Run State**         | `.claude/context/runtime/runs/<run_id>/`        | Various                             |
 
 ### PROHIBITED Locations
 
@@ -260,7 +260,7 @@ task.md                                     ← Root + ambiguous name!
 ```
 .claude/context/artifacts/plan-greenfield-2025-01-05.md
 .claude/context/artifacts/dev-manifest.json
-.claude/context/runs/run-001/artifacts/system-architecture.json
+.claude/context/runtime/runs/run-001/artifacts/system-architecture.json
 ```
 
 **INCORRECT**:

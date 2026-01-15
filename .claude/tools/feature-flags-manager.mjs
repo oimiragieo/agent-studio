@@ -30,6 +30,7 @@ export class FeatureFlagsManager {
     this.configPath = options.configPath || CONFIG_PATH;
     this.auditLogPath = options.auditLogPath || AUDIT_LOG_PATH;
     this.config = null;
+    this.suppressWarnings = options.suppressWarnings || process.env.NODE_ENV === 'test' || false;
     this.loadConfig();
   }
 
@@ -78,7 +79,9 @@ export class FeatureFlagsManager {
     const flag = this.config.flags[flagName];
 
     if (!flag) {
-      console.warn(`Feature flag "${flagName}" not found. Defaulting to disabled.`);
+      if (!this.suppressWarnings) {
+        console.warn(`Feature flag "${flagName}" not found. Defaulting to disabled.`);
+      }
       return false;
     }
 
@@ -373,9 +376,11 @@ export class FeatureFlagsManager {
       for (const [otherFlagName, otherFlag] of Object.entries(this.config.flags)) {
         if (otherFlag.rollout_order < rolloutOrder) {
           if (!this.isEnabled(otherFlagName, environment)) {
-            console.warn(
-              `Flag "${otherFlagName}" (order ${otherFlag.rollout_order}) should be enabled before "${flagName}" (order ${rolloutOrder})`
-            );
+            if (!this.suppressWarnings) {
+              console.warn(
+                `Flag "${otherFlagName}" (order ${otherFlag.rollout_order}) should be enabled before "${flagName}" (order ${rolloutOrder})`
+              );
+            }
           }
         }
       }
@@ -443,7 +448,10 @@ let instance = null;
  */
 export function getInstance() {
   if (!instance) {
-    instance = new FeatureFlagsManager();
+    // Suppress warnings in test environment or when NODE_ENV is test
+    instance = new FeatureFlagsManager({
+      suppressWarnings: process.env.NODE_ENV === 'test' || false,
+    });
   }
   return instance;
 }

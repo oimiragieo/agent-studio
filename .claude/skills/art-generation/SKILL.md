@@ -1,6 +1,7 @@
 ---
 name: art-generation
 description: AI art generation and image manipulation
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

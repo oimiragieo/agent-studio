@@ -107,7 +107,7 @@ Use memory tool to read: "What patterns do we have for authentication implementa
 Memory files are stored in the run directory structure:
 
 ```
-.claude/context/runs/{run-id}/
+.claude/context/runtime/runs/{run-id}/
 ├── memory/
 │   ├── patterns/
 │   │   ├── authentication-patterns.md
@@ -249,7 +249,7 @@ Agents can manually sync:
 User: "I prefer using async/await over promises"
 
 Agent stores in memory:
-- File: `.claude/context/runs/{run-id}/memory/preferences/coding-style.md`
+- File: `.claude/context/runtime/runs/{run-id}/memory/preferences/coding-style.md`
 - Content: "User prefers async/await syntax over Promise chains for asynchronous code"
 ```
 
@@ -259,7 +259,7 @@ Agent stores in memory:
 Agent discovers: "Using Zod for validation reduces bugs by 40%"
 
 Agent stores in memory:
-- File: `.claude/context/runs/{run-id}/memory/patterns/validation-patterns.md`
+- File: `.claude/context/runtime/runs/{run-id}/memory/patterns/validation-patterns.md`
 - Content: "Zod validation pattern: Use Zod schemas for all API input validation. Reduces bugs by 40%."
 ```
 

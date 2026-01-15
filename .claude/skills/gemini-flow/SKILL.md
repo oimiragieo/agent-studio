@@ -1,6 +1,7 @@
 ---
 name: gemini-flow
 description: Google Gemini API integration and model orchestration
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

@@ -115,7 +115,7 @@ The response-rater skill uses a **5-dimensional rubric** to evaluate plans:
 
 #### Rating Artifacts
 
-**Location**: `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+**Location**: `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
 
 **Structure**:
 
@@ -2045,7 +2045,7 @@ Gate files now provide actionable feedback:
 **Checkpoint Creation**:
 
 - **Interval**: Create checkpoints every 5 minutes for long-running tasks
-- **Location**: `.claude/context/checkpoints/{{workflow_id}}/step-{{n}}-checkpoint.json`
+- **Location**: `.claude/context/runtime/checkpoints/{{workflow_id}}/step-{{n}}-checkpoint.json`
 - **Content**: Current task state, completed work, remaining work, file modifications
 
 **Checkpoint Structure**:
@@ -2146,7 +2146,7 @@ Gate files now provide actionable feedback:
    - Workflow interrupted mid-step
    - Long-running task partially complete
    - **Recovery**:
-     - Check for checkpoint artifacts in `.claude/context/checkpoints/{{workflow_id}}/`
+     - Check for checkpoint artifacts in `.claude/context/runtime/checkpoints/{{workflow_id}}/`
      - Load checkpoint state if available
      - Resume from checkpoint
      - Complete remaining work
@@ -2192,7 +2192,7 @@ node .claude/tools/enforcement-gate.mjs validate-plan \
 - Agent coverage (correct agents assigned)
 - Integration (dependencies documented)
 
-**Output**: Rating artifact saved to `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+**Output**: Rating artifact saved to `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
 
 **Failure Handling**:
 

@@ -143,7 +143,7 @@ Compression ratio: 85% (847 → 127 tokens)
   "artifacts": [
     {
       "name": "plan-run-001.json",
-      "path": ".claude/context/artifacts/plan-run-001.json",
+      "path": ".claude/context/artifacts/generated/plan-run-001.json",
       "added_at": "2025-01-07T10:00:00Z"
     }
   ],
@@ -349,7 +349,7 @@ Monitor handoff patterns:
 
 ### Issue: Handoff Files Accumulating Too Quickly
 
-**Symptoms**: Many handoff files in `.claude/context/runs/{run_id}/handoffs/`
+**Symptoms**: Many handoff files in `.claude/context/runtime/runs/{run_id}/handoffs/`
 
 **Solutions**:
 

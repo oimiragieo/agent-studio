@@ -1,6 +1,7 @@
 ---
 name: rule-selector
 description: Analyzes project tech stack and recommends optimal rule configuration. Detects frameworks from package.json, requirements.txt, go.mod, and other config files. Generates custom manifest.yaml profiles for your specific stack.
+version: 1.0.0
 context:fork: true
 allowed-tools: read, glob, grep, search
 min_required_version: 1.0.0
@@ -62,7 +63,7 @@ cat go.mod | grep -E "gin|echo|fiber|chi"
 
 Load the rule index to discover all available rules dynamically:
 
-- @.claude/context/rule-index.json
+- @.claude/context/config/rule-index.json
 
 The index contains metadata for all 1,081+ rules with technology mappings.
 
@@ -72,7 +73,7 @@ Before using the rule index, verify version compatibility:
 
 ```javascript
 // Load and validate index version
-const ruleIndex = JSON.parse(await fs.readFile('.claude/context/rule-index.json', 'utf-8'));
+const ruleIndex = JSON.parse(await fs.readFile('.claude/context/config/rule-index.json', 'utf-8'));
 const indexVersion = ruleIndex.version || '0.0.0';
 const minRequired = '1.0.0'; // From skill frontmatter
 
@@ -95,7 +96,7 @@ if (!isVersionCompatible(indexVersion, minRequired)) {
   if (shouldRegenerate) {
     await execAsync('pnpm index-rules');
     // Reload index after regeneration
-    ruleIndex = JSON.parse(await fs.readFile('.claude/context/rule-index.json', 'utf-8'));
+    ruleIndex = JSON.parse(await fs.readFile('.claude/context/config/rule-index.json', 'utf-8'));
   }
 }
 
@@ -135,10 +136,10 @@ Update the version in `scripts/generate-rule-index.mjs` when:
 
 **Fallback Strategy (CRITICAL for drop-in reliability):**
 
-If `.claude/context/rule-index.json` is missing or cannot be loaded:
+If `.claude/context/config/rule-index.json` is missing or cannot be loaded:
 
 1. **Attempt to load pre-built index** (should exist in repo):
-   - Check if file exists at `.claude/context/rule-index.json`
+   - Check if file exists at `.claude/context/config/rule-index.json`
    - If exists, load it (pre-built index includes common stacks)
 
 2. **If pre-built index missing, fall back to direct directory scan**:
@@ -562,7 +563,7 @@ stack_profiles:
 
 ### Overview
 
-The rule-selector skill relies on the rule index (`.claude/context/rule-index.json`) for dynamic rule discovery. To ensure compatibility, the skill validates the index version before use.
+The rule-selector skill relies on the rule index (`.claude/context/config/rule-index.json`) for dynamic rule discovery. To ensure compatibility, the skill validates the index version before use.
 
 ### Version Compatibility Rules
 
@@ -698,7 +699,7 @@ This ensures the skill remains functional even with stale or missing indexes.
 
 ```bash
 # Check current index version
-cat .claude/context/rule-index.json | jq '.version'
+cat .claude/context/config/rule-index.json | jq '.version'
 # Output: "1.1.0"
 
 # Check skill requirements

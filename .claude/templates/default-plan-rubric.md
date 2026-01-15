@@ -111,7 +111,7 @@ This rubric provides default criteria for rating implementation plans when no wo
 
 1. Load this rubric when workflow-specific rubric is missing
 2. Use response-rater skill to evaluate plan against criteria
-3. Document rating in `.claude/context/runs/<run_id>/plans/<plan_id>-rating.json`
+3. Document rating in `.claude/context/runtime/runs/<run_id>/plans/<plan_id>-rating.json`
 4. If score < 7: Return plan with feedback
 5. If score >= 7: Proceed with execution
 

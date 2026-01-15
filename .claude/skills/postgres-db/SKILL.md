@@ -1,6 +1,7 @@
 ---
 name: postgres-db
 description: PostgreSQL database operations and management
+version: 1.0.0
 allowed-tools: [Bash, Read]
 ---
 

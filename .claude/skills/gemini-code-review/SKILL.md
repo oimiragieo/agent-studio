@@ -1,6 +1,7 @@
 ---
 name: gemini-code-review
 description: AI-powered code review using Gemini models
+version: 1.0.0
 allowed-tools: [Bash, Read, Glob]
 ---
 

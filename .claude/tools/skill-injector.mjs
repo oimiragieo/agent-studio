@@ -20,6 +20,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
 import { loadSkillMetadata } from '../skills/sdk/skill-loader.mjs';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,7 +28,7 @@ const __dirname = dirname(__filename);
 // Configuration paths
 const CONTEXT_DIR = join(__dirname, '..', 'context');
 const SKILLS_DIR = join(__dirname, '..', 'skills');
-const SKILL_MATRIX_PATH = join(CONTEXT_DIR, 'skill-integration-matrix.json');
+const SKILL_MATRIX_PATH = resolveConfigPath('skill-integration-matrix.json', { read: true });
 
 // ======================================================================
 // Skill content cache (memory-safe, O(1) size tracking)

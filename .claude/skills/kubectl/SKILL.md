@@ -1,6 +1,7 @@
 ---
 name: kubectl
 description: Kubernetes CLI operations and cluster management
+version: 1.0.0
 allowed-tools: [Bash, Read]
 ---
 

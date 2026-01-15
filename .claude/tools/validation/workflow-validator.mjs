@@ -99,8 +99,15 @@ export function validateWorkflow(workflowPath) {
       if (step.outputs && Array.isArray(step.outputs)) {
         const artifacts = [];
         for (const output of step.outputs) {
-          if (typeof output === 'string' && output.endsWith('.json')) {
-            artifacts.push(output);
+          if (typeof output === 'string') {
+            // Include JSON artifacts
+            if (output.endsWith('.json')) {
+              artifacts.push(output);
+            }
+            // Include special code-artifacts output (directory/collection, not a file)
+            else if (output === 'code-artifacts') {
+              artifacts.push(output);
+            }
           } else if (typeof output === 'object' && output.reasoning) {
             // Reasoning file - skip for dependency tracking
           }
@@ -118,7 +125,7 @@ export function validateWorkflow(workflowPath) {
             if (templateVars) {
               for (const varName of templateVars) {
                 const varKey = varName.replace(/\{\{|\}\}/g, '');
-                if (!['workflow_id', 'story_id', 'epic_id'].includes(varKey)) {
+                if (!['workflow_id', 'story_id', 'epic_id', 'run_id', 'plan_id'].includes(varKey)) {
                   warnings.push(`Step ${stepNum}: Unknown template variable in output: ${varName}`);
                 }
               }
@@ -133,7 +140,7 @@ export function validateWorkflow(workflowPath) {
         if (templateVars) {
           for (const varName of templateVars) {
             const varKey = varName.replace(/\{\{|\}\}/g, '');
-            if (!['workflow_id', 'story_id', 'epic_id'].includes(varKey)) {
+            if (!['workflow_id', 'story_id', 'epic_id', 'run_id', 'plan_id'].includes(varKey)) {
               warnings.push(`Step ${stepNum}: Unknown template variable in gate path: ${varName}`);
             }
           }
@@ -160,16 +167,28 @@ export function validateWorkflow(workflowPath) {
 
           // Check if artifact is created by referenced step
           const created = createdArtifacts.get(fromStep) || [];
-          const artifactFound = created.some(art => {
-            // Handle template variables in artifact names
-            const artPattern = art.replace(/\{\{[^}]+\}\}/g, '.*');
-            return new RegExp(`^${artPattern}$`).test(artifactName) || art === artifactName;
-          });
 
-          if (!artifactFound) {
-            errors.push(
-              `Step ${stepNum}: References artifact '${artifactName}' from step ${fromStep}, but step ${fromStep} does not create it`
-            );
+          // Special handling for code-artifacts (directory/collection, not a file)
+          if (artifactName === 'code-artifacts') {
+            const hasCodeArtifacts = created.includes('code-artifacts');
+            if (!hasCodeArtifacts) {
+              errors.push(
+                `Step ${stepNum}: References artifact 'code-artifacts' from step ${fromStep}, but step ${fromStep} does not create it`
+              );
+            }
+          } else {
+            // Regular artifact validation
+            const artifactFound = created.some(art => {
+              // Handle template variables in artifact names
+              const artPattern = art.replace(/\{\{[^}]+\}\}/g, '.*');
+              return new RegExp(`^${artPattern}$`).test(artifactName) || art === artifactName;
+            });
+
+            if (!artifactFound) {
+              errors.push(
+                `Step ${stepNum}: References artifact '${artifactName}' from step ${fromStep}, but step ${fromStep} does not create it`
+              );
+            }
           }
         }
       }

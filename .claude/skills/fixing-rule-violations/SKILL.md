@@ -1,6 +1,8 @@
 ---
 name: fixing-rule-violations
 description: Provides detailed fix instructions for coding rule violations. Uses the rule index to locate violated rules and extract fix patterns. Use when code violates rules or when the user asks how to fix compliance issues.
+version: 1.0.0
+allowed-tools: read, grep, glob, search, codebase_search, edit, write
 ---
 
 <identity>
@@ -30,7 +32,7 @@ Determine what rule was violated:
 
 Load the rule index to locate the violated rule:
 
-- @.claude/context/rule-index.json
+- @.claude/context/config/rule-index.json
 
 ### Step 3: Find Violated Rule
 

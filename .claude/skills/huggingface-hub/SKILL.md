@@ -1,6 +1,7 @@
 ---
 name: huggingface-hub
 description: Hugging Face Hub integration for model and dataset operations
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 category: ai-tools
 requires-env: []

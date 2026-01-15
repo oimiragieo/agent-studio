@@ -12,7 +12,7 @@
 
 **Key Features**:
 
-- ✅ Loads rule index from `.claude/context/rule-index.json`
+- ✅ Loads rule index from `.claude/context/config/rule-index.json`
 - ✅ Detects technologies from file extensions and imports
 - ✅ Queries technology map for relevant rules
 - ✅ Extracts validation patterns from `<validation>` blocks
@@ -84,7 +84,7 @@ node .claude/skills/rule-auditor/scripts/test-audit.mjs
 ```
 audit.mjs
 ├── parseArgs()            Parse CLI arguments
-├── loadRuleIndex()        Load .claude/context/rule-index.json
+├── loadRuleIndex()        Load .claude/context/config/rule-index.json
 ├── getTargetFiles()       Scan directory for code files
 ├── detectTechnologies()   Detect tech from extensions/imports
 ├── queryTechnologyMap()   Find relevant rules

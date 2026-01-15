@@ -19,6 +19,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveConfigPath, resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,24 +29,43 @@ const __dirname = path.dirname(__filename);
 // ===========================
 
 const SETTINGS_PATH = path.join(__dirname, '..', 'settings.json');
-const SESSION_STATE_DIR = path.join(__dirname, '..', 'context', 'tmp');
-const CUJ_INDEX_PATH = path.join(__dirname, '..', 'context', 'CUJ-INDEX.json');
+const SESSION_STATE_DIR = resolveRuntimePath('tmp', { write: true });
+const CUJ_INDEX_PATH = resolveConfigPath('CUJ-INDEX.json', { read: true });
 
-// Model pricing (per million tokens) - Updated Jan 2025
+const NO_SIDE_EFFECTS =
+  process.env.SKIP_WORKFLOW_EXECUTION === 'true' ||
+  process.env.NO_SIDE_EFFECTS === 'true' ||
+  process.argv.includes('--no-side-effects') ||
+  process.argv.includes('--ci') ||
+  process.argv.includes('--dry-run');
+
+// Model pricing (per million tokens) - Updated from Anthropic model announcements
 const MODEL_PRICING = {
-  'claude-3-5-haiku-20241022': {
+  'claude-haiku-4-5': {
     input: 1.0,
     output: 5.0,
   },
-  'claude-sonnet-4-20250514': {
+  'claude-sonnet-4-5': {
     input: 3.0,
     output: 15.0,
   },
-  'claude-opus-4-20241113': {
-    input: 15.0,
-    output: 75.0,
+  'claude-opus-4-5-20251101': {
+    input: 5.0,
+    output: 25.0,
   },
 };
+
+const MODEL_ALIASES = {
+  'claude-3-5-haiku-20241022': 'claude-haiku-4-5',
+  'claude-3-5-sonnet-20241022': 'claude-sonnet-4-5',
+  'claude-3-opus-20240229': 'claude-opus-4-5-20251101',
+  'claude-sonnet-4-20250514': 'claude-sonnet-4-5',
+  'claude-opus-4-20241113': 'claude-opus-4-5-20251101',
+};
+
+function normalizeModelId(modelId) {
+  return MODEL_ALIASES[modelId] || modelId;
+}
 
 // Complexity scoring thresholds
 const COMPLEXITY_THRESHOLDS = {
@@ -99,13 +119,15 @@ export async function initializeRouterSession(sessionId, initialPrompt) {
     const settings = await loadSettings();
 
     // Create session state directory if needed
-    await fs.mkdir(SESSION_STATE_DIR, { recursive: true });
+    if (!NO_SIDE_EFFECTS) {
+      await fs.mkdir(SESSION_STATE_DIR, { recursive: true });
+    }
 
     // Initialize session object
     const session = {
       session_id: sessionId,
       created_at: new Date().toISOString(),
-      model: settings.models.router || 'claude-3-5-haiku-20241022',
+      model: normalizeModelId(settings.models.router || 'claude-haiku-4-5'),
       temperature: settings.session.default_temperature || 0.1,
       role: 'router',
       initial_prompt: initialPrompt,
@@ -141,9 +163,9 @@ async function loadSettings() {
     // Return defaults if settings.json not found
     return {
       models: {
-        router: 'claude-3-5-haiku-20241022',
-        orchestrator: 'claude-sonnet-4-20250514',
-        complex: 'claude-opus-4-20241113',
+        router: 'claude-haiku-4-5',
+        orchestrator: 'claude-sonnet-4-5',
+        complex: 'claude-opus-4-5-20251101',
       },
       session: {
         default_temperature: 0.1,
@@ -165,6 +187,7 @@ async function loadSettings() {
  */
 async function saveSessionState(sessionId, session) {
   const statePath = path.join(SESSION_STATE_DIR, `router-session-${sessionId}.json`);
+  if (NO_SIDE_EFFECTS) return;
   await fs.writeFile(statePath, JSON.stringify(session, null, 2));
 }
 
@@ -175,9 +198,13 @@ async function saveSessionState(sessionId, session) {
  * @returns {Promise<Object>} Session object
  */
 async function loadSessionState(sessionId) {
-  const statePath = path.join(SESSION_STATE_DIR, `router-session-${sessionId}.json`);
-  const content = await fs.readFile(statePath, 'utf-8');
-  return JSON.parse(content);
+  try {
+    const statePath = path.join(SESSION_STATE_DIR, `router-session-${sessionId}.json`);
+    const content = await fs.readFile(statePath, 'utf-8');
+    return JSON.parse(content);
+  } catch (error) {
+    throw new Error(`Failed to load session state: ${error.message}`);
+  }
 }
 
 // ===========================
@@ -199,36 +226,70 @@ async function loadSessionState(sessionId) {
 export async function classifyIntent(userPrompt) {
   const startTime = Date.now();
 
-  const prompt = userPrompt.toLowerCase();
+  try {
+    // Validate input
+    if (!userPrompt || typeof userPrompt !== 'string') {
+      console.warn('Invalid prompt provided to classifyIntent, routing to orchestrator');
+      return {
+        intent: 'web_app',
+        complexity: 'high',
+        complexity_score: 1.0,
+        cloud_provider: null,
+        should_route: true, // Fail-safe: route to orchestrator
+        confidence: 0.5,
+        reasoning: 'Invalid prompt - routing to orchestrator for safety',
+        keywords_detected: [],
+        classification_time_ms: Date.now() - startTime,
+        error: 'Invalid prompt provided',
+      };
+    }
 
-  // Calculate complexity score
-  const complexity = calculateComplexityScore(prompt, userPrompt);
+    const prompt = userPrompt.toLowerCase();
 
-  // Detect intent
-  const intent = detectIntent(prompt);
+    // Calculate complexity score
+    const complexity = calculateComplexityScore(prompt, userPrompt);
 
-  // Detect cloud provider
-  const cloudProvider = detectCloudProvider(prompt);
+    // Detect intent
+    const intent = detectIntent(prompt);
 
-  // Determine if routing is needed
-  const shouldRoute = complexity.score >= COMPLEXITY_THRESHOLDS.ROUTE_THRESHOLD;
+    // Detect cloud provider
+    const cloudProvider = detectCloudProvider(prompt);
 
-  // Calculate confidence based on keyword matches
-  const confidence = calculateConfidence(intent, complexity, prompt);
+    // Determine if routing is needed
+    const shouldRoute = complexity.score >= COMPLEXITY_THRESHOLDS.ROUTE_THRESHOLD;
 
-  const classification = {
-    intent: intent.type,
-    complexity: complexity.level,
-    complexity_score: complexity.score,
-    cloud_provider: cloudProvider,
-    should_route: shouldRoute,
-    confidence,
-    reasoning: buildReasoning(intent, complexity, cloudProvider, shouldRoute),
-    keywords_detected: intent.keywords,
-    classification_time_ms: Date.now() - startTime,
-  };
+    // Calculate confidence based on keyword matches
+    const confidence = calculateConfidence(intent, complexity, prompt);
 
-  return classification;
+    const classification = {
+      intent: intent.type,
+      complexity: complexity.level,
+      complexity_score: complexity.score,
+      cloud_provider: cloudProvider,
+      should_route: shouldRoute,
+      confidence,
+      reasoning: buildReasoning(intent, complexity, cloudProvider, shouldRoute),
+      keywords_detected: intent.keywords,
+      classification_time_ms: Date.now() - startTime,
+    };
+
+    return classification;
+  } catch (error) {
+    console.error('Classification error:', error.message);
+    // Fail-safe: route to orchestrator on error
+    return {
+      intent: 'web_app',
+      complexity: 'high',
+      complexity_score: 1.0,
+      cloud_provider: null,
+      should_route: true, // Route to orchestrator for safety
+      confidence: 0.5,
+      reasoning: `Classification failed: ${error.message}. Routing to orchestrator.`,
+      keywords_detected: [],
+      classification_time_ms: Date.now() - startTime,
+      error: error.message,
+    };
+  }
 }
 
 /**
@@ -239,65 +300,77 @@ export async function classifyIntent(userPrompt) {
  * @returns {Object} Complexity assessment
  */
 function calculateComplexityScore(promptLower, promptOriginal) {
-  let score = 0;
-  const signals = [];
+  try {
+    let score = 0;
+    const signals = [];
 
-  // Token count estimation (rough: words * 1.3)
-  const wordCount = promptOriginal.trim().split(/\s+/).length;
-  const estimatedTokens = wordCount * 1.3;
+    // Validate inputs
+    if (!promptLower || !promptOriginal) {
+      console.warn('Invalid input to calculateComplexityScore');
+      return { score: 0.5, level: 'medium', signals: ['input_validation_failed'] };
+    }
 
-  // Adjust token threshold - use word count > 30 as proxy for complexity
-  if (wordCount > 30) {
-    score += COMPLEXITY_THRESHOLDS.TOKEN_WEIGHT;
-    signals.push('high_token_count');
+    // Token count estimation (rough: words * 1.3)
+    const wordCount = promptOriginal.trim().split(/\s+/).length;
+    const estimatedTokens = wordCount * 1.3;
+
+    // Adjust token threshold - use word count > 30 as proxy for complexity
+    if (wordCount > 30) {
+      score += COMPLEXITY_THRESHOLDS.TOKEN_WEIGHT;
+      signals.push('high_token_count');
+    }
+
+    // Action keywords
+    const hasActionKeywords = ACTION_KEYWORDS.some(kw => promptLower.includes(kw));
+    if (hasActionKeywords) {
+      score += COMPLEXITY_THRESHOLDS.ACTION_WEIGHT;
+      signals.push('action_keywords');
+    }
+
+    // Multiple questions
+    const questionCount = (promptOriginal.match(/\?/g) || []).length;
+    if (questionCount > 1) {
+      score += COMPLEXITY_THRESHOLDS.QUESTION_WEIGHT;
+      signals.push('multiple_questions');
+    }
+
+    // Multiple file references
+    const fileReferences = (promptOriginal.match(/\.(ts|js|tsx|jsx|py|md|json|yaml|yml)/g) || [])
+      .length;
+    if (fileReferences > 2) {
+      score += COMPLEXITY_THRESHOLDS.FILE_WEIGHT;
+      signals.push('multiple_files');
+    }
+
+    // Check for complex technical terms (each adds to complexity)
+    const complexTerms = [
+      'full-stack',
+      'enterprise',
+      'authentication',
+      'database',
+      'deployment',
+      'integration',
+      'architecture',
+      'api design',
+    ];
+    const matchedComplexTerms = complexTerms.filter(term => promptLower.includes(term));
+    if (matchedComplexTerms.length > 0) {
+      // Each complex term adds to score, capped at 0.3
+      score += Math.min(matchedComplexTerms.length * 0.15, 0.3);
+      signals.push('complex_technical_terms');
+    }
+
+    // Determine level
+    let level = 'low';
+    if (score >= 0.7) level = 'high';
+    else if (score >= 0.4) level = 'medium';
+
+    return { score, level, signals };
+  } catch (error) {
+    console.error('Error in calculateComplexityScore:', error.message);
+    // Return safe defaults
+    return { score: 0.5, level: 'medium', signals: ['error_in_calculation'] };
   }
-
-  // Action keywords
-  const hasActionKeywords = ACTION_KEYWORDS.some(kw => promptLower.includes(kw));
-  if (hasActionKeywords) {
-    score += COMPLEXITY_THRESHOLDS.ACTION_WEIGHT;
-    signals.push('action_keywords');
-  }
-
-  // Multiple questions
-  const questionCount = (promptOriginal.match(/\?/g) || []).length;
-  if (questionCount > 1) {
-    score += COMPLEXITY_THRESHOLDS.QUESTION_WEIGHT;
-    signals.push('multiple_questions');
-  }
-
-  // Multiple file references
-  const fileReferences = (promptOriginal.match(/\.(ts|js|tsx|jsx|py|md|json|yaml|yml)/g) || [])
-    .length;
-  if (fileReferences > 2) {
-    score += COMPLEXITY_THRESHOLDS.FILE_WEIGHT;
-    signals.push('multiple_files');
-  }
-
-  // Check for complex technical terms (each adds to complexity)
-  const complexTerms = [
-    'full-stack',
-    'enterprise',
-    'authentication',
-    'database',
-    'deployment',
-    'integration',
-    'architecture',
-    'api design',
-  ];
-  const matchedComplexTerms = complexTerms.filter(term => promptLower.includes(term));
-  if (matchedComplexTerms.length > 0) {
-    // Each complex term adds to score, capped at 0.3
-    score += Math.min(matchedComplexTerms.length * 0.15, 0.3);
-    signals.push('complex_technical_terms');
-  }
-
-  // Determine level
-  let level = 'low';
-  if (score >= 0.7) level = 'high';
-  else if (score >= 0.4) level = 'medium';
-
-  return { score, level, signals };
 }
 
 /**
@@ -307,41 +380,53 @@ function calculateComplexityScore(promptLower, promptOriginal) {
  * @returns {Object} Intent type and matched keywords
  */
 function detectIntent(promptLower) {
-  const scores = {};
-  const matchedKeywords = {};
+  try {
+    // Validate input
+    if (!promptLower || typeof promptLower !== 'string') {
+      console.warn('Invalid input to detectIntent');
+      return { type: 'web_app', keywords: [], score: 0 };
+    }
 
-  // Score each intent type
-  for (const [intentType, keywords] of Object.entries(INTENT_KEYWORDS)) {
-    let score = 0;
-    const matched = [];
+    const scores = {};
+    const matchedKeywords = {};
 
-    for (const keyword of keywords) {
-      if (promptLower.includes(keyword)) {
-        score += 1;
-        matched.push(keyword);
+    // Score each intent type
+    for (const [intentType, keywords] of Object.entries(INTENT_KEYWORDS)) {
+      let score = 0;
+      const matched = [];
+
+      for (const keyword of keywords) {
+        if (promptLower.includes(keyword)) {
+          score += 1;
+          matched.push(keyword);
+        }
+      }
+
+      scores[intentType] = score;
+      matchedKeywords[intentType] = matched;
+    }
+
+    // Find highest scoring intent
+    let maxScore = 0;
+    let topIntent = 'web_app'; // default
+
+    for (const [intentType, score] of Object.entries(scores)) {
+      if (score > maxScore) {
+        maxScore = score;
+        topIntent = intentType;
       }
     }
 
-    scores[intentType] = score;
-    matchedKeywords[intentType] = matched;
+    return {
+      type: topIntent,
+      keywords: matchedKeywords[topIntent] || [],
+      score: maxScore,
+    };
+  } catch (error) {
+    console.error('Error in detectIntent:', error.message);
+    // Return safe default
+    return { type: 'web_app', keywords: [], score: 0 };
   }
-
-  // Find highest scoring intent
-  let maxScore = 0;
-  let topIntent = 'web_app'; // default
-
-  for (const [intentType, score] of Object.entries(scores)) {
-    if (score > maxScore) {
-      maxScore = score;
-      topIntent = intentType;
-    }
-  }
-
-  return {
-    type: topIntent,
-    keywords: matchedKeywords[topIntent] || [],
-    score: maxScore,
-  };
 }
 
 /**
@@ -581,7 +666,8 @@ export async function trackCosts(sessionId, modelUsed, inputTokens, outputTokens
     const session = await loadSessionState(sessionId);
 
     // Get pricing for model
-    const pricing = MODEL_PRICING[modelUsed] || MODEL_PRICING['claude-3-5-haiku-20241022'];
+    const normalizedModel = normalizeModelId(modelUsed);
+    const pricing = MODEL_PRICING[normalizedModel] || MODEL_PRICING['claude-haiku-4-5'];
 
     // Calculate costs (pricing is per million tokens)
     const inputCost = (inputTokens / 1_000_000) * pricing.input;
@@ -594,7 +680,7 @@ export async function trackCosts(sessionId, modelUsed, inputTokens, outputTokens
     session.cost_tracking.total_cost_usd += totalCost;
     session.cost_tracking.model_usage.push({
       timestamp: new Date().toISOString(),
-      model: modelUsed,
+      model: normalizedModel,
       input_tokens: inputTokens,
       output_tokens: outputTokens,
       cost_usd: totalCost,
@@ -610,7 +696,7 @@ export async function trackCosts(sessionId, modelUsed, inputTokens, outputTokens
         input_tokens: inputTokens,
         output_tokens: outputTokens,
         cost_usd: totalCost,
-        model: modelUsed,
+        model: normalizedModel,
       },
     };
   } catch (error) {
@@ -655,16 +741,41 @@ export async function getCostSummary(sessionId) {
  * @returns {Promise<Object>} Direct response
  */
 export async function handleSimpleQuery(query, session) {
-  // For simple queries, provide direct response
-  // This would integrate with Haiku API in production
+  try {
+    // Validate inputs
+    if (!query || typeof query !== 'string') {
+      throw new Error('Invalid query provided');
+    }
+    if (!session || !session.model) {
+      throw new Error('Invalid session object');
+    }
 
-  return {
-    handled_by: 'router',
-    model: session.model,
-    response_type: 'direct',
-    message: 'Query handled directly by router',
-    classification: await classifyIntent(query),
-  };
+    // For simple queries, provide direct response
+    // This would integrate with Haiku API in production
+
+    return {
+      handled_by: 'router',
+      model: session.model,
+      response_type: 'direct',
+      message: 'Query handled directly by router',
+      classification: await classifyIntent(query),
+    };
+  } catch (error) {
+    console.error('Error in handleSimpleQuery:', error.message);
+    // Fail-safe: return error state
+    return {
+      handled_by: 'router',
+      model: session?.model || 'claude-haiku-4-5',
+      response_type: 'error',
+      message: `Query handling failed: ${error.message}`,
+      classification: {
+        intent: 'web_app',
+        complexity: 'high',
+        should_route: true, // Route to orchestrator on error
+        error: error.message,
+      },
+    };
+  }
 }
 
 /**

@@ -7,7 +7,7 @@ publish_policy: auto-on-pass # Automatically publish artifacts after validation 
 # Error Recovery Configuration
 recovery:
   enabled: true
-  checkpoint_dir: '.claude/context/runs/{{run_id}}/checkpoints'
+  checkpoint_dir: '.claude/context/runtime/runs/{{run_id}}/checkpoints'
 
 retry_config:
   max_attempts: 3
@@ -140,7 +140,7 @@ steps:
     inputs:
       - plan-{{workflow_id}}.json (from step 0)
     outputs:
-      - .claude/context/runs/{{run_id}}/plans/{{plan_id}}-rating.json
+      - .claude/context/runtime/runs/{{run_id}}/plans/{{plan_id}}-rating.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.1-orchestrator.json
     validation:
       minimum_score: 7
@@ -201,7 +201,7 @@ steps:
         mode: blocking
         min_compliance: 100
         on_failure: block
-        compliance_report_path: '.claude/context/runs/{{run_id}}/skill-compliance-01.json'
+        compliance_report_path: '.claude/context/runtime/runs/{{run_id}}/skill-compliance-01.json'
     validation:
       schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-code-reviewer.json
@@ -624,7 +624,7 @@ steps:
         min_compliance: 100
         on_failure: block
         require_output_validation: true
-        compliance_report_path: '.claude/context/runs/{{run_id}}/skill-compliance-05.json'
+        compliance_report_path: '.claude/context/runtime/runs/{{run_id}}/skill-compliance-05.json'
     validation:
       schema: .claude/schemas/quality-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json

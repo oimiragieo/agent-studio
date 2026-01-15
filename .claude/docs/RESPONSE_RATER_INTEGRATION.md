@@ -699,7 +699,7 @@ node .claude/tools/orchestrator-entry.mjs \
   --run-id test-rating-001
 
 # Verify rating artifact created
-cat .claude/context/runs/test-rating-001/artifacts/plan-rating-test-rating-001.json
+cat .claude/context/runtime/runs/test-rating-001/artifacts/plan-rating-test-rating-001.json
 ```
 
 ## Troubleshooting

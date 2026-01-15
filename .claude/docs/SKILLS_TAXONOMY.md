@@ -186,7 +186,7 @@ codex-skills/<skill-name>/
 codex run multi-ai-code-review --file src/components/UserAuth.tsx
 
 # Cross-model plan rating
-codex run response-rater --plan .claude/context/artifacts/plan-greenfield-001.md
+codex run response-rater --plan .claude/context/artifacts/generated/plan-greenfield-001.md
 ```
 
 **From Workflow**:
@@ -285,7 +285,7 @@ Need multi-model consensus?
 
 ```
 Invoke skill: response-rater
-Plan: .claude/context/artifacts/plan-crud-feature.md
+Plan: .claude/context/artifacts/generated/plan-crud-feature.md
 ```
 
 #### Example 2: Plan Rating for Security Audit
@@ -301,7 +301,7 @@ Plan: .claude/context/artifacts/plan-crud-feature.md
 **Command**:
 
 ```bash
-codex run response-rater --plan .claude/context/artifacts/plan-security-audit.md --models claude,gpt-4,gemini
+codex run response-rater --plan .claude/context/artifacts/generated/plan-security-audit.md --models claude,gpt-4,gemini
 ```
 
 #### Example 3: Code Review for Refactoring

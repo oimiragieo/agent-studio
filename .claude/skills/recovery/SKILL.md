@@ -1,6 +1,7 @@
 ---
 name: recovery
 description: Workflow recovery protocol for resuming workflows after context loss, session interruption, or errors. Handles state reconstruction, artifact recovery, and seamless workflow continuation.
+version: 1.0.0
 allowed-tools: read, grep, glob, search
 ---
 

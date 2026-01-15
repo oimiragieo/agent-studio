@@ -1,6 +1,8 @@
 ---
 name: migrating-rules
 description: Helps migrate code when updating to new rule versions. Compares rule versions from the index and generates migration plans. Use when rules are updated or when migrating between framework versions.
+version: 1.0.0
+allowed-tools: read, grep, glob, search, codebase_search, edit, write
 ---
 
 <identity>
@@ -31,7 +33,7 @@ Determine what needs migration:
 
 Load the rule index to find relevant rules:
 
-- @.claude/context/rule-index.json
+- @.claude/context/config/rule-index.json
 
 ### Step 3: Identify Source and Target Rules
 

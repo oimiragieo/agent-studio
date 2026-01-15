@@ -1,6 +1,7 @@
 ---
 name: supabase-db
 description: Supabase database, auth, and storage operations
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

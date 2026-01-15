@@ -1,6 +1,7 @@
 ---
 name: prometheus-metrics
 description: Prometheus metrics querying and alerting
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

@@ -194,7 +194,7 @@ See [AGENT_SKILL_MATRIX.md](./AGENT_SKILL_MATRIX.md) for complete mapping.
 
 1. Verify skill exists: `ls -la .claude/skills/<skill-name>/`
 2. Check SKILL.md exists: `cat .claude/skills/<skill-name>/SKILL.md`
-3. Verify skill is in rule index: `grep <skill-name> .claude/context/rule-index.json`
+3. Verify skill is in rule index: `grep <skill-name> .claude/context/config/rule-index.json`
 4. Regenerate index: `pnpm index-rules`
 
 ### Skill Not Found in Codex CLI

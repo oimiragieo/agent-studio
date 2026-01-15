@@ -1,6 +1,7 @@
 ---
 name: arxiv-research
 description: arXiv paper search and academic research
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

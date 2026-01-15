@@ -3,7 +3,7 @@
  * Enhanced Error Context Logger (Cursor Recommendation #10)
  *
  * Creates detailed error files with full context for debugging workflow failures.
- * Error files are saved to `.claude/context/runs/<run_id>/errors/`
+ * Error files are saved to `.claude/context/runtime/runs/<run_id>/errors/`
  *
  * Error context includes:
  * - Timestamp and error details
@@ -30,6 +30,8 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
+import { getRunDirectoryStructure } from './run-manager.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,14 +61,14 @@ try {
  * @returns {string} - Path to error directory
  */
 function getErrorDirectory(runId) {
-  const projectRoot = path.resolve(__dirname, '../..');
-
   if (runId) {
-    return path.join(projectRoot, '.claude/context/runs', runId, 'errors');
+    // Use run directory structure from run-manager (already uses resolver)
+    const runDirs = getRunDirectoryStructure(runId);
+    return path.join(runDirs.run_dir, 'errors');
   }
 
-  // Fallback to default errors directory
-  return path.join(projectRoot, '.claude/context/errors');
+  // Fallback to default errors directory in runtime
+  return resolveRuntimePath('errors', { write: true });
 }
 
 /**

@@ -384,7 +384,7 @@ for (const [phase, phaseStatus] of Object.entries(status)) {
 ## Next Steps
 
 1. Read full documentation: `.claude/context/reports/feature-flags-implementation-report.md`
-2. Review A2A integration architecture: `.claude/context/artifacts/a2a-integration-architecture.md`
+2. Review A2A integration architecture: `.claude/context/artifacts/reference/a2a-integration-architecture.md`
 3. Run demo: `node .claude/context/tmp/tmp-feature-flags-demo.mjs`
 4. Run tests: `node .claude/tools/feature-flags-manager.test.mjs`
 

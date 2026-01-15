@@ -52,6 +52,7 @@ import { resolve, dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { promisify } from 'util';
 import { exec } from 'child_process';
+import { resolveConfigPath } from './context-path-resolver.mjs';
 import {
   loadCUJMapping,
   getAllCUJIds,
@@ -242,7 +243,7 @@ function findSkillPath(skillName) {
  * @returns {Object} Platform compatibility configuration
  */
 function loadPlatformCompatibility() {
-  const matrixPath = resolve(ROOT, '.claude/context/platform-compatibility.json');
+  const matrixPath = resolveConfigPath('platform-compatibility.json', { read: true });
 
   if (!existsSync(matrixPath)) {
     log('⚠️  Platform compatibility matrix not found, using fallback defaults', 'yellow');

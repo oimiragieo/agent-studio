@@ -1,6 +1,7 @@
 ---
 name: twilio-sms
 description: Twilio SMS and messaging services
+version: 1.0.0
 allowed-tools: [Bash, Read, WebFetch]
 ---
 

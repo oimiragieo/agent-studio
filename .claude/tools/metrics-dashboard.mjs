@@ -15,10 +15,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { getLogger } from './structured-logger.mjs';
 import { getAllCujMetrics, getPerformancePercentiles } from './metrics-tracker.mjs';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, '../..');
-const dashboardFile = path.join(projectRoot, '.claude/context/analytics/metrics-dashboard.json');
+const dashboardFile = resolveRuntimePath('analytics/metrics-dashboard.json', { write: true });
 
 /**
  * Aggregate CUJ metrics

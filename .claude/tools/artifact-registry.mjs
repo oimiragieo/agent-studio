@@ -11,7 +11,7 @@
  *   - `updateArtifactPublishingStatus(runId, artifactName, status)` for publishing updates
  * 
  * **Why migrate?**
- * - run-manager.mjs provides unified artifact registry at `.claude/context/runs/<run_id>/artifact-registry.json`
+ * - run-manager.mjs provides unified artifact registry at `.claude/context/runtime/runs/<run_id>/artifact-registry.json`
  * - Better integration with workflow execution state
  * - Supports publishing metadata and retry tracking
  * - Atomic writes and better error handling
@@ -19,7 +19,7 @@
  * **Backward Compatibility**:
  * This module maintains backward compatibility with workflowId-based paths:
  * - Old path: `.claude/context/registry/<workflow_id>/artifacts.json`
- * - New path (run-manager): `.claude/context/runs/<run_id>/artifact-registry.json`
+ * - New path (run-manager): `.claude/context/runtime/runs/<run_id>/artifact-registry.json`
  * 
  * When workflowId === runId, both paths refer to the same execution.
  * 
@@ -33,6 +33,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,14 +43,14 @@ const __dirname = dirname(__filename);
  * @param {string} workflowId - Workflow ID (same as runId in run-manager)
  * @returns {string} Path to registry file
  * 
- * **Canonical Path**: `.claude/context/runs/<run_id>/artifact-registry.json` (via run-manager)
+ * **Canonical Path**: `.claude/context/runtime/runs/<run_id>/artifact-registry.json` (via run-manager)
  * **Legacy Path**: `.claude/context/registry/<workflow_id>/artifacts.json` (this module)
  * 
  * When workflowId === runId, prefer using run-manager's path for consistency.
  */
 function getRegistryPath(workflowId) {
   // Check if run-manager path exists (canonical)
-  const runManagerPath = resolve(process.cwd(), `.claude/context/runs/${workflowId}/artifact-registry.json`);
+  const runManagerPath = resolve(process.cwd(), `.claude/context/runtime/runs/${workflowId}/artifact-registry.json`);
   if (existsSync(runManagerPath)) {
     // Prefer run-manager path if it exists
     return runManagerPath;
@@ -190,7 +191,7 @@ export function enrichArtifactMetadata(workflowId, artifactName) {
     // Try to find gate file (multiple possible locations)
     const possibleGatePaths = [
       resolve(process.cwd(), `.claude/context/history/gates/${workflowId}/${artifact.step}-${artifact.agent}.json`),
-      resolve(process.cwd(), `.claude/context/runs/${workflowId}/gates/step-${artifact.step}.json`),
+      resolve(process.cwd(), `.claude/context/runtime/runs/${workflowId}/gates/step-${artifact.step}.json`),
       resolve(process.cwd(), `.claude/context/registry/${workflowId}/gates/${artifact.step}.json`)
     ];
     

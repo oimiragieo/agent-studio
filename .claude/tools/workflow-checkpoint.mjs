@@ -8,11 +8,14 @@ import { writeFile, readFile, mkdir, unlink } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CHECKPOINT_DIR = path.join(process.cwd(), '.claude/context/checkpoints');
+function getCheckpointPath(workflowId, options = { read: false }) {
+  return resolveRuntimePath(`checkpoints/${workflowId}.json`, options);
+}
 
 /**
  * Save workflow checkpoint
@@ -22,10 +25,8 @@ const CHECKPOINT_DIR = path.join(process.cwd(), '.claude/context/checkpoints');
  * @returns {Promise<string>} Path to saved checkpoint file
  */
 export async function saveCheckpoint(workflowId, step, state) {
-  const checkpointDir = CHECKPOINT_DIR;
-  await mkdir(checkpointDir, { recursive: true });
-
-  const checkpointPath = path.join(checkpointDir, `${workflowId}.json`);
+  const checkpointPath = getCheckpointPath(workflowId, { read: false });
+  await mkdir(path.dirname(checkpointPath), { recursive: true });
   const checkpoint = {
     workflowId,
     step,
@@ -44,7 +45,7 @@ export async function saveCheckpoint(workflowId, step, state) {
  * @returns {Promise<Object|null>} Checkpoint data or null if not found
  */
 export async function loadCheckpoint(workflowId) {
-  const checkpointPath = path.join(CHECKPOINT_DIR, `${workflowId}.json`);
+  const checkpointPath = getCheckpointPath(workflowId, { read: true });
 
   if (!existsSync(checkpointPath)) {
     return null;
@@ -60,7 +61,7 @@ export async function loadCheckpoint(workflowId) {
  * @returns {Promise<void>}
  */
 export async function deleteCheckpoint(workflowId) {
-  const checkpointPath = path.join(CHECKPOINT_DIR, `${workflowId}.json`);
+  const checkpointPath = getCheckpointPath(workflowId, { read: true });
 
   if (existsSync(checkpointPath)) {
     await unlink(checkpointPath);

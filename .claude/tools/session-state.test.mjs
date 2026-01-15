@@ -14,6 +14,7 @@ import { strict as assert } from 'assert';
 import { unlinkSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { resolveRuntimePath } from './context-path-resolver.mjs';
 import {
   initSession,
   loadSessionState,
@@ -30,7 +31,7 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const SESSION_STATE_DIR = join(__dirname, '..', 'context', 'sessions');
+const SESSION_STATE_DIR = resolveRuntimePath('sessions', { write: true });
 
 // ===========================
 // Test Utilities
@@ -73,14 +74,14 @@ console.log('Running Session State Manager Tests...\n');
 
   assert.equal(state.session_id, sessionId, 'Session ID should match');
   assert.equal(state.agent_role, 'router', 'Role should be router');
-  assert.equal(state.model, 'claude-3-5-haiku-20241022', 'Default router model should be Haiku');
+  assert.equal(state.model, 'claude-haiku-4-5', 'Default router model should be Haiku');
   assert.equal(state.initial_prompt, 'Test prompt for router', 'Initial prompt should be stored');
   assert.equal(state.routingDecisions.total, 0, 'Routing decisions should start at 0');
   assert.equal(state.costs.total, 0, 'Total cost should start at 0');
   assert.ok(state.modelHistory.length === 1, 'Model history should have 1 entry');
   assert.equal(
     state.modelHistory[0].model,
-    'claude-3-5-haiku-20241022',
+    'claude-haiku-4-5',
     'Model history should record initial model'
   );
 
@@ -97,11 +98,7 @@ console.log('Running Session State Manager Tests...\n');
 
   assert.equal(state.session_id, sessionId, 'Session ID should match');
   assert.equal(state.agent_role, 'orchestrator', 'Role should be orchestrator');
-  assert.equal(
-    state.model,
-    'claude-sonnet-4-20250514',
-    'Default orchestrator model should be Sonnet'
-  );
+  assert.equal(state.model, 'claude-sonnet-4-5', 'Default orchestrator model should be Sonnet');
   assert.equal(state.read_count, 0, 'Read count should start at 0');
   assert.equal(state.violations.length, 0, 'Violations should be empty');
 
@@ -193,7 +190,7 @@ console.log('Running Session State Manager Tests...\n');
   initSession(sessionId, 'router');
 
   // Track Haiku usage
-  const cost1 = updateModelUsage(sessionId, 'claude-3-5-haiku-20241022', 1000, 500);
+  const cost1 = updateModelUsage(sessionId, 'claude-haiku-4-5', 1000, 500);
   assert.ok(cost1.costUSD > 0, 'Cost should be calculated');
   assert.equal(cost1.modelCategory, 'haiku', 'Model category should be haiku');
 
@@ -204,7 +201,7 @@ console.log('Running Session State Manager Tests...\n');
   assert.equal(state.costs.total, state.costs.haiku.costUSD, 'Total cost should match Haiku cost');
 
   // Track Sonnet usage (model switch)
-  const cost2 = updateModelUsage(sessionId, 'claude-sonnet-4-20250514', 2000, 1000);
+  const cost2 = updateModelUsage(sessionId, 'claude-sonnet-4-5', 2000, 1000);
   assert.equal(cost2.modelCategory, 'sonnet', 'Model category should be sonnet');
 
   state = loadSessionState(sessionId);
@@ -216,7 +213,7 @@ console.log('Running Session State Manager Tests...\n');
     2,
     'Model history should have 2 entries (switch recorded)'
   );
-  assert.equal(state.model, 'claude-sonnet-4-20250514', 'Current model should be Sonnet');
+  assert.equal(state.model, 'claude-sonnet-4-5', 'Current model should be Sonnet');
 
   clearSession(sessionId);
   console.log('✅ Test 5 passed\n');
@@ -228,8 +225,8 @@ console.log('Running Session State Manager Tests...\n');
   const sessionId = `test-get-costs-${Date.now()}`;
 
   initSession(sessionId, 'router');
-  updateModelUsage(sessionId, 'claude-3-5-haiku-20241022', 1000, 500);
-  updateModelUsage(sessionId, 'claude-sonnet-4-20250514', 2000, 1000);
+  updateModelUsage(sessionId, 'claude-haiku-4-5', 1000, 500);
+  updateModelUsage(sessionId, 'claude-sonnet-4-5', 2000, 1000);
 
   const costs = getSessionCosts(sessionId);
   assert.equal(costs.sessionId, sessionId, 'Session ID should match');
