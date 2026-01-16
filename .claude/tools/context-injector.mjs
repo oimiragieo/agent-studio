@@ -269,10 +269,384 @@ export function extractConstraintsFromStyleGuide(styleGuidePath) {
   return extractConstraintsFromArchitecture(styleGuidePath);
 }
 
+/**
+ * Auto-gather context from 6 sources
+ * @param {string} taskId - Task identifier
+ * @param {string|null} outputPath - Optional path to save enriched context
+ * @returns {Promise<Object>} Enriched context with metadata
+ */
+export async function enrichTaskContext(taskId, outputPath = null) {
+  const context = {
+    background: await gatherBackground(),
+    previous_attempts: await gatherPreviousAttempts(taskId),
+    related_work: await gatherRelatedWork(taskId),
+    constraints: await gatherConstraints(),
+    dependencies: await gatherDependencies(),
+    success_criteria: await gatherSuccessCriteria(taskId),
+  };
+
+  const completenessScore = calculateCompleteness(context);
+  const enriched = {
+    ...context,
+    metadata: {
+      completenessScore,
+      generated_at: new Date().toISOString(),
+      sources: ['artifacts', 'history', 'git', 'docs', 'workflows', 'dependencies'],
+    },
+  };
+
+  if (outputPath) {
+    const fs = await import('fs/promises');
+    await fs.writeFile(outputPath, JSON.stringify(enriched, null, 2));
+  }
+
+  return enriched;
+}
+
+/**
+ * Gather background context from artifacts and documentation
+ * @returns {Promise<Object>} Background context
+ */
+async function gatherBackground() {
+  const fs = await import('fs/promises');
+  const { glob } = await import('glob');
+
+  const artifacts = await glob('.claude/context/artifacts/**/*.{json,md}', {
+    windowsPathsNoEscape: true,
+  });
+  const docs = await glob('.claude/docs/**/*.md', { windowsPathsNoEscape: true });
+
+  let projectOverview = '';
+  try {
+    projectOverview = await fs.readFile('.claude/docs/README.md', 'utf-8');
+  } catch (error) {
+    // README may not exist
+    try {
+      projectOverview = await fs.readFile('README.md', 'utf-8');
+    } catch (err) {
+      projectOverview = 'No project overview available';
+    }
+  }
+
+  return {
+    project_overview: projectOverview.substring(0, 1000), // Limit size
+    recent_artifacts: artifacts.slice(0, 5).map(a => resolve(a)),
+    key_documentation: docs
+      .filter(d => d.includes('GUIDE') || d.includes('README'))
+      .map(d => resolve(d)),
+  };
+}
+
+/**
+ * Gather previous attempt history for this task
+ * @param {string} taskId - Task identifier
+ * @returns {Promise<Array>} Previous attempts
+ */
+async function gatherPreviousAttempts(taskId) {
+  const { glob } = await import('glob');
+  const fs = await import('fs/promises');
+
+  const historyFiles = await glob(`.claude/context/history/**/*${taskId}*.json`, {
+    windowsPathsNoEscape: true,
+  });
+  const attempts = [];
+
+  for (const file of historyFiles) {
+    try {
+      const content = JSON.parse(await fs.readFile(file, 'utf-8'));
+      attempts.push({
+        timestamp: content.timestamp || content.created_at || 'unknown',
+        agent: content.agent || 'unknown',
+        verdict: content.verdict || content.status || 'unknown',
+        errors: content.errors || content.validation_errors || [],
+      });
+    } catch (error) {
+      // Skip malformed files
+    }
+  }
+
+  return attempts;
+}
+
+/**
+ * Gather related work from git log and artifacts
+ * @param {string} taskId - Task identifier
+ * @returns {Promise<Object>} Related work
+ */
+async function gatherRelatedWork(taskId) {
+  const { execSync } = await import('child_process');
+  const { glob } = await import('glob');
+
+  let gitLog = '';
+  try {
+    gitLog = execSync('git log --oneline -n 20', { encoding: 'utf-8' });
+  } catch (error) {
+    gitLog = 'Git log unavailable';
+  }
+
+  const artifacts = await glob('.claude/context/artifacts/**/*.json', {
+    windowsPathsNoEscape: true,
+  });
+
+  return {
+    recent_commits: gitLog.split('\n').slice(0, 10),
+    related_artifacts: artifacts.filter(a => a.includes(taskId)).map(a => resolve(a)),
+  };
+}
+
+/**
+ * Gather constraints from CLAUDE.md and system guardrails
+ * @returns {Promise<Object>} Constraints
+ */
+async function gatherConstraints() {
+  const fs = await import('fs/promises');
+  const { glob } = await import('glob');
+
+  let claudeMd = '';
+  try {
+    claudeMd = await fs.readFile('.claude/CLAUDE.md', 'utf-8');
+  } catch (error) {
+    claudeMd = 'CLAUDE.md not found';
+  }
+
+  let fileLocationRules = '';
+  try {
+    fileLocationRules = await fs.readFile('.claude/rules/subagent-file-rules.md', 'utf-8');
+  } catch (error) {
+    fileLocationRules = 'File location rules not found';
+  }
+
+  const guardrails = await glob('.claude/system/guardrails/**/*.md', {
+    windowsPathsNoEscape: true,
+  });
+
+  return {
+    orchestrator_rules: extractOrchestrationRules(claudeMd),
+    file_location_rules: fileLocationRules.substring(0, 2000), // Limit size
+    guardrails: guardrails.map(g => resolve(g)),
+  };
+}
+
+/**
+ * Extract orchestration rules from CLAUDE.md
+ * @param {string} content - CLAUDE.md content
+ * @returns {string} Extracted rules
+ */
+function extractOrchestrationRules(content) {
+  const lines = content.split('\n');
+  const rules = [];
+  let inRulesSection = false;
+
+  for (const line of lines) {
+    if (line.match(/^##?\s+(IDENTITY|ORCHESTRATOR|ENFORCEMENT)/i)) {
+      inRulesSection = true;
+      continue;
+    }
+
+    if (inRulesSection && line.match(/^##?\s+/)) {
+      if (rules.length > 0) break; // Stop after first rules section
+    }
+
+    if (inRulesSection && line.trim()) {
+      rules.push(line.trim());
+    }
+  }
+
+  return rules.slice(0, 50).join('\n'); // Limit to first 50 lines
+}
+
+/**
+ * Gather dependencies from dependency validator
+ * @returns {Promise<Object>} Dependencies status
+ */
+async function gatherDependencies() {
+  const { execSync } = await import('child_process');
+
+  try {
+    const result = execSync('node .claude/tools/dependency-validator.mjs validate-all --json', {
+      encoding: 'utf-8',
+      timeout: 5000,
+    });
+    return JSON.parse(result);
+  } catch (error) {
+    return {
+      valid: false,
+      missing_dependencies: [],
+      warnings: ['Dependency validation failed or timed out'],
+    };
+  }
+}
+
+/**
+ * Gather success criteria from workflow and task templates
+ * @param {string} taskId - Task identifier
+ * @returns {Promise<Array>} Success criteria
+ */
+async function gatherSuccessCriteria(taskId) {
+  const { glob } = await import('glob');
+  const fs = await import('fs/promises');
+
+  const workflows = await glob('.claude/workflows/**/*.yaml', { windowsPathsNoEscape: true });
+  const criteria = [];
+
+  for (const workflow of workflows.slice(0, 5)) {
+    try {
+      const content = await fs.readFile(workflow, 'utf-8');
+      const extracted = extractSuccessCriteria(content);
+      criteria.push(...extracted);
+    } catch (error) {
+      // Skip problematic files
+    }
+  }
+
+  return criteria.slice(0, 10); // Limit to 10 criteria
+}
+
+/**
+ * Extract success criteria from workflow YAML
+ * @param {string} content - Workflow YAML content
+ * @returns {Array} Success criteria
+ */
+function extractSuccessCriteria(content) {
+  const criteria = [];
+  const lines = content.split('\n');
+
+  for (const line of lines) {
+    // Match validation or success_criteria fields
+    if (
+      line.match(/^\s+[-*]\s+(.+)/) &&
+      (line.includes('validate') || line.includes('success') || line.includes('criteria'))
+    ) {
+      const match = line.match(/^\s+[-*]\s+(.+)/);
+      if (match) {
+        criteria.push(match[1].trim());
+      }
+    }
+  }
+
+  return criteria;
+}
+
+/**
+ * Calculate completeness score (0-100%)
+ * @param {Object} context - Context object
+ * @returns {number} Completeness score
+ */
+function calculateCompleteness(context) {
+  const weights = {
+    background: 20,
+    previous_attempts: 15,
+    related_work: 15,
+    constraints: 20,
+    dependencies: 15,
+    success_criteria: 15,
+  };
+
+  let score = 0;
+  for (const [key, weight] of Object.entries(weights)) {
+    if (context[key]) {
+      const value = context[key];
+      // Check if non-empty
+      if (Array.isArray(value) && value.length > 0) {
+        score += weight;
+      } else if (typeof value === 'object' && Object.keys(value).length > 0) {
+        score += weight;
+      } else if (typeof value === 'string' && value.length > 0) {
+        score += weight;
+      }
+    }
+  }
+
+  return score;
+}
+
+// CLI support
+if (import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`) {
+  const [, , command, ...args] = process.argv;
+
+  if (command === 'enrich') {
+    const taskIdIndex = args.indexOf('--task-id');
+    const outputIndex = args.indexOf('--output');
+
+    if (taskIdIndex === -1 || !args[taskIdIndex + 1]) {
+      console.error('Usage: node context-injector.mjs enrich --task-id <id> [--output <path>]');
+      process.exit(1);
+    }
+
+    const taskId = args[taskIdIndex + 1];
+    const outputPath = outputIndex !== -1 ? args[outputIndex + 1] : null;
+
+    enrichTaskContext(taskId, outputPath)
+      .then(enriched => {
+        console.log('Context enriched successfully');
+        console.log(`Completeness Score: ${enriched.metadata.completenessScore}%`);
+        if (outputPath) {
+          console.log(`Saved to: ${outputPath}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error enriching context:', error.message);
+        process.exit(1);
+      });
+  } else if (command === 'analyze') {
+    const taskIdIndex = args.indexOf('--task-id');
+
+    if (taskIdIndex === -1 || !args[taskIdIndex + 1]) {
+      console.error('Usage: node context-injector.mjs analyze --task-id <id>');
+      process.exit(1);
+    }
+
+    const taskId = args[taskIdIndex + 1];
+
+    enrichTaskContext(taskId)
+      .then(enriched => {
+        console.log('Context Analysis:');
+        console.log(`Completeness Score: ${enriched.metadata.completenessScore}%`);
+        console.log('\nBreakdown:');
+        console.log(
+          `- Background: ${enriched.background && Object.keys(enriched.background).length > 0 ? '✓' : '✗'}`
+        );
+        console.log(
+          `- Previous Attempts: ${enriched.previous_attempts && enriched.previous_attempts.length > 0 ? '✓' : '✗'} (${enriched.previous_attempts.length} found)`
+        );
+        console.log(
+          `- Related Work: ${enriched.related_work && Object.keys(enriched.related_work).length > 0 ? '✓' : '✗'}`
+        );
+        console.log(
+          `- Constraints: ${enriched.constraints && Object.keys(enriched.constraints).length > 0 ? '✓' : '✗'}`
+        );
+        console.log(
+          `- Dependencies: ${enriched.dependencies && enriched.dependencies.valid !== undefined ? '✓' : '✗'}`
+        );
+        console.log(
+          `- Success Criteria: ${enriched.success_criteria && enriched.success_criteria.length > 0 ? '✓' : '✗'} (${enriched.success_criteria.length} found)`
+        );
+      })
+      .catch(error => {
+        console.error('Error analyzing context:', error.message);
+        process.exit(1);
+      });
+  } else if (command === 'sources') {
+    console.log('Available Context Sources:');
+    console.log('1. artifacts - Recent artifacts from .claude/context/artifacts/');
+    console.log('2. history - Previous attempts from .claude/context/history/');
+    console.log('3. git - Recent commits from git log');
+    console.log('4. docs - Documentation from .claude/docs/ and README.md');
+    console.log('5. workflows - Success criteria from .claude/workflows/');
+    console.log('6. dependencies - Dependency status from dependency-validator');
+  } else {
+    console.log('Usage:');
+    console.log('  node context-injector.mjs enrich --task-id <id> [--output <path>]');
+    console.log('  node context-injector.mjs analyze --task-id <id>');
+    console.log('  node context-injector.mjs sources');
+  }
+}
+
 export default {
   createContextPacket,
   formatContextPacket,
   injectContext,
   extractConstraintsFromArchitecture,
   extractConstraintsFromStyleGuide,
+  enrichTaskContext,
 };

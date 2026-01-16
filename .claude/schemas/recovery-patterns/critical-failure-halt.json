@@ -1,0 +1,62 @@
+{
+  "pattern_id": "critical-failure-halt",
+  "name": "Halt Workflow on Critical Security or System Failures",
+  "description": "Immediately halt workflow execution on critical failures that pose security risks, data corruption risks, or indicate fundamental system issues. Preserves all state for forensic analysis and requires human intervention before resumption.",
+  "version": "1.0.0",
+  "enabled": true,
+  "triggers": [
+    {
+      "condition": "security_violation",
+      "severity": "critical",
+      "threshold": 1,
+      "timeframe_minutes": 60
+    },
+    {
+      "condition": "validation_failure",
+      "severity": "critical",
+      "threshold": 1,
+      "timeframe_minutes": 60,
+      "error_pattern": "(data corruption|integrity violation|critical schema violation)"
+    },
+    {
+      "condition": "resource_unavailable",
+      "severity": "critical",
+      "threshold": 1,
+      "timeframe_minutes": 60,
+      "error_pattern": "(database unreachable|critical service down|infrastructure failure)"
+    }
+  ],
+  "strategy": "halt",
+  "priority": 1,
+  "tags": ["critical", "security", "halt", "incident"],
+  "applicable_agents": [],
+  "halt": {
+    "reason": "Critical failure detected that requires immediate workflow halt and human intervention. Continuing execution could result in security vulnerabilities, data corruption, or system instability.",
+    "cleanup_required": true,
+    "cleanup_timeout_minutes": 5,
+    "preserve_state": true,
+    "preserve_artifacts": true,
+    "preserve_logs": true,
+    "notify": ["orchestrator", "user", "security_team", "on_call"],
+    "notification_channels": ["log", "email", "slack"],
+    "create_incident": true,
+    "incident_severity": "critical",
+    "allow_resume": false
+  },
+  "conditions": {
+    "workflow_phase": ["planning", "implementation", "testing", "deployment", "monitoring"],
+    "environment": ["development", "staging", "production"]
+  },
+  "metrics": {
+    "success_rate_threshold": 1.0,
+    "track_execution_time": true,
+    "track_resource_usage": true
+  },
+  "metadata": {
+    "created_by": "system",
+    "created_at": "2025-01-15T00:00:00Z",
+    "usage_count": 0,
+    "success_count": 0,
+    "failure_count": 0
+  }
+}

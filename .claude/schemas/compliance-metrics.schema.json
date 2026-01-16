@@ -1,0 +1,201 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.org/schemas/compliance-metrics.schema.json",
+  "title": "Compliance Metrics Schema",
+  "description": "Schema for orchestrator compliance metrics and dashboard data",
+  "type": "object",
+  "required": ["complianceScore", "totalViolations", "violationsByType", "sessions"],
+  "properties": {
+    "complianceScore": {
+      "type": "number",
+      "description": "Overall compliance score (0-100%) calculated as: 100 - sum(violation_penalties)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "totalViolations": {
+      "type": "integer",
+      "description": "Total number of violations",
+      "minimum": 0
+    },
+    "violationsByType": {
+      "type": "object",
+      "description": "Violations grouped by tool type",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "violationsBySession": {
+      "type": "object",
+      "description": "Violations grouped by session ID",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "violationsBySeverity": {
+      "type": "object",
+      "description": "Violations grouped by severity level",
+      "required": ["critical", "high", "medium", "low"],
+      "properties": {
+        "critical": {
+          "type": "integer",
+          "description": "Critical severity violations (penalty: 10)",
+          "minimum": 0
+        },
+        "high": {
+          "type": "integer",
+          "description": "High severity violations (penalty: 5)",
+          "minimum": 0
+        },
+        "medium": {
+          "type": "integer",
+          "description": "Medium severity violations (penalty: 2)",
+          "minimum": 0
+        },
+        "low": {
+          "type": "integer",
+          "description": "Low severity violations (penalty: 1)",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "timeSeries": {
+      "type": "array",
+      "description": "Time series data of violations over time",
+      "items": {
+        "type": "object",
+        "required": ["date", "count"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Date in ISO 8601 format (YYYY-MM-DD)",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of violations on this date",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "topViolators": {
+      "type": "array",
+      "description": "Top violating tools ranked by count",
+      "items": {
+        "type": "object",
+        "required": ["tool", "count"],
+        "properties": {
+          "tool": {
+            "type": "string",
+            "description": "Tool name",
+            "minLength": 1
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of violations",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "trend": {
+      "type": "string",
+      "description": "Overall trend direction",
+      "enum": ["improving", "stable", "worsening"]
+    },
+    "sessions": {
+      "type": "object",
+      "description": "Session statistics",
+      "required": ["total", "clean", "violations"],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "description": "Total number of sessions",
+          "minimum": 0
+        },
+        "clean": {
+          "type": "integer",
+          "description": "Number of sessions with zero violations",
+          "minimum": 0
+        },
+        "violations": {
+          "type": "integer",
+          "description": "Number of sessions with one or more violations",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "period": {
+      "type": "string",
+      "description": "Time period for metrics (e.g., 1d, 7d, 30d, all)",
+      "pattern": "^(\\d+[dwmy]|all)$"
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "Timestamp when metrics were generated",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "complianceScore": 85,
+      "totalViolations": 15,
+      "violationsByType": {
+        "Write": 5,
+        "Edit": 3,
+        "Grep": 2,
+        "Glob": 2,
+        "Bash": 3
+      },
+      "violationsBySession": {
+        "sess_1768507605287": 10,
+        "sess_1768512847978": 5
+      },
+      "violationsBySeverity": {
+        "critical": 3,
+        "high": 8,
+        "medium": 2,
+        "low": 2
+      },
+      "timeSeries": [
+        {
+          "date": "2025-01-15",
+          "count": 10
+        },
+        {
+          "date": "2025-01-16",
+          "count": 5
+        }
+      ],
+      "topViolators": [
+        {
+          "tool": "Write",
+          "count": 5
+        },
+        {
+          "tool": "Bash",
+          "count": 3
+        },
+        {
+          "tool": "Edit",
+          "count": 3
+        }
+      ],
+      "trend": "improving",
+      "sessions": {
+        "total": 2,
+        "clean": 0,
+        "violations": 2
+      },
+      "period": "7d",
+      "generated_at": "2025-01-17T12:00:00Z"
+    }
+  ]
+}

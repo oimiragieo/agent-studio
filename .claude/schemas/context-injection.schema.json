@@ -1,0 +1,261 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.org/schemas/context-injection.schema.json",
+  "title": "Context Injection Schema",
+  "description": "Schema for enriched context packets with auto-gathered information from 6 sources",
+  "type": "object",
+  "required": ["background", "constraints", "dependencies", "metadata"],
+  "properties": {
+    "background": {
+      "type": "object",
+      "description": "Project background context from artifacts and documentation",
+      "required": ["project_overview", "recent_artifacts", "key_documentation"],
+      "properties": {
+        "project_overview": {
+          "type": "string",
+          "description": "Project overview from README.md or .claude/docs/README.md"
+        },
+        "recent_artifacts": {
+          "type": "array",
+          "description": "Paths to recent artifacts (up to 5)",
+          "items": {
+            "type": "string",
+            "pattern": "^.claude/context/artifacts/"
+          },
+          "maxItems": 5
+        },
+        "key_documentation": {
+          "type": "array",
+          "description": "Paths to key documentation files",
+          "items": {
+            "type": "string",
+            "pattern": "^(.claude/docs/|README)"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "previous_attempts": {
+      "type": "array",
+      "description": "History of previous attempts for this task",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "agent", "verdict"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp of the attempt (ISO 8601 or 'unknown')",
+            "anyOf": [
+              { "format": "date-time" },
+              { "enum": ["unknown"] }
+            ]
+          },
+          "agent": {
+            "type": "string",
+            "description": "Agent that performed the attempt",
+            "minLength": 1
+          },
+          "verdict": {
+            "description": "Outcome verdict of the attempt",
+            "anyOf": [
+              { "enum": ["PASS", "CONCERNS", "FAIL", "unknown"] },
+              { "type": "string" }
+            ]
+          },
+          "errors": {
+            "type": "array",
+            "description": "Errors or validation issues encountered",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "related_work": {
+      "type": "object",
+      "description": "Related work from git commits and artifacts",
+      "required": ["recent_commits", "related_artifacts"],
+      "properties": {
+        "recent_commits": {
+          "type": "array",
+          "description": "Recent git commits (up to 10)",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10
+        },
+        "related_artifacts": {
+          "type": "array",
+          "description": "Paths to artifacts related to this task",
+          "items": {
+            "type": "string",
+            "pattern": "^.claude/context/artifacts/"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "constraints": {
+      "type": "object",
+      "description": "Constraints from CLAUDE.md and guardrails",
+      "required": ["orchestrator_rules", "file_location_rules", "guardrails"],
+      "properties": {
+        "orchestrator_rules": {
+          "type": "string",
+          "description": "Extracted orchestration rules from CLAUDE.md"
+        },
+        "file_location_rules": {
+          "type": "string",
+          "description": "File location rules from subagent-file-rules.md"
+        },
+        "guardrails": {
+          "type": "array",
+          "description": "Paths to system guardrail files",
+          "items": {
+            "type": "string",
+            "pattern": "^.claude/system/guardrails/"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "object",
+      "description": "Dependency validation status from dependency-validator",
+      "required": ["valid"],
+      "properties": {
+        "valid": {
+          "type": "boolean",
+          "description": "Whether dependencies are valid"
+        },
+        "missing_dependencies": {
+          "type": "array",
+          "description": "List of missing dependencies",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "warnings": {
+          "type": "array",
+          "description": "Dependency warnings",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "errors": {
+          "type": "array",
+          "description": "Dependency errors",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "additionalProperties": true
+    },
+    "success_criteria": {
+      "type": "array",
+      "description": "Success criteria extracted from workflows and templates",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 10
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata about the enriched context",
+      "required": ["completenessScore", "generated_at", "sources"],
+      "properties": {
+        "completenessScore": {
+          "type": "number",
+          "description": "Completeness score (0-100%) based on presence of context types",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "generated_at": {
+          "type": "string",
+          "description": "Timestamp when context was generated",
+          "format": "date-time"
+        },
+        "sources": {
+          "type": "array",
+          "description": "List of context sources used",
+          "items": {
+            "type": "string",
+            "enum": ["artifacts", "history", "git", "docs", "workflows", "dependencies"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "task_id": {
+          "type": "string",
+          "description": "Task identifier for which context was generated"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "background": {
+        "project_overview": "LLM Rules Production Pack - Multi-platform agent configuration bundle",
+        "recent_artifacts": [
+          ".claude/context/artifacts/plan-greenfield-2025-01-15.json",
+          ".claude/context/artifacts/dev-manifest.json"
+        ],
+        "key_documentation": [
+          ".claude/docs/README.md",
+          ".claude/docs/ORCHESTRATION_GUIDE.md"
+        ]
+      },
+      "previous_attempts": [
+        {
+          "timestamp": "2025-01-15T10:30:00Z",
+          "agent": "developer",
+          "verdict": "PASS",
+          "errors": []
+        }
+      ],
+      "related_work": {
+        "recent_commits": [
+          "abc123 feat: implement context injection",
+          "def456 fix: resolve dependency issues"
+        ],
+        "related_artifacts": [
+          ".claude/context/artifacts/context-enrichment-task.json"
+        ]
+      },
+      "constraints": {
+        "orchestrator_rules": "YOU ARE THE MASTER ORCHESTRATOR. EVERY USER REQUEST COMES TO YOU FIRST...",
+        "file_location_rules": "# Subagent File Location Rules\n\nThis document defines MANDATORY file location rules...",
+        "guardrails": [
+          ".claude/system/guardrails/file-location-guardrails.md",
+          ".claude/system/guardrails/security-guardrails.md"
+        ]
+      },
+      "dependencies": {
+        "valid": true,
+        "missing_dependencies": [],
+        "warnings": []
+      },
+      "success_criteria": [
+        "All files created at correct paths",
+        "Completeness score >= 80%",
+        "All 6 context sources gathered"
+      ],
+      "metadata": {
+        "completenessScore": 100,
+        "generated_at": "2025-01-15T12:00:00Z",
+        "sources": ["artifacts", "history", "git", "docs", "workflows", "dependencies"],
+        "task_id": "context-enrichment-001"
+      }
+    }
+  ]
+}

@@ -1,0 +1,671 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude.ai/schemas/recovery-pattern.schema.json",
+  "title": "Recovery Pattern Schema",
+  "description": "Schema for defining automated failure recovery patterns in workflow orchestration",
+  "type": "object",
+  "required": ["pattern_id", "name", "triggers", "strategy", "priority"],
+  "properties": {
+    "pattern_id": {
+      "type": "string",
+      "description": "Unique identifier for the recovery pattern",
+      "pattern": "^[a-z0-9-]+$",
+      "minLength": 3,
+      "maxLength": 64,
+      "examples": ["timeout-retry", "test-failure-escalate", "dependency-missing-retry"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for the recovery pattern",
+      "minLength": 5,
+      "maxLength": 128,
+      "examples": ["Retry on Timeout", "Escalate Test Failures", "Retry Dependency Installation"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of when and how this pattern should be applied",
+      "minLength": 10,
+      "maxLength": 1000
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the recovery pattern",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "1.0.0"
+    },
+    "enabled": {
+      "type": "boolean",
+      "description": "Whether this recovery pattern is currently enabled",
+      "default": true
+    },
+    "triggers": {
+      "type": "array",
+      "description": "Conditions that activate this recovery pattern",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["condition", "severity"],
+        "properties": {
+          "condition": {
+            "type": "string",
+            "description": "Type of failure condition that triggers recovery",
+            "enum": [
+              "timeout",
+              "test_failure",
+              "compilation_error",
+              "dependency_missing",
+              "resource_unavailable",
+              "validation_failure",
+              "security_violation",
+              "network_error",
+              "authentication_failure",
+              "rate_limit_exceeded",
+              "disk_space_low",
+              "memory_exhausted"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity level of the failure",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "threshold": {
+            "type": "number",
+            "description": "Number of occurrences before triggering recovery",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 1
+          },
+          "timeframe_minutes": {
+            "type": "number",
+            "description": "Time window in minutes for counting occurrences",
+            "minimum": 1,
+            "maximum": 1440,
+            "default": 60
+          },
+          "error_pattern": {
+            "type": "string",
+            "description": "Regex pattern to match error messages",
+            "format": "regex"
+          },
+          "metadata_filters": {
+            "type": "object",
+            "description": "Additional metadata filters for trigger matching",
+            "additionalProperties": {
+              "type": ["string", "number", "boolean"]
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "strategy": {
+      "type": "string",
+      "description": "Recovery strategy to apply when pattern is triggered",
+      "enum": ["retry", "escalate", "skip", "rollback", "halt"]
+    },
+    "priority": {
+      "type": "number",
+      "description": "Priority of this pattern (1=highest, 10=lowest)",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 5
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags for categorizing and searching recovery patterns",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$"
+      },
+      "uniqueItems": true
+    },
+    "applicable_agents": {
+      "type": "array",
+      "description": "Agent types this pattern applies to (empty = all agents)",
+      "items": {
+        "type": "string",
+        "enum": [
+          "developer",
+          "qa",
+          "architect",
+          "security-architect",
+          "devops",
+          "analyst",
+          "code-reviewer",
+          "technical-writer",
+          "planner",
+          "orchestrator",
+          "master-orchestrator"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "retry_policy": {
+      "type": "object",
+      "description": "Configuration for retry recovery strategy",
+      "required": ["max_attempts"],
+      "properties": {
+        "max_attempts": {
+          "type": "number",
+          "description": "Maximum number of retry attempts",
+          "minimum": 1,
+          "maximum": 5,
+          "default": 3
+        },
+        "backoff": {
+          "type": "string",
+          "description": "Backoff strategy for retry delays",
+          "enum": ["fixed", "linear", "exponential"],
+          "default": "exponential"
+        },
+        "delay_ms": {
+          "type": "number",
+          "description": "Initial delay in milliseconds between retries",
+          "minimum": 100,
+          "maximum": 300000,
+          "default": 1000
+        },
+        "max_delay_ms": {
+          "type": "number",
+          "description": "Maximum delay in milliseconds (for exponential backoff)",
+          "minimum": 1000,
+          "maximum": 3600000,
+          "default": 60000
+        },
+        "timeout_multiplier": {
+          "type": "number",
+          "description": "Multiply timeout on each retry attempt",
+          "minimum": 1.0,
+          "maximum": 5.0,
+          "default": 1.5
+        },
+        "jitter": {
+          "type": "boolean",
+          "description": "Add random jitter to retry delays",
+          "default": true
+        },
+        "jitter_factor": {
+          "type": "number",
+          "description": "Maximum jitter as fraction of delay (0.0-1.0)",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.1
+        },
+        "reset_on_success": {
+          "type": "boolean",
+          "description": "Reset retry counter after successful execution",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "escalation": {
+      "type": "object",
+      "description": "Configuration for escalation recovery strategy",
+      "required": ["to_agent"],
+      "properties": {
+        "to_agent": {
+          "type": "string",
+          "description": "Agent type to escalate the failed task to",
+          "enum": [
+            "developer",
+            "architect",
+            "security-architect",
+            "devops",
+            "code-reviewer",
+            "qa",
+            "technical-writer",
+            "orchestrator",
+            "master-orchestrator"
+          ]
+        },
+        "context": {
+          "type": "string",
+          "description": "Additional context to provide to the escalated agent",
+          "maxLength": 2000
+        },
+        "timeout_multiplier": {
+          "type": "number",
+          "description": "Multiply task timeout when escalating",
+          "minimum": 1.0,
+          "maximum": 10.0,
+          "default": 2.0
+        },
+        "priority_boost": {
+          "type": "string",
+          "description": "Increase task priority when escalating",
+          "enum": ["none", "low", "medium", "high"],
+          "default": "medium"
+        },
+        "include_artifacts": {
+          "type": "boolean",
+          "description": "Include original task artifacts in escalation",
+          "default": true
+        },
+        "include_logs": {
+          "type": "boolean",
+          "description": "Include original task logs in escalation",
+          "default": true
+        },
+        "max_escalations": {
+          "type": "number",
+          "description": "Maximum number of escalations allowed",
+          "minimum": 1,
+          "maximum": 5,
+          "default": 2
+        },
+        "escalation_chain": {
+          "type": "array",
+          "description": "Chain of agents to escalate through",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "rollback": {
+      "type": "object",
+      "description": "Configuration for rollback recovery strategy",
+      "required": ["target_state"],
+      "properties": {
+        "target_state": {
+          "type": "string",
+          "description": "State to roll back to",
+          "enum": ["previous_step", "workflow_start", "last_checkpoint", "custom"],
+          "default": "previous_step"
+        },
+        "custom_checkpoint_id": {
+          "type": "string",
+          "description": "Custom checkpoint ID (when target_state=custom)",
+          "pattern": "^[a-zA-Z0-9-_]+$"
+        },
+        "preserve_artifacts": {
+          "type": "boolean",
+          "description": "Preserve artifacts created before rollback",
+          "default": true
+        },
+        "cleanup_files": {
+          "type": "array",
+          "description": "Files to delete during rollback",
+          "items": {
+            "type": "string",
+            "description": "File path or glob pattern"
+          },
+          "uniqueItems": true
+        },
+        "cleanup_directories": {
+          "type": "array",
+          "description": "Directories to delete during rollback",
+          "items": {
+            "type": "string",
+            "description": "Directory path"
+          },
+          "uniqueItems": true
+        },
+        "restore_files": {
+          "type": "array",
+          "description": "Files to restore from checkpoint",
+          "items": {
+            "type": "object",
+            "required": ["source", "destination"],
+            "properties": {
+              "source": {
+                "type": "string",
+                "description": "Source file path in checkpoint"
+              },
+              "destination": {
+                "type": "string",
+                "description": "Destination file path to restore"
+              }
+            }
+          }
+        },
+        "notify_on_rollback": {
+          "type": "boolean",
+          "description": "Send notification when rollback occurs",
+          "default": true
+        },
+        "halt_workflow_on_rollback": {
+          "type": "boolean",
+          "description": "Halt workflow execution after rollback",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "skip": {
+      "type": "object",
+      "description": "Configuration for skip recovery strategy",
+      "required": ["reason", "impact"],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "description": "Reason for skipping the failed step",
+          "minLength": 10,
+          "maxLength": 500
+        },
+        "impact": {
+          "type": "string",
+          "description": "Impact assessment of skipping this step",
+          "enum": ["none", "minor", "major", "critical"]
+        },
+        "continue_workflow": {
+          "type": "boolean",
+          "description": "Continue workflow execution after skipping",
+          "default": true
+        },
+        "mark_workflow_degraded": {
+          "type": "boolean",
+          "description": "Mark workflow as degraded (partial success)",
+          "default": true
+        },
+        "skip_dependent_steps": {
+          "type": "boolean",
+          "description": "Skip steps that depend on the failed step",
+          "default": false
+        },
+        "alternative_steps": {
+          "type": "array",
+          "description": "Alternative steps to execute instead",
+          "items": {
+            "type": "object",
+            "required": ["agent", "task"],
+            "properties": {
+              "agent": {
+                "type": "string",
+                "description": "Agent type for alternative step"
+              },
+              "task": {
+                "type": "string",
+                "description": "Task description for alternative step"
+              },
+              "timeout_minutes": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 120
+              }
+            }
+          }
+        },
+        "notify_on_skip": {
+          "type": "boolean",
+          "description": "Send notification when step is skipped",
+          "default": true
+        },
+        "require_approval": {
+          "type": "boolean",
+          "description": "Require human approval to skip",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "halt": {
+      "type": "object",
+      "description": "Configuration for halt recovery strategy",
+      "required": ["reason"],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "description": "Reason for halting workflow execution",
+          "minLength": 10,
+          "maxLength": 1000
+        },
+        "cleanup_required": {
+          "type": "boolean",
+          "description": "Whether cleanup operations are required before halt",
+          "default": true
+        },
+        "cleanup_timeout_minutes": {
+          "type": "number",
+          "description": "Timeout for cleanup operations",
+          "minimum": 1,
+          "maximum": 60,
+          "default": 5
+        },
+        "preserve_state": {
+          "type": "boolean",
+          "description": "Preserve workflow state for debugging",
+          "default": true
+        },
+        "preserve_artifacts": {
+          "type": "boolean",
+          "description": "Preserve all artifacts created before halt",
+          "default": true
+        },
+        "preserve_logs": {
+          "type": "boolean",
+          "description": "Preserve all logs before halt",
+          "default": true
+        },
+        "notify": {
+          "type": "array",
+          "description": "Stakeholders to notify on workflow halt",
+          "items": {
+            "type": "string",
+            "enum": ["orchestrator", "user", "team_lead", "on_call", "security_team"]
+          },
+          "uniqueItems": true,
+          "default": ["orchestrator", "user"]
+        },
+        "notification_channels": {
+          "type": "array",
+          "description": "Notification channels to use",
+          "items": {
+            "type": "string",
+            "enum": ["log", "email", "slack", "pagerduty", "webhook"]
+          },
+          "uniqueItems": true,
+          "default": ["log"]
+        },
+        "create_incident": {
+          "type": "boolean",
+          "description": "Create incident ticket for halt",
+          "default": false
+        },
+        "incident_severity": {
+          "type": "string",
+          "description": "Severity of the incident",
+          "enum": ["low", "medium", "high", "critical"],
+          "default": "medium"
+        },
+        "allow_resume": {
+          "type": "boolean",
+          "description": "Allow workflow to be resumed after halt",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "conditions": {
+      "type": "object",
+      "description": "Additional conditions for pattern activation",
+      "properties": {
+        "workflow_phase": {
+          "type": "array",
+          "description": "Workflow phases where this pattern applies",
+          "items": {
+            "type": "string",
+            "enum": ["planning", "implementation", "testing", "deployment", "monitoring"]
+          }
+        },
+        "time_of_day": {
+          "type": "object",
+          "description": "Time-based conditions",
+          "properties": {
+            "start_hour": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 23
+            },
+            "end_hour": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 23
+            }
+          }
+        },
+        "environment": {
+          "type": "array",
+          "description": "Environments where this pattern applies",
+          "items": {
+            "type": "string",
+            "enum": ["development", "staging", "production"]
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Metrics tracking for pattern effectiveness",
+      "properties": {
+        "success_rate_threshold": {
+          "type": "number",
+          "description": "Minimum success rate to keep pattern enabled",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "track_execution_time": {
+          "type": "boolean",
+          "default": true
+        },
+        "track_resource_usage": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the recovery pattern",
+      "properties": {
+        "created_by": {
+          "type": "string",
+          "description": "Creator of the recovery pattern"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the pattern was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the pattern was last updated"
+        },
+        "last_used_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the pattern was last used"
+        },
+        "usage_count": {
+          "type": "number",
+          "description": "Number of times pattern has been applied",
+          "minimum": 0,
+          "default": 0
+        },
+        "success_count": {
+          "type": "number",
+          "description": "Number of successful recoveries",
+          "minimum": 0,
+          "default": 0
+        },
+        "failure_count": {
+          "type": "number",
+          "description": "Number of failed recoveries",
+          "minimum": 0,
+          "default": 0
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "strategy": { "const": "retry" } }
+      },
+      "then": {
+        "required": ["retry_policy"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "strategy": { "const": "escalate" } }
+      },
+      "then": {
+        "required": ["escalation"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "strategy": { "const": "rollback" } }
+      },
+      "then": {
+        "required": ["rollback"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "strategy": { "const": "skip" } }
+      },
+      "then": {
+        "required": ["skip"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "strategy": { "const": "halt" } }
+      },
+      "then": {
+        "required": ["halt"]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "pattern_id": "timeout-retry-exponential",
+      "name": "Retry on Timeout with Exponential Backoff",
+      "description": "Automatically retry operations that timeout with exponential backoff",
+      "triggers": [
+        {
+          "condition": "timeout",
+          "severity": "medium",
+          "threshold": 1
+        }
+      ],
+      "strategy": "retry",
+      "priority": 3,
+      "retry_policy": {
+        "max_attempts": 3,
+        "backoff": "exponential",
+        "delay_ms": 1000,
+        "timeout_multiplier": 1.5
+      }
+    },
+    {
+      "pattern_id": "test-failure-escalate-developer",
+      "name": "Escalate Test Failures to Developer",
+      "description": "Escalate failed tests to developer agent for investigation",
+      "triggers": [
+        {
+          "condition": "test_failure",
+          "severity": "high",
+          "threshold": 2,
+          "timeframe_minutes": 30
+        }
+      ],
+      "strategy": "escalate",
+      "priority": 2,
+      "escalation": {
+        "to_agent": "developer",
+        "context": "Multiple test failures detected. Please investigate root cause.",
+        "timeout_multiplier": 2.0
+      }
+    }
+  ]
+}

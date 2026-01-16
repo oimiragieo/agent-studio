@@ -1,0 +1,46 @@
+{
+  "pattern_id": "dependency-missing-retry",
+  "name": "Retry Dependency Installation with Linear Backoff",
+  "description": "Retry dependency installation when packages are missing or installation fails. Uses linear backoff to handle npm registry issues, network connectivity problems, or transient package availability issues.",
+  "version": "1.0.0",
+  "enabled": true,
+  "triggers": [
+    {
+      "condition": "dependency_missing",
+      "severity": "medium",
+      "threshold": 1,
+      "timeframe_minutes": 60,
+      "error_pattern": "(ENOTFOUND|ETIMEDOUT|npm ERR!|package not found)"
+    }
+  ],
+  "strategy": "retry",
+  "priority": 4,
+  "tags": ["dependencies", "npm", "retry", "installation"],
+  "applicable_agents": ["developer", "devops"],
+  "retry_policy": {
+    "max_attempts": 4,
+    "backoff": "linear",
+    "delay_ms": 2000,
+    "max_delay_ms": 30000,
+    "timeout_multiplier": 1.0,
+    "jitter": true,
+    "jitter_factor": 0.2,
+    "reset_on_success": true
+  },
+  "conditions": {
+    "workflow_phase": ["planning", "implementation"],
+    "environment": ["development", "staging", "production"]
+  },
+  "metrics": {
+    "success_rate_threshold": 0.75,
+    "track_execution_time": true,
+    "track_resource_usage": false
+  },
+  "metadata": {
+    "created_by": "system",
+    "created_at": "2025-01-15T00:00:00Z",
+    "usage_count": 0,
+    "success_count": 0,
+    "failure_count": 0
+  }
+}

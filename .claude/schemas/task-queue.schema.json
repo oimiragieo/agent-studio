@@ -1,0 +1,272 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude.ai/schemas/task-queue.schema.json",
+  "title": "Task Queue State Schema",
+  "description": "Schema for task queue state management in workflow orchestration",
+  "type": "object",
+  "required": ["run_id", "max_concurrent", "queue", "running", "completed", "failed", "updated_at"],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Unique identifier for the workflow run",
+      "pattern": "^[a-zA-Z0-9-_]+$",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "max_concurrent": {
+      "type": "number",
+      "description": "Maximum number of concurrent tasks allowed",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 2
+    },
+    "queue": {
+      "type": "array",
+      "description": "Tasks waiting to be executed",
+      "items": {
+        "$ref": "#/definitions/task"
+      }
+    },
+    "running": {
+      "type": "array",
+      "description": "Tasks currently executing",
+      "items": {
+        "$ref": "#/definitions/task"
+      }
+    },
+    "completed": {
+      "type": "array",
+      "description": "Tasks that completed successfully",
+      "items": {
+        "$ref": "#/definitions/task"
+      }
+    },
+    "failed": {
+      "type": "array",
+      "description": "Tasks that failed execution",
+      "items": {
+        "$ref": "#/definitions/task"
+      }
+    },
+    "cancelled": {
+      "type": "array",
+      "description": "Tasks that were cancelled",
+      "items": {
+        "$ref": "#/definitions/task"
+      },
+      "default": []
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last queue update"
+    }
+  },
+  "definitions": {
+    "task": {
+      "type": "object",
+      "required": ["id", "status", "created_at", "priority"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique task identifier",
+          "format": "uuid"
+        },
+        "agent": {
+          "type": "string",
+          "description": "Agent type assigned to execute the task",
+          "enum": [
+            "developer",
+            "qa",
+            "architect",
+            "security-architect",
+            "devops",
+            "analyst",
+            "code-reviewer",
+            "technical-writer",
+            "planner",
+            "orchestrator",
+            "master-orchestrator"
+          ]
+        },
+        "task": {
+          "type": "string",
+          "description": "Task description or objective",
+          "minLength": 10,
+          "maxLength": 5000
+        },
+        "status": {
+          "type": "string",
+          "description": "Current task status",
+          "enum": ["queued", "running", "completed", "failed", "cancelled"]
+        },
+        "priority": {
+          "type": "string",
+          "description": "Task priority level",
+          "enum": ["high", "medium", "low"],
+          "default": "medium"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when task was created"
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Timestamp when task execution started"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Timestamp when task completed successfully"
+        },
+        "failed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Timestamp when task failed"
+        },
+        "cancelled_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Timestamp when task was cancelled"
+        },
+        "duration_ms": {
+          "type": ["number", "null"],
+          "description": "Task execution duration in milliseconds",
+          "minimum": 0
+        },
+        "retry_count": {
+          "type": "number",
+          "description": "Number of retry attempts",
+          "minimum": 0,
+          "default": 0
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "Task IDs that must complete before this task can start",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "uniqueItems": true,
+          "default": []
+        },
+        "timeout_ms": {
+          "type": "number",
+          "description": "Task execution timeout in milliseconds",
+          "minimum": 1000,
+          "maximum": 3600000,
+          "default": 120000
+        },
+        "retry_policy": {
+          "type": "object",
+          "description": "Retry configuration for failed tasks",
+          "properties": {
+            "max_retries": {
+              "type": "number",
+              "description": "Maximum number of retry attempts",
+              "minimum": 0,
+              "maximum": 5,
+              "default": 0
+            },
+            "retry_delay_ms": {
+              "type": "number",
+              "description": "Delay in milliseconds before retry",
+              "minimum": 0,
+              "maximum": 60000,
+              "default": 0
+            }
+          }
+        },
+        "error": {
+          "type": ["object", "null"],
+          "description": "Error information if task failed",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Error message"
+            },
+            "stack": {
+              "type": "string",
+              "description": "Error stack trace"
+            },
+            "code": {
+              "type": "string",
+              "description": "Error code"
+            }
+          }
+        },
+        "result": {
+          "type": ["object", "null"],
+          "description": "Task execution result if completed",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "description": "Whether task completed successfully"
+            },
+            "artifacts": {
+              "type": "array",
+              "description": "Artifacts produced by the task",
+              "items": {
+                "type": "string"
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "description": "Additional result metadata",
+              "additionalProperties": true
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional task metadata",
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "run_id": "run-001",
+      "max_concurrent": 2,
+      "queue": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440001",
+          "agent": "developer",
+          "task": "Implement authentication feature",
+          "status": "queued",
+          "priority": "high",
+          "created_at": "2025-01-15T10:00:00Z",
+          "started_at": null,
+          "retry_count": 0,
+          "dependencies": [],
+          "timeout_ms": 120000,
+          "retry_policy": {
+            "max_retries": 2,
+            "retry_delay_ms": 5000
+          }
+        }
+      ],
+      "running": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440002",
+          "agent": "qa",
+          "task": "Write test suite",
+          "status": "running",
+          "priority": "medium",
+          "created_at": "2025-01-15T10:00:00Z",
+          "started_at": "2025-01-15T10:05:00Z",
+          "retry_count": 0,
+          "dependencies": [],
+          "timeout_ms": 120000
+        }
+      ],
+      "completed": [],
+      "failed": [],
+      "cancelled": [],
+      "updated_at": "2025-01-15T10:05:00Z"
+    }
+  ]
+}
