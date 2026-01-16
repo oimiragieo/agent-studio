@@ -650,6 +650,13 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 | **External Federation**   | External agent discovery, streaming, webhooks                   | `.claude/context/runtime/reports/phase-4-4-external-federation-implementation-report.md` |
 | **290 A2A Tests**         | Comprehensive test coverage with 100% backward compatibility    | Various validation reports in `.claude/context/runtime/reports/`                         |
 
+### 2026-01: Pre-PR Quality Gate (Enforcement Infrastructure)
+
+| Feature | Purpose | Documentation |
+| **Pre-PR Quality Gate** | MANDATORY enforcement of formatting/linting/validation before PR creation - BLOCKS PRs with quality issues | `.claude/docs/PRE_PR_GATE_GUIDE.md` |
+| **Auto-Detection System** | Automatically detects and runs prettier, black, eslint, pylint, jest, pytest, vitest, etc. | `.claude/tools/pre-pr-gate.mjs` |
+| **Blocking Failures** | Exit code 1 prevents PR creation if any check fails - fixes "claimed but not enforced" problem | Integrated in `.claude/workflows/pr-creation-workflow.yaml` |
+
 ### Phase 2.1.2: Codex Skills & Hook Recovery
 
 | Feature                               | Purpose                                                 | Documentation                                |

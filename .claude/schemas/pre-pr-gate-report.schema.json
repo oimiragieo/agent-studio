@@ -1,0 +1,201 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-llm-rules.dev/schemas/pre-pr-gate-report.schema.json",
+  "title": "Pre-PR Gate Report Schema",
+  "description": "Validation schema for pre-PR quality gate reports that enforce code quality before PR creation",
+  "type": "object",
+  "required": ["passed", "timestamp", "summary", "results"],
+  "properties": {
+    "passed": {
+      "type": "boolean",
+      "description": "Whether all quality checks passed (no failures)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when gate was executed"
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total", "passed", "failed", "skipped"],
+      "properties": {
+        "total": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total number of checks executed"
+        },
+        "passed": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Number of checks that passed"
+        },
+        "failed": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Number of checks that failed"
+        },
+        "skipped": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Number of checks that were skipped (tool not detected)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "results": {
+      "type": "object",
+      "required": ["formatting", "linting", "validation", "tests"],
+      "properties": {
+        "formatting": {
+          "$ref": "#/definitions/checkResult",
+          "description": "Code formatting check result (prettier, black, rustfmt, etc.)"
+        },
+        "linting": {
+          "$ref": "#/definitions/checkResult",
+          "description": "Linting check result (eslint, pylint, flake8, clippy, etc.)"
+        },
+        "validation": {
+          "$ref": "#/definitions/checkResult",
+          "description": "Custom validation check result (project-specific validators)"
+        },
+        "tests": {
+          "$ref": "#/definitions/checkResult",
+          "description": "Test execution result (jest, pytest, vitest, mocha, etc.)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "failedChecks": {
+      "type": "array",
+      "description": "Details of checks that failed",
+      "items": {
+        "type": "object",
+        "required": ["check", "tool", "errors"],
+        "properties": {
+          "check": {
+            "type": "string",
+            "enum": ["formatting", "linting", "validation", "tests"],
+            "description": "Which check failed"
+          },
+          "tool": {
+            "type": "string",
+            "description": "Which tool was used for the check"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Error messages from the failed check"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "checkResult": {
+      "type": "object",
+      "required": ["status", "errors"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "skipped", "pending"],
+          "description": "Status of the check"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Error messages if check failed"
+        },
+        "tool": {
+          "type": ["string", "null"],
+          "description": "Tool used for this check (prettier, eslint, jest, etc.)"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "passed": true,
+      "timestamp": "2025-01-15T10:30:00Z",
+      "summary": {
+        "total": 4,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 1
+      },
+      "results": {
+        "formatting": {
+          "status": "passed",
+          "errors": [],
+          "tool": "prettier"
+        },
+        "linting": {
+          "status": "passed",
+          "errors": [],
+          "tool": "eslint"
+        },
+        "validation": {
+          "status": "skipped",
+          "errors": [],
+          "tool": null
+        },
+        "tests": {
+          "status": "passed",
+          "errors": [],
+          "tool": "jest"
+        }
+      },
+      "failedChecks": []
+    },
+    {
+      "passed": false,
+      "timestamp": "2025-01-15T10:35:00Z",
+      "summary": {
+        "total": 4,
+        "passed": 2,
+        "failed": 2,
+        "skipped": 0
+      },
+      "results": {
+        "formatting": {
+          "status": "failed",
+          "errors": ["Files need formatting: src/index.ts, src/utils.ts"],
+          "tool": "prettier"
+        },
+        "linting": {
+          "status": "passed",
+          "errors": [],
+          "tool": "eslint"
+        },
+        "validation": {
+          "status": "passed",
+          "errors": [],
+          "tool": "custom"
+        },
+        "tests": {
+          "status": "failed",
+          "errors": ["3 tests failed in src/__tests__/utils.test.ts"],
+          "tool": "jest"
+        }
+      },
+      "failedChecks": [
+        {
+          "check": "formatting",
+          "tool": "prettier",
+          "errors": ["Files need formatting: src/index.ts, src/utils.ts"]
+        },
+        {
+          "check": "tests",
+          "tool": "jest",
+          "errors": ["3 tests failed in src/__tests__/utils.test.ts"]
+        }
+      ]
+    }
+  ]
+}

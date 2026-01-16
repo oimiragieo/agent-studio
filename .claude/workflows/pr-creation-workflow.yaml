@@ -26,6 +26,25 @@ steps:
       - 'Pre-commit hook executed successfully'
     failure_action: 'Block push if temp files found in root'
 
+  - id: '01a-pre-pr-gate'
+    name: 'Pre-PR Quality Gate (MANDATORY - BLOCKING)'
+    agent: 'devops'
+    description: 'BLOCKING gate - runs formatting, linting, validation, tests BEFORE allowing PR creation. This enforces actual quality checks rather than just documenting them.'
+    tasks:
+      - 'Run pre-PR gate: node .claude/tools/pre-pr-gate.mjs'
+      - 'Gate auto-detects tools: prettier, black, eslint, pylint, jest, pytest, vitest, etc.'
+      - 'Gate runs ALL detected checks: formatting, linting, validation, tests'
+      - 'Gate BLOCKS (exit 1) if any check fails'
+      - 'Gate reports what failed and how to fix it'
+      - 'Only bypass with --force flag (NOT RECOMMENDED - creates technical debt)'
+    artifacts:
+      - '.claude/context/reports/pre-pr-gate-report.json'
+    validation:
+      - 'Pre-PR gate passed (exit code 0)'
+      - 'All detected checks ran successfully'
+      - 'No quality issues blocking PR creation'
+    failure_action: 'HARD BLOCK - cannot proceed without passing gate or using --force (creates technical debt)'
+
   - id: '01-cleanup'
     name: 'Repository Cleanup'
     agent: 'devops'
