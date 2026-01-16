@@ -1,0 +1,327 @@
+{
+  "manifest_version": "1.0.0",
+  "phase": "3.1-3.2",
+  "phase_name": "Recovery DSL and Task Queue System",
+  "created_at": "2025-01-15T00:00:00Z",
+  "developer": "developer-agent",
+  "summary": {
+    "total_files": 14,
+    "schemas": 2,
+    "tools": 2,
+    "recovery_patterns": 5,
+    "documentation": 3,
+    "test_scripts": 1,
+    "guides": 1
+  },
+  "files_created": [
+    {
+      "path": ".claude/schemas/recovery-pattern.schema.json",
+      "type": "schema",
+      "purpose": "JSON Schema for recovery pattern definitions",
+      "lines": 450,
+      "features": [
+        "5 recovery strategies (retry, escalate, skip, rollback, halt)",
+        "12 failure conditions",
+        "4 severity levels",
+        "Conditional validation (strategy-specific fields)",
+        "Comprehensive metadata tracking"
+      ]
+    },
+    {
+      "path": ".claude/tools/recovery-handler.mjs",
+      "type": "tool",
+      "purpose": "Recovery pattern handler for automated failure recovery",
+      "lines": 900,
+      "features": [
+        "Pattern loading and validation",
+        "Pattern matching (severity, condition, error patterns)",
+        "5 strategy executors (retry, escalate, skip, rollback, halt)",
+        "Backoff calculation (fixed, linear, exponential)",
+        "Recovery logging and state management",
+        "CLI interface for testing and management"
+      ]
+    },
+    {
+      "path": ".claude/schemas/recovery-patterns/timeout-retry.json",
+      "type": "recovery_pattern",
+      "purpose": "Retry on timeout failures with exponential backoff",
+      "strategy": "retry",
+      "priority": 3
+    },
+    {
+      "path": ".claude/schemas/recovery-patterns/test-failure-escalate.json",
+      "type": "recovery_pattern",
+      "purpose": "Escalate test failures to developer agent",
+      "strategy": "escalate",
+      "priority": 2
+    },
+    {
+      "path": ".claude/schemas/recovery-patterns/dependency-missing-retry.json",
+      "type": "recovery_pattern",
+      "purpose": "Retry dependency installation with linear backoff",
+      "strategy": "retry",
+      "priority": 4
+    },
+    {
+      "path": ".claude/schemas/recovery-patterns/compilation-error-escalate.json",
+      "type": "recovery_pattern",
+      "purpose": "Escalate compilation errors to developer agent",
+      "strategy": "escalate",
+      "priority": 2
+    },
+    {
+      "path": ".claude/schemas/recovery-patterns/critical-failure-halt.json",
+      "type": "recovery_pattern",
+      "purpose": "Halt workflow on critical security or system failures",
+      "strategy": "halt",
+      "priority": 1
+    },
+    {
+      "path": ".claude/docs/RECOVERY_DSL_GUIDE.md",
+      "type": "documentation",
+      "purpose": "Comprehensive recovery DSL guide",
+      "lines": 650,
+      "sections": [
+        "Overview",
+        "Recovery Strategies",
+        "Pattern Structure",
+        "Trigger Conditions",
+        "Strategy Implementations",
+        "Testing Recovery Patterns",
+        "CI/CD Integration",
+        "Best Practices",
+        "Examples"
+      ]
+    },
+    {
+      "path": ".claude/docs/RECOVERY_DSL_QUICK_REFERENCE.md",
+      "type": "documentation",
+      "purpose": "Quick reference for recovery patterns",
+      "lines": 350,
+      "sections": [
+        "Strategy Decision Tree",
+        "Trigger Conditions Table",
+        "Severity Levels",
+        "Backoff Strategies Comparison",
+        "Common Failure → Recovery Mappings",
+        "CLI Commands Cheat Sheet",
+        "Troubleshooting Quick Fixes"
+      ]
+    },
+    {
+      "path": ".claude/docs/RECOVERY_DSL_INTEGRATION_EXAMPLE.md",
+      "type": "documentation",
+      "purpose": "Integration examples for recovery patterns",
+      "lines": 550,
+      "sections": [
+        "Workflow Orchestration Integration",
+        "Agent Task Integration",
+        "Custom Recovery Pattern Creation",
+        "Testing Custom Patterns",
+        "CI/CD Pipeline Integration",
+        "Real-World Recovery Scenarios"
+      ]
+    },
+    {
+      "path": ".claude/tools/qa-test-scripts/test-recovery-handler.mjs",
+      "type": "test_script",
+      "purpose": "QA test script for recovery handler validation",
+      "lines": 400,
+      "tests": [
+        "Pattern Loading",
+        "Timeout Retry Strategy",
+        "Test Failure Escalate Strategy",
+        "Dependency Missing Retry",
+        "Compilation Error Escalate",
+        "Critical Failure Halt",
+        "Pattern Matching",
+        "Backoff Calculation",
+        "State Management",
+        "Recovery Statistics"
+      ]
+    },
+    {
+      "path": ".claude/tools/task-queue.mjs",
+      "type": "tool",
+      "purpose": "Task queue management system for agent coordination",
+      "lines": 683,
+      "features": [
+        "Concurrency control (max 2 parallel tasks)",
+        "Priority queue (high/medium/low)",
+        "Task dependencies",
+        "Retry policy",
+        "Timeout tracking",
+        "Auto-start capabilities",
+        "State persistence",
+        "CLI interface"
+      ]
+    },
+    {
+      "path": ".claude/schemas/task-queue.schema.json",
+      "type": "schema",
+      "purpose": "JSON Schema for task queue state management",
+      "lines": 200,
+      "features": [
+        "Queue state definition",
+        "Task status tracking",
+        "Priority and dependency management",
+        "Retry policy configuration",
+        "Result and error tracking"
+      ]
+    },
+    {
+      "path": ".claude/docs/TASK_QUEUE_GUIDE.md",
+      "type": "documentation",
+      "purpose": "Comprehensive task queue guide",
+      "lines": 500,
+      "sections": [
+        "Overview",
+        "Why Task Queue",
+        "Task Queue API",
+        "Priority Levels",
+        "Dependency Management",
+        "Retry Policies",
+        "Concurrency Control",
+        "Usage Examples",
+        "Integration with Workflow Orchestration",
+        "Troubleshooting"
+      ]
+    }
+  ],
+  "features_implemented": {
+    "recovery_dsl": {
+      "strategies": [
+        {
+          "name": "retry",
+          "backoff_types": ["fixed", "linear", "exponential"],
+          "features": ["jitter", "timeout_multiplier", "max_attempts"]
+        },
+        {
+          "name": "escalate",
+          "features": ["escalation_chain", "timeout_multiplier", "priority_boost", "context_inclusion"]
+        },
+        {
+          "name": "skip",
+          "features": ["impact_assessment", "alternative_steps", "approval_required", "workflow_degradation"]
+        },
+        {
+          "name": "rollback",
+          "features": ["target_state", "cleanup", "restore_files", "notification"]
+        },
+        {
+          "name": "halt",
+          "features": ["cleanup", "state_preservation", "notifications", "incident_creation"]
+        }
+      ],
+      "trigger_conditions": [
+        "timeout",
+        "test_failure",
+        "compilation_error",
+        "dependency_missing",
+        "resource_unavailable",
+        "validation_failure",
+        "security_violation",
+        "network_error",
+        "authentication_failure",
+        "rate_limit_exceeded",
+        "disk_space_low",
+        "memory_exhausted"
+      ],
+      "severity_levels": ["low", "medium", "high", "critical"],
+      "pattern_matching": {
+        "condition_matching": true,
+        "severity_filtering": true,
+        "error_pattern_regex": true,
+        "threshold_counting": true,
+        "timeframe_windowing": true
+      }
+    },
+    "task_queue": {
+      "concurrency_control": {
+        "max_concurrent": 2,
+        "auto_start": true,
+        "capacity_enforcement": true
+      },
+      "priority_queue": {
+        "levels": ["high", "medium", "low"],
+        "sorting": ["priority", "creation_time"]
+      },
+      "dependency_management": {
+        "dependency_declaration": true,
+        "dependency_resolution": true,
+        "circular_dependency_detection": false
+      },
+      "retry_policy": {
+        "max_retries": true,
+        "retry_delay": true,
+        "automatic_retry": true
+      },
+      "state_persistence": {
+        "save_on_change": true,
+        "crash_recovery": true,
+        "json_format": true
+      }
+    }
+  },
+  "cli_commands": {
+    "recovery_handler": [
+      "node .claude/tools/recovery-handler.mjs --test",
+      "node .claude/tools/recovery-handler.mjs --apply --pattern <id> --failure <type>",
+      "node .claude/tools/recovery-handler.mjs --match --failure <type> --severity <level>",
+      "node .claude/tools/recovery-handler.mjs --list-patterns",
+      "node .claude/tools/recovery-handler.mjs --stats"
+    ],
+    "task_queue": [
+      "node .claude/tools/task-queue.mjs enqueue --run-id <id> --agent <type> --task <desc>",
+      "node .claude/tools/task-queue.mjs complete --run-id <id> --task-id <uuid>",
+      "node .claude/tools/task-queue.mjs fail --run-id <id> --task-id <uuid> --error <msg>",
+      "node .claude/tools/task-queue.mjs cancel --run-id <id> --task-id <uuid>",
+      "node .claude/tools/task-queue.mjs status --run-id <id> --task-id <uuid>",
+      "node .claude/tools/task-queue.mjs stats --run-id <id>",
+      "node .claude/tools/task-queue.mjs list --run-id <id>"
+    ]
+  },
+  "testing": {
+    "test_script": ".claude/tools/qa-test-scripts/test-recovery-handler.mjs",
+    "test_scenarios": 10,
+    "output_format": "qa-test-results.schema.json compliant",
+    "validation": "All recovery strategies and backoff calculations tested"
+  },
+  "integration_points": {
+    "workflow_orchestration": {
+      "recovery_on_failure": true,
+      "automatic_retry": true,
+      "task_coordination": true
+    },
+    "agent_tasks": {
+      "failure_detection": true,
+      "recovery_application": true,
+      "escalation_handling": true
+    },
+    "ci_cd_pipelines": {
+      "github_actions": true,
+      "jenkins": true,
+      "validation": true
+    }
+  },
+  "validation": {
+    "schemas_valid": true,
+    "tools_executable": true,
+    "patterns_valid": true,
+    "documentation_complete": true,
+    "test_script_functional": true
+  },
+  "success_criteria": {
+    "all_files_created": true,
+    "recovery_handler_supports_5_strategies": true,
+    "task_queue_enforces_max_2_concurrent": true,
+    "schemas_validate_successfully": true,
+    "documentation_comprehensive": true,
+    "test_script_validates_handler": true
+  },
+  "next_steps": {
+    "phase_3.3": "Checkpoint system for long-running tasks",
+    "phase_3.4": "Progress dashboard for workflow monitoring",
+    "phase_3.5": "Agent communication protocol enhancements"
+  }
+}

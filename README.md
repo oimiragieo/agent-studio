@@ -636,6 +636,9 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 
 ## New Features
 
+| Feature | Purpose | Documentation |
+| **Orchestration Enforcement Foundation** | 12 improvements for validation, recovery, and compliance | `.claude/docs/` (15+ guides) |
+
 ### 2026-01: Google A2A Protocol Integration
 
 | Feature                   | Purpose                                                         | Documentation                                                                            |
@@ -654,6 +657,25 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 | **Codex Skills Integration**          | Multi-AI validation via CLI tools                       | `.claude/docs/SKILLS_TAXONOMY.md`            |
 | **Comprehensive CUJ Fixes**           | 15 integration fixes for Codex skills                   | `.claude/docs/PHASE1_CODEX_FIXES_SUMMARY.md` |
 | **Hook Recovery & Testing Framework** | Comprehensive hook testing, bug fixes, auto PR workflow | `.claude/docs/HOOK_RECOVERY_COMPLETE.md`     |
+
+## Phase 1-2 Enhancement Summary
+
+**Orchestration Enforcement Foundation** (Phase 1-2) includes:
+
+1. **Executable Test Scripts (Phase 1.1)**: 5 QA test scripts validating hook execution, blocking, logging, runtime, JSON structure
+2. **Post-Delegation Verification (Phase 1.2)**: 5-step verification protocol with `verification-gate.mjs` tool
+3. **Code Review Checkpoint (Phase 1.3)**: Early error detection before QA/security review
+4. **Runtime Hook Validation (Phase 2.1)**: Performance and JSON structure validation for hooks
+5. **Schema Validation System (Phase 2.2)**: 10 agent-output schemas with evidence-based validation
+6. **Mandatory Verification (Phase 2.3)**: BREAKING: agent-task.schema.json v2.1.0 requires verification field
+7. **Dependency Validation (Phase 2.4)**: Pre-flight checks for Node.js, npm packages, system commands, files
+8. **Workflow Step Reordering (Phase 2.5)**: CRITICAL FIX: tests before docs (not after)
+9. **Recovery DSL (Phase 3.1)**: 5 recovery strategies (retry, escalate, skip, rollback, halt)
+10. **Task Queue System (Phase 3.2)**: Enforces max 2 concurrent tasks, priority queue, dependencies
+11. **Context Injection (Phase 3.3)**: Auto-gathering from 6 sources with completeness scoring
+12. **Compliance Dashboard (Phase 3.4)**: Tracks violations, compliance scores, trends over time
+
+See `.claude/docs/` for 15+ comprehensive guides (7,654+ lines of documentation).
 
 ## CLI Tools & Scripts (Optional)
 

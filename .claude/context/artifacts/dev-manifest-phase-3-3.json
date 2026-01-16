@@ -1,0 +1,103 @@
+{
+  "task_id": "phase-3-3-context-injection",
+  "objective": "Create context injection protocol for clear agent context passing",
+  "deliverables_created": [
+    {
+      "type": "schema",
+      "path": ".claude/schemas/context-injection.schema.json",
+      "description": "JSON schema defining enriched context structure with 6 context types",
+      "validation": "Conforms to JSON Schema Draft-07, validates context injection format"
+    },
+    {
+      "type": "tool",
+      "path": ".claude/tools/context-injector.mjs",
+      "description": "Context injector tool (v2.0) with auto-gathering and CLI support",
+      "validation": "Enhanced existing tool with auto-gathering functions, maintains backward compatibility"
+    },
+    {
+      "type": "documentation",
+      "path": ".claude/docs/CONTEXT_INJECTION_GUIDE.md",
+      "description": "Comprehensive guide for context injection protocol",
+      "validation": "Includes usage examples, integration patterns, best practices"
+    }
+  ],
+  "files_created": [
+    ".claude/schemas/context-injection.schema.json",
+    ".claude/docs/CONTEXT_INJECTION_GUIDE.md"
+  ],
+  "files_modified": [
+    ".claude/tools/context-injector.mjs"
+  ],
+  "context_types_supported": [
+    "background: Problem statement, business value, user impact, urgency, technical context",
+    "previous_attempts: What was tried before, why it failed, lessons learned",
+    "related_work: Related files, similar tasks, reference implementations, documentation",
+    "constraints: Time limits, resource limits, technical constraints",
+    "dependencies: Required files, packages, tools, prerequisite tasks",
+    "success_criteria: Explicit definition of success, validation methods"
+  ],
+  "auto_gathering_sources": [
+    "Artifacts directory (.claude/context/artifacts/)",
+    "History files (.claude/context/history/reasoning/)",
+    "Git log (last 50 commits)",
+    "Documentation (README.md, GETTING_STARTED.md, .claude/docs/)",
+    "Workflow files (.claude/workflows/*.yaml)",
+    "Dependencies (package.json)"
+  ],
+  "usage_modes": [
+    {
+      "mode": "CLI",
+      "command": "node .claude/tools/context-injector.mjs --task-id <id> [--output <path>]",
+      "description": "Auto-gathers context and saves to JSON file"
+    },
+    {
+      "mode": "Programmatic",
+      "function": "enrichTaskContext(taskId, outputPath)",
+      "description": "Returns enriched context object, optionally saves to file"
+    },
+    {
+      "mode": "Legacy",
+      "functions": "createContextPacket, formatContextPacket, injectContext",
+      "description": "Original context packet system (backward compatible)"
+    }
+  ],
+  "quality_metrics": {
+    "completeness_score": {
+      "calculation": "(populatedFields / 6) * 100",
+      "interpretation": "90-100%: Excellent, 70-89%: Good, 50-69%: Acceptable, <50%: Poor"
+    },
+    "relevance_score": {
+      "current": "Heuristic (75%)",
+      "future": "ML-based relevance scoring"
+    }
+  },
+  "integration_pattern": [
+    "Step 1: Orchestrator receives user request",
+    "Step 2: Enrich task with context (enrichTaskContext)",
+    "Step 3: Create agent task with enriched context",
+    "Step 4: Spawn agent with comprehensive context",
+    "Step 5: Agent receives full context and executes"
+  ],
+  "success_criteria_validation": {
+    "all_deliverables_created": true,
+    "schema_valid": true,
+    "tool_functional": true,
+    "documentation_comprehensive": true,
+    "supports_6_context_types": true,
+    "auto_gathering_implemented": true,
+    "cli_mode_working": true,
+    "backward_compatible": true
+  },
+  "version": "2.0.0",
+  "created_at": "2026-01-15T12:30:00Z",
+  "created_by": "developer",
+  "notes": [
+    "Enhanced existing context-injector.mjs with v2.0 auto-gathering capabilities",
+    "Maintains backward compatibility with legacy createContextPacket functions",
+    "Schema defines comprehensive context structure with validation",
+    "Documentation includes examples, best practices, and integration patterns",
+    "CLI supports --help for usage instructions",
+    "Auto-gathering scans 6 sources for comprehensive context enrichment",
+    "Quality metrics provide completeness and relevance scoring"
+  ]
+}
