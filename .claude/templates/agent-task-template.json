@@ -62,6 +62,53 @@
     "Documentation includes clear setup and usage examples",
     "No security vulnerabilities detected by security-architect review"
   ],
+  "verification": {
+    "verification_type": "runtime",
+    "required_tests": [
+      {
+        "test_name": "Unit Tests Pass",
+        "command_or_action": "npm test",
+        "expected_outcome": "All tests pass with 0 failures",
+        "timeout_seconds": 120
+      },
+      {
+        "test_name": "Lint Check",
+        "command_or_action": "npm run lint",
+        "expected_outcome": "No lint errors",
+        "timeout_seconds": 60
+      },
+      {
+        "test_name": "Type Check",
+        "command_or_action": "npx tsc --noEmit",
+        "expected_outcome": "TypeScript compilation succeeds with no errors",
+        "timeout_seconds": 90
+      },
+      {
+        "test_name": "Build Success",
+        "command_or_action": "npm run build",
+        "expected_outcome": "Build completes without errors",
+        "timeout_seconds": 180
+      }
+    ],
+    "passing_criteria": {
+      "errors_allowed": 0,
+      "tests_passed_minimum": "100%",
+      "warnings_allowed": 5
+    },
+    "evidence_required": true,
+    "evidence_fields": [
+      "test_output",
+      "lint_output",
+      "type_check_output",
+      "build_output",
+      "coverage_report"
+    ],
+    "failure_handling": {
+      "retry_policy": "once",
+      "escalate_to": "developer",
+      "rollback_required": false
+    }
+  },
   "priority": "high",
   "assigned_agent": "developer",
   "reasoning_style": "step-by-step",
@@ -105,6 +152,11 @@
         "tag": "validation",
         "description": "Self-check against success criteria and security best practices",
         "required": true
+      },
+      {
+        "tag": "evidence",
+        "description": "Test output, lint results, type check results, build output, and coverage report",
+        "required": true
       }
     ]
   },
@@ -134,7 +186,7 @@
   },
   "mode": "execute",
   "metadata": {
-    "created_at": "2026-01-12T10:00:00Z",
+    "created_at": "2026-01-15T10:00:00Z",
     "created_by": "master-orchestrator",
     "workflow_id": "security-hardening-workflow",
     "step_number": 3,

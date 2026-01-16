@@ -1,0 +1,306 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/qa-output.schema.json",
+  "title": "QA Agent Output Schema",
+  "description": "JSON Schema for validating QA agent output including test execution results and quality metrics",
+  "type": "object",
+  "required": [
+    "verdict",
+    "test_results",
+    "evidence"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall QA assessment"
+    },
+    "test_results": {
+      "type": "object",
+      "description": "Comprehensive test execution results",
+      "required": [
+        "total_tests",
+        "passed",
+        "failed",
+        "pass_rate"
+      ],
+      "properties": {
+        "total_tests": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of tests executed"
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tests that passed"
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tests that failed"
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tests skipped"
+        },
+        "pass_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of tests passed (must be >= 90% for PASS verdict)"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total test execution time in milliseconds"
+        },
+        "test_suites": {
+          "type": "array",
+          "description": "Breakdown by test suite",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "passed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "failed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "duration_ms": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "coverage_report": {
+      "type": "object",
+      "description": "Code coverage metrics",
+      "properties": {
+        "lines": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Line coverage percentage"
+        },
+        "functions": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Function coverage percentage"
+        },
+        "branches": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Branch coverage percentage"
+        },
+        "statements": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Statement coverage percentage"
+        },
+        "uncovered_files": {
+          "type": "array",
+          "description": "Files with low or no coverage",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "coverage_percent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    "failed_tests": {
+      "type": "array",
+      "description": "Details of failed tests",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "suite": {
+            "type": "string"
+          },
+          "error_message": {
+            "type": "string"
+          },
+          "stack_trace": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          }
+        }
+      }
+    },
+    "quality_checks": {
+      "type": "array",
+      "description": "Additional quality checks performed",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence supporting the verdict",
+      "required": [
+        "test_command",
+        "test_output"
+      ],
+      "properties": {
+        "test_command": {
+          "type": "string",
+          "description": "Command used to run tests"
+        },
+        "test_output": {
+          "type": "string",
+          "description": "Full output from test execution"
+        },
+        "coverage_report_path": {
+          "type": "string",
+          "description": "Path to detailed coverage report"
+        },
+        "screenshots": {
+          "type": "array",
+          "description": "Screenshots from UI tests",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "deliverables": {
+      "type": "array",
+      "description": "QA deliverables produced",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["test_report", "coverage_report", "bug_report", "test_plan"]
+          },
+          "path": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["json", "html", "markdown", "xml"]
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Recommendations for improvement",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["testing", "coverage", "performance", "reliability"]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "test_framework": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "object",
+          "properties": {
+            "node_version": {
+              "type": "string"
+            },
+            "platform": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "test_results": {
+            "properties": {
+              "pass_rate": {
+                "minimum": 90
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,205 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/analyst-output.schema.json",
+  "title": "Analyst Agent Output Schema",
+  "description": "JSON Schema for validating analyst agent output including analysis findings and recommendations",
+  "type": "object",
+  "required": [
+    "verdict",
+    "analysis_type",
+    "findings",
+    "recommendations",
+    "evidence"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall analysis assessment"
+    },
+    "analysis_type": {
+      "type": "string",
+      "enum": ["code_quality", "performance", "security", "architecture", "dependency", "technical_debt", "patterns"],
+      "description": "Type of analysis performed"
+    },
+    "findings": {
+      "type": "array",
+      "description": "Key findings from analysis",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "category",
+          "severity",
+          "description"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["bug", "code_smell", "complexity", "duplication", "performance", "security", "maintainability", "testability"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["info", "low", "medium", "high", "critical"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "function": {
+                "type": "string"
+              }
+            }
+          },
+          "impact": {
+            "type": "string"
+          },
+          "effort_to_fix": {
+            "type": "string",
+            "enum": ["trivial", "small", "medium", "large"]
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Recommendations based on analysis",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "recommendation",
+          "priority"
+        ],
+        "properties": {
+          "recommendation": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "category": {
+            "type": "string"
+          },
+          "expected_benefit": {
+            "type": "string"
+          },
+          "implementation_notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence supporting the analysis",
+      "required": [
+        "code_samples",
+        "metrics"
+      ],
+      "properties": {
+        "code_samples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "issue": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "files_analyzed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "lines_of_code": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "complexity_score": {
+              "type": "number",
+              "minimum": 0
+            },
+            "maintainability_index": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Analysis summary",
+      "properties": {
+        "total_findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "critical_findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "high_priority_recommendations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "overall_health_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "analysis_duration_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tools_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

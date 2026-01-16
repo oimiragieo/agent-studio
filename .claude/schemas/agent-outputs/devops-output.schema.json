@@ -1,0 +1,289 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/devops-output.schema.json",
+  "title": "DevOps Agent Output Schema",
+  "description": "JSON Schema for validating DevOps agent output including deployment, testing, build status, and PR creation",
+  "type": "object",
+  "required": [
+    "verdict",
+    "deployment_status",
+    "test_status",
+    "build_status"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall DevOps execution assessment"
+    },
+    "deployment_status": {
+      "type": "object",
+      "description": "Deployment execution status",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "failed", "skipped", "partial"]
+        },
+        "environment": {
+          "type": "string",
+          "enum": ["development", "staging", "production", "test"]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "commit_hash": {
+          "type": "string"
+        },
+        "deployment_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rollback_available": {
+          "type": "boolean"
+        }
+      }
+    },
+    "test_status": {
+      "type": "object",
+      "description": "Test execution status",
+      "required": [
+        "all_passing"
+      ],
+      "properties": {
+        "all_passing": {
+          "type": "boolean"
+        },
+        "total_tests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "test_command": {
+          "type": "string"
+        },
+        "test_output": {
+          "type": "string"
+        }
+      }
+    },
+    "build_status": {
+      "type": "object",
+      "description": "Build execution status",
+      "required": [
+        "success"
+      ],
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "build_time_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "build_command": {
+          "type": "string"
+        },
+        "build_output": {
+          "type": "string"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "size_bytes": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "lint_status": {
+      "type": "object",
+      "description": "Linting execution status",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "errors": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lint_output": {
+          "type": "string"
+        }
+      }
+    },
+    "pr_urls": {
+      "type": "array",
+      "description": "URLs of created pull requests",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "commits_created": {
+      "type": "array",
+      "description": "Git commits created",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hash": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "files_changed": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "ci_cd_status": {
+      "type": "object",
+      "description": "CI/CD pipeline status",
+      "properties": {
+        "pipeline_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["success", "failed", "running", "pending"]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "jobs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["success", "failed", "running", "pending"]
+              },
+              "duration_seconds": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "infrastructure_changes": {
+      "type": "array",
+      "description": "Infrastructure changes made",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["create", "update", "delete"]
+          },
+          "resource": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["success", "failed", "pending"]
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence supporting the verdict",
+      "properties": {
+        "deployment_logs": {
+          "type": "string"
+        },
+        "test_logs": {
+          "type": "string"
+        },
+        "build_logs": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "rollback_plan": {
+      "type": "object",
+      "description": "Rollback plan in case of failure",
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "previous_version": {
+          "type": "string"
+        },
+        "rollback_command": {
+          "type": "string"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "total_duration_seconds": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,245 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.com/schemas/dependency-requirements.schema.json",
+  "title": "Dependency Requirements",
+  "description": "Configuration schema for dependency validation requirements (Node.js version, npm packages, system commands, critical files)",
+  "type": "object",
+  "properties": {
+    "node": {
+      "type": "object",
+      "description": "Node.js version requirements",
+      "required": ["min_version"],
+      "properties": {
+        "min_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Minimum Node.js version (semantic versioning format)",
+          "examples": ["18.0.0", "20.0.0"]
+        },
+        "max_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Maximum Node.js version (optional, for compatibility constraints)",
+          "examples": ["22.0.0"]
+        },
+        "recommended_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Recommended Node.js version for optimal performance"
+        }
+      }
+    },
+    "npm_packages": {
+      "type": "array",
+      "description": "Required npm packages with version constraints",
+      "items": {
+        "type": "object",
+        "required": ["name", "min_version"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Package name as it appears in package.json",
+            "examples": ["prettier", "eslint", "typescript"]
+          },
+          "min_version": {
+            "type": "string",
+            "description": "Minimum package version (semantic versioning)",
+            "examples": ["3.0.0", "8.0.0", "5.0.0"]
+          },
+          "max_version": {
+            "type": "string",
+            "description": "Maximum package version (optional, for compatibility constraints)"
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Whether this package is optional (warnings instead of errors)",
+            "default": false
+          },
+          "install_command": {
+            "type": "string",
+            "description": "Command to install this package",
+            "examples": ["npm install -D prettier", "pnpm add -D eslint"]
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Why this package is required",
+            "examples": ["Code formatting", "Static analysis", "Type checking"]
+          }
+        }
+      }
+    },
+    "system_commands": {
+      "type": "array",
+      "description": "Required system commands that must be available in PATH",
+      "items": {
+        "type": "object",
+        "required": ["command", "purpose"],
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "Command name to check (e.g., 'git', 'node', 'pnpm')",
+            "examples": ["git", "node", "pnpm", "docker"]
+          },
+          "purpose": {
+            "type": "string",
+            "description": "What this command is used for",
+            "examples": ["Version control", "Node.js runtime", "Package manager"]
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Whether this command is optional (warnings instead of errors)",
+            "default": false
+          },
+          "install_instructions": {
+            "type": "string",
+            "description": "How to install this command (URL or command)",
+            "examples": [
+              "Install Git from https://git-scm.com",
+              "npm install -g pnpm",
+              "Install Docker from https://docker.com"
+            ]
+          },
+          "version_check": {
+            "type": "string",
+            "description": "Command to check version (e.g., 'git --version')"
+          },
+          "min_version": {
+            "type": "string",
+            "description": "Minimum version required (if version checking is enabled)"
+          }
+        }
+      }
+    },
+    "critical_files": {
+      "type": "array",
+      "description": "Critical files that must exist in the project",
+      "items": {
+        "type": "object",
+        "required": ["path", "description"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "File path relative to project root",
+            "examples": ["package.json", ".gitignore", "tsconfig.json"]
+          },
+          "description": {
+            "type": "string",
+            "description": "What this file is for",
+            "examples": [
+              "NPM package manifest",
+              "Git ignore rules",
+              "TypeScript configuration"
+            ]
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Whether this file is optional (warnings instead of errors)",
+            "default": false
+          },
+          "template_path": {
+            "type": "string",
+            "description": "Path to template file if missing (for auto-creation)"
+          },
+          "validation": {
+            "type": "object",
+            "description": "Additional validation rules for file content",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["json", "yaml", "text", "markdown"],
+                "description": "Expected file type for validation"
+              },
+              "required_fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Required fields for JSON/YAML files"
+              },
+              "schema": {
+                "type": "string",
+                "description": "Path to JSON schema for validation"
+              }
+            }
+          }
+        }
+      }
+    },
+    "environment_variables": {
+      "type": "array",
+      "description": "Required environment variables",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Environment variable name",
+            "examples": ["NODE_ENV", "DATABASE_URL", "API_KEY"]
+          },
+          "description": {
+            "type": "string",
+            "description": "What this variable is used for"
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Whether this variable is optional",
+            "default": false
+          },
+          "default_value": {
+            "type": "string",
+            "description": "Default value if not set"
+          },
+          "validation": {
+            "type": "object",
+            "description": "Validation rules for the variable value",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern the value must match"
+              },
+              "allowed_values": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Allowed values (enum)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata about the dependency requirements",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this config was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this config was last updated"
+        },
+        "project_name": {
+          "type": "string",
+          "description": "Project name"
+        },
+        "project_version": {
+          "type": "string",
+          "description": "Project version"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags for categorization"
+        }
+      }
+    }
+  }
+}

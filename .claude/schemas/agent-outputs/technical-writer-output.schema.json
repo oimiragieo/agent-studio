@@ -1,0 +1,231 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/technical-writer-output.schema.json",
+  "title": "Technical Writer Agent Output Schema",
+  "description": "JSON Schema for validating technical writer agent output including documentation updates and changelog",
+  "type": "object",
+  "required": [
+    "verdict",
+    "files_updated",
+    "changelog_updated"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall documentation assessment"
+    },
+    "files_updated": {
+      "type": "array",
+      "description": "Documentation files created or updated",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "type"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["readme", "changelog", "api_docs", "user_guide", "developer_guide", "contributing", "architecture", "other"]
+          },
+          "changes": {
+            "type": "string",
+            "description": "Summary of changes made"
+          },
+          "word_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "changelog_updated": {
+      "type": "boolean",
+      "description": "Whether CHANGELOG.md was updated (required true for PASS verdict)"
+    },
+    "readme_updated": {
+      "type": "boolean",
+      "description": "Whether README.md was updated"
+    },
+    "documentation_quality": {
+      "type": "object",
+      "description": "Documentation quality metrics",
+      "properties": {
+        "completeness_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "clarity_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "grammar_issues": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "broken_links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "link": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "changelog_entries": {
+      "type": "array",
+      "description": "New changelog entries added",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "changes": {
+            "type": "object",
+            "properties": {
+              "added": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "changed": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "deprecated": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "removed": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "fixed": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "security": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence supporting the documentation work",
+      "properties": {
+        "changelog_content": {
+          "type": "string"
+        },
+        "diff_summary": {
+          "type": "string"
+        },
+        "before_after_samples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "before": {
+                "type": "string"
+              },
+              "after": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Documentation improvement recommendations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["completeness", "clarity", "structure", "examples", "diagrams"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "total_words_added": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "changelog_updated": {
+            "const": true
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

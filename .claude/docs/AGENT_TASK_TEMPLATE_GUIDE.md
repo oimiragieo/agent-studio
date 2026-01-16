@@ -4,20 +4,24 @@
 
 The agent-task template is a structured format for delegating work to subagents with optimal prompt engineering. This guide explains all fields, when to use them, and how to leverage 2026 prompt optimization best practices.
 
-**Version**: 2.0.0 (2026 Prompt Engineering Update)
+**Version**: 2.1.0 (Mandatory Verification Requirements)
 **Schema**: `.claude/schemas/agent-task.schema.json`
 **Template**: `.claude/templates/agent-task-template.json`
+
+**BREAKING CHANGE in v2.1.0**: Added REQUIRED `verification` field to prevent conceptual testing.
 
 ---
 
 ## Table of Contents
 
 1. [Core Fields](#core-fields)
-2. [Prompt Optimization Fields (New)](#prompt-optimization-fields-new)
-3. [Field Usage Guide](#field-usage-guide)
-4. [Best Practices](#best-practices)
-5. [Examples by Task Type](#examples-by-task-type)
-6. [Research References](#research-references)
+2. [Mandatory Verification Requirements (v2.1.0)](#mandatory-verification-requirements-v210)
+3. [Prompt Optimization Fields](#prompt-optimization-fields)
+4. [Field Usage Guide](#field-usage-guide)
+5. [Best Practices](#best-practices)
+6. [Examples by Task Type](#examples-by-task-type)
+7. [Migration Guide (v2.0 → v2.1)](#migration-guide-v20--v21)
+8. [Research References](#research-references)
 
 ---
 
@@ -206,7 +210,151 @@ Specific subagent type to handle this task. See `.claude/docs/AGENT_DIRECTORY.md
 
 ---
 
-## Prompt Optimization Fields (New)
+## Mandatory Verification Requirements (v2.1.0)
+
+**BREAKING CHANGE**: Version 2.1.0 adds a **REQUIRED** `verification` field to prevent "conceptual testing" (claiming success without actual validation).
+
+### Why Verification is Required
+
+**Problem**: Agents often claim tasks are complete without actually running tests:
+
+- "I implemented the feature" (but didn't test it)
+- "Tests would pass" (but didn't run them)
+- "Code looks correct" (but didn't validate it)
+
+**Solution**: Mandatory `verification` field requires agents to provide concrete evidence of success.
+
+### Verification Field Structure
+
+```json
+{
+  "verification": {
+    "verification_type": "runtime", // REQUIRED: Type of verification
+    "required_tests": [
+      // REQUIRED: Tests to execute
+      {
+        "test_name": "Unit Tests Pass",
+        "command_or_action": "npm test",
+        "expected_outcome": "All tests pass with 0 failures",
+        "timeout_seconds": 120
+      }
+    ],
+    "passing_criteria": {
+      // REQUIRED: Pass/fail criteria
+      "errors_allowed": 0,
+      "tests_passed_minimum": "100%",
+      "warnings_allowed": 5
+    },
+    "evidence_required": true, // REQUIRED: Must provide evidence
+    "evidence_fields": [
+      // Required evidence
+      "test_output",
+      "lint_output",
+      "build_output"
+    ],
+    "failure_handling": {
+      // How to handle failures
+      "retry_policy": "once",
+      "escalate_to": "developer",
+      "rollback_required": false
+    }
+  }
+}
+```
+
+### Verification Types
+
+| Type            | Description                         | Use When               | Example Command             |
+| --------------- | ----------------------------------- | ---------------------- | --------------------------- |
+| **runtime**     | Execute tests/commands              | Testing code changes   | `npm test`, `npm run build` |
+| **static**      | Code analysis without execution     | Linting, type checking | `eslint`, `tsc --noEmit`    |
+| **integration** | Multiple components tested together | API integration, E2E   | `npm run test:integration`  |
+| **end-to-end**  | Full workflow validation            | Complete user flows    | `npm run test:e2e`          |
+| **manual**      | Human review required               | Design review, UX      | Manual code review          |
+
+### Required Tests Structure
+
+Each test in `required_tests` must specify:
+
+```json
+{
+  "test_name": "Descriptive test name",
+  "command_or_action": "bash command or manual action",
+  "expected_outcome": "What success looks like",
+  "timeout_seconds": 300 // Optional, default 300
+}
+```
+
+### Examples by Agent Type
+
+**Developer (Runtime)**:
+
+```json
+{
+  "verification": {
+    "verification_type": "runtime",
+    "required_tests": [
+      {
+        "test_name": "Unit Tests",
+        "command_or_action": "npm test",
+        "expected_outcome": "All tests pass",
+        "timeout_seconds": 120
+      }
+    ],
+    "passing_criteria": {
+      "errors_allowed": 0,
+      "tests_passed_minimum": "100%"
+    },
+    "evidence_required": true,
+    "evidence_fields": ["test_output"]
+  }
+}
+```
+
+**Code Reviewer (Static)**:
+
+```json
+{
+  "verification": {
+    "verification_type": "static",
+    "required_tests": [
+      {
+        "test_name": "Lint Check",
+        "command_or_action": "npm run lint",
+        "expected_outcome": "No lint errors",
+        "timeout_seconds": 60
+      }
+    ],
+    "passing_criteria": {
+      "errors_allowed": 0,
+      "tests_passed_minimum": "100%"
+    },
+    "evidence_required": true,
+    "evidence_fields": ["lint_output"]
+  }
+}
+```
+
+### Evidence Requirements
+
+When `evidence_required` is `true`, agents must provide proof in `<evidence>` tags:
+
+```xml
+<evidence>
+  <test_output>
+    All tests passed (10/10)
+    Coverage: 95%
+  </test_output>
+
+  <lint_output>
+    ✓ No lint errors found
+  </lint_output>
+</evidence>
+```
+
+---
+
+## Prompt Optimization Fields
 
 These fields leverage 2026 prompt engineering research to improve agent reliability, reduce hallucinations, and increase task completion rates.
 
@@ -839,10 +987,55 @@ node .claude/tools/enforcement-gate.mjs validate-schema \
 
 ---
 
+## Migration Guide (v2.0 → v2.1)
+
+### Breaking Changes
+
+v2.1.0 adds a **REQUIRED** `verification` field that all task templates must include.
+
+### Migration Steps
+
+**Step 1**: Add `verification` field to all existing task templates:
+
+```json
+{
+  // ... existing fields ...
+  "verification": {
+    "verification_type": "runtime",
+    "required_tests": [
+      {
+        "test_name": "Basic Validation",
+        "command_or_action": "npm test",
+        "expected_outcome": "Tests pass"
+      }
+    ],
+    "passing_criteria": {
+      "errors_allowed": 0,
+      "tests_passed_minimum": "100%"
+    },
+    "evidence_required": true
+  }
+}
+```
+
+**Step 2**: Validate schema compatibility:
+
+```bash
+node .claude/tools/gate.mjs --schema .claude/schemas/agent-task.schema.json \
+  --input path/to/task.json --autofix 1
+```
+
+**Step 3**: Update agent prompts to include evidence sections when `evidence_required: true`.
+
+**Step 4**: Update orchestration logic to verify evidence is provided.
+
+---
+
 ## Version History
 
 | Version | Date       | Changes                                                                                                                                           |
 | ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2.1.0   | 2026-01-15 | **BREAKING**: Added REQUIRED `verification` field to prevent conceptual testing                                                                   |
 | 2.0.0   | 2026-01-12 | Added 2026 prompt optimization fields: reasoning_style, examples, uncertainty_permission, output_format, thinking_budget, validation_schema, mode |
 | 1.0.0   | 2025-12-01 | Initial release with core fields                                                                                                                  |
 

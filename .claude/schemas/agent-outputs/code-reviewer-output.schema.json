@@ -1,0 +1,362 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/code-reviewer-output.schema.json",
+  "title": "Code Reviewer Agent Output Schema",
+  "description": "JSON Schema for validating code reviewer agent output including syntax, path, dependency, and logic analysis",
+  "type": "object",
+  "required": [
+    "verdict",
+    "syntax_errors",
+    "path_issues",
+    "dependency_issues",
+    "logic_concerns"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall code review assessment"
+    },
+    "syntax_errors": {
+      "type": "array",
+      "description": "Syntax errors found (must be empty for PASS verdict)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "column": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "message": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning"]
+          }
+        }
+      }
+    },
+    "path_issues": {
+      "type": "array",
+      "description": "Path compatibility and format issues",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "issue_type": {
+            "type": "string",
+            "enum": ["windows_compatibility", "hardcoded_path", "relative_path_issue", "malformed_path"]
+          },
+          "current_path": {
+            "type": "string"
+          },
+          "recommended_path": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          }
+        }
+      }
+    },
+    "dependency_issues": {
+      "type": "array",
+      "description": "Missing or incompatible dependencies",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "dependency_name": {
+            "type": "string"
+          },
+          "issue_type": {
+            "type": "string",
+            "enum": ["missing", "version_mismatch", "circular_dependency", "deprecated"]
+          },
+          "current_version": {
+            "type": "string"
+          },
+          "required_version": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "logic_concerns": {
+      "type": "array",
+      "description": "Logic issues and code quality concerns",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": ["error_handling", "null_safety", "type_safety", "race_condition", "infinite_loop", "memory_leak", "performance"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "code_quality_metrics": {
+      "type": "object",
+      "description": "Code quality metrics",
+      "properties": {
+        "complexity": {
+          "type": "object",
+          "properties": {
+            "average_cyclomatic": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max_cyclomatic": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "files_above_threshold": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string"
+                  },
+                  "complexity": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "maintainability_index": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Maintainability index (higher is better)"
+        },
+        "duplicated_code": {
+          "type": "object",
+          "properties": {
+            "percentage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "instances": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "file1": {
+                    "type": "string"
+                  },
+                  "file2": {
+                    "type": "string"
+                  },
+                  "lines": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "style_violations": {
+      "type": "array",
+      "description": "Code style violations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer"
+          },
+          "rule": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "security_findings": {
+      "type": "array",
+      "description": "Security issues identified",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer"
+          },
+          "vulnerability_type": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "best_practices": {
+      "type": "array",
+      "description": "Best practice recommendations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["naming", "structure", "documentation", "error_handling", "testing", "performance"]
+          },
+          "file": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence supporting the review",
+      "properties": {
+        "code_snippets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "lines": {
+                "type": "string"
+              },
+              "issue": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "file_references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "linter_output": {
+          "type": "string"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "files_reviewed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_issues": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "critical_issues": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocking_issues": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "review_duration_seconds": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "syntax_errors": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

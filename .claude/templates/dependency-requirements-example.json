@@ -1,0 +1,138 @@
+{
+  "$schema": "../schemas/dependency-requirements.schema.json",
+  "node": {
+    "min_version": "18.0.0",
+    "recommended_version": "20.0.0"
+  },
+  "npm_packages": [
+    {
+      "name": "prettier",
+      "min_version": "3.0.0",
+      "install_command": "npm install -D prettier",
+      "purpose": "Code formatting"
+    },
+    {
+      "name": "eslint",
+      "min_version": "8.0.0",
+      "install_command": "npm install -D eslint",
+      "purpose": "JavaScript/TypeScript linting"
+    },
+    {
+      "name": "typescript",
+      "min_version": "5.0.0",
+      "install_command": "npm install -D typescript",
+      "purpose": "TypeScript compiler and type checking"
+    },
+    {
+      "name": "@types/node",
+      "min_version": "18.0.0",
+      "install_command": "npm install -D @types/node",
+      "purpose": "TypeScript type definitions for Node.js"
+    },
+    {
+      "name": "vitest",
+      "min_version": "1.0.0",
+      "optional": true,
+      "install_command": "npm install -D vitest",
+      "purpose": "Unit testing framework"
+    },
+    {
+      "name": "zod",
+      "min_version": "4.0.0",
+      "install_command": "npm install zod",
+      "purpose": "Schema validation library"
+    }
+  ],
+  "system_commands": [
+    {
+      "command": "git",
+      "purpose": "Version control",
+      "install_instructions": "Install Git from https://git-scm.com"
+    },
+    {
+      "command": "node",
+      "purpose": "Node.js runtime",
+      "install_instructions": "Install Node.js from https://nodejs.org"
+    },
+    {
+      "command": "npm",
+      "purpose": "Node package manager",
+      "install_instructions": "Included with Node.js installation"
+    },
+    {
+      "command": "pnpm",
+      "purpose": "Fast, disk space efficient package manager",
+      "optional": true,
+      "install_instructions": "npm install -g pnpm"
+    },
+    {
+      "command": "gh",
+      "purpose": "GitHub CLI for PR creation",
+      "optional": true,
+      "install_instructions": "Install GitHub CLI from https://cli.github.com"
+    }
+  ],
+  "critical_files": [
+    {
+      "path": "package.json",
+      "description": "NPM package manifest",
+      "validation": {
+        "type": "json",
+        "required_fields": ["name", "version", "scripts"]
+      }
+    },
+    {
+      "path": ".gitignore",
+      "description": "Git ignore rules"
+    },
+    {
+      "path": "tsconfig.json",
+      "description": "TypeScript configuration",
+      "optional": true,
+      "validation": {
+        "type": "json",
+        "required_fields": ["compilerOptions"]
+      }
+    },
+    {
+      "path": ".prettierrc",
+      "description": "Prettier configuration",
+      "optional": true
+    },
+    {
+      "path": ".eslintrc.json",
+      "description": "ESLint configuration",
+      "optional": true
+    },
+    {
+      "path": "README.md",
+      "description": "Project documentation"
+    }
+  ],
+  "environment_variables": [
+    {
+      "name": "NODE_ENV",
+      "description": "Node.js environment (development, production, test)",
+      "optional": true,
+      "default_value": "development",
+      "validation": {
+        "allowed_values": ["development", "production", "test"]
+      }
+    },
+    {
+      "name": "LOG_LEVEL",
+      "description": "Logging level",
+      "optional": true,
+      "default_value": "info",
+      "validation": {
+        "allowed_values": ["debug", "info", "warn", "error"]
+      }
+    }
+  ],
+  "metadata": {
+    "created_at": "2026-01-15T00:00:00Z",
+    "project_name": "LLM Rules Production Pack",
+    "project_version": "2.1.0",
+    "tags": ["orchestration", "agent-system", "validation"]
+  }
+}

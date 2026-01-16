@@ -1,0 +1,240 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/architect-output.schema.json",
+  "title": "Architect Agent Output Schema",
+  "description": "JSON Schema for validating architect agent output including architecture diagrams, design decisions, and trade-offs",
+  "type": "object",
+  "required": [
+    "verdict",
+    "architecture_diagrams",
+    "design_decisions",
+    "trade_offs"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall architecture assessment"
+    },
+    "architecture_diagrams": {
+      "type": "array",
+      "description": "Architecture diagrams created",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "path",
+          "format"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["system_context", "container", "component", "deployment", "sequence", "class", "entity_relationship", "data_flow"]
+          },
+          "path": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["mermaid", "plantuml", "drawio", "png", "svg", "pdf"]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "design_decisions": {
+      "type": "array",
+      "description": "Key design decisions made",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "decision",
+          "rationale"
+        ],
+        "properties": {
+          "decision": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "alternatives_considered": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "alternative": {
+                  "type": "string"
+                },
+                "rejected_because": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "implications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "trade_offs": {
+      "type": "array",
+      "description": "Trade-offs in the architecture",
+      "items": {
+        "type": "object",
+        "required": [
+          "aspect",
+          "chosen_approach",
+          "rejected_approaches"
+        ],
+        "properties": {
+          "aspect": {
+            "type": "string",
+            "enum": ["performance", "scalability", "maintainability", "security", "cost", "complexity", "reliability"]
+          },
+          "chosen_approach": {
+            "type": "string"
+          },
+          "rejected_approaches": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "justification": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Architecture recommendations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["scalability", "performance", "security", "maintainability", "reliability", "observability"]
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "effort": {
+            "type": "string",
+            "enum": ["trivial", "small", "medium", "large"]
+          }
+        }
+      }
+    },
+    "technology_stack": {
+      "type": "object",
+      "description": "Recommended technology stack",
+      "properties": {
+        "frontend": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "backend": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "database": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "infrastructure": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "third_party_services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "patterns_used": {
+      "type": "array",
+      "description": "Design patterns applied",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence supporting the architecture",
+      "properties": {
+        "diagrams": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "adr_documents": {
+          "type": "array",
+          "description": "Architecture Decision Records created",
+          "items": {
+            "type": "string"
+          }
+        },
+        "documentation_links": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "architecture_style": {
+          "type": "string",
+          "enum": ["monolithic", "microservices", "serverless", "event_driven", "layered", "hexagonal"]
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

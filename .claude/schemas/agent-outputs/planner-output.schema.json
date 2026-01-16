@@ -1,0 +1,196 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/planner-output.schema.json",
+  "title": "Planner Agent Output Schema",
+  "description": "JSON Schema for validating planner agent output including execution plan, dependencies, and risk assessment",
+  "type": "object",
+  "required": [
+    "verdict",
+    "plan_id",
+    "steps",
+    "dependencies",
+    "risk_assessment",
+    "success_criteria"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall plan quality assessment"
+    },
+    "plan_id": {
+      "type": "string",
+      "description": "Unique identifier for the plan"
+    },
+    "steps": {
+      "type": "array",
+      "description": "Execution steps in the plan",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "description",
+          "agent",
+          "deliverables"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "agent": {
+            "type": "string"
+          },
+          "deliverables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dependencies": {
+            "type": "array",
+            "description": "IDs of steps this step depends on",
+            "items": {
+              "type": "string"
+            }
+          },
+          "estimated_duration_minutes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "parallel_execution_possible": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "Cross-step dependencies",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_id": {
+            "type": "string"
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dependency_type": {
+            "type": "string",
+            "enum": ["sequential", "blocking", "optional"]
+          }
+        }
+      }
+    },
+    "risk_assessment": {
+      "type": "array",
+      "description": "Identified risks and mitigations",
+      "items": {
+        "type": "object",
+        "required": [
+          "risk",
+          "severity",
+          "mitigation"
+        ],
+        "properties": {
+          "risk": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "probability": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "mitigation": {
+            "type": "string"
+          },
+          "contingency_plan": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "success_criteria": {
+      "type": "array",
+      "description": "Measurable success criteria",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "estimated_timeline": {
+      "type": "object",
+      "description": "Overall timeline estimate",
+      "properties": {
+        "total_duration_minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "critical_path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "earliest_completion": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "resource_requirements": {
+      "type": "array",
+      "description": "Resources required for execution",
+      "items": {
+        "type": "object",
+        "properties": {
+          "resource_type": {
+            "type": "string",
+            "enum": ["agent", "tool", "service", "infrastructure"]
+          },
+          "name": {
+            "type": "string"
+          },
+          "required_for_steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "plan_version": {
+          "type": "string"
+        },
+        "rating_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Plan quality rating from response-rater skill"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

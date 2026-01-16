@@ -2,9 +2,19 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://llm-rules.com/schemas/agent-task.schema.json",
   "title": "Agent Task",
-  "description": "Structured task format for delegating work to subagents",
+  "version": "2.1.0",
+  "description": "Structured task format for delegating work to subagents - v2.1.0 adds mandatory verification requirements",
   "type": "object",
-  "required": ["task_id", "objective", "context", "deliverables", "constraints"],
+  "required": [
+    "task_id",
+    "objective",
+    "context",
+    "deliverables",
+    "constraints",
+    "success_criteria",
+    "verification",
+    "assigned_agent"
+  ],
   "properties": {
     "task_id": {
       "type": "string",
@@ -148,6 +158,99 @@
       "minItems": 1,
       "items": {
         "type": "string"
+      }
+    },
+    "verification": {
+      "type": "object",
+      "description": "MANDATORY verification requirements to prove task success (v2.1.0+)",
+      "required": ["verification_type", "required_tests", "passing_criteria", "evidence_required"],
+      "properties": {
+        "verification_type": {
+          "type": "string",
+          "enum": ["runtime", "static", "integration", "end-to-end", "manual"],
+          "description": "Type of verification required: runtime (execute tests), static (code analysis), integration (multiple components), end-to-end (full workflow), manual (human review)"
+        },
+        "required_tests": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Specific tests that MUST be executed to verify success",
+          "items": {
+            "type": "object",
+            "required": ["test_name", "command_or_action", "expected_outcome"],
+            "properties": {
+              "test_name": {
+                "type": "string",
+                "description": "Name of the test to execute"
+              },
+              "command_or_action": {
+                "type": "string",
+                "description": "Bash command to execute or manual action to perform (e.g., 'npm test', 'npm run lint', 'manual code review')"
+              },
+              "expected_outcome": {
+                "type": "string",
+                "description": "What success looks like (e.g., 'All tests pass with 0 failures', 'No lint errors', 'Build completes successfully')"
+              },
+              "timeout_seconds": {
+                "type": "number",
+                "minimum": 1,
+                "default": 300,
+                "description": "Maximum time allowed for test execution (default 300 seconds)"
+              }
+            }
+          }
+        },
+        "passing_criteria": {
+          "type": "object",
+          "required": ["errors_allowed", "tests_passed_minimum"],
+          "description": "Criteria that determine whether verification passes",
+          "properties": {
+            "errors_allowed": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Maximum number of errors allowed (0 for strict validation)"
+            },
+            "tests_passed_minimum": {
+              "type": "string",
+              "pattern": "^\\d+(\\.\\d+)?%?$",
+              "description": "Minimum percentage or count of tests that must pass (e.g., '90%' or '5')"
+            },
+            "warnings_allowed": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Maximum number of warnings allowed"
+            }
+          }
+        },
+        "evidence_required": {
+          "type": "boolean",
+          "description": "Whether agent must provide evidence of verification (logs, screenshots, metrics)"
+        },
+        "evidence_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Required evidence fields that agent must provide (e.g., ['test_output', 'compilation_logs', 'coverage_report'])"
+        },
+        "failure_handling": {
+          "type": "object",
+          "description": "How to handle verification failures",
+          "properties": {
+            "retry_policy": {
+              "type": "string",
+              "enum": ["none", "once", "twice", "exponential"],
+              "description": "Retry policy on verification failure"
+            },
+            "escalate_to": {
+              "type": "string",
+              "description": "Agent to escalate to on verification failure"
+            },
+            "rollback_required": {
+              "type": "boolean",
+              "description": "Whether changes must be rolled back on verification failure"
+            }
+          }
+        }
       }
     },
     "priority": {

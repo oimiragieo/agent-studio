@@ -1,0 +1,301 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/developer-output.schema.json",
+  "title": "Developer Agent Output Schema",
+  "description": "JSON Schema for validating developer agent output including code artifacts, test results, and compilation status",
+  "type": "object",
+  "required": [
+    "verdict",
+    "files_created",
+    "test_results",
+    "compilation_success",
+    "deliverables"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall assessment of development work"
+    },
+    "files_created": {
+      "type": "array",
+      "description": "List of files created or modified during development",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "description": "File path relative to project root"
+      }
+    },
+    "files_modified": {
+      "type": "array",
+      "description": "List of existing files modified",
+      "items": {
+        "type": "string"
+      }
+    },
+    "test_results": {
+      "type": "object",
+      "description": "Test execution results",
+      "required": [
+        "total_tests",
+        "passed",
+        "failed",
+        "pass_rate"
+      ],
+      "properties": {
+        "total_tests": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of tests executed"
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tests that passed"
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tests that failed"
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tests skipped"
+        },
+        "pass_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of tests passed (must be >= 80% for PASS verdict)"
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "lines": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "functions": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "branches": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "statements": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        }
+      }
+    },
+    "compilation_success": {
+      "type": "boolean",
+      "description": "Whether code compiles without errors (must be true for PASS verdict)"
+    },
+    "lint_success": {
+      "type": "boolean",
+      "description": "Whether code passes linting checks"
+    },
+    "deliverables": {
+      "type": "array",
+      "description": "List of expected deliverables and their validation status",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "exists",
+          "validated"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path to deliverable file"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["code", "test", "documentation", "configuration"],
+            "description": "Type of deliverable"
+          },
+          "exists": {
+            "type": "boolean",
+            "const": true,
+            "description": "Whether the file exists (must be true)"
+          },
+          "validated": {
+            "type": "boolean",
+            "const": true,
+            "description": "Whether the file passes validation (must be true)"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "File size in bytes"
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence supporting the verdict",
+      "required": [
+        "compilation_output",
+        "test_output",
+        "lint_results"
+      ],
+      "properties": {
+        "compilation_output": {
+          "type": "string",
+          "description": "Output from compilation step"
+        },
+        "test_output": {
+          "type": "string",
+          "description": "Output from test execution"
+        },
+        "lint_results": {
+          "type": "string",
+          "description": "Output from linting process"
+        },
+        "code_snippets": {
+          "type": "array",
+          "description": "Key code snippets demonstrating implementation",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "lines": {
+                "type": "string"
+              },
+              "purpose": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "concerns": {
+      "type": "array",
+      "description": "List of concerns or warnings",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "category": {
+            "type": "string",
+            "enum": ["performance", "security", "maintainability", "compatibility", "testing"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dependencies_added": {
+      "type": "array",
+      "description": "New dependencies added",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["dependency", "devDependency", "peerDependency"]
+          }
+        }
+      }
+    },
+    "api_changes": {
+      "type": "array",
+      "description": "Changes to public APIs",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["added", "modified", "deprecated", "removed"]
+          },
+          "signature": {
+            "type": "string"
+          },
+          "breaking": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the development work",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "duration_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "technologies_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "compilation_success": {
+            "const": true
+          },
+          "test_results": {
+            "properties": {
+              "pass_rate": {
+                "minimum": 80
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

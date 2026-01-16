@@ -1,0 +1,304 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/performance-engineer-output.schema.json",
+  "title": "Performance Engineer Agent Output Schema",
+  "description": "JSON Schema for validating performance engineer agent output including metrics, bottlenecks, and optimizations",
+  "type": "object",
+  "required": [
+    "verdict",
+    "performance_metrics",
+    "bottlenecks",
+    "optimizations",
+    "evidence"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall performance assessment"
+    },
+    "performance_metrics": {
+      "type": "object",
+      "description": "Performance measurements",
+      "required": [
+        "load_time_ms",
+        "memory_usage_mb"
+      ],
+      "properties": {
+        "load_time_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Page/application load time in milliseconds"
+        },
+        "memory_usage_mb": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Memory usage in megabytes"
+        },
+        "cpu_usage_percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "CPU usage percentage"
+        },
+        "network_requests": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of network requests"
+        },
+        "network_payload_kb": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total network payload in kilobytes"
+        },
+        "core_web_vitals": {
+          "type": "object",
+          "properties": {
+            "lcp_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Largest Contentful Paint in ms"
+            },
+            "fid_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "First Input Delay in ms"
+            },
+            "cls_score": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Cumulative Layout Shift score"
+            },
+            "fcp_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "First Contentful Paint in ms"
+            },
+            "tti_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Time to Interactive in ms"
+            }
+          }
+        },
+        "api_response_times": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "endpoint": {
+                "type": "string"
+              },
+              "avg_response_time_ms": {
+                "type": "number",
+                "minimum": 0
+              },
+              "p95_response_time_ms": {
+                "type": "number",
+                "minimum": 0
+              },
+              "p99_response_time_ms": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "bottlenecks": {
+      "type": "array",
+      "description": "Performance bottlenecks identified",
+      "items": {
+        "type": "object",
+        "required": [
+          "location",
+          "severity",
+          "impact"
+        ],
+        "properties": {
+          "location": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "function": {
+                "type": "string"
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": ["cpu_bound", "io_bound", "memory_bound", "network_bound", "database_query", "algorithm_complexity"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "impact": {
+            "type": "string",
+            "description": "Description of performance impact"
+          },
+          "measured_time_ms": {
+            "type": "number",
+            "minimum": 0
+          },
+          "target_time_ms": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "optimizations": {
+      "type": "array",
+      "description": "Optimizations applied or recommended",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "description"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["caching", "lazy_loading", "code_splitting", "compression", "cdn", "database_indexing", "query_optimization", "algorithm_improvement", "resource_pooling"]
+          },
+          "location": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["applied", "recommended", "in_progress"]
+          },
+          "improvement": {
+            "type": "object",
+            "properties": {
+              "before_ms": {
+                "type": "number",
+                "minimum": 0
+              },
+              "after_ms": {
+                "type": "number",
+                "minimum": 0
+              },
+              "improvement_percent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "effort": {
+            "type": "string",
+            "enum": ["trivial", "small", "medium", "large"]
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence supporting performance analysis",
+      "required": [
+        "profiling_data",
+        "benchmark_results"
+      ],
+      "properties": {
+        "profiling_data": {
+          "type": "string",
+          "description": "Raw profiling output"
+        },
+        "benchmark_results": {
+          "type": "string",
+          "description": "Benchmark test results"
+        },
+        "flamegraphs": {
+          "type": "array",
+          "description": "Paths to flamegraph visualizations",
+          "items": {
+            "type": "string"
+          }
+        },
+        "screenshots": {
+          "type": "array",
+          "description": "Performance screenshots",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Performance improvement recommendations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "category": {
+            "type": "string",
+            "enum": ["frontend", "backend", "database", "network", "infrastructure"]
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "expected_improvement": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "test_environment": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory_gb": {
+              "type": "integer"
+            },
+            "network_speed": {
+              "type": "string"
+            }
+          }
+        },
+        "tools_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

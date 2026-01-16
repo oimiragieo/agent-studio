@@ -1,0 +1,367 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-outputs/security-architect-output.schema.json",
+  "title": "Security Architect Agent Output Schema",
+  "description": "JSON Schema for validating security architect agent output including vulnerability assessment and compliance status",
+  "type": "object",
+  "required": [
+    "verdict",
+    "vulnerabilities",
+    "security_concerns",
+    "compliance_status"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall security assessment"
+    },
+    "vulnerabilities": {
+      "type": "array",
+      "description": "Security vulnerabilities found (must be empty for PASS verdict)",
+      "items": {
+        "type": "object",
+        "required": [
+          "severity",
+          "type",
+          "location",
+          "description"
+        ],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "sql_injection",
+              "xss",
+              "csrf",
+              "authentication_bypass",
+              "authorization_bypass",
+              "information_disclosure",
+              "insecure_deserialization",
+              "hardcoded_secrets",
+              "weak_crypto",
+              "path_traversal",
+              "command_injection",
+              "denial_of_service"
+            ]
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "function": {
+                "type": "string"
+              }
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "cve_id": {
+            "type": "string",
+            "pattern": "^CVE-[0-9]{4}-[0-9]+$"
+          },
+          "cvss_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      }
+    },
+    "security_concerns": {
+      "type": "array",
+      "description": "General security concerns that aren't direct vulnerabilities",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "authentication",
+              "authorization",
+              "input_validation",
+              "output_encoding",
+              "cryptography",
+              "session_management",
+              "error_handling",
+              "logging",
+              "configuration"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "compliance_status": {
+      "type": "object",
+      "description": "Compliance with security standards",
+      "required": [
+        "owasp_top_10",
+        "secrets_check",
+        "auth_check",
+        "input_validation"
+      ],
+      "properties": {
+        "owasp_top_10": {
+          "type": "object",
+          "description": "OWASP Top 10 compliance",
+          "properties": {
+            "compliant": {
+              "type": "boolean"
+            },
+            "violations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "risk": {
+                    "type": "string"
+                  },
+                  "details": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "secrets_check": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "boolean"
+            },
+            "secrets_found": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string"
+                  },
+                  "line": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "auth_check": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "boolean"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "input_validation": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "boolean"
+            },
+            "unvalidated_inputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "parameter": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "gdpr": {
+          "type": "object",
+          "properties": {
+            "compliant": {
+              "type": "boolean"
+            },
+            "concerns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "pci_dss": {
+          "type": "object",
+          "properties": {
+            "applicable": {
+              "type": "boolean"
+            },
+            "compliant": {
+              "type": "boolean"
+            },
+            "violations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "dependency_vulnerabilities": {
+      "type": "array",
+      "description": "Vulnerabilities in dependencies",
+      "items": {
+        "type": "object",
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "vulnerability": {
+            "type": "string"
+          },
+          "fixed_version": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence supporting the security assessment",
+      "properties": {
+        "security_scan_output": {
+          "type": "string"
+        },
+        "manual_review_notes": {
+          "type": "string"
+        },
+        "code_snippets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "issue": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Security improvement recommendations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "category": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "estimated_effort": {
+            "type": "string",
+            "enum": ["trivial", "small", "medium", "large"]
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "scan_tools_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "vulnerabilities": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}
