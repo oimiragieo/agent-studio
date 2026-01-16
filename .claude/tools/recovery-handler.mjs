@@ -122,10 +122,7 @@ class RecoveryHandler {
 
         // Check threshold (if tracking occurrences)
         if (trigger.threshold && trigger.threshold > 1) {
-          const occurrences = this.countRecentOccurrences(
-            type,
-            trigger.timeframe_minutes || 60
-          );
+          const occurrences = this.countRecentOccurrences(type, trigger.timeframe_minutes || 60);
           if (occurrences < trigger.threshold) return false;
         }
 
@@ -302,10 +299,7 @@ class RecoveryHandler {
       ? escalation.escalation_chain[escalationCount - 1]
       : escalation.to_agent;
 
-    await this.logRecovery(
-      `Escalating to ${targetAgent} (escalation ${escalationCount})`,
-      'INFO'
-    );
+    await this.logRecovery(`Escalating to ${targetAgent} (escalation ${escalationCount})`, 'INFO');
 
     return {
       success: true,
@@ -362,10 +356,7 @@ class RecoveryHandler {
   async executeRollback(pattern, failure, context) {
     const rollback = pattern.rollback;
 
-    await this.logRecovery(
-      `Rolling back to ${rollback.target_state}`,
-      'WARN'
-    );
+    await this.logRecovery(`Rolling back to ${rollback.target_state}`, 'WARN');
 
     // Determine target checkpoint
     let checkpointId;
@@ -416,10 +407,7 @@ class RecoveryHandler {
   async executeHalt(pattern, failure, context) {
     const halt = pattern.halt;
 
-    await this.logRecovery(
-      `Halting workflow: ${halt.reason}`,
-      'ERROR'
-    );
+    await this.logRecovery(`Halting workflow: ${halt.reason}`, 'ERROR');
 
     // Execute cleanup if required
     let cleanupResult = null;
@@ -512,7 +500,7 @@ class RecoveryHandler {
     return {
       total_recoveries: total,
       successful_recoveries: successful,
-      success_rate: total > 0 ? (successful / total * 100).toFixed(2) + '%' : 'N/A',
+      success_rate: total > 0 ? ((successful / total) * 100).toFixed(2) + '%' : 'N/A',
       by_strategy: byStrategy,
       patterns_loaded: this.patterns.size,
     };

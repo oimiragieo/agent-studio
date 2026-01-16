@@ -219,7 +219,7 @@ function testRequiredFieldsPresent() {
     const output = sampleHookOutputs.valid_allow;
     const requiredFields = EXPECTED_SCHEMA.required;
 
-    const missingFields = requiredFields.filter((field) => !(field in output));
+    const missingFields = requiredFields.filter(field => !(field in output));
     testResult.json_validation.required_fields = requiredFields;
     testResult.json_validation.missing_fields = missingFields;
 
@@ -433,7 +433,7 @@ function testNestedObjectValidation() {
     const output = sampleHookOutputs.valid_allow;
     const requiredMetadataFields = EXPECTED_SCHEMA.properties.metadata.required;
 
-    const missingFields = requiredMetadataFields.filter((field) => !(field in output.metadata));
+    const missingFields = requiredMetadataFields.filter(field => !(field in output.metadata));
     testResult.json_validation.nested_required_fields = requiredMetadataFields;
     testResult.json_validation.nested_missing_fields = missingFields;
 

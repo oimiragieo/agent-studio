@@ -169,9 +169,7 @@ Examples:
  */
 function loadAgentOutput(outputPath) {
   // Resolve path (may be relative or absolute)
-  const resolvedPath = outputPath.startsWith('/')
-    ? outputPath
-    : join(PROJECT_ROOT, outputPath);
+  const resolvedPath = outputPath.startsWith('/') ? outputPath : join(PROJECT_ROOT, outputPath);
 
   if (!existsSync(resolvedPath)) {
     throw new Error(`Agent output file not found: ${resolvedPath}`);
@@ -194,14 +192,7 @@ function loadAgentOutput(outputPath) {
 function checkForErrors(output, result, verbose) {
   if (verbose) console.log('\n[STEP 1] Checking for errors...');
 
-  const errorKeywords = [
-    'error',
-    'failed',
-    'exception',
-    'crash',
-    'fatal',
-    'failure',
-  ];
+  const errorKeywords = ['error', 'failed', 'exception', 'crash', 'fatal', 'failure'];
 
   const content = output.raw.toLowerCase();
   const foundErrors = [];
@@ -223,7 +214,9 @@ function checkForErrors(output, result, verbose) {
     });
 
     if (verbose) {
-      console.log(`  ✗ Found errors: ${foundErrors.map(e => `${e.keyword} (${e.count})`).join(', ')}`);
+      console.log(
+        `  ✗ Found errors: ${foundErrors.map(e => `${e.keyword} (${e.count})`).join(', ')}`
+      );
     }
   } else {
     if (verbose) console.log('  ✓ No errors found');
@@ -236,13 +229,7 @@ function checkForErrors(output, result, verbose) {
 function checkForWarnings(output, result, verbose) {
   if (verbose) console.log('\n[STEP 2] Checking for warnings...');
 
-  const warningKeywords = [
-    'warning',
-    'concern',
-    'issue',
-    'problem',
-    'caution',
-  ];
+  const warningKeywords = ['warning', 'concern', 'issue', 'problem', 'caution'];
 
   const content = output.raw.toLowerCase();
   const foundWarnings = [];
@@ -264,7 +251,9 @@ function checkForWarnings(output, result, verbose) {
     });
 
     if (verbose) {
-      console.log(`  ⚠ Found warnings: ${foundWarnings.map(w => `${w.keyword} (${w.count})`).join(', ')}`);
+      console.log(
+        `  ⚠ Found warnings: ${foundWarnings.map(w => `${w.keyword} (${w.count})`).join(', ')}`
+      );
     }
   } else {
     if (verbose) console.log('  ✓ No warnings found');
@@ -448,7 +437,8 @@ function runVerification(args) {
   try {
     // Load agent output
     const output = loadAgentOutput(outputPath);
-    if (verbose) console.log(`\nLoaded ${output.type.toUpperCase()} output (${output.raw.length} bytes)`);
+    if (verbose)
+      console.log(`\nLoaded ${output.type.toUpperCase()} output (${output.raw.length} bytes)`);
 
     // Extract agent type if available
     if (output.type === 'json' && output.content.agent_type) {

@@ -43,18 +43,18 @@ Schema validation enforces **evidence-based outputs** from all agents:
 
 ### Schema Requirements by Agent Type
 
-| Agent | Required for PASS Verdict | Evidence Required |
-|-------|---------------------------|-------------------|
-| Developer | `compilation_success: true`, `test_results.pass_rate ≥ 80%` | compilation_output, test_output, lint_results |
-| QA | `test_results.pass_rate ≥ 90%` | test_command, test_output |
-| Code Reviewer | `syntax_errors: []` (empty) | code_snippets, file_references |
-| Security Architect | `vulnerabilities: []` (empty) | security_scan_output, manual_review_notes |
-| DevOps | `deployment_status.status: "success"`, `test_status.all_passing: true`, `build_status.success: true` | deployment_logs, test_logs, build_logs |
-| Technical Writer | `changelog_updated: true` | changelog_content, diff_summary |
-| Architect | At least 1 diagram, 1 design decision | diagrams, adr_documents |
-| Analyst | At least 1 finding, 1 recommendation | code_samples, metrics |
-| Planner | At least 1 step, risk assessment | N/A |
-| Performance Engineer | Metrics present, bottlenecks analyzed | profiling_data, benchmark_results |
+| Agent                | Required for PASS Verdict                                                                            | Evidence Required                             |
+| -------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Developer            | `compilation_success: true`, `test_results.pass_rate ≥ 80%`                                          | compilation_output, test_output, lint_results |
+| QA                   | `test_results.pass_rate ≥ 90%`                                                                       | test_command, test_output                     |
+| Code Reviewer        | `syntax_errors: []` (empty)                                                                          | code_snippets, file_references                |
+| Security Architect   | `vulnerabilities: []` (empty)                                                                        | security_scan_output, manual_review_notes     |
+| DevOps               | `deployment_status.status: "success"`, `test_status.all_passing: true`, `build_status.success: true` | deployment_logs, test_logs, build_logs        |
+| Technical Writer     | `changelog_updated: true`                                                                            | changelog_content, diff_summary               |
+| Architect            | At least 1 diagram, 1 design decision                                                                | diagrams, adr_documents                       |
+| Analyst              | At least 1 finding, 1 recommendation                                                                 | code_samples, metrics                         |
+| Planner              | At least 1 step, risk assessment                                                                     | N/A                                           |
+| Performance Engineer | Metrics present, bottlenecks analyzed                                                                | profiling_data, benchmark_results             |
 
 ---
 
@@ -87,22 +87,22 @@ node .claude/tools/schema-validator.mjs \
 
 ### Command Options
 
-| Option | Description | Example |
-|--------|-------------|---------|
-| `--agent <type>` | Agent type (required) | `--agent developer` |
-| `--output <path>` | Path to output JSON (required) | `--output ./dev-output.json` |
-| `--strict` | Exit with code 2 for ANY error (blocking) | `--strict` |
-| `--verbose` | Show detailed error messages | `--verbose` |
-| `--help` | Show usage information | `--help` |
+| Option            | Description                               | Example                      |
+| ----------------- | ----------------------------------------- | ---------------------------- |
+| `--agent <type>`  | Agent type (required)                     | `--agent developer`          |
+| `--output <path>` | Path to output JSON (required)            | `--output ./dev-output.json` |
+| `--strict`        | Exit with code 2 for ANY error (blocking) | `--strict`                   |
+| `--verbose`       | Show detailed error messages              | `--verbose`                  |
+| `--help`          | Show usage information                    | `--help`                     |
 
 ### Exit Codes
 
-| Code | Meaning | Action |
-|------|---------|--------|
-| 0 | Valid output - passes schema | ✓ Proceed |
-| 1 | Invalid (warnings only) | ⚠ Review but may proceed |
-| 2 | Invalid (critical errors) | ✗ BLOCK - fix errors |
-| 3 | File or schema not found | ✗ BLOCK - check paths |
+| Code | Meaning                      | Action                   |
+| ---- | ---------------------------- | ------------------------ |
+| 0    | Valid output - passes schema | ✓ Proceed                |
+| 1    | Invalid (warnings only)      | ⚠ Review but may proceed |
+| 2    | Invalid (critical errors)    | ✗ BLOCK - fix errors     |
+| 3    | File or schema not found     | ✗ BLOCK - check paths    |
 
 **In CI/CD**: Use `--strict` mode to block on any validation error.
 
@@ -115,6 +115,7 @@ node .claude/tools/schema-validator.mjs \
 **File**: `.claude/schemas/agent-outputs/developer-output.schema.json`
 
 **Required Fields**:
+
 - `verdict`: "PASS" | "CONCERNS" | "FAIL"
 - `files_created`: Array of file paths (min 1)
 - `test_results`: Object with total_tests, passed, failed, pass_rate
@@ -122,11 +123,13 @@ node .claude/tools/schema-validator.mjs \
 - `deliverables`: Array of deliverable objects (min 1)
 
 **PASS Verdict Requirements**:
+
 - `compilation_success` must be `true`
 - `test_results.pass_rate` must be ≥ 80%
 - All deliverables must exist and be validated
 
 **Evidence Required**:
+
 - `compilation_output`: String
 - `test_output`: String
 - `lint_results`: String
@@ -136,10 +139,7 @@ node .claude/tools/schema-validator.mjs \
 ```json
 {
   "verdict": "PASS",
-  "files_created": [
-    "src/components/Button.tsx",
-    "src/components/Button.test.tsx"
-  ],
+  "files_created": ["src/components/Button.tsx", "src/components/Button.test.tsx"],
   "test_results": {
     "total_tests": 10,
     "passed": 10,
@@ -169,14 +169,17 @@ node .claude/tools/schema-validator.mjs \
 **File**: `.claude/schemas/agent-outputs/qa-output.schema.json`
 
 **Required Fields**:
+
 - `verdict`: "PASS" | "CONCERNS" | "FAIL"
 - `test_results`: Object with total_tests, passed, failed, pass_rate
 - `evidence`: Object with test_command, test_output
 
 **PASS Verdict Requirements**:
+
 - `test_results.pass_rate` must be ≥ 90%
 
 **Evidence Required**:
+
 - `test_command`: String (command used to run tests)
 - `test_output`: String (full test execution output)
 
@@ -205,6 +208,7 @@ node .claude/tools/schema-validator.mjs \
 **File**: `.claude/schemas/agent-outputs/code-reviewer-output.schema.json`
 
 **Required Fields**:
+
 - `verdict`: "PASS" | "CONCERNS" | "FAIL"
 - `syntax_errors`: Array (must be empty for PASS)
 - `path_issues`: Array
@@ -212,9 +216,11 @@ node .claude/tools/schema-validator.mjs \
 - `logic_concerns`: Array
 
 **PASS Verdict Requirements**:
+
 - `syntax_errors` must be empty array
 
 **Evidence Required**:
+
 - `code_snippets`: Array of code samples
 - `file_references`: Array of file paths
 
@@ -247,15 +253,18 @@ node .claude/tools/schema-validator.mjs \
 **File**: `.claude/schemas/agent-outputs/security-architect-output.schema.json`
 
 **Required Fields**:
+
 - `verdict`: "PASS" | "CONCERNS" | "FAIL"
 - `vulnerabilities`: Array (must be empty for PASS)
 - `security_concerns`: Array
 - `compliance_status`: Object with owasp_top_10, secrets_check, auth_check, input_validation
 
 **PASS Verdict Requirements**:
+
 - `vulnerabilities` must be empty array
 
 **Evidence Required**:
+
 - `security_scan_output`: String
 - `manual_review_notes`: String
 
@@ -298,17 +307,20 @@ node .claude/tools/schema-validator.mjs \
 **File**: `.claude/schemas/agent-outputs/devops-output.schema.json`
 
 **Required Fields**:
+
 - `verdict`: "PASS" | "CONCERNS" | "FAIL"
 - `deployment_status`: Object with status
 - `test_status`: Object with all_passing
 - `build_status`: Object with success
 
 **PASS Verdict Requirements** (implicit):
+
 - `deployment_status.status`: "success"
 - `test_status.all_passing`: true
 - `build_status.success`: true
 
 **Evidence Required**:
+
 - `deployment_logs`: String
 - `test_logs`: String
 - `build_logs`: String
@@ -349,14 +361,17 @@ node .claude/tools/schema-validator.mjs \
 **File**: `.claude/schemas/agent-outputs/technical-writer-output.schema.json`
 
 **Required Fields**:
+
 - `verdict`: "PASS" | "CONCERNS" | "FAIL"
 - `files_updated`: Array (min 1)
 - `changelog_updated`: Boolean (must be true for PASS)
 
 **PASS Verdict Requirements**:
+
 - `changelog_updated` must be `true`
 
 **Evidence Required**:
+
 - `changelog_content`: String
 - `diff_summary`: String
 
@@ -385,17 +400,21 @@ node .claude/tools/schema-validator.mjs \
 ### 7-10. Remaining Agent Schemas
 
 **Architect** (`.claude/schemas/agent-outputs/architect-output.schema.json`):
+
 - Required: architecture_diagrams (min 1), design_decisions (min 1), trade_offs
 - Evidence: diagrams, adr_documents
 
 **Analyst** (`.claude/schemas/agent-outputs/analyst-output.schema.json`):
+
 - Required: analysis_type, findings (min 1), recommendations (min 1), evidence
 - Evidence: code_samples, metrics (required)
 
 **Planner** (`.claude/schemas/agent-outputs/planner-output.schema.json`):
+
 - Required: plan_id, steps (min 1), dependencies, risk_assessment, success_criteria (min 1)
 
 **Performance Engineer** (`.claude/schemas/agent-outputs/performance-engineer-output.schema.json`):
+
 - Required: performance_metrics (load_time_ms, memory_usage_mb), bottlenecks, optimizations, evidence
 - Evidence: profiling_data, benchmark_results (required)
 
@@ -418,7 +437,7 @@ node .claude/tools/schema-validator.mjs \
     "pass_rate": 100
   },
   "compilation_success": true,
-  "deliverables": [{"path": "src/App.tsx", "exists": true, "validated": true}],
+  "deliverables": [{ "path": "src/App.tsx", "exists": true, "validated": true }],
   "evidence": {
     "compilation_output": "Success",
     "test_output": "5 passed",
@@ -431,7 +450,7 @@ node .claude/tools/schema-validator.mjs \
 
 ```json
 {
-  "verdict": "PASS",  // ✗ INVALID: PASS requires compilation_success: true
+  "verdict": "PASS", // ✗ INVALID: PASS requires compilation_success: true
   "files_created": ["src/App.tsx"],
   "test_results": {
     "total_tests": 5,
@@ -439,8 +458,8 @@ node .claude/tools/schema-validator.mjs \
     "failed": 0,
     "pass_rate": 100
   },
-  "compilation_success": false,  // ✗ Must be true for PASS
-  "deliverables": [{"path": "src/App.tsx", "exists": true, "validated": true}],
+  "compilation_success": false, // ✗ Must be true for PASS
+  "deliverables": [{ "path": "src/App.tsx", "exists": true, "validated": true }],
   "evidence": {
     "compilation_output": "Compilation failed",
     "test_output": "5 passed",
@@ -450,6 +469,7 @@ node .claude/tools/schema-validator.mjs \
 ```
 
 **Validation Error**:
+
 ```
 ✗ VALIDATION FAILED
 
@@ -494,6 +514,7 @@ node .claude/tools/verification-gate.mjs \
 ### Missing Required Field
 
 **Error**:
+
 ```
 CRITICAL ERRORS (1):
   root: must have required property 'test_results'
@@ -502,6 +523,7 @@ CRITICAL ERRORS (1):
 **Cause**: Required field missing from output
 
 **Fix**:
+
 1. Add the missing field to agent output
 2. Ensure all required fields from schema are present
 3. Check schema definition for required fields list
@@ -509,6 +531,7 @@ CRITICAL ERRORS (1):
 ### Type Mismatch
 
 **Error**:
+
 ```
 CRITICAL ERRORS (1):
   /test_results/pass_rate: must be number
@@ -517,6 +540,7 @@ CRITICAL ERRORS (1):
 **Cause**: Field has wrong type (string instead of number)
 
 **Fix**:
+
 1. Ensure field matches expected type
 2. Convert values to correct type before output
 3. Use TypeScript for type safety
@@ -524,6 +548,7 @@ CRITICAL ERRORS (1):
 ### Enum Violation
 
 **Error**:
+
 ```
 CRITICAL ERRORS (1):
   /verdict: must be equal to one of the allowed values (PASS, CONCERNS, FAIL)
@@ -532,6 +557,7 @@ CRITICAL ERRORS (1):
 **Cause**: Field value not in allowed enum values
 
 **Fix**:
+
 1. Use only allowed values (check schema enum)
 2. Add constants for enum values in code
 3. Validate enum values before output
@@ -539,6 +565,7 @@ CRITICAL ERRORS (1):
 ### Conditional Validation Failure
 
 **Error**:
+
 ```
 CRITICAL ERRORS (1):
   root: must match "allOf" schema (PASS verdict requires pass_rate >= 90%)
@@ -547,6 +574,7 @@ CRITICAL ERRORS (1):
 **Cause**: Conditional requirement not met (e.g., PASS with low pass rate)
 
 **Fix**:
+
 1. Review conditional requirements in schema (allOf/if/then)
 2. Ensure verdict matches actual results
 3. Use CONCERNS/FAIL verdict if requirements not met
@@ -608,9 +636,9 @@ validate-outputs:
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-15 | Initial release - 10 agent schemas, schema-validator tool |
+| Version | Date       | Changes                                                   |
+| ------- | ---------- | --------------------------------------------------------- |
+| 1.0.0   | 2025-01-15 | Initial release - 10 agent schemas, schema-validator tool |
 
 ---
 

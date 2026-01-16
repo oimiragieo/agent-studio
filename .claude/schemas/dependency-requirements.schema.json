@@ -125,11 +125,7 @@
           "description": {
             "type": "string",
             "description": "What this file is for",
-            "examples": [
-              "NPM package manifest",
-              "Git ignore rules",
-              "TypeScript configuration"
-            ]
+            "examples": ["NPM package manifest", "Git ignore rules", "TypeScript configuration"]
           },
           "optional": {
             "type": "boolean",

@@ -257,13 +257,8 @@
   ],
 
   "files_by_category": {
-    "schemas": [
-      ".claude/schemas/recovery-pattern.schema.json"
-    ],
-    "tools": [
-      ".claude/tools/recovery-handler.mjs",
-      ".claude/tools/test-recovery-handler.mjs"
-    ],
+    "schemas": [".claude/schemas/recovery-pattern.schema.json"],
+    "tools": [".claude/tools/recovery-handler.mjs", ".claude/tools/test-recovery-handler.mjs"],
     "documentation": [
       ".claude/docs/RECOVERY_DSL_GUIDE.md",
       ".claude/docs/RECOVERY_DSL_QUICK_REFERENCE.md",

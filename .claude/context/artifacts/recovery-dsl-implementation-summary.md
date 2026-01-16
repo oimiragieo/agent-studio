@@ -21,6 +21,7 @@ Create Recovery DSL (Domain-Specific Language) for structured failure recovery p
 **File**: `.claude/schemas/recovery-pattern.schema.json`
 
 **Features**:
+
 - 5 recovery strategies: retry, escalate, skip, rollback, halt
 - Pattern matching system (failure type, error pattern, agent, step, severity)
 - Configurable retry policies (max attempts, backoff: fixed/linear/exponential, jitter)
@@ -31,6 +32,7 @@ Create Recovery DSL (Domain-Specific Language) for structured failure recovery p
 - Comprehensive metadata and examples
 
 **Schema Structure**:
+
 ```json
 {
   "pattern_id": "recovery-{strategy}-{context}",
@@ -58,6 +60,7 @@ Create Recovery DSL (Domain-Specific Language) for structured failure recovery p
 **File**: `.claude/tools/recovery-handler.mjs`
 
 **Features**:
+
 - Pattern loader (from `.claude/context/config/recovery-patterns/`)
 - Pattern matching algorithm (multi-criteria, priority-based)
 - 5 strategy executors:
@@ -70,6 +73,7 @@ Create Recovery DSL (Domain-Specific Language) for structured failure recovery p
 - CLI interface (--test, --list-patterns, --help)
 
 **API**:
+
 ```javascript
 import { executeRecovery } from './.claude/tools/recovery-handler.mjs';
 
@@ -82,10 +86,12 @@ const result = await executeRecovery(failure, {
 ### 3. Documentation ✅
 
 **Files**:
+
 - `.claude/docs/RECOVERY_DSL_GUIDE.md` - Comprehensive 600+ line guide
 - `.claude/docs/RECOVERY_DSL_QUICK_REFERENCE.md` - Quick reference card
 
 **Documentation Covers**:
+
 - 5 recovery strategies (when to use, how they work, configuration)
 - Pattern matching criteria and algorithm
 - Priority system guidelines
@@ -103,15 +109,16 @@ const result = await executeRecovery(failure, {
 
 **Patterns Created**:
 
-| Pattern ID | Strategy | Priority | Purpose |
-|------------|----------|----------|---------|
-| `recovery-retry-transient-failure` | retry | 80 | Retry network/timeout/rate limit failures |
-| `recovery-escalate-validation-failure` | escalate | 70 | Escalate validation failures to architect |
-| `recovery-rollback-critical-error` | rollback | 100 | Rollback critical errors (combined method) |
-| `recovery-skip-non-critical` | skip | 30 | Skip optional/non-critical steps |
-| `recovery-halt-unrecoverable` | halt | 100 | Halt on unrecoverable errors |
+| Pattern ID                             | Strategy | Priority | Purpose                                    |
+| -------------------------------------- | -------- | -------- | ------------------------------------------ |
+| `recovery-retry-transient-failure`     | retry    | 80       | Retry network/timeout/rate limit failures  |
+| `recovery-escalate-validation-failure` | escalate | 70       | Escalate validation failures to architect  |
+| `recovery-rollback-critical-error`     | rollback | 100      | Rollback critical errors (combined method) |
+| `recovery-skip-non-critical`           | skip     | 30       | Skip optional/non-critical steps           |
+| `recovery-halt-unrecoverable`          | halt     | 100      | Halt on unrecoverable errors               |
 
 **Directory Structure**:
+
 ```
 .claude/context/config/recovery-patterns/
 ├── retry-patterns/
@@ -131,6 +138,7 @@ const result = await executeRecovery(failure, {
 **File**: `.claude/tools/test-recovery-handler.mjs`
 
 **Tests**:
+
 1. ✅ Retry Strategy - Transient Failure (timeout)
 2. ✅ Escalation Strategy - Validation Failure
 3. ✅ Skip Strategy - Non-Critical Step
@@ -141,6 +149,7 @@ const result = await executeRecovery(failure, {
 8. ✅ Exponential Backoff Calculation
 
 **Run Tests**:
+
 ```bash
 node .claude/tools/test-recovery-handler.mjs
 ```
@@ -149,15 +158,15 @@ node .claude/tools/test-recovery-handler.mjs
 
 ## Success Criteria
 
-| Criterion | Status | Evidence |
-|-----------|--------|----------|
-| Recovery DSL schema created | ✅ | `.claude/schemas/recovery-pattern.schema.json` |
-| Recovery handler tool implemented | ✅ | `.claude/tools/recovery-handler.mjs` |
-| Supports 5 recovery strategies | ✅ | retry, escalate, skip, rollback, halt |
-| Retry policies configurable | ✅ | max attempts, backoff (fixed/linear/exponential), jitter |
-| Escalation rules defined | ✅ | Target agent, timeout multiplier, context |
-| Documentation explains DSL usage | ✅ | RECOVERY_DSL_GUIDE.md (600+ lines) |
-| Integration pattern provided | ✅ | Workflow integration examples in guide |
+| Criterion                         | Status | Evidence                                                 |
+| --------------------------------- | ------ | -------------------------------------------------------- |
+| Recovery DSL schema created       | ✅     | `.claude/schemas/recovery-pattern.schema.json`           |
+| Recovery handler tool implemented | ✅     | `.claude/tools/recovery-handler.mjs`                     |
+| Supports 5 recovery strategies    | ✅     | retry, escalate, skip, rollback, halt                    |
+| Retry policies configurable       | ✅     | max attempts, backoff (fixed/linear/exponential), jitter |
+| Escalation rules defined          | ✅     | Target agent, timeout multiplier, context                |
+| Documentation explains DSL usage  | ✅     | RECOVERY_DSL_GUIDE.md (600+ lines)                       |
+| Integration pattern provided      | ✅     | Workflow integration examples in guide                   |
 
 ---
 
@@ -166,6 +175,7 @@ node .claude/tools/test-recovery-handler.mjs
 ### 1. Pattern Matching System
 
 **Multi-Criteria Matching**:
+
 - Failure type (timeout, validation_failure, rate_limit, ...)
 - Error pattern (regex matching)
 - Agent filter (specific agents only)
@@ -173,6 +183,7 @@ node .claude/tools/test-recovery-handler.mjs
 - Severity threshold (info/warning/error/critical)
 
 **Priority System** (0-100):
+
 - Higher priority patterns evaluated first
 - Enables fine-grained control over recovery behavior
 - Recommended: 90-100 critical, 70-89 important, 50-69 standard, 30-49 fallback
@@ -180,6 +191,7 @@ node .claude/tools/test-recovery-handler.mjs
 ### 2. Retry Strategy
 
 **Backoff Strategies**:
+
 - **Fixed**: Same delay every retry (e.g., 1s, 1s, 1s)
 - **Linear**: Linear increase (e.g., 1s, 2s, 3s)
 - **Exponential**: Exponential increase (e.g., 1s, 2s, 4s, 8s)
@@ -187,6 +199,7 @@ node .claude/tools/test-recovery-handler.mjs
 **Jitter**: Adds ±20% random variance to prevent thundering herd
 
 **Input Modification**:
+
 - Reduce scope on retry
 - Increase thinking budget
 - Add failure context
@@ -194,12 +207,14 @@ node .claude/tools/test-recovery-handler.mjs
 ### 3. Escalation Strategy
 
 **Escalation Paths**:
+
 - developer → architect (complex design)
 - developer → security-architect (security issues)
 - developer → performance-engineer (performance bottlenecks)
 - qa → developer (test failures)
 
 **Context Preservation**:
+
 - Original task description
 - Failure logs
 - Expert hints
@@ -208,12 +223,14 @@ node .claude/tools/test-recovery-handler.mjs
 ### 4. Rollback Strategy
 
 **Methods**:
+
 - **git**: Code rollback (soft/mixed/hard reset)
 - **filesystem**: File creates/deletes rollback
 - **state**: Workflow state rollback (from checkpoint)
 - **combined**: All three methods
 
 **Safety**:
+
 - Git stash before rollback (preserve for debugging)
 - Verification after rollback
 - Checkpoint-based state restoration
@@ -221,6 +238,7 @@ node .claude/tools/test-recovery-handler.mjs
 ### 5. Halt Strategy
 
 **Features**:
+
 - Immediate workflow stop
 - State preservation (`.claude/context/runtime/preserved/`)
 - Incident report creation (`.claude/context/reports/incident-*.md`)
@@ -263,7 +281,7 @@ try {
     failure_type: classifyFailure(error),
     error_message: error.message,
     severity: determineSeverity(error),
-    attempts: task.attempts || 1
+    attempts: task.attempts || 1,
   };
 
   // Execute recovery
@@ -273,7 +291,7 @@ try {
     },
     escalateFunction: async ({ toAgent, context }) => {
       return await executeAgent({ ...task, agent: toAgent, context });
-    }
+    },
   });
 
   if (recovery.success) {
@@ -319,6 +337,7 @@ node .claude/tools/recovery-handler.mjs --list-patterns
 ```
 
 **Output**:
+
 ```
 📋 Available Recovery Patterns (5):
 
@@ -344,6 +363,7 @@ node .claude/tools/recovery-handler.mjs --test
 ```
 
 **Output**:
+
 ```
 🧪 Running test failure scenario...
 
@@ -531,33 +551,33 @@ node .claude/tools/recovery-handler.mjs --test
 
 ### Core Implementation
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `.claude/schemas/recovery-pattern.schema.json` | 450 | Recovery pattern JSON schema |
-| `.claude/tools/recovery-handler.mjs` | 900 | Recovery handler implementation |
-| `.claude/tools/test-recovery-handler.mjs` | 400 | Test suite (8 tests) |
+| File                                           | Lines | Purpose                         |
+| ---------------------------------------------- | ----- | ------------------------------- |
+| `.claude/schemas/recovery-pattern.schema.json` | 450   | Recovery pattern JSON schema    |
+| `.claude/tools/recovery-handler.mjs`           | 900   | Recovery handler implementation |
+| `.claude/tools/test-recovery-handler.mjs`      | 400   | Test suite (8 tests)            |
 
 ### Documentation
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `.claude/docs/RECOVERY_DSL_GUIDE.md` | 600+ | Comprehensive guide |
-| `.claude/docs/RECOVERY_DSL_QUICK_REFERENCE.md` | 350 | Quick reference card |
+| File                                           | Lines | Purpose              |
+| ---------------------------------------------- | ----- | -------------------- |
+| `.claude/docs/RECOVERY_DSL_GUIDE.md`           | 600+  | Comprehensive guide  |
+| `.claude/docs/RECOVERY_DSL_QUICK_REFERENCE.md` | 350   | Quick reference card |
 
 ### Default Patterns
 
-| File | Strategy | Priority |
-|------|----------|----------|
-| `retry-patterns/retry-transient-failure.json` | retry | 80 |
-| `escalation-patterns/escalate-validation-failure.json` | escalate | 70 |
-| `rollback-patterns/rollback-critical-error.json` | rollback | 100 |
-| `skip-patterns/skip-non-critical.json` | skip | 30 |
-| `halt-patterns/halt-unrecoverable.json` | halt | 100 |
+| File                                                   | Strategy | Priority |
+| ------------------------------------------------------ | -------- | -------- |
+| `retry-patterns/retry-transient-failure.json`          | retry    | 80       |
+| `escalation-patterns/escalate-validation-failure.json` | escalate | 70       |
+| `rollback-patterns/rollback-critical-error.json`       | rollback | 100      |
+| `skip-patterns/skip-non-critical.json`                 | skip     | 30       |
+| `halt-patterns/halt-unrecoverable.json`                | halt     | 100      |
 
 ### Summary Artifacts
 
-| File | Purpose |
-|------|---------|
+| File                                                               | Purpose      |
+| ------------------------------------------------------------------ | ------------ |
 | `.claude/context/artifacts/recovery-dsl-implementation-summary.md` | This summary |
 
 ---
@@ -580,6 +600,7 @@ The Recovery DSL provides a comprehensive, structured approach to failure recove
 ---
 
 **Deliverables Checklist**:
+
 - ✅ Recovery pattern schema created
 - ✅ Recovery handler tool implemented
 - ✅ 5 recovery strategies supported

@@ -198,11 +198,21 @@
         },
         {
           "name": "escalate",
-          "features": ["escalation_chain", "timeout_multiplier", "priority_boost", "context_inclusion"]
+          "features": [
+            "escalation_chain",
+            "timeout_multiplier",
+            "priority_boost",
+            "context_inclusion"
+          ]
         },
         {
           "name": "skip",
-          "features": ["impact_assessment", "alternative_steps", "approval_required", "workflow_degradation"]
+          "features": [
+            "impact_assessment",
+            "alternative_steps",
+            "approval_required",
+            "workflow_degradation"
+          ]
         },
         {
           "name": "rollback",

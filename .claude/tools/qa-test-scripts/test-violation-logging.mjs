@@ -34,7 +34,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const PROJECT_ROOT = join(__dirname, '../../..');
-const SESSION_STATE_PATH = join(PROJECT_ROOT, '.claude/context/tmp/orchestrator-session-state.json');
+const SESSION_STATE_PATH = join(
+  PROJECT_ROOT,
+  '.claude/context/tmp/orchestrator-session-state.json'
+);
 const VIOLATION_LOG_PATH = join(PROJECT_ROOT, '.claude/context/logs/orchestrator-violations.log');
 
 /**
@@ -61,7 +64,8 @@ class LoggingTestResult {
     this.state_entry = stateEntry;
     this.error_message = errorMessage;
 
-    this.passed = this.logged_to_file === this.should_log_to_file &&
+    this.passed =
+      this.logged_to_file === this.should_log_to_file &&
       this.logged_to_state === this.should_log_to_state;
   }
 }
@@ -97,9 +101,8 @@ class LoggingTestSuite {
   }
 
   calculateSuccessRate() {
-    this.success_rate = this.total_tests > 0
-      ? Math.round((this.passed / this.total_tests) * 100)
-      : 0;
+    this.success_rate =
+      this.total_tests > 0 ? Math.round((this.passed / this.total_tests) * 100) : 0;
   }
 
   setDuration(startTime) {
@@ -242,10 +245,35 @@ function checkViolationLoggedToState(tool) {
  * Test scenarios
  */
 const LOGGING_TEST_SCENARIOS = [
-  { name: 'Write tool violation logged', tool: 'Write', reason: 'Orchestrator cannot modify files', shouldLogToFile: true, shouldLogToState: true },
-  { name: 'Edit tool violation logged', tool: 'Edit', reason: 'Orchestrator cannot edit files', shouldLogToFile: true, shouldLogToState: true },
-  { name: 'Grep tool violation logged', tool: 'Grep', reason: 'Orchestrator cannot search code', shouldLogToFile: true, shouldLogToState: true },
-  { name: 'Bash dangerous command violation logged', tool: 'Bash', reason: 'Dangerous git command', command: 'git add .', shouldLogToFile: true, shouldLogToState: true },
+  {
+    name: 'Write tool violation logged',
+    tool: 'Write',
+    reason: 'Orchestrator cannot modify files',
+    shouldLogToFile: true,
+    shouldLogToState: true,
+  },
+  {
+    name: 'Edit tool violation logged',
+    tool: 'Edit',
+    reason: 'Orchestrator cannot edit files',
+    shouldLogToFile: true,
+    shouldLogToState: true,
+  },
+  {
+    name: 'Grep tool violation logged',
+    tool: 'Grep',
+    reason: 'Orchestrator cannot search code',
+    shouldLogToFile: true,
+    shouldLogToState: true,
+  },
+  {
+    name: 'Bash dangerous command violation logged',
+    tool: 'Bash',
+    reason: 'Dangerous git command',
+    command: 'git add .',
+    shouldLogToFile: true,
+    shouldLogToState: true,
+  },
 ];
 
 /**
@@ -281,12 +309,7 @@ async function runLoggingTests() {
       // Check state logging
       const stateCheck = checkViolationLoggedToState(scenario.tool);
 
-      result.setActual(
-        fileCheck.logged,
-        stateCheck.logged,
-        fileCheck.entry,
-        stateCheck.entry
-      );
+      result.setActual(fileCheck.logged, stateCheck.logged, fileCheck.entry, stateCheck.entry);
 
       if (result.passed) {
         console.log(`  ✓ PASS: Logged to file=${fileCheck.logged}, state=${stateCheck.logged}`);
@@ -295,7 +318,9 @@ async function runLoggingTests() {
         }
       } else {
         console.log(`  ✗ FAIL:`);
-        console.log(`    Expected: File=${scenario.shouldLogToFile}, State=${scenario.shouldLogToState}`);
+        console.log(
+          `    Expected: File=${scenario.shouldLogToFile}, State=${scenario.shouldLogToState}`
+        );
         console.log(`    Actual: File=${result.logged_to_file}, State=${result.logged_to_state}`);
       }
     } catch (error) {
@@ -322,10 +347,14 @@ async function runLoggingTests() {
     console.log(`\n✓ All ${suite.total_tests} tests passed!`);
     process.exit(0);
   } else if (suite.success_rate >= 70) {
-    console.log(`\n⚠ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`);
+    console.log(
+      `\n⚠ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`
+    );
     process.exit(1);
   } else {
-    console.error(`\n✗ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`);
+    console.error(
+      `\n✗ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`
+    );
     process.exit(2);
   }
 }

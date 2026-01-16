@@ -104,8 +104,8 @@ class TaskQueue {
       retry_policy: {
         max_retries: taskSpec.max_retries || 0,
         retry_delay_ms: taskSpec.retry_delay_ms || 0,
-        ...taskSpec.retry_policy
-      }
+        ...taskSpec.retry_policy,
+      },
     };
 
     this.queue.push(task);
@@ -160,9 +160,7 @@ class TaskQueue {
       return true;
     }
 
-    return task.dependencies.every(depId =>
-      this.completed.some(t => t.id === depId)
-    );
+    return task.dependencies.every(depId => this.completed.some(t => t.id === depId));
   }
 
   /**
@@ -234,7 +232,7 @@ class TaskQueue {
     task.duration_ms = new Date(task.failed_at) - new Date(task.started_at);
     task.error = {
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     };
 
     // Check if retry is allowed
@@ -317,7 +315,7 @@ class TaskQueue {
       ...this.running,
       ...this.completed,
       ...this.failed,
-      ...this.cancelled
+      ...this.cancelled,
     ];
 
     const task = all.find(t => t.id === taskId);
@@ -338,7 +336,7 @@ class TaskQueue {
       priority: task.priority,
       dependencies: task.dependencies,
       error: task.error,
-      result: task.result
+      result: task.result,
     };
   }
 
@@ -383,16 +381,23 @@ class TaskQueue {
       completed: this.completed.length,
       failed: this.failed.length,
       cancelled: this.cancelled.length,
-      total: this.queue.length + this.running.length + this.completed.length +
-             this.failed.length + this.cancelled.length,
-      success_rate: this.completed.length + this.failed.length > 0
-        ? (this.completed.length / (this.completed.length + this.failed.length) * 100).toFixed(2) + '%'
-        : 'N/A',
+      total:
+        this.queue.length +
+        this.running.length +
+        this.completed.length +
+        this.failed.length +
+        this.cancelled.length,
+      success_rate:
+        this.completed.length + this.failed.length > 0
+          ? ((this.completed.length / (this.completed.length + this.failed.length)) * 100).toFixed(
+              2
+            ) + '%'
+          : 'N/A',
       queue_details: {
         high_priority: this.queue.filter(t => t.priority === 'high').length,
         medium_priority: this.queue.filter(t => t.priority === 'medium').length,
-        low_priority: this.queue.filter(t => t.priority === 'low').length
-      }
+        low_priority: this.queue.filter(t => t.priority === 'low').length,
+      },
     };
   }
 
@@ -405,7 +410,7 @@ class TaskQueue {
       running: [...this.running],
       completed: [...this.completed],
       failed: [...this.failed],
-      cancelled: [...this.cancelled]
+      cancelled: [...this.cancelled],
     };
   }
 
@@ -421,7 +426,7 @@ class TaskQueue {
       completed: this.completed,
       failed: this.failed,
       cancelled: this.cancelled,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const statePath = this.getStatePath();
@@ -507,7 +512,7 @@ async function main() {
         const result = queue.enqueue({
           agent,
           task,
-          priority
+          priority,
         });
 
         console.log('Task enqueued:');

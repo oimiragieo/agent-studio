@@ -4,13 +4,7 @@
   "title": "Analyst Agent Output Schema",
   "description": "JSON Schema for validating analyst agent output including analysis findings and recommendations",
   "type": "object",
-  "required": [
-    "verdict",
-    "analysis_type",
-    "findings",
-    "recommendations",
-    "evidence"
-  ],
+  "required": ["verdict", "analysis_type", "findings", "recommendations", "evidence"],
   "properties": {
     "verdict": {
       "type": "string",
@@ -19,7 +13,15 @@
     },
     "analysis_type": {
       "type": "string",
-      "enum": ["code_quality", "performance", "security", "architecture", "dependency", "technical_debt", "patterns"],
+      "enum": [
+        "code_quality",
+        "performance",
+        "security",
+        "architecture",
+        "dependency",
+        "technical_debt",
+        "patterns"
+      ],
       "description": "Type of analysis performed"
     },
     "findings": {
@@ -28,15 +30,20 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "category",
-          "severity",
-          "description"
-        ],
+        "required": ["category", "severity", "description"],
         "properties": {
           "category": {
             "type": "string",
-            "enum": ["bug", "code_smell", "complexity", "duplication", "performance", "security", "maintainability", "testability"]
+            "enum": [
+              "bug",
+              "code_smell",
+              "complexity",
+              "duplication",
+              "performance",
+              "security",
+              "maintainability",
+              "testability"
+            ]
           },
           "severity": {
             "type": "string",
@@ -76,10 +83,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "recommendation",
-          "priority"
-        ],
+        "required": ["recommendation", "priority"],
         "properties": {
           "recommendation": {
             "type": "string"
@@ -103,10 +107,7 @@
     "evidence": {
       "type": "object",
       "description": "Evidence supporting the analysis",
-      "required": [
-        "code_samples",
-        "metrics"
-      ],
+      "required": ["code_samples", "metrics"],
       "properties": {
         "code_samples": {
           "type": "array",

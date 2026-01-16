@@ -4,12 +4,7 @@
   "title": "Architect Agent Output Schema",
   "description": "JSON Schema for validating architect agent output including architecture diagrams, design decisions, and trade-offs",
   "type": "object",
-  "required": [
-    "verdict",
-    "architecture_diagrams",
-    "design_decisions",
-    "trade_offs"
-  ],
+  "required": ["verdict", "architecture_diagrams", "design_decisions", "trade_offs"],
   "properties": {
     "verdict": {
       "type": "string",
@@ -22,15 +17,20 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "type",
-          "path",
-          "format"
-        ],
+        "required": ["type", "path", "format"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["system_context", "container", "component", "deployment", "sequence", "class", "entity_relationship", "data_flow"]
+            "enum": [
+              "system_context",
+              "container",
+              "component",
+              "deployment",
+              "sequence",
+              "class",
+              "entity_relationship",
+              "data_flow"
+            ]
           },
           "path": {
             "type": "string"
@@ -51,10 +51,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "decision",
-          "rationale"
-        ],
+        "required": ["decision", "rationale"],
         "properties": {
           "decision": {
             "type": "string"
@@ -90,15 +87,19 @@
       "description": "Trade-offs in the architecture",
       "items": {
         "type": "object",
-        "required": [
-          "aspect",
-          "chosen_approach",
-          "rejected_approaches"
-        ],
+        "required": ["aspect", "chosen_approach", "rejected_approaches"],
         "properties": {
           "aspect": {
             "type": "string",
-            "enum": ["performance", "scalability", "maintainability", "security", "cost", "complexity", "reliability"]
+            "enum": [
+              "performance",
+              "scalability",
+              "maintainability",
+              "security",
+              "cost",
+              "complexity",
+              "reliability"
+            ]
           },
           "chosen_approach": {
             "type": "string"
@@ -123,7 +124,14 @@
         "properties": {
           "category": {
             "type": "string",
-            "enum": ["scalability", "performance", "security", "maintainability", "reliability", "observability"]
+            "enum": [
+              "scalability",
+              "performance",
+              "security",
+              "maintainability",
+              "reliability",
+              "observability"
+            ]
           },
           "recommendation": {
             "type": "string"
@@ -231,7 +239,14 @@
         },
         "architecture_style": {
           "type": "string",
-          "enum": ["monolithic", "microservices", "serverless", "event_driven", "layered", "hexagonal"]
+          "enum": [
+            "monolithic",
+            "microservices",
+            "serverless",
+            "event_driven",
+            "layered",
+            "hexagonal"
+          ]
         }
       }
     }

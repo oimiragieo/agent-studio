@@ -25,9 +25,7 @@
     ".claude/schemas/context-injection.schema.json",
     ".claude/docs/CONTEXT_INJECTION_GUIDE.md"
   ],
-  "files_modified": [
-    ".claude/tools/context-injector.mjs"
-  ],
+  "files_modified": [".claude/tools/context-injector.mjs"],
   "context_types_supported": [
     "background: Problem statement, business value, user impact, urgency, technical context",
     "previous_attempts: What was tried before, why it failed, lessons learned",

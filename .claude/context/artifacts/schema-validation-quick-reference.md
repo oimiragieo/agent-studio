@@ -24,27 +24,27 @@ node .claude/tools/schema-validator.mjs --help
 
 ## Exit Codes
 
-| Code | Meaning | Action |
-|------|---------|--------|
-| 0 | Validation passed | ✅ Proceed |
-| 1 | Validation failed | ❌ Fix errors |
-| 2 | Warnings found | ⚠️ Review |
-| 3 | Invalid arguments | 🔧 Check syntax |
+| Code | Meaning           | Action          |
+| ---- | ----------------- | --------------- |
+| 0    | Validation passed | ✅ Proceed      |
+| 1    | Validation failed | ❌ Fix errors   |
+| 2    | Warnings found    | ⚠️ Review       |
+| 3    | Invalid arguments | 🔧 Check syntax |
 
 ## Agent Type Map
 
-| Agent | Schema File | Key Fields |
-|-------|-------------|------------|
-| `developer` | `developer-output.schema.json` | `test_results`, `compilation_success` |
-| `qa` | `qa-output.schema.json` | `test_results`, `evidence.test_output` |
-| `code-reviewer` | `code-reviewer-output.schema.json` | `findings`, `severity_counts` |
-| `security-architect` | `security-architect-output.schema.json` | `vulnerabilities`, `risk_score` |
-| `devops` | `devops-output.schema.json` | `deployment_status`, `health_checks` |
-| `technical-writer` | `technical-writer-output.schema.json` | `files_updated`, `word_count` |
-| `architect` | `architect-output.schema.json` | `design_artifacts`, `risk_analysis` |
-| `analyst` | `analyst-output.schema.json` | `analysis_results`, `data_quality` |
-| `planner` | `planner-output.schema.json` | `plan_document`, `success_criteria` |
-| `performance-engineer` | `performance-engineer-output.schema.json` | `metrics`, `benchmarks` |
+| Agent                  | Schema File                               | Key Fields                             |
+| ---------------------- | ----------------------------------------- | -------------------------------------- |
+| `developer`            | `developer-output.schema.json`            | `test_results`, `compilation_success`  |
+| `qa`                   | `qa-output.schema.json`                   | `test_results`, `evidence.test_output` |
+| `code-reviewer`        | `code-reviewer-output.schema.json`        | `findings`, `severity_counts`          |
+| `security-architect`   | `security-architect-output.schema.json`   | `vulnerabilities`, `risk_score`        |
+| `devops`               | `devops-output.schema.json`               | `deployment_status`, `health_checks`   |
+| `technical-writer`     | `technical-writer-output.schema.json`     | `files_updated`, `word_count`          |
+| `architect`            | `architect-output.schema.json`            | `design_artifacts`, `risk_analysis`    |
+| `analyst`              | `analyst-output.schema.json`              | `analysis_results`, `data_quality`     |
+| `planner`              | `planner-output.schema.json`              | `plan_document`, `success_criteria`    |
+| `performance-engineer` | `performance-engineer-output.schema.json` | `metrics`, `benchmarks`                |
 
 ## Universal Required Fields
 
@@ -60,21 +60,21 @@ node .claude/tools/schema-validator.mjs --help
 
 ## PASS Verdict Requirements
 
-| Agent | Threshold |
-|-------|-----------|
-| Developer | `test_results.pass_rate ≥ 80%` |
-| QA | `test_results.pass_rate ≥ 90%` |
-| Code Reviewer | `severity_counts.critical: 0` AND `high: 0` |
-| Security Architect | `risk_score < 30` |
-| DevOps | `health_checks.all_passing: true` |
-| Planner | `quality_score ≥ 7` |
-| Performance Engineer | ≥10% improvement |
+| Agent                | Threshold                                   |
+| -------------------- | ------------------------------------------- |
+| Developer            | `test_results.pass_rate ≥ 80%`              |
+| QA                   | `test_results.pass_rate ≥ 90%`              |
+| Code Reviewer        | `severity_counts.critical: 0` AND `high: 0` |
+| Security Architect   | `risk_score < 30`                           |
+| DevOps               | `health_checks.all_passing: true`           |
+| Planner              | `quality_score ≥ 7`                         |
+| Performance Engineer | ≥10% improvement                            |
 
 ## Workflow Integration Pattern
 
 ```yaml
 steps:
-  - name: "Step Name"
+  - name: 'Step Name'
     agent: developer
     validation:
       schema: agent-outputs/developer-output.schema.json
@@ -99,12 +99,12 @@ console.log('✅ Validated - proceeding');
 
 ## Common Validation Errors
 
-| Error | Fix |
-|-------|-----|
-| "Missing required property: test_results" | Add test execution results |
-| "Property 'verdict' must be PASS, CONCERNS, or FAIL" | Use exact enum values |
-| "Property 'pass_rate' must be >= 90" | Improve test pass rate |
-| "Property 'verdict_reason' is required" | Add explanation for CONCERNS/FAIL |
+| Error                                                | Fix                               |
+| ---------------------------------------------------- | --------------------------------- |
+| "Missing required property: test_results"            | Add test execution results        |
+| "Property 'verdict' must be PASS, CONCERNS, or FAIL" | Use exact enum values             |
+| "Property 'pass_rate' must be >= 90"                 | Improve test pass rate            |
+| "Property 'verdict_reason' is required"              | Add explanation for CONCERNS/FAIL |
 
 ## Programmatic Validation
 

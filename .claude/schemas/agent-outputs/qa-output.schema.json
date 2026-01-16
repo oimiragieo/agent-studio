@@ -4,11 +4,7 @@
   "title": "QA Agent Output Schema",
   "description": "JSON Schema for validating QA agent output including test execution results and quality metrics",
   "type": "object",
-  "required": [
-    "verdict",
-    "test_results",
-    "evidence"
-  ],
+  "required": ["verdict", "test_results", "evidence"],
   "properties": {
     "verdict": {
       "type": "string",
@@ -18,12 +14,7 @@
     "test_results": {
       "type": "object",
       "description": "Comprehensive test execution results",
-      "required": [
-        "total_tests",
-        "passed",
-        "failed",
-        "pass_rate"
-      ],
+      "required": ["total_tests", "passed", "failed", "pass_rate"],
       "properties": {
         "total_tests": {
           "type": "integer",
@@ -179,10 +170,7 @@
     "evidence": {
       "type": "object",
       "description": "Evidence supporting the verdict",
-      "required": [
-        "test_command",
-        "test_output"
-      ],
+      "required": ["test_command", "test_output"],
       "properties": {
         "test_command": {
           "type": "string",

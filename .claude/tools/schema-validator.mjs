@@ -273,7 +273,7 @@ function printResults(result, options) {
 
   if (critical.length > 0) {
     console.log(`CRITICAL ERRORS (${critical.length}):`);
-    critical.forEach((error) => {
+    critical.forEach(error => {
       console.log(formatError(error, options.verbose));
     });
     console.log();
@@ -281,7 +281,7 @@ function printResults(result, options) {
 
   if (warnings.length > 0) {
     console.log(`WARNINGS (${warnings.length}):`);
-    warnings.forEach((error) => {
+    warnings.forEach(error => {
       console.log(formatError(error, options.verbose));
     });
     console.log();
@@ -302,7 +302,7 @@ function generateReport(result, options, schema) {
     total_errors: errors.length,
     critical_errors: critical.length,
     warnings: warnings.length,
-    errors: errors.map((error) => ({
+    errors: errors.map(error => ({
       path: error.instancePath || error.dataPath || 'root',
       keyword: error.keyword,
       message: error.message,

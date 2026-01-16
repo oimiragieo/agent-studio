@@ -4,13 +4,7 @@
   "title": "Performance Engineer Agent Output Schema",
   "description": "JSON Schema for validating performance engineer agent output including metrics, bottlenecks, and optimizations",
   "type": "object",
-  "required": [
-    "verdict",
-    "performance_metrics",
-    "bottlenecks",
-    "optimizations",
-    "evidence"
-  ],
+  "required": ["verdict", "performance_metrics", "bottlenecks", "optimizations", "evidence"],
   "properties": {
     "verdict": {
       "type": "string",
@@ -20,10 +14,7 @@
     "performance_metrics": {
       "type": "object",
       "description": "Performance measurements",
-      "required": [
-        "load_time_ms",
-        "memory_usage_mb"
-      ],
+      "required": ["load_time_ms", "memory_usage_mb"],
       "properties": {
         "load_time_ms": {
           "type": "number",
@@ -111,11 +102,7 @@
       "description": "Performance bottlenecks identified",
       "items": {
         "type": "object",
-        "required": [
-          "location",
-          "severity",
-          "impact"
-        ],
+        "required": ["location", "severity", "impact"],
         "properties": {
           "location": {
             "type": "object",
@@ -134,7 +121,14 @@
           },
           "type": {
             "type": "string",
-            "enum": ["cpu_bound", "io_bound", "memory_bound", "network_bound", "database_query", "algorithm_complexity"]
+            "enum": [
+              "cpu_bound",
+              "io_bound",
+              "memory_bound",
+              "network_bound",
+              "database_query",
+              "algorithm_complexity"
+            ]
           },
           "severity": {
             "type": "string",
@@ -160,14 +154,21 @@
       "description": "Optimizations applied or recommended",
       "items": {
         "type": "object",
-        "required": [
-          "type",
-          "description"
-        ],
+        "required": ["type", "description"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["caching", "lazy_loading", "code_splitting", "compression", "cdn", "database_indexing", "query_optimization", "algorithm_improvement", "resource_pooling"]
+            "enum": [
+              "caching",
+              "lazy_loading",
+              "code_splitting",
+              "compression",
+              "cdn",
+              "database_indexing",
+              "query_optimization",
+              "algorithm_improvement",
+              "resource_pooling"
+            ]
           },
           "location": {
             "type": "string"
@@ -207,10 +208,7 @@
     "evidence": {
       "type": "object",
       "description": "Evidence supporting performance analysis",
-      "required": [
-        "profiling_data",
-        "benchmark_results"
-      ],
+      "required": ["profiling_data", "benchmark_results"],
       "properties": {
         "profiling_data": {
           "type": "string",

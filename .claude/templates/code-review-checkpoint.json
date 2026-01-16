@@ -3,10 +3,7 @@
   "timestamp": "2025-01-15T10:30:00.000Z",
   "verdict": "PASS",
   "reviewer": "code-reviewer",
-  "files_reviewed": [
-    "path/to/file1.ts",
-    "path/to/file2.tsx"
-  ],
+  "files_reviewed": ["path/to/file1.ts", "path/to/file2.tsx"],
   "review_summary": {
     "total_files": 0,
     "files_with_issues": 0,

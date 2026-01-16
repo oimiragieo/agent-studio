@@ -4,12 +4,7 @@
   "title": "Security Architect Agent Output Schema",
   "description": "JSON Schema for validating security architect agent output including vulnerability assessment and compliance status",
   "type": "object",
-  "required": [
-    "verdict",
-    "vulnerabilities",
-    "security_concerns",
-    "compliance_status"
-  ],
+  "required": ["verdict", "vulnerabilities", "security_concerns", "compliance_status"],
   "properties": {
     "verdict": {
       "type": "string",
@@ -21,12 +16,7 @@
       "description": "Security vulnerabilities found (must be empty for PASS verdict)",
       "items": {
         "type": "object",
-        "required": [
-          "severity",
-          "type",
-          "location",
-          "description"
-        ],
+        "required": ["severity", "type", "location", "description"],
         "properties": {
           "severity": {
             "type": "string",
@@ -125,12 +115,7 @@
     "compliance_status": {
       "type": "object",
       "description": "Compliance with security standards",
-      "required": [
-        "owasp_top_10",
-        "secrets_check",
-        "auth_check",
-        "input_validation"
-      ],
+      "required": ["owasp_top_10", "secrets_check", "auth_check", "input_validation"],
       "properties": {
         "owasp_top_10": {
           "type": "object",

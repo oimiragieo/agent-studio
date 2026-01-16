@@ -28,12 +28,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "description",
-          "agent",
-          "deliverables"
-        ],
+        "required": ["id", "description", "agent", "deliverables"],
         "properties": {
           "id": {
             "type": "string"
@@ -94,11 +89,7 @@
       "description": "Identified risks and mitigations",
       "items": {
         "type": "object",
-        "required": [
-          "risk",
-          "severity",
-          "mitigation"
-        ],
+        "required": ["risk", "severity", "mitigation"],
         "properties": {
           "risk": {
             "type": "string"

@@ -4,13 +4,7 @@
   "title": "Code Reviewer Agent Output Schema",
   "description": "JSON Schema for validating code reviewer agent output including syntax, path, dependency, and logic analysis",
   "type": "object",
-  "required": [
-    "verdict",
-    "syntax_errors",
-    "path_issues",
-    "dependency_issues",
-    "logic_concerns"
-  ],
+  "required": ["verdict", "syntax_errors", "path_issues", "dependency_issues", "logic_concerns"],
   "properties": {
     "verdict": {
       "type": "string",
@@ -59,7 +53,12 @@
           },
           "issue_type": {
             "type": "string",
-            "enum": ["windows_compatibility", "hardcoded_path", "relative_path_issue", "malformed_path"]
+            "enum": [
+              "windows_compatibility",
+              "hardcoded_path",
+              "relative_path_issue",
+              "malformed_path"
+            ]
           },
           "current_path": {
             "type": "string"
@@ -117,7 +116,15 @@
           },
           "category": {
             "type": "string",
-            "enum": ["error_handling", "null_safety", "type_safety", "race_condition", "infinite_loop", "memory_leak", "performance"]
+            "enum": [
+              "error_handling",
+              "null_safety",
+              "type_safety",
+              "race_condition",
+              "infinite_loop",
+              "memory_leak",
+              "performance"
+            ]
           },
           "description": {
             "type": "string"
@@ -255,7 +262,14 @@
         "properties": {
           "category": {
             "type": "string",
-            "enum": ["naming", "structure", "documentation", "error_handling", "testing", "performance"]
+            "enum": [
+              "naming",
+              "structure",
+              "documentation",
+              "error_handling",
+              "testing",
+              "performance"
+            ]
           },
           "file": {
             "type": "string"

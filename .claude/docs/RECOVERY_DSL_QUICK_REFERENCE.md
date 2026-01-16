@@ -32,43 +32,44 @@ Can we revert to previous state?
 
 ## Trigger Conditions Quick Reference
 
-| Condition               | Typical Cause                  | Severity | Recommended Strategy |
-| ----------------------- | ------------------------------ | -------- | -------------------- |
-| `timeout`               | Network delay, slow service    | Medium   | Retry                |
-| `test_failure`          | Code defects, environment      | High     | Escalate             |
-| `compilation_error`     | Syntax errors, type errors     | High     | Escalate             |
-| `dependency_missing`    | npm registry, network          | Medium   | Retry                |
-| `resource_unavailable`  | Service down, API unreachable  | High     | Retry → Escalate     |
-| `validation_failure`    | Schema errors, data issues     | Medium   | Escalate             |
-| `security_violation`    | Vuln detected, auth failure    | Critical | Halt                 |
-| `network_error`         | Connectivity issues            | Medium   | Retry                |
+| Condition                | Typical Cause                 | Severity | Recommended Strategy |
+| ------------------------ | ----------------------------- | -------- | -------------------- |
+| `timeout`                | Network delay, slow service   | Medium   | Retry                |
+| `test_failure`           | Code defects, environment     | High     | Escalate             |
+| `compilation_error`      | Syntax errors, type errors    | High     | Escalate             |
+| `dependency_missing`     | npm registry, network         | Medium   | Retry                |
+| `resource_unavailable`   | Service down, API unreachable | High     | Retry → Escalate     |
+| `validation_failure`     | Schema errors, data issues    | Medium   | Escalate             |
+| `security_violation`     | Vuln detected, auth failure   | Critical | Halt                 |
+| `network_error`          | Connectivity issues           | Medium   | Retry                |
 | `authentication_failure` | Invalid credentials           | High     | Halt                 |
-| `rate_limit_exceeded`   | API quota exceeded             | Low      | Retry (long delay)   |
-| `disk_space_low`        | Storage full                   | High     | Halt                 |
-| `memory_exhausted`      | OOM condition                  | Critical | Halt                 |
+| `rate_limit_exceeded`    | API quota exceeded            | Low      | Retry (long delay)   |
+| `disk_space_low`         | Storage full                  | High     | Halt                 |
+| `memory_exhausted`       | OOM condition                 | Critical | Halt                 |
 
 ---
 
 ## Severity Levels
 
-| Level    | Priority | Response      | Example Use Cases                      |
-| -------- | -------- | ------------- | -------------------------------------- |
-| Low      | 4        | Hours         | Rate limit warnings, deprecation       |
-| Medium   | 3        | Minutes       | Timeouts, missing dependencies         |
-| High     | 2        | Immediate     | Test failures, compilation errors      |
-| Critical | 1        | Immediate     | Security violations, data corruption   |
+| Level    | Priority | Response  | Example Use Cases                    |
+| -------- | -------- | --------- | ------------------------------------ |
+| Low      | 4        | Hours     | Rate limit warnings, deprecation     |
+| Medium   | 3        | Minutes   | Timeouts, missing dependencies       |
+| High     | 2        | Immediate | Test failures, compilation errors    |
+| Critical | 1        | Immediate | Security violations, data corruption |
 
 ---
 
 ## Backoff Strategies Comparison
 
-| Strategy     | Formula                 | Example Delays (1s base) | Best For                     |
-| ------------ | ----------------------- | ------------------------ | ---------------------------- |
-| Fixed        | delay                   | 1s, 1s, 1s               | Predictable retry timing     |
-| Linear       | delay × attempt         | 1s, 2s, 3s               | Gradual backoff              |
-| Exponential  | delay × 2^(attempt-1)   | 1s, 2s, 4s, 8s           | Network/API retries (recommended) |
+| Strategy    | Formula               | Example Delays (1s base) | Best For                          |
+| ----------- | --------------------- | ------------------------ | --------------------------------- |
+| Fixed       | delay                 | 1s, 1s, 1s               | Predictable retry timing          |
+| Linear      | delay × attempt       | 1s, 2s, 3s               | Gradual backoff                   |
+| Exponential | delay × 2^(attempt-1) | 1s, 2s, 4s, 8s           | Network/API retries (recommended) |
 
 **Add Jitter:** Always enable to prevent thundering herd:
+
 ```json
 {
   "jitter": true,
@@ -120,9 +121,7 @@ Can we revert to previous state?
 ```json
 {
   "pattern_id": "security-halt",
-  "triggers": [
-    { "condition": "security_violation", "severity": "critical" }
-  ],
+  "triggers": [{ "condition": "security_violation", "severity": "critical" }],
   "strategy": "halt",
   "halt": {
     "notify": ["orchestrator", "security_team"],
@@ -136,9 +135,7 @@ Can we revert to previous state?
 ```json
 {
   "pattern_id": "dependency-retry",
-  "triggers": [
-    { "condition": "dependency_missing", "severity": "medium" }
-  ],
+  "triggers": [{ "condition": "dependency_missing", "severity": "medium" }],
   "strategy": "retry",
   "retry_policy": {
     "max_attempts": 4,
@@ -153,9 +150,7 @@ Can we revert to previous state?
 ```json
 {
   "pattern_id": "flaky-test-skip",
-  "triggers": [
-    { "condition": "test_failure", "severity": "low" }
-  ],
+  "triggers": [{ "condition": "test_failure", "severity": "low" }],
   "strategy": "skip",
   "skip": {
     "reason": "Known flaky test",
@@ -170,16 +165,19 @@ Can we revert to previous state?
 ## CLI Commands Cheat Sheet
 
 ### Test All Patterns
+
 ```bash
 node .claude/tools/recovery-handler.mjs --test
 ```
 
 ### List Loaded Patterns
+
 ```bash
 node .claude/tools/recovery-handler.mjs --list-patterns
 ```
 
 ### Apply Specific Pattern
+
 ```bash
 node .claude/tools/recovery-handler.mjs --apply \
   --pattern <pattern-id> \
@@ -187,6 +185,7 @@ node .claude/tools/recovery-handler.mjs --apply \
 ```
 
 ### Match Failure to Pattern
+
 ```bash
 node .claude/tools/recovery-handler.mjs --match \
   --failure <condition> \
@@ -194,11 +193,13 @@ node .claude/tools/recovery-handler.mjs --match \
 ```
 
 ### View Statistics
+
 ```bash
 node .claude/tools/recovery-handler.mjs --stats
 ```
 
 ### Validate Pattern Schema
+
 ```bash
 node .claude/tools/validate-schema.mjs \
   --schema .claude/schemas/recovery-pattern.schema.json \
@@ -209,13 +210,13 @@ node .claude/tools/validate-schema.mjs \
 
 ## Pattern Priority Guidelines
 
-| Priority | Strategy Type        | Example                              |
-| -------- | -------------------- | ------------------------------------ |
-| 1        | Critical Halt        | Security violations, data corruption |
-| 2        | High Priority Escalate | Compilation errors, test failures  |
-| 3-4      | Standard Retry       | Timeouts, network errors             |
-| 5-6      | Low Priority Skip    | Flaky tests, optional validations    |
-| 7-8      | Informational        | Warnings, deprecations               |
+| Priority | Strategy Type          | Example                              |
+| -------- | ---------------------- | ------------------------------------ |
+| 1        | Critical Halt          | Security violations, data corruption |
+| 2        | High Priority Escalate | Compilation errors, test failures    |
+| 3-4      | Standard Retry         | Timeouts, network errors             |
+| 5-6      | Low Priority Skip      | Flaky tests, optional validations    |
+| 7-8      | Informational          | Warnings, deprecations               |
 
 ---
 
@@ -227,9 +228,7 @@ node .claude/tools/validate-schema.mjs \
 {
   "pattern_id": "simple-retry",
   "name": "Simple Retry Pattern",
-  "triggers": [
-    { "condition": "timeout", "severity": "medium" }
-  ],
+  "triggers": [{ "condition": "timeout", "severity": "medium" }],
   "strategy": "retry",
   "priority": 5,
   "retry_policy": {
@@ -286,6 +285,7 @@ node .claude/tools/validate-schema.mjs \
 ### Pattern Not Triggering
 
 **Check List:**
+
 - [ ] Pattern enabled: `"enabled": true`
 - [ ] Condition matches failure type
 - [ ] Severity level correct
@@ -293,6 +293,7 @@ node .claude/tools/validate-schema.mjs \
 - [ ] Error pattern matches (if specified)
 
 **Debug Command:**
+
 ```bash
 node .claude/tools/recovery-handler.mjs --match \
   --failure <your-failure-type> \
@@ -302,10 +303,11 @@ node .claude/tools/recovery-handler.mjs --match \
 ### Too Many Retries
 
 **Quick Fix:** Reduce max_attempts
+
 ```json
 {
   "retry_policy": {
-    "max_attempts": 2  // Down from 3+
+    "max_attempts": 2 // Down from 3+
   }
 }
 ```
@@ -313,11 +315,13 @@ node .claude/tools/recovery-handler.mjs --match \
 ### Recovery Not Working
 
 **Check Logs:**
+
 ```bash
 cat .claude/context/logs/recovery.log
 ```
 
 **Check State:**
+
 ```bash
 cat .claude/context/runtime/recovery/recovery-state.json
 ```
@@ -343,6 +347,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ### Retry Strategy
 
 **Minimal:**
+
 ```json
 {
   "strategy": "retry",
@@ -353,6 +358,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ```
 
 **Recommended:**
+
 ```json
 {
   "strategy": "retry",
@@ -369,6 +375,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ### Escalate Strategy
 
 **Minimal:**
+
 ```json
 {
   "strategy": "escalate",
@@ -379,6 +386,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ```
 
 **Recommended:**
+
 ```json
 {
   "strategy": "escalate",
@@ -394,6 +402,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ### Skip Strategy
 
 **Minimal:**
+
 ```json
 {
   "strategy": "skip",
@@ -405,6 +414,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ```
 
 **Recommended:**
+
 ```json
 {
   "strategy": "skip",
@@ -420,6 +430,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ### Rollback Strategy
 
 **Minimal:**
+
 ```json
 {
   "strategy": "rollback",
@@ -430,6 +441,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ```
 
 **Recommended:**
+
 ```json
 {
   "strategy": "rollback",
@@ -445,6 +457,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ### Halt Strategy
 
 **Minimal:**
+
 ```json
 {
   "strategy": "halt",
@@ -455,6 +468,7 @@ cat .claude/context/runtime/recovery/recovery-state.json
 ```
 
 **Recommended:**
+
 ```json
 {
   "strategy": "halt",
@@ -485,7 +499,7 @@ try {
   const failure = {
     type: determineFailureType(error),
     severity: determineSeverity(error),
-    metadata: { error_message: error.message }
+    metadata: { error_message: error.message },
   };
 
   const pattern = handler.matchPattern(failure);
@@ -512,13 +526,13 @@ try {
 
 ## Default Patterns Reference
 
-| Pattern ID                  | Strategy | Condition           | Max Attempts/Agent |
-| --------------------------- | -------- | ------------------- | ------------------ |
-| `timeout-retry`             | Retry    | timeout             | 3 (exponential)    |
-| `test-failure-escalate`     | Escalate | test_failure        | → developer        |
-| `dependency-missing-retry`  | Retry    | dependency_missing  | 4 (linear)         |
-| `compilation-error-escalate`| Escalate | compilation_error   | → developer        |
-| `critical-failure-halt`     | Halt     | security_violation  | N/A (halt)         |
+| Pattern ID                   | Strategy | Condition          | Max Attempts/Agent |
+| ---------------------------- | -------- | ------------------ | ------------------ |
+| `timeout-retry`              | Retry    | timeout            | 3 (exponential)    |
+| `test-failure-escalate`      | Escalate | test_failure       | → developer        |
+| `dependency-missing-retry`   | Retry    | dependency_missing | 4 (linear)         |
+| `compilation-error-escalate` | Escalate | compilation_error  | → developer        |
+| `critical-failure-halt`      | Halt     | security_violation | N/A (halt)         |
 
 ---
 
@@ -542,6 +556,7 @@ Before deploying a new pattern:
 ---
 
 **See Also:**
+
 - [Recovery DSL Guide](./RECOVERY_DSL_GUIDE.md) - Comprehensive guide
 - [Recovery Integration Examples](./RECOVERY_DSL_INTEGRATION_EXAMPLE.md) - Integration examples
 - [Recovery Pattern Schema](./../schemas/recovery-pattern.schema.json) - JSON schema

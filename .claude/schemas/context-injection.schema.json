@@ -45,10 +45,7 @@
           "timestamp": {
             "type": "string",
             "description": "Timestamp of the attempt (ISO 8601 or 'unknown')",
-            "anyOf": [
-              { "format": "date-time" },
-              { "enum": ["unknown"] }
-            ]
+            "anyOf": [{ "format": "date-time" }, { "enum": ["unknown"] }]
           },
           "agent": {
             "type": "string",
@@ -57,10 +54,7 @@
           },
           "verdict": {
             "description": "Outcome verdict of the attempt",
-            "anyOf": [
-              { "enum": ["PASS", "CONCERNS", "FAIL", "unknown"] },
-              { "type": "string" }
-            ]
+            "anyOf": [{ "enum": ["PASS", "CONCERNS", "FAIL", "unknown"] }, { "type": "string" }]
           },
           "errors": {
             "type": "array",
@@ -210,10 +204,7 @@
           ".claude/context/artifacts/plan-greenfield-2025-01-15.json",
           ".claude/context/artifacts/dev-manifest.json"
         ],
-        "key_documentation": [
-          ".claude/docs/README.md",
-          ".claude/docs/ORCHESTRATION_GUIDE.md"
-        ]
+        "key_documentation": [".claude/docs/README.md", ".claude/docs/ORCHESTRATION_GUIDE.md"]
       },
       "previous_attempts": [
         {
@@ -228,9 +219,7 @@
           "abc123 feat: implement context injection",
           "def456 fix: resolve dependency issues"
         ],
-        "related_artifacts": [
-          ".claude/context/artifacts/context-enrichment-task.json"
-        ]
+        "related_artifacts": [".claude/context/artifacts/context-enrichment-task.json"]
       },
       "constraints": {
         "orchestrator_rules": "YOU ARE THE MASTER ORCHESTRATOR. EVERY USER REQUEST COMES TO YOU FIRST...",

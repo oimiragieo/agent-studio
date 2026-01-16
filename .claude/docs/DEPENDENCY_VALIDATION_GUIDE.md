@@ -5,6 +5,7 @@
 Dependency validation ensures all required tools, packages, and files are available before task execution. This prevents mid-execution failures due to missing dependencies.
 
 ### What It Checks
+
 - Node.js version compatibility
 - npm package versions
 - System command availability
@@ -12,6 +13,7 @@ Dependency validation ensures all required tools, packages, and files are availa
 - Environment variables
 
 ### Why It Matters
+
 - Prevents "works on my machine" issues
 - Catches missing dependencies early
 - Reduces debugging time
@@ -20,13 +22,17 @@ Dependency validation ensures all required tools, packages, and files are availa
 ## When to Run Validation
 
 ### Before Task Execution
+
 Run validation before starting any development task:
+
 ```bash
 node .claude/tools/dependency-validator.mjs validate-all
 ```
 
 ### In CI/CD Pipelines
+
 Add validation as first step in CI/CD:
+
 ```yaml
 # GitHub Actions
 - name: Validate Dependencies
@@ -34,7 +40,9 @@ Add validation as first step in CI/CD:
 ```
 
 ### Pre-commit Hooks
+
 Validate dependencies before every commit:
+
 ```json
 {
   "hooks": {
@@ -50,45 +58,44 @@ Create `.claude/schemas/dependency-requirements.json`:
 ```json
 {
   "node": { "min_version": "18.0.0" },
-  "npm_packages": [
-    { "name": "prettier", "min_version": "3.0.0" }
-  ],
-  "system_commands": [
-    { "command": "git", "purpose": "Version control" }
-  ],
-  "critical_files": [
-    { "path": "package.json", "description": "NPM manifest" }
-  ]
+  "npm_packages": [{ "name": "prettier", "min_version": "3.0.0" }],
+  "system_commands": [{ "command": "git", "purpose": "Version control" }],
+  "critical_files": [{ "path": "package.json", "description": "NPM manifest" }]
 }
 ```
 
 ## Usage Examples
 
 ### Command 1: validate-all
+
 ```bash
 node .claude/tools/dependency-validator.mjs validate-all
 # Validates all dependency types
 ```
 
 ### Command 2: validate-node
+
 ```bash
 node .claude/tools/dependency-validator.mjs validate-node --min-version 18.0.0
 # Validates Node.js version only
 ```
 
 ### Command 3: validate-packages
+
 ```bash
 node .claude/tools/dependency-validator.mjs validate-packages --config .claude/schemas/dependency-requirements.json
 # Validates npm packages from config
 ```
 
 ### Command 4: validate-commands
+
 ```bash
 node .claude/tools/dependency-validator.mjs validate-commands --config .claude/schemas/dependency-requirements.json
 # Validates system commands exist
 ```
 
 ### Command 5: validate-files
+
 ```bash
 node .claude/tools/dependency-validator.mjs validate-files --config .claude/schemas/dependency-requirements.json
 # Validates critical files exist
@@ -97,31 +104,41 @@ node .claude/tools/dependency-validator.mjs validate-files --config .claude/sche
 ## Validation Types
 
 ### 1. Node.js Version
+
 Checks Node.js version meets minimum requirement:
+
 - **Min Version**: 18.0.0 (required)
 - **Check**: `node --version`
 - **Failure**: "Node.js 16.x.x detected, minimum 18.0.0 required"
 
 ### 2. npm Packages
+
 Checks package versions in package.json:
+
 - **Source**: package.json dependencies
 - **Check**: Version comparison
 - **Failure**: "prettier 2.8.0 detected, minimum 3.0.0 required"
 
 ### 3. System Commands
+
 Checks commands available in PATH:
+
 - **Commands**: git, npm, pnpm, eslint, prettier
 - **Check**: `which <command>` or `where <command>`
 - **Failure**: "git command not found, install from https://git-scm.com"
 
 ### 4. Critical Files
+
 Checks files exist at specified paths:
+
 - **Files**: package.json, .gitignore, tsconfig.json
 - **Check**: File existence
 - **Failure**: "package.json not found, initialize with npm init"
 
 ### 5. Environment Variables
+
 Checks required env vars are set:
+
 - **Variables**: NODE_ENV, API_KEY, etc.
 - **Check**: process.env
 - **Failure**: "NODE_ENV not set, required for production"
@@ -129,12 +146,14 @@ Checks required env vars are set:
 ## Interpreting Results
 
 ### Exit Codes
+
 - **0**: All dependencies valid
 - **1**: Warnings (non-blocking issues)
 - **2**: Critical missing dependencies (blocking)
 - **3**: Validation error (config issue)
 
 ### JSON Output
+
 ```json
 {
   "valid": false,
@@ -160,28 +179,34 @@ Checks required env vars are set:
 ## Troubleshooting
 
 ### Issue 1: Node.js Version Too Old
+
 **Error**: "Node.js 16.x.x detected, minimum 18.0.0 required"
 **Fix**: Install Node.js 18+ from https://nodejs.org
 
 ### Issue 2: Missing npm Package
+
 **Error**: "prettier not found in package.json"
 **Fix**: `npm install -D prettier`
 
 ### Issue 3: System Command Not Found
+
 **Error**: "git command not found"
 **Fix**: Install Git from https://git-scm.com
 
 ### Issue 4: Critical File Missing
+
 **Error**: "package.json not found"
 **Fix**: Initialize project with `npm init -y`
 
 ### Issue 5: Invalid Config File
+
 **Error**: "dependency-requirements.json invalid JSON"
 **Fix**: Validate JSON syntax at https://jsonlint.com
 
 ## CI/CD Integration
 
 ### GitHub Actions
+
 ```yaml
 name: CI
 on: [push, pull_request]
@@ -198,6 +223,7 @@ jobs:
 ```
 
 ### GitLab CI
+
 ```yaml
 validate-dependencies:
   stage: test
@@ -206,6 +232,7 @@ validate-dependencies:
 ```
 
 ### Jenkins
+
 ```groovy
 stage('Validate Dependencies') {
   steps {
@@ -217,6 +244,7 @@ stage('Validate Dependencies') {
 ## Pre-commit Hook Integration
 
 Add to `.husky/pre-commit`:
+
 ```bash
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
@@ -227,24 +255,29 @@ node .claude/tools/dependency-validator.mjs validate-all || exit 1
 ## Best Practices
 
 ### 1. Required vs Optional
+
 - **Required**: Core dependencies (Node.js, git, package.json)
 - **Optional**: Nice-to-have tools (pnpm, docker)
 
 ### 2. Version Pinning
+
 - **Strict**: Use exact versions for production (18.0.0)
 - **Flexible**: Use ranges for development (^18.0.0)
 
 ### 3. Validation Frequency
+
 - **Always**: Pre-commit, CI/CD pipeline start
 - **Occasionally**: Before major releases
 - **Never**: During active development (slows down)
 
 ### 4. Error Handling
+
 - **Block**: Missing required dependencies
 - **Warn**: Missing optional dependencies
 - **Ignore**: Development-only dependencies in production
 
 ### 5. Config Management
+
 - **Single Source**: One dependency-requirements.json file
 - **Environment-Specific**: Different configs for dev/staging/prod
 - **Version Control**: Commit dependency config files
@@ -252,22 +285,18 @@ node .claude/tools/dependency-validator.mjs validate-all || exit 1
 ## Examples
 
 ### Example 1: Basic Project
+
 ```json
 {
   "node": { "min_version": "18.0.0" },
-  "npm_packages": [
-    { "name": "typescript", "min_version": "5.0.0" }
-  ],
-  "system_commands": [
-    { "command": "git", "purpose": "Version control" }
-  ],
-  "critical_files": [
-    { "path": "package.json", "description": "NPM manifest" }
-  ]
+  "npm_packages": [{ "name": "typescript", "min_version": "5.0.0" }],
+  "system_commands": [{ "command": "git", "purpose": "Version control" }],
+  "critical_files": [{ "path": "package.json", "description": "NPM manifest" }]
 }
 ```
 
 ### Example 2: Full-Stack Project
+
 ```json
 {
   "node": { "min_version": "18.0.0" },
@@ -307,12 +336,8 @@ You can define different dependency requirements for different environments:
     },
     "production": {
       "node": { "min_version": "20.0.0" },
-      "npm_packages": [
-        { "name": "typescript", "min_version": "5.3.0" }
-      ],
-      "system_commands": [
-        { "command": "pm2", "purpose": "Process management" }
-      ]
+      "npm_packages": [{ "name": "typescript", "min_version": "5.3.0" }],
+      "system_commands": [{ "command": "pm2", "purpose": "Process management" }]
     }
   }
 }
@@ -330,8 +355,8 @@ export async function validateCustomRequirement() {
 
   return {
     valid: isValid,
-    message: isValid ? "Custom check passed" : "Custom check failed",
-    action: isValid ? null : "Run: npm run fix-custom-issue"
+    message: isValid ? 'Custom check passed' : 'Custom check failed',
+    action: isValid ? null : 'Run: npm run fix-custom-issue',
   };
 }
 ```
@@ -416,6 +441,7 @@ node .claude/tools/dependency-validator.mjs validate-all --auto-fix
 ```
 
 Auto-fix capabilities:
+
 - Install missing npm packages
 - Update outdated packages
 - Create missing critical files
@@ -426,6 +452,7 @@ Auto-fix capabilities:
 When auto-fix is not available:
 
 1. **Review Validation Report**
+
    ```bash
    node .claude/tools/dependency-validator.mjs validate-all --report .claude/context/reports/dependency-report.json
    ```
@@ -457,6 +484,7 @@ node .claude/tools/dependency-validator.mjs validate-packages --security-scan
 ```
 
 Security checks include:
+
 - Known CVEs in dependencies
 - Outdated packages with security patches
 - Malicious packages
@@ -469,9 +497,7 @@ Configure trusted package registries:
 ```json
 {
   "security": {
-    "allowed_registries": [
-      "https://registry.npmjs.org"
-    ],
+    "allowed_registries": ["https://registry.npmjs.org"],
     "block_unknown_sources": true
   }
 }
@@ -504,7 +530,7 @@ Cache validation results to reduce overhead:
 // .claude/tools/dependency-validator.mjs
 const cache = new ValidationCache({
   ttl: 3600, // 1 hour
-  invalidateOn: ['package.json', 'package-lock.json']
+  invalidateOn: ['package.json', 'package-lock.json'],
 });
 
 const result = await cache.getOrCompute('node-version', async () => {
@@ -529,7 +555,7 @@ const results = await Promise.all([
   validateNodeVersion(),
   validatePackages(),
   validateCommands(),
-  validateFiles()
+  validateFiles(),
 ]);
 ```
 
@@ -546,6 +572,7 @@ node .claude/tools/dependency-validator.mjs validate-all \
 ```
 
 Report includes:
+
 - Validation timestamp
 - System information
 - Dependency status (valid/invalid/warning)
@@ -567,6 +594,7 @@ node .claude/tools/dependency-validator.mjs monitor \
 ### Metrics and Analytics
 
 Track validation metrics:
+
 - Success rate over time
 - Most common missing dependencies
 - Average validation duration
@@ -579,6 +607,7 @@ Track validation metrics:
 Replace manual dependency checks with automated validation:
 
 **Before (Manual)**:
+
 ```bash
 # Manual check script
 #!/bin/bash
@@ -589,6 +618,7 @@ test -f package.json
 ```
 
 **After (Automated)**:
+
 ```bash
 # Automated validation
 node .claude/tools/dependency-validator.mjs validate-all
@@ -675,26 +705,31 @@ echo "All validations passed!"
 ## FAQ
 
 ### Q: How often should I run validation?
+
 **A**: Run validation before every commit (pre-commit hook) and in CI/CD pipelines. For local development, run when changing dependencies.
 
 ### Q: What if validation fails in CI/CD?
+
 **A**: CI/CD should block on validation failures. Fix dependencies before proceeding with deployment.
 
 ### Q: Can I skip validation for hotfixes?
+
 **A**: No. Validation catches critical issues that could cause production failures. Even hotfixes should validate.
 
 ### Q: How do I handle optional dependencies?
+
 **A**: Mark dependencies as optional in config. Validation will warn but not fail:
+
 ```json
 {
-  "system_commands": [
-    { "command": "docker", "optional": true }
-  ]
+  "system_commands": [{ "command": "docker", "optional": true }]
 }
 ```
 
 ### Q: What about platform-specific dependencies?
+
 **A**: Use conditional validation based on platform:
+
 ```json
 {
   "system_commands": [
@@ -709,6 +744,6 @@ echo "All validations passed!"
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-15 | Initial release |
+| Version | Date       | Changes         |
+| ------- | ---------- | --------------- |
+| 1.0.0   | 2025-01-15 | Initial release |

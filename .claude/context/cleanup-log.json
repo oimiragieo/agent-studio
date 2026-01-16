@@ -14,7 +14,22 @@
       "file": "tmpclaude-5b82-cwd",
       "reason": "tmpclaude_file",
       "cleaned_at": "2026-01-14T04:06:43.976Z"
+    },
+    {
+      "file": "C:/dev/projects/LLM-RULES/.claude/docs/CODE_REVIEW_INTEGRATION.md",
+      "reason": "matches_slop_pattern",
+      "cleaned_at": "2026-01-15T22:59:44.866Z"
+    },
+    {
+      "file": "C:\\dev\\projects\\LLM-RULES\\.claude\\docs\\CONTEXT_INJECTION_GUIDE.md",
+      "reason": "matches_slop_pattern",
+      "cleaned_at": "2026-01-15T23:49:07.480Z"
+    },
+    {
+      "file": "C:\\dev\\projects\\LLM-RULES\\.claude\\docs\\COMPLIANCE_DASHBOARD_GUIDE.md",
+      "reason": "matches_slop_pattern",
+      "cleaned_at": "2026-01-15T23:50:31.606Z"
     }
   ],
-  "last_cleanup": "2026-01-14T04:06:43.978Z"
+  "last_cleanup": "2026-01-15T23:50:31.608Z"
 }

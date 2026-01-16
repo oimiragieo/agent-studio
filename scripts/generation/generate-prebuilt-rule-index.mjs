@@ -62,14 +62,17 @@ function extractFrontmatter(content) {
       // Pre-process frontmatter to quote glob patterns (prevents YAML alias interpretation)
       let frontmatterText = frontmatterMatch[1];
       // Quote glob patterns that start with * or contain **
-      frontmatterText = frontmatterText.replace(/^(\s*globs:\s*)([^\n]+)$/gm, (match, prefix, value) => {
-        // If value contains * and isn't already quoted, quote it
-        if ((value.includes('*') || value.includes('**')) && !value.match(/^["'].*["']$/)) {
-          return `${prefix}"${value}"`;
+      frontmatterText = frontmatterText.replace(
+        /^(\s*globs:\s*)([^\n]+)$/gm,
+        (match, prefix, value) => {
+          // If value contains * and isn't already quoted, quote it
+          if ((value.includes('*') || value.includes('**')) && !value.match(/^["'].*["']$/)) {
+            return `${prefix}"${value}"`;
+          }
+          return match;
         }
-        return match;
-      });
-      
+      );
+
       return yaml.load(frontmatterText) || {};
     } catch (error) {
       // Fall through to simple parsing

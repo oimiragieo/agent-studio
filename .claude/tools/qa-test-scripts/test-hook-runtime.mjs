@@ -30,8 +30,20 @@ const PROJECT_ROOT = join(__dirname, '..', '..', '..');
 const PERFORMANCE_THRESHOLD_MS = 5000; // 5 seconds max per hook
 const MEMORY_THRESHOLD_MB = 100; // 100MB max memory usage
 const HOOK_PATH = join(PROJECT_ROOT, '.claude', 'hooks', 'orchestrator-enforcement-hook.mjs');
-const SESSION_STATE_PATH = join(PROJECT_ROOT, '.claude', 'context', 'tmp', 'orchestrator-session-state.json');
-const VIOLATION_LOG_PATH = join(PROJECT_ROOT, '.claude', 'context', 'logs', 'orchestrator-violations.log');
+const SESSION_STATE_PATH = join(
+  PROJECT_ROOT,
+  '.claude',
+  'context',
+  'tmp',
+  'orchestrator-session-state.json'
+);
+const VIOLATION_LOG_PATH = join(
+  PROJECT_ROOT,
+  '.claude',
+  'context',
+  'logs',
+  'orchestrator-violations.log'
+);
 
 // Test results structure
 const results = {
@@ -66,7 +78,7 @@ function initializeTestEnvironment() {
     join(PROJECT_ROOT, '.claude', 'context', 'reports'),
   ];
 
-  dirs.forEach((dir) => {
+  dirs.forEach(dir => {
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true });
     }
@@ -100,7 +112,7 @@ function cleanupTestEnvironment() {
   // Clean violation log (remove test entries)
   if (existsSync(VIOLATION_LOG_PATH)) {
     const log = readFileSync(VIOLATION_LOG_PATH, 'utf-8');
-    const lines = log.split('\n').filter((line) => !line.includes('test_runtime_'));
+    const lines = log.split('\n').filter(line => !line.includes('test_runtime_'));
     writeFileSync(VIOLATION_LOG_PATH, lines.join('\n'));
     console.log('  ✓ Violation log cleaned');
   }

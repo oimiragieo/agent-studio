@@ -4,13 +4,7 @@
   "title": "Developer Agent Output Schema",
   "description": "JSON Schema for validating developer agent output including code artifacts, test results, and compilation status",
   "type": "object",
-  "required": [
-    "verdict",
-    "files_created",
-    "test_results",
-    "compilation_success",
-    "deliverables"
-  ],
+  "required": ["verdict", "files_created", "test_results", "compilation_success", "deliverables"],
   "properties": {
     "verdict": {
       "type": "string",
@@ -36,12 +30,7 @@
     "test_results": {
       "type": "object",
       "description": "Test execution results",
-      "required": [
-        "total_tests",
-        "passed",
-        "failed",
-        "pass_rate"
-      ],
+      "required": ["total_tests", "passed", "failed", "pass_rate"],
       "properties": {
         "total_tests": {
           "type": "integer",
@@ -110,11 +99,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "path",
-          "exists",
-          "validated"
-        ],
+        "required": ["path", "exists", "validated"],
         "properties": {
           "path": {
             "type": "string",
@@ -146,11 +131,7 @@
     "evidence": {
       "type": "object",
       "description": "Evidence supporting the verdict",
-      "required": [
-        "compilation_output",
-        "test_output",
-        "lint_results"
-      ],
+      "required": ["compilation_output", "test_output", "lint_results"],
       "properties": {
         "compilation_output": {
           "type": "string",

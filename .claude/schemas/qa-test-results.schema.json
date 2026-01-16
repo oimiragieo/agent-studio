@@ -58,10 +58,7 @@
       "minItems": 0,
       "items": {
         "type": "object",
-        "required": [
-          "name",
-          "passed"
-        ],
+        "required": ["name", "passed"],
         "properties": {
           "name": {
             "type": "string",
@@ -107,23 +104,12 @@
           "expected": {
             "type": "string",
             "description": "Expected outcome",
-            "enum": [
-              "allow",
-              "block",
-              "pass",
-              "fail"
-            ]
+            "enum": ["allow", "block", "pass", "fail"]
           },
           "actual": {
             "type": "string",
             "description": "Actual outcome",
-            "enum": [
-              "allow",
-              "block",
-              "pass",
-              "fail",
-              "error"
-            ]
+            "enum": ["allow", "block", "pass", "fail", "error"]
           },
           "passed": {
             "type": "boolean",
@@ -296,14 +282,7 @@
         "platform": {
           "type": "string",
           "description": "Operating system platform",
-          "enum": [
-            "win32",
-            "darwin",
-            "linux",
-            "freebsd",
-            "openbsd",
-            "sunos"
-          ]
+          "enum": ["win32", "darwin", "linux", "freebsd", "openbsd", "sunos"]
         },
         "project_root": {
           "type": "string",
@@ -317,10 +296,7 @@
       "description": "Critical errors encountered during test execution",
       "items": {
         "type": "object",
-        "required": [
-          "message",
-          "timestamp"
-        ],
+        "required": ["message", "timestamp"],
         "properties": {
           "message": {
             "type": "string",

@@ -38,8 +38,8 @@ class RecoveryHandlerTest {
       summary: {},
       metadata: {
         version: '1.0.0',
-        environment: 'test'
-      }
+        environment: 'test',
+      },
     };
   }
 
@@ -73,7 +73,7 @@ class RecoveryHandlerTest {
       console.error('Test suite error:', error);
       this.addTest('Test Suite Execution', 'FAILED', {
         error: error.message,
-        stack: error.stack
+        stack: error.stack,
       });
     }
 
@@ -124,7 +124,7 @@ class RecoveryHandlerTest {
         'test-failure-escalate',
         'dependency-missing-retry',
         'compilation-error-escalate',
-        'critical-failure-halt'
+        'critical-failure-halt',
       ];
 
       for (const patternId of expectedPatterns) {
@@ -136,7 +136,7 @@ class RecoveryHandlerTest {
 
       this.addTest(testName, 'PASSED', {
         patterns_loaded: patternsLoaded,
-        expected_patterns: expectedPatterns
+        expected_patterns: expectedPatterns,
       });
     } catch (error) {
       console.log(`  ✗ ${error.message}`);
@@ -155,7 +155,7 @@ class RecoveryHandlerTest {
       const failure = {
         type: 'timeout',
         severity: 'medium',
-        metadata: { error_message: 'Request timeout' }
+        metadata: { error_message: 'Request timeout' },
       };
 
       const pattern = this.handler.matchPattern(failure);
@@ -172,7 +172,7 @@ class RecoveryHandlerTest {
       console.log(`  ✓ Strategy is retry`);
 
       const result = await this.handler.applyPattern(pattern, failure, {
-        retry_count: 0
+        retry_count: 0,
       });
 
       if (!result.success) {
@@ -191,7 +191,7 @@ class RecoveryHandlerTest {
         pattern: pattern.pattern_id,
         strategy: pattern.strategy,
         delay_ms: result.delay_ms,
-        retry_count: result.retry_count
+        retry_count: result.retry_count,
       });
     } catch (error) {
       console.log(`  ✗ ${error.message}`);
@@ -210,7 +210,7 @@ class RecoveryHandlerTest {
       const failure = {
         type: 'test_failure',
         severity: 'high',
-        metadata: { error_message: 'AssertionError: Expected true to be false' }
+        metadata: { error_message: 'AssertionError: Expected true to be false' },
       };
 
       // Simulate multiple failures to meet threshold
@@ -233,7 +233,7 @@ class RecoveryHandlerTest {
       console.log(`  ✓ Strategy is escalate`);
 
       const result = await this.handler.applyPattern(pattern, failure, {
-        escalation_count: 0
+        escalation_count: 0,
       });
 
       if (!result.success) {
@@ -252,7 +252,7 @@ class RecoveryHandlerTest {
         pattern: pattern.pattern_id,
         strategy: pattern.strategy,
         target_agent: result.target_agent,
-        timeout_multiplier: result.timeout_multiplier
+        timeout_multiplier: result.timeout_multiplier,
       });
     } catch (error) {
       console.log(`  ✗ ${error.message}`);
@@ -271,7 +271,7 @@ class RecoveryHandlerTest {
       const failure = {
         type: 'dependency_missing',
         severity: 'medium',
-        metadata: { error_message: 'npm ERR! 404 Not Found' }
+        metadata: { error_message: 'npm ERR! 404 Not Found' },
       };
 
       const pattern = this.handler.matchPattern(failure);
@@ -298,7 +298,7 @@ class RecoveryHandlerTest {
       this.addTest(testName, 'PASSED', {
         pattern: pattern.pattern_id,
         backoff: pattern.retry_policy.backoff,
-        max_attempts: pattern.retry_policy.max_attempts
+        max_attempts: pattern.retry_policy.max_attempts,
       });
     } catch (error) {
       console.log(`  ✗ ${error.message}`);
@@ -317,7 +317,7 @@ class RecoveryHandlerTest {
       const failure = {
         type: 'compilation_error',
         severity: 'high',
-        metadata: { error_message: 'SyntaxError: Unexpected token' }
+        metadata: { error_message: 'SyntaxError: Unexpected token' },
       };
 
       const pattern = this.handler.matchPattern(failure);
@@ -342,7 +342,7 @@ class RecoveryHandlerTest {
       this.addTest(testName, 'PASSED', {
         pattern: pattern.pattern_id,
         strategy: pattern.strategy,
-        target_agent: result.target_agent
+        target_agent: result.target_agent,
       });
     } catch (error) {
       console.log(`  ✗ ${error.message}`);
@@ -361,7 +361,7 @@ class RecoveryHandlerTest {
       const failure = {
         type: 'security_violation',
         severity: 'critical',
-        metadata: { error_message: 'SQL injection detected' }
+        metadata: { error_message: 'SQL injection detected' },
       };
 
       const pattern = this.handler.matchPattern(failure);
@@ -393,7 +393,7 @@ class RecoveryHandlerTest {
         pattern: pattern.pattern_id,
         strategy: pattern.strategy,
         preserve_state: result.preserve_state,
-        create_incident: result.create_incident
+        create_incident: result.create_incident,
       });
     } catch (error) {
       console.log(`  ✗ ${error.message}`);
@@ -412,14 +412,14 @@ class RecoveryHandlerTest {
       const testCases = [
         { type: 'timeout', severity: 'medium', expected: true },
         { type: 'test_failure', severity: 'high', expected: true },
-        { type: 'unknown_failure', severity: 'low', expected: false }
+        { type: 'unknown_failure', severity: 'low', expected: false },
       ];
 
       for (const testCase of testCases) {
         const failure = {
           type: testCase.type,
           severity: testCase.severity,
-          metadata: {}
+          metadata: {},
         };
 
         const pattern = this.handler.matchPattern(failure);
@@ -452,7 +452,7 @@ class RecoveryHandlerTest {
       const policies = [
         { backoff: 'fixed', delay_ms: 1000, expected: [1000, 1000, 1000] },
         { backoff: 'linear', delay_ms: 1000, expected: [1000, 2000, 3000] },
-        { backoff: 'exponential', delay_ms: 1000, jitter: false, expected: [1000, 2000, 4000] }
+        { backoff: 'exponential', delay_ms: 1000, jitter: false, expected: [1000, 2000, 4000] },
       ];
 
       for (const policy of policies) {
@@ -503,8 +503,14 @@ class RecoveryHandlerTest {
       console.log(`  ✓ Recovery history updated`);
 
       // Verify state saved
-      const statePath = path.join(PROJECT_ROOT, '.claude/context/runtime/recovery/recovery-state.json');
-      const stateExists = await fs.access(statePath).then(() => true).catch(() => false);
+      const statePath = path.join(
+        PROJECT_ROOT,
+        '.claude/context/runtime/recovery/recovery-state.json'
+      );
+      const stateExists = await fs
+        .access(statePath)
+        .then(() => true)
+        .catch(() => false);
 
       if (!stateExists) {
         throw new Error('Recovery state not saved');
@@ -514,7 +520,7 @@ class RecoveryHandlerTest {
 
       this.addTest(testName, 'PASSED', {
         history_entries: newHistoryLength,
-        state_saved: true
+        state_saved: true,
       });
     } catch (error) {
       console.log(`  ✗ ${error.message}`);
@@ -565,7 +571,7 @@ class RecoveryHandlerTest {
       name,
       status,
       timestamp: new Date().toISOString(),
-      ...details
+      ...details,
     });
   }
 
@@ -578,9 +584,10 @@ class RecoveryHandlerTest {
       passed: this.results.passed,
       failed: this.results.failed,
       skipped: this.results.skipped,
-      pass_rate: this.results.total_tests > 0
-        ? (this.results.passed / this.results.total_tests * 100).toFixed(2) + '%'
-        : '0%'
+      pass_rate:
+        this.results.total_tests > 0
+          ? ((this.results.passed / this.results.total_tests) * 100).toFixed(2) + '%'
+          : '0%',
     };
 
     const resultsDir = path.dirname(RESULTS_FILE);

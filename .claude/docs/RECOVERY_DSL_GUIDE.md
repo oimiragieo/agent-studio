@@ -51,30 +51,33 @@ Logging & State Update
 
 The Recovery DSL supports 5 core strategies:
 
-| Strategy   | Use Case                           | Automation Level | Risk Level |
-| ---------- | ---------------------------------- | ---------------- | ---------- |
-| **Retry**  | Transient failures                 | High             | Low        |
-| **Escalate** | Complex issues needing expertise | Medium           | Low        |
-| **Skip**   | Non-critical failures              | Medium           | Medium     |
-| **Rollback** | State corruption, breaking changes | Low            | High       |
-| **Halt**   | Critical failures, security issues | Low              | Critical   |
+| Strategy     | Use Case                           | Automation Level | Risk Level |
+| ------------ | ---------------------------------- | ---------------- | ---------- |
+| **Retry**    | Transient failures                 | High             | Low        |
+| **Escalate** | Complex issues needing expertise   | Medium           | Low        |
+| **Skip**     | Non-critical failures              | Medium           | Medium     |
+| **Rollback** | State corruption, breaking changes | Low              | High       |
+| **Halt**     | Critical failures, security issues | Low              | Critical   |
 
 ### When to Use Each Strategy
 
 #### 1. Retry
 
 **Use When:**
+
 - Network timeouts or transient connectivity issues
 - Temporary resource unavailability (API rate limits)
 - Dependency installation failures (npm registry issues)
 - Slow-responding external services
 
 **Don't Use When:**
+
 - Compilation or syntax errors (code-level issues)
 - Authentication failures (credentials invalid)
 - Schema validation errors (data structure issues)
 
 **Example:**
+
 ```json
 {
   "strategy": "retry",
@@ -90,17 +93,20 @@ The Recovery DSL supports 5 core strategies:
 #### 2. Escalate
 
 **Use When:**
+
 - Test failures indicating code defects
 - Compilation errors requiring developer fixes
 - Complex issues beyond current agent's capability
 - Repeated failures of the same operation
 
 **Don't Use When:**
+
 - Simple transient errors (use retry)
 - Issues that can be skipped (use skip)
 - Critical security violations (use halt)
 
 **Example:**
+
 ```json
 {
   "strategy": "escalate",
@@ -116,17 +122,20 @@ The Recovery DSL supports 5 core strategies:
 #### 3. Skip
 
 **Use When:**
+
 - Non-critical test failures (e.g., flaky tests)
 - Optional validation steps
 - Features that can be degraded gracefully
 - Steps with alternative workarounds
 
 **Don't Use When:**
+
 - Security validation failures
 - Data integrity checks
 - Required functionality tests
 
 **Example:**
+
 ```json
 {
   "strategy": "skip",
@@ -142,17 +151,20 @@ The Recovery DSL supports 5 core strategies:
 #### 4. Rollback
 
 **Use When:**
+
 - Breaking changes introduced
 - Database migration failures
 - Configuration errors causing instability
 - State corruption detected
 
 **Don't Use When:**
+
 - Transient failures (use retry)
 - Issues that don't affect state
 - Forward-only migrations (can't rollback)
 
 **Example:**
+
 ```json
 {
   "strategy": "rollback",
@@ -168,16 +180,19 @@ The Recovery DSL supports 5 core strategies:
 #### 5. Halt
 
 **Use When:**
+
 - Critical security vulnerabilities detected
 - Data corruption or integrity violations
 - Infrastructure failures (database down)
 - Unrecoverable system errors
 
 **Don't Use When:**
+
 - Recoverable errors (use retry or escalate)
 - Non-critical issues (use skip)
 
 **Example:**
+
 ```json
 {
   "strategy": "halt",
@@ -259,29 +274,29 @@ Every recovery pattern must include:
 
 ### Available Conditions
 
-| Condition               | Description                      | Typical Severity |
-| ----------------------- | -------------------------------- | ---------------- |
-| `timeout`               | Operation exceeded time limit    | Medium           |
-| `test_failure`          | Test suite or test case failed   | High             |
-| `compilation_error`     | Build or compilation failed      | High             |
-| `dependency_missing`    | Package/module not found         | Medium           |
-| `resource_unavailable`  | Service/API unreachable          | High             |
-| `validation_failure`    | Schema/data validation failed    | Medium           |
-| `security_violation`    | Security check failed            | Critical         |
-| `network_error`         | Network connectivity issue       | Medium           |
-| `authentication_failure` | Auth credentials invalid        | High             |
-| `rate_limit_exceeded`   | API rate limit hit               | Low              |
-| `disk_space_low`        | Insufficient disk space          | High             |
-| `memory_exhausted`      | Out of memory                    | Critical         |
+| Condition                | Description                    | Typical Severity |
+| ------------------------ | ------------------------------ | ---------------- |
+| `timeout`                | Operation exceeded time limit  | Medium           |
+| `test_failure`           | Test suite or test case failed | High             |
+| `compilation_error`      | Build or compilation failed    | High             |
+| `dependency_missing`     | Package/module not found       | Medium           |
+| `resource_unavailable`   | Service/API unreachable        | High             |
+| `validation_failure`     | Schema/data validation failed  | Medium           |
+| `security_violation`     | Security check failed          | Critical         |
+| `network_error`          | Network connectivity issue     | Medium           |
+| `authentication_failure` | Auth credentials invalid       | High             |
+| `rate_limit_exceeded`    | API rate limit hit             | Low              |
+| `disk_space_low`         | Insufficient disk space        | High             |
+| `memory_exhausted`       | Out of memory                  | Critical         |
 
 ### Severity Levels
 
-| Level      | Impact       | Response Time | Example                           |
-| ---------- | ------------ | ------------- | --------------------------------- |
-| Low        | Minimal      | Hours         | Rate limit warning                |
-| Medium     | Moderate     | Minutes       | Timeout, dependency missing       |
-| High       | Significant  | Immediate     | Test failures, compilation errors |
-| Critical   | Severe       | Immediate     | Security violations, data loss    |
+| Level    | Impact      | Response Time | Example                           |
+| -------- | ----------- | ------------- | --------------------------------- |
+| Low      | Minimal     | Hours         | Rate limit warning                |
+| Medium   | Moderate    | Minutes       | Timeout, dependency missing       |
+| High     | Significant | Immediate     | Test failures, compilation errors |
+| Critical | Severe      | Immediate     | Security violations, data loss    |
 
 ### Threshold and Timeframe
 
@@ -382,6 +397,7 @@ Increase timeout on each retry:
 ```
 
 If initial timeout = 10s:
+
 - Attempt 1: 10s timeout
 - Attempt 2: 15s timeout
 - Attempt 3: 22.5s timeout
@@ -460,6 +476,7 @@ Third escalation → security-architect
 ```
 
 Options:
+
 - `previous_step`: Roll back to last completed step
 - `workflow_start`: Roll back to workflow start
 - `last_checkpoint`: Roll back to most recent checkpoint
@@ -643,7 +660,7 @@ try {
   const failure = {
     type: 'timeout',
     severity: 'medium',
-    metadata: { error_message: error.message }
+    metadata: { error_message: error.message },
   };
 
   const pattern = handler.matchPattern(failure);
@@ -683,7 +700,7 @@ Don't retry forever:
 ```json
 {
   "retry_policy": {
-    "max_attempts": 3  // Not 10+
+    "max_attempts": 3 // Not 10+
   }
 }
 ```
@@ -907,6 +924,7 @@ Use semantic versioning:
 ### Pattern Not Triggering
 
 **Check:**
+
 1. Pattern is enabled: `"enabled": true`
 2. Trigger condition matches failure type
 3. Severity threshold is met
@@ -916,6 +934,7 @@ Use semantic versioning:
 ### Recovery Failing
 
 **Check:**
+
 1. Recovery logs: `.claude/context/logs/recovery.log`
 2. Recovery state: `.claude/context/runtime/recovery/recovery-state.json`
 3. Pattern configuration is valid
@@ -924,10 +943,11 @@ Use semantic versioning:
 ### Too Many Retries
 
 **Adjust:**
+
 ```json
 {
   "retry_policy": {
-    "max_attempts": 2  // Reduce from default 3
+    "max_attempts": 2 // Reduce from default 3
   }
 }
 ```
@@ -935,6 +955,7 @@ Use semantic versioning:
 ### Pattern Priority Conflicts
 
 **Solution:** Assign distinct priorities:
+
 - Critical halts: 1-2
 - Escalations: 2-4
 - Retries: 3-6
@@ -958,6 +979,7 @@ Use recovery patterns to build resilient, self-healing workflow orchestration.
 ---
 
 **See Also:**
+
 - [Recovery DSL Quick Reference](./RECOVERY_DSL_QUICK_REFERENCE.md)
 - [Recovery Integration Examples](./RECOVERY_DSL_INTEGRATION_EXAMPLE.md)
 - [Recovery Pattern Schema](./../schemas/recovery-pattern.schema.json)

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Artifact Kind Validator
- * 
+ *
  * Enforces canonical rules for reference vs generated artifacts.
  * Prevents placing rubrics/templates in generated/ or writing outputs into reference/.
- * 
+ *
  * Usage:
  *   node artifact-kind-validator.mjs [--check] [--fix]
  */
@@ -57,7 +57,7 @@ function validateArtifactPlacement() {
       if (file.endsWith('.json') && isReferenceFile(file)) {
         errors.push(
           `Reference file "${file}" found in generated/ directory. ` +
-          `Move to reference/ directory.`
+            `Move to reference/ directory.`
         );
       }
     }
@@ -70,7 +70,7 @@ function validateArtifactPlacement() {
       if (file.endsWith('.json') && isGeneratedFile(file)) {
         warnings.push(
           `Generated file "${file}" found in reference/ directory. ` +
-          `Consider moving to generated/ directory.`
+            `Consider moving to generated/ directory.`
         );
       }
     }
@@ -78,13 +78,13 @@ function validateArtifactPlacement() {
 
   // Check root artifacts directory (should be empty after migration)
   if (existsSync(ARTIFACTS_DIR)) {
-    const files = readdirSync(ARTIFACTS_DIR).filter(f => 
-      f.endsWith('.json') && f !== 'generated' && f !== 'reference'
+    const files = readdirSync(ARTIFACTS_DIR).filter(
+      f => f.endsWith('.json') && f !== 'generated' && f !== 'reference'
     );
     if (files.length > 0) {
       warnings.push(
         `Found ${files.length} artifact file(s) in root artifacts/ directory. ` +
-        `These should be moved to generated/ or reference/ subdirectories.`
+          `These should be moved to generated/ or reference/ subdirectories.`
       );
     }
   }

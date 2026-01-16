@@ -30,7 +30,10 @@ const __dirname = dirname(__filename);
 
 const PROJECT_ROOT = join(__dirname, '../../..');
 const HOOK_PATH = join(PROJECT_ROOT, '.claude/hooks/orchestrator-enforcement-hook.mjs');
-const SESSION_STATE_PATH = join(PROJECT_ROOT, '.claude/context/tmp/orchestrator-session-state.json');
+const SESSION_STATE_PATH = join(
+  PROJECT_ROOT,
+  '.claude/context/tmp/orchestrator-session-state.json'
+);
 
 /**
  * Test result structure
@@ -55,7 +58,8 @@ class BlockingTestResult {
     this.error_message = errorMessage;
 
     // Test passes if blocking behavior matches AND agent delegation is correct
-    this.passed = this.actual_blocked === this.expected_blocked &&
+    this.passed =
+      this.actual_blocked === this.expected_blocked &&
       (!this.expected_blocked || this.actual_agent === this.expected_agent);
   }
 }
@@ -91,9 +95,8 @@ class BlockingTestSuite {
   }
 
   calculateSuccessRate() {
-    this.success_rate = this.total_tests > 0
-      ? Math.round((this.passed / this.total_tests) * 100)
-      : 0;
+    this.success_rate =
+      this.total_tests > 0 ? Math.round((this.passed / this.total_tests) * 100) : 0;
   }
 
   setDuration(startTime) {
@@ -153,7 +156,11 @@ function extractAgentFromMessage(message) {
 function simulateToolBlocking(toolName, parameters = {}) {
   // Define blocking rules
   const blockRules = {
-    Write: { blocked: true, agent: 'developer', reason: 'File modification requires developer agent' },
+    Write: {
+      blocked: true,
+      agent: 'developer',
+      reason: 'File modification requires developer agent',
+    },
     Edit: { blocked: true, agent: 'developer', reason: 'File editing requires developer agent' },
     Grep: { blocked: true, agent: 'analyst', reason: 'Code search requires analyst agent' },
     Glob: { blocked: true, agent: 'analyst', reason: 'File pattern search requires analyst agent' },
@@ -164,9 +171,17 @@ function simulateToolBlocking(toolName, parameters = {}) {
   if (toolName === 'Bash') {
     const command = parameters.command || '';
     const dangerousPatterns = [
-      { pattern: /git\s+(add|commit|push)/, agent: 'developer', reason: 'Git operations require developer agent' },
+      {
+        pattern: /git\s+(add|commit|push)/,
+        agent: 'developer',
+        reason: 'Git operations require developer agent',
+      },
       { pattern: /npm\s+run/, agent: 'qa', reason: 'NPM scripts require QA agent' },
-      { pattern: /node\s+\.claude\/tools\//, agent: 'developer', reason: 'Tool execution requires developer agent' },
+      {
+        pattern: /node\s+\.claude\/tools\//,
+        agent: 'developer',
+        reason: 'Tool execution requires developer agent',
+      },
     ];
 
     for (const { pattern, agent, reason } of dangerousPatterns) {
@@ -208,20 +223,92 @@ function simulateToolBlocking(toolName, parameters = {}) {
  */
 const BLOCKING_TEST_SCENARIOS = [
   // Blocked tools with delegation
-  { name: 'Write tool blocked with developer delegation', tool: 'Write', params: {}, expectedBlocked: true, expectedAgent: 'developer' },
-  { name: 'Edit tool blocked with developer delegation', tool: 'Edit', params: {}, expectedBlocked: true, expectedAgent: 'developer' },
-  { name: 'Grep tool blocked with analyst delegation', tool: 'Grep', params: {}, expectedBlocked: true, expectedAgent: 'analyst' },
-  { name: 'Glob tool blocked with analyst delegation', tool: 'Glob', params: {}, expectedBlocked: true, expectedAgent: 'analyst' },
-  { name: 'Bash git add blocked with developer delegation', tool: 'Bash', params: { command: 'git add .' }, expectedBlocked: true, expectedAgent: 'developer' },
-  { name: 'Bash git commit blocked with developer delegation', tool: 'Bash', params: { command: 'git commit -m "test"' }, expectedBlocked: true, expectedAgent: 'developer' },
-  { name: 'Bash npm run blocked with qa delegation', tool: 'Bash', params: { command: 'npm run test' }, expectedBlocked: true, expectedAgent: 'qa' },
-  { name: 'Bash node .claude/tools blocked with developer delegation', tool: 'Bash', params: { command: 'node .claude/tools/test.mjs' }, expectedBlocked: true, expectedAgent: 'developer' },
+  {
+    name: 'Write tool blocked with developer delegation',
+    tool: 'Write',
+    params: {},
+    expectedBlocked: true,
+    expectedAgent: 'developer',
+  },
+  {
+    name: 'Edit tool blocked with developer delegation',
+    tool: 'Edit',
+    params: {},
+    expectedBlocked: true,
+    expectedAgent: 'developer',
+  },
+  {
+    name: 'Grep tool blocked with analyst delegation',
+    tool: 'Grep',
+    params: {},
+    expectedBlocked: true,
+    expectedAgent: 'analyst',
+  },
+  {
+    name: 'Glob tool blocked with analyst delegation',
+    tool: 'Glob',
+    params: {},
+    expectedBlocked: true,
+    expectedAgent: 'analyst',
+  },
+  {
+    name: 'Bash git add blocked with developer delegation',
+    tool: 'Bash',
+    params: { command: 'git add .' },
+    expectedBlocked: true,
+    expectedAgent: 'developer',
+  },
+  {
+    name: 'Bash git commit blocked with developer delegation',
+    tool: 'Bash',
+    params: { command: 'git commit -m "test"' },
+    expectedBlocked: true,
+    expectedAgent: 'developer',
+  },
+  {
+    name: 'Bash npm run blocked with qa delegation',
+    tool: 'Bash',
+    params: { command: 'npm run test' },
+    expectedBlocked: true,
+    expectedAgent: 'qa',
+  },
+  {
+    name: 'Bash node .claude/tools blocked with developer delegation',
+    tool: 'Bash',
+    params: { command: 'node .claude/tools/test.mjs' },
+    expectedBlocked: true,
+    expectedAgent: 'developer',
+  },
 
   // Allowed tools (should not be blocked)
-  { name: 'Task tool allowed', tool: 'Task', params: {}, expectedBlocked: false, expectedAgent: null },
-  { name: 'TodoWrite tool allowed', tool: 'TodoWrite', params: {}, expectedBlocked: false, expectedAgent: null },
-  { name: 'Read tool allowed', tool: 'Read', params: { file_path: 'test.md' }, expectedBlocked: false, expectedAgent: null },
-  { name: 'Bash safe command allowed', tool: 'Bash', params: { command: 'ls -la' }, expectedBlocked: false, expectedAgent: null },
+  {
+    name: 'Task tool allowed',
+    tool: 'Task',
+    params: {},
+    expectedBlocked: false,
+    expectedAgent: null,
+  },
+  {
+    name: 'TodoWrite tool allowed',
+    tool: 'TodoWrite',
+    params: {},
+    expectedBlocked: false,
+    expectedAgent: null,
+  },
+  {
+    name: 'Read tool allowed',
+    tool: 'Read',
+    params: { file_path: 'test.md' },
+    expectedBlocked: false,
+    expectedAgent: null,
+  },
+  {
+    name: 'Bash safe command allowed',
+    tool: 'Bash',
+    params: { command: 'ls -la' },
+    expectedBlocked: false,
+    expectedAgent: null,
+  },
 ];
 
 /**
@@ -268,21 +355,23 @@ async function runBlockingTests() {
         ? extractAgentFromMessage(blockResult.message)
         : null;
 
-      result.setActual(
-        blockResult.blocked,
-        extractedAgent,
-        blockResult.message
-      );
+      result.setActual(blockResult.blocked, extractedAgent, blockResult.message);
 
       if (result.passed) {
-        console.log(`  ✓ PASS: Blocked=${scenario.expectedBlocked}, Agent=${scenario.expectedAgent || 'N/A'}`);
+        console.log(
+          `  ✓ PASS: Blocked=${scenario.expectedBlocked}, Agent=${scenario.expectedAgent || 'N/A'}`
+        );
         if (blockResult.message) {
           console.log(`    Block message: ${blockResult.message.split('\n')[0]}`);
         }
       } else {
         console.log(`  ✗ FAIL:`);
-        console.log(`    Expected: Blocked=${scenario.expectedBlocked}, Agent=${scenario.expectedAgent || 'N/A'}`);
-        console.log(`    Actual: Blocked=${result.actual_blocked}, Agent=${result.actual_agent || 'N/A'}`);
+        console.log(
+          `    Expected: Blocked=${scenario.expectedBlocked}, Agent=${scenario.expectedAgent || 'N/A'}`
+        );
+        console.log(
+          `    Actual: Blocked=${result.actual_blocked}, Agent=${result.actual_agent || 'N/A'}`
+        );
       }
     } catch (error) {
       result.setActual(false, null, null, error.message);
@@ -305,10 +394,14 @@ async function runBlockingTests() {
     console.log(`\n✓ All ${suite.total_tests} tests passed!`);
     process.exit(0);
   } else if (suite.success_rate >= 70) {
-    console.log(`\n⚠ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`);
+    console.log(
+      `\n⚠ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`
+    );
     process.exit(1);
   } else {
-    console.error(`\n✗ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`);
+    console.error(
+      `\n✗ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`
+    );
     process.exit(2);
   }
 }
@@ -344,7 +437,9 @@ function outputResults(suite) {
       .filter(r => !r.passed)
       .forEach(r => {
         console.log(`  - ${r.name}`);
-        console.log(`    Expected: Blocked=${r.expected_blocked}, Agent=${r.expected_agent || 'N/A'}`);
+        console.log(
+          `    Expected: Blocked=${r.expected_blocked}, Agent=${r.expected_agent || 'N/A'}`
+        );
         console.log(`    Actual: Blocked=${r.actual_blocked}, Agent=${r.actual_agent || 'N/A'}`);
         if (r.error_message) {
           console.log(`    Error: ${r.error_message}`);

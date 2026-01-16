@@ -103,9 +103,7 @@ async function validateNodeVersion(minVersion) {
     );
     result.recommendation = `Install Node.js ${minVersion} or later from https://nodejs.org`;
   } else {
-    console.log(
-      `${colors.green}✓${colors.reset} Node.js ${currentVersion} (>= ${minVersion})`
-    );
+    console.log(`${colors.green}✓${colors.reset} Node.js ${currentVersion} (>= ${minVersion})`);
   }
 
   return result;
@@ -164,8 +162,7 @@ async function validatePackages(packages) {
           name: pkg.name,
           min_version: pkg.min_version,
           current_version: cleanVersion,
-          install_command:
-            pkg.install_command || `npm install ${pkg.name}@^${pkg.min_version}`,
+          install_command: pkg.install_command || `npm install ${pkg.name}@^${pkg.min_version}`,
         });
       } else {
         console.log(
@@ -176,9 +173,7 @@ async function validatePackages(packages) {
   }
 
   if (result.missing_dependencies.length > 0) {
-    result.recommendations = result.missing_dependencies.map(
-      (dep) => dep.install_command
-    );
+    result.recommendations = result.missing_dependencies.map(dep => dep.install_command);
   }
 
   return result;
@@ -225,9 +220,7 @@ async function validateCommands(commands) {
   }
 
   if (result.missing_dependencies.length > 0) {
-    result.recommendations = result.missing_dependencies.map(
-      (dep) => dep.install_instructions
-    );
+    result.recommendations = result.missing_dependencies.map(dep => dep.install_instructions);
   }
 
   return result;
@@ -269,7 +262,7 @@ async function validateFiles(files) {
 
   if (result.missing_dependencies.length > 0) {
     result.recommendations = result.missing_dependencies.map(
-      (dep) => `Create ${dep.path} (${dep.description})`
+      dep => `Create ${dep.path} (${dep.description})`
     );
   }
 
@@ -282,9 +275,7 @@ async function validateFiles(files) {
 async function validateAll(configPath) {
   console.log(`${colors.blue}Starting comprehensive dependency validation...${colors.reset}\n`);
 
-  const config = configPath
-    ? loadConfig(configPath)
-    : loadDefaultConfig();
+  const config = configPath ? loadConfig(configPath) : loadDefaultConfig();
 
   const results = {
     node: null,
@@ -342,7 +333,9 @@ async function validateAll(configPath) {
     console.log(`${colors.yellow}⚠ Validation passed with warnings${colors.reset}\n`);
     printWarnings(results);
   } else {
-    console.log(`${colors.red}✗ Validation failed - missing critical dependencies${colors.reset}\n`);
+    console.log(
+      `${colors.red}✗ Validation failed - missing critical dependencies${colors.reset}\n`
+    );
     printErrors(results);
   }
 
@@ -380,7 +373,7 @@ function printErrors(results) {
 
   if (results.packages && !results.packages.valid) {
     console.log(`  - Missing packages:`);
-    results.packages.missing_dependencies.forEach((dep) => {
+    results.packages.missing_dependencies.forEach(dep => {
       console.log(`    • ${dep.name} (>= ${dep.min_version})`);
       console.log(`      ${colors.yellow}→${colors.reset} ${dep.install_command}`);
     });
@@ -388,7 +381,7 @@ function printErrors(results) {
 
   if (results.commands && !results.commands.valid) {
     console.log(`  - Missing commands:`);
-    results.commands.missing_dependencies.forEach((dep) => {
+    results.commands.missing_dependencies.forEach(dep => {
       console.log(`    • ${dep.command} (${dep.purpose})`);
       console.log(`      ${colors.yellow}→${colors.reset} ${dep.install_instructions}`);
     });
@@ -396,7 +389,7 @@ function printErrors(results) {
 
   if (results.files && !results.files.valid) {
     console.log(`  - Missing files:`);
-    results.files.missing_dependencies.forEach((dep) => {
+    results.files.missing_dependencies.forEach(dep => {
       console.log(`    • ${dep.path} (${dep.description})`);
     });
   }
@@ -417,7 +410,7 @@ function printWarnings(results) {
     ...(results.files?.warnings || []),
   ];
 
-  allWarnings.forEach((warning) => {
+  allWarnings.forEach(warning => {
     console.log(`  - ${warning}`);
   });
 
@@ -536,9 +529,7 @@ async function main() {
       }
 
       case 'validate-packages': {
-        const config = options.configPath
-          ? loadConfig(options.configPath)
-          : loadDefaultConfig();
+        const config = options.configPath ? loadConfig(options.configPath) : loadDefaultConfig();
         const result = await validatePackages(config.npm_packages || []);
         console.log(JSON.stringify(result, null, 2));
         process.exit(result.valid ? 0 : 2);
@@ -546,9 +537,7 @@ async function main() {
       }
 
       case 'validate-commands': {
-        const config = options.configPath
-          ? loadConfig(options.configPath)
-          : loadDefaultConfig();
+        const config = options.configPath ? loadConfig(options.configPath) : loadDefaultConfig();
         const result = await validateCommands(config.system_commands || []);
         console.log(JSON.stringify(result, null, 2));
         process.exit(result.valid ? 0 : 2);
@@ -556,9 +545,7 @@ async function main() {
       }
 
       case 'validate-files': {
-        const config = options.configPath
-          ? loadConfig(options.configPath)
-          : loadDefaultConfig();
+        const config = options.configPath ? loadConfig(options.configPath) : loadDefaultConfig();
         const result = await validateFiles(config.critical_files || []);
         console.log(JSON.stringify(result, null, 2));
         process.exit(result.valid ? 0 : 2);

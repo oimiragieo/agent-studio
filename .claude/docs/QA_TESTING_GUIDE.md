@@ -24,21 +24,21 @@ All tests output JSON results conforming to `.claude/schemas/qa-test-results.sch
 
 **Test Scenarios** (13 total):
 
-| Scenario | Role | Tool | Expected |
-|----------|------|------|----------|
-| Orchestrator uses Task tool | orchestrator | Task | allow |
-| Orchestrator uses TodoWrite tool | orchestrator | TodoWrite | allow |
-| Orchestrator uses AskUserQuestion tool | orchestrator | AskUserQuestion | allow |
-| Orchestrator uses Read tool (1st call) | orchestrator | Read | allow |
-| Orchestrator uses Write tool | orchestrator | Write | block |
-| Orchestrator uses Edit tool | orchestrator | Edit | block |
-| Orchestrator uses Grep tool | orchestrator | Grep | block |
-| Orchestrator uses Glob tool | orchestrator | Glob | block |
-| Orchestrator uses Bash with git add | orchestrator | Bash | block |
-| Orchestrator uses Bash with npm run | orchestrator | Bash | block |
-| Developer uses Write tool | developer | Write | allow |
-| Developer uses Edit tool | developer | Edit | allow |
-| Analyst uses Grep tool | analyst | Grep | allow |
+| Scenario                               | Role         | Tool            | Expected |
+| -------------------------------------- | ------------ | --------------- | -------- |
+| Orchestrator uses Task tool            | orchestrator | Task            | allow    |
+| Orchestrator uses TodoWrite tool       | orchestrator | TodoWrite       | allow    |
+| Orchestrator uses AskUserQuestion tool | orchestrator | AskUserQuestion | allow    |
+| Orchestrator uses Read tool (1st call) | orchestrator | Read            | allow    |
+| Orchestrator uses Write tool           | orchestrator | Write           | block    |
+| Orchestrator uses Edit tool            | orchestrator | Edit            | block    |
+| Orchestrator uses Grep tool            | orchestrator | Grep            | block    |
+| Orchestrator uses Glob tool            | orchestrator | Glob            | block    |
+| Orchestrator uses Bash with git add    | orchestrator | Bash            | block    |
+| Orchestrator uses Bash with npm run    | orchestrator | Bash            | block    |
+| Developer uses Write tool              | developer    | Write           | allow    |
+| Developer uses Edit tool               | developer    | Edit            | allow    |
+| Analyst uses Grep tool                 | analyst      | Grep            | allow    |
 
 **Usage**:
 
@@ -90,20 +90,20 @@ Results saved to: .claude/context/reports/test-hook-execution-1736942400000.json
 
 **Test Scenarios** (12 total):
 
-| Scenario | Tool | Expected Blocked | Expected Agent |
-|----------|------|------------------|----------------|
-| Write tool blocked with developer delegation | Write | true | developer |
-| Edit tool blocked with developer delegation | Edit | true | developer |
-| Grep tool blocked with analyst delegation | Grep | true | analyst |
-| Glob tool blocked with analyst delegation | Glob | true | analyst |
-| Bash git add blocked with developer delegation | Bash | true | developer |
-| Bash git commit blocked with developer delegation | Bash | true | developer |
-| Bash npm run blocked with qa delegation | Bash | true | qa |
-| Bash node .claude/tools blocked with developer delegation | Bash | true | developer |
-| Task tool allowed | Task | false | null |
-| TodoWrite tool allowed | TodoWrite | false | null |
-| Read tool allowed | Read | false | null |
-| Bash safe command allowed | Bash | false | null |
+| Scenario                                                  | Tool      | Expected Blocked | Expected Agent |
+| --------------------------------------------------------- | --------- | ---------------- | -------------- |
+| Write tool blocked with developer delegation              | Write     | true             | developer      |
+| Edit tool blocked with developer delegation               | Edit      | true             | developer      |
+| Grep tool blocked with analyst delegation                 | Grep      | true             | analyst        |
+| Glob tool blocked with analyst delegation                 | Glob      | true             | analyst        |
+| Bash git add blocked with developer delegation            | Bash      | true             | developer      |
+| Bash git commit blocked with developer delegation         | Bash      | true             | developer      |
+| Bash npm run blocked with qa delegation                   | Bash      | true             | qa             |
+| Bash node .claude/tools blocked with developer delegation | Bash      | true             | developer      |
+| Task tool allowed                                         | Task      | false            | null           |
+| TodoWrite tool allowed                                    | TodoWrite | false            | null           |
+| Read tool allowed                                         | Read      | false            | null           |
+| Bash safe command allowed                                 | Bash      | false            | null           |
 
 **Usage**:
 
@@ -156,12 +156,12 @@ Results saved to: .claude/context/reports/test-orchestrator-blocking-17369427000
 
 **Test Scenarios** (4 total):
 
-| Scenario | Tool | Should Log to File | Should Log to State |
-|----------|------|-------------------|---------------------|
-| Write tool violation logged | Write | true | true |
-| Edit tool violation logged | Edit | true | true |
-| Grep tool violation logged | Grep | true | true |
-| Bash dangerous command violation logged | Bash | true | true |
+| Scenario                                | Tool  | Should Log to File | Should Log to State |
+| --------------------------------------- | ----- | ------------------ | ------------------- |
+| Write tool violation logged             | Write | true               | true                |
+| Edit tool violation logged              | Edit  | true               | true                |
+| Grep tool violation logged              | Grep  | true               | true                |
+| Bash dangerous command violation logged | Bash  | true               | true                |
 
 **Validates**:
 
@@ -520,11 +520,11 @@ The `test-hook-runtime.mjs` script validates 8 critical runtime behaviors:
 
 ### Performance Thresholds
 
-| Metric | Threshold | Why It Matters |
-|--------|-----------|----------------|
-| Execution Time | 5 seconds max | Prevents workflow delays |
-| Memory Usage | 100MB max | Prevents memory leaks |
-| File Cleanup | 100% success | Prevents temp file accumulation |
+| Metric         | Threshold     | Why It Matters                  |
+| -------------- | ------------- | ------------------------------- |
+| Execution Time | 5 seconds max | Prevents workflow delays        |
+| Memory Usage   | 100MB max     | Prevents memory leaks           |
+| File Cleanup   | 100% success  | Prevents temp file accumulation |
 
 **Why These Thresholds?**
 
@@ -597,6 +597,7 @@ Duration: 987ms
 **Cause**: Hook is slow due to blocking I/O, complex logic, or resource contention
 
 **Fix**:
+
 1. Profile hook execution to identify bottleneck
 2. Optimize file I/O operations (use async where possible)
 3. Reduce complexity of blocking operations
@@ -609,6 +610,7 @@ Duration: 987ms
 **Cause**: Memory leak or inefficient data structures
 
 **Fix**:
+
 1. Check for unclosed file handles
 2. Review large object allocations
 3. Use streaming for large file operations
@@ -621,6 +623,7 @@ Duration: 987ms
 **Cause**: Hook doesn't clean up temp files after execution
 
 **Fix**:
+
 1. Add cleanup logic to hook's exit handler
 2. Use `try...finally` blocks to ensure cleanup
 3. Implement graceful shutdown handlers
@@ -633,6 +636,7 @@ Duration: 987ms
 **Cause**: Race conditions or improper state synchronization
 
 **Fix**:
+
 1. Add file locking for concurrent access
 2. Use atomic write operations (write to temp, then rename)
 3. Implement state validation checks
@@ -678,6 +682,7 @@ All hook outputs must conform to this structure:
 ```
 
 **Optional Fields**:
+
 - `metadata.delegation_target` - Agent to delegate to (for block decisions)
 - `metadata.read_count` - Current read count (for Read tool)
 
@@ -731,7 +736,7 @@ All hook outputs must conform to this structure:
 
 ```json
 {
-  "decision": "reject",  // Should be: allow, block, or warn
+  "decision": "reject", // Should be: allow, block, or warn
   "reason": "Invalid decision value",
   "metadata": {
     "tool": "Write",
@@ -762,6 +767,7 @@ node .claude/tools/qa-test-scripts/test-hook-json-validation.mjs
 **Cause**: Hook doesn't return decision field in output
 
 **Fix**:
+
 1. Ensure hook always returns decision field
 2. Add validation before returning output
 3. Use schema validation in hook implementation
@@ -773,6 +779,7 @@ node .claude/tools/qa-test-scripts/test-hook-json-validation.mjs
 **Cause**: Hook returns invalid decision value like "reject" or "deny"
 
 **Fix**:
+
 1. Use constants for decision values
 2. Add validation to ensure only valid values are used
 3. Review hook logic for decision assignment
@@ -784,6 +791,7 @@ node .claude/tools/qa-test-scripts/test-hook-json-validation.mjs
 **Cause**: Incorrect type assignment in hook
 
 **Fix**:
+
 1. Ensure all fields match expected types
 2. Use TypeScript or JSDoc for type checking
 3. Add runtime type validation
@@ -795,6 +803,7 @@ node .claude/tools/qa-test-scripts/test-hook-json-validation.mjs
 **Cause**: Metadata object incomplete
 
 **Fix**:
+
 1. Ensure metadata object includes all required fields
 2. Validate metadata structure before returning
 3. Use object destructuring with defaults
@@ -803,10 +812,10 @@ node .claude/tools/qa-test-scripts/test-hook-json-validation.mjs
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.1.0 | 2025-01-15 | Added sections 4-5: Runtime and JSON validation tests |
-| 1.0.0 | 2025-01-15 | Initial release - 3 test scripts with JSON output |
+| Version | Date       | Changes                                               |
+| ------- | ---------- | ----------------------------------------------------- |
+| 1.1.0   | 2025-01-15 | Added sections 4-5: Runtime and JSON validation tests |
+| 1.0.0   | 2025-01-15 | Initial release - 3 test scripts with JSON output     |
 
 ---
 

@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
  * Context Path Resolver
- * 
+ *
  * Centralized path resolution for context files with backward compatibility.
  * Enforces canonical paths for writes, falls back to old paths for reads.
- * 
+ *
  * Resolver Contract:
  * - Writes ALWAYS go to canonical paths
  * - Reads fall back to old paths if canonical doesn't exist
  * - When both exist, prefer canonical (new) path
  * - On mismatch, warn and use canonical (auto-migrate on write)
- * 
+ *
  * Usage:
  *   import { resolveConfigPath, resolveRuntimePath, resolveArtifactPath } from './context-path-resolver.mjs';
  */
@@ -62,23 +62,23 @@ function looksLikeDirectorySubpath(subpath) {
 export function checkPathPrecedence(oldPath, newPath) {
   const oldExists = existsSync(oldPath);
   const newExists = existsSync(newPath);
-  
+
   if (!oldExists && !newExists) {
     return { exists: false, prefer: 'new' };
   }
-  
+
   if (oldExists && !newExists) {
     return { exists: true, prefer: 'old', shouldMigrate: true };
   }
-  
+
   if (!oldExists && newExists) {
     return { exists: true, prefer: 'new' };
   }
-  
+
   // Both exist - prefer canonical (new)
   const oldMtime = getMtime(oldPath);
   const newMtime = getMtime(newPath);
-  
+
   if (newMtime >= oldMtime) {
     return { exists: true, prefer: 'new', bothExist: true };
   } else {
@@ -99,34 +99,35 @@ export function resolveConfigPath(filename, options = {}) {
     throw new Error('resolveConfigPath: cannot set both read and write');
   }
   const isWrite = options.write === true || (!isRead && !options.read); // Default to write if neither specified
-  
+
   const canonicalPath = join(CANONICAL_PATHS.config, filename);
   const legacyPath = join(LEGACY_PATHS.config, filename);
-  
+
   // Check if we should skip directory creation (for --no-side-effects mode)
-  const skipDirCreation = process.env.SKIP_WORKFLOW_EXECUTION === 'true' ||     
-                          process.env.NO_SIDE_EFFECTS === 'true' ||
-                          process.argv.includes('--no-side-effects') ||
-                          process.argv.includes('--ci') ||
-                          process.argv.includes('--dry-run');
-  
+  const skipDirCreation =
+    process.env.SKIP_WORKFLOW_EXECUTION === 'true' ||
+    process.env.NO_SIDE_EFFECTS === 'true' ||
+    process.argv.includes('--no-side-effects') ||
+    process.argv.includes('--ci') ||
+    process.argv.includes('--dry-run');
+
   if (isWrite && !skipDirCreation) {
     // Write: always use canonical
     // Ensure directory exists (unless in read-only mode)
     mkdirSync(dirname(canonicalPath), { recursive: true });
     return canonicalPath;
   }
-  
+
   if (isWrite && skipDirCreation) {
     // Write mode but in read-only: return canonical path without creating dir
     return canonicalPath;
   }
-  
+
   // Read: fall back to legacy if canonical doesn't exist
   if (existsSync(canonicalPath)) {
     return canonicalPath;
   }
-  
+
   if (existsSync(legacyPath)) {
     // Warn if both exist (shouldn't happen for config, but handle gracefully)
     const precedence = checkPathPrecedence(legacyPath, canonicalPath);
@@ -135,7 +136,7 @@ export function resolveConfigPath(filename, options = {}) {
     }
     return legacyPath;
   }
-  
+
   // Neither exists - return canonical for writes
   return canonicalPath;
 }
@@ -156,34 +157,33 @@ export function resolveRuntimePath(subpath, options = {}) {
 
   const canonicalPath = join(CANONICAL_PATHS.runtime, subpath);
   const legacyPath = join(LEGACY_PATHS.runtime, subpath);
-  
+
   // Check if we should skip directory creation (for --no-side-effects mode)
-  const skipDirCreation = process.env.SKIP_WORKFLOW_EXECUTION === 'true' ||     
-                          process.env.NO_SIDE_EFFECTS === 'true' ||
-                          process.argv.includes('--no-side-effects') ||
-                          process.argv.includes('--ci') ||
-                          process.argv.includes('--dry-run');
-  
+  const skipDirCreation =
+    process.env.SKIP_WORKFLOW_EXECUTION === 'true' ||
+    process.env.NO_SIDE_EFFECTS === 'true' ||
+    process.argv.includes('--no-side-effects') ||
+    process.argv.includes('--ci') ||
+    process.argv.includes('--dry-run');
+
   if (isWrite && !skipDirCreation) {
     // Write: always use canonical
     // Ensure directory exists (unless in read-only mode)
-    const dirToCreate = looksLikeDirectorySubpath(subpath)
-      ? canonicalPath
-      : dirname(canonicalPath);
+    const dirToCreate = looksLikeDirectorySubpath(subpath) ? canonicalPath : dirname(canonicalPath);
     mkdirSync(dirToCreate, { recursive: true });
     return canonicalPath;
   }
-  
+
   if (isWrite && skipDirCreation) {
     // Write mode but in read-only: return canonical path without creating dir
     return canonicalPath;
   }
-  
+
   // Read: fall back to legacy if canonical doesn't exist
   if (existsSync(canonicalPath)) {
     return canonicalPath;
   }
-  
+
   if (existsSync(legacyPath)) {
     const precedence = checkPathPrecedence(legacyPath, canonicalPath);
     if (precedence.shouldWarn) {
@@ -191,7 +191,7 @@ export function resolveRuntimePath(subpath, options = {}) {
     }
     return legacyPath;
   }
-  
+
   // Neither exists - return canonical for writes
   return canonicalPath;
 }
@@ -207,7 +207,7 @@ export function resolveArtifactPath({ kind = 'generated', filename }) {
     mkdirSync(dirname(path), { recursive: true });
     return path;
   }
-  
+
   // Generated artifacts
   const path = join(CANONICAL_PATHS.artifacts, 'generated', filename);
   mkdirSync(dirname(path), { recursive: true });
@@ -238,28 +238,28 @@ export function getCanonicalPath(type, ...parts) {
 export function migrateIfNeeded(oldPath, newPath, options = { mergePolicy: 'prefer-newer' }) {
   const oldExists = existsSync(oldPath);
   const newExists = existsSync(newPath);
-  
+
   if (!oldExists) {
     return false; // Nothing to migrate
   }
-  
+
   if (newExists) {
     // Both exist - check timestamps
     const oldMtime = getMtime(oldPath);
     const newMtime = getMtime(newPath);
-    
+
     if (newMtime >= oldMtime) {
       // New is newer or same - skip migration
       return false;
     }
-    
+
     // Old is newer - merge based on policy
     if (options.mergePolicy === 'prefer-newer') {
       // For JSON files, merge arrays and prefer newer values
       try {
         const oldData = JSON.parse(readFileSync(oldPath, 'utf8'));
         const newData = JSON.parse(readFileSync(newPath, 'utf8'));
-        
+
         // Merge: prefer newer values, append arrays
         const merged = { ...newData };
         for (const [key, value] of Object.entries(oldData)) {
@@ -270,7 +270,7 @@ export function migrateIfNeeded(oldPath, newPath, options = { mergePolicy: 'pref
             merged[key] = value;
           }
         }
-        
+
         writeFileSync(newPath, JSON.stringify(merged, null, 2));
         return true;
       } catch (error) {
@@ -290,7 +290,7 @@ export function migrateIfNeeded(oldPath, newPath, options = { mergePolicy: 'pref
       return true;
     }
   }
-  
+
   // New doesn't exist - migrate
   mkdirSync(dirname(newPath), { recursive: true });
   const content = readFileSync(oldPath);

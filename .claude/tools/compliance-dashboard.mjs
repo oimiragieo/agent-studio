@@ -341,7 +341,8 @@ class ComplianceDashboard {
    * @returns {string} HTML content
    */
   generateHTML(metrics) {
-    const scoreClass = metrics.complianceScore >= 80 ? 'high' : metrics.complianceScore >= 60 ? 'medium' : 'low';
+    const scoreClass =
+      metrics.complianceScore >= 80 ? 'high' : metrics.complianceScore >= 60 ? 'medium' : 'low';
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -501,12 +502,16 @@ class ComplianceDashboard {
           </tr>
         </thead>
         <tbody>
-          ${Object.entries(metrics.violationsByType).map(([type, count]) => `
+          ${Object.entries(metrics.violationsByType)
+            .map(
+              ([type, count]) => `
           <tr>
             <td>${type}</td>
             <td>${count}</td>
           </tr>
-          `).join('')}
+          `
+            )
+            .join('')}
         </tbody>
       </table>
     </div>
@@ -514,9 +519,13 @@ class ComplianceDashboard {
     <div class="metric">
       <h2>Violations by Severity</h2>
       <ul>
-        ${Object.entries(metrics.violationsBySeverity).map(([severity, count]) => `
+        ${Object.entries(metrics.violationsBySeverity)
+          .map(
+            ([severity, count]) => `
         <li><strong>${severity.charAt(0).toUpperCase() + severity.slice(1)}:</strong> ${count}</li>
-        `).join('')}
+        `
+          )
+          .join('')}
       </ul>
     </div>
 
@@ -524,7 +533,7 @@ class ComplianceDashboard {
       <h2>Session Statistics</h2>
       <ul>
         <li><strong>Total Sessions:</strong> ${metrics.sessions.total}</li>
-        <li><strong>Clean Sessions:</strong> ${metrics.sessions.clean} (${metrics.sessions.total > 0 ? (metrics.sessions.clean / metrics.sessions.total * 100).toFixed(1) : 0}%)</li>
+        <li><strong>Clean Sessions:</strong> ${metrics.sessions.clean} (${metrics.sessions.total > 0 ? ((metrics.sessions.clean / metrics.sessions.total) * 100).toFixed(1) : 0}%)</li>
         <li><strong>Sessions with Violations:</strong> ${metrics.sessions.violations}</li>
       </ul>
     </div>
@@ -539,12 +548,16 @@ class ComplianceDashboard {
           </tr>
         </thead>
         <tbody>
-          ${metrics.topViolators.map((v, index) => `
+          ${metrics.topViolators
+            .map(
+              (v, index) => `
           <tr>
             <td>${index + 1}. ${v.tool}</td>
             <td>${v.count}</td>
           </tr>
-          `).join('')}
+          `
+            )
+            .join('')}
         </tbody>
       </table>
     </div>
@@ -556,7 +569,9 @@ class ComplianceDashboard {
       </div>
     </div>
 
-    ${metrics.timeSeries.length > 0 ? `
+    ${
+      metrics.timeSeries.length > 0
+        ? `
     <div class="metric">
       <h2>Violations Over Time</h2>
       <table>
@@ -567,16 +582,22 @@ class ComplianceDashboard {
           </tr>
         </thead>
         <tbody>
-          ${metrics.timeSeries.map(ts => `
+          ${metrics.timeSeries
+            .map(
+              ts => `
           <tr>
             <td>${ts.date}</td>
             <td>${ts.count}</td>
           </tr>
-          `).join('')}
+          `
+            )
+            .join('')}
         </tbody>
       </table>
     </div>
-    ` : ''}
+    `
+        : ''
+    }
 
     <p class="timestamp">Generated: ${new Date().toISOString()}</p>
   </div>
@@ -590,7 +611,8 @@ class ComplianceDashboard {
    * @returns {string} Markdown content
    */
   generateMarkdown(metrics) {
-    const scoreEmoji = metrics.complianceScore >= 80 ? '🟢' : metrics.complianceScore >= 60 ? '🟡' : '🔴';
+    const scoreEmoji =
+      metrics.complianceScore >= 80 ? '🟢' : metrics.complianceScore >= 60 ? '🟡' : '🔴';
 
     return `# Orchestrator Compliance Dashboard
 
@@ -609,16 +631,22 @@ Penalty weights: Critical=10, High=5, Medium=2, Low=1
 
 | Tool | Count |
 |------|-------|
-${Object.entries(metrics.violationsByType).map(([type, count]) => `| ${type} | ${count} |`).join('\n')}
+${Object.entries(metrics.violationsByType)
+  .map(([type, count]) => `| ${type} | ${count} |`)
+  .join('\n')}
 
 ## Violations by Severity
 
-${Object.entries(metrics.violationsBySeverity).map(([severity, count]) => `- **${severity.charAt(0).toUpperCase() + severity.slice(1)}:** ${count}`).join('\n')}
+${Object.entries(metrics.violationsBySeverity)
+  .map(
+    ([severity, count]) => `- **${severity.charAt(0).toUpperCase() + severity.slice(1)}:** ${count}`
+  )
+  .join('\n')}
 
 ## Session Statistics
 
 - **Total Sessions:** ${metrics.sessions.total}
-- **Clean Sessions:** ${metrics.sessions.clean} (${metrics.sessions.total > 0 ? (metrics.sessions.clean / metrics.sessions.total * 100).toFixed(1) : 0}%)
+- **Clean Sessions:** ${metrics.sessions.clean} (${metrics.sessions.total > 0 ? ((metrics.sessions.clean / metrics.sessions.total) * 100).toFixed(1) : 0}%)
 - **Sessions with Violations:** ${metrics.sessions.violations}
 
 ## Top Violators
@@ -629,12 +657,16 @@ ${metrics.topViolators.map((v, index) => `${index + 1}. **${v.tool}:** ${v.count
 
 ${metrics.trend === 'improving' ? '✅ **Improving**' : metrics.trend === 'worsening' ? '❌ **Worsening**' : '➖ **Stable**'}
 
-${metrics.timeSeries.length > 0 ? `## Violations Over Time
+${
+  metrics.timeSeries.length > 0
+    ? `## Violations Over Time
 
 | Date | Count |
 |------|-------|
 ${metrics.timeSeries.map(ts => `| ${ts.date} | ${ts.count} |`).join('\n')}
-` : ''}
+`
+    : ''
+}
 
 ---
 
@@ -664,7 +696,7 @@ ${metrics.timeSeries.map(ts => `| ${ts.date} | ${ts.count} |`).join('\n')}
 
 // CLI support
 if (import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`) {
-  const [,, command, ...args] = process.argv;
+  const [, , command, ...args] = process.argv;
   const dashboard = new ComplianceDashboard();
 
   if (command === 'generate') {
@@ -676,7 +708,8 @@ if (import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`) {
       format: formatIndex !== -1 ? args[formatIndex + 1] : 'html',
     };
 
-    dashboard.generate(options)
+    dashboard
+      .generate(options)
       .then(result => {
         console.log(`\nDashboard saved to: ${result.outputPath}`);
       })
@@ -688,7 +721,8 @@ if (import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`) {
     const periodIndex = args.indexOf('--period');
     const period = periodIndex !== -1 ? args[periodIndex + 1] : '7d';
 
-    dashboard.calculateMetrics(period)
+    dashboard
+      .calculateMetrics(period)
       .then(metrics => {
         console.log('\nCompliance Metrics:');
         console.log(`Compliance Score: ${metrics.complianceScore}%`);
@@ -713,7 +747,8 @@ if (import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`) {
 
     const sessionId = args[sessionIdIndex + 1];
 
-    dashboard.analyzeSession(sessionId)
+    dashboard
+      .analyzeSession(sessionId)
       .then(analysis => {
         console.log(`\nSession Analysis: ${analysis.session_id}`);
         console.log(`Total Violations: ${analysis.total_violations}`);
@@ -729,7 +764,9 @@ if (import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`) {
       });
   } else {
     console.log('Usage:');
-    console.log('  node compliance-dashboard.mjs generate [--period <1d|7d|30d|all>] [--format <html|json|markdown>]');
+    console.log(
+      '  node compliance-dashboard.mjs generate [--period <1d|7d|30d|all>] [--format <html|json|markdown>]'
+    );
     console.log('  node compliance-dashboard.mjs metrics [--period <1d|7d|30d|all>]');
     console.log('  node compliance-dashboard.mjs analyze --session-id <id>');
   }

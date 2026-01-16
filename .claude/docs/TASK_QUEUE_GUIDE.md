@@ -100,8 +100,8 @@ const task = queue.enqueue({
   timeout_ms: 120000,
   retry_policy: {
     max_retries: 2,
-    retry_delay_ms: 5000
-  }
+    retry_delay_ms: 5000,
+  },
 });
 
 console.log(`Task ID: ${task.id}`);
@@ -117,7 +117,7 @@ Mark task as completed.
 await queue.complete('550e8400-e29b-41d4-a716-446655440001', {
   success: true,
   artifacts: ['auth.ts', 'auth.test.ts'],
-  metadata: { lines_of_code: 250 }
+  metadata: { lines_of_code: 250 },
 });
 ```
 
@@ -126,10 +126,7 @@ await queue.complete('550e8400-e29b-41d4-a716-446655440001', {
 Mark task as failed (triggers retry if configured).
 
 ```javascript
-await queue.fail(
-  '550e8400-e29b-41d4-a716-446655440001',
-  new Error('Compilation failed')
-);
+await queue.fail('550e8400-e29b-41d4-a716-446655440001', new Error('Compilation failed'));
 ```
 
 #### `cancel(taskId)`
@@ -185,15 +182,16 @@ console.log(`Success Rate: ${stats.success_rate}`);
 
 ### Priority Values
 
-| Priority | Use Case                           | Example Tasks                    |
-| -------- | ---------------------------------- | -------------------------------- |
-| `high`   | Critical path, blocking operations | Security fixes, critical bugs    |
-| `medium` | Standard workflow tasks            | Feature implementation, tests    |
-| `low`    | Background tasks, non-urgent       | Documentation, cleanup, metrics  |
+| Priority | Use Case                           | Example Tasks                   |
+| -------- | ---------------------------------- | ------------------------------- |
+| `high`   | Critical path, blocking operations | Security fixes, critical bugs   |
+| `medium` | Standard workflow tasks            | Feature implementation, tests   |
+| `low`    | Background tasks, non-urgent       | Documentation, cleanup, metrics |
 
 ### Priority Ordering
 
 Tasks are sorted by:
+
 1. **Priority** (high → medium → low)
 2. **Creation Time** (older first)
 
@@ -215,19 +213,19 @@ Tasks are sorted by:
 queue.enqueue({
   agent: 'security-architect',
   task: 'Fix critical vulnerability',
-  priority: 'high' // Runs before medium/low
+  priority: 'high', // Runs before medium/low
 });
 
 queue.enqueue({
   agent: 'developer',
   task: 'Implement feature',
-  priority: 'medium' // Default
+  priority: 'medium', // Default
 });
 
 queue.enqueue({
   agent: 'technical-writer',
   task: 'Update documentation',
-  priority: 'low' // Runs last
+  priority: 'low', // Runs last
 });
 ```
 
@@ -245,7 +243,7 @@ const task1 = queue.enqueue({
   id: 'arch-001',
   agent: 'architect',
   task: 'Design authentication system',
-  priority: 'high'
+  priority: 'high',
 });
 
 // Task 2: Developer implements (depends on architect)
@@ -253,7 +251,7 @@ const task2 = queue.enqueue({
   agent: 'developer',
   task: 'Implement authentication',
   dependencies: ['arch-001'], // Wait for task1
-  priority: 'high'
+  priority: 'high',
 });
 
 // Task 3: QA tests (depends on developer)
@@ -261,13 +259,14 @@ const task3 = queue.enqueue({
   agent: 'qa',
   task: 'Test authentication',
   dependencies: [task2.id], // Wait for task2
-  priority: 'medium'
+  priority: 'medium',
 });
 ```
 
 ### Dependency Resolution
 
 The queue automatically:
+
 1. **Blocks dependent tasks**: Tasks wait in queue until dependencies complete
 2. **Checks on dequeue**: Only dequeues tasks with met dependencies
 3. **Handles failures**: If dependency fails, dependent task may need cancellation
@@ -277,12 +276,14 @@ The queue automatically:
 **Warning:** Avoid circular dependencies - they cause deadlock.
 
 **❌ Bad:**
+
 ```javascript
 queue.enqueue({ id: 'A', dependencies: ['B'] });
 queue.enqueue({ id: 'B', dependencies: ['A'] }); // Deadlock!
 ```
 
 **✅ Good:**
+
 ```javascript
 queue.enqueue({ id: 'A', dependencies: [] });
 queue.enqueue({ id: 'B', dependencies: ['A'] }); // Linear dependency
@@ -300,14 +301,15 @@ queue.enqueue({
   task: 'npm install dependencies',
   retry_policy: {
     max_retries: 3, // Retry up to 3 times
-    retry_delay_ms: 5000 // Wait 5 seconds between retries
-  }
+    retry_delay_ms: 5000, // Wait 5 seconds between retries
+  },
 });
 ```
 
 ### Retry Behavior
 
 When a task fails:
+
 1. **Check retry count**: If `retry_count < max_retries`
 2. **Delay**: Wait `retry_delay_ms` milliseconds
 3. **Re-enqueue**: Add task back to queue
@@ -317,11 +319,13 @@ When a task fails:
 ### When to Use Retries
 
 **✅ Use Retries For:**
+
 - Network timeouts (API calls, downloads)
 - Transient failures (npm registry issues)
 - Resource unavailable (temporary service outage)
 
 **❌ Don't Use Retries For:**
+
 - Compilation errors (code needs fixing)
 - Test failures (logic errors)
 - Authentication failures (credentials invalid)
@@ -334,9 +338,9 @@ queue.enqueue({
   task: 'Fetch API documentation',
   retry_policy: {
     max_retries: 4,
-    retry_delay_ms: 2000
+    retry_delay_ms: 2000,
   },
-  timeout_ms: 30000
+  timeout_ms: 30000,
 });
 
 // Execution timeline:
@@ -361,6 +365,7 @@ queue.maxConcurrent; // 2 (hardcoded)
 ### Auto-Start Mechanism
 
 When capacity is available (<2 running), the queue automatically:
+
 1. **Dequeue next task**: Get highest priority task with met dependencies
 2. **Start execution**: Move task to `running` array
 3. **Update state**: Persist queue state
@@ -394,6 +399,7 @@ await queue.complete('T2');
 ### Preventing Concurrency Violations
 
 The queue prevents:
+
 - **❌ 3+ parallel spawns**: API would return 400 error
 - **❌ Unbounded parallelism**: Resource exhaustion
 - **❌ Queue starvation**: High-priority tasks blocked
@@ -413,7 +419,7 @@ const planTask = queue.enqueue({
   id: 'plan-001',
   agent: 'planner',
   task: 'Create implementation plan',
-  priority: 'high'
+  priority: 'high',
 });
 
 // Step 2: Implement (depends on plan)
@@ -421,7 +427,7 @@ const devTask = queue.enqueue({
   agent: 'developer',
   task: 'Implement planned features',
   dependencies: ['plan-001'],
-  priority: 'high'
+  priority: 'high',
 });
 
 // Step 3: Test (depends on implementation)
@@ -429,7 +435,7 @@ const testTask = queue.enqueue({
   agent: 'qa',
   task: 'Test implemented features',
   dependencies: [devTask.id],
-  priority: 'medium'
+  priority: 'medium',
 });
 
 // Wait for all to complete
@@ -444,14 +450,14 @@ const task1 = queue.enqueue({
   id: 'feature-a',
   agent: 'developer',
   task: 'Implement feature A',
-  priority: 'high'
+  priority: 'high',
 });
 
 const task2 = queue.enqueue({
   id: 'feature-b',
   agent: 'developer',
   task: 'Implement feature B',
-  priority: 'high'
+  priority: 'high',
 });
 
 // Merge task (depends on both)
@@ -459,7 +465,7 @@ const mergeTask = queue.enqueue({
   agent: 'code-reviewer',
   task: 'Review and merge features A and B',
   dependencies: ['feature-a', 'feature-b'],
-  priority: 'medium'
+  priority: 'medium',
 });
 ```
 
@@ -471,8 +477,8 @@ const task = queue.enqueue({
   task: 'Install npm dependencies',
   retry_policy: {
     max_retries: 3,
-    retry_delay_ms: 5000
-  }
+    retry_delay_ms: 5000,
+  },
 });
 
 // Simulate failure
@@ -524,7 +530,7 @@ class WorkflowExecutor {
         priority: step.priority || 'medium',
         dependencies: step.dependencies || [],
         timeout_ms: step.timeout_ms || 120000,
-        retry_policy: step.retry_policy
+        retry_policy: step.retry_policy,
       });
 
       taskIds.push(task.id);
@@ -547,8 +553,8 @@ await executor.executeWorkflow({
   steps: [
     { agent: 'planner', task: 'Create plan', priority: 'high' },
     { agent: 'developer', task: 'Implement', dependencies: ['plan-001'] },
-    { agent: 'qa', task: 'Test' }
-  ]
+    { agent: 'qa', task: 'Test' },
+  ],
 });
 ```
 
@@ -561,8 +567,8 @@ await queue.complete(taskId, {
   artifacts: ['file1.ts', 'file2.ts'],
   metadata: {
     lines_of_code: 500,
-    tests_created: 10
-  }
+    tests_created: 10,
+  },
 });
 
 // Retrieve result
@@ -580,11 +586,13 @@ console.log('Metadata:', status.result.metadata);
 **Symptoms:** Tasks stuck in queue, not running
 
 **Checks:**
+
 1. **Running tasks**: `queue.running.length === 2` (at capacity)
 2. **Dependencies**: Tasks waiting for dependencies to complete
 3. **Initialization**: `queue.initialized === true`
 
 **Solution:**
+
 ```javascript
 // Check queue stats
 const stats = queue.getQueueStats();
@@ -606,14 +614,15 @@ await queue.complete(stuckTaskId);
 **Cause:** `max_retries` too high or not set
 
 **Solution:**
+
 ```javascript
 // Set reasonable retry limit
 queue.enqueue({
   task: 'Risky operation',
   retry_policy: {
     max_retries: 3, // Stop after 3 attempts
-    retry_delay_ms: 5000
-  }
+    retry_delay_ms: 5000,
+  },
 });
 ```
 
@@ -624,6 +633,7 @@ queue.enqueue({
 **Cause:** Task A depends on B, B depends on A
 
 **Detection:**
+
 ```javascript
 // Check dependencies
 const taskA = queue.getStatus('task-a');
@@ -640,6 +650,7 @@ console.log('B depends on:', taskB.dependencies); // ['task-a'] ← Circular!
 **Symptoms:** Queue state inconsistent after crash
 
 **Recovery:**
+
 ```javascript
 // Reset queue
 await queue.reset();
@@ -654,11 +665,13 @@ const statePath = '.claude/context/runtime/runs/<run-id>/task-queue.json';
 **Symptoms:** Queue has capacity but tasks not starting
 
 **Checks:**
+
 1. Dependencies met?
 2. Queue initialized?
 3. Auto-start called?
 
 **Solution:**
+
 ```javascript
 // Manually trigger auto-start
 await queue.autoStart();
@@ -738,13 +751,13 @@ const test = queue.enqueue({ task: 'Test', dependencies: [impl.id] });
 // Transient failures: Retry
 queue.enqueue({
   task: 'API call',
-  retry_policy: { max_retries: 3, retry_delay_ms: 2000 }
+  retry_policy: { max_retries: 3, retry_delay_ms: 2000 },
 });
 
 // Code errors: No retry
 queue.enqueue({
   task: 'Compile code',
-  retry_policy: { max_retries: 0 } // Don't retry compilation errors
+  retry_policy: { max_retries: 0 }, // Don't retry compilation errors
 });
 ```
 
@@ -796,6 +809,7 @@ Use the task queue to build robust, scalable workflow orchestration.
 ---
 
 **See Also:**
+
 - [Task Queue Schema](./../schemas/task-queue.schema.json)
 - [Recovery DSL Guide](./RECOVERY_DSL_GUIDE.md)
 - [Workflow Guide](./../workflows/WORKFLOW-GUIDE.md)

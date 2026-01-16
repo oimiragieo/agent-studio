@@ -26,7 +26,10 @@ const __dirname = dirname(__filename);
 // Project root is 3 levels up from .claude/tools/qa-test-scripts/
 const PROJECT_ROOT = join(__dirname, '../../..');
 const HOOK_PATH = join(PROJECT_ROOT, '.claude/hooks/orchestrator-enforcement-hook.mjs');
-const SESSION_STATE_PATH = join(PROJECT_ROOT, '.claude/context/tmp/orchestrator-session-state.json');
+const SESSION_STATE_PATH = join(
+  PROJECT_ROOT,
+  '.claude/context/tmp/orchestrator-session-state.json'
+);
 const VIOLATION_LOG_PATH = join(PROJECT_ROOT, '.claude/context/logs/orchestrator-violations.log');
 
 /**
@@ -81,9 +84,8 @@ class TestSuite {
   }
 
   calculateSuccessRate() {
-    this.success_rate = this.total_tests > 0
-      ? Math.round((this.passed / this.total_tests) * 100)
-      : 0;
+    this.success_rate =
+      this.total_tests > 0 ? Math.round((this.passed / this.total_tests) * 100) : 0;
   }
 
   setDuration(startTime) {
@@ -108,13 +110,20 @@ function initializeTestEnvironment() {
 
   // Clear previous test state
   if (existsSync(SESSION_STATE_PATH)) {
-    writeFileSync(SESSION_STATE_PATH, JSON.stringify({
-      session_id: `test_${Date.now()}`,
-      agent_role: 'orchestrator',
-      read_count: 0,
-      violations: [],
-      created_at: new Date().toISOString(),
-    }, null, 2));
+    writeFileSync(
+      SESSION_STATE_PATH,
+      JSON.stringify(
+        {
+          session_id: `test_${Date.now()}`,
+          agent_role: 'orchestrator',
+          read_count: 0,
+          violations: [],
+          created_at: new Date().toISOString(),
+        },
+        null,
+        2
+      )
+    );
   }
 }
 
@@ -203,17 +212,45 @@ async function simulateToolCall(hook, toolName, parameters, role) {
 const TEST_SCENARIOS = [
   // Orchestrator - Allowed tools
   { name: 'Orchestrator uses Task tool', role: 'orchestrator', tool: 'Task', expected: 'allow' },
-  { name: 'Orchestrator uses TodoWrite tool', role: 'orchestrator', tool: 'TodoWrite', expected: 'allow' },
-  { name: 'Orchestrator uses AskUserQuestion tool', role: 'orchestrator', tool: 'AskUserQuestion', expected: 'allow' },
-  { name: 'Orchestrator uses Read tool (first call)', role: 'orchestrator', tool: 'Read', expected: 'allow', params: { file_path: 'test.md' } },
+  {
+    name: 'Orchestrator uses TodoWrite tool',
+    role: 'orchestrator',
+    tool: 'TodoWrite',
+    expected: 'allow',
+  },
+  {
+    name: 'Orchestrator uses AskUserQuestion tool',
+    role: 'orchestrator',
+    tool: 'AskUserQuestion',
+    expected: 'allow',
+  },
+  {
+    name: 'Orchestrator uses Read tool (first call)',
+    role: 'orchestrator',
+    tool: 'Read',
+    expected: 'allow',
+    params: { file_path: 'test.md' },
+  },
 
   // Orchestrator - Blocked tools
   { name: 'Orchestrator uses Write tool', role: 'orchestrator', tool: 'Write', expected: 'block' },
   { name: 'Orchestrator uses Edit tool', role: 'orchestrator', tool: 'Edit', expected: 'block' },
   { name: 'Orchestrator uses Grep tool', role: 'orchestrator', tool: 'Grep', expected: 'block' },
   { name: 'Orchestrator uses Glob tool', role: 'orchestrator', tool: 'Glob', expected: 'block' },
-  { name: 'Orchestrator uses Bash with git add', role: 'orchestrator', tool: 'Bash', expected: 'block', params: { command: 'git add .' } },
-  { name: 'Orchestrator uses Bash with npm run', role: 'orchestrator', tool: 'Bash', expected: 'block', params: { command: 'npm run test' } },
+  {
+    name: 'Orchestrator uses Bash with git add',
+    role: 'orchestrator',
+    tool: 'Bash',
+    expected: 'block',
+    params: { command: 'git add .' },
+  },
+  {
+    name: 'Orchestrator uses Bash with npm run',
+    role: 'orchestrator',
+    tool: 'Bash',
+    expected: 'block',
+    params: { command: 'npm run test' },
+  },
 
   // Subagent - All tools allowed
   { name: 'Developer uses Write tool', role: 'developer', tool: 'Write', expected: 'allow' },
@@ -260,27 +297,24 @@ async function runTests() {
 
   // Run each test scenario
   for (const scenario of TEST_SCENARIOS) {
-    const result = new TestResult(
-      scenario.name,
-      scenario.role,
-      scenario.tool,
-      scenario.expected
-    );
+    const result = new TestResult(scenario.name, scenario.role, scenario.tool, scenario.expected);
 
     try {
       console.log(`Testing: ${scenario.name}...`);
 
       // Note: Hook integration would go here
       // For now, we simulate based on known behavior
-      const shouldBlock = scenario.role === 'orchestrator' &&
+      const shouldBlock =
+        scenario.role === 'orchestrator' &&
         ['Write', 'Edit', 'Grep', 'Glob'].includes(scenario.tool);
 
-      const shouldBlockBash = scenario.role === 'orchestrator' &&
+      const shouldBlockBash =
+        scenario.role === 'orchestrator' &&
         scenario.tool === 'Bash' &&
         scenario.params?.command &&
         /git\s+(add|commit|push)|npm\s+run|node\s+\.claude\/tools/.test(scenario.params.command);
 
-      const actualResult = (shouldBlock || shouldBlockBash) ? 'block' : 'allow';
+      const actualResult = shouldBlock || shouldBlockBash ? 'block' : 'allow';
 
       result.setActual(actualResult);
 
@@ -310,10 +344,14 @@ async function runTests() {
     console.log(`\n✓ All ${suite.total_tests} tests passed!`);
     process.exit(0);
   } else if (suite.success_rate >= 70) {
-    console.log(`\n⚠ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`);
+    console.log(
+      `\n⚠ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`
+    );
     process.exit(1);
   } else {
-    console.error(`\n✗ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`);
+    console.error(
+      `\n✗ ${suite.failed} of ${suite.total_tests} tests failed (${suite.success_rate}% success rate)`
+    );
     process.exit(2);
   }
 }

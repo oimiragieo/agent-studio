@@ -4,12 +4,7 @@
   "title": "DevOps Agent Output Schema",
   "description": "JSON Schema for validating DevOps agent output including deployment, testing, build status, and PR creation",
   "type": "object",
-  "required": [
-    "verdict",
-    "deployment_status",
-    "test_status",
-    "build_status"
-  ],
+  "required": ["verdict", "deployment_status", "test_status", "build_status"],
   "properties": {
     "verdict": {
       "type": "string",
@@ -19,9 +14,7 @@
     "deployment_status": {
       "type": "object",
       "description": "Deployment execution status",
-      "required": [
-        "status"
-      ],
+      "required": ["status"],
       "properties": {
         "status": {
           "type": "string",
@@ -50,9 +43,7 @@
     "test_status": {
       "type": "object",
       "description": "Test execution status",
-      "required": [
-        "all_passing"
-      ],
+      "required": ["all_passing"],
       "properties": {
         "all_passing": {
           "type": "boolean"
@@ -80,9 +71,7 @@
     "build_status": {
       "type": "object",
       "description": "Build execution status",
-      "required": [
-        "success"
-      ],
+      "required": ["success"],
       "properties": {
         "success": {
           "type": "boolean"

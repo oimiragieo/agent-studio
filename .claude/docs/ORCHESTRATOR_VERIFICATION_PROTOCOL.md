@@ -14,13 +14,13 @@ The **5-step verification protocol** ensures that delegated agents complete thei
 
 ## When to Use Verification
 
-| Trigger | Verification Required |
-|---------|----------------------|
-| Agent completes task | ✅ Always verify |
-| Agent reports output | ✅ Always verify |
-| Before spawning next agent | ✅ Always verify |
-| Multi-step workflow | ✅ Verify each step |
-| Agent returns early | ✅ Verify anyway |
+| Trigger                    | Verification Required |
+| -------------------------- | --------------------- |
+| Agent completes task       | ✅ Always verify      |
+| Agent reports output       | ✅ Always verify      |
+| Before spawning next agent | ✅ Always verify      |
+| Multi-step workflow        | ✅ Verify each step   |
+| Agent returns early        | ✅ Verify anyway      |
 
 **Rule**: Never skip verification. Always verify agent output before proceeding.
 
@@ -183,11 +183,11 @@ node .claude/tools/verification-gate.mjs --output agent-output.md --verbose
 
 ### Exit Codes
 
-| Exit Code | Meaning | Action |
-|-----------|---------|--------|
-| 0 | PASS | Proceed to next workflow step |
-| 1 | CONCERNS | Evaluate severity, may proceed (standard mode) |
-| 2 | FAIL | Stop workflow, address critical issues |
+| Exit Code | Meaning  | Action                                         |
+| --------- | -------- | ---------------------------------------------- |
+| 0         | PASS     | Proceed to next workflow step                  |
+| 1         | CONCERNS | Evaluate severity, may proceed (standard mode) |
+| 2         | FAIL     | Stop workflow, address critical issues         |
 
 ### Interpreting Results
 
@@ -516,9 +516,9 @@ cat .claude/context/reports/security-audit.json | jq '.vulnerabilities[] | selec
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-15 | Initial release - 5-step verification protocol |
+| Version | Date       | Changes                                        |
+| ------- | ---------- | ---------------------------------------------- |
+| 1.0.0   | 2025-01-15 | Initial release - 5-step verification protocol |
 
 ---
 

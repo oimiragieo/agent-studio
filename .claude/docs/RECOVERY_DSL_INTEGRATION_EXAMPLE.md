@@ -52,8 +52,8 @@ class WorkflowExecutor {
         error_message: error.message,
         error_stack: error.stack,
         step_id: step.id,
-        agent: step.agent
-      }
+        agent: step.agent,
+      },
     };
 
     // Match failure to recovery pattern
@@ -69,14 +69,10 @@ class WorkflowExecutor {
       workflow_id: this.workflowId,
       step_id: step.id,
       retry_count: step.retry_count || 0,
-      previous_checkpoint: step.checkpoint
+      previous_checkpoint: step.checkpoint,
     };
 
-    const result = await this.recoveryHandler.applyPattern(
-      pattern,
-      failure,
-      context
-    );
+    const result = await this.recoveryHandler.applyPattern(pattern, failure, context);
 
     return this.handleRecoveryResult(result, step);
   }
@@ -182,8 +178,8 @@ class AgentTaskRunner {
             error_message: error.message,
             task_id: task.task_id,
             agent: this.agentType,
-            attempt: recoveryAttempt
-          }
+            attempt: recoveryAttempt,
+          },
         };
 
         const pattern = this.recoveryHandler.matchPattern(failure);
@@ -195,14 +191,10 @@ class AgentTaskRunner {
         const context = {
           task_id: task.task_id,
           retry_count: recoveryAttempt - 1,
-          agent_type: this.agentType
+          agent_type: this.agentType,
         };
 
-        const recovery = await this.recoveryHandler.applyPattern(
-          pattern,
-          failure,
-          context
-        );
+        const recovery = await this.recoveryHandler.applyPattern(pattern, failure, context);
 
         // Handle halt strategy
         if (recovery.strategy === 'halt') {
@@ -215,7 +207,7 @@ class AgentTaskRunner {
             success: false,
             escalated: true,
             target_agent: recovery.target_agent,
-            recovery
+            recovery,
           };
         }
 
@@ -225,7 +217,7 @@ class AgentTaskRunner {
             success: true,
             skipped: true,
             degraded: recovery.mark_degraded,
-            recovery
+            recovery,
           };
         }
 
@@ -252,10 +244,10 @@ class AgentTaskRunner {
 
   classifyError(error) {
     const errorMap = {
-      'ETIMEDOUT': 'timeout',
-      'ENOTFOUND': 'dependency_missing',
-      'ECONNREFUSED': 'resource_unavailable',
-      'ERR_ASSERTION': 'test_failure'
+      ETIMEDOUT: 'timeout',
+      ENOTFOUND: 'dependency_missing',
+      ECONNREFUSED: 'resource_unavailable',
+      ERR_ASSERTION: 'test_failure',
     };
     return errorMap[error.code] || 'validation_failure';
   }
@@ -289,7 +281,7 @@ await runner.init();
 const result = await runner.runTask({
   task_id: 'task-001',
   objective: 'Implement feature X',
-  timeout_ms: 120000
+  timeout_ms: 120000,
 });
 
 if (result.escalated) {
@@ -401,8 +393,8 @@ async function createRecoveryPattern(config) {
       created_at: new Date().toISOString(),
       usage_count: 0,
       success_count: 0,
-      failure_count: 0
-    }
+      failure_count: 0,
+    },
   };
 
   // Add strategy-specific configuration
@@ -425,11 +417,7 @@ async function createRecoveryPattern(config) {
   const filename = `${pattern.pattern_id}.json`;
   const filepath = path.join(patternsDir, filename);
 
-  await fs.writeFile(
-    filepath,
-    JSON.stringify(pattern, null, 2),
-    'utf-8'
-  );
+  await fs.writeFile(filepath, JSON.stringify(pattern, null, 2), 'utf-8');
 
   console.log(`Created recovery pattern: ${filepath}`);
   return pattern;
@@ -440,16 +428,14 @@ await createRecoveryPattern({
   id: 'custom-api-retry',
   name: 'Retry Custom API Calls',
   description: 'Retry failed API calls with linear backoff',
-  triggers: [
-    { condition: 'network_error', severity: 'medium' }
-  ],
+  triggers: [{ condition: 'network_error', severity: 'medium' }],
   strategy: 'retry',
   priority: 4,
   retry_policy: {
     max_attempts: 3,
     backoff: 'linear',
-    delay_ms: 1000
-  }
+    delay_ms: 1000,
+  },
 });
 ```
 
@@ -477,7 +463,7 @@ async function testCustomPattern() {
   const failure = {
     type: 'network_error',
     severity: 'medium',
-    metadata: {}
+    metadata: {},
   };
 
   const matched = handler.matchPattern(failure);
@@ -510,18 +496,18 @@ async function simulateWorkflowWithRecovery() {
     {
       name: 'Timeout Recovery',
       failure: { type: 'timeout', severity: 'medium' },
-      expectedStrategy: 'retry'
+      expectedStrategy: 'retry',
     },
     {
       name: 'Test Failure Escalation',
       failure: { type: 'test_failure', severity: 'high' },
-      expectedStrategy: 'escalate'
+      expectedStrategy: 'escalate',
     },
     {
       name: 'Security Halt',
       failure: { type: 'security_violation', severity: 'critical' },
-      expectedStrategy: 'halt'
-    }
+      expectedStrategy: 'halt',
+    },
   ];
 
   for (const scenario of scenarios) {
@@ -530,11 +516,7 @@ async function simulateWorkflowWithRecovery() {
     const pattern = handler.matchPattern(scenario.failure);
     assert(pattern, `Should match pattern for ${scenario.name}`);
 
-    const result = await handler.applyPattern(
-      pattern,
-      scenario.failure,
-      {}
-    );
+    const result = await handler.applyPattern(pattern, scenario.failure, {});
 
     assert.strictEqual(
       result.strategy,
@@ -822,6 +804,7 @@ Recovery DSL integrates with:
 ---
 
 **See Also:**
+
 - [Recovery DSL Guide](./RECOVERY_DSL_GUIDE.md)
 - [Recovery Quick Reference](./RECOVERY_DSL_QUICK_REFERENCE.md)
 - [Recovery Pattern Schema](./../schemas/recovery-pattern.schema.json)

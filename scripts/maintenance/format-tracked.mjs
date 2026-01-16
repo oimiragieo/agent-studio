@@ -13,6 +13,7 @@
 import { execFileSync, spawnSync } from 'child_process';
 import { extname } from 'path';
 import { fileURLToPath } from 'url';
+import prettier from 'prettier';
 
 const argv = new Set(process.argv.slice(2));
 const mode = argv.has('--check') ? 'check' : 'write';
@@ -49,11 +50,37 @@ function runPrettierChunk(prettierBin, files) {
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
+async function filterIgnoredFiles(files) {
+  const nonIgnored = [];
+
+  for (const file of files) {
+    try {
+      const fileInfo = await prettier.getFileInfo(file);
+      if (!fileInfo.ignored) {
+        nonIgnored.push(file);
+      }
+    } catch (err) {
+      // If getFileInfo fails, include the file (let prettier handle it)
+      nonIgnored.push(file);
+    }
+  }
+
+  return nonIgnored;
+}
+
 async function main() {
   const candidates = getTrackedFiles().filter(f => prettierExtensions.has(extname(f)));
 
   if (candidates.length === 0) {
     process.stdout.write('No tracked files matched for formatting.\n');
+    return;
+  }
+
+  // Filter out files that are ignored by Prettier
+  const filesToFormat = await filterIgnoredFiles(candidates);
+
+  if (filesToFormat.length === 0) {
+    process.stdout.write('All tracked files are ignored by Prettier.\n');
     return;
   }
 
@@ -73,7 +100,7 @@ async function main() {
     currentLen = baseLen;
   };
 
-  for (const file of candidates) {
+  for (const file of filesToFormat) {
     const added = file.length + 3;
     if (current.length > 0 && currentLen + added > maxCmdChars) flush();
     current.push(file);

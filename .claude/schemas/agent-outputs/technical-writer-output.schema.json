@@ -4,11 +4,7 @@
   "title": "Technical Writer Agent Output Schema",
   "description": "JSON Schema for validating technical writer agent output including documentation updates and changelog",
   "type": "object",
-  "required": [
-    "verdict",
-    "files_updated",
-    "changelog_updated"
-  ],
+  "required": ["verdict", "files_updated", "changelog_updated"],
   "properties": {
     "verdict": {
       "type": "string",
@@ -21,17 +17,23 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "path",
-          "type"
-        ],
+        "required": ["path", "type"],
         "properties": {
           "path": {
             "type": "string"
           },
           "type": {
             "type": "string",
-            "enum": ["readme", "changelog", "api_docs", "user_guide", "developer_guide", "contributing", "architecture", "other"]
+            "enum": [
+              "readme",
+              "changelog",
+              "api_docs",
+              "user_guide",
+              "developer_guide",
+              "contributing",
+              "architecture",
+              "other"
+            ]
           },
           "changes": {
             "type": "string",
