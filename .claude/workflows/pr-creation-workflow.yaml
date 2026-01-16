@@ -60,7 +60,30 @@ steps:
       - 'All auto-fixable lint errors resolved'
       - 'All files formatted with prettier'
       - 'Zero critical lint errors'
-    failure_action: 'Report issues and continue to security review'
+    failure_action: 'Report issues and continue to code review'
+
+  - id: '03a-code-review'
+    name: 'Code Review Checkpoint'
+    agent: 'code-reviewer'
+    description: 'Review changes for syntax errors, path issues, dependencies, logic errors BEFORE security review and QA'
+    tasks:
+      - 'Review git diff for syntax errors and compilation issues'
+      - 'Validate file paths for Windows/Unix compatibility'
+      - 'Check dependency availability and compatibility'
+      - 'Review logic for bugs and edge cases'
+      - 'Verify no malformed paths (C:devprojects patterns)'
+      - 'Check imports and exports are correct'
+      - 'Validate cross-platform compatibility'
+      - 'Check for circular dependencies'
+    artifacts:
+      - 'code-review-checkpoint.json'
+    validation:
+      - 'No syntax errors'
+      - 'Paths valid for cross-platform'
+      - 'Dependencies available'
+      - 'No obvious logic errors'
+      - 'All imports resolved'
+    failure_action: 'Block if critical issues found (syntax errors, missing dependencies, malformed paths)'
 
   - id: '03-security'
     name: 'Security Review'
@@ -95,10 +118,33 @@ steps:
     validation:
       - 'All critical issues resolved'
 
+  - id: '06-verify-tests'
+    name: 'Verify All Tests Pass (BEFORE documenting)'
+    agent: 'qa'
+    description: 'Run full test suite to ensure no regressions - MUST pass before updating docs'
+    tasks:
+      - 'Run all unit tests'
+      - 'Run integration tests if available'
+      - 'Run smoke tests'
+      - 'Verify 100% test pass rate'
+      - "Check test coverage hasn't decreased"
+      - 'Validate build completes successfully'
+      - 'Run end-to-end smoke tests if configured'
+    artifacts:
+      - 'test-results.json'
+      - 'coverage-report.html'
+      - 'build-verification.log'
+    validation:
+      - 'All tests passing'
+      - 'No new test failures introduced'
+      - 'Build succeeds without errors'
+      - 'Test coverage maintained or improved'
+    failure_action: 'BLOCK push if tests fail - do NOT proceed to documentation'
+
   - id: '05-update-docs'
-    name: 'Update Documentation'
+    name: 'Update Documentation (AFTER tests pass)'
     agent: 'technical-writer'
-    description: 'Update documentation based on changes'
+    description: 'Update documentation based on changes - only after validation proves success'
     tasks:
       - 'Generate CHANGELOG entry from git diff'
       - 'Update README.md if public API changes detected'
@@ -106,6 +152,8 @@ steps:
       - 'Update user documentation if features added'
       - 'Verify all links in docs are valid'
       - 'Check documentation for clarity and completeness'
+      - 'Document breaking changes prominently'
+      - 'Update migration guides if needed'
     artifacts:
       - 'CHANGELOG.md (updated)'
       - 'README.md (if updated)'
@@ -114,24 +162,8 @@ steps:
     validation:
       - 'CHANGELOG entry created'
       - 'Documentation reflects all changes'
-
-  - id: '06-verify-tests'
-    name: 'Verify All Tests Pass'
-    agent: 'qa'
-    description: 'Run full test suite to ensure no regressions'
-    tasks:
-      - 'Run all unit tests'
-      - 'Run integration tests if available'
-      - 'Run smoke tests'
-      - 'Verify 100% test pass rate'
-      - "Check test coverage hasn't decreased"
-    artifacts:
-      - 'test-results.json'
-      - 'coverage-report.html'
-    validation:
-      - 'All tests passing'
-      - 'No new test failures introduced'
-    failure_action: 'Block push if tests fail'
+      - 'Breaking changes documented'
+      - 'No documentation of unvalidated features'
 
   - id: '07-create-commits'
     name: 'Create Commits with Proper Messages'

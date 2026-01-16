@@ -1,0 +1,377 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/qa-test-results.schema.json",
+  "title": "QA Test Results Schema",
+  "description": "JSON Schema for validating QA test result output from orchestrator enforcement test scripts",
+  "type": "object",
+  "required": [
+    "test_suite",
+    "timestamp",
+    "total_tests",
+    "passed",
+    "failed",
+    "success_rate",
+    "results"
+  ],
+  "properties": {
+    "test_suite": {
+      "type": "string",
+      "description": "Name of the test suite executed",
+      "minLength": 1,
+      "examples": [
+        "Hook Execution Tests",
+        "Orchestrator Blocking Tests",
+        "Violation Logging Tests",
+        "Hook Runtime Validation Tests",
+        "Hook JSON Validation Tests"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when tests were executed"
+    },
+    "total_tests": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of tests executed"
+    },
+    "passed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of tests that passed"
+    },
+    "failed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of tests that failed"
+    },
+    "success_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Percentage of tests that passed (0-100)"
+    },
+    "results": {
+      "type": "array",
+      "description": "Individual test results",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "passed"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Test case name",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "description": "Agent role being tested",
+            "enum": [
+              "orchestrator",
+              "master-orchestrator",
+              "developer",
+              "analyst",
+              "qa",
+              "architect",
+              "code-reviewer",
+              "security-architect",
+              "devops",
+              "technical-writer",
+              "planner",
+              "pm",
+              "ux-expert",
+              "api-designer",
+              "system"
+            ]
+          },
+          "tool": {
+            "type": "string",
+            "description": "Tool being tested",
+            "examples": [
+              "Task",
+              "TodoWrite",
+              "AskUserQuestion",
+              "Read",
+              "Write",
+              "Edit",
+              "Grep",
+              "Glob",
+              "Bash"
+            ]
+          },
+          "expected": {
+            "type": "string",
+            "description": "Expected outcome",
+            "enum": [
+              "allow",
+              "block",
+              "pass",
+              "fail"
+            ]
+          },
+          "actual": {
+            "type": "string",
+            "description": "Actual outcome",
+            "enum": [
+              "allow",
+              "block",
+              "pass",
+              "fail",
+              "error"
+            ]
+          },
+          "passed": {
+            "type": "boolean",
+            "description": "Whether the test passed"
+          },
+          "error_message": {
+            "type": "string",
+            "description": "Error message if test failed or encountered an error"
+          },
+          "expected_blocked": {
+            "type": "boolean",
+            "description": "Whether tool should have been blocked (for blocking tests)"
+          },
+          "actual_blocked": {
+            "type": "boolean",
+            "description": "Whether tool was actually blocked (for blocking tests)"
+          },
+          "expected_agent": {
+            "type": ["string", "null"],
+            "description": "Expected agent to delegate to (for blocking tests)"
+          },
+          "actual_agent": {
+            "type": ["string", "null"],
+            "description": "Actual agent suggested in block message (for blocking tests)"
+          },
+          "block_message": {
+            "type": ["string", "null"],
+            "description": "Block message returned by hook (for blocking tests)"
+          },
+          "should_log_to_file": {
+            "type": "boolean",
+            "description": "Whether violation should be logged to file (for logging tests)"
+          },
+          "logged_to_file": {
+            "type": "boolean",
+            "description": "Whether violation was logged to file (for logging tests)"
+          },
+          "should_log_to_state": {
+            "type": "boolean",
+            "description": "Whether violation should be logged to session state (for logging tests)"
+          },
+          "logged_to_state": {
+            "type": "boolean",
+            "description": "Whether violation was logged to session state (for logging tests)"
+          },
+          "log_entry": {
+            "type": ["string", "null"],
+            "description": "Log entry written to violation log (for logging tests)"
+          },
+          "state_entry": {
+            "type": ["object", "null"],
+            "description": "State entry written to session state (for logging tests)"
+          },
+          "performance_metrics": {
+            "type": "object",
+            "description": "Performance metrics for runtime validation tests",
+            "properties": {
+              "execution_time_ms": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Execution time in milliseconds"
+              },
+              "memory_usage_bytes": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Memory usage in bytes"
+              },
+              "threshold_ms": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Performance threshold in milliseconds"
+              },
+              "threshold_bytes": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Memory threshold in bytes"
+              },
+              "cleanup_success": {
+                "type": "boolean",
+                "description": "Whether cleanup operations succeeded"
+              }
+            }
+          },
+          "json_validation": {
+            "type": "object",
+            "description": "JSON structure validation details",
+            "properties": {
+              "is_json": {
+                "type": "boolean",
+                "description": "Whether output is valid JSON"
+              },
+              "is_object": {
+                "type": "boolean",
+                "description": "Whether output is a JSON object"
+              },
+              "required_fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of required fields"
+              },
+              "missing_fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of missing required fields"
+              },
+              "field_value": {
+                "type": ["string", "number", "boolean", "null"],
+                "description": "Field value being validated"
+              },
+              "allowed_values": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Allowed enum values"
+              },
+              "field_types": {
+                "type": "object",
+                "description": "Field type validation results",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "actual": {
+                      "type": "string"
+                    },
+                    "expected": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "nested_required_fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Required fields in nested objects"
+              },
+              "nested_missing_fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Missing fields in nested objects"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total duration of test execution in milliseconds"
+    },
+    "environment": {
+      "type": "object",
+      "description": "Test environment information",
+      "properties": {
+        "node_version": {
+          "type": "string",
+          "description": "Node.js version used for testing",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Operating system platform",
+          "enum": [
+            "win32",
+            "darwin",
+            "linux",
+            "freebsd",
+            "openbsd",
+            "sunos"
+          ]
+        },
+        "project_root": {
+          "type": "string",
+          "description": "Absolute path to project root"
+        }
+      },
+      "additionalProperties": false
+    },
+    "errors": {
+      "type": "array",
+      "description": "Critical errors encountered during test execution",
+      "items": {
+        "type": "object",
+        "required": [
+          "message",
+          "timestamp"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the error occurred"
+          },
+          "stack": {
+            "type": "string",
+            "description": "Error stack trace"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "test_suite": "Hook Execution Tests",
+      "timestamp": "2025-01-15T10:30:00.000Z",
+      "total_tests": 13,
+      "passed": 13,
+      "failed": 0,
+      "success_rate": 100,
+      "results": [
+        {
+          "name": "Orchestrator uses Task tool",
+          "role": "orchestrator",
+          "tool": "Task",
+          "expected": "allow",
+          "actual": "allow",
+          "passed": true
+        },
+        {
+          "name": "Orchestrator uses Write tool",
+          "role": "orchestrator",
+          "tool": "Write",
+          "expected": "block",
+          "actual": "block",
+          "passed": true
+        }
+      ],
+      "duration_ms": 1523,
+      "environment": {
+        "node_version": "v20.10.0",
+        "platform": "win32",
+        "project_root": "C:/dev/projects/LLM-RULES"
+      }
+    }
+  ]
+}

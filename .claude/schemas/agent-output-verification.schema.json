@@ -1,0 +1,334 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/agent-output-verification.schema.json",
+  "title": "Agent Output Verification Schema",
+  "description": "JSON Schema for validating agent output verification results from verification-gate.mjs",
+  "type": "object",
+  "required": [
+    "verdict",
+    "agent_type",
+    "timestamp",
+    "errors",
+    "warnings",
+    "deliverables_status",
+    "success_criteria_status",
+    "verification_steps"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall verification verdict"
+    },
+    "agent_type": {
+      "type": ["string", "null"],
+      "description": "Type of agent that produced the output",
+      "enum": [
+        "orchestrator",
+        "master-orchestrator",
+        "developer",
+        "analyst",
+        "qa",
+        "architect",
+        "code-reviewer",
+        "security-architect",
+        "devops",
+        "technical-writer",
+        "planner",
+        "pm",
+        "ux-expert",
+        "api-designer",
+        "llm-architect",
+        "database-architect",
+        "mobile-developer",
+        "performance-engineer",
+        "accessibility-expert",
+        "compliance-auditor",
+        "incident-responder",
+        null
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when verification was performed"
+    },
+    "errors": {
+      "type": "array",
+      "description": "Errors found during verification",
+      "items": {
+        "type": "object",
+        "required": ["message", "severity", "timestamp"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "minLength": 1
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Error severity level"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the error was detected"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "description": "Warnings found during verification",
+      "items": {
+        "type": "object",
+        "required": ["message", "timestamp"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Warning message",
+            "minLength": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the warning was detected"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "deliverables_status": {
+      "type": "array",
+      "description": "Status of deliverables verification",
+      "items": {
+        "type": "object",
+        "required": ["path", "exists", "validated"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path to deliverable file",
+            "minLength": 1
+          },
+          "exists": {
+            "type": "boolean",
+            "description": "Whether the deliverable file exists"
+          },
+          "validated": {
+            "type": "boolean",
+            "description": "Whether the deliverable passed validation (e.g., not empty)"
+          },
+          "message": {
+            "type": ["string", "null"],
+            "description": "Additional information about deliverable status"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "success_criteria_status": {
+      "type": "array",
+      "description": "Status of success criteria validation",
+      "items": {
+        "type": "object",
+        "required": ["criterion", "met"],
+        "properties": {
+          "criterion": {
+            "type": "string",
+            "description": "Success criterion description",
+            "minLength": 1
+          },
+          "met": {
+            "type": "boolean",
+            "description": "Whether the criterion was met"
+          },
+          "evidence": {
+            "type": ["string", "null"],
+            "description": "Evidence that the criterion was met"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "verification_steps": {
+      "type": "object",
+      "description": "Detailed results of each verification step",
+      "required": [
+        "step1_errors",
+        "step2_warnings",
+        "step3_deliverables",
+        "step4_criteria",
+        "step5_verdict"
+      ],
+      "properties": {
+        "step1_errors": {
+          "type": "object",
+          "description": "Step 1: Check for errors",
+          "required": ["checked", "found"],
+          "properties": {
+            "checked": {
+              "type": "boolean",
+              "description": "Whether this step was executed"
+            },
+            "found": {
+              "type": "array",
+              "description": "Error keywords found in output",
+              "items": {
+                "type": "object",
+                "required": ["keyword", "count"],
+                "properties": {
+                  "keyword": {
+                    "type": "string",
+                    "description": "Error keyword"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Number of occurrences"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "step2_warnings": {
+          "type": "object",
+          "description": "Step 2: Check for warnings",
+          "required": ["checked", "found"],
+          "properties": {
+            "checked": {
+              "type": "boolean",
+              "description": "Whether this step was executed"
+            },
+            "found": {
+              "type": "array",
+              "description": "Warning keywords found in output",
+              "items": {
+                "type": "object",
+                "required": ["keyword", "count"],
+                "properties": {
+                  "keyword": {
+                    "type": "string",
+                    "description": "Warning keyword"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Number of occurrences"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "step3_deliverables": {
+          "type": "object",
+          "description": "Step 3: Verify deliverables exist",
+          "required": ["checked", "missing"],
+          "properties": {
+            "checked": {
+              "type": "boolean",
+              "description": "Whether this step was executed"
+            },
+            "missing": {
+              "type": "array",
+              "description": "Paths to missing deliverables",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "step4_criteria": {
+          "type": "object",
+          "description": "Step 4: Validate success criteria",
+          "required": ["checked", "unmet"],
+          "properties": {
+            "checked": {
+              "type": "boolean",
+              "description": "Whether this step was executed"
+            },
+            "unmet": {
+              "type": "array",
+              "description": "Unmet success criteria",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "step5_verdict": {
+          "type": "object",
+          "description": "Step 5: Check verdict",
+          "required": ["checked", "agent_verdict"],
+          "properties": {
+            "checked": {
+              "type": "boolean",
+              "description": "Whether this step was executed"
+            },
+            "agent_verdict": {
+              "type": ["string", "null"],
+              "enum": ["PASS", "CONCERNS", "FAIL", null],
+              "description": "Verdict reported by agent (if any)"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "verdict": "PASS",
+      "agent_type": "developer",
+      "timestamp": "2025-01-15T10:30:00.000Z",
+      "errors": [],
+      "warnings": [],
+      "deliverables_status": [
+        {
+          "path": ".claude/context/reports/implementation-complete.md",
+          "exists": true,
+          "validated": true,
+          "message": null
+        }
+      ],
+      "success_criteria_status": [
+        {
+          "criterion": "All tests passing",
+          "met": true,
+          "evidence": "Test suite: 15/15 passed"
+        }
+      ],
+      "verification_steps": {
+        "step1_errors": {
+          "checked": true,
+          "found": []
+        },
+        "step2_warnings": {
+          "checked": true,
+          "found": []
+        },
+        "step3_deliverables": {
+          "checked": true,
+          "missing": []
+        },
+        "step4_criteria": {
+          "checked": true,
+          "unmet": []
+        },
+        "step5_verdict": {
+          "checked": true,
+          "agent_verdict": "PASS"
+        }
+      }
+    }
+  ]
+}

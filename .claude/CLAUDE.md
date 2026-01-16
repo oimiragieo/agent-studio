@@ -411,6 +411,38 @@ Task: "Commit the changes with message: ..."
 
 **Workflow-Specific Thresholds**: Different workflows have different minimum scores based on risk and complexity. See @.claude/docs/PLAN_RATING_THRESHOLDS.md for detailed threshold documentation.
 
+### Post-Delegation Verification Protocol
+
+**Execute after EVERY agent completes, before spawning next agent:**
+
+**VERIFICATION CHECKLIST (5 STEPS):**
+
+**STEP 1: CHECK FOR ERRORS**
+→ Scan output for: 'error', 'failed', 'exception', 'crash', 'fatal'
+→ Found errors? STOP and investigate - do not proceed
+
+**STEP 2: CHECK FOR WARNINGS**
+→ Scan output for: 'warning', 'concern', 'issue', 'problem', 'caution'
+→ Found warnings? Evaluate severity - may need attention
+
+**STEP 3: VERIFY DELIVERABLES EXIST**
+→ Check all expected deliverables exist at specified paths
+→ Use verification-gate.mjs tool: `node .claude/tools/verification-gate.mjs --output <path>`
+
+**STEP 4: VALIDATE SUCCESS CRITERIA**
+→ Verify agent met all success criteria from task template
+→ Check evidence provided (logs, test output, metrics)
+
+**STEP 5: CHECK VERDICT**
+→ If agent provided verdict (PASS/CONCERNS/FAIL), respect it
+→ PASS: Proceed to next step
+→ CONCERNS: Evaluate if issues are blocking
+→ FAIL: STOP and address issues before proceeding
+
+**Tool Support**: Use `.claude/tools/verification-gate.mjs` for automated verification
+
+**Documentation**: See `.claude/docs/ORCHESTRATOR_VERIFICATION_PROTOCOL.md` for complete guide
+
 ### Subagent Types for Common Tasks
 
 | I want to...        | Task Tool:         | Reason                                |

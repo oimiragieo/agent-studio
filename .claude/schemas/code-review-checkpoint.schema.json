@@ -1,0 +1,432 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.dev/schemas/code-review-checkpoint.schema.json",
+  "title": "Code Review Checkpoint Schema",
+  "description": "JSON Schema for validating code review checkpoint output before security review and QA",
+  "type": "object",
+  "required": [
+    "review_id",
+    "timestamp",
+    "verdict",
+    "reviewer",
+    "files_reviewed",
+    "review_summary",
+    "syntax_errors",
+    "path_issues",
+    "dependency_issues",
+    "logic_concerns",
+    "blocking_issues"
+  ],
+  "properties": {
+    "review_id": {
+      "type": "string",
+      "description": "Unique identifier for this code review",
+      "pattern": "^code-review-[0-9]{8}-[0-9]{6}$",
+      "examples": ["code-review-20250115-103000"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when review was performed"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "CONCERNS", "FAIL"],
+      "description": "Overall code review verdict"
+    },
+    "reviewer": {
+      "type": "string",
+      "description": "Agent that performed the review",
+      "const": "code-reviewer"
+    },
+    "files_reviewed": {
+      "type": "array",
+      "description": "List of files reviewed",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "description": "File path reviewed"
+      }
+    },
+    "review_summary": {
+      "type": "object",
+      "description": "Summary statistics of the review",
+      "required": [
+        "total_files",
+        "files_with_issues",
+        "total_issues",
+        "blocking_issues",
+        "non_blocking_issues"
+      ],
+      "properties": {
+        "total_files": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of files reviewed"
+        },
+        "files_with_issues": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of files with issues found"
+        },
+        "total_issues": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of issues found"
+        },
+        "blocking_issues": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of blocking issues (must fix before proceed)"
+        },
+        "non_blocking_issues": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of non-blocking issues (warnings, recommendations)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "syntax_errors": {
+      "type": "array",
+      "description": "Syntax errors that prevent compilation",
+      "items": {
+        "type": "object",
+        "required": ["file", "line", "message", "severity"],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "File path containing syntax error"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number of syntax error"
+          },
+          "column": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Column number of syntax error (optional)"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "minLength": 1
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Severity of syntax error"
+          },
+          "code_snippet": {
+            "type": "string",
+            "description": "Code snippet showing the error"
+          },
+          "fix_suggestion": {
+            "type": "string",
+            "description": "Suggested fix for the error"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "path_issues": {
+      "type": "array",
+      "description": "Path compatibility issues (Windows/Unix)",
+      "items": {
+        "type": "object",
+        "required": ["file", "issue", "severity"],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "File containing path issue"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number with path issue"
+          },
+          "issue": {
+            "type": "string",
+            "description": "Description of path issue",
+            "minLength": 1
+          },
+          "pattern": {
+            "type": "string",
+            "description": "Malformed path pattern detected"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Severity of path issue"
+          },
+          "fix_suggestion": {
+            "type": "string",
+            "description": "Suggested fix for path issue"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "dependency_issues": {
+      "type": "array",
+      "description": "Dependency availability and compatibility issues",
+      "items": {
+        "type": "object",
+        "required": ["dependency", "severity"],
+        "properties": {
+          "dependency": {
+            "type": "string",
+            "description": "Package name with issue",
+            "minLength": 1
+          },
+          "version_required": {
+            "type": "string",
+            "description": "Version required by code"
+          },
+          "version_installed": {
+            "type": "string",
+            "description": "Version currently installed"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Severity of dependency issue"
+          },
+          "impact": {
+            "type": "string",
+            "description": "Impact of the dependency issue"
+          },
+          "fix_suggestion": {
+            "type": "string",
+            "description": "Suggested fix for dependency issue"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "logic_concerns": {
+      "type": "array",
+      "description": "Logic errors, bugs, and edge cases",
+      "items": {
+        "type": "object",
+        "required": ["file", "concern", "severity"],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "File containing logic concern"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number of concern"
+          },
+          "concern": {
+            "type": "string",
+            "description": "Description of logic concern",
+            "minLength": 1
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Severity of logic concern"
+          },
+          "code_snippet": {
+            "type": "string",
+            "description": "Code snippet showing the concern"
+          },
+          "fix_suggestion": {
+            "type": "string",
+            "description": "Suggested fix for the concern"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Non-blocking recommendations for improvement",
+      "items": {
+        "type": "object",
+        "required": ["category", "priority", "recommendation"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "code_quality",
+              "performance",
+              "maintainability",
+              "security",
+              "testing",
+              "documentation"
+            ],
+            "description": "Category of recommendation"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Priority of recommendation"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommendation text",
+            "minLength": 1
+          },
+          "files_affected": {
+            "type": "array",
+            "description": "Files this recommendation applies to",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "blocking_issues": {
+      "type": "array",
+      "description": "Issues that MUST be fixed before proceeding",
+      "items": {
+        "type": "object",
+        "required": ["issue_type", "file", "message", "must_fix"],
+        "properties": {
+          "issue_type": {
+            "type": "string",
+            "enum": [
+              "syntax_error",
+              "path_issue",
+              "dependency_issue",
+              "logic_error",
+              "security_issue"
+            ],
+            "description": "Type of blocking issue"
+          },
+          "file": {
+            "type": "string",
+            "description": "File with blocking issue"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number of blocking issue"
+          },
+          "message": {
+            "type": "string",
+            "description": "Description of blocking issue",
+            "minLength": 1
+          },
+          "must_fix": {
+            "type": "boolean",
+            "const": true,
+            "description": "Indicates this must be fixed (always true for blocking_issues)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "cross_platform_compatibility": {
+      "type": "object",
+      "description": "Cross-platform compatibility assessment",
+      "required": ["windows_compatible", "unix_compatible", "issues"],
+      "properties": {
+        "windows_compatible": {
+          "type": "boolean",
+          "description": "Whether code is Windows compatible"
+        },
+        "unix_compatible": {
+          "type": "boolean",
+          "description": "Whether code is Unix/Linux compatible"
+        },
+        "issues": {
+          "type": "array",
+          "description": "Platform-specific issues found",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "import_export_validation": {
+      "type": "object",
+      "description": "Import/export statement validation",
+      "required": [
+        "all_imports_resolved",
+        "missing_imports",
+        "unused_imports",
+        "circular_dependencies"
+      ],
+      "properties": {
+        "all_imports_resolved": {
+          "type": "boolean",
+          "description": "Whether all imports can be resolved"
+        },
+        "missing_imports": {
+          "type": "array",
+          "description": "Imports that cannot be resolved",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unused_imports": {
+          "type": "array",
+          "description": "Imports that are not used",
+          "items": {
+            "type": "string"
+          }
+        },
+        "circular_dependencies": {
+          "type": "array",
+          "description": "Circular dependency chains detected",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "next_steps": {
+      "type": "array",
+      "description": "Recommended next steps based on review",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "review_id": "code-review-20250115-103000",
+      "timestamp": "2025-01-15T10:30:00.000Z",
+      "verdict": "PASS",
+      "reviewer": "code-reviewer",
+      "files_reviewed": ["src/index.ts", "src/utils.ts"],
+      "review_summary": {
+        "total_files": 2,
+        "files_with_issues": 0,
+        "total_issues": 0,
+        "blocking_issues": 0,
+        "non_blocking_issues": 0
+      },
+      "syntax_errors": [],
+      "path_issues": [],
+      "dependency_issues": [],
+      "logic_concerns": [],
+      "recommendations": [],
+      "blocking_issues": [],
+      "cross_platform_compatibility": {
+        "windows_compatible": true,
+        "unix_compatible": true,
+        "issues": []
+      },
+      "import_export_validation": {
+        "all_imports_resolved": true,
+        "missing_imports": [],
+        "unused_imports": [],
+        "circular_dependencies": []
+      },
+      "next_steps": ["Proceed to security review"]
+    }
+  ]
+}

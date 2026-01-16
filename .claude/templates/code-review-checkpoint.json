@@ -1,0 +1,91 @@
+{
+  "review_id": "code-review-YYYYMMDD-HHMMSS",
+  "timestamp": "2025-01-15T10:30:00.000Z",
+  "verdict": "PASS",
+  "reviewer": "code-reviewer",
+  "files_reviewed": [
+    "path/to/file1.ts",
+    "path/to/file2.tsx"
+  ],
+  "review_summary": {
+    "total_files": 0,
+    "files_with_issues": 0,
+    "total_issues": 0,
+    "blocking_issues": 0,
+    "non_blocking_issues": 0
+  },
+  "syntax_errors": [
+    {
+      "file": "path/to/file.ts",
+      "line": 42,
+      "column": 10,
+      "message": "Unexpected token ';'",
+      "severity": "critical",
+      "code_snippet": "const x = 5;;",
+      "fix_suggestion": "Remove extra semicolon"
+    }
+  ],
+  "path_issues": [
+    {
+      "file": "path/to/file.ts",
+      "line": 15,
+      "issue": "Malformed Windows path",
+      "pattern": "C:devprojects",
+      "severity": "critical",
+      "fix_suggestion": "Use proper path separators: C:/dev/projects or C:\\dev\\projects"
+    }
+  ],
+  "dependency_issues": [
+    {
+      "dependency": "package-name",
+      "version_required": "^2.0.0",
+      "version_installed": "1.5.0",
+      "severity": "high",
+      "impact": "Breaking changes in v2.0.0 not compatible with current code",
+      "fix_suggestion": "Update code to use v2.0.0 API or downgrade dependency requirement"
+    }
+  ],
+  "logic_concerns": [
+    {
+      "file": "path/to/file.ts",
+      "line": 28,
+      "concern": "Potential null pointer exception",
+      "severity": "medium",
+      "code_snippet": "const result = data.user.name;",
+      "fix_suggestion": "Add null check: const result = data?.user?.name ?? 'default';"
+    }
+  ],
+  "recommendations": [
+    {
+      "category": "code_quality",
+      "priority": "low",
+      "recommendation": "Consider extracting repeated logic into utility function",
+      "files_affected": ["file1.ts", "file2.ts"]
+    }
+  ],
+  "blocking_issues": [
+    {
+      "issue_type": "syntax_error",
+      "file": "path/to/file.ts",
+      "line": 42,
+      "message": "Code will not compile due to syntax error",
+      "must_fix": true
+    }
+  ],
+  "cross_platform_compatibility": {
+    "windows_compatible": true,
+    "unix_compatible": true,
+    "issues": []
+  },
+  "import_export_validation": {
+    "all_imports_resolved": true,
+    "missing_imports": [],
+    "unused_imports": [],
+    "circular_dependencies": []
+  },
+  "next_steps": [
+    "Fix all blocking issues before proceeding to security review",
+    "Address high-priority dependency issues",
+    "Re-run code review after fixes"
+  ]
+}
