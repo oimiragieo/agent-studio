@@ -115,14 +115,14 @@ function safeRespond(obj) {
 
 // Recursion protection - prevent hook from triggering itself
 if (process.env.CLAUDE_ORCHESTRATOR_HOOK_EXECUTING === 'true') {
-  safeRespond({ decision: 'allow' });
+  safeRespond({ decision: 'approve' });
   process.exit(0);
 }
 process.env.CLAUDE_ORCHESTRATOR_HOOK_EXECUTING = 'true';
 
 // Timeout protection - force exit after 2 seconds (fail-open)
 const timeout = setTimeout(() => {
-  safeRespond({ decision: 'allow', warning: 'Hook timeout' });
+  safeRespond({ decision: 'approve', warning: 'Hook timeout' });
   delete process.env.CLAUDE_ORCHESTRATOR_HOOK_EXECUTING;
   process.exit(0);
 }, 2000);
@@ -271,6 +271,26 @@ function detectRoleFromEnv() {
       : 'subagent';
   }
   return null;
+}
+
+function detectRoleFromHookInput(hookInput) {
+  try {
+    const ctx = hookInput?.context ?? hookInput?.ctx ?? null;
+    const raw =
+      ctx?.agent_name ??
+      ctx?.agentName ??
+      ctx?.agent ??
+      hookInput?.agent_name ??
+      hookInput?.agentName ??
+      hookInput?.agent ??
+      null;
+    if (typeof raw !== 'string') return null;
+    const name = raw.trim().toLowerCase();
+    if (!name) return null;
+    return ['orchestrator', 'master-orchestrator'].includes(name) ? 'orchestrator' : null;
+  } catch {
+    return null;
+  }
 }
 
 async function writeSessionState(state) {
@@ -451,7 +471,7 @@ async function main() {
   try {
     hookInput = JSON.parse(input);
   } catch {
-    safeRespond({ decision: 'allow' });
+    safeRespond({ decision: 'approve' });
     return;
   }
 
@@ -460,28 +480,31 @@ async function main() {
 
   // Exclusions to prevent recursion / self-interference
   if (tool === 'Task' || tool === 'TodoWrite') {
-    safeRespond({ decision: 'allow' });
+    safeRespond({ decision: 'approve' });
     return;
   }
 
   // Fast path: if tool isn't enforced, allow without touching state/logs
   if (!ENFORCEMENT_RULES[tool]) {
-    safeRespond({ decision: 'allow' });
+    safeRespond({ decision: 'approve' });
     return;
   }
 
   const envRole = detectRoleFromEnv();
   if (envRole === 'subagent') {
-    safeRespond({ decision: 'allow' });
+    safeRespond({ decision: 'approve' });
     return;
   }
 
+  const hookRole = detectRoleFromHookInput(hookInput);
   const existingState = await tryLoadEffectiveSessionState();
   const role =
-    envRole ?? (existingState?.agent_role === 'orchestrator' ? 'orchestrator' : 'subagent');
+    envRole ??
+    hookRole ??
+    (existingState?.agent_role === 'orchestrator' ? 'orchestrator' : 'subagent');
 
   if (role !== 'orchestrator') {
-    safeRespond({ decision: 'allow' });
+    safeRespond({ decision: 'approve' });
     return;
   }
 
@@ -550,7 +573,7 @@ async function main() {
     const command = String(toolInput.command || '');
     const isBlocked = rule.blocked_patterns.some(pattern => pattern.test(command));
     if (!isBlocked) {
-      safeRespond({ decision: 'allow' });
+      safeRespond({ decision: 'approve' });
       return;
     }
 
@@ -602,7 +625,7 @@ async function main() {
           file_read: filePath || undefined,
         });
         await compactSessionStateIfNeeded();
-        safeRespond({ decision: 'allow' });
+        safeRespond({ decision: 'approve' });
         return;
       }
 
@@ -648,16 +671,16 @@ async function main() {
       file_read: filePath || undefined,
     });
     await compactSessionStateIfNeeded();
-    safeRespond({ decision: 'allow' });
+    safeRespond({ decision: 'approve' });
     return;
   }
 
-  safeRespond({ decision: 'allow' });
+  safeRespond({ decision: 'approve' });
 }
 
 main()
   .catch(error => {
-    safeRespond({ decision: 'allow', warning: `Hook error: ${error.message}` });
+    safeRespond({ decision: 'approve', warning: `Hook error: ${error.message}` });
   })
   .finally(() => {
     clearTimeout(timeout);

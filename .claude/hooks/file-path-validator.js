@@ -20,7 +20,7 @@ import { fileURLToPath } from 'url';
 
 // Recursion protection - prevent hook from triggering itself
 if (process.env.CLAUDE_PATH_VALIDATOR_EXECUTING === 'true') {
-  console.log(JSON.stringify({ decision: 'allow' }));
+  console.log(JSON.stringify({ decision: 'approve' }));
   process.exit(0);
 }
 process.env.CLAUDE_PATH_VALIDATOR_EXECUTING = 'true';
@@ -28,7 +28,7 @@ process.env.CLAUDE_PATH_VALIDATOR_EXECUTING = 'true';
 // Timeout protection - force exit after 1 second
 const timeout = setTimeout(() => {
   console.error('[PATH VALIDATOR] Timeout exceeded, allowing by default');
-  console.log(JSON.stringify({ decision: 'allow', warning: 'Hook timeout' }));
+  console.log(JSON.stringify({ decision: 'approve', warning: 'Hook timeout' }));
   process.exit(0);
 }, 1000);
 
@@ -246,7 +246,7 @@ async function main() {
 
     // Skip validation for TodoWrite and Task tools
     if (toolName === 'TodoWrite' || toolName === 'Task') {
-      console.log(JSON.stringify({ decision: 'allow' }));
+      console.log(JSON.stringify({ decision: 'approve' }));
       process.exit(0);
     }
 
@@ -286,13 +286,13 @@ async function main() {
     }
 
     // Allow by default
-    console.log(JSON.stringify({ decision: 'allow' }));
+    console.log(JSON.stringify({ decision: 'approve' }));
     process.exit(0);
   } catch (error) {
     // On error, allow (fail open) but log warning
     console.error(
       JSON.stringify({
-        decision: 'allow',
+        decision: 'approve',
         warning: `Path validator error: ${error.message}`,
       })
     );

@@ -10,6 +10,13 @@ priority: highest
 
 # Orchestrator Agent
 
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Require subagents to put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Require subagents to put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If both are produced: require `.md` in `reports/`, `.json` in `artifacts/`, and explicit cross-links (paths) in the report.
+
 ## ⚠️ CRITICAL ENFORCEMENT - READ THIS FIRST
 
 ```
@@ -83,6 +90,25 @@ When significant work is completed (3+ files changed, new tests/docs, bugfix/ref
 **If you answer YES to questions 3-4, immediately STOP and delegate via Task tool.**
 
 ---
+
+## Routing Handoff (Avoid “ROUTING HANDOFF REQUIRED” Denials)
+
+### Already-Routed Sessions (Do NOT re-route)
+
+In this repo, routing is often performed automatically by the router-first hooks before you are spawned.
+
+If routing is already complete (for example you are running under a selected workflow like
+`@.claude/workflows/agent-framework-integration.yaml`), **do not spawn the router again**.
+
+- Do **not** run a second “classify this request” pass.
+- Do **not** read `.claude/agents/router.md` to decide what to do.
+- Proceed by executing the already-selected workflow and delegating only to the step agents defined by that workflow.
+
+When you spawn the router via `Task` and receive its JSON decision:
+
+- Parse the router’s JSON decision (from the router tool result) first:
+  - If `should_escalate === true` and `escalation_target` is a non-empty string, immediately spawn that agent via `Task` (subagent_type = `escalation_target`) before attempting any other tools.
+  - If parsing fails (or `escalation_target` is null), your next attempt will be blocked with **ROUTING HANDOFF REQUIRED** including the target agent name—spawn that target and continue.
 
 ## Identity
 

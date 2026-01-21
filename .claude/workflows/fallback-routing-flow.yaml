@@ -4,6 +4,8 @@ type: testing
 project_type: validation
 publish_policy: auto-on-pass # Automatically publish artifacts after validation passes
 template: true # This is a template workflow - agent fields use {{placeholders}} for dynamic substitution
+# NOTE: Dry-run warnings about template variables (e.g., `agent: '{{primary_agent}}'`) are expected for this workflow.
+# The dry-run suite intentionally skips existence/path checks when placeholders are present.
 
 # Error Recovery Configuration
 recovery:
@@ -106,6 +108,7 @@ steps:
     validation:
       minimum_score: 7
       rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
     retry:
       max_attempts: 3
@@ -135,7 +138,11 @@ steps:
       - error-details-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-{{primary_agent}}.json
     validation:
+      schema: .claude/schemas/primary-agent-artifacts.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-{{primary_agent}}.json
+    secondary_outputs:
+      - artifact: error-details-{{workflow_id}}.json
+        schema: .claude/schemas/fallback-error-details.schema.json
     on_failure: 'Trigger fallback routing to step 2'
     description: |
       Primary agent execution with simulated failure:
@@ -207,6 +214,7 @@ steps:
       - fallback-agent-output-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-{{fallback_agent}}.json
     validation:
+      schema: .claude/schemas/fallback-agent-output.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/04-{{fallback_agent}}.json
     description: |
       Fallback agent execution:
@@ -274,6 +282,8 @@ steps:
     inputs:
       - artifact-registry.json
     policy: auto-on-pass
+    validation:
+      schema: .claude/schemas/artifact-registry.schema.json
     retry:
       max_attempts: 3
       on_failure: log_and_continue

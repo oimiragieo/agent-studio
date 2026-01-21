@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Fallback Agent Output",
+  "description": "Schema for fallback-agent-output artifacts produced during fallback routing tests.",
+  "type": "object",
+  "required": ["workflow_id", "generated_at", "agent", "status"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "agent": { "type": "string" },
+    "status": { "type": "string", "enum": ["success", "failed", "partial"] },
+    "artifacts": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": true
+}

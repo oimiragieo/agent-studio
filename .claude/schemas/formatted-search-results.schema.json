@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Formatted Search Results",
+  "description": "Schema for formatted search results produced by the Search Functionality Workflow.",
+  "type": "object",
+  "required": ["workflow_id", "generated_at", "query", "results"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "query": { "type": "string" },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string" },
+          "title": { "type": "string" },
+          "snippet": { "type": "string" },
+          "score": { "type": "number" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "summary": { "type": "string" },
+    "refine_suggestions": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

@@ -103,7 +103,7 @@ async function main() {
 
     // Return result (injected memory will be prepended to tool context)
     const result = {
-      decision: 'allow',
+      decision: 'approve',
       injectedMemory: injection.memory,
       tokensUsed: injection.tokensUsed,
       sources: injection.sources,
@@ -119,7 +119,7 @@ async function main() {
     const duration = Date.now() - startTime;
 
     const result = {
-      decision: 'allow',
+      decision: 'approve',
       injectedMemory: null,
       tokensUsed: 0,
       sources: [],

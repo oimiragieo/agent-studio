@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Recommendations",
+  "description": "Schema for agent recommendation outputs produced during onboarding and analysis workflows.",
+  "type": "object",
+  "required": ["workflow_id", "generated_at", "primary_agents", "secondary_agents"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "project_path": { "type": "string" },
+    "primary_agents": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "secondary_agents": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "triggers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pattern", "agents"],
+        "properties": {
+          "pattern": { "type": "string" },
+          "agents": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "reason": { "type": "string" },
+          "priority": { "type": "string", "enum": ["required", "recommended", "optional"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": true
+}

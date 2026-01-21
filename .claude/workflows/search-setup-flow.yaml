@@ -106,6 +106,7 @@ steps:
       - search-config.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-orchestrator.json
     validation:
+      schema: .claude/schemas/search-config.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-orchestrator.json
       custom_checks:
         - api_credentials_valid
@@ -163,6 +164,7 @@ steps:
       - result-summary.md
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-business-analyst.json
     validation:
+      schema: .claude/schemas/formatted-search-results.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-business-analyst.json
     description: |
       Format and present search results:
@@ -187,6 +189,7 @@ steps:
       - cache-entry.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-orchestrator.json
     validation:
+      schema: .claude/schemas/cache-entry.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/04-orchestrator.json
     description: |
       Cache search results for performance:

@@ -30,6 +30,32 @@ const DEFAULT_WORKFLOW_TTL = 60 * 60 * 1000;
 const MAX_CACHE_SIZE = 500; // Maximum entries per cache
 const MAX_CACHE_MEMORY_MB = 50; // Maximum memory usage in MB per cache
 
+// Memory Guard: Trigger cleanup if RSS exceeds 3.5GB
+const RSS_LIMIT_BYTES = 3.5 * 1024 * 1024 * 1024;
+let lastMemoryCheck = 0;
+const MEMORY_CHECK_INTERVAL = 30000; // 30 seconds
+
+/**
+ * Check memory pressure and trigger cleanup if necessary
+ */
+function checkMemoryPressure() {
+  const now = Date.now();
+  if (now - lastMemoryCheck < MEMORY_CHECK_INTERVAL) return;
+  lastMemoryCheck = now;
+
+  const rss = process.memoryUsage().rss;
+  if (rss > RSS_LIMIT_BYTES) {
+    console.warn(
+      `[Artifact Cache] Memory pressure detected: ${(rss / 1024 / 1024 / 1024).toFixed(2)}GB RSS. Triggering cache purge.`
+    );
+    // Since we can't import cleanupAllCaches here (circular dep),
+    // we clear our own local caches which are the main memory consumers.
+    artifactCache.clear();
+    workflowCache.clear();
+    if (global.gc) global.gc();
+  }
+}
+
 // Cache directory for persistent workflow cache
 const CACHE_DIR = resolveRuntimePath('cache', { write: true });
 
@@ -226,6 +252,7 @@ export async function cacheArtifact(artifactPath, artifactData, ttl = DEFAULT_FI
 
   // Prune cache if needed
   pruneCache(artifactCache, 'Artifact Cache');
+  checkMemoryPressure();
 }
 
 /**

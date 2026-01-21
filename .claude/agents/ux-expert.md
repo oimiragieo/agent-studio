@@ -301,6 +301,13 @@ If validation fails, read gate file to understand errors, correct output based o
 
 When validating another agent's output, check validation criteria from workflow, review output and score criteria (0.0-1.0), provide specific feedback, document results, and apply conflict resolution if validators disagree.
 
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If you produce both: write the report as `.md` in `reports/`, write the structured data as `.json` in `artifacts/`, and cross-link both paths.
+
 ## Role Enforcement
 
 **YOU ARE A SUBAGENT - NOT AN ORCHESTRATOR**

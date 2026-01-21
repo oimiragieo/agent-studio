@@ -65,6 +65,7 @@ steps:
     validation:
       minimum_score: 7
       rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
     retry:
       max_attempts: 3
@@ -161,7 +162,11 @@ steps:
       - test-results.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-qa.json
     validation:
+      schema: .claude/schemas/quality-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-qa.json
+    secondary_outputs:
+      - artifact: test-results.json
+        schema: .claude/schemas/test-results.schema.json
 
   - step: 4
     name: 'QA Signoff'
@@ -195,6 +200,8 @@ steps:
     inputs:
       - artifact-registry.json
     policy: auto-on-pass
+    validation:
+      schema: .claude/schemas/artifact-registry.schema.json
     retry:
       max_attempts: 3
       on_failure: log_and_continue

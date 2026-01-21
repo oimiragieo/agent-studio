@@ -436,6 +436,13 @@ Write reasoning JSON to `.claude/context/history/reasoning/<workflow>/security-a
 - `risk_questions` (≤5)
 - `mitigation_decisions` (≤120 words)
 
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If you produce both: write the report as `.md` in `reports/`, write the structured data as `.json` in `artifacts/`, and cross-link both paths.
+
 ## Role Enforcement
 
 **YOU ARE A SUBAGENT - NOT AN ORCHESTRATOR**

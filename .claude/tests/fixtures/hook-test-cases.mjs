@@ -96,7 +96,19 @@ export const HOOKS = {
           },
         },
         expected: {
-          decision: 'allow',
+          decision: 'approve',
+        },
+      },
+      {
+        name: 'Block inline GitHub PAT in command',
+        input: {
+          tool_name: 'Bash',
+          tool_input: {
+            command: 'GITHUB_PERSONAL_ACCESS_TOKEN="github_pat_ABC123" python executor.py --list',
+          },
+        },
+        expected: {
+          decision: 'block',
         },
       },
       {
@@ -108,14 +120,27 @@ export const HOOKS = {
           },
         },
         expected: {
-          decision: 'allow',
+          decision: 'approve',
         },
       },
       {
         name: 'Handle empty',
         input: {},
         expected: {
-          decision: 'allow',
+          decision: 'approve',
+        },
+      },
+    ],
+  },
+  'read-size-guard.mjs': {
+    type: 'PreToolUse',
+    matchers: ['Read'],
+    testCases: [
+      {
+        name: 'Handle empty',
+        input: {},
+        expected: {
+          decision: 'approve',
         },
       },
     ],
@@ -133,7 +158,7 @@ export const HOOKS = {
           },
         },
         expected: {
-          decision: 'allow',
+          decision: 'approve',
         },
         env: {
           CLAUDE_AGENT_ROLE: 'developer',
@@ -148,7 +173,7 @@ export const HOOKS = {
           },
         },
         expected: {
-          decision: 'allow',
+          decision: 'approve',
         },
         env: {
           CLAUDE_AGENT_ROLE: 'developer',
@@ -158,7 +183,7 @@ export const HOOKS = {
         name: 'Handle empty',
         input: {},
         expected: {
-          decision: 'allow',
+          decision: 'approve',
         },
       },
     ],
@@ -176,7 +201,7 @@ export const HOOKS = {
           },
         },
         expected: {
-          decision: 'allow',
+          decision: 'approve',
         },
       },
       {
@@ -188,7 +213,7 @@ export const HOOKS = {
           },
         },
         expected: {
-          decision: 'allow',
+          decision: 'approve',
         },
       },
       {
@@ -222,14 +247,14 @@ export const HOOKS = {
           tool_input: {},
         },
         expected: {
-          decision: 'allow',
+          decision: 'approve',
         },
       },
       {
         name: 'Handle empty',
         input: {},
         expected: {
-          decision: 'allow',
+          decision: 'approve',
         },
       },
     ],

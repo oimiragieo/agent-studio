@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Payload Record (sanitized tool inputs/outputs)",
+  "type": "object",
+  "required": ["schema_version", "trace_id", "span_id", "stored_at", "expires_at"],
+  "properties": {
+    "$schema": { "type": ["string", "null"] },
+    "schema_version": { "type": "number" },
+    "trace_id": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+    "span_id": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+    "run_id": { "type": ["string", "null"] },
+    "session_key": { "type": ["string", "null"] },
+    "span_name": { "type": ["string", "null"] },
+    "event_type": { "type": ["string", "null"] },
+    "stored_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "inputs": { "type": ["object", "array", "string", "number", "boolean", "null"] },
+    "outputs": { "type": ["object", "array", "string", "number", "boolean", "null"] }
+  },
+  "additionalProperties": true
+}

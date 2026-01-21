@@ -1,6 +1,6 @@
 # Agent Studio (LLM-RULES)
 
-**Agent Studio** is a multi-platform configuration bundle designed to empower AI agents like Claude Code, Cursor IDE, and Factory Droids. It provides a comprehensive set of specialized agents, skills, tools, and rule packs to orchestrate complex software engineering tasks.
+**Agent Studio** is a configuration bundle designed to empower AI agents like Claude Code and Cursor IDE. It provides a comprehensive set of specialized agents, skills, tools, and rule packs to orchestrate complex software engineering tasks.
 
 ## Project Overview
 
@@ -23,10 +23,8 @@ The project is organized into platform-specific configuration folders and shared
   - `workflows/`: YAML definitions for agent orchestration.
   - `hooks/`: Shell scripts for pre/post-tool execution logic (security & audit).
 - **`.cursor/`**: Configuration mirrored for Cursor IDE (rules, context).
-- **`.factory/`**: Configuration for Factory Droids.
 - **`scripts/`**: Maintenance and validation scripts (Node.js).
 - **`codex-skills/`**: Skills specific to Codex/OpenAI models (e.g., `multi-ai-code-review`).
-- **`.opencode/`**: Configuration for OpenCode.
 
 ## Key Files
 

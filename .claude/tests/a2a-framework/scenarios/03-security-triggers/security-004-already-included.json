@@ -1,0 +1,92 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-security-004",
+  "name": "Security-architect already included",
+  "description": "Verify that no suggestion appears when security-architect already assigned",
+  "category": "security-trigger",
+  "priority": "P1",
+  "tags": ["security", "trigger", "already-assigned"],
+
+  "preconditions": {
+    "fixtures": [],
+    "state": {},
+    "environment": {}
+  },
+
+  "steps": [
+    {
+      "step_id": "invoke-with-security-already-assigned",
+      "action": "invoke_pretooluse_hook",
+      "input": {
+        "hook": "security-trigger-auto-spawn.mjs",
+        "tool_name": "Task",
+        "tool_input": {
+          "task_id": "test-auth-covered-001",
+          "objective": "Implement authentication with security review",
+          "context": {
+            "problem": "Need secure authentication",
+            "why_now": "Security requirement"
+          },
+          "deliverables": [
+            {
+              "type": "file",
+              "path": ".claude/context/tmp/auth-reviewed.mjs",
+              "description": "Authenticated implementation"
+            }
+          ],
+          "constraints": {
+            "max_time_minutes": 20
+          },
+          "success_criteria": ["Authentication implemented", "Security reviewed"],
+          "verification": {
+            "verification_type": "static",
+            "evidence_required": true
+          },
+          "assigned_agent": "security-architect"
+        }
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 5000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "hook_decision",
+      "target": "steps.invoke-with-security-already-assigned.result.decision",
+      "operator": "equals",
+      "expected": "approve"
+    },
+    {
+      "type": "security_detected",
+      "target": "steps.invoke-with-security-already-assigned.result.metadata.security_triggers_detected",
+      "operator": "greater_than",
+      "expected": 0
+    },
+    {
+      "type": "no_suggestion_redundant",
+      "target": "steps.invoke-with-security-already-assigned.result.suggestion",
+      "operator": "equals",
+      "expected": null
+    },
+    {
+      "type": "security_covered",
+      "target": "steps.invoke-with-security-already-assigned.result.metadata.security_covered",
+      "operator": "equals",
+      "expected": true
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["security-trigger-auto-spawn.mjs"]
+  }
+}

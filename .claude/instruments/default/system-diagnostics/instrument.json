@@ -1,0 +1,6 @@
+{
+  "name": "system-diagnostics",
+  "description": "Run repo diagnostics (tests + validations + workflow dry-run)",
+  "command": "node .claude/tools/system-diagnostics.mjs",
+  "timeout_ms": 3600000
+}

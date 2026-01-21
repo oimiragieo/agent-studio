@@ -58,6 +58,13 @@ const SCHEMA_DETECTION_MAP = {
     '*-task.json': 'task.schema.json',
     '*.json': 'task.schema.json',
   },
+  testing: {
+    '*-run-results.json': 'agent-integration-run-results.schema.json',
+    '*-verification.json': null,
+  },
+  observability: {
+    '*-otlp.json': 'otlp-traces.schema.json',
+  },
 };
 
 /**
@@ -88,6 +95,7 @@ async function loadJson(filePath) {
 function autoDetectSchema(filePath) {
   const fileName = basename(filePath);
   const dirName = basename(dirname(filePath));
+  const parentDir = dirName;
 
   // Check directory-specific patterns
   if (SCHEMA_DETECTION_MAP[dirName]) {
@@ -124,6 +132,11 @@ function autoDetectSchema(filePath) {
   }
   if (fileName.endsWith('-gate.json')) {
     return 'gate-result.schema.json';
+  }
+
+  // Agent smoke summaries live under `<workflow>-agent-smoke/_summary.json`.
+  if (fileName === '_summary.json' && /-agent-smoke$/i.test(parentDir)) {
+    return 'agent-smoke-summary.schema.json';
   }
 
   return null;

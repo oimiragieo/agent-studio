@@ -1,19 +1,19 @@
 # LLM Rules Production Pack
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20%7C%20Cursor%20%7C%20Factory-purple.svg)]()
+[![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20%7C%20Cursor-purple.svg)]()
 [![Agents](https://img.shields.io/badge/Agents-35-green.svg)]()
 [![Skills](https://img.shields.io/badge/Skills-110-orange.svg)]()
 [![A2A Protocol](https://img.shields.io/badge/A2A%20v0.3.0-Compliant-brightgreen.svg)]()
 [![Tests](https://img.shields.io/badge/Tests-667%20Passing-success.svg)]()
 
-**Enterprise-grade AI agent orchestration system** for Claude Code, Cursor IDE, and Factory Droid with comprehensive enforcement gates, security validation, workflow automation, and **Google A2A protocol integration** for external agent federation.
+**Enterprise-grade AI agent orchestration system** for Claude Code and Cursor IDE with comprehensive enforcement gates, security validation, **router-first enforcement** (100% routing coverage), workflow automation, and **Google A2A protocol integration** for external agent federation.
 
 > **Configuration-First Architecture**: This is a **configuration bundle**, not a runtime system. All functionality comes from configuration files (markdown, YAML, JSON) that are read directly by the IDE/platform. No build step, no server process, no library imports required for core functionality.
 
 ## What This Is
 
-A **production-ready, drop-in configuration bundle** for AI agent orchestration. This is a **configuration-first** system - you copy configuration files into your project, and they work immediately with Claude Code, Cursor IDE, or Factory Droid.
+A **production-ready, drop-in configuration bundle** for AI agent orchestration. This is a **configuration-first** system - you copy configuration files into your project, and they work immediately with Claude Code (and optionally Cursor IDE).
 
 ### Core Components
 
@@ -36,7 +36,7 @@ A **production-ready, drop-in configuration bundle** for AI agent orchestration.
   - Machine-readable registry (`.claude/context/config/cuj-registry.json`) for programmatic access
   - 54 workflow-based, 5 skill-only, 2 manual setup
 
-- **124 JSON schemas** for artifact validation
+- **182 JSON schemas** for artifact validation
   - Schema files (`.claude/schemas/<name>.schema.json`) for validating workflow artifacts
   - Ensures consistency and correctness of generated outputs
 
@@ -112,7 +112,7 @@ The system is **declarative** - you define what should happen (agents, workflows
 - **NOT an SDK** - No library to import (dependencies in `package.json` are for optional validation scripts and utilities, not a distributable library)
 - **NOT an MCP server** - No server to run (`.claude/.mcp.json` is client configuration for connecting to external MCP servers like `@modelcontextprotocol/server-repo`, `@modelcontextprotocol/server-github`, etc.)
 - **NOT primarily a CLI tool** - Core functionality is configuration files that work without any CLI; CLI tools are optional utilities for validation, testing, and management
-- **NOT a framework** - Works with existing tools (Claude Code, Cursor IDE, Factory Droid) without requiring framework integration
+- **NOT a framework** - Works with Claude Code (and optionally Cursor IDE) without requiring framework integration
 
 ## Key Features
 
@@ -140,8 +140,9 @@ The system is **declarative** - you define what should happen (agents, workflows
 
 - **Master Orchestrator**: Single entry point routing all requests
 - **Rule Index System**: Dynamic rule discovery (progressive disclosure)
-- **Cross-Platform**: Claude Code, Cursor IDE, Factory Droid support
+- **Cross-Platform**: Claude Code + Cursor IDE support
 - **Security Hooks**: Command validation, audit logging, file protection
+- **Tool-search noise handling**: Diagnostics treat "Tool Search disabled" as non-blocking and report it separately
 - **Knowledge Base-Aware Orchestration**: Dynamic agent routing based on agent expertise
 - **Agent-as-a-Graph Retrieval**: 14.9% improvement in tool matching accuracy
 
@@ -153,7 +154,6 @@ The system is **declarative** - you define what should happen (agents, workflows
 # Copy into your project
 cp -r .claude/ your-project/
 cp -r .cursor/ your-project/   # Optional: Cursor support
-cp -r .factory/ your-project/  # Optional: Factory support
 cp CLAUDE.md your-project/     # Required: Root instructions file
 
 # That's it! The configuration works immediately.
@@ -171,21 +171,25 @@ If you want to use validation scripts and CLI tools:
 # Copy configuration (same as above)
 cp -r .claude/ your-project/
 cp -r .cursor/ your-project/
-cp -r .factory/ your-project/
 cp CLAUDE.md your-project/
 
 # Install dependencies for CLI tools
 cd your-project
 pnpm install
 
-# Validate configuration (using unified validator)
-pnpm validate              # Quick validation of all configs
-pnpm validate:cujs         # Full CUJ validation
-pnpm validate:cujs:quick   # Fast CUJ validation (skip links)
-pnpm validate:cujs:dry-run # Dry-run (no state changes, CI-friendly)
+ # Validate configuration (using unified validator)
+ pnpm validate              # Quick validation of all configs
+ pnpm validate:cujs         # Full CUJ validation
+ pnpm validate:cujs:quick   # Fast CUJ validation (skip links)
+ pnpm validate:cujs:dry-run # Dry-run (no state changes, CI-friendly)
+ pnpm validate:schemas      # Validate latest integration artifacts (if present)
 
-# CUJ diagnostics
-pnpm cuj:doctor            # Detailed CUJ diagnostics
+ # Cleanup (recommended before commits)
+ pnpm cleanup:check         # Preview what would be deleted (safe)
+ pnpm cleanup               # Delete temp/runtime files (use with care)
+
+ # CUJ diagnostics
+ pnpm cuj:doctor            # Detailed CUJ diagnostics
 
 # List available CUJs
 pnpm cuj:list
@@ -572,23 +576,114 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 | **Workflow**    | `/code-quality`, `/performance`, `/ai-system`, `/mobile`, `/incident`, `/legacy-modernize`                 |
 | **Enforcement** | `/check-security`, `/enforce-security`, `/approve-security`, `/validate-plan-rating`, `/validate-signoffs` |
 
+## Debugging & Diagnostics (Important)
+
+This repo is designed to be run from inside a project directory (the “workspace”). **Keep all automation scoped to the current workspace** unless a human explicitly approves external paths.
+
+### Where logs live (Claude Code)
+
+- **Claude Code debug logs** (when starting with `-d` or `-d hooks`): `C:\Users\<you>\.claude\debug\<uuid>.txt`
+- **Claude session transcripts** (Claude Code internal): `C:\Users\<you>\.claude\projects\C--dev-projects-LLM-RULES\<sessionId>\`
+- **Repo runtime artifacts** (this workspace): `.claude/context/` (reports, artifacts, runtime runs)
+  - **Run state + events**: `.claude/context/runtime/**/runs/<runId>/{state.json,events.ndjson,summary.md}`
+  - **Tool event stream (easy grep)**: `.claude/context/artifacts/tool-events/run-<runId>.ndjson`
+  - **Routing decision artifacts**: `.claude/context/artifacts/routing/<sessionKey>.json`
+  - **Agent task completion artifacts**: `.claude/context/artifacts/agents/<sessionKey>/<ts>-<agent>.json`
+  - **Denied-tool stream (when no runId yet)**: `.claude/context/artifacts/tool-events/orphan-denials.ndjson`
+  - **Denial logger diagnostics**: `.claude/context/logs/{denial-logger-errors.log,denial-logger-warnings.log}`
+  - **Subagent attribution state** (for missing-context SubagentStart/Stop): `state.json` fields `pending_subagents`, `subagent_parent_stack` (stale entries dropped after ~3 minutes; override via `CLAUDE_PENDING_SUBAGENT_TTL_MS`)
+  - **Subagent attribution metrics**: `state.json` metrics `pending_subagents_max`, `subagent_parent_stack_max`, `pending_subagents_stale_dropped`
+
+### Router-first enforcement + long-running reliability
+
+- Router-first enforcement is enforced by `.claude/hooks/router-first-enforcer.mjs` and coordinated via on-disk routing state under `.claude/context/tmp/`.
+- Multi-process Claude sessions (subagents/tools in separate Node processes) rely on a **shared session key** written at session start by `.claude/hooks/session-start.mjs` and read/refreshed by `.claude/hooks/session-key.mjs`.
+- **Important reliability fix**: shared session key TTL and routing state TTL use a **long, sliding window** to avoid mid-session expiry causing “must be routed” deadlocks in long runs.
+  - **Provable routing**: `.claude/hooks/router-completion-handler.mjs` writes a persisted routing decision artifact under `.claude/context/artifacts/routing/`.
+- **Router JSON parsing hardening**: the completion handler strips code fences, tolerates single-quoted JSON, and logs sanitized samples on parse failures; edge cases are covered by router completion tests.
+- **Routing in progress**: once routing has started, the hook may intentionally block unsafe tools (like repo-wide `Grep`/`Glob`) with **ROUTING IN PROGRESS - LIMITED TOOLING**; during routing, stick to `.claude/` scoped `Glob` + specific `Read`s.
+- **Routing safety guard**: while routing is in progress, `.claude/hooks/routing-safety-guard.mjs` blocks `Grep`/`Search` and restricts `Glob` to small config paths (workflows/agents/schemas) to reduce risk of CLI OOM.
+
+### Quick “is it alive?” status
+
+- Use the built-in `/status` command (implemented in `.claude/commands/status.md`) to print:
+  - current resume/run status
+  - recent events tail
+- Tool events (denials/failures): `node .claude/tools/tool-events-dashboard.mjs --last 80` (filter: `--agent`, `--tool`, `--denied-only`, `--since "2026-01-18T00:00:00Z"`)
+- Routing handoff outcome (proactive vs fallback): `.claude/context/artifacts/routing-handoff/run-<runId>.json`
+
+### Run diagnostics (deterministic tooling)
+
+This repository prefers deterministic tooling over “it says it did it”:
+
+```bash
+# Full suite
+npm run test:tools
+node --test --test-concurrency=1 tests/*.test.mjs
+
+# Diagnostics + debug log tail summary
+node .claude/tools/system-diagnostics.mjs --log "C:\Users\<you>\.claude\debug\<uuid>.txt"
+```
+
+Outputs:
+
+- Report: `.claude/context/reports/system-diagnostics-<timestamp>.md`
+- Artifact: `.claude/context/artifacts/system-diagnostics-<timestamp>.json`
+- Fix plan: `.claude/context/artifacts/diagnostics/diagnostics-master-fix-plan.md` (override via `--fix-plan-path`, legacy root via `--legacy-root-fix-plan`)
+
+### Read-only mode (optional safety)
+
+If you want to run diagnostics/audits without allowing repo mutations:
+
+```bash
+node .claude/tools/read-only.mjs enable --reason "audit"
+node .claude/tools/read-only.mjs status
+```
+
+This is enforced by `.claude/hooks/read-only-enforcer.mjs` and blocks `Write`/`Edit` and mutating `Bash`.
+
+### Client context (optional)
+
+If you want agents/tools to behave consistently across clients (Claude Code vs Cursor vs Codex CLI), set a context:
+
+```bash
+node .claude/tools/client-context.mjs set claude-code
+node .claude/tools/client-context.mjs current
+```
+
+### Self-healing loop state (WIP but real)
+
+To support iterative runs (rate → fix → retest → rerate) with persisted state:
+
+```bash
+node .claude/tools/iteration-state-manager.mjs init --id "self-heal-<id>" --target 9
+node .claude/tools/iteration-state-manager.mjs get --id "self-heal-<id>"
+```
+
 ## Security
 
 ### Security & Enforcement Hooks
 
-6 production hooks provide security validation, audit logging, and orchestrator enforcement:
+Core production hooks provide security validation, audit logging, observability, and orchestrator enforcement.
 
-**PreToolUse Hooks (4 hooks):**
+**PreToolUse Hooks (core):**
 
 - **security-pre-tool.mjs**: Blocks dangerous commands and sensitive file operations
 - **file-path-validator.js**: Validates file paths to prevent SLOP (files in wrong locations)
-- **orchestrator-enforcement-hook.mjs**: Enforces orchestrator delegation rules (2-file Read limit, no Write/Edit/Grep/Glob)
+- **read-path-guard.mjs**: Blocks `Read` on directories (including relative paths) to prevent `EISDIR` errors (suggests Glob/Search)
+- **router-first-enforcer.mjs**: Enforces router-first gating and explicit handoffs
+- **orchestrator-tool-guard.mjs**: Blocks orchestrators from high-fanout scans (Grep/Glob/Search)
+- **master-orchestrator-read-guard.mjs**: Blocks master orchestrator from reading files directly (forces delegation)
+- **orchestrator-enforcement-pre-tool.mjs**: Enforces orchestrator delegation rules (2-file Read limit, no Write/Edit/Grep/Glob)
 - **skill-injection-hook.js**: Automatically injects skills into Task tool calls
+- **run-observer.mjs (pre)**: Records tool start events and run heartbeat
 
-**PostToolUse Hooks (2 hooks):**
+**PostToolUse Hooks (core):**
 
 - **audit-post-tool.mjs**: Logs tool usage with performance metrics
 - **post-session-cleanup.js**: Automatic session cleanup for temporary files
+- **router-completion-handler.mjs**: Marks routing completed and writes routing artifacts
+- **run-observer.mjs (post)**: Records tool completion events, failures, and summary
 
 **Testing & Validation:**
 
@@ -598,6 +693,10 @@ Skills using the index: rule-auditor, rule-selector, scaffolder, explaining-rule
 - See `.claude/docs/HOOK_RECOVERY_COMPLETE.md` for troubleshooting
 
 **Hook Documentation:** See `.claude/hooks/README.md` for complete hook documentation
+
+**Denial Visibility:** Some PreToolUse denials are logged even when the tool never executes:
+
+- Look for `\"denied\":true` in `.claude/context/artifacts/tool-events/run-<runId>.ndjson`
 
 ### Protected Operations
 
@@ -673,23 +772,29 @@ pnpm install
 #### Validation & Testing
 
 ```bash
-# Configuration validation
-pnpm validate              # Fast validation (config, models)
-pnpm validate:all          # Full validation (includes workflows, CUJs, rule index)
-pnpm validate:verbose      # Detailed output
-pnpm validate:sync         # Cross-platform agent/skill parity
-pnpm validate:cujs         # Validate all CUJ files
-pnpm validate:cujs:e2e     # End-to-end CUJ validation
-pnpm validate:cujs:dry-run # Dry-run CUJ validation (no mutations)
-pnpm validate:workflow     # Validate workflow YAML files
-pnpm validate:references   # Validate cross-file references
-pnpm validate:index        # Validate rule index
-pnpm validate:workflow-gates # Validate workflow rating gates
+ # Configuration validation
+ pnpm validate              # Fast validation (config, models)
+ pnpm validate:all          # Full validation (includes workflows, CUJs, rule index)
+ pnpm validate:verbose      # Detailed output
+ pnpm validate:sync         # Cross-platform agent/skill parity
+ pnpm validate:cujs         # Validate all CUJ files
+ pnpm validate:cujs:e2e     # End-to-end CUJ validation
+ pnpm validate:cujs:dry-run # Dry-run CUJ validation (no mutations)
+ pnpm validate:workflow     # Validate workflow YAML files
+ pnpm validate:references   # Validate cross-file references
+ pnpm validate:index        # Validate rule index
+ pnpm validate:workflow-gates # Validate workflow rating gates
+ pnpm validate:schemas      # Validate latest integration artifacts (if present)
 
-# CUJ management
-pnpm cuj <CUJ-ID>          # Execute a CUJ workflow
-pnpm cuj:list              # List all available CUJs
-pnpm cuj:simulate <CUJ-ID> # Simulate CUJ execution (dry run)
+ # Cleanup (recommended before commits)
+ pnpm cleanup:check         # Preview what would be deleted (safe)
+ pnpm cleanup               # Delete temp/runtime files (use with care)
+ node .claude/tools/cleanup-repo.mjs --execute --reports-retention-days 5 # Optional: prune reports older than 5 days
+
+ # CUJ management
+ pnpm cuj <CUJ-ID>          # Execute a CUJ workflow
+ pnpm cuj:list              # List all available CUJs
+ pnpm cuj:simulate <CUJ-ID> # Simulate CUJ execution (dry run)
 pnpm cuj:validate <CUJ-ID> # Validate CUJ structure
 pnpm cuj:doctor            # Comprehensive CUJ health check
 pnpm cuj:doctor:json       # CUJ health check (JSON output)
@@ -712,13 +817,58 @@ pnpm sync-cuj-registry:validate # Validate CUJ registry sync
 pnpm format                # Format tracked files
 pnpm format:check          # Check formatting without changes
 
+# Note: If you have legacy directories like `.opencode.disabled/` or `.factory.disabled/` from older versions,
+# `pnpm format` will ignore them.
+
+# Observability snapshot (debug log + run artifacts)
+node .claude/tools/observability-bundle.mjs --debug-log "C:\\Users\\you\\.claude\\debug\\<session>.txt"
+
+# Optional: store sanitized payloads + generate failure bundles (controlled via env)
+# CLAUDE_OBS_STORE_PAYLOADS=1 -> .claude/context/payloads/ (linked from events via event.payload.payload_ref)
+# CLAUDE_OBS_FAILURE_BUNDLES=1 -> .claude/context/artifacts/failure-bundles/
+
+# Tip: set these flags in your terminal before launching Claude Code (recommended), or in a local override
+# `.claude/settings.local.json` (`env` block). Repo defaults do not force-enable payload storage/bundles.
+
+# Claude Code stability note:
+# - Repo defaults enable RAG indexing and cap session context (`max_context_tokens=60000`).
+# - Debug-mode note (Windows): some hook processes receive `CLAUDE_SESSION_ID` while others don’t; the hooks now normalize UUID-like ids to `shared-<uuid>` and persist that to `.claude/context/tmp/shared-session-key.json` to prevent routing/observability state from splitting.
+# - If you hit host OOM during long multi-agent debug runs, prefer the headless runners or disable background indexing locally via `.claude/settings.local.json`.
+
+# Claude Code integration prompt templates (paste into a new session)
+# - Ship readiness (UI-safe): .claude/prompts/ship-readiness.md
+# - Agent framework integration (UI-safe): .claude/prompts/agent-framework-integration.md
+
+# Production readiness (push-button)
+# - Headless integration runner (baseline + smoke + verify + payloads + denial proof): `pnpm integration:headless:json`
+# - Ship readiness audit (UI-safe headless runner + auditable report/results): `pnpm ship-readiness:headless:json`
+# - UI stability: headless workflows intentionally deny `Task` fan-out after handoff (see `.claude/hooks/headless-task-guard.mjs`) so the UI doesn’t try to spawn QA/etc and OOM instead of running the deterministic headless runner.
+# - Retention cleanup for headless runs: `pnpm cleanup:headless`
+# - Docs: .claude/docs/PRODUCTION_READINESS.md
+
+# Verify integration outputs (after running the prompt)
+node .claude/tools/verify-agent-integration.mjs --workflow-id agent-integration-v1-<YYYYMMDD-HHMMSS>
+
+# Headless agent smoke (recommended for stability / OOM avoidance)
+# Runs each agent smoke in a separate `claude -p` process and writes receipts to:
+# `.claude/context/artifacts/testing/<workflow_id>-agent-smoke/`
+# Notes:
+# - For real Claude runs, use a per-agent timeout like `--timeout-ms 90000` to avoid false failures.
+# - You can pin the model via `--model sonnet` (or `CLAUDE_HEADLESS_MODEL=sonnet`).
+# - `--strict` enables `--json-schema` enforcement (may be stricter than some agent prompt formats).
+node .claude/tools/run-agent-smoke-headless.mjs --workflow-id agent-integration-v1-<YYYYMMDD-HHMMSS> --timeout-ms 90000
+
+# Fully headless integration runner (recommended when Claude Code UI OOMs)
+# Executes baseline suites + headless smoke + verification with artifacts written under `.claude/context/`.
+node .claude/tools/run-agent-framework-integration-headless.mjs --workflow-id agent-integration-v1-<YYYYMMDD-HHMMSS>
+
+# OTLP export (OpenTelemetry) from an events.ndjson file (enterprise observability backends)
+node .claude/tools/otlp-export.mjs --events .claude/context/runtime/headless/runs/<run_id>/events.ndjson --out .claude/context/artifacts/observability/<workflow_id>-otlp.json
+
 # A2A Protocol Testing (NEW)
-pnpm test:a2a              # Run all A2A protocol tests (290 tests)
-pnpm test:a2a:framework    # Test A2A test framework (74 tests)
-pnpm test:a2a:poc          # Test AgentCard generation (40 tests)
-pnpm test:a2a:memory       # Test Memory-A2A bridge (73 tests)
-pnpm test:a2a:lifecycle    # Test task lifecycle (90 tests)
-pnpm test:a2a:federation   # Test external federation (102 tests)
+pnpm test:a2a              # Run all A2A scenarios
+pnpm test:a2a:verbose      # Verbose output
+pnpm test:a2a:ci           # CI mode (strict)
 
 # Codex Skills Testing
 pnpm test:codex-integration      # Test Codex skills integration
@@ -809,6 +959,9 @@ The project includes MCP (Model Context Protocol) **client configuration** in `.
 - **slack**: Slack integration for notifications (`@modelcontextprotocol/server-slack`)
 - **chrome-devtools**: Chrome DevTools Protocol integration (`chrome-devtools-mcp`)
 - **sequential-thinking**: Structured problem solving (`@modelcontextprotocol/server-sequential-thinking`)
+- **serena (optional)**: Semantic code navigation/editing via LSP (`oraios/serena` MCP server)
+
+See `.claude/docs/SERENA_INTEGRATION.md` for enabling Serena and recommended contexts (`claude-code`, `ide`, `codex`).
 
 These servers are launched by Claude Code when needed - you don't need to run them manually. The configuration is optional and can be customized or removed if not needed.
 
@@ -816,7 +969,7 @@ These servers are launched by Claude Code when needed - you don't need to run th
 
 ### Core Requirements (Required)
 
-- **Claude Code**, **Cursor IDE**, or **Factory Droid** - One of these platforms is required for the configuration to work
+- **Claude Code** (recommended) or **Cursor IDE** - One of these platforms is required for the configuration to work
 - **Git 2.30+** - For version control (if using git-based workflows)
 
 ### Optional Requirements (For CLI Tools & Validation)

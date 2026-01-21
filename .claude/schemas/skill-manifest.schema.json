@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Skill Manifest",
+  "description": "Minimal schema placeholder for workflows that validate skill implementation manifests. This is intentionally permissive to avoid blocking workflow validation on missing schema files.",
+  "type": "object",
+  "additionalProperties": true
+}

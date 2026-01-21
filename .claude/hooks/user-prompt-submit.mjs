@@ -18,14 +18,14 @@ let input;
 try {
   input = JSON.parse(readFileSync(0, 'utf-8'));
 } catch (error) {
-  console.log(JSON.stringify({ decision: 'allow' }));
+  console.log(JSON.stringify({ decision: 'approve' }));
   process.exit(0);
 }
 
 const prompt = input.prompt || '';
 
 if (!prompt) {
-  console.log(JSON.stringify({ decision: 'allow' }));
+  console.log(JSON.stringify({ decision: 'approve' }));
   process.exit(0);
 }
 
@@ -153,7 +153,7 @@ try {
 // Allow and route to orchestrator-entry
 console.log(
   JSON.stringify({
-    decision: 'allow',
+    decision: 'approve',
     route_to: 'orchestrator-entry',
   })
 );

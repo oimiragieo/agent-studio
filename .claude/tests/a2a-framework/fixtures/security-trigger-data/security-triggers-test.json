@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "examples": [
+    {
+      "text": "Implement user authentication with JWT tokens",
+      "expected_categories": ["authentication"],
+      "expected_recommended_agents": ["security-architect"]
+    },
+    {
+      "text": "Add RBAC authorization checks and input validation",
+      "expected_categories": ["authorization", "input-validation"],
+      "expected_recommended_agents": ["security-architect"]
+    }
+  ]
+}

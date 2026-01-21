@@ -1,0 +1,109 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-verify-004",
+  "name": "Handle clean output (no errors/warnings)",
+  "description": "Verify that clean agent output produces PASS verdict",
+  "category": "verification-protocol",
+  "priority": "P1",
+  "tags": ["verification", "clean-output", "pass"],
+
+  "preconditions": {
+    "fixtures": [],
+    "state": {
+      "create_deliverable": {
+        "path": ".claude/context/tmp/test-verify-clean/output.mjs",
+        "content": "export function test() { return 'success'; }"
+      }
+    },
+    "environment": {}
+  },
+
+  "steps": [
+    {
+      "step_id": "create-deliverable-file",
+      "action": "verify_artifact_exists",
+      "input": {
+        "path": ".claude/context/tmp/test-verify-clean/output.mjs",
+        "create_if_missing": true,
+        "content": "export function test() { return 'success'; }"
+      },
+      "expected": {
+        "exists": true
+      },
+      "timeout_ms": 1000
+    },
+    {
+      "step_id": "invoke-with-clean-output",
+      "action": "invoke_posttooluse_hook",
+      "input": {
+        "hook": "post-delegation-verifier.mjs",
+        "tool_name": "Task",
+        "tool_input": {
+          "task_id": "test-verify-clean-001",
+          "objective": "Create test function",
+          "deliverables": [
+            {
+              "type": "file",
+              "path": ".claude/context/tmp/test-verify-clean/output.mjs",
+              "description": "Test function"
+            }
+          ]
+        },
+        "tool_result": {
+          "content": "Function created successfully. All tests passed."
+        }
+      },
+      "expected": {
+        "decision": "approve",
+        "verification_verdict": "PASS",
+        "errors": [],
+        "warnings": []
+      },
+      "timeout_ms": 5000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "no_errors",
+      "target": "steps.invoke-with-clean-output.result.errors.length",
+      "operator": "equals",
+      "expected": 0
+    },
+    {
+      "type": "no_warnings",
+      "target": "steps.invoke-with-clean-output.result.warnings.length",
+      "operator": "equals",
+      "expected": 0
+    },
+    {
+      "type": "deliverables_verified",
+      "target": "steps.invoke-with-clean-output.result.verification_steps.step3_deliverables.all_exist",
+      "operator": "equals",
+      "expected": true
+    },
+    {
+      "type": "verification_verdict",
+      "target": "steps.invoke-with-clean-output.result.verification_verdict",
+      "operator": "equals",
+      "expected": "PASS"
+    },
+    {
+      "type": "verification_passed",
+      "target": "steps.invoke-with-clean-output.result.verification_passed",
+      "operator": "equals",
+      "expected": true
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [".claude/context/tmp/test-verify-clean/output.mjs"],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["post-delegation-verifier.mjs"]
+  }
+}

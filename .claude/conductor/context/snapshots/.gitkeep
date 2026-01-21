@@ -1,0 +1,3 @@
+# State Snapshot Storage
+
+This directory stores context snapshots for Conductor-inspired state management.

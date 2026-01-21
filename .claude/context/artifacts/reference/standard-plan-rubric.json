@@ -6,7 +6,7 @@
   "dimensions": [
     {
       "name": "completeness",
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "All required information present, no gaps",
       "scoring": {
         "9-10": {
@@ -45,7 +45,7 @@
     },
     {
       "name": "feasibility",
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Plan is realistic and achievable",
       "scoring": {
         "9-10": {
@@ -84,7 +84,7 @@
     },
     {
       "name": "risk_mitigation",
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Risks identified and mitigation strategies defined",
       "scoring": {
         "9-10": {
@@ -123,7 +123,7 @@
     },
     {
       "name": "agent_coverage",
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Appropriate agents assigned to each task",
       "scoring": {
         "9-10": {
@@ -163,7 +163,7 @@
     },
     {
       "name": "integration",
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Plan integrates properly with existing systems",
       "scoring": {
         "9-10": {

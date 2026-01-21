@@ -1,0 +1,173 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-workflow-002",
+  "name": "Workflow with conditional security step",
+  "description": "Validate that conditional security step executes when triggered",
+  "category": "workflow-execution",
+  "priority": "P1",
+  "tags": ["workflow", "conditional", "security"],
+
+  "preconditions": {
+    "fixtures": ["mock-agent-responses/mock-security-response.json"],
+    "state": {},
+    "environment": {
+      "WORKFLOW_FILE": ".claude/workflows/code-review-flow.yaml",
+      "SECURITY_FOCUS": true
+    }
+  },
+
+  "steps": [
+    {
+      "step_id": "create-workflow-run-security",
+      "action": "validate_enforcement_gate",
+      "input": {
+        "runId": "test-workflow-sec-001",
+        "workflow": "code-review-flow",
+        "step": 0,
+        "planId": "plan-sec-001",
+        "task": "Code review with security focus",
+        "agents": ["planner", "code-reviewer", "developer", "security-architect", "qa"],
+        "workflow_inputs": {
+          "security_focus": true
+        }
+      },
+      "expected": {
+        "allowed": true,
+        "run_created": true
+      },
+      "timeout_ms": 5000
+    },
+    {
+      "step_id": "execute-through-step-3",
+      "action": "simulate_agent_chain",
+      "input": {
+        "agents": [
+          {
+            "type": "planner",
+            "task": "Create plan"
+          },
+          {
+            "type": "code-reviewer",
+            "task": "Analyze code"
+          },
+          {
+            "type": "developer",
+            "task": "Fix suggestions"
+          }
+        ]
+      },
+      "expected": {
+        "all_completed": true
+      },
+      "timeout_ms": 30000
+    },
+    {
+      "step_id": "check-conditional-step-3-5",
+      "action": "validate_enforcement_gate",
+      "input": {
+        "runId": "test-workflow-sec-001",
+        "workflow": "code-review-flow",
+        "step": 3.5,
+        "check_condition": "security_focus === true"
+      },
+      "expected": {
+        "allowed": true,
+        "condition_met": true,
+        "step_should_execute": true
+      },
+      "timeout_ms": 5000
+    },
+    {
+      "step_id": "execute-security-review",
+      "action": "simulate_task_delegation",
+      "input": {
+        "task_id": "test-workflow-sec-001-step-3-5",
+        "objective": "Security review of code changes",
+        "context": {
+          "problem": "Validate security of implementation",
+          "why_now": "Security focus enabled"
+        },
+        "deliverables": [
+          {
+            "type": "file",
+            "path": ".claude/context/artifacts/security-review-workflow-sec-001.json",
+            "description": "Security review results"
+          }
+        ],
+        "constraints": {
+          "max_time_minutes": 15
+        },
+        "success_criteria": ["Security review completed"],
+        "verification": {
+          "verification_type": "manual",
+          "evidence_required": true
+        },
+        "assigned_agent": "security-architect"
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 15000
+    },
+    {
+      "step_id": "inject-security-response",
+      "action": "inject_mock_response",
+      "input": {
+        "agent": "security-architect",
+        "response_fixture": "mock-security-response.json",
+        "task_id": "test-workflow-sec-001-step-3-5"
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 1000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "conditional_executed",
+      "target": "steps.check-conditional-step-3-5.result.step_should_execute",
+      "operator": "equals",
+      "expected": true
+    },
+    {
+      "type": "security_step_executed",
+      "target": "step_3_5_executed",
+      "operator": "equals",
+      "expected": true
+    },
+    {
+      "type": "artifact_exists",
+      "target": ".claude/context/artifacts/security-review-workflow-sec-001.json",
+      "operator": "exists",
+      "expected": true
+    },
+    {
+      "type": "gate_file_exists",
+      "target": "gate_files",
+      "operator": "contains",
+      "expected": "3.5-security-architect.json"
+    },
+    {
+      "type": "total_steps",
+      "target": "workflow.total_steps_executed",
+      "operator": "equals",
+      "expected": 6
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [
+      ".claude/context/artifacts/security-review-workflow-sec-001.json",
+      ".claude/context/runtime/runs/test-workflow-sec-001/"
+    ],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["agent-task-template-enforcer.mjs", "security-trigger-auto-spawn.mjs"]
+  }
+}

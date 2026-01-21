@@ -15,7 +15,7 @@ validation_required: true # Only publish artifacts with validation_status: 'pass
 <identity>
 Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they are properly versioned and distributed.
 
-**Platform Support**: This skill works across all platforms (Claude, Cursor, Factory, OpenCode) with platform-specific invocation methods but consistent metadata structure.
+**Platform Support**: This skill works across Claude (and optionally Cursor) with platform-specific invocation methods but consistent metadata structure.
 </identity>
 
 <capabilities>
@@ -138,7 +138,6 @@ Artifact Publisher - Handles the lifecycle of Claude Artifacts, ensuring they ar
 <workflow_integration>
 
 - **Post-Tool Trigger**: This skill is often invoked automatically after a `PostToolUse` hook to snapshot the results of a tool execution.
-- **Factory Droid**: Published artifacts are the primary way Factory Droids consume instructions from Claude.
 - **Publishing Policy**: The `publish_policy` in the frontmatter dictates when artifacts are automatically published:
   - `manual`: Requires explicit `publish_artifact` call.
   - `auto-on-pass`: Automatically publishes if the artifact's validation status is 'pass'.
@@ -251,18 +250,8 @@ await registerArtifact(runId, {
 - Use `@artifact-publisher` mention
 - Invoke: "Use @artifact-publisher to publish this plan"
 
-**Factory**:
-
-- Use Task tool with skill
-- Invoke: "Run Task tool with skill artifact-publisher to publish this spec"
-
-**OpenCode**:
-
-- Use file system operations
-- Invoke: "Publish artifact to .opencode/context/artifacts/published/"
-
-**Cross-Platform Metadata**:
-All platforms should use consistent metadata structure:
+**Metadata**:
+All invocations should use consistent metadata structure:
 
 ```json
 {

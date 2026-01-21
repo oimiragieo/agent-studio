@@ -1,0 +1,1111 @@
+# Conductor Integration Workflow
+# 4-phase workflow for integrating Conductor-inspired features into LLM-RULES
+# Prevents ad-hoc execution and ensures proper agent routing and enforcement
+
+name: conductor-integration-workflow
+version: 1.0.0
+description: >
+  Comprehensive 4-phase workflow for Conductor feature integration.
+  Includes project analysis, suggestion system, smart revert, tracks,
+  and full documentation. Addresses 15+ missing agent invocations from
+  previous ad-hoc execution.
+
+trigger_patterns:
+  - 'conductor integration'
+  - 'integrate conductor'
+  - 'conductor features'
+  - 'brownfield onboarding'
+  - 'project analyzer'
+
+primary_agent: orchestrator
+estimated_duration: '12 weeks'
+priority: high
+
+# Workflow-level inputs (provided at workflow start)
+workflow_inputs:
+  required:
+    - workflow_id
+  optional:
+    - target_project_path
+    - feature_flags
+
+# Security enforcement configuration
+security:
+  triggers:
+    - category: 'tool_development'
+      keywords: ['skill', 'tool', 'mjs', 'script']
+      required_agents: ['security-architect', 'code-reviewer']
+    - category: 'schema_design'
+      keywords: ['schema', 'json-schema', 'validation']
+      required_agents: ['architect', 'code-reviewer']
+    - category: 'file_operations'
+      keywords: ['snapshot', 'revert', 'restore', 'delete']
+      required_agents: ['security-architect', 'qa']
+
+# Enforcement gates configuration
+enforcement_gates:
+  plan_rating:
+    minimum_score: 7
+    max_attempts: 3
+    rubric: '.claude/context/artifacts/standard-plan-rubric.json'
+  file_location:
+    validator: 'validate-file-location'
+    rules: '.claude/rules/subagent-file-rules.md'
+  security_triggers:
+    config: '.claude/context/security-triggers-v2.json'
+    block_on_critical: true
+
+# ==============================================================================
+# PHASE 1: FOUNDATION (Weeks 1-2)
+# ==============================================================================
+
+phases:
+  - phase: 1
+    name: 'Foundation'
+    description: 'Establish directory structure, schemas, and core infrastructure'
+    duration: '2 weeks'
+
+    steps:
+      # Step 0: Planning Phase (MANDATORY for all workflows)
+      - id: 'step-0'
+        name: 'Create Integration Plan'
+        agent: 'planner'
+        description: >
+          Create comprehensive plan for Phase 1 foundation work.
+          Analyze existing conductor directory structure if any.
+          Plan schema design and skill creation sequence.
+        inputs:
+          - workflow_id: '{{workflow_id}}'
+          - plan_context: '.claude/context/artifacts/plan-conductor-integration-2026-01-15.md'
+        outputs:
+          - 'plan-{{workflow_id}}.md'
+          - 'plan-{{workflow_id}}.json'
+        validation:
+          schema: '.claude/schemas/plan.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/00-planner.json'
+        next_agents: []
+        retry_on_fail: true
+        max_retries: 2
+
+      # Step 0.1: Plan Rating Gate (MANDATORY)
+      - id: 'step-0.1'
+        name: 'Plan Rating Gate'
+        agent: 'orchestrator'
+        description: >
+          Rate plan using response-rater skill.
+          Minimum score: 7/10.
+          Return to planner if score < 7.
+        inputs:
+          - 'plan-{{workflow_id}}.json (from step 0)'
+        outputs:
+          - 'plan-{{workflow_id}}-rating.json'
+        validation:
+          schema: '.claude/schemas/plan-rating.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/00.1-rating.json'
+        enforcement_gates:
+          - 'plan_rating'
+        next_agents: []
+        blocking: true
+
+      # Step 1.1: Create Conductor Directory Structure
+      - id: 'step-1.1'
+        name: 'Create Conductor Directory Structure'
+        agent: 'developer'
+        description: >
+          Create .claude/conductor/ directory hierarchy:
+          - .claude/conductor/context/snapshots/
+          - .claude/conductor/context/suggestions/
+          - .claude/conductor/analysis/
+          - .claude/conductor/tracks/
+          Add .gitkeep files to preserve structure.
+        inputs:
+          - 'plan-{{workflow_id}}.json (from step 0)'
+        outputs:
+          - 'dev-manifest-conductor-dirs.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.1-developer.json'
+        next_agents:
+          - 'code-reviewer'
+        enforcement_gates:
+          - 'file_location'
+        retry_on_fail: true
+        max_retries: 2
+
+      # Step 1.2: Code Review for Directory Structure
+      - id: 'step-1.2'
+        name: 'Review Directory Structure'
+        agent: 'code-reviewer'
+        description: >
+          Review directory structure for:
+          - Correct paths (no nested .claude folders)
+          - Proper .gitkeep files
+          - No conflicts with existing structure
+        inputs:
+          - 'dev-manifest-conductor-dirs.json (from step 1.1)'
+        outputs:
+          - 'code-review-dirs.json'
+        validation:
+          schema: '.claude/schemas/code-review.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.2-code-reviewer.json'
+        next_agents: []
+
+      # Step 1.3: Create Foundation Schemas
+      - id: 'step-1.3'
+        name: 'Design Foundation Schemas'
+        agent: 'architect'
+        description: >
+          Design JSON Schemas for Conductor features:
+          - project-analysis.schema.json (brownfield analysis output)
+          - suggestion.schema.json (interactive suggestions)
+          - snapshot.schema.json (state snapshots)
+          - track.schema.json (track definitions)
+          Follow existing .claude/schemas/ conventions.
+        inputs:
+          - 'plan-{{workflow_id}}.json (from step 0)'
+          - 'code-review-dirs.json (from step 1.2)'
+        outputs:
+          - 'schema-design-manifest.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/generic-json.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.3-architect.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'security-architect'
+        enforcement_gates:
+          - 'security_triggers'
+        retry_on_fail: true
+        max_retries: 2
+
+      # Step 1.4: Security Review for Schemas
+      - id: 'step-1.4'
+        name: 'Security Review Schemas'
+        agent: 'security-architect'
+        description: >
+          Review schemas for security considerations:
+          - No PII exposure in schema fields
+          - Proper validation constraints
+          - Safe defaults for optional fields
+        inputs:
+          - 'schema-design-manifest.json (from step 1.3)'
+        outputs:
+          - 'security-review-schemas.json'
+        validation:
+          schema: '.claude/schemas/generic-json.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.4-security.json'
+        next_agents: []
+
+      # Step 1.5: Implement Project Analyzer Skill
+      - id: 'step-1.5'
+        name: 'Implement Project Analyzer Skill'
+        agent: 'developer'
+        description: >
+          Create .claude/skills/project-analyzer/SKILL.md and implementation:
+          - Codebase scanning logic (file types, sizes, patterns)
+          - Dependency detection (package.json, requirements.txt)
+          - Framework detection (React, Next.js, FastAPI, etc.)
+          - Component relationship mapping
+          - Generate project-summary.json and dependency-graph.json
+          Add skill to skill-integration-matrix.json.
+        inputs:
+          - 'plan-{{workflow_id}}.json (from step 0)'
+          - 'security-review-schemas.json (from step 1.4)'
+        outputs:
+          - 'dev-manifest-project-analyzer.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/skill-manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.5-developer.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'security-architect'
+          - 'qa'
+          - 'technical-writer'
+        enforcement_gates:
+          - 'file_location'
+          - 'security_triggers'
+        retry_on_fail: true
+        max_retries: 3
+
+      # Step 1.6: Review Project Analyzer Skill
+      - id: 'step-1.6'
+        name: 'Review Project Analyzer Skill'
+        agent: 'code-reviewer'
+        description: >
+          Comprehensive review of project-analyzer skill:
+          - Code quality and patterns
+          - Error handling
+          - Performance considerations
+          - Integration with existing skills
+        inputs:
+          - 'dev-manifest-project-analyzer.json (from step 1.5)'
+        outputs:
+          - 'code-review-project-analyzer.json'
+        validation:
+          schema: '.claude/schemas/code-review.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.6-code-reviewer.json'
+        next_agents: []
+
+      # Step 1.7: Security Review Project Analyzer
+      - id: 'step-1.7'
+        name: 'Security Review Project Analyzer'
+        agent: 'security-architect'
+        description: >
+          Security review of project-analyzer skill:
+          - File system access patterns
+          - No arbitrary code execution
+          - Safe handling of untrusted codebases
+          - No credential exposure
+        inputs:
+          - 'dev-manifest-project-analyzer.json (from step 1.5)'
+          - 'code-review-project-analyzer.json (from step 1.6)'
+        outputs:
+          - 'security-review-project-analyzer.json'
+        validation:
+          schema: '.claude/schemas/security-review.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.7-security.json'
+        next_agents: []
+        blocking: true
+
+      # Step 1.8: Implement Snapshot Infrastructure
+      - id: 'step-1.8'
+        name: 'Implement Snapshot Manager'
+        agent: 'developer'
+        description: >
+          Create .claude/tools/snapshot-manager.mjs:
+          - State capture (modified files, artifacts, run state)
+          - Snapshot storage in .claude/conductor/context/snapshots/
+          - Snapshot listing and retrieval
+          - Snapshot pruning (max 10 snapshots, age-based cleanup)
+          - CLI commands for snapshot management
+        inputs:
+          - 'plan-{{workflow_id}}.json (from step 0)'
+          - 'security-review-schemas.json (from step 1.4)'
+        outputs:
+          - 'dev-manifest-snapshot-manager.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.8-developer.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'security-architect'
+          - 'qa'
+        enforcement_gates:
+          - 'file_location'
+          - 'security_triggers'
+        retry_on_fail: true
+        max_retries: 3
+
+      # Step 1.9: QA Testing for Snapshot Manager
+      - id: 'step-1.9'
+        name: 'Test Snapshot Manager'
+        agent: 'qa'
+        description: >
+          Test snapshot-manager.mjs:
+          - Create snapshots of current workflow state
+          - List available snapshots with metadata
+          - Retrieve specific snapshot by ID
+          - Verify automatic pruning maintains <= 10 snapshots
+          - Edge cases: empty state, large files, binary exclusion
+        inputs:
+          - 'dev-manifest-snapshot-manager.json (from step 1.8)'
+        outputs:
+          - 'test-results-snapshot-manager.json'
+        validation:
+          schema: '.claude/schemas/test-results.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.9-qa.json'
+        next_agents: []
+
+      # Step 1.10: Create Brownfield Onboarding Workflow
+      - id: 'step-1.10'
+        name: 'Create Brownfield Onboarding Workflow'
+        agent: 'architect'
+        description: >
+          Create .claude/workflows/brownfield-onboarding.yaml:
+          - Define workflow steps: analyze -> summarize -> recommend -> snapshot
+          - Integrate project-analyzer skill invocation
+          - Add agent recommendations based on detected tech stack
+          - Add to workflow registry
+        inputs:
+          - 'plan-{{workflow_id}}.json (from step 0)'
+          - 'security-review-project-analyzer.json (from step 1.7)'
+          - 'test-results-snapshot-manager.json (from step 1.9)'
+        outputs:
+          - 'brownfield-onboarding-workflow.yaml'
+        validation:
+          schema: '.claude/schemas/workflow.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.10-architect.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'technical-writer'
+
+      # Step 1.11: Document Phase 1 Completion
+      - id: 'step-1.11'
+        name: 'Document Phase 1'
+        agent: 'technical-writer'
+        description: >
+          Create documentation for Phase 1 deliverables:
+          - Update CONDUCTOR_FEATURES.md with Phase 1 features
+          - Create PROJECT_ANALYZER_GUIDE.md
+          - Update skill-integration-matrix.json documentation
+        inputs:
+          - 'brownfield-onboarding-workflow.yaml (from step 1.10)'
+          - 'dev-manifest-project-analyzer.json (from step 1.5)'
+          - 'dev-manifest-snapshot-manager.json (from step 1.8)'
+        outputs:
+          - 'phase-1-documentation.md'
+        validation:
+          gate: '.claude/context/history/gates/{{workflow_id}}/01.11-technical-writer.json'
+        next_agents: []
+
+    quality_gates:
+      mandatory:
+        - 'All 4 schemas created and valid JSON Schema'
+        - 'project-analyzer skill detects >= 10 framework types'
+        - 'Snapshot creation time < 5 seconds'
+        - 'All security reviews passed'
+      blocking:
+        - 'Security vulnerabilities in file access'
+        - 'Schema validation failures'
+      warnings:
+        - 'Performance degradation on large codebases'
+
+  # ==============================================================================
+  # PHASE 2: USER EXPERIENCE (Weeks 3-4)
+  # ==============================================================================
+
+  - phase: 2
+    name: 'User Experience'
+    description: 'Implement suggestion system and smart revert functionality'
+    duration: '2 weeks'
+    depends_on: ['phase-1']
+
+    steps:
+      # Step 2.1: Design Suggestion System Architecture
+      - id: 'step-2.1'
+        name: 'Design Suggestion System Architecture'
+        agent: 'architect'
+        description: >
+          Design suggestion flow architecture:
+          - Suggestion types (file_edit, command, clarification, agent_switch)
+          - Queue management in .claude/conductor/context/suggestions/
+          - Priority scoring (confidence, impact)
+          - Integration points with existing 34 agents
+        inputs:
+          - 'plan-{{workflow_id}}.json (from step 0)'
+          - 'phase-1-documentation.md (from step 1.11)'
+        outputs:
+          - 'suggestion-system-architecture.json'
+        validation:
+          schema: '.claude/schemas/system_architecture.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/02.1-architect.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'security-architect'
+        enforcement_gates:
+          - 'security_triggers'
+
+      # Step 2.2: Security Review Suggestion Architecture
+      - id: 'step-2.2'
+        name: 'Security Review Suggestion Architecture'
+        agent: 'security-architect'
+        description: >
+          Review suggestion system security:
+          - No arbitrary command execution
+          - Safe file edit suggestions
+          - Proper validation before applying suggestions
+          - User confirmation requirements
+        inputs:
+          - 'suggestion-system-architecture.json (from step 2.1)'
+        outputs:
+          - 'security-review-suggestions.json'
+        validation:
+          schema: '.claude/schemas/security-review.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/02.2-security.json'
+        next_agents: []
+        blocking: true
+
+      # Step 2.3: Implement Suggestion Generator Skill
+      - id: 'step-2.3'
+        name: 'Implement Suggestion Generator Skill'
+        agent: 'developer'
+        description: >
+          Create .claude/skills/suggestion-generator/SKILL.md:
+          - Suggestion creation from agent outputs
+          - Queue management with priority sorting
+          - Suggestion presentation format
+          - CLI for suggestion management
+          - Add to skill-integration-matrix.json
+        inputs:
+          - 'suggestion-system-architecture.json (from step 2.1)'
+          - 'security-review-suggestions.json (from step 2.2)'
+        outputs:
+          - 'dev-manifest-suggestion-generator.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/02.3-developer.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'security-architect'
+          - 'qa'
+          - 'technical-writer'
+        enforcement_gates:
+          - 'file_location'
+          - 'security_triggers'
+        retry_on_fail: true
+        max_retries: 3
+
+      # Step 2.4: Implement Workflow Revert Skill
+      - id: 'step-2.4'
+        name: 'Implement Workflow Revert Skill'
+        agent: 'developer'
+        description: >
+          Create .claude/skills/workflow-revert/SKILL.md:
+          - Snapshot selection (by ID, time, description)
+          - File restoration from snapshot
+          - Artifact restoration
+          - Run state restoration
+          - Safety checks (confirmation before destructive revert)
+          - Pre-revert snapshot creation for safety
+        inputs:
+          - 'plan-{{workflow_id}}.json (from step 0)'
+          - 'dev-manifest-snapshot-manager.json (from step 1.8)'
+        outputs:
+          - 'dev-manifest-workflow-revert.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/02.4-developer.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'security-architect'
+          - 'qa'
+        enforcement_gates:
+          - 'file_location'
+          - 'security_triggers'
+        retry_on_fail: true
+        max_retries: 3
+
+      # Step 2.5: Security Review Revert Skill
+      - id: 'step-2.5'
+        name: 'Security Review Revert Skill'
+        agent: 'security-architect'
+        description: >
+          Critical security review of workflow-revert skill:
+          - File restoration safety (no arbitrary overwrites)
+          - Atomic revert (all-or-nothing)
+          - No data loss scenarios
+          - Proper rollback on failure
+        inputs:
+          - 'dev-manifest-workflow-revert.json (from step 2.4)'
+        outputs:
+          - 'security-review-revert.json'
+        validation:
+          schema: '.claude/schemas/security-review.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/02.5-security.json'
+        next_agents: []
+        blocking: true
+
+      # Step 2.6: QA Testing for Suggestion and Revert
+      - id: 'step-2.6'
+        name: 'Test Suggestion and Revert Skills'
+        agent: 'qa'
+        description: >
+          Comprehensive testing:
+          - Suggestion generation from agent outputs
+          - Priority ordering by confidence
+          - Revert to any available snapshot
+          - File restoration accuracy (byte-identical)
+          - Confirmation prompt before destructive operations
+          - Edge cases: empty snapshots, corrupted state, partial reverts
+        inputs:
+          - 'dev-manifest-suggestion-generator.json (from step 2.3)'
+          - 'dev-manifest-workflow-revert.json (from step 2.4)'
+          - 'security-review-revert.json (from step 2.5)'
+        outputs:
+          - 'test-results-phase-2.json'
+        validation:
+          schema: '.claude/schemas/test-results.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/02.6-qa.json'
+        next_agents: []
+
+      # Step 2.7: Integrate Suggestions into Agent Prompts
+      - id: 'step-2.7'
+        name: 'Integrate Suggestions into Agents'
+        agent: 'developer'
+        description: >
+          Update key agents to generate suggestions:
+          - developer: suggestions for ambiguous edits
+          - code-reviewer: fix suggestions
+          - architect: design option suggestions
+          - qa: test coverage suggestions
+          Update agent prompt templates.
+        inputs:
+          - 'dev-manifest-suggestion-generator.json (from step 2.3)'
+          - 'test-results-phase-2.json (from step 2.6)'
+        outputs:
+          - 'dev-manifest-agent-integration.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/02.7-developer.json'
+        next_agents:
+          - 'code-reviewer'
+
+      # Step 2.8: Document Phase 2
+      - id: 'step-2.8'
+        name: 'Document Phase 2'
+        agent: 'technical-writer'
+        description: >
+          Create documentation for Phase 2:
+          - SUGGESTIONS_GUIDE.md
+          - SMART_REVERT_GUIDE.md
+          - Update CONDUCTOR_FEATURES.md
+        inputs:
+          - 'dev-manifest-suggestion-generator.json (from step 2.3)'
+          - 'dev-manifest-workflow-revert.json (from step 2.4)'
+          - 'test-results-phase-2.json (from step 2.6)'
+        outputs:
+          - 'phase-2-documentation.md'
+        validation:
+          gate: '.claude/context/history/gates/{{workflow_id}}/02.8-technical-writer.json'
+        next_agents: []
+
+    quality_gates:
+      mandatory:
+        - 'Suggestion acceptance rate >= 70% in tests'
+        - 'Revert success rate 100%'
+        - 'Revert time < 10 seconds'
+        - '4 key agents generate suggestions'
+      blocking:
+        - 'Data loss during revert'
+        - 'Security vulnerabilities in file operations'
+      warnings:
+        - 'Low-quality suggestion generation'
+
+  # ==============================================================================
+  # PHASE 3: ORGANIZATION (Weeks 5-8)
+  # ==============================================================================
+
+  - phase: 3
+    name: 'Organization'
+    description: 'Implement track-based organization and state management'
+    duration: '4 weeks'
+    depends_on: ['phase-2']
+
+    steps:
+      # Step 3.1: Design Track System Architecture
+      - id: 'step-3.1'
+        name: 'Design Track System Architecture'
+        agent: 'architect'
+        description: >
+          Design track system:
+          - Track lifecycle (create, activate, suspend, complete, archive)
+          - Context isolation between tracks
+          - Track-to-workflow mapping
+          - Track switching behavior
+          - Integration with existing workflows
+        inputs:
+          - 'plan-{{workflow_id}}.json (from step 0)'
+          - 'phase-2-documentation.md (from step 2.8)'
+        outputs:
+          - 'track-system-architecture.json'
+        validation:
+          schema: '.claude/schemas/system_architecture.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/03.1-architect.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'security-architect'
+
+      # Step 3.2: Implement Track Manager Skill
+      - id: 'step-3.2'
+        name: 'Implement Track Manager Skill'
+        agent: 'developer'
+        description: >
+          Create .claude/skills/track-manager/SKILL.md:
+          - Track creation with isolated context
+          - Track activation (load context, set active)
+          - Track suspension (save context, clear active)
+          - Track completion (archive context, mark done)
+          - Track listing and status
+          - Create .claude/conductor/tracks/track-registry.json
+          - CLI for track management
+        inputs:
+          - 'track-system-architecture.json (from step 3.1)'
+        outputs:
+          - 'dev-manifest-track-manager.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/03.2-developer.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'security-architect'
+          - 'qa'
+        enforcement_gates:
+          - 'file_location'
+          - 'security_triggers'
+        retry_on_fail: true
+        max_retries: 3
+
+      # Step 3.3: Implement State Resumption
+      - id: 'step-3.3'
+        name: 'Implement State Resumption'
+        agent: 'developer'
+        description: >
+          Create session recovery infrastructure:
+          - Session state persistence (beyond snapshots)
+          - Auto-save on workflow step completion
+          - Session recovery detection (interrupted sessions)
+          - Recovery prompt (resume vs start fresh)
+          - State reconstruction from last checkpoint
+          - Integration with run-manager.mjs
+        inputs:
+          - 'dev-manifest-snapshot-manager.json (from step 1.8)'
+          - 'dev-manifest-track-manager.json (from step 3.2)'
+        outputs:
+          - 'dev-manifest-session-recovery.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/03.3-developer.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'qa'
+        retry_on_fail: true
+        max_retries: 2
+
+      # Step 3.4: Security Review Track and Recovery
+      - id: 'step-3.4'
+        name: 'Security Review Track and Recovery Systems'
+        agent: 'security-architect'
+        description: >
+          Review track and recovery security:
+          - Context isolation (no leakage between tracks)
+          - Session state security
+          - Recovery state validation
+          - No unauthorized context access
+        inputs:
+          - 'dev-manifest-track-manager.json (from step 3.2)'
+          - 'dev-manifest-session-recovery.json (from step 3.3)'
+        outputs:
+          - 'security-review-phase-3.json'
+        validation:
+          schema: '.claude/schemas/security-review.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/03.4-security.json'
+        next_agents: []
+        blocking: true
+
+      # Step 3.5: QA Testing for Tracks and Recovery
+      - id: 'step-3.5'
+        name: 'Test Tracks and Recovery'
+        agent: 'qa'
+        description: >
+          Comprehensive testing:
+          - Track creation, activation, suspension, completion
+          - Context isolation between tracks
+          - Session recovery after simulated interruption
+          - Track switch time < 3 seconds
+          - State recovery rate >= 95%
+        inputs:
+          - 'dev-manifest-track-manager.json (from step 3.2)'
+          - 'dev-manifest-session-recovery.json (from step 3.3)'
+          - 'security-review-phase-3.json (from step 3.4)'
+        outputs:
+          - 'test-results-phase-3.json'
+        validation:
+          schema: '.claude/schemas/test-results.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/03.5-qa.json'
+        next_agents: []
+
+      # Step 3.6: Track-Based Workflow Routing
+      - id: 'step-3.6'
+        name: 'Implement Track-Based Workflow Routing'
+        agent: 'architect'
+        description: >
+          Update orchestration for track awareness:
+          - Track-aware workflow selection
+          - Automatic track suggestion based on task type
+          - Update master-orchestrator with track awareness
+          - Add track context to workflow execution
+        inputs:
+          - 'dev-manifest-track-manager.json (from step 3.2)'
+          - 'test-results-phase-3.json (from step 3.5)'
+        outputs:
+          - 'track-workflow-routing.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/generic-json.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/03.6-architect.json'
+        next_agents:
+          - 'code-reviewer'
+
+      # Step 3.7: Document Phase 3
+      - id: 'step-3.7'
+        name: 'Document Phase 3'
+        agent: 'technical-writer'
+        description: >
+          Create documentation for Phase 3:
+          - TRACKS_GUIDE.md
+          - Session recovery documentation
+          - Update CONDUCTOR_FEATURES.md
+        inputs:
+          - 'dev-manifest-track-manager.json (from step 3.2)'
+          - 'dev-manifest-session-recovery.json (from step 3.3)'
+          - 'test-results-phase-3.json (from step 3.5)'
+        outputs:
+          - 'phase-3-documentation.md'
+        validation:
+          gate: '.claude/context/history/gates/{{workflow_id}}/03.7-technical-writer.json'
+        next_agents: []
+
+    quality_gates:
+      mandatory:
+        - 'Track switch time < 3 seconds'
+        - 'State recovery rate >= 95%'
+        - 'No context leakage between tracks'
+        - 'Orchestrator integrates with tracks'
+      blocking:
+        - 'Context leakage between tracks'
+        - 'Corrupted state causes recovery failure'
+      warnings:
+        - 'Track complexity concerns'
+
+  # ==============================================================================
+  # PHASE 4: POLISH (Weeks 9-12)
+  # ==============================================================================
+
+  - phase: 4
+    name: 'Polish'
+    description: 'Documentation, tooling, telemetry, and final review'
+    duration: '4 weeks'
+    depends_on: ['phase-3']
+
+    steps:
+      # Step 4.1: Create Feature Documentation
+      - id: 'step-4.1'
+        name: 'Create Comprehensive Documentation'
+        agent: 'technical-writer'
+        description: >
+          Create complete documentation:
+          - CONDUCTOR_FEATURES.md (full user guide)
+          - PROJECT_ANALYZER_GUIDE.md (brownfield onboarding)
+          - SUGGESTIONS_GUIDE.md (interactive Q&A)
+          - SMART_REVERT_GUIDE.md (revert functionality)
+          - TRACKS_GUIDE.md (track organization)
+          - Update CLAUDE.md with Conductor summary
+          - Update WORKFLOW-GUIDE.md with new workflows
+        inputs:
+          - 'phase-1-documentation.md (from step 1.11)'
+          - 'phase-2-documentation.md (from step 2.8)'
+          - 'phase-3-documentation.md (from step 3.7)'
+        outputs:
+          - 'conductor-documentation-complete.md'
+          - 'code-artifacts'
+        validation:
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.1-technical-writer.json'
+        next_agents:
+          - 'code-reviewer'
+        retry_on_fail: true
+        max_retries: 2
+
+      # Step 4.2: Build Management Tooling
+      - id: 'step-4.2'
+        name: 'Build Management Tooling'
+        agent: 'developer'
+        description: >
+          Create management tools:
+          - .claude/tools/conductor-status.mjs (dashboard tool)
+          - Feature toggle management
+          - Snapshot cleanup utility
+          - Track cleanup utility
+          - Health check for Conductor features
+        inputs:
+          - 'phase-3-documentation.md (from step 3.7)'
+        outputs:
+          - 'dev-manifest-conductor-tooling.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.2-developer.json'
+        next_agents:
+          - 'code-reviewer'
+          - 'qa'
+        enforcement_gates:
+          - 'file_location'
+
+      # Step 4.3: Implement Telemetry
+      - id: 'step-4.3'
+        name: 'Implement Telemetry'
+        agent: 'developer'
+        description: >
+          Create telemetry system:
+          - .claude/tools/conductor-telemetry.mjs
+          - Feature usage tracking (opt-in, privacy-respecting)
+          - Suggestion acceptance/rejection tracking
+          - Revert usage tracking
+          - Track usage tracking
+          - Telemetry dashboard
+        inputs:
+          - 'dev-manifest-conductor-tooling.json (from step 4.2)'
+        outputs:
+          - 'dev-manifest-telemetry.json'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.3-developer.json'
+        next_agents:
+          - 'security-architect'
+          - 'code-reviewer'
+        enforcement_gates:
+          - 'security_triggers'
+
+      # Step 4.4: Security Review Telemetry
+      - id: 'step-4.4'
+        name: 'Security Review Telemetry'
+        agent: 'security-architect'
+        description: >
+          Review telemetry security:
+          - No PII collection
+          - Opt-in only enforcement
+          - Data retention policies
+          - No external data transmission without consent
+        inputs:
+          - 'dev-manifest-telemetry.json (from step 4.3)'
+        outputs:
+          - 'security-review-telemetry.json'
+        validation:
+          schema: '.claude/schemas/security-review.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.4-security.json'
+        next_agents: []
+        blocking: true
+
+      # Step 4.5: Integration Testing
+      - id: 'step-4.5'
+        name: 'Comprehensive Integration Testing'
+        agent: 'qa'
+        description: >
+          Full integration test suite:
+          - Test project-analyzer on 20+ diverse codebases
+          - Test suggestion flow end-to-end
+          - Test revert in various scenarios
+          - Test track isolation and switching
+          - Test state recovery after simulated interruptions
+          - Performance testing for all features
+        inputs:
+          - 'conductor-documentation-complete.md (from step 4.1)'
+          - 'dev-manifest-conductor-tooling.json (from step 4.2)'
+          - 'security-review-telemetry.json (from step 4.4)'
+        outputs:
+          - 'integration-test-results.json'
+        validation:
+          schema: '.claude/schemas/generic-json.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.5-qa.json'
+        next_agents:
+          - 'performance-engineer'
+        retry_on_fail: true
+        max_retries: 2
+
+      # Step 4.6: Performance Optimization
+      - id: 'step-4.6'
+        name: 'Performance Optimization'
+        agent: 'performance-engineer'
+        description: >
+          Optimize all Conductor features:
+          - Profile all features
+          - Identify performance bottlenecks
+          - Optimize snapshot creation/restoration
+          - Optimize project analysis scanning
+          - Optimize suggestion generation
+          - Optimize track switching
+        inputs:
+          - 'integration-test-results.json (from step 4.5)'
+        outputs:
+          - 'performance-optimization-report.json'
+        validation:
+          schema: '.claude/schemas/performance-optimization-analysis.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.6-performance.json'
+        next_agents:
+          - 'developer'
+
+      # Step 4.7: Apply Performance Fixes
+      - id: 'step-4.7'
+        name: 'Apply Performance Fixes'
+        agent: 'developer'
+        condition: 'performance-optimization-report.json:issues_found == true'
+        description: >
+          Apply performance optimizations identified by performance-engineer.
+          Re-run performance tests after fixes.
+        inputs:
+          - 'performance-optimization-report.json (from step 4.6)'
+        outputs:
+          - 'dev-manifest-performance-fixes.json (optional)'
+          - 'code-artifacts'
+        validation:
+          schema: '.claude/schemas/artifact_manifest.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.7-developer.json'
+        next_agents:
+          - 'qa'
+
+      # Step 4.8: Final Review
+      - id: 'step-4.8'
+        name: 'Final Architecture Review'
+        agent: 'architect'
+        description: >
+          Final architecture review:
+          - Verify all components integrate correctly
+          - Review all documentation for accuracy
+          - Validate feature flag configuration
+          - Approve rollout strategy
+        inputs:
+          - 'integration-test-results.json (from step 4.5)'
+          - 'performance-optimization-report.json (from step 4.6)'
+          - 'conductor-documentation-complete.md (from step 4.1)'
+        outputs:
+          - 'final-architecture-review.json'
+        validation:
+          schema: '.claude/schemas/architecture-review.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.8-architect.json'
+        next_agents:
+          - 'pm'
+        blocking: true
+
+      # Step 4.9: PM Sign-off
+      - id: 'step-4.9'
+        name: 'PM Review and Sign-off'
+        agent: 'pm'
+        description: >
+          PM final review:
+          - Verify all requirements addressed
+          - Review user-facing documentation
+          - Approve release notes
+          - Sign off on rollout plan
+        inputs:
+          - 'final-architecture-review.json (from step 4.8)'
+          - 'conductor-documentation-complete.md (from step 4.1)'
+        outputs:
+          - 'pm-signoff.json'
+        validation:
+          schema: '.claude/schemas/generic-json.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.9-pm.json'
+        next_agents: []
+        blocking: true
+
+      # Step 4.10: Create Release Artifacts
+      - id: 'step-4.10'
+        name: 'Create Release Artifacts'
+        agent: 'devops'
+        description: >
+          Prepare release:
+          - Create release notes
+          - Configure feature flags for gradual rollout
+          - Update CHANGELOG.md
+          - Prepare merge to main branch
+        inputs:
+          - 'pm-signoff.json (from step 4.9)'
+          - 'conductor-documentation-complete.md (from step 4.1)'
+        outputs:
+          - 'release-artifacts.json'
+          - 'CHANGELOG-update.md'
+        validation:
+          schema: '.claude/schemas/generic-json.schema.json'
+          gate: '.claude/context/history/gates/{{workflow_id}}/04.10-devops.json'
+        next_agents: []
+
+    quality_gates:
+      mandatory:
+        - 'Documentation 100% complete'
+        - 'Test pass rate >= 95%'
+        - 'All performance targets met'
+        - 'Architecture and PM sign-off'
+      blocking:
+        - 'Critical security issues'
+        - 'Test failures > 5%'
+        - 'Performance regression'
+      warnings:
+        - 'Minor documentation gaps'
+
+# ==============================================================================
+# WORKFLOW METADATA
+# ==============================================================================
+
+rollback_strategy:
+  on_failure: 'Revert to last successful phase, restore from snapshots'
+  cleanup: 'Remove temporary artifacts, restore backups'
+  escalation: 'Escalate to human review after 3 failed attempts'
+
+success_criteria:
+  - 'All 4 phases completed successfully'
+  - 'All quality gates passed'
+  - 'All security reviews approved'
+  - 'PM sign-off obtained'
+  - 'Documentation 100% complete'
+  - 'Integration tests >= 95% pass rate'
+  - 'No performance regression'
+
+success_metrics:
+  phase_1:
+    - metric: 'Brownfield analysis accuracy'
+      target: '>= 90%'
+      measurement: 'Test on 20+ codebases'
+    - metric: 'Snapshot creation time'
+      target: '< 5 seconds'
+      measurement: 'Automated benchmark'
+  phase_2:
+    - metric: 'Suggestion acceptance rate'
+      target: '>= 70%'
+      measurement: 'Telemetry tracking'
+    - metric: 'Revert success rate'
+      target: '100%'
+      measurement: 'Integration tests'
+  phase_3:
+    - metric: 'Track switch time'
+      target: '< 3 seconds'
+      measurement: 'Automated benchmark'
+    - metric: 'State recovery rate'
+      target: '>= 95%'
+      measurement: 'Integration tests'
+  phase_4:
+    - metric: 'Test pass rate'
+      target: '>= 95%'
+      measurement: 'Test suite'
+    - metric: 'Documentation coverage'
+      target: '100%'
+      measurement: 'Manual review'
+
+# Agent usage summary
+agents_required:
+  - agent: 'planner'
+    phases: [1]
+    responsibility: 'Create integration plan'
+  - agent: 'architect'
+    phases: [1, 2, 3, 4]
+    responsibility: 'Architecture design, schema design, reviews'
+  - agent: 'developer'
+    phases: [1, 2, 3, 4]
+    responsibility: 'Implementation of skills, tools, infrastructure'
+  - agent: 'code-reviewer'
+    phases: [1, 2, 3, 4]
+    responsibility: 'Code review for all implementations'
+  - agent: 'security-architect'
+    phases: [1, 2, 3, 4]
+    responsibility: 'Security review for all components'
+  - agent: 'qa'
+    phases: [1, 2, 3, 4]
+    responsibility: 'Testing and validation'
+  - agent: 'technical-writer'
+    phases: [1, 2, 3, 4]
+    responsibility: 'Documentation creation'
+  - agent: 'performance-engineer'
+    phases: [4]
+    responsibility: 'Performance optimization'
+  - agent: 'pm'
+    phases: [4]
+    responsibility: 'Final review and sign-off'
+  - agent: 'devops'
+    phases: [4]
+    responsibility: 'Release preparation'

@@ -58,6 +58,64 @@ See `.claude/docs/HOOK_RECURSION_PREVENTION.md` for details.
 
 ## Available Hooks
 
+### run-observer.mjs (PreToolUse/PostToolUse) - **Session Observability**
+
+Creates durable progress state for long-running agent workflows:
+
+- Writes `.claude/context/runtime/runs/<runId>/state.json` (heartbeat, current agent/activity, errors)
+- Appends `.claude/context/runtime/runs/<runId>/events.ndjson` (event log)
+- Writes `.claude/context/artifacts/tool-events/run-<runId>.ndjson` (easy-grep tool event stream)
+- Enables `node .claude/tools/workflow-dashboard.mjs --watch` and `node .claude/tools/session-recovery.mjs detect`
+
+Trace/span fields (OTel/W3C compatible, backward compatible with existing events):
+
+- Every event includes `trace_id`, `span_id`, `parent_span_id`, `traceparent`, plus normalized `span_kind` and `event_type`.
+- `pre`/`post` tool events share the same `span_id` for easy span reconstruction.
+
+Optional deep-debug outputs (disabled unless enabled via env):
+
+- `CLAUDE_OBS_STORE_PAYLOADS=1`: on `PostToolUse`, store sanitized tool inputs/outputs under `.claude/context/payloads/` and link from the event via `event.payload.payload_ref`.
+- `CLAUDE_OBS_FAILURE_BUNDLES=1`: on tool failures, emit a trace-linked bundle JSON under `.claude/context/artifacts/failure-bundles/`.
+
+Subagent attribution hardening:
+
+- Tracks `Task`→`SubagentStart` mappings in `state.json` (`pending_subagents`) and restores parents via `subagent_parent_stack`.
+- Drops stale pending entries after ~3 minutes (override via `CLAUDE_PENDING_SUBAGENT_TTL_MS`).
+- Emits metrics in `state.json` under `metrics`: `pending_subagents_max`, `subagent_parent_stack_max`, `pending_subagents_stale_dropped`.
+
+### read-only-enforcer.mjs (PreToolUse) - **Optional Read-Only Mode**
+
+Provides a single safety switch to prevent repo mutations during audits/diagnostics:
+
+- Blocks `Write`/`Edit` when enabled
+- Blocks mutating `Bash` commands (git commit/push, installs, rm/mv/cp, redirects)
+
+Enable:
+
+- File: `.claude/context/tmp/read-only.json` (`{ "enabled": true }`)
+- Env: `CLAUDE_READ_ONLY=true`
+
+Helper tool: `node .claude/tools/read-only.mjs enable|disable|status`
+
+### router-first-enforcer.mjs (PreToolUse) - **Router-First Enforcement + Handoff**
+
+Enforces that all work is routed before any non-router tool use proceeds, and (when applicable) requires a handoff to the router-selected `escalation_target`.
+
+Docs:
+
+- `.claude/docs/ROUTER_FIRST_ENFORCEMENT_GUIDE.md`
+
+### router-glob-guard.mjs (PreToolUse) - **OOM Prevention During Routing**
+
+During routing, blocks non-`.claude/`-scoped `Glob` patterns to prevent extremely large tool outputs (which can spike memory and crash Claude Code).
+
+Allows during routing:
+
+- `.claude/workflows/*.yaml`
+- `.claude/agents/*.md`
+
+Once routing completes, normal Glob behavior resumes (other guards may still apply).
+
 ### orchestrator-enforcement-hook.mjs (PreToolUse/PostToolUse) - **Phase 1 Enforcement**
 
 **NEW**: Enforces orchestrator delegation rules by blocking direct implementation work.
@@ -187,6 +245,75 @@ Logs tool executions for audit trail:
 
 **Performance**: ~9ms execution time (76% faster than bash version)
 
+---
+
+### post-task-output-retriever.mjs (PostToolUse) - **NEW: Orchestration Visibility**
+
+**Purpose**: Automatically retrieves and displays agent outputs after Task tool completes. Solves the "black box" problem where users don't see what agents produced.
+
+**Features**:
+
+- Intercepts Task tool completion via PostToolUse hook
+- Retrieves agent output from Task results
+- Scans for newly created artifacts (last 60 seconds)
+- Displays formatted summary with file paths, sizes, timestamps
+- Shows first 1000 characters of agent output
+
+**Triggered By**: Task tool (agent delegation)
+
+**Output Example**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  🔍 POST-TASK OUTPUT RETRIEVAL                              │
+└─────────────────────────────────────────────────────────────┘
+
+Agent Type: developer
+Description: Implement skill conversion
+Agent ID: a14493c
+
+📁 Scanning for artifacts created by agent...
+
+✓ Found 3 artifact(s):
+  📄 .claude/skills/ralph-wiggum/SKILL.md (12.5 KB)
+  📄 .claude/templates/ralph-wiggum-task.json (3.2 KB)
+  📄 plan-ralph-wiggum-2026-01-16.md (8.1 KB)
+```
+
+**Configuration**:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/post-task-output-retriever.mjs"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Testing**: Run `node .claude/hooks/post-task-output-retriever.mjs` (shows recent artifacts)
+
+**Performance**: ~100ms execution time (artifact scanning + summary generation)
+
+**Priority**: 50 (runs after Task but before other PostToolUse hooks)
+
+**Research Patterns Applied**:
+
+- **CrewAI**: Real-time output display, session artifact tracking
+- **AutoGen**: Conversation transparency, agent output visibility
+- **LangChain**: Callback-based result retrieval
+
+---
+
 ## Installation
 
 Register these hooks in Claude Code:
@@ -248,7 +375,7 @@ Add to your Claude Code configuration:
 ### Output (PreToolUse only)
 
 ```json
-{"decision": "allow"}
+{"decision": "approve"}
 // or
 {"decision": "block", "reason": "Explanation for blocking"}
 ```
@@ -300,7 +427,7 @@ echo '{"tool":"Bash","tool_input":{"command":"rm -rf /"}}' | node .claude/hooks/
 
 # Test security hook - should allow
 echo '{"tool":"Bash","tool_input":{"command":"git status"}}' | node .claude/hooks/security-pre-tool.mjs
-# Expected: {"decision": "allow"}
+# Expected: {"decision": "approve"}
 
 # Test audit hook
 echo '{"tool":"Bash","tool_input":{"command":"npm test"}}' | node .claude/hooks/audit-post-tool.mjs

@@ -66,6 +66,14 @@
         "type": "string"
       },
       "description": "List of missing inputs required for workflow execution (e.g., 'auth_provider', 'database_type', 'deployment_target')"
+    },
+    "should_escalate": {
+      "type": "boolean",
+      "description": "Whether the router is requesting a forced handoff to a specific agent (used by router-first enforcement)"
+    },
+    "escalation_target": {
+      "type": ["string", "null"],
+      "description": "Agent name to hand off execution to when should_escalate is true (e.g., 'diagnostics-runner')"
     }
   }
 }

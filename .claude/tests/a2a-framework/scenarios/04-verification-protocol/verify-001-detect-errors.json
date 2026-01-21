@@ -1,0 +1,76 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-verify-001",
+  "name": "Detect errors in agent output",
+  "description": "Verify that post-delegation hook detects error keywords in output",
+  "category": "verification-protocol",
+  "priority": "P0",
+  "tags": ["verification", "errors", "post-delegation"],
+
+  "preconditions": {
+    "fixtures": [],
+    "state": {},
+    "environment": {}
+  },
+
+  "steps": [
+    {
+      "step_id": "invoke-with-error-output",
+      "action": "invoke_posttooluse_hook",
+      "input": {
+        "hook": "post-delegation-verifier.mjs",
+        "tool_name": "Task",
+        "tool_input": {
+          "task_id": "test-verify-error-001",
+          "objective": "Compile TypeScript code"
+        },
+        "tool_result": {
+          "content": "Attempted to create file but error: failed to compile the TypeScript. Syntax error on line 42."
+        }
+      },
+      "expected": {
+        "decision": "approve",
+        "verification_verdict": "FAIL"
+      },
+      "timeout_ms": 5000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "hook_decision",
+      "target": "steps.invoke-with-error-output.result.decision",
+      "operator": "equals",
+      "expected": "approve"
+    },
+    {
+      "type": "errors_detected",
+      "target": "steps.invoke-with-error-output.result.verification_steps.step1_errors.found.length",
+      "operator": "greater_than",
+      "expected": 0
+    },
+    {
+      "type": "verification_verdict",
+      "target": "steps.invoke-with-error-output.result.verification_verdict",
+      "operator": "matches",
+      "expected": "FAIL|CONCERNS"
+    },
+    {
+      "type": "error_details",
+      "target": "steps.invoke-with-error-output.result.errors",
+      "operator": "contains",
+      "expected": "\"error\""
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["post-delegation-verifier.mjs"]
+  }
+}

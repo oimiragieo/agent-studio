@@ -1,0 +1,169 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-chain-004",
+  "name": "Chain with security agent auto-injection",
+  "description": "Validate that security-architect is automatically suggested when security keywords detected",
+  "category": "agent-chain",
+  "priority": "P1",
+  "tags": ["chain", "security", "auto-spawn", "authentication"],
+
+  "preconditions": {
+    "fixtures": [
+      "mock-agent-responses/mock-developer-response.json",
+      "mock-agent-responses/mock-security-response.json"
+    ],
+    "state": {},
+    "environment": {}
+  },
+
+  "steps": [
+    {
+      "step_id": "delegate-developer-auth",
+      "action": "simulate_task_delegation",
+      "input": {
+        "task_id": "test-chain-004-dev",
+        "objective": "Implement user authentication with JWT tokens",
+        "context": {
+          "problem": "Need secure authentication system",
+          "why_now": "Core security feature",
+          "related_files": []
+        },
+        "deliverables": [
+          {
+            "type": "file",
+            "path": ".claude/context/tmp/test-chain-004/auth-service.mjs",
+            "description": "Authentication service implementation"
+          }
+        ],
+        "constraints": {
+          "max_time_minutes": 20
+        },
+        "success_criteria": ["JWT authentication implemented", "Security best practices followed"],
+        "verification": {
+          "verification_type": "static",
+          "evidence_required": true
+        },
+        "assigned_agent": "developer"
+      },
+      "expected": {
+        "decision": "approve",
+        "outputs": [".claude/context/tmp/test-chain-004/auth-service.mjs"]
+      },
+      "timeout_ms": 20000
+    },
+    {
+      "step_id": "check-security-trigger",
+      "action": "invoke_pretooluse_hook",
+      "input": {
+        "hook": "security-trigger-auto-spawn.mjs",
+        "tool_name": "Task",
+        "tool_input": {
+          "task_id": "test-chain-004-dev",
+          "objective": "Implement user authentication with JWT tokens"
+        }
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 5000
+    },
+    {
+      "step_id": "inject-developer-response",
+      "action": "inject_mock_response",
+      "input": {
+        "agent": "developer",
+        "response_fixture": "mock-developer-response.json",
+        "task_id": "test-chain-004-dev"
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 1000
+    },
+    {
+      "step_id": "delegate-security-architect",
+      "action": "simulate_task_delegation",
+      "input": {
+        "task_id": "test-chain-004-sec",
+        "objective": "Security review of authentication implementation",
+        "context": {
+          "problem": "Validate security of authentication system",
+          "why_now": "Security-critical feature",
+          "related_files": [".claude/context/tmp/test-chain-004/auth-service.mjs"]
+        },
+        "deliverables": [
+          {
+            "type": "file",
+            "path": ".claude/context/tmp/test-chain-004/security-review.json",
+            "description": "Security audit results"
+          }
+        ],
+        "constraints": {
+          "max_time_minutes": 15
+        },
+        "success_criteria": [
+          "Security audit completed",
+          "Vulnerabilities identified if any",
+          "Recommendations provided"
+        ],
+        "verification": {
+          "verification_type": "manual",
+          "evidence_required": true
+        },
+        "assigned_agent": "security-architect"
+      },
+      "expected": {
+        "decision": "approve",
+        "outputs": [".claude/context/tmp/test-chain-004/security-review.json"]
+      },
+      "timeout_ms": 15000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "hook_decision",
+      "target": "steps.check-security-trigger.result.decision",
+      "operator": "equals",
+      "expected": "approve"
+    },
+    {
+      "type": "security_trigger_detected",
+      "target": "steps.check-security-trigger.result.metadata.security_triggers_detected",
+      "operator": "greater_than",
+      "expected": 0
+    },
+    {
+      "type": "security_agent_recommended",
+      "target": "steps.check-security-trigger.result.metadata.recommended_agents",
+      "operator": "contains",
+      "expected": "security-architect"
+    },
+    {
+      "type": "security_review_completed",
+      "target": "steps.delegate-security-architect.result.decision",
+      "operator": "equals",
+      "expected": "approve"
+    },
+    {
+      "type": "artifact_exists",
+      "target": ".claude/context/tmp/test-chain-004/security-review.json",
+      "operator": "exists",
+      "expected": true
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [
+      ".claude/context/tmp/test-chain-004/auth-service.mjs",
+      ".claude/context/tmp/test-chain-004/security-review.json"
+    ],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["security-trigger-auto-spawn.mjs", "agent-task-template-enforcer.mjs"]
+  }
+}

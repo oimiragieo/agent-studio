@@ -1,0 +1,63 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-template-003",
+  "name": "Block invalid JSON syntax",
+  "description": "Verify that malformed JSON is blocked with helpful error",
+  "category": "template-enforcement",
+  "priority": "P0",
+  "tags": ["hook", "blocking", "template", "invalid-json"],
+
+  "preconditions": {
+    "fixtures": ["sample-task-inputs/invalid-json-task.txt"],
+    "state": {},
+    "environment": {}
+  },
+
+  "steps": [
+    {
+      "step_id": "invoke-with-invalid-json",
+      "action": "invoke_pretooluse_hook",
+      "input": {
+        "hook": "agent-task-template-enforcer.mjs",
+        "tool_name": "Task",
+        "tool_input_raw": "{\n  \"task_id\": \"test-invalid-001\",\n  \"objective\": \"Create something\",\n}"
+      },
+      "expected": {
+        "decision": "block"
+      },
+      "timeout_ms": 5000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "hook_decision",
+      "target": "steps.invoke-with-invalid-json.result.decision",
+      "operator": "equals",
+      "expected": "block"
+    },
+    {
+      "type": "hook_output",
+      "target": "steps.invoke-with-invalid-json.result.reason",
+      "operator": "matches",
+      "expected": "not valid JSON|Invalid JSON"
+    },
+    {
+      "type": "helpful_error",
+      "target": "steps.invoke-with-invalid-json.result.reason",
+      "operator": "contains",
+      "expected": "valid JSON"
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["agent-task-template-enforcer.mjs"]
+  }
+}

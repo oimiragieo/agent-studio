@@ -1,0 +1,241 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-chain-002",
+  "name": "3-agent chain: architect -> developer -> qa",
+  "description": "Validate architect to developer to qa chain with proper artifact flow",
+  "category": "agent-chain",
+  "priority": "P0",
+  "tags": ["chain", "artifact-flow", "architect", "developer", "qa"],
+
+  "preconditions": {
+    "fixtures": [
+      "mock-agent-responses/mock-architect-response.json",
+      "mock-agent-responses/mock-developer-response.json",
+      "mock-agent-responses/mock-qa-response.json"
+    ],
+    "state": {},
+    "environment": {}
+  },
+
+  "steps": [
+    {
+      "step_id": "delegate-architect",
+      "action": "simulate_task_delegation",
+      "input": {
+        "task_id": "test-chain-002-arch",
+        "objective": "Design a user authentication module",
+        "reasoning_style": "step-by-step",
+        "mode": "execute",
+        "context": {
+          "problem": "Need secure authentication design",
+          "why_now": "Foundation for implementation",
+          "related_files": []
+        },
+        "deliverables": [
+          {
+            "type": "file",
+            "path": ".claude/context/tmp/test-chain-002/design.md",
+            "description": "Architecture design document",
+            "format": "markdown",
+            "validation": "Design document with components, data flow, security considerations"
+          }
+        ],
+        "constraints": {
+          "max_time_minutes": 15,
+          "must_validate": true
+        },
+        "success_criteria": [
+          "Components defined",
+          "Data flow documented",
+          "Security considerations included"
+        ],
+        "verification": {
+          "verification_type": "manual",
+          "evidence_required": true
+        },
+        "assigned_agent": "architect"
+      },
+      "expected": {
+        "decision": "approve",
+        "outputs": [".claude/context/tmp/test-chain-002/design.md"]
+      },
+      "timeout_ms": 15000
+    },
+    {
+      "step_id": "inject-architect-response",
+      "action": "inject_mock_response",
+      "input": {
+        "agent": "architect",
+        "response_fixture": "mock-architect-response.json",
+        "task_id": "test-chain-002-arch"
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 1000
+    },
+    {
+      "step_id": "delegate-developer",
+      "action": "simulate_task_delegation",
+      "input": {
+        "task_id": "test-chain-002-dev",
+        "objective": "Implement authentication module based on design",
+        "context": {
+          "problem": "Implement the designed authentication system",
+          "why_now": "Ready for implementation phase",
+          "related_files": [".claude/context/tmp/test-chain-002/design.md"]
+        },
+        "deliverables": [
+          {
+            "type": "file",
+            "path": ".claude/context/tmp/test-chain-002/implementation.mjs",
+            "description": "Authentication module implementation",
+            "format": "javascript"
+          }
+        ],
+        "constraints": {
+          "max_time_minutes": 20,
+          "must_validate": true
+        },
+        "success_criteria": [
+          "All components implemented",
+          "No syntax errors",
+          "Follows design specifications"
+        ],
+        "verification": {
+          "verification_type": "static",
+          "required_tests": [
+            {
+              "test_name": "syntax",
+              "command_or_action": "node --check implementation.mjs",
+              "expected_outcome": "No errors"
+            }
+          ],
+          "passing_criteria": {
+            "errors_allowed": 0
+          },
+          "evidence_required": true
+        },
+        "assigned_agent": "developer"
+      },
+      "expected": {
+        "decision": "approve",
+        "outputs": [".claude/context/tmp/test-chain-002/implementation.mjs"]
+      },
+      "timeout_ms": 20000
+    },
+    {
+      "step_id": "inject-developer-response",
+      "action": "inject_mock_response",
+      "input": {
+        "agent": "developer",
+        "response_fixture": "mock-developer-response.json",
+        "task_id": "test-chain-002-dev"
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 1000
+    },
+    {
+      "step_id": "delegate-qa",
+      "action": "simulate_task_delegation",
+      "input": {
+        "task_id": "test-chain-002-qa",
+        "objective": "Validate authentication module implementation",
+        "context": {
+          "problem": "Ensure implementation quality and correctness",
+          "why_now": "Final validation before merge",
+          "related_files": [
+            ".claude/context/tmp/test-chain-002/design.md",
+            ".claude/context/tmp/test-chain-002/implementation.mjs"
+          ]
+        },
+        "deliverables": [
+          {
+            "type": "file",
+            "path": ".claude/context/tmp/test-chain-002/qa-report.json",
+            "description": "QA validation results",
+            "format": "json"
+          }
+        ],
+        "constraints": {
+          "max_time_minutes": 10,
+          "must_validate": true
+        },
+        "success_criteria": ["All tests executed", "Verdict provided", "Issues documented if any"],
+        "verification": {
+          "verification_type": "automated",
+          "required_tests": [
+            {
+              "test_name": "unit-tests",
+              "command_or_action": "npm test",
+              "expected_outcome": "All pass"
+            }
+          ],
+          "passing_criteria": {
+            "tests_passed_minimum": "100%"
+          },
+          "evidence_required": true
+        },
+        "assigned_agent": "qa"
+      },
+      "expected": {
+        "decision": "approve",
+        "outputs": [".claude/context/tmp/test-chain-002/qa-report.json"]
+      },
+      "timeout_ms": 10000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "chain_complete",
+      "target": "steps",
+      "operator": "count_equals",
+      "expected": 5
+    },
+    {
+      "type": "artifact_exists",
+      "target": ".claude/context/tmp/test-chain-002/design.md",
+      "operator": "exists",
+      "expected": true
+    },
+    {
+      "type": "artifact_exists",
+      "target": ".claude/context/tmp/test-chain-002/implementation.mjs",
+      "operator": "exists",
+      "expected": true
+    },
+    {
+      "type": "artifact_exists",
+      "target": ".claude/context/tmp/test-chain-002/qa-report.json",
+      "operator": "exists",
+      "expected": true
+    },
+    {
+      "type": "artifact_chain",
+      "target": "steps.delegate-qa.input.context.related_files",
+      "operator": "includes_all",
+      "expected": [
+        ".claude/context/tmp/test-chain-002/design.md",
+        ".claude/context/tmp/test-chain-002/implementation.mjs"
+      ]
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [
+      ".claude/context/tmp/test-chain-002/design.md",
+      ".claude/context/tmp/test-chain-002/implementation.mjs",
+      ".claude/context/tmp/test-chain-002/qa-report.json"
+    ],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["agent-task-template-enforcer.mjs", "post-delegation-verifier.mjs"]
+  }
+}

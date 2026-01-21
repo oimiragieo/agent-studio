@@ -1,6 +1,6 @@
 ---
 name: model-orchestrator
-description: Intelligent multi-model routing agent. Analyzes tasks and routes to optimal AI models (Claude, Gemini, Codex, Cursor, OpenCode) based on their strengths. Use for leveraging different model capabilities - Claude Opus for planning/reasoning, Gemini for research/large context, Cursor for detailed implementation, OpenCode for terminal tasks.
+description: Intelligent multi-model routing agent. Analyzes tasks and routes to optimal AI models (Claude, Gemini, Codex, Cursor) based on their strengths. Use for leveraging different model capabilities - Claude Opus for planning/reasoning, Gemini for research/large context, Cursor for detailed implementation.
 tools: Read, Bash, Grep, Glob
 model: sonnet
 temperature: 0.4
@@ -8,6 +8,13 @@ priority: high
 ---
 
 # Model Orchestrator Agent
+
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If you produce both: write the report as `.md` in `reports/`, write the structured data as `.json` in `artifacts/`, and cross-link both paths.
 
 ## Role Enforcement
 
@@ -196,91 +203,27 @@ codex exec "prompt" --model gpt-5.1-codex-mini -c 'model_reasoning_effort="mediu
 codex exec "prompt" --output-schema ./schema.json -o output.json
 ```
 
-### OpenCode (opencode) - Multi-Model Gateway
-
-**Strengths**: Terminal-native, GitHub Copilot integration, access to 17+ models, cost-effective
-**Best for**:
-
-- Cost-effective access to flagship models (Opus, GPT-5, Gemini via Copilot subscription)
-- Terminal-based multi-model workflows
-- Quick model switching without API key management
-- GitHub Copilot integrated development
-  **Weaknesses**: Requires GitHub Copilot auth for full model access
-
-**⚠️ Model Enablement Note**:
-Some Copilot models require explicit enablement in GitHub settings:
-
-- Go to: https://github.com/settings/copilot → Model features → Enable all models
-- Without enablement, models show "not supported" error (verified: enabling fixes this)
-
-**Available Models** (with Copilot cost multipliers):
-
-| Model ID                              | CLI Flag             | Cost     | Best For               |
-| ------------------------------------- | -------------------- | -------- | ---------------------- |
-| `github-copilot/grok-code-fast-1`     | `opencode-fast`      | **FREE** | Ultra-fast iteration   |
-| `github-copilot/gpt-5-mini`           | `opencode-mini`      | **FREE** | Lightweight tasks      |
-| `github-copilot/claude-haiku-4.5`     | `opencode-haiku`     | 0.33x    | Quick simple tasks     |
-| `github-copilot/gpt-5.1-codex-mini`   | -                    | 0.33x    | Fast code gen          |
-| `github-copilot/claude-sonnet-4.5`    | `opencode` (default) | 1x       | Daily driver coding    |
-| `github-copilot/gpt-5.1`              | `opencode-gpt5`      | 1x       | Flagship reasoning     |
-| `github-copilot/gpt-5.1-codex`        | `opencode-codex`     | 1x       | Code generation        |
-| `github-copilot/gemini-3-pro-preview` | `opencode-gemini`    | 1x       | Large context research |
-| `github-copilot/claude-opus-4.5`      | `opencode-opus`      | Premium  | Planning, architecture |
-
-**Cost Strategy**: Use `opencode-fast` or `opencode-mini` (FREE) for iteration, `opencode-haiku` (0.33x) for simple tasks, reserve `opencode-opus` for critical planning.
-
-**Native Models** (no Copilot required):
-
-- `opencode/gpt-5-nano`
-- `opencode/big-pickle`
-- `opencode/grok-code`
-
-**CLI Examples** (use `opencode run` for headless mode):
-
-```bash
-# Default (Sonnet 4.5)
-opencode run "prompt" --model github-copilot/claude-sonnet-4.5
-
-# Planning with Opus via Copilot (cost-effective!)
-opencode run "prompt" --model github-copilot/claude-opus-4.5
-
-# Fast iteration with Grok
-opencode run "prompt" --model github-copilot/grok-code-fast-1
-
-# Code generation with GPT-5.1 Codex
-opencode run "prompt" --model github-copilot/gpt-5.1-codex
-
-# Continue last session
-opencode run "follow up prompt" --model github-copilot/claude-sonnet-4.5 --continue
-
-# Continue specific session
-opencode run "prompt" --session <session-id>
-
-# Interactive TUI mode
-opencode
-```
-
 ## Task Classification
 
 ### Task Types and Optimal Models
 
-| Task Type                   | Primary Model   | Cursor Alt       | OpenCode Alt       | Cost     | Reasoning                                      |
-| --------------------------- | --------------- | ---------------- | ------------------ | -------- | ---------------------------------------------- |
-| **Architecture Planning**   | Claude Opus     | cursor-thinking  | opencode-opus      | Premium  | Opus for depth; reserve for critical decisions |
-| **Complex Algorithm**       | Claude Opus     | cursor-thinking  | opencode-gpt5      | 1x       | Opus excels; GPT-5.1 as cost-effective alt     |
-| **Code Implementation**     | cursor          | cursor-codex     | opencode-codex     | 1x       | Cursor for detail; Codex for scaffolding       |
-| **Large Codebase Analysis** | Gemini          | cursor-gemini    | opencode-gemini    | 1x       | All have large context windows                 |
-| **Research/Fact-Finding**   | Gemini          | cursor-gemini    | opencode-gemini    | 1x       | Large context for docs                         |
-| **UI/Frontend Code**        | cursor          | cursor-composer  | Codex              | 1x       | All excel at UI generation                     |
-| **Code Review**             | Claude Opus     | cursor-opus      | opencode-gpt5      | 1x       | Use GPT-5.1 to save Opus quota                 |
-| **Documentation**           | Claude Sonnet   | cursor           | opencode           | 1x       | Sonnet efficient across all gateways           |
-| **Deep Debugging**          | cursor-thinking | cursor-opus      | opencode-gpt5      | 1x       | Thinking mode for root cause analysis          |
-| **Quick Fixes**             | cursor-auto     | cursor-grok      | **opencode-fast**  | **FREE** | Grok for speed, zero cost!                     |
-| **Test Generation**         | Claude Sonnet   | cursor           | opencode           | 1x       | Sonnet writes good tests                       |
-| **Fast Iteration**          | cursor-grok     | cursor-composer  | **opencode-mini**  | **FREE** | GPT-5 mini for zero-cost iteration             |
-| **Simple Tasks**            | cursor-auto     | -                | **opencode-haiku** | 0.33x    | Haiku for cheap simple tasks                   |
-| **Refactoring**             | cursor-thinking | cursor-opus      | opencode-gpt5      | 1x       | Extended reasoning; use GPT-5.1 to save quota  |
-| **Extended Reasoning**      | cursor-thinking | cursor-gpt5-high | opencode-gpt5      | 1x       | Thinking modes for complex problems            |
+| Task Type                   | Primary Model   | Cursor Alt       | Reasoning                                      |
+| --------------------------- | --------------- | ---------------- | ---------------------------------------------- |
+| **Architecture Planning**   | Claude Opus     | cursor-thinking  | Opus for depth; reserve for critical decisions |
+| **Complex Algorithm**       | Claude Opus     | cursor-thinking  | Opus excels for hard problems                  |
+| **Code Implementation**     | cursor          | cursor-codex     | Cursor for detail; Codex for scaffolding       |
+| **Large Codebase Analysis** | Gemini          | cursor-gemini    | Large context for docs/code                    |
+| **Research/Fact-Finding**   | Gemini          | cursor-gemini    | Large context for docs                         |
+| **UI/Frontend Code**        | cursor          | cursor-composer  | UI generation + iteration                      |
+| **Code Review**             | Claude Opus     | cursor-opus      | Depth + security review                        |
+| **Documentation**           | Claude Sonnet   | cursor           | Efficient writing + synthesis                  |
+| **Deep Debugging**          | cursor-thinking | cursor-opus      | Extended reasoning for root cause analysis     |
+| **Quick Fixes**             | cursor-auto     | cursor-grok      | Speed-first                                    |
+| **Test Generation**         | Claude Sonnet   | cursor           | Solid test writing                             |
+| **Fast Iteration**          | cursor-grok     | cursor-composer  | Short loops                                    |
+| **Simple Tasks**            | cursor-auto     | -                | Minimal overhead                               |
+| **Refactoring**             | cursor-thinking | cursor-opus      | Strategy + guardrails                          |
+| **Extended Reasoning**      | cursor-thinking | cursor-gpt5-high | Deep reasoning modes for complex problems      |
 
 ## Execution Process
 
@@ -305,7 +248,7 @@ Based on classification, select model(s):
 
 ```json
 {
-  "primary_model": "claude-opus|gemini|cursor|codex|sonnet|opencode",
+  "primary_model": "claude-opus|gemini|cursor|codex|sonnet",
   "secondary_model": null|"model_name",
   "execution_strategy": "single|sequential|parallel|synthesis",
   "rationale": "Why this model/strategy was chosen"
@@ -532,23 +475,23 @@ User Request → Main Agent (Claude)
 
 ## When to Use Each Model - Quick Reference
 
-| Situation                      | Direct API    | Cursor Alt      | OpenCode Alt    |
-| ------------------------------ | ------------- | --------------- | --------------- |
-| "Plan a complex system"        | Claude Opus   | cursor-thinking | opencode-opus   |
-| "Deep reasoning needed"        | Claude Opus   | cursor-thinking | opencode-gpt5   |
-| "Analyze large codebase"       | Gemini        | cursor-gemini   | opencode-gemini |
-| "Implement detailed component" | -             | cursor          | opencode-codex  |
-| "Quick bug fix"                | -             | cursor-auto     | opencode-fast   |
-| "Research best practices"      | Gemini        | cursor-gemini   | opencode-gemini |
-| "Security code review"         | Claude Opus   | cursor-opus     | opencode-opus   |
-| "Generate UI components"       | Codex         | cursor-composer | opencode-codex  |
-| "Write comprehensive tests"    | Claude Sonnet | cursor          | opencode        |
-| "Refactor with strategy"       | -             | cursor-thinking | opencode-opus   |
-| "Debug complex issue"          | -             | cursor-thinking | opencode-gpt5   |
-| "Ultra-fast iteration"         | -             | cursor-grok     | opencode-fast   |
-| "Simple quick tasks"           | -             | cursor-auto     | opencode-haiku  |
-| "Extended reasoning mode"      | -             | cursor-thinking | -               |
-| "Free tier usage"              | -             | cursor-auto     | -               |
+| Situation                      | Direct API    | Cursor Alt      |
+| ------------------------------ | ------------- | --------------- |
+| "Plan a complex system"        | Claude Opus   | cursor-thinking |
+| "Deep reasoning needed"        | Claude Opus   | cursor-thinking |
+| "Analyze large codebase"       | Gemini        | cursor-gemini   |
+| "Implement detailed component" | -             | cursor          |
+| "Quick bug fix"                | -             | cursor-auto     |
+| "Research best practices"      | Gemini        | cursor-gemini   |
+| "Security code review"         | Claude Opus   | cursor-opus     |
+| "Generate UI components"       | Codex         | cursor-composer |
+| "Write comprehensive tests"    | Claude Sonnet | cursor          |
+| "Refactor with strategy"       | -             | cursor-thinking |
+| "Debug complex issue"          | -             | cursor-thinking |
+| "Ultra-fast iteration"         | -             | cursor-grok     |
+| "Simple quick tasks"           | -             | cursor-auto     |
+| "Extended reasoning mode"      | -             | cursor-thinking |
+| "Free tier usage"              | -             | cursor-auto     |
 
 ## Error Handling
 

@@ -1,0 +1,98 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-security-002",
+  "name": "Detect multiple security categories",
+  "description": "Verify that multiple security keywords in different categories are detected",
+  "category": "security-trigger",
+  "priority": "P0",
+  "tags": ["security", "trigger", "multiple-categories"],
+
+  "preconditions": {
+    "fixtures": ["security-trigger-data/security-triggers-test.json"],
+    "state": {},
+    "environment": {}
+  },
+
+  "steps": [
+    {
+      "step_id": "invoke-with-multiple-keywords",
+      "action": "invoke_pretooluse_hook",
+      "input": {
+        "hook": "security-trigger-auto-spawn.mjs",
+        "tool_name": "Task",
+        "tool_input": {
+          "task_id": "test-multi-sec-001",
+          "objective": "Implement authentication with encryption and secure API key storage",
+          "context": {
+            "problem": "Need comprehensive security for user data",
+            "why_now": "Compliance requirement"
+          },
+          "deliverables": [
+            {
+              "type": "file",
+              "path": ".claude/context/tmp/secure-auth.mjs",
+              "description": "Secure authentication with encryption"
+            }
+          ],
+          "constraints": {
+            "max_time_minutes": 30
+          },
+          "success_criteria": ["Authentication implemented", "Data encrypted", "API keys secured"],
+          "verification": {
+            "verification_type": "static",
+            "evidence_required": true
+          },
+          "assigned_agent": "developer"
+        }
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 5000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "hook_decision",
+      "target": "steps.invoke-with-multiple-keywords.result.decision",
+      "operator": "equals",
+      "expected": "approve"
+    },
+    {
+      "type": "multiple_categories",
+      "target": "steps.invoke-with-multiple-keywords.result.metadata.categories.length",
+      "operator": "greater_than",
+      "expected": 1
+    },
+    {
+      "type": "category_detected",
+      "target": "steps.invoke-with-multiple-keywords.result.metadata.categories",
+      "operator": "contains",
+      "expected": "authentication"
+    },
+    {
+      "type": "category_detected",
+      "target": "steps.invoke-with-multiple-keywords.result.metadata.categories",
+      "operator": "contains",
+      "expected": "data_protection"
+    },
+    {
+      "type": "priority_escalation",
+      "target": "steps.invoke-with-multiple-keywords.result.metadata.highest_priority",
+      "operator": "equals",
+      "expected": "critical"
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["security-trigger-auto-spawn.mjs"]
+  }
+}

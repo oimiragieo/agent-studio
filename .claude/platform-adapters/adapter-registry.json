@@ -49,33 +49,6 @@
         "Parallel steps executed sequentially",
         "Validation gates require manual checks"
       ]
-    },
-    "factory": {
-      "file": "factory-adapter.mjs",
-      "class": "FactoryAdapter",
-      "native": false,
-      "description": "Factory Droid adapter with manual task coordination",
-      "capabilities": {
-        "workflows": "manual",
-        "skills": "converted",
-        "subagents": "none",
-        "plan_mode": "none",
-        "validation_gates": "manual",
-        "parallel_execution": "none"
-      },
-      "cuj_support": "30/62",
-      "recommended_for": [
-        "Simple sequential tasks",
-        "Single-agent operations",
-        "Prototyping",
-        "Learning and exploration"
-      ],
-      "limitations": [
-        "No native workflow support",
-        "No subagent orchestration",
-        "Manual coordination required",
-        "No automatic retry or checkpointing"
-      ]
     }
   },
   "default": "claude",
@@ -89,11 +62,6 @@
       "env_vars": ["CURSOR_SESSION"],
       "files": [".cursor/settings.json", ".cursorrules"],
       "priority": 2
-    },
-    "factory": {
-      "env_vars": ["FACTORY_DROID"],
-      "files": [".factory/config.json"],
-      "priority": 3
     }
   },
   "translation_matrix": {
@@ -102,30 +70,10 @@
       "automation": "high",
       "fidelity": "good"
     },
-    "claude_to_factory": {
-      "difficulty": "high",
-      "automation": "low",
-      "fidelity": "limited"
-    },
     "cursor_to_claude": {
       "difficulty": "easy",
       "automation": "high",
       "fidelity": "excellent"
-    },
-    "cursor_to_factory": {
-      "difficulty": "moderate",
-      "automation": "medium",
-      "fidelity": "moderate"
-    },
-    "factory_to_claude": {
-      "difficulty": "easy",
-      "automation": "high",
-      "fidelity": "excellent"
-    },
-    "factory_to_cursor": {
-      "difficulty": "easy",
-      "automation": "high",
-      "fidelity": "good"
     }
   }
 }

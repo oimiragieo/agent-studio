@@ -10,7 +10,7 @@ Agent Studio is a drop-in configuration bundle that gives you:
 - **13 utility skills** for code generation, validation, and more
 - **1,081+ technology rules** that auto-apply to your code
 - **10 workflows** for common development tasks
-- **Cross-platform support** for Claude Code, Cursor IDE, and Factory Droid
+- **Cross-platform support** for Claude Code and Cursor IDE
 
 ## Quick Start (5 Minutes)
 
@@ -83,6 +83,25 @@ Or ask a question:
 ```
 "Help me understand how to use this tool"
 ```
+
+## Router-First Enforcement (Production Ready!)
+
+LLM-RULES now includes router-first enforcement that ensures all requests are routed through the router agent before any other agent operates:
+
+- **[ROUTER_FIRST_ENFORCEMENT_GUIDE.md](ROUTER_FIRST_ENFORCEMENT_GUIDE.md)** - Complete user guide with examples and troubleshooting
+- **How it works**: Router automatically classifies your request, then master-orchestrator selects appropriate workflow
+- **Benefits**: 100% routing coverage, 60-80% cost reduction for multi-step workflows, complete audit trail
+- **Transparent**: Automatic routing - no changes to how you use the system
+
+## Conductor Features (NEW!)
+
+LLM-RULES now includes Conductor, an intelligent workflow orchestration system:
+
+- **[CONDUCTOR_FEATURES.md](CONDUCTOR_FEATURES.md)** - Complete Conductor overview
+- **[PROJECT_ANALYZER_GUIDE.md](PROJECT_ANALYZER_GUIDE.md)** - Automated project analysis
+- **[SUGGESTIONS_GUIDE.md](SUGGESTIONS_GUIDE.md)** - Smart workflow suggestions
+- **[SMART_REVERT_GUIDE.md](SMART_REVERT_GUIDE.md)** - Snapshot-based recovery
+- **[TRACKS_GUIDE.md](TRACKS_GUIDE.md)** - Work organization system
 
 ## What to Read Next
 

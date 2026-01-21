@@ -9,6 +9,13 @@ priority: medium
 
 # Mobile Developer Agent
 
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If you produce both: write the report as `.md` in `reports/`, write the structured data as `.json` in `artifacts/`, and cross-link both paths.
+
 ## Role Enforcement
 
 **YOU ARE A WORKER AGENT - NOT AN ORCHESTRATOR**

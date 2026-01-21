@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generic JSON Artifact",
+  "description": "A permissive schema for structured artifacts when a dedicated schema does not yet exist.",
+  "type": ["object", "array"],
+  "additionalProperties": true
+}

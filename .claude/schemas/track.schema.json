@@ -1,0 +1,593 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.com/schemas/track.schema.json",
+  "title": "Track",
+  "version": "1.0.0",
+  "description": "Schema for track definitions managed by track-manager skill for Conductor workflows",
+  "type": "object",
+  "required": ["track_id", "name", "type", "status", "steps", "created_at"],
+  "properties": {
+    "track_id": {
+      "type": "string",
+      "pattern": "^track-[a-z0-9-]+$",
+      "description": "Unique identifier for this track"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100,
+      "description": "Human-readable name for the track"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Detailed description of what this track accomplishes"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "onboarding",
+        "feature",
+        "bugfix",
+        "refactor",
+        "migration",
+        "testing",
+        "documentation",
+        "security",
+        "performance",
+        "maintenance",
+        "learning",
+        "exploration",
+        "custom"
+      ],
+      "description": "Category of the track"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "active",
+        "paused",
+        "completed",
+        "failed",
+        "cancelled",
+        "archived"
+      ],
+      "description": "Current status of the track"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["P0", "P1", "P2", "P3"],
+      "description": "Priority level (P0=critical, P3=low priority)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when track was created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when track was last updated"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when track execution started"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when track was completed"
+    },
+    "source": {
+      "type": "object",
+      "description": "Origin of this track",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "analysis",
+            "user-created",
+            "template",
+            "suggestion",
+            "workflow",
+            "imported",
+            "auto-generated"
+          ],
+          "description": "How the track was created"
+        },
+        "analysis_id": {
+          "type": "string",
+          "description": "Reference to project analysis (if applicable)"
+        },
+        "template_id": {
+          "type": "string",
+          "description": "Reference to template used (if applicable)"
+        },
+        "suggestion_id": {
+          "type": "string",
+          "description": "Reference to suggestion that created this track"
+        },
+        "created_by": {
+          "type": "string",
+          "description": "Agent or user that created the track"
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Context information for the track",
+      "properties": {
+        "goal": {
+          "type": "string",
+          "description": "High-level goal of this track"
+        },
+        "success_criteria": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Criteria for considering track complete"
+        },
+        "target_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files primarily affected by this track"
+        },
+        "target_directories": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Directories primarily affected by this track"
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Track IDs that must be completed first"
+        },
+        "blocks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Track IDs that are blocked by this track"
+        },
+        "related_tracks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Related track IDs"
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered list of steps in this track",
+      "items": {
+        "type": "object",
+        "required": ["step_id", "name", "type", "status"],
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "pattern": "^step-[a-z0-9-]+$",
+            "description": "Unique identifier for this step"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Human-readable step name"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "What this step accomplishes"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "action",
+              "decision",
+              "review",
+              "approval",
+              "wait",
+              "parallel",
+              "conditional",
+              "loop",
+              "checkpoint"
+            ],
+            "description": "Type of step"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "ready",
+              "in-progress",
+              "waiting",
+              "completed",
+              "skipped",
+              "failed",
+              "blocked"
+            ],
+            "description": "Current status of the step"
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Order within the track (0-indexed)"
+          },
+          "action": {
+            "type": "object",
+            "description": "Action to perform for this step",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "spawn-agent",
+                  "run-workflow",
+                  "run-command",
+                  "edit-file",
+                  "create-file",
+                  "review",
+                  "manual",
+                  "wait-for-input",
+                  "conditional-branch"
+                ]
+              },
+              "agent": {
+                "type": "string",
+                "description": "Agent to spawn (if type=spawn-agent)"
+              },
+              "workflow": {
+                "type": "string",
+                "description": "Workflow to run (if type=run-workflow)"
+              },
+              "command": {
+                "type": "string",
+                "description": "Command to execute (if type=run-command)"
+              },
+              "task_template": {
+                "type": "object",
+                "description": "Task template for agent delegation"
+              },
+              "condition": {
+                "type": "string",
+                "description": "Condition expression (if type=conditional-branch)"
+              },
+              "branches": {
+                "type": "array",
+                "description": "Conditional branches",
+                "items": {
+                  "type": "object",
+                  "required": ["condition", "next_step"],
+                  "properties": {
+                    "condition": { "type": "string" },
+                    "next_step": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "inputs": {
+            "type": "array",
+            "description": "Required inputs for this step",
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": { "type": "string" },
+                "type": {
+                  "type": "string",
+                  "enum": ["string", "number", "boolean", "file", "artifact", "decision"]
+                },
+                "required": { "type": "boolean", "default": true },
+                "from_step": {
+                  "type": "string",
+                  "description": "Step ID to get input from"
+                },
+                "default_value": {}
+              }
+            }
+          },
+          "outputs": {
+            "type": "array",
+            "description": "Outputs produced by this step",
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": { "type": "string" },
+                "type": {
+                  "type": "string",
+                  "enum": ["string", "number", "boolean", "file", "artifact", "decision"]
+                },
+                "path": {
+                  "type": "string",
+                  "description": "File path for file/artifact outputs"
+                }
+              }
+            }
+          },
+          "validation": {
+            "type": "object",
+            "description": "Validation requirements for step completion",
+            "properties": {
+              "required": {
+                "type": "boolean",
+                "default": true
+              },
+              "type": {
+                "type": "string",
+                "enum": ["auto", "manual", "gate", "schema"],
+                "description": "Type of validation"
+              },
+              "schema_ref": {
+                "type": "string",
+                "description": "Schema to validate output against"
+              },
+              "gate_ref": {
+                "type": "string",
+                "description": "Gate to run for validation"
+              },
+              "success_criteria": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "timing": {
+            "type": "object",
+            "description": "Timing information for the step",
+            "properties": {
+              "estimated_duration_minutes": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "started_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "completed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "actual_duration_ms": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "timeout_minutes": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "retry": {
+            "type": "object",
+            "description": "Retry configuration",
+            "properties": {
+              "max_attempts": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 3
+              },
+              "current_attempt": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "backoff_strategy": {
+                "type": "string",
+                "enum": ["none", "linear", "exponential"]
+              }
+            }
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes or comments about this step"
+          },
+          "error": {
+            "type": "object",
+            "description": "Error information if step failed",
+            "properties": {
+              "message": { "type": "string" },
+              "code": { "type": "string" },
+              "occurred_at": { "type": "string", "format": "date-time" },
+              "recoverable": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "description": "Track progress information",
+      "properties": {
+        "current_step": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Index of current step"
+        },
+        "current_step_id": {
+          "type": "string",
+          "description": "ID of current step"
+        },
+        "completed_steps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_steps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "steps_status": {
+          "type": "object",
+          "description": "Status count by type",
+          "properties": {
+            "pending": { "type": "integer", "minimum": 0 },
+            "completed": { "type": "integer", "minimum": 0 },
+            "failed": { "type": "integer", "minimum": 0 },
+            "skipped": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "description": "Execution configuration and state",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["interactive", "autonomous", "semi-autonomous"],
+          "description": "Execution mode"
+        },
+        "auto_advance": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically advance to next step on completion"
+        },
+        "pause_on_failure": {
+          "type": "boolean",
+          "default": true,
+          "description": "Pause track on step failure"
+        },
+        "require_approval": {
+          "type": "boolean",
+          "default": false,
+          "description": "Require user approval between steps"
+        },
+        "parallel_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "Maximum parallel steps"
+        },
+        "checkpoint_frequency": {
+          "type": "string",
+          "enum": ["never", "per-step", "per-milestone", "hourly"],
+          "description": "How often to create snapshots"
+        }
+      }
+    },
+    "outcomes": {
+      "type": "object",
+      "description": "Track outcomes and results",
+      "properties": {
+        "result": {
+          "type": "string",
+          "enum": ["success", "partial", "failed", "cancelled"],
+          "description": "Overall track result"
+        },
+        "artifacts_created": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Artifacts created during track execution"
+        },
+        "files_modified": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files modified during track execution"
+        },
+        "suggestions_generated": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Suggestion IDs generated from this track"
+        },
+        "next_tracks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Recommended follow-up track IDs"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Summary of what was accomplished"
+        },
+        "lessons_learned": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Insights gained during track execution"
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Track execution metrics",
+      "properties": {
+        "total_duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Time spent actively working (excluding pauses)"
+        },
+        "pause_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "agents_used": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "tokens_consumed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "snapshots_created": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "display": {
+      "type": "object",
+      "description": "Display formatting hints",
+      "properties": {
+        "icon": {
+          "type": "string",
+          "description": "Icon identifier for UI"
+        },
+        "color": {
+          "type": "string",
+          "description": "Color coding (hex or named)"
+        },
+        "group": {
+          "type": "string",
+          "description": "Grouping category for UI organization"
+        },
+        "collapsed": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to show collapsed in UI"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "properties": {
+        "manager_version": { "type": "string" },
+        "project_id": { "type": "string" },
+        "session_id": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Key-value labels for filtering"
+        },
+        "notes": {
+          "type": "string",
+          "description": "User notes about this track"
+        }
+      }
+    }
+  }
+}

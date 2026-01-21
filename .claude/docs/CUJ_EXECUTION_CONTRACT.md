@@ -120,18 +120,16 @@ Agents required for workflow execution. Used for fallback planning.
 
 CLI tools required for execution.
 
-| CLI        | Description          |
-| ---------- | -------------------- |
-| `claude`   | Claude Code CLI      |
-| `cursor`   | Cursor IDE CLI       |
-| `gemini`   | Google Gemini CLI    |
-| `codex`    | OpenAI Codex CLI     |
-| `factory`  | Factory Droid CLI    |
-| `opencode` | OpenCode CLI         |
-| `node`     | Node.js runtime      |
-| `pnpm`     | pnpm package manager |
-| `npm`      | npm package manager  |
-| `git`      | Git version control  |
+| CLI      | Description          |
+| -------- | -------------------- |
+| `claude` | Claude Code CLI      |
+| `cursor` | Cursor IDE CLI       |
+| `gemini` | Google Gemini CLI    |
+| `codex`  | OpenAI Codex CLI     |
+| `node`   | Node.js runtime      |
+| `pnpm`   | pnpm package manager |
+| `npm`    | npm package manager  |
+| `git`    | Git version control  |
 
 ```json
 {

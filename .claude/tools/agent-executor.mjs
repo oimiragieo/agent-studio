@@ -19,6 +19,8 @@ import { resolveArtifactPath, resolveGatePath, resolveReasoningPath } from './pa
 import { createContextPacket, injectContext } from './context-injector.mjs';
 import { transitionState, requestApproval } from './run-state-machine.mjs';
 import { updateRunSummary } from './dashboard-generator.mjs';
+import { TaskStateManager, TaskState } from './a2a/task-state-manager.mjs';
+import TaskQueue from './task-queue.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -72,35 +74,88 @@ export class ClaudeCodeAdapter extends AgentExecutorAdapter {
   }
 
   async execute({ agent, systemPrompt, messages, tools, runId, step }) {
-    // In Claude Code, we use the Task tool to invoke subagents
-    // This is a placeholder - actual implementation would use Claude Agent SDK
-    // Fail fast instead of fake success to prevent false positives
-
     const startTime = Date.now();
+    const gatePath = resolveGatePath(runId, step);
+    const reasoningPath = resolveReasoningPath(runId, step, agent);
 
-    // TODO: Actual implementation would:
-    // 1. Use Claude Agent SDK to invoke Task tool with subagent specification
-    // 2. Wait for completion
-    // 3. Capture artifacts, stdout, stderr
-    // 4. Read token usage from API
+    try {
+      // 1. Initialize Task System
+      const queue = new TaskQueue(runId);
+      await queue.init();
 
-    // Return failed status since adapter is not fully implemented
-    return {
-      status: 'failed',
-      error: 'ClaudeCodeAdapter not fully implemented - requires Claude Agent SDK integration',
-      artifacts_written: [],
-      gate_path: resolveGatePath(runId, step),
-      reasoning_path: resolveReasoningPath(runId, step, agent),
-      token_usage: {
-        used: 0,
-        limit: 100000,
-        source: 'estimate',
-        confidence: 'low',
-      },
-      stderr: 'Adapter placeholder - not implemented',
-      stdout: '',
-      duration_ms: Date.now() - startTime,
-    };
+      // 2. Enqueue the subagent task
+      // We translate the agent request into a Task specification
+      const task = queue.enqueue({
+        agent,
+        task: `Execute step ${step} using ${agent} persona. Instructions: ${systemPrompt}`,
+        priority: 'medium',
+        metadata: {
+          step,
+          runId,
+          tools,
+          messages,
+        },
+      });
+
+      // 3. Wait for completion (with timeout)
+      const timeoutMs = 300000; // 5 minutes
+      const result = await queue.waitForCompletion(task.id, timeoutMs);
+
+      if (result.success) {
+        // Capture artifacts from the result
+        const artifactsWritten = result.result?.artifacts_written || [];
+
+        return {
+          status: 'completed',
+          artifacts_written: artifactsWritten,
+          gate_path: gatePath,
+          reasoning_path: reasoningPath,
+          token_usage: result.result?.token_usage || {
+            used: 0,
+            limit: 100000,
+            source: 'estimate',
+            confidence: 'low',
+          },
+          stderr: '',
+          stdout: result.result?.stdout || 'Subagent execution completed successfully',
+          duration_ms: Date.now() - startTime,
+        };
+      } else {
+        return {
+          status: 'failed',
+          error: result.error?.message || 'Subagent execution failed',
+          artifacts_written: [],
+          gate_path: gatePath,
+          reasoning_path: reasoningPath,
+          token_usage: {
+            used: 0,
+            limit: 100000,
+            source: 'estimate',
+            confidence: 'low',
+          },
+          stderr: result.error?.stack || 'Unknown error',
+          stdout: '',
+          duration_ms: Date.now() - startTime,
+        };
+      }
+    } catch (error) {
+      return {
+        status: 'failed',
+        error: `ClaudeCodeAdapter execution error: ${error.message}`,
+        artifacts_written: [],
+        gate_path: gatePath,
+        reasoning_path: reasoningPath,
+        token_usage: {
+          used: 0,
+          limit: 100000,
+          source: 'estimate',
+          confidence: 'low',
+        },
+        stderr: error.stack,
+        stdout: '',
+        duration_ms: Date.now() - startTime,
+      };
+    }
   }
 }
 

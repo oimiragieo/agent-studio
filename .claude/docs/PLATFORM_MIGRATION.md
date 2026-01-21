@@ -108,7 +108,7 @@ cat .claude/agents/developer.md | head -100 > .cursorrules
 node .claude/tools/detect-platform.mjs \
   --translate .claude/workflows/greenfield-fullstack.yaml \
   --platform factory \
-  > .factory/tasks/greenfield-fullstack.json
+  > (Factory integration not shipped in this release)
 ```
 
 ### Step 2: Create manual execution checklist

@@ -84,6 +84,7 @@ steps:
     validation:
       minimum_score: 7
       rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
     retry:
       max_attempts: 3
@@ -392,6 +393,7 @@ steps:
       - disagreements.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/08-model-orchestrator.json
     validation:
+      schema: .claude/schemas/multi-ai-validation.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/08-model-orchestrator.json
     description: |
       Multi-AI validation of implemented code:
@@ -466,6 +468,7 @@ steps:
       - documentation.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/10-technical-writer.json
     validation:
+      schema: .claude/schemas/documentation-bundle.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/10-technical-writer.json
 
   - step: 11
@@ -483,7 +486,11 @@ steps:
       - test-results.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/11-qa.json
     validation:
+      schema: .claude/schemas/quality-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/11-qa.json
+    secondary_outputs:
+      - artifact: test-results.json
+        schema: .claude/schemas/test-results.schema.json
 
   - step: 12
     name: 'Infrastructure Provisioning'
@@ -498,7 +505,11 @@ steps:
       - infrastructure-state.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/12-gcp-cloud-agent.json
     validation:
+      schema: .claude/schemas/deployment-status.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/12-gcp-cloud-agent.json
+    secondary_outputs:
+      - artifact: infrastructure-state.json
+        schema: .claude/schemas/infrastructure-state.schema.json
     description: |
       Provision actual infrastructure resources:
       - Execute Terraform plan or gcloud commands
@@ -589,6 +600,8 @@ steps:
     inputs:
       - artifact-registry.json
     policy: auto-on-pass
+    validation:
+      schema: .claude/schemas/artifact-registry.schema.json
     retry:
       max_attempts: 3
       on_failure: log_and_continue

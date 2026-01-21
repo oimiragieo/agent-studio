@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OTLP Traces (JSON)",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["resourceSpans"],
+  "properties": {
+    "resourceSpans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "resource": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "scopeSpans": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "scope": { "type": "object", "additionalProperties": true },
+                "spans": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "required": [
+                      "traceId",
+                      "spanId",
+                      "name",
+                      "startTimeUnixNano",
+                      "endTimeUnixNano"
+                    ],
+                    "properties": {
+                      "traceId": { "type": "string" },
+                      "spanId": { "type": "string" },
+                      "parentSpanId": { "type": "string" },
+                      "name": { "type": "string" },
+                      "kind": { "type": "string" },
+                      "startTimeUnixNano": { "type": "string" },
+                      "endTimeUnixNano": { "type": "string" },
+                      "attributes": { "type": "array" },
+                      "status": { "type": "object", "additionalProperties": true }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

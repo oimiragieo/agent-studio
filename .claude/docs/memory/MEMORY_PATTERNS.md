@@ -1911,6 +1911,6 @@ await entityMemory.deduplicateEntities(); // Merge duplicates
 
 ## Related Documentation
 
-- [Everlasting Agent System](EVERLASTING_AGENTS.md) - Context window management
-- [Phase-Based Projects](PHASE_BASED_PROJECTS.md) - Project structure
-- [Context Optimization](CONTEXT_OPTIMIZATION.md) - Context management best practices
+- [Everlasting Agent System](../EVERLASTING_AGENTS.md) - Context window management
+- [Phase-Based Projects](../PHASE_BASED_PROJECTS.md) - Project structure
+- [Context Optimization](../CONTEXT_OPTIMIZATION.md) - Context management best practices

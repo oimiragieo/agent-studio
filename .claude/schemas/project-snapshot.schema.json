@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project Snapshot",
+  "description": "Schema for project-snapshot.json produced by onboarding documentation steps.",
+  "type": "object",
+  "required": ["workflow_id", "generated_at", "project_path", "sections"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "project_path": { "type": "string" },
+    "sections": { "type": "object", "additionalProperties": true },
+    "inputs": { "type": "object", "additionalProperties": true },
+    "references": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

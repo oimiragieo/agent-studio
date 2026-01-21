@@ -72,7 +72,7 @@
       "description": "Target destinations for publishing (e.g., project_feed, cursor)",
       "items": {
         "type": "string",
-        "enum": ["project_feed", "cursor", "factory", "opencode"]
+        "enum": ["project_feed", "cursor"]
       },
       "default": []
     },
@@ -123,7 +123,7 @@
     },
     "platform": {
       "type": "string",
-      "enum": ["claude", "cursor", "factory", "opencode"],
+      "enum": ["claude", "cursor"],
       "description": "Platform where artifact was created"
     },
     "last_synced": {

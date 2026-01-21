@@ -76,6 +76,7 @@ steps:
     validation:
       minimum_score: 7
       rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
     retry:
       max_attempts: 3
@@ -101,6 +102,7 @@ steps:
       - legacy-analysis.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/01-business-analyst.json
     validation:
+      schema: .claude/schemas/legacy-analysis.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/01-business-analyst.json
     description: |
       Comprehensive legacy system analysis:
@@ -127,6 +129,7 @@ steps:
       - modernization-strategy.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-legacy-modernizer.json
     validation:
+      schema: .claude/schemas/modernization-strategy.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-legacy-modernizer.json
     description: |
       Legacy modernization strategy:
@@ -234,7 +237,11 @@ steps:
       - migration-test-results.json
       - quality-report.json
     validation:
+      schema: .claude/schemas/quality-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/06-qa.json
+    secondary_outputs:
+      - artifact: migration-test-results.json
+        schema: .claude/schemas/test-results.schema.json
     description: |
       Comprehensive migration testing:
       - Business logic verification (new matches old)
@@ -257,6 +264,8 @@ steps:
     inputs:
       - artifact-registry.json
     policy: auto-on-pass
+    validation:
+      schema: .claude/schemas/artifact-registry.schema.json
     retry:
       max_attempts: 3
       on_failure: log_and_continue

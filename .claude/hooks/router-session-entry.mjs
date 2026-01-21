@@ -81,7 +81,9 @@ export async function main(hookContext = {}) {
 
     console.log('[Router Hook] Classification result:');
     console.log(`  Intent: ${classification.intent}`);
-    console.log(`  Complexity: ${classification.complexity} (score: ${classification.complexity_score.toFixed(2)})`);
+    console.log(
+      `  Complexity: ${classification.complexity} (score: ${classification.complexity_score.toFixed(2)})`
+    );
     console.log(`  Should route: ${classification.should_route}`);
     console.log(`  Confidence: ${classification.confidence.toFixed(2)}`);
 

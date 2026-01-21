@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Documentation Bundle",
+  "description": "Schema for structured documentation outputs (JSON bundles) produced by technical-writer steps.",
+  "type": "object",
+  "required": ["workflow_id", "generated_at", "documents"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "title"],
+        "properties": {
+          "type": { "type": "string" },
+          "title": { "type": "string" },
+          "path": { "type": "string" },
+          "summary": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "links": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

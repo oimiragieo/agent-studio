@@ -1,0 +1,26 @@
+{
+  "task_id": "fixture-valid-001",
+  "objective": "Valid task template fixture",
+  "context": {
+    "problem": "Fixture for valid task template",
+    "why_now": "A2A test harness"
+  },
+  "deliverables": [
+    {
+      "type": "file",
+      "path": ".claude/context/tmp/fixture-valid/output.txt",
+      "description": "Output placeholder"
+    }
+  ],
+  "constraints": {
+    "max_time_minutes": 5
+  },
+  "success_criteria": ["Done"],
+  "verification": {
+    "verification_type": "static",
+    "evidence_required": true
+  },
+  "assigned_agent": "developer",
+  "thinking_budget": 1000,
+  "uncertainty_permission": true
+}

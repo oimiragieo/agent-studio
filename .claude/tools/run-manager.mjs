@@ -586,9 +586,11 @@ export async function readRun(runId) {
  * Update run record (with file locking for concurrency safety)
  * @param {string} runId - Run identifier
  * @param {Object} updates - Fields to update
+ * @param {Object} options - Update options
+ * @param {boolean} options.autoSave - Create auto-save snapshot on step completion
  * @returns {Promise<Object>} Updated run record
  */
-export async function updateRun(runId, updates) {
+export async function updateRun(runId, updates, options = {}) {
   // Acquire lock
   const unlock = await acquireLock(runId);
 
@@ -614,6 +616,25 @@ export async function updateRun(runId, updates) {
     }
     if (updates.current_step !== undefined) {
       runRecord.timestamps.last_step_completed_at = new Date().toISOString();
+
+      // Auto-save on step completion
+      if (options.autoSave !== false) {
+        try {
+          const { createSnapshot } = await import('./snapshot-manager.mjs');
+          await createSnapshot({
+            type: 'auto',
+            runId,
+            description: `Auto-save after step ${updates.current_step} completion`,
+            trigger: {
+              type: 'step_completion',
+              step: updates.current_step,
+            },
+          });
+        } catch (error) {
+          // Non-critical - auto-save failure shouldn't break run updates
+          console.warn(`Warning: Failed to auto-save snapshot: ${error.message}`);
+        }
+      }
     }
 
     const runJsonPath = getRunJsonPath(runId);

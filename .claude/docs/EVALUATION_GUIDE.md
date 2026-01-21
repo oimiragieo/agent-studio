@@ -507,7 +507,7 @@ Overall correctness of generated answers using LLM evaluation.
 
 - [Evaluation Framework](../evaluation/README.md) - Framework overview
 - [Rule Auditor](../skills/rule-auditor/SKILL.md) - Rule compliance
-- [Agent Performance](../docs/AGENT_PERFORMANCE.md) - Performance metrics
+- [Agent Performance](./AGENT_PERFORMANCE.md) - Performance metrics
 
 ## References
 
