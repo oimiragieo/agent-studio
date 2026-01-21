@@ -8,7 +8,8 @@
 # Claude Code Session Data
 .claude/context/session.json
 # Artifacts: ignore everything except vetted reference artifacts
-.claude/context/artifacts/*
+.claude/context/artifacts/**
+!.claude/context/artifacts/.gitkeep
 !.claude/context/artifacts/reference/
 !.claude/context/artifacts/reference/**
 
@@ -25,6 +26,7 @@
 
 # Config data (version-controlled) - NEW PATTERNS
 !.claude/context/config/
+!.claude/context/config/**
 
 # Legacy patterns (to be removed after cutover)
 .claude/context/history/reasoning/**/*.json
