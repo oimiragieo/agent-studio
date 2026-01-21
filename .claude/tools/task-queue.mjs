@@ -54,9 +54,7 @@ export default class TaskQueue {
 
     const taskId = makeId('task');
     const description =
-      typeof task === 'string' && task.trim()
-        ? task.trim()
-        : `Execute ${agent || 'agent'} task`;
+      typeof task === 'string' && task.trim() ? task.trim() : `Execute ${agent || 'agent'} task`;
 
     const sessionId = makeId('session');
     const payload = {
@@ -71,7 +69,11 @@ export default class TaskQueue {
     // adapter is responsible for interpreting payloads.
     // Note: `spawnWorker` returns the actual sessionId. We pass ours as a hint
     // through payload, but always trust the returned id.
-    const spawnedSessionId = this.supervisor.spawnWorker(agent || 'developer', description, payload);
+    const spawnedSessionId = this.supervisor.spawnWorker(
+      agent || 'developer',
+      description,
+      payload
+    );
 
     this.tasks.set(taskId, {
       id: taskId,
@@ -109,4 +111,3 @@ export default class TaskQueue {
     }
   }
 }
-

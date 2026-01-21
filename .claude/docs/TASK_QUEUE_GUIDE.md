@@ -31,4 +31,3 @@ Both write artifacts under `.claude/context/` and are designed to be “queue-li
 - [Tracks Guide](./TRACKS_GUIDE.md)
 - [Track System Architecture](./TRACK_SYSTEM_ARCHITECTURE.md)
 - [Heap Management](./HEAP_MANAGEMENT.md)
-
