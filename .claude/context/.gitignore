@@ -4,6 +4,7 @@
 # Session state (regenerated on each run)
 session.json
 *.log
+cleanup-log.json
 
 # Runtime directory (all runtime data)
 runtime/**/*
@@ -24,6 +25,10 @@ history/gates/**/*.json
 # Audit logs (can grow large)
 audit/**/*.json
 audit/**/*.log
+
+# Memory + performance (runtime)
+memory/**/*
+performance/**/*
 
 # Keep directory structure
 !.gitkeep

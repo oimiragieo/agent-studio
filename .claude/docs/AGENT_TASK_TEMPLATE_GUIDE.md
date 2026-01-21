@@ -18,6 +18,9 @@ The agent-task template is a structured format for delegating work to subagents 
 4. [Best Practices](#best-practices)
 5. [Examples by Task Type](#examples-by-task-type)
 6. [Research References](#research-references)
+7. [Validation](#validation)
+8. [Version History](#version-history)
+9. [See Also](#see-also)
 
 ---
 

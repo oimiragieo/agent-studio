@@ -104,6 +104,7 @@ steps:
     validation:
       minimum_score: 7
       rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
     retry:
       max_attempts: 3
@@ -214,6 +215,7 @@ steps:
       - code-artifacts
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/04-developer.json
     validation:
+      schema: .claude/schemas/artifact_manifest.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/04-developer.json
     description: |
       Implementation of UI improvements:
@@ -240,6 +242,7 @@ steps:
       - code-artifacts
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05-mobile-developer.json
     validation:
+      schema: .claude/schemas/mobile-optimization.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/05-mobile-developer.json
     description: |
       Mobile-specific optimizations:
@@ -290,6 +293,8 @@ steps:
     inputs:
       - artifact-registry.json
     policy: auto-on-pass
+    validation:
+      schema: .claude/schemas/artifact-registry.schema.json
     retry:
       max_attempts: 3
       on_failure: log_and_continue

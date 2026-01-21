@@ -605,6 +605,63 @@ router_session:
     timeout_ms: 30000 # Overall session timeout: 30 seconds
     retry_attempts: 2 # Number of retry attempts on failure
 
+# Router-First Enforcement Configuration
+routing:
+  router_first_enforcement:
+    enabled: true
+    bypass_env_var: 'CLAUDE_ROUTER_BYPASS'
+    session_timeout_minutes: 30
+    confidence_threshold: 0.8
+    fallback_workflow: '@.claude/workflows/greenfield-fullstack.yaml'
+
+  router_agent:
+    model: 'claude-haiku-4-5'
+    max_tokens: 500
+    timeout_ms: 2000
+
+  session_state:
+    # Authoritative per-session routing state (prevents cross-session stomps)
+    per_session_dir: '.claude/context/tmp/routing-sessions'
+    # Legacy mirror (best-effort) for older tooling/docs
+    legacy_mirror_path: '.claude/context/tmp/routing-session-state.json'
+    error_log_path: '.claude/context/logs/router-enforcement-errors.log'
+
+# Hooks Configuration
+hooks:
+  preToolUse:
+    - name: 'router-first-enforcer'
+      path: '.claude/hooks/router-first-enforcer.mjs'
+      priority: 100
+      enabled: true
+      description: 'Enforces router-first architecture: all requests must be routed before agent execution'
+    - name: 'orchestrator-enforcement-pre-tool'
+      path: '.claude/hooks/orchestrator-enforcement-pre-tool.mjs'
+      priority: 200
+      enabled: true
+      description: 'Enforces orchestrator tool restrictions (no Write/Edit/Grep/Glob/dangerous Bash)'
+    - name: 'agent-task-template-enforcer'
+      path: '.claude/hooks/agent-task-template-enforcer.mjs'
+      priority: 300
+      enabled: true
+      description: 'Validates Task tool JSON format against agent-task.schema.json'
+    - name: 'security-trigger-auto-spawn'
+      path: '.claude/hooks/security-trigger-auto-spawn.mjs'
+      priority: 400
+      enabled: true
+      description: 'Suggests security agents when security keywords detected'
+
+  postToolUse:
+    - name: 'router-completion-handler'
+      path: '.claude/hooks/router-completion-handler.mjs'
+      priority: 50
+      enabled: true
+      description: 'Marks router-first routing completed after router finishes'
+    - name: 'post-delegation-verifier'
+      path: '.claude/hooks/post-delegation-verifier.mjs'
+      priority: 100
+      enabled: true
+      description: 'Verifies agent deliverables and success criteria after Task completion'
+
 # Workflow Selection Configuration
 workflow_selection:
   quick_flow:

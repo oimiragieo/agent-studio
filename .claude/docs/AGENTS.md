@@ -1,6 +1,6 @@
 # AGENTS.md - Agent Studio
 
-Multi-platform agent configuration bundle for Claude Code, Cursor IDE, and Factory Droid.
+Agent configuration bundle for Claude Code (and optionally Cursor IDE).
 
 ## Commands
 

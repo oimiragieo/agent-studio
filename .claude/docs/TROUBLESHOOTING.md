@@ -7,6 +7,45 @@ All errors are logged to:
 - `.claude/context/logs/errors.log` - Human-readable log
 - `.claude/context/runtime/runs/<run_id>/errors/` - Run-specific error files with full context
 
+Related observability outputs (for auditing and deep debugging):
+
+- `.claude/context/runtime/runs/<runId>/events.ndjson` - append-only run event log (includes `trace_id`/`span_id`)
+- `.claude/context/artifacts/tool-events/run-<runId>.ndjson` - grep-friendly tool + guard stream (includes denials)
+- `.claude/context/artifacts/failure-bundles/failure-*.json` - failure bundles (when `CLAUDE_OBS_FAILURE_BUNDLES=1`)
+- `.claude/context/payloads/trace-<trace_id>/span-<span_id>.json` - sanitized tool inputs/outputs (when `CLAUDE_OBS_STORE_PAYLOADS=1`)
+
+If you have a Claude debug log, generate a single audit bundle:
+
+```bash
+node .claude/tools/observability-bundle.mjs --debug-log "C:\\Users\\you\\.claude\\debug\\<session>.txt"
+```
+
+If you ran the framework integration prompt, verify its outputs:
+
+```bash
+node .claude/tools/verify-agent-integration.mjs --workflow-id agent-integration-v1-<YYYYMMDD-HHMMSS>
+```
+
+If you ran the integration **headlessly** (outside Claude Code UI), use:
+
+```bash
+node .claude/tools/verify-agent-integration.mjs --workflow-id agent-integration-v1-<YYYYMMDD-HHMMSS> --mode headless
+```
+
+### Export traces to OTLP (OpenTelemetry)
+
+Export an `events.ndjson` file (Claude Code run or headless run) to OTLP/JSON:
+
+```bash
+node .claude/tools/otlp-export.mjs --events "<events.ndjson>" --out ".claude/context/artifacts/observability/<id>-otlp.json"
+```
+
+Optional: POST directly to an OTLP/HTTP JSON endpoint:
+
+```bash
+node .claude/tools/otlp-export.mjs --events "<events.ndjson>" --endpoint "https://<collector>/v1/traces"
+```
+
 ### View Recent Errors
 
 ```bash
@@ -20,6 +59,68 @@ node .claude/tools/error-logger.mjs --run-id <run_id> summary
 ---
 
 ## Common Errors
+
+### Integration test “PASS” but denial not verified
+
+If an integration report claims the intentional denial ran, but `verify-agent-integration.mjs` warns that the denial was not verified via tool-events:
+
+- The denial was likely triggered by a Node/FS error (e.g., `EISDIR`) instead of a PreToolUse hook denial.
+- The intentional denial step must use the **Read tool** on a directory path (e.g., `.claude/agents/`) so `read-path-guard` can block it.
+- Confirm in `.claude/context/artifacts/tool-events/run-<runId>.ndjson` that the denied entry includes:
+  - `tool: "Read"`
+  - `denied_by: "read-path-guard"`
+
+### ROUTING HANDOFF REQUIRED (router-first enforcement)
+
+If you see an error banner like:
+
+```
+ROUTING HANDOFF REQUIRED
+Routing is complete, but execution must be handed off to: orchestrator
+```
+
+- This means the router finished, but the post-routing executor agent has not been entered/spawned yet.
+- Fix: spawn the required coordinator via `Task` (usually `orchestrator`) and let it run the selected workflow.
+- If the model tries `master-orchestrator` while routing expects `orchestrator` (or vice versa), treat them as equivalent coordinators and proceed with either one; the coordinator should then delegate work to worker agents.
+
+### Integration prompt routed to diagnostics-runner
+
+If an integration harness prompt is treated as “diagnostics” and tries to hand off to `diagnostics-runner`, you may see a handoff denial requiring `orchestrator`.
+
+- Preferred: use the short integration prompt that directly requests running `@.claude/workflows/agent-framework-integration.yaml`.
+- If you see a handoff denial, follow the banner and spawn `orchestrator`.
+
+### ROUTER RE-RUN BLOCKED (routing loop / OOM guard)
+
+If you see:
+
+```
+ROUTER RE-RUN BLOCKED
+Routing is already in progress for this session.
+```
+
+- A coordinator tried to spawn the router again after routing started (or completed).
+- This is blocked because repeated routing can explode token usage and crash Claude Code.
+- Fix: proceed with the already-selected workflow and delegate only to step agents; if you truly need a different route, start a new session/request.
+
+### Claude Code host OOM (JavaScript heap out of memory)
+
+If Claude Code crashes with a Node error like:
+
+```
+FATAL ERROR: ... Allocation failed - JavaScript heap out of memory
+```
+
+Common mitigations:
+
+- Use the short integration prompt (avoid verbose prompts that cause high-token router/coordinator outputs).
+- Keep subagent outputs minimal (JSON receipt only).
+- If background RAG indexing is contributing to memory pressure, disable it in a local override:
+  - `.claude/settings.local.json`
+- Reduce concurrency (never run multiple subagents in parallel during smoke tests).
+- If the UI still OOMs, run the full integration **outside** Claude Code UI:
+  - `node .claude/tools/run-agent-framework-integration-headless.mjs --workflow-id agent-integration-v1-<YYYYMMDD-HHMMSS>`
+  - or the push-button script: `pnpm integration:headless:json`
 
 ### Exit Code 127: Command Not Found
 

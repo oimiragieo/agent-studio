@@ -1,0 +1,98 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-security-001",
+  "name": "Detect authentication keywords",
+  "description": "Verify that authentication-related keywords trigger security suggestions",
+  "category": "security-trigger",
+  "priority": "P0",
+  "tags": ["security", "trigger", "authentication", "suggestion"],
+
+  "preconditions": {
+    "fixtures": ["security-trigger-data/security-triggers-test.json"],
+    "state": {},
+    "environment": {}
+  },
+
+  "steps": [
+    {
+      "step_id": "invoke-with-auth-keyword",
+      "action": "invoke_pretooluse_hook",
+      "input": {
+        "hook": "security-trigger-auto-spawn.mjs",
+        "tool_name": "Task",
+        "tool_input": {
+          "task_id": "test-auth-001",
+          "objective": "Implement user authentication with JWT tokens",
+          "context": {
+            "problem": "Need secure authentication",
+            "why_now": "Security requirement"
+          },
+          "deliverables": [
+            {
+              "type": "file",
+              "path": ".claude/context/tmp/auth.mjs",
+              "description": "Authentication implementation"
+            }
+          ],
+          "constraints": {
+            "max_time_minutes": 20
+          },
+          "success_criteria": ["Authentication implemented"],
+          "verification": {
+            "verification_type": "static",
+            "evidence_required": true
+          },
+          "assigned_agent": "developer"
+        }
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 5000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "hook_decision",
+      "target": "steps.invoke-with-auth-keyword.result.decision",
+      "operator": "equals",
+      "expected": "approve"
+    },
+    {
+      "type": "security_trigger_count",
+      "target": "steps.invoke-with-auth-keyword.result.metadata.security_triggers_detected",
+      "operator": "greater_than",
+      "expected": 0
+    },
+    {
+      "type": "agent_recommendation",
+      "target": "steps.invoke-with-auth-keyword.result.metadata.recommended_agents",
+      "operator": "contains",
+      "expected": "security-architect"
+    },
+    {
+      "type": "category_detected",
+      "target": "steps.invoke-with-auth-keyword.result.metadata.categories",
+      "operator": "contains",
+      "expected": "authentication"
+    },
+    {
+      "type": "suggestion_provided",
+      "target": "steps.invoke-with-auth-keyword.result.suggestion",
+      "operator": "contains",
+      "expected": "security-architect"
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["security-trigger-auto-spawn.mjs"]
+  }
+}

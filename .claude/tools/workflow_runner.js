@@ -36,6 +36,8 @@ import {
 } from './workflow/loop-handler.mjs';
 import { checkContextThreshold, recordContextUsage } from './context-monitor.mjs';
 import { getRequiredTemplates } from './template-registry.mjs';
+import { findStepInWorkflow, evaluateCondition } from './workflow/engine.mjs';
+import { prepareRecovery } from './context-recovery.mjs';
 import {
   createRun,
   updateRun,
@@ -45,6 +47,8 @@ import {
   readArtifactRegistry,
   getRunDirectoryStructure,
 } from './run-manager.mjs';
+import { resolveWorkflowPath, resolveSchemaPath } from './workflow/path-resolver.mjs';
+import { validateRequiredArtifacts } from './workflow/artifact-validator.mjs';
 import { resolveArtifactPath, resolveGatePath, resolveReasoningPath } from './path-resolver.mjs';
 import {
   resolveConfigPath,
@@ -83,6 +87,25 @@ try {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+function getOrchestratorSessionId() {
+  const candidates = [
+    process.env.CLAUDE_CODE_SESSION_ID,
+    process.env.CLAUDE_SESSION_ID,
+    process.env.CLAUDE_SESSION,
+    process.env.CLAUDE_CONVERSATION_ID,
+    process.env.CLAUDE_CONVERSATION_UUID,
+    process.env.CLAUDE_CHAT_ID,
+  ];
+
+  for (const c of candidates) {
+    if (c == null) continue;
+    const s = String(c).trim();
+    if (s) return s;
+  }
+
+  return 'unknown';
+}
+
 /**
  * Load JSON file with streaming support for large files
  * @param {string} filePath - Path to JSON file
@@ -98,99 +121,6 @@ async function loadJSONFile(filePath) {
   } else {
     return JSON.parse(readFileSync(filePath, 'utf-8'));
   }
-}
-
-/**
- * Resolve workflow path from project root
- * Handles relative paths from config.yaml (e.g., .claude/workflows/...)
- *
- * PATH RESOLUTION STRATEGY:
- *
- * The workflow runner uses a multi-strategy approach to find workflow files:
- * 1. Absolute paths: If path starts with '/' (Unix) or 'C:' (Windows), use as-is
- * 2. Project root: Resolve from project root (parent of .claude directory)
- *    - This is the PRIMARY strategy and works when called from project root
- *    - workflow_runner.js is in .claude/tools/, so project root is ../..
- * 3. Current working directory: Fallback if project root resolution fails
- *    - Useful when called from subdirectories
- * 4. Script location: Final fallback relative to script's directory
- *
- * EXPECTED WORKING DIRECTORY:
- * - Best practice: Run from project root directory
- * - Command: `node .claude/tools/workflow_runner.js --workflow .claude/workflows/<name>.yaml --step 0`
- * - The runner will automatically resolve paths relative to project root
- *
- * EXAMPLES:
- * - From project root: `node .claude/tools/workflow_runner.js --workflow .claude/workflows/quick-flow.yaml --step 0`
- * - From any directory: Works due to fallback strategies, but project root is recommended
- */
-function resolveWorkflowPath(relativePath) {
-  // If path is already absolute, return as-is
-  if (
-    relativePath.startsWith('/') ||
-    (process.platform === 'win32' && /^[A-Z]:/.test(relativePath))
-  ) {
-    return relativePath;
-  }
-
-  // Strategy 1: Resolve from project root (parent of .claude directory)
-  // workflow_runner.js is in .claude/tools/, so go up two levels
-  const projectRoot = resolve(__dirname, '../..');
-  const projectRootPath = resolve(projectRoot, relativePath);
-  if (existsSync(projectRootPath)) {
-    return projectRootPath;
-  }
-
-  // Strategy 2: Resolve from current working directory
-  const cwdPath = resolve(process.cwd(), relativePath);
-  if (existsSync(cwdPath)) {
-    return cwdPath;
-  }
-
-  // Strategy 3: Resolve from script location
-  const scriptPath = resolve(__dirname, relativePath);
-  if (existsSync(scriptPath)) {
-    return scriptPath;
-  }
-
-  // If none found, return project root path (will fail with clear error later)
-  return projectRootPath;
-}
-
-/**
- * Resolve schema path using same strategy as workflow files
- * Uses multi-strategy approach: project root -> cwd -> script location
- */
-function resolveSchemaPath(relativePath) {
-  // If path is already absolute, return as-is
-  if (
-    relativePath.startsWith('/') ||
-    (process.platform === 'win32' && /^[A-Z]:/.test(relativePath))
-  ) {
-    return relativePath;
-  }
-
-  // Strategy 1: Resolve from project root (parent of .claude directory)
-  const projectRoot = resolve(__dirname, '../..');
-  const projectRootPath = resolve(projectRoot, relativePath);
-  if (existsSync(projectRootPath)) {
-    return projectRootPath;
-  }
-
-  // Strategy 2: Resolve from current working directory
-  const cwdPath = resolve(process.cwd(), relativePath);
-  if (existsSync(cwdPath)) {
-    return cwdPath;
-  }
-
-  // Strategy 3: Resolve from script location
-  const scriptPath = resolve(__dirname, relativePath);
-  if (existsSync(scriptPath)) {
-    return scriptPath;
-  }
-
-  // If none found, return project root path (will fail with clear error later)
-  return projectRootPath;
 }
 
 /**
@@ -268,66 +198,6 @@ async function ensureArtifactRegistry(runId, workflowName, isDryRun = false) {
     } catch (reinitError) {
       throw new Error(`Failed to re-initialize artifact registry: ${reinitError.message}`);
     }
-  }
-}
-
-/**
- * Validate artifacts required for a step before execution
- * Checks that all required artifacts from previous steps exist and are validated
- *
- * @param {string} runId - Run identifier
- * @param {number} stepNumber - Current step number
- * @param {Array} requiredArtifacts - List of required artifact names
- * @returns {Promise<Object>} Validation result
- */
-async function validateRequiredArtifacts(runId, stepNumber, requiredArtifacts = []) {
-  if (!runId || requiredArtifacts.length === 0) {
-    return { valid: true, missing: [], failed: [] };
-  }
-
-  const missing = [];
-  const failed = [];
-
-  try {
-    const registry = await readArtifactRegistry(runId);
-    const registeredArtifacts = registry.artifacts || {};
-
-    for (const artifactName of requiredArtifacts) {
-      const artifact = registeredArtifacts[artifactName];
-
-      if (!artifact) {
-        missing.push({
-          name: artifactName,
-          error: 'Artifact not found in registry',
-        });
-        continue;
-      }
-
-      // Check validation status
-      if (artifact.validationStatus === 'fail') {
-        failed.push({
-          name: artifactName,
-          step: artifact.step,
-          error: 'Artifact validation failed',
-        });
-      } else if (artifact.validationStatus === 'pending') {
-        // Pending is allowed for now - agent may still be working
-        console.warn(`⚠️  Artifact ${artifactName} validation is pending`);
-      }
-    }
-
-    return {
-      valid: missing.length === 0 && failed.length === 0,
-      missing,
-      failed,
-    };
-  } catch (error) {
-    return {
-      valid: false,
-      missing: requiredArtifacts.map(name => ({ name, error: 'Registry read failed' })),
-      failed: [],
-      error: error.message,
-    };
   }
 }
 
@@ -950,93 +820,6 @@ function validateStepDependencies(workflow, stepNumber, workflowId, storyId = nu
 }
 
 /**
- * Find step in workflow (handles both flat steps array and nested phases)
- */
-function findStepInWorkflow(workflow, stepNumber) {
-  const stepKey = String(stepNumber);
-  const numeric = /^\d+$/.test(stepKey) ? String(parseInt(stepKey, 10)) : null;
-  const padded2 = numeric ? numeric.padStart(2, '0') : null;
-
-  // Handle flat steps array
-  if (workflow.steps && Array.isArray(workflow.steps)) {
-    for (const step of workflow.steps) {
-      const stepId = step.id != null ? String(step.id) : null;
-      if (
-        String(step.step) === stepKey ||
-        stepId === stepKey ||
-        (padded2 && stepId && stepId.startsWith(`${padded2}-`))
-      ) {
-        return step;
-      }
-    }
-  }
-
-  // Handle phase-based workflows (BMad format)
-  if (workflow.phases && Array.isArray(workflow.phases)) {
-    for (const phase of workflow.phases) {
-      if (phase.steps && Array.isArray(phase.steps)) {
-        for (const step of phase.steps) {
-          const stepId = step.id != null ? String(step.id) : null;
-          if (
-            String(step.step) === stepKey ||
-            stepId === stepKey ||
-            (padded2 && stepId && stepId.startsWith(`${padded2}-`))
-          ) {
-            return step;
-          }
-        }
-      }
-      // Check if_yes and if_no steps
-      if (phase.decision) {
-        if (phase.decision.if_yes && Array.isArray(phase.decision.if_yes)) {
-          for (const step of phase.decision.if_yes) {
-            const stepId = step.id != null ? String(step.id) : null;
-            if (
-              String(step.step) === stepKey ||
-              stepId === stepKey ||
-              (padded2 && stepId && stepId.startsWith(`${padded2}-`))
-            ) {
-              return step;
-            }
-          }
-        }
-        if (phase.decision.if_no && Array.isArray(phase.decision.if_no)) {
-          for (const step of phase.decision.if_no) {
-            const stepId = step.id != null ? String(step.id) : null;
-            if (
-              String(step.step) === stepKey ||
-              stepId === stepKey ||
-              (padded2 && stepId && stepId.startsWith(`${padded2}-`))
-            ) {
-              return step;
-            }
-          }
-        }
-      }
-      // Check epic_loop and story_loop
-      if (
-        phase.epic_loop &&
-        phase.epic_loop.story_loop &&
-        Array.isArray(phase.epic_loop.story_loop)
-      ) {
-        for (const step of phase.epic_loop.story_loop) {
-          const stepId = step.id != null ? String(step.id) : null;
-          if (
-            String(step.step) === stepKey ||
-            stepId === stepKey ||
-            (padded2 && stepId && stepId.startsWith(`${padded2}-`))
-          ) {
-            return step;
-          }
-        }
-      }
-    }
-  }
-
-  return null;
-}
-
-/**
  * Get step configuration using proper YAML parsing
  */
 function getStepConfig(workflow, stepNumber) {
@@ -1120,421 +903,6 @@ function getStepConfig(workflow, stepNumber) {
     customChecks,
     tool,
   };
-}
-
-/**
- * Safe property access utility - handles undefined/null paths gracefully
- * @param {Object} obj - The object to traverse
- * @param {string} path - Dot-separated path (e.g., 'step.output.risk')
- * @param {*} defaultValue - Value to return if path not found
- * @returns {*} - The value at the path, or defaultValue if not found
- */
-function safeGet(obj, path, defaultValue = undefined) {
-  if (obj == null || typeof path !== 'string') {
-    return defaultValue;
-  }
-
-  const keys = path.split('.');
-  let result = obj;
-
-  for (const key of keys) {
-    if (result == null || typeof result !== 'object') {
-      return defaultValue;
-    }
-    result = result[key];
-  }
-
-  return result !== undefined ? result : defaultValue;
-}
-
-/**
- * Tokenize condition string into tokens for parsing
- * Handles parentheses, quotes, operators, and function calls
- * @param {string} condition - The condition string to tokenize
- * @returns {string[]} - Array of tokens
- */
-function tokenizeCondition(condition) {
-  const tokens = [];
-  let current = '';
-  let inQuotes = false;
-  let quoteChar = null;
-  let parenDepth = 0; // Track nested parentheses in function calls
-  let inFunctionCall = false;
-
-  for (let i = 0; i < condition.length; i++) {
-    const char = condition[i];
-
-    // Handle quote toggling
-    if ((char === '"' || char === "'") && !inQuotes) {
-      inQuotes = true;
-      quoteChar = char;
-      current += char;
-    } else if (char === quoteChar && inQuotes) {
-      inQuotes = false;
-      quoteChar = null;
-      current += char;
-    } else if (!inQuotes && char === '(') {
-      // Check if this is a function call (current ends with function-like pattern)
-      // Patterns like: .includes(, .startsWith(, .endsWith(, .match(
-      if (/\.[a-zA-Z]+$/.test(current)) {
-        // This is a function call - include the parentheses in the token
-        inFunctionCall = true;
-        parenDepth = 1;
-        current += char;
-      } else {
-        // This is a grouping parenthesis
-        if (current.trim()) {
-          tokens.push(current.trim());
-        }
-        tokens.push(char);
-        current = '';
-      }
-    } else if (!inQuotes && char === ')') {
-      if (inFunctionCall) {
-        current += char;
-        parenDepth--;
-        if (parenDepth === 0) {
-          inFunctionCall = false;
-        }
-      } else {
-        // This is a grouping parenthesis
-        if (current.trim()) {
-          tokens.push(current.trim());
-        }
-        tokens.push(char);
-        current = '';
-      }
-    } else if (!inQuotes && !inFunctionCall && /\s/.test(char)) {
-      // Whitespace separates tokens (outside quotes and function calls)
-      if (current.trim()) {
-        tokens.push(current.trim());
-      }
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-
-  // Push final token
-  if (current.trim()) {
-    tokens.push(current.trim());
-  }
-
-  return tokens;
-}
-
-/**
- * Evaluate an atomic condition (no operators, no parentheses)
- * @param {string} condition - The atomic condition to evaluate
- * @param {Object} safeContext - The evaluation context
- * @returns {boolean} - The evaluation result
- */
-function evaluateAtomic(condition, safeContext) {
-  // Pattern: providers.includes('provider_name')
-  if (condition.includes('providers.includes')) {
-    const match = condition.match(/providers\.includes\(['"]([^'"]+)['"]\)/);
-    if (match) {
-      const providers = safeGet(safeContext, 'providers', []);
-      return Array.isArray(providers) && providers.includes(match[1]);
-    }
-  }
-
-  // Pattern: step.output.field === 'value' or step.output.field === true/false
-  if (condition.includes('step.output.')) {
-    // Boolean match
-    const boolMatch = condition.match(/step\.output\.([a-zA-Z_]+)\s*===?\s*(true|false)/);
-    if (boolMatch) {
-      const fieldName = boolMatch[1];
-      const expectedValue = boolMatch[2] === 'true';
-      const actualValue = safeGet(safeContext, `step.output.${fieldName}`);
-      return actualValue === expectedValue;
-    }
-
-    // String match
-    const strMatch = condition.match(/step\.output\.([a-zA-Z_]+)\s*===?\s*['"]([^'"]*)['"]/);
-    if (strMatch) {
-      const fieldName = strMatch[1];
-      const expectedValue = strMatch[2];
-      const actualValue = safeGet(safeContext, `step.output.${fieldName}`);
-      return actualValue === expectedValue;
-    }
-
-    // Inequality match (!==)
-    const neqMatch = condition.match(/step\.output\.([a-zA-Z_]+)\s*!==?\s*['"]([^'"]*)['"]/);
-    if (neqMatch) {
-      const fieldName = neqMatch[1];
-      const expectedValue = neqMatch[2];
-      const actualValue = safeGet(safeContext, `step.output.${fieldName}`);
-      return actualValue !== expectedValue;
-    }
-  }
-
-  // Pattern: config.field === true|false or config.field === 'value' or config.field === number
-  if (condition.includes('config.')) {
-    // Boolean match
-    const boolMatch = condition.match(/config\.([a-zA-Z_]+)\s*===?\s*(true|false)/);
-    if (boolMatch) {
-      const fieldName = boolMatch[1];
-      const expectedValue = boolMatch[2] === 'true';
-      const actualValue = safeGet(safeContext, `config.${fieldName}`);
-      return actualValue === expectedValue;
-    }
-
-    // String match
-    const strMatch = condition.match(/config\.([a-zA-Z_]+)\s*===?\s*['"]([^'"]*)['"]/);
-    if (strMatch) {
-      const fieldName = strMatch[1];
-      const expectedValue = strMatch[2];
-      const actualValue = safeGet(safeContext, `config.${fieldName}`);
-      return actualValue === expectedValue;
-    }
-
-    // Numeric match (including == for loose equality)
-    const numMatch = condition.match(/config\.([a-zA-Z_]+)\s*[!=<>]=?\s*(-?\d+(?:\.\d+)?)/);
-    if (numMatch) {
-      const fieldName = numMatch[1];
-      const expectedValue = parseFloat(numMatch[2]);
-      const actualValue = safeGet(safeContext, `config.${fieldName}`);
-      // Check operator type
-      if (condition.includes('!==') || condition.includes('!=')) {
-        return actualValue !== expectedValue;
-      } else if (condition.includes('>=')) {
-        return actualValue >= expectedValue;
-      } else if (condition.includes('<=')) {
-        return actualValue <= expectedValue;
-      } else if (condition.includes('>')) {
-        return actualValue > expectedValue;
-      } else if (condition.includes('<')) {
-        return actualValue < expectedValue;
-      } else {
-        // == or ===
-        return actualValue === expectedValue || actualValue == expectedValue;
-      }
-    }
-  }
-
-  // Pattern: env.VARIABLE === 'value' or env.VARIABLE === true/false
-  if (condition.includes('env.')) {
-    // Boolean match
-    const boolMatch = condition.match(/env\.([A-Z_]+)\s*===?\s*(true|false)/);
-    if (boolMatch) {
-      const varName = boolMatch[1];
-      const expectedValue = boolMatch[2] === 'true';
-      const actualValue = safeGet(safeContext, `env.${varName}`);
-      return actualValue === expectedValue || actualValue === String(expectedValue);
-    }
-
-    // String match
-    const strMatch = condition.match(/env\.([A-Z_]+)\s*===?\s*['"]([^'"]*)['"]/);
-    if (strMatch) {
-      const varName = strMatch[1];
-      const expectedValue = strMatch[2];
-      const actualValue = safeGet(safeContext, `env.${varName}`);
-      return actualValue === expectedValue;
-    }
-  }
-
-  // Pattern: artifacts.field.subfield === 'value'
-  if (condition.includes('artifacts.')) {
-    const match = condition.match(/artifacts\.([a-zA-Z_.]+)\s*===?\s*['"]([^'"]*)['"]/);
-    if (match) {
-      const fieldPath = match[1];
-      const expectedValue = match[2];
-      const actualValue = safeGet(safeContext, `artifacts.${fieldPath}`);
-      return actualValue === expectedValue;
-    }
-  }
-
-  // Pattern: simple boolean flags (snake_case identifiers)
-  // These are common patterns in code-review-flow.yaml
-  if (/^[a-z][a-z0-9_]*$/i.test(condition)) {
-    // Check in config first
-    const configValue = safeGet(safeContext, `config.${condition}`);
-    if (configValue !== undefined) {
-      return !!configValue;
-    }
-
-    // Check in artifacts
-    const artifactValue = safeGet(safeContext, `artifacts.${condition}`);
-    if (artifactValue !== undefined) {
-      return !!artifactValue;
-    }
-
-    // Check environment variables (uppercase version)
-    const envKey = condition.toUpperCase();
-    const envValue = safeGet(safeContext, `env.${envKey}`);
-    if (envValue !== undefined) {
-      return envValue === 'true' || envValue === true;
-    }
-
-    // Check direct context property
-    const directValue = safeGet(safeContext, condition);
-    if (directValue !== undefined) {
-      return !!directValue;
-    }
-
-    // Not found anywhere - return false (fail closed for booleans)
-    return false;
-  }
-
-  // Unrecognized pattern - log warning and return false (fail closed)
-  console.warn(`⚠️  Warning: Unrecognized atomic condition: "${condition}"`);
-  return false;
-}
-
-/**
- * Parse primary expression (handles parentheses, NOT, comparisons, and atomic conditions)
- * @param {string[]} tokens - Mutable array of tokens
- * @param {Object} safeContext - The evaluation context
- * @returns {boolean} - The evaluation result
- */
-function parsePrimary(tokens, safeContext) {
-  if (tokens.length === 0) {
-    return false;
-  }
-
-  const token = tokens[0];
-
-  // Handle opening parenthesis - parse nested expression
-  if (token === '(') {
-    tokens.shift(); // consume '('
-    const result = parseOr(tokens, safeContext);
-    if (tokens.length > 0 && tokens[0] === ')') {
-      tokens.shift(); // consume ')'
-    }
-    return result;
-  }
-
-  // Handle NOT operator
-  if (token === 'NOT' || token === '!') {
-    tokens.shift(); // consume 'NOT' or '!'
-    return !parsePrimary(tokens, safeContext);
-  }
-
-  // Consume the first token
-  tokens.shift();
-
-  // Check if next token is a comparison operator
-  // This handles patterns like: config.enabled === true
-  if (tokens.length >= 2 && /^[!=<>]=?=?$/.test(tokens[0])) {
-    const operator = tokens.shift(); // consume operator (===, ==, !==, !=, etc.)
-    const rightValue = tokens.shift(); // consume right-hand value
-
-    // Reconstruct the full comparison expression for evaluateAtomic
-    const fullCondition = `${token} ${operator} ${rightValue}`;
-    return evaluateAtomic(fullCondition, safeContext);
-  }
-
-  // Single token atomic condition (boolean flag, function call like providers.includes)
-  return evaluateAtomic(token, safeContext);
-}
-
-/**
- * Parse AND expressions (higher precedence than OR)
- * @param {string[]} tokens - Mutable array of tokens
- * @param {Object} safeContext - The evaluation context
- * @returns {boolean} - The evaluation result
- */
-function parseAnd(tokens, safeContext) {
-  let left = parsePrimary(tokens, safeContext);
-
-  while (tokens.length > 0 && (tokens[0] === 'AND' || tokens[0] === '&&')) {
-    tokens.shift(); // consume 'AND' or '&&'
-    const right = parsePrimary(tokens, safeContext);
-    left = left && right;
-  }
-
-  return left;
-}
-
-/**
- * Parse OR expressions (lower precedence than AND)
- * @param {string[]} tokens - Mutable array of tokens
- * @param {Object} safeContext - The evaluation context
- * @returns {boolean} - The evaluation result
- */
-function parseOr(tokens, safeContext) {
-  let left = parseAnd(tokens, safeContext);
-
-  while (tokens.length > 0 && (tokens[0] === 'OR' || tokens[0] === '||')) {
-    tokens.shift(); // consume 'OR' or '||'
-    const right = parseAnd(tokens, safeContext);
-    left = left || right;
-  }
-
-  return left;
-}
-
-/**
- * Parse and evaluate a condition expression with proper operator precedence
- * @param {string[]} tokens - Array of tokens to parse
- * @param {Object} safeContext - The evaluation context
- * @returns {boolean} - The evaluation result
- */
-function parseExpression(tokens, safeContext) {
-  // Create a copy to avoid mutating the original
-  const tokensCopy = [...tokens];
-  return parseOr(tokensCopy, safeContext);
-}
-
-/**
- * Evaluate step condition expression to determine if step should execute
- *
- * Supports:
- * - Nested expressions with parentheses: (A OR B) AND C
- * - Operator precedence: AND binds tighter than OR
- * - NOT operator: NOT condition, !condition
- * - Safe variable resolution: missing variables return false
- * - Multiple condition patterns:
- *   - providers.includes("name")
- *   - step.output.field === "value"
- *   - config.field === true/false/"value"
- *   - env.VARIABLE === "value"
- *   - artifacts.field === "value"
- *   - simple_boolean_flag
- *
- * @param {string} condition - Condition expression from workflow YAML
- * @param {Object} context - Context containing artifacts, config, env, providers
- * @returns {boolean} - true if step should execute, false if should skip
- */
-function evaluateCondition(condition, context = {}) {
-  if (!condition || typeof condition !== 'string') {
-    return true; // No condition means always execute
-  }
-
-  // Build safe evaluation context with defaults
-  const safeContext = {
-    providers: context.providers || [],
-    step: context.step || {},
-    config: context.config || {},
-    env: {
-      MULTI_AI_ENABLED: process.env.MULTI_AI_ENABLED === 'true',
-      CI: process.env.CI === 'true',
-      NODE_ENV: process.env.NODE_ENV || 'development',
-      ...context.env,
-    },
-    artifacts: context.artifacts || {},
-  };
-
-  try {
-    const trimmed = condition.trim();
-
-    // Tokenize the condition
-    const tokens = tokenizeCondition(trimmed);
-
-    if (tokens.length === 0) {
-      return true; // Empty condition means always execute
-    }
-
-    // Parse and evaluate the expression
-    return parseExpression(tokens, safeContext);
-  } catch (error) {
-    // On any error, fail open (execute step)
-    console.warn(`⚠️  Warning: Condition evaluation failed: ${error.message}`);
-    console.warn(`   Condition: "${condition}"`);
-    console.warn(`   Defaulting to execute step (fail-open behavior)`);
-    return true;
-  }
 }
 
 /**
@@ -1996,25 +1364,46 @@ async function performDryRun(workflowPath, workflowId) {
         }
       }
 
-      // Validate schema exists
-      if (step.validation && step.validation.schema) {
-        const schemaPath = resolveSchemaPath(step.validation.schema);
+      // Validate schema exists (support both legacy `schema:` and canonical `validation.schema:`)
+      const configuredSchema = step?.validation?.schema || step?.schema || null;
+      if (configuredSchema) {
+        const schemaPath = resolveSchemaPath(configuredSchema);
         if (existsSync(schemaPath)) {
-          console.log(`  ✅ Schema: ${step.validation.schema}`);
+          console.log(`  ✅ Schema: ${configuredSchema}`);
           report.schemas_resolved.push({
             step: stepNum,
-            schema: step.validation.schema,
+            schema: configuredSchema,
             path: schemaPath,
           });
         } else {
-          const error = `Schema not found: ${step.validation.schema} (resolved: ${schemaPath})`;
+          const error = `Schema not found: ${configuredSchema} (resolved: ${schemaPath})`;
           console.error(`  ❌ ${error}`);
           report.errors.push(error);
           report.valid = false;
         }
       } else {
-        console.log(`  ⚠️  No schema validation configured`);
-        report.warnings.push(`Step ${stepNum}: No schema validation`);
+        // Only warn for steps that appear to produce structured artifacts.
+        // (Markdown/text reports often don't have schemas and are acceptable.)
+        const outputs = step.outputs ?? step.artifacts;
+        const outputNames = Array.isArray(outputs)
+          ? outputs
+              // Ignore object-style outputs like `{ reasoning: ... }` for schema purposes.
+              // These are meta logs and often intentionally schema-less.
+              .map(o => (typeof o === 'string' ? o : null))
+              .filter(Boolean)
+          : [];
+
+        const hasStructuredOutput = outputNames.some(name => {
+          const s = String(name || '');
+          return s.endsWith('.json') || s.endsWith('.yaml') || s.endsWith('.yml');
+        });
+
+        if (hasStructuredOutput) {
+          console.log(`  ⚠️  No schema validation configured`);
+          report.warnings.push(`Step ${stepNum}: No schema validation`);
+        } else {
+          console.log(`  ℹ️  No schema validation configured (non-structured outputs)`);
+        }
       }
 
       // Validate inputs (dependencies on previous steps)
@@ -2549,7 +1938,7 @@ async function main() {
     return;
   }
 
-  // Handle dry-run-only mode (no step specified)
+  // Perform dry-run if workflow exists
   if (isDryRun && !args.step && !args.decision && !args.loop) {
     try {
       const result = await performDryRun(workflowPath, workflowId);
@@ -2601,6 +1990,22 @@ async function main() {
 
   const storyId = args['story-id'] || null;
   const epicId = args['epic-id'] || null;
+
+  // Check if step should execute based on condition
+  const stepConfig = findStepInWorkflow(workflow, args.step);
+  if (stepConfig && stepConfig.condition) {
+    // Collect context for condition evaluation
+    const evalContext = {
+      config: args.config ? JSON.parse(args.config) : {},
+      artifacts: args.artifacts ? JSON.parse(args.artifacts) : {},
+      env: process.env,
+    };
+
+    if (!evaluateCondition(stepConfig.condition, evalContext)) {
+      console.log(`\n⏭️  Skipping step ${args.step}: Condition "${stepConfig.condition}" not met.`);
+      process.exit(0);
+    }
+  }
 
   // Check if Step 0.5 (Feature Distillation) should execute before Step 0
   // This happens when user_requirements is a markdown file > 15KB
@@ -2751,8 +2156,29 @@ async function main() {
     // This allows workflow to run even if context monitoring fails
   }
 
+  const orchestratorSessionId = getOrchestratorSessionId();
+
   // Call step validation execution
-  await executeWorkflowStepValidation(workflow, args, workflowId, storyId, epicId, isDryRun);
+  try {
+    await executeWorkflowStepValidation(
+      workflow,
+      args,
+      workflowId,
+      storyId,
+      epicId,
+      isDryRun,
+      orchestratorSessionId
+    );
+  } catch (error) {
+    if (!isDryRun) {
+      try {
+        await prepareRecovery(runId || workflowId, orchestratorSessionId);
+      } catch (recoveryError) {
+        console.warn(`⚠️  Warning: Failed to prepare recovery: ${recoveryError.message}`);
+      }
+    }
+    throw error;
+  }
 }
 
 /**
@@ -2792,7 +2218,8 @@ async function executeWorkflowStepValidation(
   workflowId,
   storyId,
   epicId,
-  isDryRun
+  isDryRun,
+  orchestratorSessionId
 ) {
   // Validate step dependencies before proceeding
   const dependencyCheck = validateStepDependencies(
@@ -3421,6 +2848,13 @@ async function executeWorkflowStepValidation(
         console.error(`\n❌ Error executing agent: ${error.message}`);
         console.error(`   Step: ${args.step} (${stepName})`);
         console.error(`   Agent: ${agentName}`);
+        if (!isDryRun) {
+          try {
+            await prepareRecovery(runId || workflowId, orchestratorSessionId);
+          } catch (recoveryError) {
+            console.warn(`⚠️  Warning: Failed to prepare recovery: ${recoveryError.message}`);
+          }
+        }
         process.exit(1);
       }
     }
@@ -3936,19 +3370,43 @@ async function executeWorkflowStepValidation(
   }
 }
 
-main().catch(error => {
+main().catch(async error => {
   console.error('Unexpected error:', error);
+
+  // Error recovery: if we have a run context, prepare a recovery bundle so execution can resume
+  // from the last successful checkpoint/step.
+  try {
+    const parsed = parseArgs();
+    const isDryRun = Boolean(parsed['dry-run']);
+    const runId =
+      (typeof parsed['run-id'] === 'string' && parsed['run-id'].trim()
+        ? parsed['run-id'].trim()
+        : null) ||
+      (typeof parsed['runId'] === 'string' && parsed['runId'].trim()
+        ? parsed['runId'].trim()
+        : null) ||
+      null;
+    const workflowId =
+      (typeof parsed['workflow-id'] === 'string' && parsed['workflow-id'].trim()
+        ? parsed['workflow-id'].trim()
+        : null) ||
+      (typeof parsed['workflowId'] === 'string' && parsed['workflowId'].trim()
+        ? parsed['workflowId'].trim()
+        : null) ||
+      (typeof parsed['workflow_id'] === 'string' && parsed['workflow_id'].trim()
+        ? parsed['workflow_id'].trim()
+        : null) ||
+      null;
+
+    const orchestratorSessionId = getOrchestratorSessionId();
+
+    if (!isDryRun && orchestratorSessionId && (runId || workflowId)) {
+      await prepareRecovery(runId || workflowId, orchestratorSessionId);
+      console.warn(`âš ï¸  Recovery prepared for run: ${runId || workflowId}`);
+    }
+  } catch (recoveryError) {
+    console.warn(`âš ï¸  Warning: Failed to prepare recovery: ${recoveryError.message}`);
+  }
+
   process.exit(2);
 });
-
-// Export functions for testing
-export {
-  evaluateCondition,
-  tokenizeCondition,
-  evaluateAtomic,
-  safeGet,
-  parseExpression,
-  parseOr,
-  parseAnd,
-  parsePrimary,
-};

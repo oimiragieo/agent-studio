@@ -7,17 +7,21 @@
 
 # Claude Code Session Data
 .claude/context/session.json
-# Artifacts: generated (runtime) vs reference (version-controlled)
-.claude/context/artifacts/generated/
+# Artifacts: ignore everything except vetted reference artifacts
+.claude/context/artifacts/*
 !.claude/context/artifacts/reference/
+!.claude/context/artifacts/reference/**
 
 # Runtime data (gitignored) - NEW PATTERNS
 .claude/context/runtime/
 .claude/context/analytics/
 .claude/context/audit/
+.claude/context/logs/
 .claude/context/reports/
+.claude/context/payloads/
 .claude/context/tasks/
 .claude/context/todos/
+.claude/context/test-results/
 
 # Config data (version-controlled) - NEW PATTERNS
 !.claude/context/config/
@@ -28,6 +32,8 @@
 .claude/context/blackboard/*.json
 .claude/context/runs/
 .claude/context/cache/
+.claude/context/rule-index-cache.json
+.claude/context/skill-summaries.json
 
 # Context session files (runtime data)
 context/sessions/
@@ -88,10 +94,16 @@ test-results/
 # Temporary Files
 tmp/
 temp/
+.tmp/
+.opencode.disabled/
+.factory.disabled/
 *.tmp
 tmpclaude-*
 .claude/tools/tmpclaude-*
 .claude/context/tmp/*.txt
+# Diagnostics runner (should live under .claude/context/, but ignore root spills)
+DIAGNOSTICS_*.md
+DIAGNOSTICS_*.json
 nul
 con
 prn

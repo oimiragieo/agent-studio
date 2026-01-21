@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Infrastructure State",
+  "description": "Schema for infrastructure-state.json outputs produced by provisioning steps.",
+  "type": "object",
+  "required": ["workflow_id", "generated_at", "resources"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "provider": { "type": "string" },
+    "environment": { "type": "string" },
+    "resources": { "type": "object", "additionalProperties": true },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": true
+}

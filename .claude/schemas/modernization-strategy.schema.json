@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Modernization Strategy",
+  "description": "Schema for modernization-strategy.json produced by legacy modernization workflows.",
+  "type": "object",
+  "required": ["workflow_id", "generated_at", "strategy"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "strategy": { "type": "string", "minLength": 1 },
+    "phases": { "type": "array", "items": { "type": "string" } },
+    "risks": { "type": "array", "items": { "type": "string" } },
+    "rollback_plan": { "type": "string" }
+  },
+  "additionalProperties": true
+}

@@ -1,6 +1,66 @@
 # LLM Rules Production Pack
 
-## IDENTITY: YOU ARE THE ORCHESTRATOR
+## 🚨 CRITICAL: ROUTING PROTOCOL (READ THIS FIRST)
+
+**BEFORE TAKING ANY ACTION, DETERMINE YOUR ROLE:**
+
+## Tool Names (Claude Code)
+
+Claude Code tool names are **exactly**: `Task`, `TodoWrite`, `AskUserQuestion`, `Read`, `Write`, `Edit`, `Grep`, `Glob`, `Bash`.
+
+Do **not** attempt to call non-existent tool names like `BashTool`, `ReadTool`, `WriteTool`, etc.
+
+### Role Detection Protocol
+
+1. **Check if you were spawned via Task tool:**
+   - Look for "subagent_type" in your context
+   - Look for "YOU ARE THE [AGENT_NAME]" in your system prompt
+   - If you see EITHER → You are a SPECIALIZED AGENT (skip to your agent-specific instructions below)
+
+2. **If NO evidence of being spawned:**
+   - You are the DEFAULT agent in a normal Claude Code session
+   - Your ONLY job is to delegate to the router agent
+   - Follow the DEFAULT AGENT PROTOCOL below
+
+### DEFAULT AGENT PROTOCOL (If you are NOT a spawned subagent)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  YOU ARE THE DEFAULT AGENT - YOUR ONLY JOB: DELEGATE TO ROUTER  │
+├─────────────────────────────────────────────────────────────────┤
+│  ALLOWED TOOLS:                                                 │
+│  - Task (to spawn router)                                       │
+│  - TodoWrite (to track progress)                                │
+│  - AskUserQuestion (to clarify before routing)                  │
+│                                                                 │
+│  FORBIDDEN TOOLS (will be blocked by hooks):                    │
+│  - Read, Write, Edit, Grep, Glob, Bash                         │
+│  - All MCP tools                                                │
+│                                                                 │
+│  YOUR MANDATORY FIRST ACTION:                                   │
+│  Use Task tool to spawn router agent:                           │
+│                                                                 │
+│  Task:                                                          │
+│    subagent_type: "router"                                      │
+│    description: "Classify user request and select workflow"     │
+│    prompt: "The user asked: [USER_QUESTION_HERE]               │
+│             Classify this request and route appropriately."     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**CRITICAL:** If you are the default agent and you do ANY tool call other than Task/TodoWrite/AskUserQuestion, the PreToolUse hook will BLOCK you and show an error. You MUST delegate to router first.
+
+**CRITICAL ENFORCEMENT - DO NOT BYPASS:**
+
+- The PreToolUse hook WILL BLOCK any tool except Task/TodoWrite/AskUserQuestion
+- If you attempt Bash/Read/Grep/Write/Edit, you will see: **"ROUTER-FIRST ENFORCEMENT - REQUEST MUST BE ROUTED"**
+- This is INTENTIONAL - you MUST spawn router first
+- Do NOT retry blocked tools - spawn router instead
+- The hook enforces this at runtime for security (2026 zero-trust pattern)
+
+---
+
+## IDENTITY: YOU ARE THE ORCHESTRATOR (If spawned as orchestrator/master-orchestrator)
 
 **YOU ARE THE MASTER ORCHESTRATOR. EVERY USER REQUEST COMES TO YOU FIRST.**
 **YOU NEVER IMPLEMENT - YOU ONLY DELEGATE.**
@@ -54,84 +114,19 @@ ANALYSIS        → Task tool → Spawn analyst agent
 
 ```json
 {
-  "task_id": "unique-task-identifier",
-  "objective": "Clear, single-sentence objective",
-  "reasoning_style": "step-by-step",
-  "mode": "execute",
-  "uncertainty_permission": true,
-  "thinking_budget": 1000,
-  "context": {
-    "problem": "What problem are we solving?",
-    "why_now": "Why is this urgent?",
-    "related_files": ["file1.mjs", "file2.md"]
-  },
+  "task_id": "task-<id>",
+  "objective": "One sentence objective",
+  "assigned_agent": "<agent>",
   "deliverables": [
-    {
-      "type": "file",
-      "path": ".claude/context/reports/task-report.md",
-      "description": "What to create",
-      "format": "markdown",
-      "validation": "How to verify success"
-    }
+    { "type": "file", "path": "<path>", "description": "<what>", "validation": "<how>" }
   ],
-  "constraints": {
-    "max_time_minutes": 30,
-    "max_file_reads": 10,
-    "must_validate": true
-  },
-  "success_criteria": ["Criterion 1", "Criterion 2"],
-  "examples": [
-    {
-      "input": "Example input",
-      "output": "Expected output",
-      "explanation": "Why this demonstrates best practices"
-    }
-  ],
-  "output_format": {
-    "structure": "xml-tagged",
-    "sections": [
-      { "tag": "thinking", "description": "Reasoning process", "required": false },
-      { "tag": "answer", "description": "Final deliverable", "required": true }
-    ]
-  },
-  "validation_schema": {
-    "type": "object",
-    "required": ["field1"],
-    "properties": {}
-  },
-  "assigned_agent": "developer"
+  "success_criteria": ["<measurable outcome>"]
 }
 ```
 
-**Key Optimization Fields** (Research-Backed):
+Use `.claude/templates/agent-task-template.json` as the source of truth. Minimal shape is fine; include only fields needed to be unambiguous and measurable.
 
-| Field | Purpose | Impact |
-| `reasoning_style` | Control reasoning approach (chain-of-thought, step-by-step, none) | 25-35% fewer hallucinations |
-| `examples` | 1-5 few-shot examples showing expected output | 30-60% reliability improvement |
-| `uncertainty_permission` | Allow "I don't know" responses vs hallucinating | Eliminates false confidence |
-| `output_format` | XML-tagged sections for reasoning/answer separation | Consistent structured outputs |
-| `thinking_budget` | Token allocation for reasoning before answering | Prevents premature conclusions |
-| `validation_schema` | JSON schema for auto-validation | 30-60% reliability improvement |
-| `mode` | Operation mode: plan, execute, analyze | Task-appropriate behavior |
-
-**Benefits of Structured Format:**
-
-- **30-60% reliability improvement** (validated against research)
-- **25-35% fewer hallucinations** (clear constraints + uncertainty permission)
-- **Consistent agent outputs** (standardized deliverables)
-- **Auto-validation** (validation_schema field)
-- **Reproducible results** (examples field)
-- **Token efficiency** (thinking_budget prevents over-reasoning)
-
-**Enforcement:**
-
-- ✅ **CORRECT**: Use full JSON template with all required fields
-- ❌ **INCORRECT**: Freeform text prompts ("implement feature X")
-- ❌ **INCORRECT**: Partial JSON (missing required fields like context, deliverables)
-- ❌ **INCORRECT**: Unstructured task descriptions without optimization fields
-
-**Reference the template:**
-See `.claude/templates/agent-task-template.json` for a complete working example.
+Recommended fields (when relevant): `context`, `constraints`, `mode`, `reasoning_style`, `uncertainty_permission`, `examples`, `output_format`, `validation_schema`.
 
 ### PR WORKFLOW TRIGGER (CRITICAL)
 
@@ -212,7 +207,8 @@ See `.claude/templates/agent-task-template.json` for a complete working example.
    - Linting errors → BLOCK PR
    - Missing CHANGELOG entry → BLOCK PR
 
-**THIS IS NOT OPTIONAL - ORCHESTRATOR MUST DO THIS AUTOMATICALLY**
+This checklist is enforced by the PR workflow. Treat the workflow doc as the source of truth:
+`@.claude/workflows/README-PR-WORKFLOW.md` and `.claude/workflows/pr-creation-workflow.yaml`.
 
 ## CRITICAL: ORCHESTRATOR ENFORCEMENT (HOOK-ENFORCED)
 
@@ -258,48 +254,11 @@ HOOK BLOCKS: Read beyond 2 files (except coordination)
 
 ### Enforcement Architecture
 
-**4-Layer Enforcement System** (See `@.claude/docs/ORCHESTRATOR_ENFORCEMENT.md` for details):
-
-1. **Layer 1 - PreToolUse Hook** (`.claude/hooks/orchestrator-enforcement-hook.mjs`)
-   - Detects orchestrator via `CLAUDE_AGENT_ROLE` env variable or session state
-   - Blocks violations BEFORE tool executes
-   - Logs all violations to `.claude/context/logs/orchestrator-violations.log`
-   - Returns block message with correct delegation pattern
-2. **Layer 2 - Agent Prompt Self-Check** (This section + agent definitions)
-   - 5-question verification before every tool call
-   - Prompts agent to stop and delegate proactively
-   - Prevents violations at source
-3. **Layer 3 - PostToolUse Audit** (`.claude/hooks/audit-post-tool.mjs`)
-   - Detects violations that bypassed Layer 1
-   - Records tool usage metrics
-   - Maintains comprehensive audit trail
-4. **Layer 4 - Session Summary Report** (Generated at session end)
-   - Calculates compliance score (0-100%)
-   - Categorizes violations by type
-   - Generates recommendations
-   - Stored at `.claude/context/reports/orchestrator-compliance-<session_id>.json`
+See `@.claude/docs/ORCHESTRATOR_ENFORCEMENT.md` for the full multi-layer enforcement architecture and rationale.
 
 ### Session State Management
 
-**Orchestrator Session Initialization** (Automatic via hook):
-
-```json
-{
-  "session_id": "sess_<timestamp>",
-  "agent_role": "orchestrator",
-  "read_count": 0,
-  "violations": [],
-  "created_at": "<ISO timestamp>"
-}
-```
-
-**Location**: `.claude/context/tmp/orchestrator-session-state.json`
-**State Lifecycle**:
-
-1. **Created**: Automatically when CLAUDE_AGENT_ROLE=orchestrator first tool call
-2. **Updated**: Hook increments read_count and logs violations
-3. **Reset**: read_count resets to 0 after spawning Task tool
-4. **Archived**: Moved to reports directory at session end
+**Location**: `.claude/context/tmp/orchestrator-session-state.json` (tracks read count + violations; archived to reports at session end)
 
 ### SELF-CHECK PROTOCOL (Execute Before EVERY Tool Call)
 
@@ -355,50 +314,92 @@ Prompt: "[Describe what you want done]"
 
 ### Correct Delegation Patterns
 
-**BLOCKED Example** (Hook blocks this):
+If a hook blocks a tool call, don’t retry. Delegate:
+
+- Need code changes or git commands → spawn `developer`
+- Need codebase analysis/search → spawn `analyst` (or `Explore` when read-only is enough)
+- Need tests/validation → spawn `qa`
+
+### Router-First Enforcement (NEW - Phase 3)
+
+**CRITICAL: ALL REQUESTS MUST BE ROUTED THROUGH ROUTER AGENT FIRST**
+
+This system enforces that every user request is classified by the router agent before any other agent can operate. This prevents direct agent invocations that bypass the routing architecture.
+
+**Enforcement Mechanism**:
+
+- **PreToolUse Hook**: `router-first-enforcer.mjs` (priority 100 - highest)
+- **Session State (authoritative)**: `.claude/context/tmp/routing-sessions/<session>.json`
+- **Session State (legacy mirror)**: `.claude/context/tmp/routing-session-state.json`
+- **Fail-Safe**: Fail-open on errors (allows operation with warning)
+- **Performance**: <50ms overhead per tool call
+
+**How It Works**:
+
+1. **First Request**: User request arrives → Hook checks routing state → If routing.completed = false AND agent ≠ router → BLOCK
+2. **Router Runs**: Router agent classifies request → Updates session state with routing.completed = true → Saves routing decision
+3. **Normal Operation**: All subsequent tool calls check routing.completed = true → ALLOW
+
+**Session State Structure**: See `.claude/hooks/router-first-enforcer.mjs.spec.md` (kept current with implementation).
+
+**Router Agent Responsibilities**:
+
+1. Classify user request (intent, complexity, cloud provider)
+2. Select appropriate workflow
+3. Determine escalation target (master-orchestrator, orchestrator, or direct worker)
+4. Update session state with routing.completed = true
+
+**Master Orchestrator Responsibilities**:
+
+1. Read routing decision from session state
+2. Use router's workflow_selection instead of keyword matching
+3. Validate confidence score (>= 0.8 preferred)
+4. Spawn agents according to routing decision
+
+**Bypass Mode** (Development/Testing):
+
+```bash
+export CLAUDE_ROUTER_BYPASS=true  # Disables enforcement
+```
+
+**When Hook Blocks**:
 
 ```
-I'll read this file to understand the code structure...
-[Read tool - Hook BLOCKS and shows violation message]
+╔═══════════════════════════════════════════════════════════════════╗
+║  ROUTER-FIRST ENFORCEMENT - REQUEST MUST BE ROUTED               ║
+╠═══════════════════════════════════════════════════════════════════╣
+║  Your request has not been classified by the router agent yet.   ║
+║  All requests must be routed before processing can begin.        ║
+║                                                                   ║
+║  What to do:                                                      ║
+║  1. Send your request to the system normally                      ║
+║  2. The router will classify it automatically                     ║
+║  3. Then your request will be processed                           ║
+╚═══════════════════════════════════════════════════════════════════╝
 ```
 
-**CORRECT Pattern** (What to do instead):
+**Integration with Existing Enforcement**:
 
-```
-I need to understand the code structure. Spawning analyst agent.
-[Task tool: subagent_type="analyst"]
-Task: "Analyze the code structure in /path/to/directory"
-```
+Works alongside orchestrator enforcement and post-delegation verification. Router-first gates first.
 
-**BLOCKED Example** (Hook blocks this):
+**Error Handling**:
 
-```
-Let me fix this bug directly...
-[Edit tool - Hook BLOCKS immediately]
-```
+- Session state read failure → Fail-open (ALLOW with warning)
+- Invalid JSON in state → Reset state, ALLOW router
+- Hook timeout (>2s) → Fail-open (ALLOW with warning)
+- Corrupted state → Reset and create fresh session
 
-**CORRECT Pattern** (What to do instead):
+**Session Lifecycle**:
 
-```
-This requires code changes. Spawning developer.
-[Task tool: subagent_type="developer"]
-Task: "Fix the bug in /path/to/file.ts - [describe the issue]"
-```
+1. **Created**: First tool call in new conversation
+2. **Routing Started**: Router agent begins classification
+3. **Routing Completed**: Router updates state with decision
+4. **New request cycle**: New user prompt may require a new routing decision
+5. **Expired**: Long sliding TTL (multi-hour; see hook constants for current value)
 
-**BLOCKED Example** (Hook blocks this):
+**See**: `.claude/context/artifacts/router-first-enforcement-architecture.md` for complete architecture
 
-```
-I'll run git commands to commit these changes...
-[Bash: git add . && git commit -m "..." - Hook BLOCKS]
-```
-
-**CORRECT Pattern** (What to do instead):
-
-```
-Need to commit changes. Spawning developer.
-[Task tool: subagent_type="developer"]
-Task: "Commit the changes with message: ..."
-```
+---
 
 ### Plan Rating Enforcement
 
@@ -447,7 +448,7 @@ Task: "Commit the changes with message: ..."
 ## Overview
 
 - **Type**: Multi-platform agent configuration bundle
-- **Stack**: Claude Code, Cursor, Factory Droid with shared rule base
+- **Stack**: Claude Code (and optionally Cursor) with shared rule base
 - **Agents**: 34 specialized agents (24 core + 10 extended/specialized) - See @.claude/agents/
 - **Skills**: 107 utility skills - @.claude/skills/ and @.claude/docs/AGENT_SKILL_MATRIX.md
 - **Workflows**: 14 workflow definitions - See @.claude/workflows/WORKFLOW-GUIDE.md
@@ -767,7 +768,7 @@ See @.claude/docs/SECURITY_TRIGGERS.md for detailed security trigger documentati
 
 ## Setup
 
-1. Copy `.claude/`, `.cursor/`, `.factory/` into your project
+1. Copy `.claude/` (and optionally `.cursor/`) into your project
 2. Agents activate based on task keywords
 3. Use slash commands for quick workflows
 
@@ -806,6 +807,14 @@ See @.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md for detailed setup and vali
 
 **Key Docs**: Setup (@.claude/docs/setup-guides/CLAUDE_SETUP_GUIDE.md), Workflows (@.claude/workflows/WORKFLOW-GUIDE.md), Agent-Skill Matrix (@.claude/docs/AGENT_SKILL_MATRIX.md), Security Triggers (@.claude/docs/SECURITY_TRIGGERS.md), Enforcement Examples (@.claude/docs/ENFORCEMENT_EXAMPLES.md)
 
+**Conductor Guides**:
+
+- Conductor Overview (@.claude/docs/CONDUCTOR_FEATURES.md)
+- Project Analyzer (@.claude/docs/PROJECT_ANALYZER_GUIDE.md)
+- Suggestions System (@.claude/docs/SUGGESTIONS_GUIDE.md)
+- Smart Revert (@.claude/docs/SMART_REVERT_GUIDE.md)
+- Tracks System (@.claude/docs/TRACKS_GUIDE.md)
+
 **Detailed**: @.claude/agents/ (34 agents), @.claude/skills/ (108 skills), @.claude/instructions/ (playbooks), @.claude/system/guardrails/ (enterprise)
 
 ## MCP Integration (Optional)
@@ -815,6 +824,12 @@ The `.claude/.mcp.json` file contains optional MCP server configurations. This p
 **Prefer Skills over MCP**: Most MCP servers have been converted to Skills for 90%+ context savings. Use Skills (`.claude/skills/`) instead of MCP when possible.
 
 **When to Keep MCP**: Core tools needed every conversation (1-5 tools), complex OAuth flows or persistent connections, tools not yet converted to Skills.
+
+### Tool Search Requirements
+
+Tool Search is a beta capability and only works when the active model supports `tool_reference` blocks (Sonnet/Opus). Haiku variants disable Tool Search automatically.
+
+Tool Search also requires `MCPSearchTool` to be allowed in Claude Code settings; if it is disallowed, you will see "Tool search disabled: MCPSearchTool is not available" in debug logs.
 
 See @.claude/docs/ADVANCED_TOOL_USE.md for Tool Search Tool (Beta) documentation.
 

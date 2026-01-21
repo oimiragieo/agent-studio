@@ -98,6 +98,7 @@ steps:
     validation:
       minimum_score: 7
       rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
     retry:
       max_attempts: 3
@@ -164,6 +165,7 @@ steps:
       - phase-2-work-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02-developer.json
     validation:
+      schema: .claude/schemas/phase-work.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02-developer.json
     description: |
       Simulate work for Phase 2:
@@ -320,6 +322,8 @@ steps:
     inputs:
       - artifact-registry.json
     policy: auto-on-pass
+    validation:
+      schema: .claude/schemas/artifact-registry.schema.json
     retry:
       max_attempts: 3
       on_failure: log_and_continue

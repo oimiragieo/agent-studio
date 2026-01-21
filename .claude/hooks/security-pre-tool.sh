@@ -11,7 +11,7 @@ TOOL_INPUT=$(echo "$INPUT" | jq -r '.tool_input // empty')
 
 # Skip validation for TodoWrite and Task tools
 if [ "$TOOL_NAME" = "TodoWrite" ] || [ "$TOOL_NAME" = "Task" ]; then
-    echo '{"decision": "allow"}'
+    echo '{"decision": "approve"}'
     exit 0
 fi
 
@@ -102,4 +102,4 @@ if [ "$TOOL_NAME" = "Edit" ] || [ "$TOOL_NAME" = "Write" ]; then
 fi
 
 # Allow by default
-echo '{"decision": "allow"}'
+echo '{"decision": "approve"}'

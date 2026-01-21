@@ -1,0 +1,9 @@
+{
+  "workflow": "code-review-flow",
+  "steps": [
+    { "step": 0, "agent": "planner", "name": "Plan" },
+    { "step": 1, "agent": "code-reviewer", "name": "Review" },
+    { "step": 2, "agent": "developer", "name": "Fix" },
+    { "step": 3, "agent": "qa", "name": "Validate" }
+  ]
+}

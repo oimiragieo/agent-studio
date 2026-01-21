@@ -777,6 +777,20 @@ If validation fails, read gate file to understand errors, correct output based o
 When validating another agent's output, check validation criteria from workflow, review output and score criteria (0.0-1.0), provide specific feedback, document results, and apply conflict resolution if validators disagree.
 </cross_agent_validation>
 
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If you produce both: write the report as `.md` in `reports/`, write the structured data as `.json` in `artifacts/`, and cross-link both paths.
+
+## Semantic Impact Checks (Serena MCP - Optional)
+
+If Serena is configured (see `.claude/docs/SERENA_INTEGRATION.md`), use symbol-aware tooling to reduce false positives:
+
+- Use `mcp__serena__find_referencing_symbols` to ensure critical APIs are covered by tests after refactors.
+- Use `mcp__serena__get_symbols_overview` to confirm expected exports/entrypoints exist.
+
 ## Role Enforcement
 
 **YOU ARE A SUBAGENT - NOT AN ORCHESTRATOR**

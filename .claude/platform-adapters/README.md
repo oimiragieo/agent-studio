@@ -30,13 +30,12 @@ The platform adapter layer enables workflows designed for Claude Code to be exec
 
 ## Files
 
-| File                    | Description                                 |
-| ----------------------- | ------------------------------------------- |
-| `base-adapter.mjs`      | Abstract base class with common interface   |
-| `claude-adapter.mjs`    | Native Claude Code adapter (full support)   |
-| `cursor-adapter.mjs`    | Cursor IDE adapter (Plan Mode translation)  |
-| `factory-adapter.mjs`   | Factory Droid adapter (manual coordination) |
-| `adapter-registry.json` | Adapter configuration and capabilities      |
+| File                    | Description                                |
+| ----------------------- | ------------------------------------------ |
+| `base-adapter.mjs`      | Abstract base class with common interface  |
+| `claude-adapter.mjs`    | Native Claude Code adapter (full support)  |
+| `cursor-adapter.mjs`    | Cursor IDE adapter (Plan Mode translation) |
+| `adapter-registry.json` | Adapter configuration and capabilities     |
 
 ## Usage
 

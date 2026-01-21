@@ -104,34 +104,75 @@ export function validateParallelGroups(steps) {
  * @param {Function} stepExecutor - Function to execute a single step
  * @returns {Promise<Object>} Execution result
  */
-async function executeStepWithTimeout(step, context, stepExecutor, timeout = 300000) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+async function executeStepWithTimeout(step, context, stepExecutor, timeout = 300000, retry = {}) {
+  const {
+    retries = 0,
+    retryDelayMs = 1000,
+    backoffMultiplier = 2,
+    maxRetryDelayMs = 30_000,
+    shouldRetry = null,
+    onAttempt = () => {},
+  } = retry || {};
 
-  try {
-    const result = await Promise.race([
-      stepExecutor(step, context),
-      new Promise((_, reject) => {
-        controller.signal.addEventListener('abort', () => {
-          reject(new Error(`Step ${step.step} timed out after ${timeout}ms`));
-        });
-      }),
-    ]);
+  const maxAttempts = Math.max(0, Math.floor(Number(retries || 0))) + 1;
 
-    return {
-      step: step.step,
-      status: 'success',
-      result,
-    };
-  } catch (error) {
-    return {
-      step: step.step,
-      status: 'error',
-      error: error.message,
-    };
-  } finally {
-    clearTimeout(timeoutId);
+  const delayFor = attemptIdx => {
+    const base = Number(retryDelayMs);
+    const mult = Number(backoffMultiplier);
+    const max = Number(maxRetryDelayMs);
+    const safeBase = Number.isFinite(base) && base > 0 ? base : 1000;
+    const safeMult = Number.isFinite(mult) && mult >= 1 ? mult : 2;
+    const safeMax = Number.isFinite(max) && max > 0 ? max : 30_000;
+    return Math.min(safeMax, Math.floor(safeBase * Math.pow(safeMult, attemptIdx)));
+  };
+
+  const shouldRetryError = err => {
+    if (typeof shouldRetry === 'function') return Boolean(shouldRetry(err, step, context));
+    return true; // default: retry any error
+  };
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const startedAt = Date.now();
+
+    try {
+      onAttempt({ step: step.step, attempt, maxAttempts });
+      const result = await Promise.race([
+        stepExecutor(step, context),
+        new Promise((_, reject) => {
+          controller.signal.addEventListener('abort', () => {
+            reject(new Error(`Step ${step.step} timed out after ${timeout}ms`));
+          });
+        }),
+      ]);
+
+      clearTimeout(timeoutId);
+      return {
+        step: step.step,
+        status: 'success',
+        result,
+        duration_ms: Date.now() - startedAt,
+        attempts: attempt,
+      };
+    } catch (error) {
+      clearTimeout(timeoutId);
+      const message = error?.message || String(error);
+      const last = {
+        step: step.step,
+        status: 'error',
+        error: message,
+        duration_ms: Date.now() - startedAt,
+        attempts: attempt,
+      };
+
+      if (attempt >= maxAttempts || !shouldRetryError(error)) return last;
+      const delay = delayFor(attempt - 1);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
   }
+
+  return { step: step.step, status: 'error', error: 'Unknown error' };
 }
 
 /**
@@ -154,7 +195,12 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
     failFast = false,
     onStepComplete = () => {},
     onGroupComplete = () => {},
+    onEvent = () => {},
+    retry = null,
   } = options;
+
+  const emitter = new EventEmitter();
+  if (typeof onEvent === 'function') emitter.on('event', onEvent);
 
   if (!stepExecutor || typeof stepExecutor !== 'function') {
     throw new Error('stepExecutor function is required');
@@ -169,7 +215,15 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
     console.warn('[ParallelExecutor] Falling back to sequential execution');
 
     // Execute sequentially on validation error
-    return executeSequentially(steps, context, stepExecutor, timeout, onStepComplete);
+    return executeSequentially(
+      steps,
+      context,
+      stepExecutor,
+      timeout,
+      onStepComplete,
+      retry,
+      emitter
+    );
   }
 
   // Log warnings
@@ -199,13 +253,31 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
   // Execute groups in order
   for (const [groupId, groupSteps] of sortedGroups) {
     const groupStartTime = Date.now();
+    emitter.emit('event', {
+      type: 'group_start',
+      group_id: groupId,
+      steps: groupSteps.map(s => s.step),
+    });
 
     if (groupSteps.length === 1) {
       // Single step - execute directly
       const step = groupSteps[0];
       console.log(`[ParallelExecutor] Executing step ${step.step} (sequential)`);
 
-      const result = await executeStepWithTimeout(step, context, stepExecutor, timeout);
+      emitter.emit('event', { type: 'step_start', group_id: groupId, step: step.step });
+      const stepRetry = step.retry && typeof step.retry === 'object' ? step.retry : null;
+      const retryCfg = stepRetry || retry || null;
+      const result = await executeStepWithTimeout(step, context, stepExecutor, timeout, {
+        ...(retryCfg || {}),
+        onAttempt: info =>
+          emitter.emit('event', { type: 'step_attempt', group_id: groupId, ...info }),
+      });
+      emitter.emit('event', {
+        type: 'step_complete',
+        group_id: groupId,
+        step: step.step,
+        status: result.status,
+      });
 
       if (result.status === 'success') {
         results.success.push(result);
@@ -224,7 +296,11 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
       );
 
       const parallelPromises = groupSteps.map(step =>
-        executeStepWithTimeout(step, context, stepExecutor, timeout)
+        executeStepWithTimeout(step, context, stepExecutor, timeout, {
+          ...((step.retry && typeof step.retry === 'object' ? step.retry : null) || retry || {}),
+          onAttempt: info =>
+            emitter.emit('event', { type: 'step_attempt', group_id: groupId, ...info }),
+        })
       );
 
       const parallelResults = await Promise.allSettled(parallelPromises);
@@ -252,6 +328,12 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
           groupSuccess = false;
         }
 
+        emitter.emit('event', {
+          type: 'step_complete',
+          group_id: groupId,
+          step: result.step,
+          status: result.status,
+        });
         onStepComplete(result);
       }
 
@@ -279,6 +361,14 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
         duration: groupDuration,
       });
 
+      emitter.emit('event', {
+        type: 'group_complete',
+        group_id: groupId,
+        steps: groupSteps.map(s => s.step),
+        success: groupSuccess,
+        duration_ms: groupDuration,
+      });
+
       if (!groupSuccess && failFast) {
         break;
       }
@@ -294,7 +384,15 @@ export async function executeWorkflowSteps(steps, context, options = {}) {
 /**
  * Execute steps sequentially (fallback mode)
  */
-async function executeSequentially(steps, context, stepExecutor, timeout, onStepComplete) {
+async function executeSequentially(
+  steps,
+  context,
+  stepExecutor,
+  timeout,
+  onStepComplete,
+  retry,
+  emitter
+) {
   const results = {
     success: [],
     failed: [],
@@ -310,7 +408,20 @@ async function executeSequentially(steps, context, stepExecutor, timeout, onStep
   for (const step of steps) {
     console.log(`[ParallelExecutor] Executing step ${step.step} (sequential fallback)`);
 
-    const result = await executeStepWithTimeout(step, context, stepExecutor, timeout);
+    emitter?.emit?.('event', { type: 'step_start', group_id: 'sequential', step: step.step });
+    const stepRetry = step.retry && typeof step.retry === 'object' ? step.retry : null;
+    const retryCfg = stepRetry || retry || null;
+    const result = await executeStepWithTimeout(step, context, stepExecutor, timeout, {
+      ...(retryCfg || {}),
+      onAttempt: info =>
+        emitter?.emit?.('event', { type: 'step_attempt', group_id: 'sequential', ...info }),
+    });
+    emitter?.emit?.('event', {
+      type: 'step_complete',
+      group_id: 'sequential',
+      step: step.step,
+      status: result.status,
+    });
 
     if (result.status === 'success') {
       results.success.push(result);

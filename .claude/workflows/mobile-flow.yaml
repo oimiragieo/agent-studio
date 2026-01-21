@@ -73,6 +73,7 @@ steps:
     validation:
       minimum_score: 7
       rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
     retry:
       max_attempts: 3
@@ -143,6 +144,7 @@ steps:
       - mobile-security-review.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02.5-security-architect.json
     validation:
+      schema: .claude/schemas/security-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02.5-security-architect.json
     description: |
       Mobile security and permissions review:
@@ -166,6 +168,7 @@ steps:
       - mobile-accessibility-audit.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/02.6-accessibility-expert.json
     validation:
+      schema: .claude/schemas/ui-audit-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/02.6-accessibility-expert.json
     description: |
       Mobile accessibility compliance:
@@ -236,7 +239,11 @@ steps:
       - mobile-test-results.json
       - quality-report.json
     validation:
+      schema: .claude/schemas/quality-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/05-qa.json
+    secondary_outputs:
+      - artifact: mobile-test-results.json
+        schema: .claude/schemas/test-results.schema.json
     description: |
       Mobile-specific testing:
       - Device compatibility testing
@@ -254,6 +261,8 @@ steps:
     inputs:
       - artifact-registry.json
     policy: auto-on-pass
+    validation:
+      schema: .claude/schemas/artifact-registry.schema.json
     retry:
       max_attempts: 3
       on_failure: log_and_continue

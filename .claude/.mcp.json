@@ -98,6 +98,22 @@
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
       "description": "Sequential thinking and structured problem solving. Helps break down complex problems into steps with revision capabilities.",
       "deferLoading": true
+    },
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "claude-code",
+        "--project",
+        "${workspaceFolder}"
+      ],
+      "description": "Serena MCP server (semantic code navigation/editing via LSP). Optional; requires uv/uvx installed. See .claude/docs/SERENA_INTEGRATION.md.",
+      "optional": true,
+      "deferLoading": true
     }
   }
 }

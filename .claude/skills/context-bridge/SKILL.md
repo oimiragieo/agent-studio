@@ -1,7 +1,7 @@
 ---
 name: context-bridge
 version: 1.0.0
-description: Synchronize task state and metadata across Claude, Cursor, and Factory Droid sessions. Use when handing off tasks between platforms, sharing plans, or updating external trackers like Linear or Jira.
+description: Synchronize task state and metadata across Claude and Cursor sessions. Use when handing off tasks between platforms, sharing plans, or updating external trackers like Linear or Jira.
 allowed-tools: linear_read, linear_write, github_read, github_write, slack_write
 ---
 
@@ -24,7 +24,7 @@ Context Bridge - Synchronizes task state and metadata across Claude, Cursor, and
    - Read artifact registry from source platform (e.g., `.claude/context/runtime/runs/<run_id>/artifact-registry.json`)
    - Extract publishing metadata (published, published_at, publish_status, publish_targets, publish_attempts)
    - Validate metadata against `.claude/schemas/artifact-metadata.schema.json`
-   - Sync to target platform (e.g., `.cursor/plans/artifacts/` or `.factory/context/artifacts/`)
+   - Sync to target platform (e.g., `.cursor/plans/artifacts/`)
    - Handle conflicts: prefer most recent `published_at` timestamp
    - Update `last_synced` timestamp in metadata
 4. **Update Trackers**: If a ticket ID is present, update the external status (Linear/GitHub).

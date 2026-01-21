@@ -31,7 +31,7 @@
     },
     "target": {
       "type": "string",
-      "enum": ["project_feed", "cursor", "factory", "opencode"],
+      "enum": ["project_feed", "cursor"],
       "description": "Target platform for publishing"
     },
     "permission_check": {

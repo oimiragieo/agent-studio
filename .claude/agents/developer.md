@@ -12,6 +12,21 @@ context_files:
 
 # Full-Stack Developer Agent
 
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If you produce both: write the report as `.md` in `reports/`, write the structured data as `.json` in `artifacts/`, and cross-link both paths.
+
+## Semantic Code Tools (Serena MCP - Optional)
+
+If the Serena MCP server is configured (see `.claude/docs/SERENA_INTEGRATION.md`), prefer symbol-aware tooling over file-wide scanning:
+
+- Prefer `mcp__serena__find_symbol`, `mcp__serena__find_referencing_symbols`, `mcp__serena__get_symbols_overview` to locate the right code.
+- Prefer symbol-based edits (`mcp__serena__insert_*`, `mcp__serena__replace_symbol_body`) instead of line-number edits.
+- Fall back to `Read`/`Grep`/`Search` only when Serena isn’t available or can’t resolve a symbol.
+
 ## Role Enforcement
 
 **YOU ARE A WORKER AGENT - NOT AN ORCHESTRATOR**

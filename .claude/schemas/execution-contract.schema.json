@@ -65,21 +65,10 @@
       "type": "array",
       "items": {
         "type": "string",
-        "enum": [
-          "claude",
-          "cursor",
-          "gemini",
-          "codex",
-          "factory",
-          "opencode",
-          "node",
-          "pnpm",
-          "npm",
-          "git"
-        ]
+        "enum": ["claude", "cursor", "gemini", "codex", "node", "pnpm", "npm", "git"]
       },
       "uniqueItems": true,
-      "description": "CLI tools required for execution. 'claude' for Claude Code CLI, 'cursor' for Cursor, 'gemini' for Google Gemini CLI, 'codex' for OpenAI Codex CLI, 'factory' for Factory Droid, 'opencode' for OpenCode CLI."
+      "description": "CLI tools required for execution. 'claude' for Claude Code CLI, 'cursor' for Cursor, 'gemini' for Google Gemini CLI, 'codex' for OpenAI Codex CLI."
     },
     "required_schemas": {
       "type": "array",

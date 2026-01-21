@@ -26,7 +26,6 @@ BYPASS_PERMISSIONS=false
 # Model CLI commands
 # Updated Nov 2025: Opus 4.5, Sonnet 4.5, Gemini 3.0 Pro
 # Note: cursor-agent requires WSL on Windows
-# Note: opencode supports 17+ models via GitHub Copilot integration
 declare -A MODEL_COMMANDS=(
     # Direct API models
     # NOTE: --permission-mode bypassPermissions removed for security
@@ -53,16 +52,6 @@ declare -A MODEL_COMMANDS=(
     ["cursor-gemini"]="wsl bash -lc \"cursor-agent -p --model gemini-3-pro --output-format json '\$PROMPT'\""
     ["cursor-grok"]="wsl bash -lc \"cursor-agent -p --model grok --output-format json '\$PROMPT'\""
     ["cursor-composer"]="wsl bash -lc \"cursor-agent -p --model composer-1 --output-format json '\$PROMPT'\""
-    # OpenCode - use 'opencode run' for headless, --model provider/model format
-    # Note: Some Copilot models require enablement in GitHub Copilot settings
-    ["opencode"]="opencode run \"\$PROMPT\" --model github-copilot/claude-sonnet-4.5"
-    ["opencode-opus"]="opencode run \"\$PROMPT\" --model github-copilot/claude-opus-4.5"  # May require Copilot settings
-    ["opencode-gpt5"]="opencode run \"\$PROMPT\" --model github-copilot/gpt-5.1"
-    ["opencode-codex"]="opencode run \"\$PROMPT\" --model github-copilot/gpt-5.1-codex"
-    ["opencode-gemini"]="opencode run \"\$PROMPT\" --model github-copilot/gemini-3-pro-preview"
-    ["opencode-fast"]="opencode run \"\$PROMPT\" --model github-copilot/grok-code-fast-1"
-    ["opencode-haiku"]="opencode run \"\$PROMPT\" --model github-copilot/claude-haiku-4.5"
-    ["opencode-mini"]="opencode run \"\$PROMPT\" --model github-copilot/gpt-5-mini"
 )
 
 # Model capabilities for auto-routing
@@ -87,15 +76,6 @@ declare -A MODEL_STRENGTHS=(
     ["cursor-gemini"]="research,large-context,analysis"
     ["cursor-grok"]="fast-responses,coding"
     ["cursor-composer"]="cursor-native,fast,proprietary"
-    # OpenCode variants (via GitHub Copilot)
-    ["opencode"]="terminal-tasks,quick-edits,cost-effective,multi-model"
-    ["opencode-opus"]="planning,architecture,reasoning,cost-effective"
-    ["opencode-gpt5"]="reasoning,coding,analysis,flagship"
-    ["opencode-codex"]="code-generation,scaffolding,implementation"
-    ["opencode-gemini"]="research,large-context,analysis"
-    ["opencode-fast"]="quick-fixes,iteration,speed"
-    ["opencode-haiku"]="fast-responses,simple-tasks,cost-effective"
-    ["opencode-mini"]="lightweight,quick-tasks,iteration"
 )
 
 # Usage
@@ -154,17 +134,6 @@ MODELS:
     cursor-gemini       - Gemini 3 Pro: Large context research
     cursor-grok         - Grok: Fast xAI model
     cursor-composer     - Composer 1: Cursor's proprietary model
-
-    OpenCode Models (via GitHub Copilot - cost-effective):
-    CLI: opencode run "query" --model provider/model
-    opencode       - Sonnet 4.5: Terminal-native multi-model gateway
-    opencode-opus  - Claude Opus 4.5: Planning, architecture
-    opencode-gpt5  - GPT-5.1: Flagship reasoning and coding
-    opencode-codex - GPT-5.1 Codex: Code generation specialist
-    opencode-gemini- Gemini 3 Pro Preview: Large context research
-    opencode-fast  - Grok Code Fast: Ultra-fast responses
-    opencode-haiku - Claude Haiku 4.5: Quick simple tasks
-    opencode-mini  - GPT-5 Mini: Lightweight iteration
 
 STRATEGIES:
     single     - Execute with one model

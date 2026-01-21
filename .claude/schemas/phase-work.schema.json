@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Phase Work Artifact",
+  "description": "Schema for simulated phase work artifacts used by recovery-test workflows.",
+  "type": "object",
+  "required": ["workflow_id", "generated_at", "phase", "artifacts"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "phase": { "type": "integer", "minimum": 0 },
+    "artifacts": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": true
+}

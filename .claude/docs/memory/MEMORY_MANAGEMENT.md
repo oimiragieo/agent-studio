@@ -551,5 +551,5 @@ Memory usage is logged automatically with **RSS as primary metric**:
 
 ## See Also
 
-- [Workflow Guide](../workflows/WORKFLOW-GUIDE.md) - Workflow execution details
+- [Workflow Guide](../../workflows/WORKFLOW-GUIDE.md) - Workflow execution details
 - [CUJ Index](../cujs/CUJ-INDEX.md) - Customer User Journey documentation

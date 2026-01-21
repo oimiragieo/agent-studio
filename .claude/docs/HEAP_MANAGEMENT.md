@@ -302,8 +302,8 @@ console.log(`Heap snapshot written to: ${snapshot}`);
 
 ### Architecture Documents
 
-- [Ephemeral Worker Pattern](../context/artifacts/architecture-ephemeral-workers.md)
-- [Phase 2 Memory System](../context/artifacts/architecture-phase-2-memory-system.md)
+- [Ephemeral Worker Pattern](./architecture/architecture-ephemeral-workers.md)
+- [Phase 2 Memory System](./architecture/architecture-phase-2-memory-system.md)
 
 ### Implementation Files
 

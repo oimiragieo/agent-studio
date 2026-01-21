@@ -2,7 +2,7 @@
 name: technical-writer
 description: Developer documentation, API references, onboarding guides, user manuals, system overviews, architectural documentation, and release notes. Use to create developer documentation, API references, onboarding guides, user manuals, system overviews, architectural documentation, or release notes.
 tools: Read, Search, Edit, Grep, Glob, MCP_search_code, MCP_search_knowledge
-model: haiku
+model: sonnet
 temperature: 0.7
 priority: medium
 ---
@@ -608,6 +608,13 @@ When Developer agent creates new modules:
 - Technical Writer should be notified to create claude.md
 - Or Developer can invoke claude-md-generator skill directly
 - Ensure claude.md is created before module is considered complete
+
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If you produce both: write the report as `.md` in `reports/`, write the structured data as `.json` in `artifacts/`, and cross-link both paths.
 
 ## Role Enforcement
 

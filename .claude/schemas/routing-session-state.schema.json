@@ -1,0 +1,280 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://llm-rules.com/schemas/routing-session-state.schema.json",
+  "title": "Routing Session State",
+  "version": "1.0.0",
+  "description": "Schema for tracking router-first enforcement session state. Used by router-first-enforcer.mjs to verify that requests have been properly routed before processing.",
+  "type": "object",
+  "required": ["session_id", "created_at", "updated_at", "expires_at", "routing", "version"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique session identifier, format: sess_<timestamp>",
+      "pattern": "^sess_[0-9]+$",
+      "examples": ["sess_1705420800000"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when session was created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last state update"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when session expires (default: 30 minutes from creation)"
+    },
+    "routing": {
+      "type": "object",
+      "description": "Routing status and classification result",
+      "required": ["completed"],
+      "properties": {
+        "completed": {
+          "type": "boolean",
+          "description": "Whether the router agent has finished classifying the request"
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when router started classification"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when router completed classification"
+        },
+        "decision": {
+          "type": ["object", "null"],
+          "description": "Router classification result",
+          "properties": {
+            "intent": {
+              "type": "string",
+              "description": "Classified intent of the user request",
+              "enum": [
+                "web_app",
+                "script",
+                "analysis",
+                "infrastructure",
+                "mobile",
+                "ai_system",
+                "question",
+                "status",
+                "read",
+                "fix",
+                "test",
+                "document",
+                "implement",
+                "architecture",
+                "refactor",
+                "optimize",
+                "security"
+              ]
+            },
+            "complexity": {
+              "type": "string",
+              "description": "Assessed complexity of the request",
+              "enum": ["low", "medium", "high"]
+            },
+            "cloud_provider": {
+              "type": ["string", "null"],
+              "description": "Detected cloud provider, if any",
+              "enum": ["gcp", "aws", "azure", null]
+            },
+            "workflow_selection": {
+              "type": "string",
+              "description": "Selected workflow file path",
+              "pattern": "^@?\\.claude/workflows/[a-z0-9-]+\\.yaml$",
+              "examples": ["@.claude/workflows/greenfield-fullstack.yaml"]
+            },
+            "confidence": {
+              "type": "number",
+              "description": "Confidence score of the classification (0.0 to 1.0)",
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "reasoning": {
+              "type": "string",
+              "description": "Router's reasoning for the classification decision",
+              "maxLength": 500
+            },
+            "keywords_detected": {
+              "type": "array",
+              "description": "Keywords that influenced the classification",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 20
+            },
+            "should_escalate": {
+              "type": "boolean",
+              "description": "Whether the request should be escalated to orchestrator"
+            },
+            "escalation_target": {
+              "type": ["string", "null"],
+              "description": "Target agent for escalation",
+              "enum": [
+                "master-orchestrator",
+                "orchestrator",
+                "security-architect",
+                "compliance-auditor",
+                null
+              ]
+            }
+          },
+          "required": [
+            "intent",
+            "complexity",
+            "workflow_selection",
+            "confidence",
+            "should_escalate"
+          ]
+        }
+      }
+    },
+    "routing_history": {
+      "type": "array",
+      "description": "Audit trail of routing decisions in this session",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "request_summary"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this routing decision was made"
+          },
+          "decision": {
+            "type": ["object", "null"],
+            "description": "The routing decision (same schema as routing.decision)"
+          },
+          "request_summary": {
+            "type": "string",
+            "description": "Brief summary of the user request",
+            "maxLength": 200
+          }
+        }
+      },
+      "maxItems": 10
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Performance metrics for the routing operation",
+      "properties": {
+        "routing_duration_ms": {
+          "type": ["number", "null"],
+          "description": "Time taken for router classification in milliseconds",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "tokens_used": {
+          "type": ["object", "null"],
+          "description": "Token usage for router classification",
+          "properties": {
+            "input": {
+              "type": "number",
+              "description": "Input tokens consumed",
+              "minimum": 0
+            },
+            "output": {
+              "type": "number",
+              "description": "Output tokens consumed",
+              "minimum": 0
+            }
+          },
+          "required": ["input", "output"]
+        },
+        "model": {
+          "type": ["string", "null"],
+          "description": "Model used for routing (typically 'haiku')",
+          "enum": ["haiku", "sonnet", "opus", null]
+        }
+      }
+    },
+    "version": {
+      "type": "integer",
+      "description": "State version number, incremented on each write",
+      "minimum": 1
+    },
+    "last_compact_ms": {
+      "type": "number",
+      "description": "Timestamp of last state compaction (for delta log pattern)",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "session_id": "sess_1705420800000",
+      "created_at": "2026-01-16T12:00:00.000Z",
+      "updated_at": "2026-01-16T12:00:00.000Z",
+      "expires_at": "2026-01-16T12:30:00.000Z",
+      "routing": {
+        "completed": false,
+        "started_at": null,
+        "completed_at": null,
+        "decision": null
+      },
+      "routing_history": [],
+      "metrics": {
+        "routing_duration_ms": null,
+        "tokens_used": null,
+        "model": null
+      },
+      "version": 1,
+      "last_compact_ms": 1705420800000
+    },
+    {
+      "session_id": "sess_1705420800000",
+      "created_at": "2026-01-16T12:00:00.000Z",
+      "updated_at": "2026-01-16T12:00:00.150Z",
+      "expires_at": "2026-01-16T12:30:00.000Z",
+      "routing": {
+        "completed": true,
+        "started_at": "2026-01-16T12:00:00.050Z",
+        "completed_at": "2026-01-16T12:00:00.150Z",
+        "decision": {
+          "intent": "web_app",
+          "complexity": "high",
+          "cloud_provider": "gcp",
+          "workflow_selection": "@.claude/workflows/greenfield-fullstack.yaml",
+          "confidence": 0.95,
+          "reasoning": "User wants enterprise web application with GCP integration",
+          "keywords_detected": ["enterprise", "web application", "google cloud"],
+          "should_escalate": true,
+          "escalation_target": "master-orchestrator"
+        }
+      },
+      "routing_history": [
+        {
+          "timestamp": "2026-01-16T12:00:00.150Z",
+          "decision": {
+            "intent": "web_app",
+            "complexity": "high",
+            "cloud_provider": "gcp",
+            "workflow_selection": "@.claude/workflows/greenfield-fullstack.yaml",
+            "confidence": 0.95,
+            "reasoning": "User wants enterprise web application with GCP integration",
+            "keywords_detected": ["enterprise", "web application", "google cloud"],
+            "should_escalate": true,
+            "escalation_target": "master-orchestrator"
+          },
+          "request_summary": "Build enterprise web app with GCP"
+        }
+      ],
+      "metrics": {
+        "routing_duration_ms": 100,
+        "tokens_used": {
+          "input": 250,
+          "output": 150
+        },
+        "model": "haiku"
+      },
+      "version": 2,
+      "last_compact_ms": 1705420800150
+    }
+  ]
+}

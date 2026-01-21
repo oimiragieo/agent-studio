@@ -12,6 +12,51 @@
       "description": "Intercepts user prompts and routes through Haiku router for cost optimization"
     },
     {
+      "name": "run-observer-pre",
+      "type": "preToolUse",
+      "path": ".claude/hooks/run-observer.mjs",
+      "enabled": true,
+      "priority": 1,
+      "matcher": "*",
+      "description": "Durable run observability (pre): heartbeat + activity for long-running sessions"
+    },
+    {
+      "name": "orchestrator-tool-guard",
+      "type": "preToolUse",
+      "path": ".claude/hooks/orchestrator-tool-guard.mjs",
+      "enabled": true,
+      "priority": 2,
+      "matcher": "Grep|Glob|Search",
+      "description": "Prevents orchestrators from running high-fanout repo scans (reduces OOM risk)"
+    },
+    {
+      "name": "router-glob-guard",
+      "type": "preToolUse",
+      "path": ".claude/hooks/router-glob-guard.mjs",
+      "enabled": true,
+      "priority": 2,
+      "matcher": "Glob",
+      "description": "Blocks non-.claude repo-wide Glob during routing to prevent high-fanout output and CLI OOM"
+    },
+    {
+      "name": "router-completion-handler",
+      "type": "postToolUse",
+      "path": ".claude/hooks/router-completion-handler.mjs",
+      "enabled": true,
+      "priority": 1,
+      "matcher": "Task|router",
+      "description": "Marks router-first routing as completed after router finishes"
+    },
+    {
+      "name": "run-observer-post",
+      "type": "postToolUse",
+      "path": ".claude/hooks/run-observer.mjs",
+      "enabled": true,
+      "priority": 2,
+      "matcher": "*",
+      "description": "Durable run observability (post): append event log and capture failures"
+    },
+    {
       "name": "security-validation",
       "type": "preToolUse",
       "path": ".claude/hooks/security-pre-tool.mjs",
@@ -28,6 +73,15 @@
       "priority": 3,
       "matcher": "*",
       "description": "Validates file paths on all tools to prevent SLOP"
+    },
+    {
+      "name": "read-size-guard",
+      "type": "preToolUse",
+      "path": ".claude/hooks/read-size-guard.mjs",
+      "enabled": true,
+      "priority": 3,
+      "matcher": "Read",
+      "description": "Blocks oversized Read() calls without paging to prevent token cap errors"
     },
     {
       "name": "orchestrator-enforcement",

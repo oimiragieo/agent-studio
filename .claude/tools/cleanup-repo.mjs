@@ -12,6 +12,7 @@
  * Usage:
  *   node .claude/tools/cleanup-repo.mjs --dry-run    # Preview deletions
  *   node .claude/tools/cleanup-repo.mjs --execute    # Actually delete
+ *   node .claude/tools/cleanup-repo.mjs --dry-run --reports-retention-days 5
  */
 
 import fs from 'fs';
@@ -30,11 +31,29 @@ const args = process.argv.slice(2);
 const isDryRun = args.includes('--dry-run');
 const isExecute = args.includes('--execute');
 const skipConfirmation = args.includes('--yes') || args.includes('-y');
+const reportsRetentionDaysIdx = args.indexOf('--reports-retention-days');
+const reportsRetentionDaysRaw =
+  reportsRetentionDaysIdx >= 0 ? args[reportsRetentionDaysIdx + 1] : null;
+const reportsRetentionDays =
+  reportsRetentionDaysRaw == null
+    ? null
+    : Number.isFinite(Number(reportsRetentionDaysRaw))
+      ? Number(reportsRetentionDaysRaw)
+      : NaN;
 
 if (!isDryRun && !isExecute) {
   console.error('Error: Must specify --dry-run or --execute');
-  console.error('Usage: node .claude/tools/cleanup-repo.mjs [--dry-run|--execute] [--yes]');
+  console.error(
+    'Usage: node .claude/tools/cleanup-repo.mjs [--dry-run|--execute] [--yes] [--reports-retention-days <days>]'
+  );
   process.exit(1);
+}
+
+if (reportsRetentionDaysRaw != null) {
+  if (!Number.isFinite(reportsRetentionDays) || reportsRetentionDays < 0) {
+    console.error('Error: --reports-retention-days must be a non-negative number');
+    process.exit(1);
+  }
 }
 
 // ============================================================================
@@ -56,6 +75,9 @@ const PROTECTED_PATHS = [
   '.claude/templates',
   '.claude/docs',
   '.claude/system',
+  // Context config + reference artifacts are versioned/curated; never delete.
+  '.claude/context/config',
+  '.claude/context/artifacts/reference',
   'scripts',
   'src',
   'tests',
@@ -96,6 +118,11 @@ const CLEANUP_PATTERNS = {
     patterns: ['*.log'],
     ageInHours: 168, // 7 days
     description: 'Log files older than 7 days',
+  },
+
+  // Reports retention (optional)
+  oldReports: {
+    description: 'Report files older than configured retention',
   },
 
   // Files with tmp- prefix
@@ -188,6 +215,13 @@ function isOlderThan(filePath, hours) {
     // If file doesn't exist or can't be accessed, consider it not old
     return false;
   }
+}
+
+/**
+ * Check if file is older than specified days
+ */
+function isOlderThanDays(filePath, days) {
+  return isOlderThan(filePath, days * 24);
 }
 
 /**
@@ -633,6 +667,33 @@ async function findNestedClaudeFolders() {
   return results;
 }
 
+/**
+ * Find report files older than retention window under .claude/context/reports.
+ * This is opt-in via --reports-retention-days to avoid surprising deletions.
+ */
+async function findOldReports({ retentionDays }) {
+  if (retentionDays == null) return [];
+  if (!Number.isFinite(retentionDays) || retentionDays <= 0) return [];
+
+  const results = [];
+  try {
+    const reportsDir = path.join(projectRoot, '.claude', 'context', 'reports');
+    if (!fs.existsSync(reportsDir)) return [];
+
+    const pattern = path.join(reportsDir, '**', '*').replace(/\\/g, '/');
+    const matches = await glob(pattern, { absolute: true, dot: true, nodir: true });
+
+    for (const match of matches) {
+      if (isProtectedPath(match)) continue;
+      if (isOlderThanDays(match, retentionDays)) results.push(match);
+    }
+  } catch (error) {
+    console.error(`Error finding old reports: ${error.message}`);
+  }
+
+  return results;
+}
+
 // ============================================================================
 // MAIN CLEANUP LOGIC
 // ============================================================================
@@ -655,6 +716,7 @@ async function runCleanup() {
     tmpclaudeDirs: await findTmpClaudeDirs(),
     malformedPaths: await findMalformedPaths(),
     claudeTempFiles: await findClaudeTempFiles(),
+    oldReports: await findOldReports({ retentionDays: reportsRetentionDays }),
     oldLogs: await findOldLogs(),
     tmpPrefixFiles: await findTmpPrefixFiles(),
     testArtifactsRoot: await findTestArtifactsRoot(),

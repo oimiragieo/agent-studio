@@ -54,7 +54,7 @@ const TEST_CASES = {
         tool: 'Bash',
         tool_input: { command: 'git status' },
       },
-      expected: { decision: 'allow' },
+      expected: { decision: 'approve' },
     },
     {
       name: 'Should allow safe file writes',
@@ -62,7 +62,7 @@ const TEST_CASES = {
         tool: 'Write',
         tool_input: { file_path: 'README.md' },
       },
-      expected: { decision: 'allow' },
+      expected: { decision: 'approve' },
     },
   ],
   'audit-post-tool.mjs': [

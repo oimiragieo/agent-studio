@@ -44,8 +44,14 @@ git status
 # Dry-run (preview)
 node .claude/tools/cleanup-repo.mjs --dry-run
 
+# Optional: prune historical reports (keep last N days)
+node .claude/tools/cleanup-repo.mjs --dry-run --reports-retention-days 5
+
 # Execute (with confirmation prompt)
 node .claude/tools/cleanup-repo.mjs --execute
+
+# Execute (keep last N days of reports)
+node .claude/tools/cleanup-repo.mjs --execute --reports-retention-days 5
 
 # Execute (skip confirmation)
 node .claude/tools/cleanup-repo.mjs --execute --yes

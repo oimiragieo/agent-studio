@@ -1,0 +1,4 @@
+{
+  "task_id": "fixture-invalid-json-001",
+  "objective": "This fixture intentionally contains invalid JSON",
+}

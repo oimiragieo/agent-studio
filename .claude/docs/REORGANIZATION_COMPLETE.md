@@ -7,18 +7,21 @@ The enterprise folder structure reorganization has been successfully completed. 
 ## Completed Phases
 
 ### ✅ Phase 0: Prerequisites
+
 - **Phase 0.0**: Artifacts boundary tightened (Option A-Safe - split into generated/reference, MCP at parent)
 - **Phase 0.1**: Skill validation verified (already correct)
 - **Phase 0.2**: CUJ schema verified (already has "Search & Discovery")
 - **Phase 0.3**: Test strategy updated (added hook tests to pnpm test)
 
 ### ✅ Phase 1: Script Organization
+
 - Created script subdirectories (validation, generation, migration, maintenance, testing, installation, utilities)
 - Moved all scripts to organized locations
 - Created wrapper files at root for stable external API
 - Updated package.json script references
 
 ### ✅ Phase 2: Context Reorganization
+
 - **Phase 2.0.1**: Created context-path-resolver.mjs with explicit contract
 - **Phase 2.0.2**: Updated core entrypoints (run-cuj.mjs, sync-cuj-registry.mjs, cuj-validator-unified.mjs, workflow_runner.js)
 - **Phase 2.0.3**: Created mechanical enforcement check script
@@ -27,27 +30,33 @@ The enterprise folder structure reorganization has been successfully completed. 
 - **Phase 2.3**: Moved runtime data to runtime/ (history kept stable per Option A)
 
 ### ✅ Phase 3: .gitignore
+
 - Updated with two-step process (new patterns added, legacy patterns kept for now)
 
 ### ✅ Phase 4: Documentation Organization
+
 - Moved diagrams to .claude/docs/architecture/
 - Organized memory docs to .claude/docs/memory/
 - Created CONTEXT_PATH_MIGRATION.md
 
 ### ✅ Phase 5: Tests at Root
+
 - Verified tests stay at root (not in .claude/)
 - Updated test scripts in package.json
 
 ### ✅ Phase 6: Workflow Paths
+
 - Option A chosen: Keep history/ stable (workflows unchanged, resolver handles tools)
 
 ### ✅ Phase 7: Documentation Updates
+
 - Updated README.md with new paths
 - Updated GETTING_STARTED.md with new paths
-- Updated .claude/docs/*.md files with new artifact paths
+- Updated .claude/docs/\*.md files with new artifact paths
 - Updated CUJ documentation with new paths
 
 ### ✅ Phase 8: Validation & Cleanup
+
 - Removed empty directories
 - Verified MCP config (correct - points to parent artifacts/)
 - All linter checks pass
@@ -109,6 +118,7 @@ tests/                        # Stay at root (not in .claude/)
 ## Backward Compatibility
 
 All tools use `context-path-resolver.mjs` for path resolution:
+
 - **Reads**: Fall back to legacy paths if canonical doesn't exist
 - **Writes**: Always go to canonical paths
 - **Precedence**: Prefer canonical when both exist

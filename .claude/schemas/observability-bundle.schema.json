@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Observability Bundle",
+  "type": "object",
+  "required": ["id", "created_at", "project_root", "inputs", "outputs", "runs", "data"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string" },
+    "project_root": { "type": "string", "minLength": 1 },
+    "inputs": {
+      "type": "object",
+      "required": ["debug_log_path"],
+      "properties": {
+        "debug_log_path": { "type": ["string", "null"] },
+        "testing_run_id": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "outputs": {
+      "type": "object",
+      "required": ["bundle_json", "report_md"],
+      "properties": {
+        "bundle_json": { "type": "string" },
+        "report_md": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "ok", "cmd"],
+        "properties": {
+          "name": { "type": "string" },
+          "ok": { "type": "boolean" },
+          "exit_code": { "type": ["number", "null"] },
+          "timed_out": { "type": "boolean" },
+          "error": { "type": ["string", "null"] },
+          "cmd": { "type": "array", "items": { "type": "string" } },
+          "stderr_tail": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "project": { "type": ["object", "null"] },
+        "events_tail": { "type": ["object", "null"] },
+        "metrics_summary": { "type": ["object", "null"] },
+        "resume_status": { "type": ["object", "null"] },
+        "tool_events": { "type": ["object", "null"] },
+        "debug_analysis": { "type": ["object", "null"] },
+        "testing_run": { "type": ["object", "null"] }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

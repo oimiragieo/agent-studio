@@ -5,6 +5,7 @@ This document describes the migration from legacy context paths to the new organ
 ## Overview
 
 The context directory has been reorganized to separate:
+
 - **Config files** (version-controlled): `.claude/context/config/`
 - **Runtime data** (gitignored): `.claude/context/runtime/`
 - **Artifacts** (split into generated/reference): `.claude/context/artifacts/`
@@ -13,45 +14,45 @@ The context directory has been reorganized to separate:
 
 ### Config Files
 
-| Legacy Path | New Path | Status |
-|------------|----------|--------|
-| `.claude/context/cuj-registry.json` | `.claude/context/config/cuj-registry.json` | ✅ Migrated |
+| Legacy Path                                     | New Path                                               | Status      |
+| ----------------------------------------------- | ------------------------------------------------------ | ----------- |
+| `.claude/context/cuj-registry.json`             | `.claude/context/config/cuj-registry.json`             | ✅ Migrated |
 | `.claude/context/skill-integration-matrix.json` | `.claude/context/config/skill-integration-matrix.json` | ✅ Migrated |
-| `.claude/context/security-triggers-v2.json` | `.claude/context/config/security-triggers-v2.json` | ✅ Migrated |
-| `.claude/context/rule-index.json` | `.claude/context/config/rule-index.json` | ✅ Migrated |
-| `.claude/context/signoff-matrix.json` | `.claude/context/config/signoff-matrix.json` | ✅ Migrated |
+| `.claude/context/security-triggers-v2.json`     | `.claude/context/config/security-triggers-v2.json`     | ✅ Migrated |
+| `.claude/context/rule-index.json`               | `.claude/context/config/rule-index.json`               | ✅ Migrated |
+| `.claude/context/signoff-matrix.json`           | `.claude/context/config/signoff-matrix.json`           | ✅ Migrated |
 
 ### Runtime Data
 
-| Legacy Path | New Path | Status |
-|------------|----------|--------|
-| `.claude/context/analytics/` | `.claude/context/runtime/analytics/` | ✅ Migrated |
-| `.claude/context/audit/` | `.claude/context/runtime/audit/` | ✅ Migrated |
-| `.claude/context/cache/` | `.claude/context/runtime/cache/` | ✅ Migrated |
+| Legacy Path                            | New Path                               | Status      |
+| -------------------------------------- | -------------------------------------- | ----------- |
+| `.claude/context/analytics/`           | `.claude/context/runtime/analytics/`   | ✅ Migrated |
+| `.claude/context/audit/`               | `.claude/context/runtime/audit/`       | ✅ Migrated |
+| `.claude/context/cache/`               | `.claude/context/runtime/cache/`       | ✅ Migrated |
 | `.claude/context/runtime/checkpoints/` | `.claude/context/runtime/checkpoints/` | ✅ Migrated |
-| `.claude/context/logs/` | `.claude/context/runtime/logs/` | ✅ Migrated |
-| `.claude/context/memory/` | `.claude/context/runtime/memory/` | ✅ Migrated |
-| `.claude/context/reports/` | `.claude/context/runtime/reports/` | ✅ Migrated |
-| `.claude/context/runtime/runs/` | `.claude/context/runtime/runs/` | ✅ Migrated |
-| `.claude/context/sessions/` | `.claude/context/runtime/sessions/` | ✅ Migrated |
-| `.claude/context/tasks/` | `.claude/context/runtime/tasks/` | ✅ Migrated |
-| `.claude/context/test/` | `.claude/context/runtime/test/` | ✅ Migrated |
-| `.claude/context/tmp/` | `.claude/context/runtime/tmp/` | ✅ Migrated |
-| `.claude/context/todos/` | `.claude/context/runtime/todos/` | ✅ Migrated |
+| `.claude/context/logs/`                | `.claude/context/runtime/logs/`        | ✅ Migrated |
+| `.claude/context/memory/`              | `.claude/context/runtime/memory/`      | ✅ Migrated |
+| `.claude/context/reports/`             | `.claude/context/runtime/reports/`     | ✅ Migrated |
+| `.claude/context/runtime/runs/`        | `.claude/context/runtime/runs/`        | ✅ Migrated |
+| `.claude/context/sessions/`            | `.claude/context/runtime/sessions/`    | ✅ Migrated |
+| `.claude/context/tasks/`               | `.claude/context/runtime/tasks/`       | ✅ Migrated |
+| `.claude/context/test/`                | `.claude/context/runtime/test/`        | ✅ Migrated |
+| `.claude/context/tmp/`                 | `.claude/context/runtime/tmp/`         | ✅ Migrated |
+| `.claude/context/todos/`               | `.claude/context/runtime/todos/`       | ✅ Migrated |
 
 ### Artifacts
 
-| Legacy Path | New Path | Status |
-|------------|----------|--------|
-| `.claude/context/artifacts/*.json` (generated) | `.claude/context/artifacts/generated/*.json` | ✅ Migrated |
-| `.claude/context/artifacts/*-rubric.json` | `.claude/context/artifacts/reference/*-rubric.json` | ✅ Migrated |
-| `.claude/context/artifacts/*-reference.json` | `.claude/context/artifacts/reference/*-reference.json` | ✅ Migrated |
-| `.claude/context/artifacts/*-template.json` | `.claude/context/artifacts/reference/*-template.json` | ✅ Migrated |
+| Legacy Path                                    | New Path                                               | Status      |
+| ---------------------------------------------- | ------------------------------------------------------ | ----------- |
+| `.claude/context/artifacts/*.json` (generated) | `.claude/context/artifacts/generated/*.json`           | ✅ Migrated |
+| `.claude/context/artifacts/*-rubric.json`      | `.claude/context/artifacts/reference/*-rubric.json`    | ✅ Migrated |
+| `.claude/context/artifacts/*-reference.json`   | `.claude/context/artifacts/reference/*-reference.json` | ✅ Migrated |
+| `.claude/context/artifacts/*-template.json`    | `.claude/context/artifacts/reference/*-template.json`  | ✅ Migrated |
 
 ### History (Stable - Option A)
 
-| Path | Status |
-|------|--------|
+| Path                       | Status                               |
+| -------------------------- | ------------------------------------ |
 | `.claude/context/history/` | ✅ Kept stable (workflows expect it) |
 
 ## Resolver Fallback Behavior
@@ -59,18 +60,24 @@ The context directory has been reorganized to separate:
 The `context-path-resolver.mjs` provides backward compatibility:
 
 ### Read Behavior
+
 - **Primary**: Check canonical (new) path first
 - **Fallback**: If canonical doesn't exist, use legacy path
 - **Precedence**: If both exist, prefer canonical (newer) path
 
 ### Write Behavior
+
 - **Always**: Writes go to canonical paths
 - **Auto-migration**: On write, automatically migrates from legacy if needed
 
 ### Example Usage
 
 ```javascript
-import { resolveConfigPath, resolveRuntimePath, resolveArtifactPath } from './context-path-resolver.mjs';
+import {
+  resolveConfigPath,
+  resolveRuntimePath,
+  resolveArtifactPath,
+} from './context-path-resolver.mjs';
 
 // Config file (read with fallback)
 const registryPath = resolveConfigPath('cuj-registry.json', { read: true });

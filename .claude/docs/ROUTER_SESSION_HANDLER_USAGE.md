@@ -395,20 +395,37 @@ try {
 
 ## Hook Integration
 
-### Router Session Entry Hook
+### Router-First Hooks (Claude Code)
 
-The Router Session Handler integrates with the Claude Code hook system via `router-session-entry.mjs`. This hook intercepts user prompts at session start before any other processing occurs.
+Claude Code does not provide a stable "UserPromptSubmit" hook in all environments, so this repo uses a **router-first** hook stack instead. The key behavior: tools are blocked until the request is routed through the `router` agent, then the session is handed off to the required coordinator (usually `orchestrator`) before work proceeds.
 
-**Hook Location**: `.claude/hooks/router-session-entry.mjs`
-**Hook Type**: `UserPromptSubmit` (executes on every prompt)
-**Priority**: 1 (executes first in hook chain)
+**Authoritative wiring**: `.claude/settings.json` → `hooks.PreToolUse` / `hooks.PostToolUse`
+
+Core scripts:
+
+- `.claude/hooks/router-first-enforcer.mjs` (PreToolUse): blocks tool use until routed; instructs spawning `router`
+- `.claude/hooks/router-completion-handler.mjs` (PostToolUse): marks routing as complete after router finishes
+- `.claude/hooks/no-reroute-after-routing.mjs` (PreToolUse): prevents spawning `router` again after routing starts (OOM guard)
 
 ### How the Hook Works
+
+Current (router-first enforcement):
+
+```
+User prompt
+  -> router-first-enforcer.mjs (blocks tools until routed)
+  -> Task spawn router
+  -> router selects workflow + escalation target
+  -> router-completion-handler.mjs marks routing.completed=true
+  -> routing-handoff-target-guard.mjs enforces handoff to orchestrator
+```
+
+Legacy diagram (kept for historical context; do not wire `router-session-entry.mjs` into Claude Code hooks):
 
 ```
 User Prompt
     ↓
-[router-session-entry.mjs Hook]
+[router-first-enforcer.mjs Gate]
     ├─ Initialize router session (Haiku model)
     ├─ Classify intent & complexity
     ├─ Decision: Simple or Complex?
@@ -425,25 +442,7 @@ User Prompt
 
 ### Hook Configuration
 
-The hook is automatically registered in `.claude/hooks/hook-registry.json`:
-
-```json
-{
-  "hooks": {
-    "router-session-entry": {
-      "path": ".claude/hooks/router-session-entry.mjs",
-      "type": "UserPromptSubmit",
-      "priority": 1,
-      "enabled": true,
-      "config": {
-        "complexity_threshold": 0.7,
-        "session_id_prefix": "router-session",
-        "cost_tracking_enabled": true
-      }
-    }
-  }
-}
-```
+Claude Code hook wiring is configured in `.claude/settings.json`. The `.claude/hooks/hook-registry.json` file is kept for legacy tooling and human reference, but it is not the authoritative runtime configuration for Claude Code.
 
 ### Hook Settings in settings.json
 
@@ -843,7 +842,7 @@ if (sessionContext?.router_classification?.routing_method === 'router_classifica
 **Solution**:
 
 1. Check the error message: `tail -20 .claude/context/logs/hooks.log`
-2. Verify hook can load: `node .claude/hooks/router-session-entry.mjs`
+2. Verify router-first hooks run: `pnpm test:hooks --hook router-first-enforcer.mjs`
 3. Test with simple prompt: `node .claude/tools/router-session-handler.mjs classify "hello"`
 4. Check dependencies: `npm ls` and verify all modules resolve
 5. If corrupted settings: Restore from backup or recreate
@@ -859,7 +858,7 @@ if (sessionContext?.router_classification?.routing_method === 'router_classifica
 
 ## Related Documentation
 
-- [Router Agent Definition](./.claude/agents/router.md)
-- [Orchestrator Entry Point](./.claude/docs/ORCHESTRATOR_ENTRY_USAGE.md)
-- [Workflow Guide](./.claude/workflows/WORKFLOW-GUIDE.md)
-- [Settings Schema](./.claude/schemas/settings.schema.json)
+- [Router Agent Definition](../agents/router.md)
+- [Orchestrator Quick Reference](./ORCHESTRATOR_QUICK_REFERENCE.md)
+- [Workflow Guide](../workflows/WORKFLOW-GUIDE.md)
+- [Settings Schema](../schemas/settings.schema.json)

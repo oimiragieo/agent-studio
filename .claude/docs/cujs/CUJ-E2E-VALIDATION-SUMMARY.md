@@ -379,8 +379,8 @@ Potential additions to the validation system:
 
 For issues or questions:
 
-1. Check [Common Issues](../tools/README-CUJ-VALIDATION.md#common-issues-and-fixes) section
-2. Review [Troubleshooting](../tools/README-CUJ-VALIDATION.md#troubleshooting) guide
+1. Check [Common Issues](../../tools/README-CUJ-VALIDATION.md#common-issues-and-fixes) section
+2. Review [Troubleshooting](../../tools/README-CUJ-VALIDATION.md#troubleshooting) guide
 3. Run with `--verbose --fix-suggestions` for detailed diagnostics
 4. Open an issue with validation report JSON attached
 

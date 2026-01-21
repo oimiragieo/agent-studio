@@ -9,7 +9,7 @@ INPUT=$(cat)
 PROMPT=$(echo "$INPUT" | jq -r '.prompt // empty')
 
 if [ -z "$PROMPT" ]; then
-    echo '{"decision": "allow"}'
+    echo '{"decision": "approve"}'
     exit 0
 fi
 
@@ -72,5 +72,5 @@ if [ "$PROMPT_LENGTH" -gt 50000 ]; then
 fi
 
 # Allow by default
-echo '{"decision": "allow"}'
+echo '{"decision": "approve"}'
 

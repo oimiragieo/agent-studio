@@ -416,9 +416,9 @@ node .claude/tools/performance-benchmarker.mjs help
 
 ## Related Documentation
 
-- [CUJ Validation System](./.claude/docs/CUJ_VALIDATION.md)
-- [Workflow Guide](./.claude/workflows/WORKFLOW-GUIDE.md)
-- [Context Optimization](./.claude/docs/CONTEXT_OPTIMIZATION.md)
+- [CUJ Validation System](../tools/README-CUJ-VALIDATION.md)
+- [Workflow Guide](../workflows/WORKFLOW-GUIDE.md)
+- [Context Optimization](./CONTEXT_OPTIMIZATION.md)
 
 ## Version History
 

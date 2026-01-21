@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "version": "2.0",
+  "memory": {
+    "rag": {
+      "enabled": true,
+      "backgroundIndexing": false,
+      "batchSize": 25,
+      "indexInterval": 300000,
+      "minRelevance": 0.75
+    }
+  },
+  "session": {
+    "max_context_tokens": 60000
+  },
+  "env": {
+    "CLAUDE_OBS_STORE_PAYLOADS": "0",
+    "CLAUDE_OBS_FAILURE_BUNDLES": "0"
+  }
+}

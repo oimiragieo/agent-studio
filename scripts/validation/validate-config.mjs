@@ -738,10 +738,12 @@ function validateConfig() {
   // 12. Validate MCP server configuration
   console.log('\nValidating MCP configuration...');
   const mcpConfigPath = '.claude/.mcp.json';
+  let mcpToolSearchEnabled = false;
   if (existsSync(resolve(rootDir, mcpConfigPath))) {
     try {
       const mcpContent = readFileSync(resolve(rootDir, mcpConfigPath), 'utf-8');
       const mcpConfig = JSON.parse(mcpContent);
+      mcpToolSearchEnabled = Boolean(mcpConfig?.toolSearch?.enabled);
 
       // Validate MCP config root structure (Claude Code format)
       if (typeof mcpConfig !== 'object' || mcpConfig === null) {
@@ -850,6 +852,30 @@ function validateConfig() {
     try {
       const settingsContent = readFileSync(resolve(rootDir, settingsPath), 'utf-8');
       const settings = JSON.parse(settingsContent);
+
+      if (mcpToolSearchEnabled) {
+        const routerModel = String(
+          settings?.models?.router ?? settings?.session?.default_model ?? ''
+        ).trim();
+        if (routerModel && routerModel.toLowerCase().includes('haiku')) {
+          warnings.push(
+            [
+              '.mcp.json: toolSearch.enabled is true, but the router/default model is a Haiku variant.',
+              'Claude Code disables tool search on models that do not support tool_reference blocks (observed in logs).',
+              'Recommendation: set `.claude/settings.json` `models.router` to `claude-sonnet-4-5` (or Opus), or disable toolSearch.',
+            ].join(' ')
+          );
+        }
+
+        if (
+          Array.isArray(settings.disallowedTools) &&
+          settings.disallowedTools.includes('MCPSearchTool')
+        ) {
+          warnings.push(
+            'settings.json: disallowedTools includes MCPSearchTool, which disables Tool Search even if enabled in .mcp.json.'
+          );
+        }
+      }
 
       // Validate SDK-compatible structure (camelCase keys)
       const validKeys = [

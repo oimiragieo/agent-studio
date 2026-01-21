@@ -146,73 +146,7 @@ models:
       - 'Iterative code refinement'
       - 'Extended reasoning with thinking modes'
 
-  # OpenCode - Multi-model gateway via GitHub Copilot
-  # After GitHub auth, opencode provides access to 17+ models
-  opencode:
-    cli_name: opencode
-    description: 'Terminal-native multi-model gateway with GitHub Copilot integration'
-
-    # Native OpenCode models
-    native_models:
-      - opencode/gpt-5-nano
-      - opencode/big-pickle
-      - opencode/grok-code
-
-    # GitHub Copilot models (requires GitHub auth)
-    # NOTE: Models require enablement in GitHub Copilot settings:
-    # - https://github.com/settings/copilot -> Model features -> Enable all models
-    # - Without enablement, models show "not supported" error
-    # - All models verified working after enablement (Nov 2025)
-    copilot_models:
-      flagship:
-        - github-copilot/gpt-5.1
-        - github-copilot/gpt-5
-        - github-copilot/claude-opus-4.5 # Requires Copilot model enablement
-        - github-copilot/claude-sonnet-4.5
-        - github-copilot/gemini-3-pro-preview
-      coding:
-        - github-copilot/gpt-5.1-codex
-        - github-copilot/gpt-5-codex
-        - github-copilot/gpt-5.1-codex-mini
-        - github-copilot/oswe-vscode-prime
-      fast:
-        - github-copilot/grok-code-fast-1
-        - github-copilot/gpt-5-mini
-        - github-copilot/claude-haiku-4.5
-        - github-copilot/gpt-4o
-        - github-copilot/gpt-4.1
-      legacy:
-        - github-copilot/claude-opus-41
-        - github-copilot/claude-sonnet-4
-        - github-copilot/gemini-2.5-pro
-
-    # Default commands by use case
-    # Syntax: opencode run "message" --model provider/model [--continue] [--session ID]
-    # Note: No --output-format flag - outputs text by default
-    commands:
-      default: 'opencode run "$PROMPT" --model github-copilot/claude-sonnet-4.5'
-      planning: 'opencode run "$PROMPT" --model github-copilot/claude-opus-4.5'
-      fast: 'opencode run "$PROMPT" --model github-copilot/grok-code-fast-1'
-      codex: 'opencode run "$PROMPT" --model github-copilot/gpt-5.1-codex'
-      research: 'opencode run "$PROMPT" --model github-copilot/gemini-3-pro-preview'
-      haiku: 'opencode run "$PROMPT" --model github-copilot/claude-haiku-4.5'
-      # Continue last session
-      continue_default: 'opencode run "$PROMPT" --model github-copilot/claude-sonnet-4.5 --continue'
-
-    strengths:
-      - multi_model_access
-      - terminal_native
-      - github_copilot_integration
-      - cost_effective_flagship_access
-      - fast_iteration
-    weaknesses:
-      - requires_github_auth_for_copilot_models
-    cost_tier: low # GitHub Copilot subscription covers usage
-    latency: fast
-    best_for:
-      - 'Cost-effective access to flagship models'
-      - 'Terminal-based multi-model workflows'
-      - 'Quick model switching without API key management'
+      # OpenCode/Factory integrations are not shipped in this release.
       - 'GitHub Copilot integrated development'
 
   # OpenAI Codex - 2025 CLI tool (not the 2021 model)
@@ -271,49 +205,43 @@ models:
       - 'Autofix CI failures'
 
 # Task Type Routing
-# Each task has primary model + cost-effective opencode alternative
+# Each task has primary + optional secondary model
 task_routing:
   # Architecture & Strategy
   architecture_planning:
     primary: claude-opus-4-5
     secondary: gemini-3-0-pro
-    opencode_alt: opencode-opus # github-copilot/claude-opus-4.5
     strategy: sequential
-    rationale: 'Opus 4.5 for planning; Gemini provides research context; opencode-opus for cost savings'
+    rationale: 'Opus 4.5 for planning; Gemini provides research context'
 
   system_design:
     primary: claude-opus-4-5
     secondary: null
-    opencode_alt: opencode-opus
     strategy: single
     rationale: "Opus 4.5's reasoning depth prevents architectural hallucinations"
 
   ambiguity_resolution:
     primary: claude-opus-4-5
     secondary: null
-    opencode_alt: opencode-gpt5 # github-copilot/gpt-5.1
     strategy: single
-    rationale: 'Opus 4.5 excels at resolving unclear requirements; GPT-5.1 as alternative'
+    rationale: 'Opus 4.5 excels at resolving unclear requirements'
 
   # Research & Knowledge
   research:
     primary: gemini-3-0-pro
     secondary: null
-    opencode_alt: opencode-gemini # github-copilot/gemini-3-pro-preview
     strategy: single
-    rationale: "Gemini 3.0's 1M context window; opencode-gemini via Copilot"
+    rationale: "Gemini 3.0's 1M context window"
 
   large_codebase_analysis:
     primary: gemini-3-0-pro
     secondary: claude-opus-4-5
-    opencode_alt: opencode-gemini
     strategy: synthesis
     rationale: 'Gemini identifies relevant files; Opus analyzes the logic'
 
   documentation_review:
     primary: gemini-3-0-pro
     secondary: claude-sonnet-4-5
-    opencode_alt: opencode-gemini
     strategy: single
     rationale: 'Gemini for coverage, Sonnet for speed'
 
@@ -321,61 +249,55 @@ task_routing:
   detailed_implementation:
     primary: cursor-agent-v2
     secondary: claude-sonnet-4-5
-    opencode_alt: opencode-codex # github-copilot/gpt-5.1-codex
     strategy: single
-    rationale: 'Cursor for detail; GPT-5.1 Codex for code generation'
+    rationale: 'Cursor for detail; Sonnet for polish'
 
   ui_frontend:
     primary: claude-sonnet-4-5
     secondary: cursor-agent-v2
-    opencode_alt: opencode-codex
     strategy: single
     rationale: 'Sonnet 4.5 has superior spatial reasoning for CSS/Tailwind'
 
   standard_coding:
     primary: claude-sonnet-4-5
     secondary: null
-    opencode_alt: opencode # github-copilot/claude-sonnet-4.5 (default)
     strategy: single
     rationale: 'Sonnet 4.5 is the ideal daily driver'
 
   test_generation:
     primary: claude-sonnet-4-5
     secondary: null
-    opencode_alt: opencode
     strategy: single
     rationale: 'Sonnet 4.5 excels at TDD workflows'
 
   quick_fix:
-    primary: opencode-fast # github-copilot/grok-code-fast-1
-    secondary: opencode-haiku # github-copilot/claude-haiku-4.5
+    primary: claude-sonnet-4-5
+    secondary: null
     strategy: single
-    rationale: 'Grok Fast or Haiku for ultra-fast simple fixes'
+    rationale: 'Sonnet for quick fixes'
 
   fast_iteration:
-    primary: opencode-fast
-    secondary: opencode-mini # github-copilot/gpt-5-mini
+    primary: cursor-agent-v2
+    secondary: null
     strategy: single
-    rationale: 'Maximum speed for iteration cycles'
+    rationale: 'Cursor for rapid iteration on diffs'
 
   terminal_tasks:
-    primary: opencode
-    secondary: opencode-fast
+    primary: claude-sonnet-4-5
+    secondary: null
     strategy: single
-    rationale: 'OpenCode optimized for terminal-based workflows'
+    rationale: 'Use Claude tools for terminal workflows'
 
   # Review & Security
   security_review:
     primary: claude-opus-4-5
     secondary: gemini-3-0-pro
-    opencode_alt: opencode-opus
     strategy: parallel
     rationale: 'Opus for logic flaws; Gemini finds pattern-based vulnerabilities'
 
   code_review:
     primary: claude-opus-4-5
     secondary: null
-    opencode_alt: opencode-opus
     strategy: single
     rationale: 'Opus 4.5 provides Senior Staff Engineer level feedback'
 
@@ -383,7 +305,6 @@ task_routing:
   debugging:
     primary: claude-opus-4-5
     secondary: cursor-agent-v2
-    opencode_alt: opencode-gpt5
     strategy: sequential
     rationale: 'Opus for root cause analysis, Cursor for applying fixes'
 
@@ -444,44 +365,6 @@ cost_tiers:
       - cursor-grok # Grok
       - cursor-composer # Composer 1 (proprietary)
 
-  copilot_subscription:
-    description: 'GitHub Copilot subscription - access to all models with cost multipliers'
-    # Cost multipliers affect Copilot quota usage (Nov 2025)
-    # 0x = FREE, 0.33x = cheap, 1x = standard, 10x = expensive
-    cost_multipliers:
-      free_tier: # 0x - Use these for high-volume tasks!
-        - github-copilot/gpt-4.1
-        - github-copilot/gpt-4o
-        - github-copilot/gpt-5-mini # opencode-mini
-        - github-copilot/grok-code-fast-1 # opencode-fast
-      cheap_tier: # 0.33x
-        - github-copilot/claude-haiku-4.5 # opencode-haiku
-        - github-copilot/gpt-5.1-codex-mini # Fast code gen
-      standard_tier: # 1x
-        - github-copilot/claude-sonnet-4 # Legacy
-        - github-copilot/claude-sonnet-4.5 # opencode (default)
-        - github-copilot/gemini-2.5-pro # Legacy
-        - github-copilot/gemini-3-pro-preview # opencode-gemini
-        - github-copilot/gpt-5 # Standard GPT
-        - github-copilot/gpt-5-codex # Code gen
-        - github-copilot/gpt-5.1 # opencode-gpt5
-        - github-copilot/gpt-5.1-codex # opencode-codex
-      expensive_tier: # 10x - Use sparingly!
-        - github-copilot/claude-opus-4.1 # Legacy Opus
-      premium_tier: # Unknown/Premium pricing
-        - github-copilot/claude-opus-4.5 # opencode-opus (Preview)
-      auto_discount: # 10% discount
-        - auto # Auto-selects best model with discount
-    models:
-      - opencode # Sonnet 4.5 (1x)
-      - opencode-opus # Opus 4.5 (Premium - use for important tasks only)
-      - opencode-gpt5 # GPT-5.1 (1x)
-      - opencode-codex # GPT-5.1 Codex (1x)
-      - opencode-gemini# Gemini 3 Pro (1x)
-      - opencode-fast # Grok Code Fast (FREE!)
-      - opencode-haiku # Haiku 4.5 (0.33x)
-      - opencode-mini # GPT-5 Mini (FREE!)
-
 # Required Environment/Auth
 required_auth:
   direct_api:
@@ -491,6 +374,3 @@ required_auth:
   cursor:
     - 'Cursor Pro/Business subscription'
     - 'WSL on Windows (cursor-agent requires bash)'
-  opencode:
-    - 'GitHub Copilot subscription'
-    - 'gh auth login (GitHub CLI authentication)'

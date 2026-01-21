@@ -1,0 +1,181 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-workflow-001",
+  "name": "Execute code-review workflow",
+  "description": "Validate full code-review workflow execution with all steps",
+  "category": "workflow-execution",
+  "priority": "P0",
+  "tags": ["workflow", "code-review", "end-to-end"],
+
+  "preconditions": {
+    "fixtures": [
+      "workflow-snapshots/workflow-snapshot-code-review.json",
+      "mock-agent-responses/mock-planner-response.json",
+      "mock-agent-responses/mock-code-reviewer-response.json",
+      "mock-agent-responses/mock-developer-response.json",
+      "mock-agent-responses/mock-qa-response.json"
+    ],
+    "state": {},
+    "environment": {
+      "WORKFLOW_FILE": ".claude/workflows/code-review-flow.yaml"
+    }
+  },
+
+  "steps": [
+    {
+      "step_id": "create-workflow-run",
+      "action": "validate_enforcement_gate",
+      "input": {
+        "runId": "test-workflow-cr-001",
+        "workflow": "code-review-flow",
+        "step": 0,
+        "planId": "plan-cr-001",
+        "task": "Code review workflow test",
+        "agents": ["planner", "code-reviewer", "developer", "qa"]
+      },
+      "expected": {
+        "allowed": true,
+        "run_created": true
+      },
+      "timeout_ms": 5000
+    },
+    {
+      "step_id": "execute-step-0-planner",
+      "action": "simulate_task_delegation",
+      "input": {
+        "task_id": "test-workflow-cr-001-step-0",
+        "objective": "Create code review plan",
+        "context": {
+          "problem": "Plan comprehensive code review",
+          "why_now": "Workflow initialization"
+        },
+        "deliverables": [
+          {
+            "type": "file",
+            "path": ".claude/context/artifacts/plan-cr-001.json",
+            "description": "Code review plan"
+          }
+        ],
+        "constraints": {
+          "max_time_minutes": 10
+        },
+        "success_criteria": ["Plan created", "Score >= 7/10"],
+        "verification": {
+          "verification_type": "manual",
+          "evidence_required": true
+        },
+        "assigned_agent": "planner"
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 10000
+    },
+    {
+      "step_id": "inject-planner-response",
+      "action": "inject_mock_response",
+      "input": {
+        "agent": "planner",
+        "response_fixture": "mock-planner-response.json",
+        "task_id": "test-workflow-cr-001-step-0",
+        "plan_score": 8
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 1000
+    },
+    {
+      "step_id": "validate-plan-rating",
+      "action": "validate_enforcement_gate",
+      "input": {
+        "runId": "test-workflow-cr-001",
+        "workflow": "code-review-flow",
+        "step": 1,
+        "planId": "plan-cr-001",
+        "validate": "plan_rating"
+      },
+      "expected": {
+        "allowed": true,
+        "plan_score": 8,
+        "min_score": 7
+      },
+      "timeout_ms": 5000
+    },
+    {
+      "step_id": "execute-remaining-steps",
+      "action": "simulate_agent_chain",
+      "input": {
+        "agents": [
+          {
+            "type": "code-reviewer",
+            "task": "Analyze code",
+            "response_fixture": "mock-code-reviewer-response.json"
+          },
+          {
+            "type": "developer",
+            "task": "Fix suggestions",
+            "response_fixture": "mock-developer-response.json"
+          },
+          {
+            "type": "qa",
+            "task": "Validate fixes",
+            "response_fixture": "mock-qa-response.json"
+          }
+        ]
+      },
+      "expected": {
+        "all_completed": true,
+        "total_steps": 3
+      },
+      "timeout_ms": 30000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "workflow_status",
+      "target": "run.status",
+      "operator": "equals",
+      "expected": "completed"
+    },
+    {
+      "type": "gate_files_created",
+      "target": "gate_files_count",
+      "operator": "equals",
+      "expected": 5
+    },
+    {
+      "type": "plan_rating",
+      "target": "steps.validate-plan-rating.result.plan_score",
+      "operator": "greater_than",
+      "expected": 6
+    },
+    {
+      "type": "all_steps_completed",
+      "target": "steps.execute-remaining-steps.result.all_completed",
+      "operator": "equals",
+      "expected": true
+    },
+    {
+      "type": "completion_criteria",
+      "target": "workflow.completion_criteria_met",
+      "operator": "equals",
+      "expected": true
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [
+      ".claude/context/artifacts/plan-cr-001.json",
+      ".claude/context/runtime/runs/test-workflow-cr-001/"
+    ],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["agent-task-template-enforcer.mjs", "post-delegation-verifier.mjs"]
+  }
+}

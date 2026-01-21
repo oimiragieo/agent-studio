@@ -77,6 +77,7 @@ steps:
     validation:
       minimum_score: 7
       rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
     retry:
       max_attempts: 3
@@ -143,7 +144,13 @@ steps:
       - compliance-validation.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/03-security-architect.json
     validation:
+      schema: .claude/schemas/security-architecture.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/03-security.json
+    secondary_outputs:
+      - artifact: threat-model.json
+        schema: .claude/schemas/threat-model.schema.json
+      - artifact: compliance-validation.json
+        schema: .claude/schemas/compliance-validation.schema.json
     notes: |
       Mandatory security review for enterprise projects.
       Must validate SOC2, HIPAA, GDPR requirements as applicable.
@@ -200,6 +207,7 @@ steps:
       - monitoring-plan.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/06-devops.json
     validation:
+      schema: .claude/schemas/infrastructure_config.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/06-devops.json
     notes: |
       Plan must include disaster recovery, backup procedures,
@@ -261,6 +269,7 @@ steps:
       - api-documentation.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/09-technical-writer.json
     validation:
+      schema: .claude/schemas/documentation-bundle.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/09-technical-writer.json
     notes: |
       Enterprise documentation must include operations runbooks,
@@ -306,7 +315,11 @@ steps:
       - compliance-attestation.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/11-qa-final.json
     validation:
+      schema: .claude/schemas/quality-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/11-qa-final.json
+    secondary_outputs:
+      - artifact: test-results.json
+        schema: .claude/schemas/test-results.schema.json
 
   - step: 11.5
     name: 'Publish Artifacts'
@@ -316,6 +329,8 @@ steps:
     inputs:
       - artifact-registry.json
     policy: auto-on-pass
+    validation:
+      schema: .claude/schemas/artifact-registry.schema.json
     retry:
       max_attempts: 3
       on_failure: log_and_continue

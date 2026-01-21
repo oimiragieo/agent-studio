@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Smoke Summary",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["workflow_id", "total", "passed", "failed"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": "string", "format": "date-time" },
+    "total": { "type": "integer", "minimum": 0 },
+    "passed": { "type": "integer", "minimum": 0 },
+    "failed": { "type": "integer", "minimum": 0 },
+    "receipts_directory": { "type": "string" },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["agent", "ok"],
+        "properties": {
+          "agent": { "type": "string" },
+          "ok": { "type": "boolean" },
+          "receipt_path": { "type": "string" }
+        }
+      }
+    }
+  }
+}

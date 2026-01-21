@@ -6,7 +6,7 @@ This guide will help you get started with LLM-RULES Production Pack.
 
 ## Installation
 
-1. Copy `.claude/`, `.cursor/`, `.factory/` directories into your project
+1. Copy `.claude/` (and optionally `.cursor/`) into your project
 2. Ensure CLAUDE.md is in your project root
 3. Run validation: `pnpm validate`
 

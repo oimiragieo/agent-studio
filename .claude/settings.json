@@ -10,6 +10,7 @@
       "Glob",
       "Grep",
       "Task",
+      "MCPSearchTool",
       "Bash(node *)",
       "Bash(python *)",
       "Bash(npm *)",
@@ -71,7 +72,7 @@
   "session": {
     "auto_save": true,
     "context_file": ".claude/context/session.json",
-    "max_context_tokens": 100000,
+    "max_context_tokens": 60000,
     "default_model": "claude-haiku-4-5",
     "default_temperature": 0.1,
     "default_role": "router",
@@ -102,7 +103,7 @@
     "agent_directory": ".claude/agents"
   },
   "extended_thinking": {
-    "enabled": true,
+    "enabled": false,
     "use_for_agents": [
       "orchestrator",
       "architect",
@@ -119,24 +120,183 @@
     ]
   },
   "hooks": {
-    "PreToolUse": [
+    "SessionStart": [
       {
-        "matcher": "*",
+        "matcher": "startup",
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/router-session-entry.mjs"
+            "command": "node .claude/hooks/session-start.mjs"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/run-observer.mjs pre"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/no-reroute-after-routing.mjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing-handoff-target-guard.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/headless-task-guard.mjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/task-concurrency-guard.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/router-glob-guard.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/read-only-enforcer.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/master-orchestrator-read-guard.mjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/read-path-guard.mjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/read-size-guard.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Grep|Glob|Search",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing-safety-guard.mjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/orchestrator-tool-guard.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/router-first-enforcer.mjs"
           }
         ]
       }
     ],
     "PostToolUse": [
       {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/run-observer.mjs post"
+          }
+        ]
+      },
+      {
+        "matcher": "Task|router",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/router-completion-handler.mjs"
+          }
+        ]
+      },
+      {
         "matcher": "Bash|Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/post-session-cleanup.js"
+            "command": "node .claude/hooks/post-delegation-verifier.mjs"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/run-observer.mjs subagent-start"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/subagent-activity-tracker.mjs start"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/run-observer.mjs subagent-stop"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/subagent-activity-tracker.mjs stop"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/idle-heartbeat.mjs"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/run-observer.mjs stop"
           }
         ]
       }
@@ -156,5 +316,12 @@
       "ftsSearchWeight": 0.6,
       "minRelevance": 0.7
     }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node .claude/hooks/statusline.mjs"
+  },
+  "env": {
+    "ENABLE_TOOL_SEARCH": "auto:5"
   }
 }

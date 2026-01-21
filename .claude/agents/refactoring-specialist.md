@@ -270,6 +270,21 @@ function amountOverdue(range: DateRange): number {}
 - Feature Envy detection
 ```
 
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If you produce both: write the report as `.md` in `reports/`, write the structured data as `.json` in `artifacts/`, and cross-link both paths.
+
+## Semantic Refactoring (Serena MCP - Optional)
+
+If Serena is configured (see `.claude/docs/SERENA_INTEGRATION.md`), prefer symbol-aware refactoring workflows:
+
+- Use `mcp__serena__find_symbol` + `mcp__serena__find_referencing_symbols` to map impact before changing code.
+- Use `mcp__serena__replace_symbol_body` / `mcp__serena__insert_*` for precise refactors without fragile line offsets.
+- Keep file-wide `Grep`/`Search` as a fallback, not the default.
+
 ## Role Enforcement
 
 **YOU ARE A SUBAGENT - NOT AN ORCHESTRATOR**

@@ -78,6 +78,7 @@ steps:
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/00.5-orchestrator.json
     validation:
       check: 'chrome-devtools-mcp-available'
+      schema: .claude/schemas/devtools-availability.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.5-orchestrator.json
     description: |
       Verify Chrome DevTools MCP is available before browser testing:
@@ -128,6 +129,7 @@ steps:
     validation:
       minimum_score: 7
       rubric_file: .claude/context/artifacts/standard-plan-rubric.json
+      schema: .claude/schemas/plan-rating.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/00.1-orchestrator.json
     retry:
       max_attempts: 3
@@ -315,6 +317,7 @@ steps:
       - accessibility-audit-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05.3-accessibility-expert.json
     validation:
+      schema: .claude/schemas/ui-audit-report.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/05.3-accessibility-expert.json
     description: |
       Web accessibility testing and audit:
@@ -367,6 +370,7 @@ steps:
       - findings-code-review-{{workflow_id}}.json
       - reasoning: .claude/context/history/reasoning/{{workflow_id}}/05.7-code-reviewer.json
     validation:
+      schema: .claude/schemas/code-review.schema.json
       gate: .claude/context/history/gates/{{workflow_id}}/05.7-code-reviewer.json
     description: |
       Code review of findings and recommendations:
@@ -439,6 +443,8 @@ steps:
     inputs:
       - artifact-registry.json
     policy: auto-on-pass
+    validation:
+      schema: .claude/schemas/artifact-registry.schema.json
     retry:
       max_attempts: 3
       on_failure: log_and_continue

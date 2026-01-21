@@ -232,6 +232,12 @@ See `.claude/docs/EVERLASTING_AGENTS.md` for detailed guide.
 - Configure `deferLoading: true` for MCP servers in `.claude/.mcp.json`
 - Specify `alwaysLoadTools` for critical tools that must be available immediately
 
+**Requirements / Gotchas**:
+
+- Tool Search requires a model that supports `tool_reference` blocks (e.g., Claude Sonnet 4+ / Opus 4+).
+- If your active model is a Haiku variant, Claude Code will disable Tool Search (you’ll see debug logs like “model does not support tool_reference blocks”).
+- Tool Search can also be disabled if `MCPSearchTool` is disallowed in Claude Code settings.
+
 **Benefits**:
 
 - **85% reduction** in MCP tool token usage (80k → 12k tokens)

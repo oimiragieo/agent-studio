@@ -78,10 +78,39 @@ your-project/
 
 **Available Hooks:**
 
-- **security-pre-tool.sh** (PreToolUse): Blocks dangerous commands, protects sensitive files, prevents force pushes
-- **audit-post-tool.sh** (PostToolUse): Logs all tool executions for audit trail
+- **security-pre-tool.mjs** (PreToolUse): Blocks dangerous commands, protects sensitive files, prevents force pushes
+- **read-only-enforcer.mjs** (PreToolUse): Optional “read-only mode” that blocks `Write`/`Edit` and mutating `Bash` when enabled
+- **read-path-guard.mjs** (PreToolUse): Blocks `Read` on directories (including relative paths) to prevent `EISDIR` errors (suggests `Glob`/`Search`)
+- **router-first-enforcer.mjs** (PreToolUse): Enforces router-first gating and explicit handoffs
+- **orchestrator-tool-guard.mjs** (PreToolUse): Prevents orchestrators from high-fanout scans
+- **run-observer.mjs** (Pre/PostToolUse): Writes durable run state and tool event logs
+- **router-completion-handler.mjs** (PostToolUse): Persists routing completion + decision artifacts
+- **audit-post-tool.mjs** (PostToolUse): Logs tool execution for audit trail
 
 See `.claude/hooks/README.md` for detailed hook documentation.
+
+### Where outputs go (standardized)
+
+- **Reports**: `.claude/context/reports/` (outcomes, diagnostics, issues)
+- **Artifacts**: `.claude/context/artifacts/` (structured outputs like routing decisions, tool event streams)
+- **Run state/events**: `.claude/context/runtime/**/runs/<runId>/`
+
+### Optional observability tuning
+
+- `CLAUDE_PENDING_SUBAGENT_TTL_MS`: Drops stale `Task`→`SubagentStart` pending mappings after a TTL (default: `180000`).
+- `CLAUDE_OBS_STORE_PAYLOADS`: When set to `1`, `run-observer.mjs` stores sanitized tool inputs/outputs under `.claude/context/payloads/` and links them from `events.ndjson` via `event.payload.payload_ref`.
+- `CLAUDE_OBS_FAILURE_BUNDLES`: When set to `1`, denials and tool failures generate a failure bundle JSON under `.claude/context/artifacts/failure-bundles/`.
+  - Optional knobs: `CLAUDE_PAYLOAD_MAX_BYTES`, `CLAUDE_PAYLOAD_TTL_DAYS`, `CLAUDE_FAILURE_BUNDLE_TAIL_LINES`, `CLAUDE_FAILURE_BUNDLE_TAIL_BYTES`.
+
+Where to set these:
+
+- In your terminal environment before launching Claude Code (recommended), or
+- In a local override file `.claude/settings.local.json` (`env` block).
+
+### Optional safety switches
+
+- Read-only mode: `node .claude/tools/read-only.mjs enable` (disable with `node .claude/tools/read-only.mjs disable`)
+- Client context: `node .claude/tools/client-context.mjs set claude-code` (see `.claude/config/client-contexts.json`)
 
 ### Step 4: Test It Works
 
@@ -93,6 +122,33 @@ See `.claude/hooks/README.md` for detailed hook documentation.
 "I need to design a database schema for user management"
 → [Routes to database-architect agent]
 ```
+
+### Optional: Run integration test prompts (Claude Code)
+
+Two paste-ready prompts are included for end-to-end validation:
+
+- Ship readiness (UI-safe): `.claude/prompts/ship-readiness.md`
+- Agent framework integration (UI-safe): `.claude/prompts/agent-framework-integration.md`
+
+After running an integration prompt, verify outputs:
+
+```bash
+node .claude/tools/verify-agent-integration.mjs --workflow-id agent-integration-v1-<YYYYMMDD-HHMMSS>
+```
+
+For a UI-safe, deterministic ship-readiness run (recommended on Windows / debug mode), run the headless audit:
+
+```bash
+pnpm ship-readiness:headless:json
+```
+
+Then verify:
+
+```bash
+node .claude/tools/verify-ship-readiness.mjs --workflow-id ship-readiness-v1-<YYYYMMDD-HHMMSS> --json
+```
+
+Debug-mode note (Windows): Claude Code may launch some hooks with `CLAUDE_SESSION_ID` set (UUID) while others lack it. This repo normalizes UUID-like ids to `shared-<uuid>` and persists them to `.claude/context/tmp/shared-session-key.json` so routing/observability state doesn’t split across processes.
 
 ## ⚠️ Claude Code 2.1.2: Windows Managed Settings Migration
 
@@ -344,6 +400,16 @@ See `.claude/docs/UPGRADE_GUIDE_2.1.2.md` for complete migration guide.
 
 ---
 
+## Skill Injection
+
+Skill injection enables Claude to automatically attach selected skill context to subagent runs, reducing repeated prompting and improving reliability during long-running workflows.
+
+Key points:
+
+- Controlled by the skill frontmatter field `context:fork: true`
+- Implemented by the `skill-injection-hook.js` hook (see `.claude/hooks/`)
+- Designed to reduce subagent context bloat while keeping specialized capabilities available
+
 ## Validation (Optional)
 
 Validate your configuration after copying:
@@ -355,6 +421,12 @@ pnpm install
 # Run validation
 pnpm validate          # Fast validation (config, models)
 pnpm validate:all      # Full validation (includes workflows, references, CUJs, rule index)
+
+# Cleanup (recommended before commits)
+pnpm cleanup:check     # Preview what would be deleted (safe)
+pnpm cleanup           # Delete temp/runtime files (use with care)
+node .claude/tools/cleanup-repo.mjs --dry-run --reports-retention-days 5   # Optional: preview pruning reports older than 5 days
+node .claude/tools/cleanup-repo.mjs --execute --reports-retention-days 5   # Optional: prune reports older than 5 days (opt-in)
 ```
 
 **What fast validation checks**:
@@ -519,7 +591,6 @@ Skills work across all three platforms with consistent functionality.
 
 - Claude: `.claude/skills/*/SKILL.md`
 - Cursor: `.cursor/skills/*.md`
-- Factory: `.factory/skills/*.md`
 
 ## How Workflows Work
 
@@ -1408,7 +1479,7 @@ echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /"}}' | bash .claude/h
 
 # Test security hook allows safe command
 echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/security-pre-tool.sh
-# Expected: {"decision": "allow"}
+# Expected: {"decision": "approve"}
 
 # Test audit hook logs execution
 echo '{"tool_name":"Bash","tool_input":{"command":"npm test"}}' | bash .claude/hooks/audit-post-tool.sh

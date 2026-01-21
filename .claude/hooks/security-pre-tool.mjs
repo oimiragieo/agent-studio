@@ -7,6 +7,7 @@
  */
 
 import { stdin, stdout, stderr } from 'process';
+import { logDenialIfBlocking } from './denial-logger.mjs';
 
 // Recursion protection - prevent hook from triggering itself
 if (process.env.CLAUDE_SECURITY_HOOK_EXECUTING === 'true') {
@@ -17,7 +18,7 @@ process.env.CLAUDE_SECURITY_HOOK_EXECUTING = 'true';
 // Timeout protection - force exit after 1 second
 const timeout = setTimeout(() => {
   stderr.write('[SECURITY HOOK] Timeout exceeded, allowing by default\n');
-  stdout.write(JSON.stringify({ decision: 'allow', warning: 'Hook timeout' }));
+  stdout.write(JSON.stringify({ decision: 'approve', warning: 'Hook timeout' }));
   delete process.env.CLAUDE_SECURITY_HOOK_EXECUTING;
   process.exit(0);
 }, 1000);
@@ -72,6 +73,12 @@ const DANGEROUS_PATTERNS = [
   /ufw\s+disable/,
 ];
 
+// Secret-leak patterns: block commands that inline secrets (avoid recording in debug logs / allowlists).
+const INLINE_SECRET_PATTERNS = [
+  /github_pat_[A-Za-z0-9_]+/,
+  /GITHUB_PERSONAL_ACCESS_TOKEN\s*=\s*['"]?github_pat_/i,
+];
+
 // Sensitive file patterns
 const SENSITIVE_FILE_PATTERNS = [
   /\.env($|\.local|\.production|\.secret)/,
@@ -116,17 +123,18 @@ async function main() {
     const inputStr = await readStdin();
 
     if (!inputStr || inputStr.trim() === '') {
-      respond('allow');
+      respond('approve');
       process.exit(0);
     }
 
     const input = JSON.parse(inputStr);
+    const hookInput = input;
     const toolName = input.tool_name || input.tool || '';
     const toolInput = input.tool_input || input.input || {};
 
     // Skip validation for TodoWrite and Task tools
     if (toolName === 'TodoWrite' || toolName === 'Task') {
-      respond('allow');
+      respond('approve');
       process.exit(0);
     }
 
@@ -134,10 +142,33 @@ async function main() {
     if (toolName === 'Bash') {
       const command = toolInput.command || '';
 
+      // Block inlined secrets (prevents secrets being persisted into Claude Code debug logs / allow rules)
+      for (const pattern of INLINE_SECRET_PATTERNS) {
+        if (pattern.test(command)) {
+          const reason =
+            'Blocked command containing an inline secret (e.g., github_pat_...). ' +
+            'Set secrets in your environment (outside the command) and reference them without embedding values.';
+          await logDenialIfBlocking({
+            hookName: 'security-pre-tool',
+            hookInput,
+            decision: 'block',
+            reason,
+          });
+          respond('block', reason);
+          process.exit(0);
+        }
+      }
+
       // Check for dangerous patterns
       for (const pattern of DANGEROUS_PATTERNS) {
         if (pattern.test(command)) {
           const patternStr = pattern.source.substring(0, 50);
+          await logDenialIfBlocking({
+            hookName: 'security-pre-tool',
+            hookInput,
+            decision: 'block',
+            reason: `Blocked dangerous command pattern: ${patternStr}`,
+          });
           respond('block', `Blocked dangerous command pattern: ${patternStr}`);
           process.exit(0);
         }
@@ -145,6 +176,12 @@ async function main() {
 
       // Block force push to main/master
       if (/git\s+push.*(--force|-f).*(main|master)/.test(command)) {
+        await logDenialIfBlocking({
+          hookName: 'security-pre-tool',
+          hookInput,
+          decision: 'block',
+          reason: 'Blocked force push to protected branch',
+        });
         respond('block', 'Blocked force push to protected branch');
         process.exit(0);
       }
@@ -157,6 +194,12 @@ async function main() {
       // Check for sensitive file patterns
       for (const pattern of SENSITIVE_FILE_PATTERNS) {
         if (pattern.test(filePath)) {
+          await logDenialIfBlocking({
+            hookName: 'security-pre-tool',
+            hookInput,
+            decision: 'block',
+            reason: 'Blocked editing environment/secrets file',
+          });
           respond('block', 'Blocked editing environment/secrets file');
           process.exit(0);
         }
@@ -164,12 +207,12 @@ async function main() {
     }
 
     // Allow by default
-    respond('allow');
+    respond('approve');
     process.exit(0);
   } catch (error) {
     // On error, allow (fail open) but log warning
     log(`Error: ${error.message}`);
-    respond('allow', `Security validator error: ${error.message}`);
+    respond('approve', `Security validator error: ${error.message}`);
     process.exit(0);
   } finally {
     clearTimeout(timeout);

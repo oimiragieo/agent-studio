@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Architecture Summary",
+  "description": "Schema for high-level architecture summary outputs produced during onboarding workflows.",
+  "type": "object",
+  "required": ["workflow_id", "generated_at", "summary"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "summary": { "type": "string", "minLength": 1 },
+    "architecture_pattern": { "type": "string" },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "risks": { "type": "array", "items": { "type": "string" } },
+    "recommendations": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

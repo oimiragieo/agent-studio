@@ -182,7 +182,7 @@ Hooks are shell scripts that execute at lifecycle events to provide security val
   - Prevents force push to main/master branches
   - Protects `.env` files and credential files from editing
   - Blocks potentially malicious curl/wget piped to bash
-  - Returns JSON: `{"decision": "allow"}` or `{"decision": "block", "reason": "..."}`
+  - Returns JSON: `{"decision": "approve"}` or `{"decision": "block", "reason": "..."}`
 
 - **PostToolUse Hook** (`audit-post-tool.sh`): Logs tool executions for audit trail
   - Records timestamp, tool name, and summary
@@ -429,7 +429,7 @@ Agents have:
 
 **Routing Agents:**
 
-- Model Orchestrator - Multi-model routing (Claude, Gemini, Cursor, OpenCode)
+- Model Orchestrator - Multi-model routing (Claude, Gemini, Cursor)
 - Orchestrator - Task routing and multi-agent coordination
 
 ### 5. Extended Thinking (1M+ Tokens)

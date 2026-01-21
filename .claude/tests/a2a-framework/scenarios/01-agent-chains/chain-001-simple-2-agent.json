@@ -1,0 +1,181 @@
+{
+  "$schema": "../../schemas/a2a-test-scenario.schema.json",
+  "scenario_id": "a2a-chain-001",
+  "name": "Simple 2-agent chain: developer -> code-reviewer",
+  "description": "Validate that a simple developer to code-reviewer chain passes artifacts correctly",
+  "category": "agent-chain",
+  "priority": "P0",
+  "tags": ["chain", "artifact-flow", "developer", "code-reviewer"],
+
+  "preconditions": {
+    "fixtures": [
+      "mock-agent-responses/mock-developer-response.json",
+      "mock-agent-responses/mock-code-reviewer-response.json"
+    ],
+    "state": {},
+    "environment": {}
+  },
+
+  "steps": [
+    {
+      "step_id": "delegate-developer",
+      "action": "simulate_task_delegation",
+      "input": {
+        "task_id": "test-chain-001-dev",
+        "objective": "Create a simple utility function",
+        "reasoning_style": "step-by-step",
+        "mode": "execute",
+        "uncertainty_permission": true,
+        "thinking_budget": 500,
+        "context": {
+          "problem": "Need a string formatting utility",
+          "why_now": "Required for feature development",
+          "related_files": []
+        },
+        "deliverables": [
+          {
+            "type": "file",
+            "path": ".claude/context/tmp/test-chain-001/utility.mjs",
+            "description": "Utility function implementation",
+            "format": "javascript",
+            "validation": "Valid JavaScript syntax, function exported"
+          }
+        ],
+        "constraints": {
+          "max_time_minutes": 10,
+          "max_file_reads": 5,
+          "must_validate": true
+        },
+        "success_criteria": ["Function implemented", "No syntax errors", "Exports available"],
+        "verification": {
+          "verification_type": "static",
+          "required_tests": [
+            {
+              "test_name": "lint",
+              "command_or_action": "eslint utility.mjs",
+              "expected_outcome": "No errors"
+            }
+          ],
+          "passing_criteria": {
+            "errors_allowed": 0,
+            "tests_passed_minimum": "100%"
+          },
+          "evidence_required": true
+        },
+        "assigned_agent": "developer"
+      },
+      "expected": {
+        "decision": "approve",
+        "outputs": [".claude/context/tmp/test-chain-001/utility.mjs"],
+        "state_changes": {},
+        "errors": [],
+        "warnings": []
+      },
+      "timeout_ms": 10000
+    },
+    {
+      "step_id": "inject-developer-response",
+      "action": "inject_mock_response",
+      "input": {
+        "agent": "developer",
+        "response_fixture": "mock-developer-response.json",
+        "task_id": "test-chain-001-dev"
+      },
+      "expected": {
+        "decision": "approve"
+      },
+      "timeout_ms": 1000
+    },
+    {
+      "step_id": "delegate-code-reviewer",
+      "action": "simulate_task_delegation",
+      "input": {
+        "task_id": "test-chain-001-review",
+        "objective": "Review the utility function implementation",
+        "reasoning_style": "step-by-step",
+        "mode": "execute",
+        "context": {
+          "problem": "Validate code quality and best practices",
+          "why_now": "Ensure implementation meets standards",
+          "related_files": [".claude/context/tmp/test-chain-001/utility.mjs"]
+        },
+        "deliverables": [
+          {
+            "type": "file",
+            "path": ".claude/context/tmp/test-chain-001/review-report.json",
+            "description": "Code review results",
+            "format": "json",
+            "validation": "Valid JSON with verdict field"
+          }
+        ],
+        "constraints": {
+          "max_time_minutes": 5,
+          "max_file_reads": 3,
+          "must_validate": true
+        },
+        "success_criteria": [
+          "Review completed",
+          "Verdict provided (PASS/CONCERNS/FAIL)",
+          "Feedback documented"
+        ],
+        "verification": {
+          "verification_type": "manual",
+          "evidence_required": true
+        },
+        "assigned_agent": "code-reviewer"
+      },
+      "expected": {
+        "decision": "approve",
+        "outputs": [".claude/context/tmp/test-chain-001/review-report.json"]
+      },
+      "timeout_ms": 5000
+    }
+  ],
+
+  "assertions": [
+    {
+      "type": "hook_decision",
+      "target": "steps.delegate-developer.result.decision",
+      "operator": "equals",
+      "expected": "approve"
+    },
+    {
+      "type": "hook_decision",
+      "target": "steps.delegate-code-reviewer.result.decision",
+      "operator": "equals",
+      "expected": "approve"
+    },
+    {
+      "type": "artifact_exists",
+      "target": ".claude/context/tmp/test-chain-001/utility.mjs",
+      "operator": "exists",
+      "expected": true
+    },
+    {
+      "type": "artifact_chain",
+      "target": "steps.delegate-code-reviewer.input.context.related_files",
+      "operator": "includes_all",
+      "expected": [".claude/context/tmp/test-chain-001/utility.mjs"]
+    },
+    {
+      "type": "chain_complete",
+      "target": "steps",
+      "operator": "count_equals",
+      "expected": 3
+    }
+  ],
+
+  "cleanup": {
+    "remove_files": [
+      ".claude/context/tmp/test-chain-001/utility.mjs",
+      ".claude/context/tmp/test-chain-001/review-report.json"
+    ],
+    "restore_state": true
+  },
+
+  "metadata": {
+    "created_at": "2026-01-16T00:00:00Z",
+    "author": "developer",
+    "related_hooks": ["agent-task-template-enforcer.mjs", "post-delegation-verifier.mjs"]
+  }
+}

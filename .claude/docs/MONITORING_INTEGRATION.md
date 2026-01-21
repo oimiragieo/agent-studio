@@ -4,7 +4,7 @@
 
 Phase 5 of Cursor 47 recommendations implements comprehensive monitoring and observability for Codex skills and workflows. This guide documents the monitoring infrastructure and integration points.
 
-## Monitoring Tools (5 Total)
+## Monitoring Tools (Core + Hook-Based Run Tracing)
 
 ### 1. Structured Logger (`structured-logger.mjs`)
 
@@ -395,6 +395,22 @@ All monitoring data is stored in `.claude/context/analytics/` and `.claude/conte
 - `progress.jsonl` - Progress events
 - `metrics-dashboard.json` - Latest dashboard snapshot
 - `cuj-performance.json` - Legacy performance data
+
+Hook-based run tracing data is stored in `.claude/context/runtime/` and `.claude/context/artifacts/`:
+
+- `.claude/context/runtime/runs/<runId>/state.json` - durable run state (current agent/activity, errors, metrics)
+- `.claude/context/runtime/runs/<runId>/events.ndjson` - append-only event log (includes `trace_id`/`span_id` fields)
+- `.claude/context/artifacts/tool-events/run-<runId>.ndjson` - grep-friendly tool/guard event stream (includes denials)
+- `.claude/context/artifacts/failure-bundles/failure-*.json` - failure bundles (when `CLAUDE_OBS_FAILURE_BUNDLES=1`)
+- `.claude/context/payloads/trace-<trace_id>/span-<span_id>.json` - sanitized tool inputs/outputs (when `CLAUDE_OBS_STORE_PAYLOADS=1`)
+
+One-shot snapshot tool (recommended when troubleshooting):
+
+- `node .claude/tools/observability-bundle.mjs --debug-log "C:\\Users\\you\\.claude\\debug\\<session>.txt"`
+
+Integration run verifier (recommended after running the integration prompt templates):
+
+- `node .claude/tools/verify-agent-integration.mjs --workflow-id agent-integration-v1-<YYYYMMDD-HHMMSS> --json`
 
 ## Benefits
 

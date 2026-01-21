@@ -2,6 +2,16 @@
 
 Core documentation for deploying and using LLM-RULES. Main reference is `CLAUDE.md` in project root.
 
+## Conductor Features
+
+New Conductor system provides intelligent workflow orchestration:
+
+- **[Conductor Features Overview](CONDUCTOR_FEATURES.md)** - Complete Conductor feature guide
+- **[Project Analyzer Guide](PROJECT_ANALYZER_GUIDE.md)** - Automated brownfield analysis
+- **[Suggestions Guide](SUGGESTIONS_GUIDE.md)** - Proactive workflow guidance
+- **[Smart Revert Guide](SMART_REVERT_GUIDE.md)** - Snapshot-based recovery
+- **[Tracks Guide](TRACKS_GUIDE.md)** - Work organization and lifecycle
+
 ## Phase 2.1.2 Highlights
 
 Claude Code 2.1.2 introduces three major enhancements:
@@ -18,14 +28,13 @@ Claude Code 2.1.2 introduces three major enhancements:
 
 - **[Claude Code Setup](setup-guides/CLAUDE_SETUP_GUIDE.md)** - Configure LLM-RULES in Claude Code
 - **[Cursor IDE Setup](setup-guides/CURSOR_SETUP_GUIDE.md)** - Configure LLM-RULES in Cursor IDE
-- **[Factory Droid Setup](setup-guides/FACTORY_SETUP_GUIDE.md)** - Configure LLM-RULES in Factory Droid
 
 ## Core Concepts
 
 | Document                                        | Purpose                                          |
 | ----------------------------------------------- | ------------------------------------------------ |
 | [Context Optimization](CONTEXT_OPTIMIZATION.md) | Token efficiency and context management          |
-| [Memory Patterns](MEMORY_PATTERNS.md)           | Dual persistence (CLAUDE.md + memory skills)     |
+| [Memory Patterns](./memory/MEMORY_PATTERNS.md)  | Dual persistence (CLAUDE.md + memory skills)     |
 | [Everlasting Agents](EVERLASTING_AGENTS.md)     | Unlimited project duration via context recycling |
 | [Phase-Based Projects](PHASE_BASED_PROJECTS.md) | Organizing projects into manageable phases       |
 | [Evaluation Guide](EVALUATION_GUIDE.md)         | Agent performance and rule compliance grading    |

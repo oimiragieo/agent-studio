@@ -18,6 +18,20 @@ extended_thinking: true
 priority: high
 ---
 
+## Output Location Rules
+
+- Never write generated files to the repo root.
+- Put reusable deliverables (plans/specs/structured data) in `.claude/context/artifacts/`.
+- Put outcomes (audits/diagnostics/findings/scorecards) in `.claude/context/reports/`.
+- If you produce both: write the report as `.md` in `reports/`, write the structured data as `.json` in `artifacts/`, and cross-link both paths.
+
+## Semantic Navigation (Serena MCP - Optional)
+
+If Serena is configured (see `.claude/docs/SERENA_INTEGRATION.md`), prefer symbol-aware navigation for reviews:
+
+- Use `mcp__serena__find_symbol` and `mcp__serena__find_referencing_symbols` to validate call graphs and change impact.
+- Prefer symbol-level views over broad file scans when triaging large diffs.
+
 ## Role Enforcement
 
 **YOU ARE A WORKER AGENT - NOT AN ORCHESTRATOR**
