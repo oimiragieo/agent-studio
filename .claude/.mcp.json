@@ -1,119 +1,29 @@
 {
-  "betaFeatures": ["advanced-tool-use-2025-11-20"],
-  "toolSearch": {
-    "enabled": true,
-    "autoEnableThreshold": 20,
-    "defaultDeferLoading": true
-  },
+  "disabledMcpServers": [],
   "mcpServers": {
-    "repo": {
+    "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-repo"],
-      "env": {
-        "REPO_PATH": "${workspaceFolder}"
-      },
-      "description": "Repository search and codebase RAG for Claude Code. Used by repo-rag skill.",
-      "deferLoading": true,
-      "alwaysLoadTools": ["search_code", "read_file"]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
     },
-    "artifacts": {
+    "git": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-artifacts"],
-      "env": {
-        "ARTIFACTS_DIR": "${workspaceFolder}/.claude/context/artifacts"
-      },
-      "description": "Artifact publishing and management for Claude Projects. Used by artifact-publisher skill.",
-      "deferLoading": true
+      "args": ["-y", "@modelcontextprotocol/server-git", "."]
     },
-    "github": {
+    "memory": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
-      },
-      "description": "GitHub integration for issues, PRs, and repository management. Used by context-bridge skill.",
-      "optional": true,
-      "deferLoading": true,
-      "alwaysLoadTools": ["create_pull_request", "get_issue"],
-      "allowedCallers": ["code_execution_20250825"],
-      "tools": {
-        "create_pull_request": {
-          "programmatic": true
-        },
-        "list_issues": {
-          "programmatic": true
-        },
-        "get_file_contents": {
-          "programmatic": true
-        }
-      },
-      "inputExamples": {
-        "create_pull_request": [
-          {
-            "title": "Fix authentication bug",
-            "body": "Resolves #123\n\nThis PR fixes the authentication bug reported in issue #123.",
-            "head": "feature/fix-auth",
-            "base": "main",
-            "draft": false
-          },
-          {
-            "title": "Add dark mode support",
-            "body": "Implements dark mode toggle with system preference detection.",
-            "head": "feature/dark-mode",
-            "base": "develop",
-            "draft": true
-          }
-        ]
-      }
-    },
-    "linear": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-linear"],
-      "env": {
-        "LINEAR_API_KEY": "${LINEAR_API_KEY}"
-      },
-      "description": "Linear integration for issue tracking. Used by context-bridge skill.",
-      "optional": true,
-      "deferLoading": true
-    },
-    "slack": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-slack"],
-      "env": {
-        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}"
-      },
-      "description": "Slack integration for notifications. Used by context-bridge skill.",
-      "optional": true,
-      "deferLoading": true
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"],
-      "description": "Chrome DevTools Protocol integration for browser automation, debugging, and performance analysis. Allows AI to control and inspect live Chrome instances.",
-      "deferLoading": true,
-      "alwaysLoadTools": ["take_screenshot", "navigate_page"]
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
     },
     "sequential-thinking": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "description": "Sequential thinking and structured problem solving. Helps break down complex problems into steps with revision capabilities.",
-      "deferLoading": true
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
-    "serena": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena",
-        "start-mcp-server",
-        "--context",
-        "claude-code",
-        "--project",
-        "${workspaceFolder}"
-      ],
-      "description": "Serena MCP server (semantic code navigation/editing via LSP). Optional; requires uv/uvx installed. See .claude/docs/SERENA_INTEGRATION.md.",
-      "optional": true,
-      "deferLoading": true
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite", "--db", ".claude/context/memory/vectors.db"]
     }
   }
 }

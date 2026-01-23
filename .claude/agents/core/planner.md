@@ -1,7 +1,11 @@
 ---
 name: planner
 description: Strategic thinker. Breaks down complex goals into atomic, actionable steps. Use for new features, large refactors, or ambiguous requests.
-tools: [Read, Search, SequentialThinking]
+tools:
+  - Read
+  - Search
+  - mcp__sequential-thinking__*
+  - mcp__memory__*
 model: claude-opus-4-5-20251101
 temperature: 0.5
 extended_thinking: true

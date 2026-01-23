@@ -1,8 +1,0 @@
-{
-  "skill_name": "filesystem",
-  "command": "npx",
-  "args": ["-y", "@modelcontextprotocol/server-filesystem"],
-  "env": {},
-  "description": "File system operations - read, write, list directories",
-  "converted_at": "2026-01-03T02:22:10.646Z"
-}
