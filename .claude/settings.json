@@ -6,14 +6,95 @@
   "hooks": {
     "UserPromptSubmit": [
       {
-        "type": "command",
-        "command": "node .claude/hooks/routing/router-enforcer.js"
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/router-mode-reset.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/router-enforcer.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/session/memory-reminder.cjs"
+          }
+        ]
       }
     ],
     "PreToolUse": [
       {
-        "type": "command",
-        "command": "node .claude/hooks/safety/tdd-check.js"
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/safety/windows-null-sanitizer.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/safety/bash-command-validator.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/safety/router-write-guard.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/safety/tdd-check.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/safety/validate-skill-invocation.cjs"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/memory/format-memory.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/safety/enforce-claude-md-update.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/agent-context-tracker.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/memory/extract-workflow-learnings.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/memory/session-memory-extractor.cjs"
+          }
+        ]
       }
     ]
   }

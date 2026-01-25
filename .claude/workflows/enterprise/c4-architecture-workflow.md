@@ -1,0 +1,471 @@
+---
+name: c4-architecture-workflow
+description: Generate comprehensive C4 architecture documentation for an existing repository/codebase using a bottom-up analysis approach. Coordinates Code, Component, Container, and Context agents to create complete architectural documentation.
+version: 1.0.0
+agents:
+  - c4-code
+  - c4-component
+  - c4-container
+  - c4-context
+tags: [architecture, documentation, c4-model, workflow]
+---
+
+# C4 Architecture Documentation Workflow
+
+Generate comprehensive C4 architecture documentation for an existing repository/codebase using a bottom-up analysis approach.
+
+## Overview
+
+This workflow creates comprehensive C4 architecture documentation following the [official C4 model](https://c4model.com/diagrams) by:
+
+1. **Code Level**: Analyzing every subdirectory bottom-up to create code-level documentation
+2. **Component Level**: Synthesizing code documentation into logical components within containers
+3. **Container Level**: Mapping components to deployment containers with API documentation (shows high-level technology choices)
+4. **Context Level**: Creating high-level system context with personas and user journeys (focuses on people and software systems, not technologies)
+
+**Note**: According to the [C4 model](https://c4model.com/diagrams), you don't need to use all 4 levels of diagram - the system context and container diagrams are sufficient for most software development teams. This workflow generates all levels for completeness, but teams can choose which levels to use.
+
+All documentation is written to a new `C4-Documentation/` directory in the repository root.
+
+## Phase 1: Code-Level Documentation (Bottom-Up Analysis)
+
+### 1.1 Discover All Subdirectories
+
+- Use codebase search to identify all subdirectories in the repository
+- Sort directories by depth (deepest first) for bottom-up processing
+- Filter out common non-code directories (node_modules, .git, build, dist, etc.)
+- Create list of directories to process
+
+### 1.2 Process Each Directory (Bottom-Up)
+
+For each directory, starting from the deepest:
+
+- Spawn c4-code agent with Task tool
+- Prompt template:
+
+```
+You are the C4-CODE agent. Read .claude/agents/specialized/c4-code.md
+
+## Task
+Analyze the code in directory: [directory_path]
+
+## Instructions
+Create comprehensive C4 Code-level documentation following this structure:
+
+1. **Overview Section**:
+   - Name: [Descriptive name for this code directory]
+   - Description: [Short description of what this code does]
+   - Location: [Link to actual directory path relative to repo root]
+   - Language: [Primary programming language(s) used]
+   - Purpose: [What this code accomplishes]
+
+2. **Code Elements Section**:
+   - Document all functions/methods with complete signatures:
+     - Function name, parameters (with types), return type
+     - Description of what each function does
+     - Location (file path and line numbers)
+     - Dependencies (what this function depends on)
+   - Document all classes/modules:
+     - Class name, description, location
+     - Methods and their signatures
+     - Dependencies
+
+3. **Dependencies Section**:
+   - Internal dependencies (other code in this repo)
+   - External dependencies (libraries, frameworks, services)
+
+4. **Relationships Section**:
+   - Optional Mermaid diagram if relationships are complex
+
+Save the output as: C4-Documentation/c4-code-[directory-name].md
+Use a sanitized directory name (replace / with -, remove special chars) for the filename.
+
+## Memory Protocol
+1. Read .claude/context/memory/learnings.md first
+2. Record patterns to memory after completion
+```
+
+- Expected output: c4-code-<directory-name>.md file in C4-Documentation/
+- Context: All files in the directory and its subdirectories
+
+**Repeat for every subdirectory** until all directories have corresponding c4-code-*.md files.
+
+## Phase 2: Component-Level Synthesis
+
+### 2.1 Analyze All Code-Level Documentation
+
+- Collect all c4-code-*.md files created in Phase 1
+- Analyze code structure, dependencies, and relationships
+- Identify logical component boundaries based on:
+  - Domain boundaries (related business functionality)
+  - Technical boundaries (shared frameworks, libraries)
+  - Organizational boundaries (team ownership, if evident)
+
+### 2.2 Create Component Documentation
+
+For each identified component:
+
+- Spawn c4-component agent with Task tool
+- Prompt template:
+
+```
+You are the C4-COMPONENT agent. Read .claude/agents/specialized/c4-component.md
+
+## Task
+Synthesize the following C4 Code-level documentation files into a logical component.
+
+Code files to analyze:
+[List of c4-code-*.md file paths]
+
+## Instructions
+Create comprehensive C4 Component-level documentation following this structure:
+
+1. **Overview Section**:
+   - Name: [Component name - descriptive and meaningful]
+   - Description: [Short description of component purpose]
+   - Type: [Application, Service, Library, etc.]
+   - Technology: [Primary technologies used]
+
+2. **Purpose Section**:
+   - Detailed description of what this component does
+   - What problems it solves
+   - Its role in the system
+
+3. **Software Features Section**:
+   - List all software features provided by this component
+   - Each feature with a brief description
+
+4. **Code Elements Section**:
+   - List all c4-code-*.md files contained in this component
+   - Link to each file with a brief description
+
+5. **Interfaces Section**:
+   - Document all component interfaces:
+     - Interface name
+     - Protocol (REST, GraphQL, gRPC, Events, etc.)
+     - Description
+     - Operations (function signatures, endpoints, etc.)
+
+6. **Dependencies Section**:
+   - Components used (other components this depends on)
+   - External systems (databases, APIs, services)
+
+7. **Component Diagram**:
+   - Mermaid diagram showing this component and its relationships
+
+Save the output as: C4-Documentation/c4-component-[component-name].md
+Use a sanitized component name for the filename.
+
+## Memory Protocol
+1. Read .claude/context/memory/learnings.md first
+2. Record patterns to memory after completion
+```
+
+- Expected output: c4-component-<name>.md file for each component
+- Context: All relevant c4-code-*.md files for this component
+
+### 2.3 Create Master Component Index
+
+- Spawn c4-component agent with Task tool
+- Prompt template:
+
+```
+You are the C4-COMPONENT agent. Read .claude/agents/specialized/c4-component.md
+
+## Task
+Create a master component index that lists all components in the system.
+
+## Instructions
+Based on all c4-component-*.md files created, generate:
+
+1. **System Components Section**:
+   - List all components with:
+     - Component name
+     - Short description
+     - Link to component documentation
+
+2. **Component Relationships Diagram**:
+   - Mermaid diagram showing all components and their relationships
+   - Show dependencies between components
+   - Show external system dependencies
+
+Save the output as: C4-Documentation/c4-component.md
+
+## Memory Protocol
+1. Read .claude/context/memory/learnings.md first
+2. Record patterns to memory after completion
+```
+
+- Expected output: Master c4-component.md file
+- Context: All c4-component-*.md files
+
+## Phase 3: Container-Level Synthesis
+
+### 3.1 Analyze Components and Deployment Definitions
+
+- Review all c4-component-*.md files
+- Search for deployment/infrastructure definitions:
+  - Dockerfiles
+  - Kubernetes manifests (deployments, services, etc.)
+  - Docker Compose files
+  - Terraform/CloudFormation configs
+  - Cloud service definitions (AWS Lambda, Azure Functions, etc.)
+  - CI/CD pipeline definitions
+
+### 3.2 Map Components to Containers
+
+- Spawn c4-container agent with Task tool
+- Prompt template:
+
+```
+You are the C4-CONTAINER agent. Read .claude/agents/specialized/c4-container.md
+
+## Task
+Synthesize components into containers based on deployment definitions.
+
+Component documentation:
+[List of all c4-component-*.md file paths]
+
+Deployment definitions found:
+[List of deployment config files: Dockerfiles, K8s manifests, etc.]
+
+## Instructions
+Create comprehensive C4 Container-level documentation following this structure:
+
+1. **Containers Section** (for each container):
+   - Name: [Container name]
+   - Description: [Short description of container purpose and deployment]
+   - Type: [Web Application, API, Database, Message Queue, etc.]
+   - Technology: [Primary technologies: Node.js, Python, PostgreSQL, etc.]
+   - Deployment: [Docker, Kubernetes, Cloud Service, etc.]
+
+2. **Purpose Section** (for each container):
+   - Detailed description of what this container does
+   - How it's deployed
+   - Its role in the system
+
+3. **Components Section** (for each container):
+   - List all components deployed in this container
+   - Link to component documentation
+
+4. **Interfaces Section** (for each container):
+   - Document all container APIs and interfaces:
+     - API/Interface name
+     - Protocol (REST, GraphQL, gRPC, Events, etc.)
+     - Description
+     - Link to OpenAPI/Swagger/API Spec file
+     - List of endpoints/operations
+
+5. **API Specifications**:
+   - For each container API, create an OpenAPI 3.1+ specification
+   - Save as: C4-Documentation/apis/[container-name]-api.yaml
+   - Include:
+     - All endpoints with methods (GET, POST, etc.)
+     - Request/response schemas
+     - Authentication requirements
+     - Error responses
+
+6. **Dependencies Section** (for each container):
+   - Containers used (other containers this depends on)
+   - External systems (databases, third-party APIs, etc.)
+   - Communication protocols
+
+7. **Infrastructure Section** (for each container):
+   - Link to deployment config (Dockerfile, K8s manifest, etc.)
+   - Scaling strategy
+   - Resource requirements (CPU, memory, storage)
+
+8. **Container Diagram**:
+   - Mermaid diagram showing all containers and their relationships
+   - Show communication protocols
+   - Show external system dependencies
+
+Save the output as: C4-Documentation/c4-container.md
+
+## Memory Protocol
+1. Read .claude/context/memory/learnings.md first
+2. Record patterns to memory after completion
+```
+
+- Expected output: c4-container.md with all containers and API specifications
+- Context: All component documentation and deployment definitions
+
+## Phase 4: Context-Level Documentation
+
+### 4.1 Analyze System Documentation
+
+- Review container and component documentation
+- Search for system documentation:
+  - README files
+  - Architecture documentation
+  - Requirements documents
+  - Design documents
+  - Test files (to understand system behavior)
+  - API documentation
+  - User documentation
+
+### 4.2 Create Context Documentation
+
+- Spawn c4-context agent with Task tool
+- Prompt template:
+
+```
+You are the C4-CONTEXT agent. Read .claude/agents/specialized/c4-context.md
+
+## Task
+Create comprehensive C4 Context-level documentation for the system.
+
+Container documentation: C4-Documentation/c4-container.md
+Component documentation: C4-Documentation/c4-component.md
+System documentation: [List of README, architecture docs, requirements, etc.]
+Test files: [List of test files that show system behavior]
+
+## Instructions
+Create comprehensive C4 Context-level documentation following this structure:
+
+1. **System Overview Section**:
+   - Short Description: [One-sentence description of what the system does]
+   - Long Description: [Detailed description of system purpose, capabilities, problems solved]
+
+2. **Personas Section**:
+   - For each persona (human users and programmatic "users"):
+     - Persona name
+     - Type (Human User / Programmatic User / External System)
+     - Description (who they are, what they need)
+     - Goals (what they want to achieve)
+     - Key features used
+
+3. **System Features Section**:
+   - For each high-level feature:
+     - Feature name
+     - Description (what this feature does)
+     - Users (which personas use this feature)
+     - Link to user journey map
+
+4. **User Journeys Section**:
+   - For each key feature and persona:
+     - Journey name: [Feature Name] - [Persona Name] Journey
+     - Step-by-step journey
+     - Include all system touchpoints
+   - For programmatic users (external systems, APIs):
+     - Integration journey with step-by-step process
+
+5. **External Systems and Dependencies Section**:
+   - For each external system:
+     - System name
+     - Type (Database, API, Service, Message Queue, etc.)
+     - Description (what it provides)
+     - Integration type (API, Events, File Transfer, etc.)
+     - Purpose (why the system depends on this)
+
+6. **System Context Diagram**:
+   - Mermaid C4Context diagram showing:
+     - The system (as a box in the center)
+     - All personas (users) around it
+     - All external systems around it
+     - Relationships and data flows
+
+7. **Related Documentation Section**:
+   - Links to container documentation
+   - Links to component documentation
+
+Save the output as: C4-Documentation/c4-context.md
+
+Ensure the documentation is:
+- Understandable by non-technical stakeholders
+- Focuses on system purpose, users, and external relationships
+- Includes comprehensive user journey maps
+- Identifies all external systems and dependencies
+
+## Memory Protocol
+1. Read .claude/context/memory/learnings.md first
+2. Record patterns to memory after completion
+```
+
+- Expected output: c4-context.md with complete system context
+- Context: All container, component, and system documentation
+
+## Configuration Options
+
+- `target_directory`: Root directory to analyze (default: current repository root)
+- `exclude_patterns`: Patterns to exclude (default: node_modules, .git, build, dist, etc.)
+- `output_directory`: Where to write C4 documentation (default: C4-Documentation/)
+- `include_tests`: Whether to analyze test files for context (default: true)
+- `api_format`: Format for API specs (default: openapi)
+
+## Success Criteria
+
+- ✅ Every subdirectory has a corresponding c4-code-*.md file
+- ✅ All code-level documentation includes complete function signatures
+- ✅ Components are logically grouped with clear boundaries
+- ✅ All components have interface documentation
+- ✅ Master component index created with relationship diagram
+- ✅ Containers map to actual deployment units
+- ✅ All container APIs documented with OpenAPI/Swagger specs
+- ✅ Container diagram shows deployment architecture
+- ✅ System context includes all personas (human and programmatic)
+- ✅ User journeys documented for all key features
+- ✅ All external systems and dependencies identified
+- ✅ Context diagram shows system, users, and external systems
+- ✅ Documentation is organized in C4-Documentation/ directory
+
+## Output Structure
+
+```
+C4-Documentation/
+├── c4-code-*.md              # Code-level docs (one per directory)
+├── c4-component-*.md          # Component-level docs (one per component)
+├── c4-component.md            # Master component index
+├── c4-container.md            # Container-level docs
+├── c4-context.md              # Context-level docs
+└── apis/                      # API specifications
+    ├── [container]-api.yaml   # OpenAPI specs for each container
+    └── ...
+```
+
+## Coordination Notes
+
+- **Bottom-up processing**: Process directories from deepest to shallowest
+- **Incremental synthesis**: Each level builds on the previous level's documentation
+- **Complete coverage**: Every directory must have code-level documentation before synthesis
+- **Link consistency**: All documentation files link to each other appropriately
+- **API documentation**: Container APIs must have OpenAPI/Swagger specifications
+- **Stakeholder-friendly**: Context documentation should be understandable by non-technical stakeholders
+- **Mermaid diagrams**: Use proper C4 Mermaid notation for all diagrams
+
+## Example Usage
+
+As a Router, you would coordinate this workflow like:
+
+```javascript
+// Phase 1: Discover directories and spawn c4-code agents
+// (repeat for each directory)
+Task({
+  subagent_type: 'general-purpose',
+  description: 'C4 Code analysis for src/api',
+  prompt: 'You are C4-CODE agent. Read .claude/agents/specialized/c4-code.md...',
+});
+
+// Phase 2: Spawn c4-component agent to synthesize
+Task({
+  subagent_type: 'general-purpose',
+  description: 'C4 Component synthesis',
+  prompt: 'You are C4-COMPONENT agent. Read .claude/agents/specialized/c4-component.md...',
+});
+
+// Phase 3: Spawn c4-container agent
+Task({
+  subagent_type: 'general-purpose',
+  description: 'C4 Container mapping',
+  prompt: 'You are C4-CONTAINER agent. Read .claude/agents/specialized/c4-container.md...',
+});
+
+// Phase 4: Spawn c4-context agent
+Task({
+  subagent_type: 'general-purpose',
+  description: 'C4 Context documentation',
+  prompt: 'You are C4-CONTEXT agent. Read .claude/agents/specialized/c4-context.md...',
+});
+```
+
+This workflow implements a complete C4 architecture documentation process following the C4 model (Context, Container, Component, Code) using a bottom-up approach.
