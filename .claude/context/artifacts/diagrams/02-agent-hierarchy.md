@@ -138,47 +138,51 @@ flowchart TB
 ## Agent Categories
 
 ### Core Agents (8 agents)
+
 Fundamental agents that handle common development tasks.
 
-| Agent | Primary Responsibility | File |
-|-------|----------------------|------|
-| Developer | Bug fixes, feature implementation | `core/developer.md` |
-| Planner | Feature design, task breakdown | `core/planner.md` |
-| Architect | System design, architecture decisions | `core/architect.md` |
-| QA | Testing, quality assurance | `core/qa.md` |
-| Technical Writer | Documentation | `core/technical-writer.md` |
-| PM | Product management, requirements | `core/pm.md` |
-| Reflection Agent | Quality assessment, learning extraction | `core/reflection-agent.md` |
-| Context Compressor | Context summarization | `core/context-compressor.md` |
+| Agent              | Primary Responsibility                  | File                         |
+| ------------------ | --------------------------------------- | ---------------------------- |
+| Developer          | Bug fixes, feature implementation       | `core/developer.md`          |
+| Planner            | Feature design, task breakdown          | `core/planner.md`            |
+| Architect          | System design, architecture decisions   | `core/architect.md`          |
+| QA                 | Testing, quality assurance              | `core/qa.md`                 |
+| Technical Writer   | Documentation                           | `core/technical-writer.md`   |
+| PM                 | Product management, requirements        | `core/pm.md`                 |
+| Reflection Agent   | Quality assessment, learning extraction | `core/reflection-agent.md`   |
+| Context Compressor | Context summarization                   | `core/context-compressor.md` |
 
 ### Domain Agents (20 agents)
+
 Language and framework specialists with deep expertise.
 
-| Category | Agents | Expertise |
-|----------|--------|-----------|
-| Languages | python-pro, typescript-pro, rust-pro, golang-pro, java-pro, php-pro | Native language patterns |
-| Frameworks | fastapi-pro, nextjs-pro, nodejs-pro, frontend-pro, sveltekit-expert | Framework best practices |
-| Mobile | ios-pro, android-pro, expo-mobile-developer, mobile-ux-reviewer | Mobile development |
-| Emerging | ai-ml-specialist, web3-blockchain-expert, gamedev-pro, scientific-research-expert, data-engineer, graphql-pro, tauri-desktop-developer | Specialized domains |
+| Category   | Agents                                                                                                                                 | Expertise                |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| Languages  | python-pro, typescript-pro, rust-pro, golang-pro, java-pro, php-pro                                                                    | Native language patterns |
+| Frameworks | fastapi-pro, nextjs-pro, nodejs-pro, frontend-pro, sveltekit-expert                                                                    | Framework best practices |
+| Mobile     | ios-pro, android-pro, expo-mobile-developer, mobile-ux-reviewer                                                                        | Mobile development       |
+| Emerging   | ai-ml-specialist, web3-blockchain-expert, gamedev-pro, scientific-research-expert, data-engineer, graphql-pro, tauri-desktop-developer | Specialized domains      |
 
 ### Specialized Agents (11 agents)
+
 Task-specific agents for focused responsibilities.
 
-| Category | Agents | Purpose |
-|----------|--------|---------|
-| Security | security-architect, code-reviewer | Security analysis, code review |
-| Infrastructure | devops, devops-troubleshooter, incident-responder | Operations, debugging |
-| C4 Architecture | c4-context, c4-container, c4-component, c4-code | Architecture documentation |
-| Other | conductor-validator, reverse-engineer, database-architect | Specialized tasks |
+| Category        | Agents                                                    | Purpose                        |
+| --------------- | --------------------------------------------------------- | ------------------------------ |
+| Security        | security-architect, code-reviewer                         | Security analysis, code review |
+| Infrastructure  | devops, devops-troubleshooter, incident-responder         | Operations, debugging          |
+| C4 Architecture | c4-context, c4-container, c4-component, c4-code           | Architecture documentation     |
+| Other           | conductor-validator, reverse-engineer, database-architect | Specialized tasks              |
 
 ### Orchestrators (3 agents)
+
 Multi-agent coordinators for complex workflows.
 
-| Agent | Purpose | When Used |
-|-------|---------|-----------|
-| Master Orchestrator | Project-level coordination | Complex multi-phase projects |
-| Swarm Coordinator | Parallel agent execution | Parallel reviews, bulk operations |
-| Evolution Orchestrator | Self-evolution workflow | Creating new agents/skills |
+| Agent                  | Purpose                    | When Used                         |
+| ---------------------- | -------------------------- | --------------------------------- |
+| Master Orchestrator    | Project-level coordination | Complex multi-phase projects      |
+| Swarm Coordinator      | Parallel agent execution   | Parallel reviews, bulk operations |
+| Evolution Orchestrator | Self-evolution workflow    | Creating new agents/skills        |
 
 ## Routing Logic
 

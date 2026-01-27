@@ -131,17 +131,17 @@ flowchart TB
 
 ## Component Descriptions
 
-| Component | Purpose | Location |
-|-----------|---------|----------|
-| **Router** | Classifies requests, selects agents | `.claude/agents/core/router.md` |
-| **Core Agents** | Developer, Planner, Architect, QA, PM, Technical-Writer | `.claude/agents/core/` |
-| **Domain Agents** | Language/framework specialists | `.claude/agents/domain/` |
-| **Specialized Agents** | Task-specific experts | `.claude/agents/specialized/` |
-| **Orchestrators** | Multi-agent coordinators | `.claude/agents/orchestrators/` |
-| **Hooks** | Pre/Post tool validation | `.claude/hooks/` |
-| **Skills** | Reusable capabilities | `.claude/skills/` |
-| **Workflows** | Multi-phase processes | `.claude/workflows/` |
-| **State Files** | Runtime state persistence | `.claude/context/` |
+| Component              | Purpose                                                 | Location                        |
+| ---------------------- | ------------------------------------------------------- | ------------------------------- |
+| **Router**             | Classifies requests, selects agents                     | `.claude/agents/core/router.md` |
+| **Core Agents**        | Developer, Planner, Architect, QA, PM, Technical-Writer | `.claude/agents/core/`          |
+| **Domain Agents**      | Language/framework specialists                          | `.claude/agents/domain/`        |
+| **Specialized Agents** | Task-specific experts                                   | `.claude/agents/specialized/`   |
+| **Orchestrators**      | Multi-agent coordinators                                | `.claude/agents/orchestrators/` |
+| **Hooks**              | Pre/Post tool validation                                | `.claude/hooks/`                |
+| **Skills**             | Reusable capabilities                                   | `.claude/skills/`               |
+| **Workflows**          | Multi-phase processes                                   | `.claude/workflows/`            |
+| **State Files**        | Runtime state persistence                               | `.claude/context/`              |
 
 ## Data Flow
 

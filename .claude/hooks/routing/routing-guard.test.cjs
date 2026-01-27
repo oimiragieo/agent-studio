@@ -481,5 +481,255 @@ describe('routing-guard', () => {
       assert.ok(routingGuard.IMPLEMENTATION_AGENTS.includes('qa'));
       assert.ok(routingGuard.IMPLEMENTATION_AGENTS.includes('devops'));
     });
+
+    it('should have Bash in watched tools', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.ok(routingGuard.ALL_WATCHED_TOOLS.includes('Bash'));
+    });
+
+    it('should have ROUTER_BASH_WHITELIST defined', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.ok(Array.isArray(routingGuard.ROUTER_BASH_WHITELIST));
+      assert.ok(routingGuard.ROUTER_BASH_WHITELIST.length > 0);
+    });
+  });
+
+  describe('isWhitelistedBashCommand', () => {
+    it('should allow git status', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('git status'), true);
+    });
+
+    it('should allow git status -s', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('git status -s'), true);
+    });
+
+    it('should allow git status --short', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('git status --short'), true);
+    });
+
+    it('should allow git log --oneline -5', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('git log --oneline -5'), true);
+    });
+
+    it('should allow git log --oneline -10', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('git log --oneline -10'), true);
+    });
+
+    it('should allow git diff --name-only', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('git diff --name-only'), true);
+    });
+
+    it('should allow git branch', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('git branch'), true);
+    });
+
+    it('should reject pnpm test', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('pnpm test'), false);
+    });
+
+    it('should reject npm test', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('npm test'), false);
+    });
+
+    it('should reject rm commands', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('rm -rf /'), false);
+    });
+
+    it('should reject git push', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('git push'), false);
+    });
+
+    it('should reject git checkout', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('git checkout main'), false);
+    });
+
+    it('should reject arbitrary shell commands', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('node index.js'), false);
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('cat /etc/passwd'), false);
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('curl https://evil.com'), false);
+    });
+
+    it('should reject null/undefined/empty', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand(null), false);
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand(undefined), false);
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand(''), false);
+    });
+
+    it('should trim whitespace', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      assert.strictEqual(routingGuard.isWhitelistedBashCommand('  git status  '), true);
+    });
+  });
+
+  describe('checkRouterBash', () => {
+    it('should pass for non-Bash tools', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      const result = routingGuard.checkRouterBash('Read', {});
+      assert.strictEqual(result.pass, true);
+    });
+
+    it('should pass when enforcement is off', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+
+      process.env.ROUTER_BASH_GUARD = 'off';
+      const result = routingGuard.checkRouterBash('Bash', { command: 'pnpm test' });
+      assert.strictEqual(result.pass, true);
+    });
+
+    it('should pass for whitelisted git commands in router mode', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Set router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+
+      const result = routingGuard.checkRouterBash('Bash', { command: 'git status' });
+      assert.strictEqual(result.pass, true);
+    });
+
+    it('should pass for whitelisted git log command in router mode', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Set router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+
+      const result = routingGuard.checkRouterBash('Bash', { command: 'git log --oneline -5' });
+      assert.strictEqual(result.pass, true);
+    });
+
+    it('should block non-whitelisted commands in router mode', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Set router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+
+      // Ensure enforcement is on
+      process.env.ROUTER_BASH_GUARD = 'block';
+
+      const result = routingGuard.checkRouterBash('Bash', { command: 'pnpm test' });
+      assert.strictEqual(result.pass, false);
+      assert.strictEqual(result.result, 'block');
+      assert.ok(result.message.includes('ROUTER BASH VIOLATION'));
+    });
+
+    it('should block node commands in router mode', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Set router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+
+      process.env.ROUTER_BASH_GUARD = 'block';
+
+      const result = routingGuard.checkRouterBash('Bash', {
+        command: 'node .claude/hooks/test.cjs',
+      });
+      assert.strictEqual(result.pass, false);
+      assert.strictEqual(result.result, 'block');
+    });
+
+    it('should warn for non-whitelisted commands when enforcement is warn', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Set router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+
+      process.env.ROUTER_BASH_GUARD = 'warn';
+
+      const result = routingGuard.checkRouterBash('Bash', { command: 'pnpm test' });
+      assert.strictEqual(result.pass, true);
+      assert.strictEqual(result.result, 'warn');
+      assert.ok(result.message.includes('ROUTER BASH VIOLATION'));
+    });
+
+    it('should pass for any command when in agent mode', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Set agent mode
+      routerState.enterAgentMode();
+      routerState.invalidateStateCache();
+
+      process.env.ROUTER_BASH_GUARD = 'block';
+
+      const result = routingGuard.checkRouterBash('Bash', { command: 'pnpm test' });
+      assert.strictEqual(result.pass, true);
+    });
+
+    it('should include visceral message with correct format', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Set router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+
+      process.env.ROUTER_BASH_GUARD = 'block';
+
+      const result = routingGuard.checkRouterBash('Bash', { command: 'npm install' });
+      assert.strictEqual(result.pass, false);
+      // Check visceral message contains key elements
+      assert.ok(result.message.includes('ADR-030'), 'Message should reference ADR-030');
+      assert.ok(result.message.includes('git status'), 'Message should list allowed commands');
+      assert.ok(result.message.includes('Spawn'), 'Message should tell user to spawn agent');
+      assert.ok(result.message.includes('ROUTER_BASH_GUARD'), 'Message should mention override');
+    });
+  });
+
+  describe('checkRouterBash exported from module', () => {
+    it('should export checkRouterBash function', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.strictEqual(typeof routingGuard.checkRouterBash, 'function');
+    });
+
+    it('should export isWhitelistedBashCommand function', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.strictEqual(typeof routingGuard.isWhitelistedBashCommand, 'function');
+    });
+
+    it('should export ROUTER_BASH_WHITELIST constant', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(Array.isArray(routingGuard.ROUTER_BASH_WHITELIST));
+    });
   });
 });

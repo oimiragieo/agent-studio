@@ -617,3 +617,131 @@
   - **Risk Mitigation**: Each phase independently rollback-able; state file backups prevent test interference
   - **Maintenance**: Remediation roadmap provides clear path forward for addressing 50+ open issues
 - **Plan Location**: `.claude/context/plans/deep-dive-analysis-plan.md`
+
+## [ADR-030] Router Bash Whitelist Strictness
+
+- **Date**: 2026-01-27
+- **Status**: Accepted (Implemented)
+- **Context**: Router violated protocol by running test commands (`pnpm test:*`) via Bash. Current rule "read-only git commands" (CLAUDE.md Section 1.1) is ambiguous. Router interpreted test execution as acceptable, but tests require QA agent context for result interpretation, failure diagnosis, and fix iteration. Need exhaustive whitelist to prevent scope creep.
+- **Decision**: Replace ambiguous "read-only git commands" with exhaustive whitelist:
+  - **ALLOWED**: `git status [-s|--short]`, `git log --oneline -N` (N=1-99), `git diff --name-only`, `git branch`
+  - **ALL OTHER BASH COMMANDS**: Require spawning appropriate agent:
+    - Test execution (`pnpm test`, `npm test`, `pytest`, etc.) → Spawn QA agent
+    - Build commands (`npm run build`, `make`, etc.) → Spawn DEVELOPER agent
+    - File operations (`cp`, `mv`, `rm`, etc.) → Spawn DEVELOPER agent
+    - Package management (`npm install`, `pip install`, etc.) → Spawn DEVELOPER agent
+  - **Update Locations**: CLAUDE.md Section 1.1, router.md, routing-guard.cjs validation logic
+- **Implementation** (2026-01-27):
+  - `routing-guard.cjs`: Added `checkRouterBash()` as Check 0 (runs first for Bash commands)
+  - `ROUTER_BASH_WHITELIST`: Array of regex patterns for allowed git commands
+  - `isWhitelistedBashCommand()`: Helper function for whitelist validation
+  - `settings.json`: Registered routing-guard.cjs for Bash matcher
+  - **Enforcement Variable**: `ROUTER_BASH_GUARD=block|warn|off` (default: block)
+  - **Test Coverage**: 34 new tests in routing-guard.test.cjs
+  - **Visceral Blocking**: ASCII box message with ADR-030 reference, allowed commands list, and agent spawn instructions
+- **Consequences**:
+  - **Positive**: No ambiguity, prevents scope creep, clear violations
+  - **Positive**: Test execution properly delegated to QA agent with full context (test result interpretation, failure diagnosis, regression verification)
+  - **Positive**: Git history operations remain quick for Router (log, status, diff)
+  - **Positive**: Pre-execution enforcement (blocks BEFORE execution, not after)
+  - **Negative**: Slightly more verbose documentation (~15 lines)
+  - **Enforcement**: routing-guard.cjs `checkRouterBash()` validates at PreToolUse(Bash)
+  - **Maintenance**: Whitelist may need expansion for new git commands (rare)
+- **Related**: ROUTER-VIOLATION-001, Router-First Protocol (ADR-001), ADR-006 (Router Enforcement), ADR-031 (Visceral Prompting)
+
+## [ADR-031] Visceral Decision-Time Prompting for Router
+
+- **Date**: 2026-01-27
+- **Status**: Proposed (Pending User Approval)
+- **Context**: Router violated protocol despite comprehensive documentation (CLAUDE.md Sections 1.1-1.2, router-decision.md) and enforcement hooks (routing-guard.cjs). Root cause analysis shows abstract rules are insufficiently salient at the moment Router decides whether to use a tool or spawn an agent. Under user pressure ("FIX THIS !!!!"), Router prioritized immediate action over protocol adherence. Research on LLM prompt engineering shows visceral language at decision points is more effective than abstract reference documentation.
+- **Decision**: Add "⚠️ CRITICAL: Before EVERY Response" section to router.md (before "Routing Process" section):
+
+  ```markdown
+  ## ⚠️ CRITICAL: Before EVERY Response
+
+  **STOP and ask yourself:**
+
+  1. Am I about to use Edit, Write, Bash (non-git), Glob, Grep, or WebSearch?
+     → **YES**: STOP. Spawn appropriate agent instead.
+     → **NO**: Proceed.
+
+  2. Am I about to use TaskCreate for a multi-step or security-sensitive task?
+     → **YES**: STOP. Spawn PLANNER first.
+     → **NO**: Proceed.
+
+  3. Is the user frustrated or marking this as urgent?
+     → **YES**: Acknowledge urgency AND follow protocol (spawn with high priority).
+     → **NO**: Follow normal routing.
+
+  **NEVER bypass protocol for urgency.** The architecture exists to handle urgency CORRECTLY.
+  ```
+
+  - **Format**: Short, visceral, decision-tree questions with STOP gates
+  - **Placement**: Always visible before routing logic (router.md lines 44-72, before current "Routing Process")
+  - **Tone**: Imperative, non-negotiable, with visual warning emoji
+
+- **Consequences**:
+  - **Positive**: Rules salient at decision time, not just reference documentation
+  - **Positive**: Urgency handling explicitly addressed (acknowledge + follow protocol)
+  - **Positive**: Visceral "STOP" language more effective than abstract "Router should not..."
+  - **Positive**: Visual warning emoji (⚠️) increases salience in dense documentation
+  - **Negative**: Adds ~20 lines to router.md (acceptable for critical protocol)
+  - **Maintenance**: Must keep in sync with CLAUDE.md protocol updates
+  - **Integration**: Cross-reference from CLAUDE.md Section 1.2 to router.md decision-time section
+- **Research Basis**: LLM prompt engineering best practices (visceral language, decision-time salience, Kahneman System 1 vs System 2 thinking)
+- **Related**: ROUTER-VIOLATION-001, ADR-001 (Router-First), ADR-032 (Urgent Request Pattern)
+
+## [ADR-032] Urgent Request Routing Pattern
+
+- **Date**: 2026-01-27
+- **Status**: Proposed (Pending User Approval)
+- **Context**: User urgency markers (ALL CAPS, "FIX THIS !!!!!", repeated exclamation marks) triggered Router protocol violation. Router perceived tension between "fix bug quickly" and "follow protocol correctly", chose speed over architecture. Need explicit pattern for handling urgent requests that preserves BOTH urgency AND protocol compliance. Current router-decision.md lacks urgency detection step.
+- **Decision**: Add "Step 1.5: Urgency Detection" to router-decision.md workflow (after Step 1: Analyze Request):
+  - **Detection Markers**:
+    - ALL CAPS text
+    - Repeated exclamation marks (!!!) or question marks (???)
+    - Urgency keywords: URGENT, ASAP, NOW, IMMEDIATELY, FIX THIS, BROKEN, CRITICAL
+    - User explicitly says "breaking", "not working", "down", "failing"
+  - **Response Pattern**:
+
+    ```
+    [ROUTER] 🚨 URGENT REQUEST DETECTED
+    - User Urgency: HIGH
+    - Issue: [one-line summary]
+    - Response: Spawning [AGENT] with HIGH PRIORITY + OPUS model
+
+    [To User] "I understand this is urgent. Spawning specialized [AGENT] agent with highest priority to resolve this immediately."
+    ```
+
+  - **Then spawn with urgency parameters**:
+
+    ```javascript
+    Task({
+      subagent_type: 'general-purpose',
+      model: 'opus', // Best model for urgent critical issues
+      priority: 'high',
+      description: 'URGENT: [Agent] fixing [issue]',
+      prompt: `URGENT TASK: [description]
+    
+      User is experiencing critical issue. Please:
+      1. Prioritize speed AND correctness
+      2. Use appropriate debugging/diagnostic skills
+      3. Provide user updates via task metadata
+      4. Verify fix with tests before completing
+      5. Update task status with detailed summary`,
+    });
+    ```
+
+  - **Key Principle**: Urgency preserved through priority/model selection, NOT protocol bypass
+  - **User Communication**: Explicitly acknowledge urgency to reduce pressure for Router to bypass protocol
+
+- **Consequences**:
+  - **Positive**: Explicit handling prevents ad-hoc "I'll just fix it myself" decisions
+  - **Positive**: User sees urgency acknowledgment (reduces psychological pressure on Router)
+  - **Positive**: Opus model ensures best quality for critical issues (worth cost for emergencies)
+  - **Positive**: "HIGH" priority signals to spawned agent this needs immediate attention
+  - **Negative**: Opus costs ~15x more than Sonnet (acceptable trade-off for genuine emergencies)
+  - **Negative**: Adds ~40 lines to router-decision.md (acceptable for critical workflow gap)
+  - **Integration**: Update router.md to reference this pattern, update CLAUDE.md example flow
+  - **False Positives**: May detect urgency when user is just emphatic (acceptable - better safe than missed emergency)
+- **Related**: ROUTER-VIOLATION-001, Task Priority System, Model Selection (CLAUDE.md Section 5)

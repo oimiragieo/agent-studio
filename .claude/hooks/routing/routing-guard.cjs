@@ -56,6 +56,7 @@ const ALL_WATCHED_TOOLS = [
   'Glob',
   'Grep',
   'WebSearch',
+  'Bash', // Added: Router can only use whitelisted git commands
   // Write tools (require agent context)
   'Edit',
   'Write',
@@ -68,8 +69,25 @@ const ALL_WATCHED_TOOLS = [
 /**
  * Tools that Router should NEVER use directly (must spawn agent)
  * From router-self-check.cjs
+ * Note: Bash is CONDITIONALLY blacklisted - only whitelisted git commands are allowed
  */
 const BLACKLISTED_TOOLS = ['Glob', 'Grep', 'Edit', 'Write', 'NotebookEdit', 'WebSearch'];
+
+/**
+ * Router Bash Whitelist (ADR-030)
+ * Router may ONLY use these exact Bash commands. ALL other Bash commands require spawning an agent.
+ * Exhaustive list - if it's not here, Router cannot use it.
+ */
+const ROUTER_BASH_WHITELIST = [
+  // Git status commands
+  /^git\s+status(\s+-s|\s+--short)?$/,
+  // Git log commands (limited output)
+  /^git\s+log\s+--oneline\s+-\d{1,2}$/,
+  // Git diff name-only
+  /^git\s+diff\s+--name-only$/,
+  // Git branch listing
+  /^git\s+branch$/,
+];
 
 /**
  * Tools that are always allowed for Router
@@ -180,8 +198,98 @@ function isImplementationAgentSpawn(toolInput) {
 }
 
 // =============================================================================
+// HELPER FUNCTIONS FOR BASH VALIDATION
+// =============================================================================
+
+/**
+ * Check if a Bash command is in the Router whitelist (ADR-030)
+ * @param {string} command - The bash command to check
+ * @returns {boolean} True if command is whitelisted for Router
+ */
+function isWhitelistedBashCommand(command) {
+  if (!command || typeof command !== 'string') {
+    return false;
+  }
+  const trimmed = command.trim();
+  return ROUTER_BASH_WHITELIST.some(pattern => pattern.test(trimmed));
+}
+
+// =============================================================================
 // CHECK FUNCTIONS (one per original hook)
 // =============================================================================
+
+/**
+ * Check 0: Router Bash Check (blocks non-whitelisted Bash commands in router context)
+ * ADR-030: Router may ONLY use whitelisted git commands via Bash
+ *
+ * @param {string} toolName - Tool being used
+ * @param {Object} toolInput - Tool input containing command
+ * @returns {{ pass: boolean, result?: string, message?: string }}
+ */
+function checkRouterBash(toolName, toolInput = {}) {
+  // Only applies to Bash tool
+  if (toolName !== 'Bash') {
+    return { pass: true };
+  }
+
+  const enforcement = getEnforcementMode('ROUTER_BASH_GUARD', 'block');
+  if (enforcement === 'off') {
+    auditLog('routing-guard', 'security_override_used', {
+      check: 'router-bash',
+      override: 'ROUTER_BASH_GUARD=off',
+    });
+    return { pass: true };
+  }
+
+  // Check if we're in agent context (Task has been spawned)
+  const state = routerState.getState();
+  if (state.mode === 'agent' || state.taskSpawned) {
+    // Agents can use any Bash commands (they have full tools)
+    return { pass: true };
+  }
+
+  // In Router context - check if command is whitelisted
+  const command = toolInput.command || '';
+  if (isWhitelistedBashCommand(command)) {
+    return { pass: true };
+  }
+
+  // Router is using non-whitelisted Bash command - VIOLATION
+  const truncatedCmd = command.length > 50 ? command.slice(0, 47) + '...' : command;
+  const message = `
++======================================================================+
+|  ROUTER BASH VIOLATION BLOCKED (ADR-030)                             |
++======================================================================+
+|  Command: ${truncatedCmd.padEnd(56)}|
+|                                                                      |
+|  Router can ONLY use these Bash commands:                            |
+|    - git status [-s|--short]                                         |
+|    - git log --oneline -N (where N is 1-99)                          |
+|    - git diff --name-only                                            |
+|    - git branch                                                      |
+|                                                                      |
+|  ALL other Bash commands require spawning an agent:                  |
+|    - Test execution (pnpm test, npm test) --> Spawn QA               |
+|    - Build commands --> Spawn DEVELOPER                              |
+|    - File operations --> Spawn DEVELOPER                             |
+|                                                                      |
+|  Example:                                                            |
+|    Task({                                                            |
+|      subagent_type: 'general-purpose',                               |
+|      description: 'QA running tests',                                |
+|      prompt: 'You are QA. Run tests and analyze results...'          |
+|    })                                                                |
+|                                                                      |
+|  Override: ROUTER_BASH_GUARD=warn or ROUTER_BASH_GUARD=off           |
++======================================================================+
+`;
+
+  if (enforcement === 'block') {
+    return { pass: false, result: 'block', message };
+  } else {
+    return { pass: true, result: 'warn', message };
+  }
+}
 
 /**
  * Check 1: Router Self-Check (blocks blacklisted tools in router context)
@@ -450,6 +558,15 @@ Override: ROUTER_WRITE_GUARD=warn or ROUTER_WRITE_GUARD=off`;
  * @returns {{ pass: boolean, result: string, message: string }}
  */
 function runAllChecks(toolName, toolInput) {
+  // Check 0: Router Bash Check (ADR-030 - must come first for Bash commands)
+  const bashCheck = checkRouterBash(toolName, toolInput);
+  if (!bashCheck.pass) {
+    return { pass: false, result: bashCheck.result, message: bashCheck.message };
+  }
+  if (bashCheck.result === 'warn') {
+    console.warn(bashCheck.message);
+  }
+
   // Check 1: Router Self-Check (now receives toolInput for file path checking)
   const selfCheck = checkRouterSelfCheck(toolName, toolInput);
   if (!selfCheck.pass) {
@@ -565,6 +682,7 @@ if (require.main === module) {
 module.exports = {
   main,
   runAllChecks,
+  checkRouterBash,
   checkRouterSelfCheck,
   checkPlannerFirst,
   checkTaskCreate,
@@ -574,10 +692,12 @@ module.exports = {
   isSecuritySpawn,
   isImplementationAgentSpawn,
   isAlwaysAllowedWrite,
+  isWhitelistedBashCommand,
   // Constants
   ALL_WATCHED_TOOLS,
   BLACKLISTED_TOOLS,
   WHITELISTED_TOOLS,
   WRITE_TOOLS,
   IMPLEMENTATION_AGENTS,
+  ROUTER_BASH_WHITELIST,
 };

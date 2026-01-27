@@ -167,12 +167,12 @@ flowchart LR
 
 ```javascript
 // CORRECT: Use Skill() tool to invoke
-Skill({ skill: "tdd" });
-Skill({ skill: "debugging" });
-Skill({ skill: "security-architect" });
+Skill({ skill: 'tdd' });
+Skill({ skill: 'debugging' });
+Skill({ skill: 'security-architect' });
 
 // WRONG: Just reading doesn't apply the skill
-Read(".claude/skills/tdd/SKILL.md");  // This only reads, doesn't invoke!
+Read('.claude/skills/tdd/SKILL.md'); // This only reads, doesn't invoke!
 ```
 
 ### Skill Composition
@@ -181,9 +181,9 @@ Agents can invoke multiple skills:
 
 ```javascript
 // Sequential skill invocation
-Skill({ skill: "project-onboarding" });  // First understand the codebase
-Skill({ skill: "tdd" });                 // Then apply TDD workflow
-Skill({ skill: "debugging" });           // Use debugging if tests fail
+Skill({ skill: 'project-onboarding' }); // First understand the codebase
+Skill({ skill: 'tdd' }); // Then apply TDD workflow
+Skill({ skill: 'debugging' }); // Use debugging if tests fail
 ```
 
 ### Creator Skills (Self-Evolution)
@@ -192,27 +192,27 @@ When no existing skill meets the need:
 
 ```javascript
 // Research first (MANDATORY)
-Skill({ skill: "research-synthesis" });
+Skill({ skill: 'research-synthesis' });
 
 // Then create new skill
-Skill({ skill: "skill-creator" });
+Skill({ skill: 'skill-creator' });
 ```
 
 ## Skill File Locations
 
-| Skill Type | Location Pattern |
-|------------|------------------|
-| Standard | `.claude/skills/<skill-name>/SKILL.md` |
+| Skill Type | Location Pattern                               |
+| ---------- | ---------------------------------------------- |
+| Standard   | `.claude/skills/<skill-name>/SKILL.md`         |
 | Sub-skills | `.claude/skills/<parent>/sub-skills/<name>.md` |
 
 ## Integration Points
 
-| Integration | How Skills Connect |
-|-------------|-------------------|
-| **Agents** | Define `skills` array in agent frontmatter |
-| **Workflows** | Specify skills used in each phase |
-| **Hooks** | `validate-skill-invocation.cjs` validates invocations |
-| **Memory** | Skills follow Memory Protocol for persistence |
+| Integration   | How Skills Connect                                    |
+| ------------- | ----------------------------------------------------- |
+| **Agents**    | Define `skills` array in agent frontmatter            |
+| **Workflows** | Specify skills used in each phase                     |
+| **Hooks**     | `validate-skill-invocation.cjs` validates invocations |
+| **Memory**    | Skills follow Memory Protocol for persistence         |
 
 ## Memory Protocol (All Skills)
 
@@ -225,6 +225,7 @@ Every skill includes Memory Protocol:
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

@@ -211,25 +211,25 @@ flowchart LR
 
 ## Iron Laws of Evolution
 
-| # | Law | Enforcement |
-|---|-----|-------------|
-| 1 | **NO ARTIFACT WITHOUT RESEARCH** | `research-enforcement.cjs` blocks |
-| 2 | **NO DEPLOYMENT WITHOUT VALIDATION** | All 6 gates required |
-| 3 | **NO STATE TRANSITION WITHOUT UPDATE** | `evolution-state-guard.cjs` |
-| 4 | **NO DEVIATION FROM EVOLVE** | Workflow is locked-in |
-| 5 | **NO BYPASSING SCHEMA VALIDATION** | JSON schema required |
-| 6 | **NO ARTIFACT WITHOUT ROUTING** | Must be discoverable |
+| #   | Law                                    | Enforcement                       |
+| --- | -------------------------------------- | --------------------------------- |
+| 1   | **NO ARTIFACT WITHOUT RESEARCH**       | `research-enforcement.cjs` blocks |
+| 2   | **NO DEPLOYMENT WITHOUT VALIDATION**   | All 6 gates required              |
+| 3   | **NO STATE TRANSITION WITHOUT UPDATE** | `evolution-state-guard.cjs`       |
+| 4   | **NO DEVIATION FROM EVOLVE**           | Workflow is locked-in             |
+| 5   | **NO BYPASSING SCHEMA VALIDATION**     | JSON schema required              |
+| 6   | **NO ARTIFACT WITHOUT ROUTING**        | Must be discoverable              |
 
 ## Artifact Output Locations
 
-| Artifact Type | Location Pattern |
-|---------------|------------------|
-| Agent | `.claude/agents/<category>/<name>.md` |
-| Skill | `.claude/skills/<name>/SKILL.md` |
-| Workflow | `.claude/workflows/<category>/<name>.md` |
-| Hook | `.claude/hooks/<category>/<name>.cjs` |
-| Schema | `.claude/schemas/<name>.json` |
-| Template | `.claude/templates/<name>.md` |
+| Artifact Type | Location Pattern                         |
+| ------------- | ---------------------------------------- |
+| Agent         | `.claude/agents/<category>/<name>.md`    |
+| Skill         | `.claude/skills/<name>/SKILL.md`         |
+| Workflow      | `.claude/workflows/<category>/<name>.md` |
+| Hook          | `.claude/hooks/<category>/<name>.cjs`    |
+| Schema        | `.claude/schemas/<name>.json`            |
+| Template      | `.claude/templates/<name>.md`            |
 
 ## Recovery Protocol
 

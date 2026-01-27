@@ -129,86 +129,98 @@ flowchart TB
 ## Hook Categories and Files
 
 ### UserPromptSubmit Hooks (1 hook)
+
 Triggered when user submits a prompt, before any processing.
 
-| Hook | Purpose |
-|------|---------|
+| Hook                      | Purpose                                         |
+| ------------------------- | ----------------------------------------------- |
 | `user-prompt-unified.cjs` | Classifies complexity, initializes router state |
 
 ### PreToolUse Hooks (By Matcher)
 
 #### Bash Matcher
-| Hook | Purpose | Enforcement |
-|------|---------|-------------|
-| `windows-null-sanitizer.cjs` | Sanitizes Windows null bytes | Block |
-| `bash-command-validator.cjs` | Validates shell commands | Block |
+
+| Hook                         | Purpose                      | Enforcement |
+| ---------------------------- | ---------------------------- | ----------- |
+| `windows-null-sanitizer.cjs` | Sanitizes Windows null bytes | Block       |
+| `bash-command-validator.cjs` | Validates shell commands     | Block       |
 
 #### Glob/Grep/WebSearch Matcher
-| Hook | Purpose | Enforcement |
-|------|---------|-------------|
-| `routing-guard.cjs` | Router tool restrictions | Block |
+
+| Hook                | Purpose                  | Enforcement |
+| ------------------- | ------------------------ | ----------- |
+| `routing-guard.cjs` | Router tool restrictions | Block       |
 
 #### Edit/Write/NotebookEdit Matcher
-| Hook | Purpose | Enforcement |
-|------|---------|-------------|
-| `file-placement-guard.cjs` | Enforces file placement rules | Warn (default) |
-| `routing-guard.cjs` | Router tool restrictions | Block |
-| `tdd-check.cjs` | Enforces TDD workflow | Warn |
-| `plan-evolution-guard.cjs` | Validates plan modifications | Warn |
-| `unified-evolution-guard.cjs` | Enforces EVOLVE workflow | Block |
+
+| Hook                          | Purpose                       | Enforcement    |
+| ----------------------------- | ----------------------------- | -------------- |
+| `file-placement-guard.cjs`    | Enforces file placement rules | Warn (default) |
+| `routing-guard.cjs`           | Router tool restrictions      | Block          |
+| `tdd-check.cjs`               | Enforces TDD workflow         | Warn           |
+| `plan-evolution-guard.cjs`    | Validates plan modifications  | Warn           |
+| `unified-evolution-guard.cjs` | Enforces EVOLVE workflow      | Block          |
 
 #### Read Matcher
-| Hook | Purpose | Enforcement |
-|------|---------|-------------|
-| `validate-skill-invocation.cjs` | Validates skill invocations | Advisory |
+
+| Hook                            | Purpose                     | Enforcement |
+| ------------------------------- | --------------------------- | ----------- |
+| `validate-skill-invocation.cjs` | Validates skill invocations | Advisory    |
 
 #### TaskCreate Matcher
-| Hook | Purpose | Enforcement |
-|------|---------|-------------|
-| `routing-guard.cjs` | Planner-first enforcement | Block |
+
+| Hook                | Purpose                   | Enforcement |
+| ------------------- | ------------------------- | ----------- |
+| `routing-guard.cjs` | Planner-first enforcement | Block       |
 
 #### Task Matcher
-| Hook | Purpose | Enforcement |
-|------|---------|-------------|
-| `pre-task-unified.cjs` | Consolidated PreToolUse(Task) checks | Block |
+
+| Hook                   | Purpose                              | Enforcement |
+| ---------------------- | ------------------------------------ | ----------- |
+| `pre-task-unified.cjs` | Consolidated PreToolUse(Task) checks | Block       |
 
 ### PostToolUse Hooks (By Matcher)
 
 #### All Tools (Empty Matcher)
-| Hook | Purpose |
-|------|---------|
+
+| Hook                   | Purpose                    |
+| ---------------------- | -------------------------- |
 | `anomaly-detector.cjs` | Detects anomalous patterns |
 
 #### Task Matcher
-| Hook | Purpose |
-|------|---------|
-| `auto-rerouter.cjs` | Reroutes failed tasks |
+
+| Hook                    | Purpose                        |
+| ----------------------- | ------------------------------ |
+| `auto-rerouter.cjs`     | Reroutes failed tasks          |
 | `post-task-unified.cjs` | Consolidated PostToolUse(Task) |
 
 #### Edit/Write Matcher
-| Hook | Purpose |
-|------|---------|
-| `format-memory.cjs` | Formats memory file writes |
+
+| Hook                           | Purpose                         |
+| ------------------------------ | ------------------------------- |
+| `format-memory.cjs`            | Formats memory file writes      |
 | `enforce-claude-md-update.cjs` | Ensures CLAUDE.md stays updated |
 
 #### TaskUpdate Matcher
-| Hook | Purpose |
-|------|---------|
-| `task-update-tracker.cjs` | Tracks task status changes |
+
+| Hook                             | Purpose                         |
+| -------------------------------- | ------------------------------- |
+| `task-update-tracker.cjs`        | Tracks task status changes      |
 | `task-completion-reflection.cjs` | Queues reflection on completion |
 
 #### Bash Matcher
-| Hook | Purpose |
-|------|---------|
+
+| Hook                            | Purpose                     |
+| ------------------------------- | --------------------------- |
 | `error-recovery-reflection.cjs` | Queues reflection on errors |
 
 ### SessionEnd Hooks
 
-| Hook | Purpose |
-|------|---------|
-| `session-end-recorder.cjs` | Records session summary to memory |
-| `session-end-reflection.cjs` | Queues session reflection |
-| `reflection-queue-processor.cjs` | Processes queued reflections |
+| Hook                             | Purpose                           |
+| -------------------------------- | --------------------------------- |
+| `session-end-recorder.cjs`       | Records session summary to memory |
+| `session-end-reflection.cjs`     | Queues session reflection         |
+| `reflection-queue-processor.cjs` | Processes queued reflections      |
 
 ## Hook Directory Structure
 
@@ -271,10 +283,10 @@ hooks/
 
 Most hooks support three enforcement modes via environment variables:
 
-| Mode | Behavior | When to Use |
-|------|----------|-------------|
+| Mode    | Behavior                       | When to Use                       |
+| ------- | ------------------------------ | --------------------------------- |
 | `block` | Prevents action, returns error | Production (default for security) |
-| `warn` | Logs warning, allows action | Development, debugging |
-| `off` | Disables hook entirely | Emergency override only |
+| `warn`  | Logs warning, allows action    | Development, debugging            |
+| `off`   | Disables hook entirely         | Emergency override only           |
 
 Example: `PLANNER_FIRST_ENFORCEMENT=warn claude`

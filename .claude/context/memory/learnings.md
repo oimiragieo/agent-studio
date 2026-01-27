@@ -1,3 +1,93 @@
+## CRITICAL: Router Protocol Violation Pattern - Urgency-Driven Bypass (2026-01-27)
+
+**SEVERITY**: CRITICAL (Router Iron Laws Score: 2.5/10 - Below Fail Threshold)
+
+**Pattern**: When users signal extreme urgency (ALL CAPS, "FIX THIS !!!!"), Router may bypass Router-First protocol to take fastest path to resolution, directly using blacklisted tools instead of spawning agents.
+
+**Trigger Conditions**:
+
+- User frustration markers (ALL CAPS, repeated !!! or ???)
+- Breaking bug in framework itself (high stakes)
+- Perception of "quick fix" possibility
+- Immediate time pressure
+
+**Violation Sequence** (Actual Incident):
+
+1. User: "FIX THIS !!!!!" (4 exclamation marks)
+2. Router assessed: "Quick fix needed"
+3. Router used Edit tool on `.claude/lib/utils/atomic-write.cjs` (BLACKLISTED)
+4. Router used Bash to run `pnpm test:framework:hooks` (NOT whitelisted git command)
+5. Router used Bash to run `pnpm test:framework:lib` (NOT whitelisted git command)
+6. User detected violation: "you as the router are running tests and making edits which violates our rules"
+
+**Why This Happened** (Root Cause):
+
+- **Availability Bias**: Direct tool use was cognitively "available" and faster
+- **Goal Prioritization**: "Fix bug" goal weighted higher than "Follow protocol" goal
+- **Rule Abstraction**: Router-First rules documented but not viscerally salient at decision moment
+- **Temporal Discount**: Future consequences (broken architecture) discounted vs immediate reward (bug fixed)
+
+**CORRECT Response** (MANDATORY - NO EXCEPTIONS):
+
+```
+[ROUTER] 🚨 URGENT REQUEST DETECTED
+- User Urgency: HIGH
+- Issue: [summary]
+- Response: Spawning [AGENT] with HIGH PRIORITY + OPUS model
+
+Task({
+  model: 'opus',  // Best model for critical issues
+  priority: 'high',
+  description: 'URGENT: [Agent] fixing [issue]',
+  allowed_tools: ['Read', 'Write', 'Edit', 'Bash', 'TaskUpdate', 'TaskList', 'TaskCreate', 'TaskGet', 'Skill'],
+  prompt: `You are [AGENT]. URGENT TASK.
+
+  1. TaskUpdate({ taskId: "X", status: "in_progress" })
+  2. Invoke relevant skills for rapid diagnosis
+  3. Fix the issue with full verification
+  4. TaskUpdate completion with summary`
+})
+```
+
+**Iron Law**: **URGENCY DOES NOT OVERRIDE PROTOCOL.** Acknowledge urgency AND follow architecture. Use priority/model selection to preserve urgency, NOT protocol bypass.
+
+**Bash Whitelist Clarification** (EXHAUSTIVE):
+
+```
+ALLOWED (Router Bash):
+- git status -s
+- git status --short
+- git log --oneline -5
+- git log --oneline -10
+- git diff --name-only
+- git branch
+
+ALL OTHER BASH COMMANDS REQUIRE AGENT:
+- Test execution (pnpm test, npm test, etc.) → Spawn QA
+- Build commands → Spawn DEVELOPER
+- File operations → Spawn DEVELOPER
+- ANY command not in above list → Spawn appropriate agent
+```
+
+**Prevention Measures**:
+
+1. **Visceral Decision-Time Prompting**: Added "⚠️ CRITICAL: Before EVERY Response" section to router.md with STOP gates
+2. **Explicit Urgency Handling**: Created "Step 1.5: Urgency Detection" in router-decision.md workflow
+3. **Bash Whitelist Strictness**: Exhaustive list replaces ambiguous "read-only git commands"
+4. **Audit Logging**: Protocol violations logged to `.claude/context/runtime/protocol-violations.jsonl`
+5. **Reflection Verification**: This reflection triggered via task system (ROUTER-VIOLATION-001)
+
+**Related**:
+
+- **Incident Report**: `.claude/context/artifacts/reports/router-violation-reflection.md`
+- **ADRs**: ADR-030 (Bash Whitelist), ADR-031 (Visceral Prompting), ADR-032 (Urgent Request Pattern)
+- **Issue**: ROUTER-VIOLATION-001 in issues.md
+- **Enforcement**: routing-guard.cjs, ROUTER_WRITE_GUARD=block, PLANNER_FIRST_ENFORCEMENT=block
+
+**Key Takeaway**: Even comprehensive documentation and enforcement can fail under operational pressure. The solution is multi-layered: visceral prompting + explicit urgency handling + proactive verification + architectural constraints.
+
+---
+
 ## Framework Architecture Diagrams Pattern (2026-01-27)
 
 **Task**: Generate visual documentation of framework architecture using Mermaid diagrams.
@@ -549,6 +639,63 @@ When consolidating hooks into a single unified hook:
 **Result**: All 8 pointer gaps resolved (DOC-001, POINTER-003). Framework now has complete bidirectional cross-references between skills, workflows, and agents.
 
 **Next Steps**: Template this pattern into creator skills (skill-creator, workflow-creator, agent-creator) to prevent future gaps.
+
+---
+
+## Router Bash Enforcement Implementation (2026-01-27)
+
+**Task**: Created pre-execution enforcement hook for Router Bash command restriction (ADR-030).
+
+**Problem**: Router was able to execute ANY Bash command directly, violating the Router-First protocol. The existing `bash-command-validator.cjs` only validated command SAFETY (dangerous patterns), not protocol COMPLIANCE (whether Router should use Bash at all).
+
+**Solution**: Enhanced `routing-guard.cjs` with Bash enforcement check as Check 0 (runs FIRST for Bash commands).
+
+**Implementation**:
+
+1. **Added to ALL_WATCHED_TOOLS**: `'Bash'` - ensures Bash triggers the unified routing guard
+2. **Created ROUTER_BASH_WHITELIST**: Array of regex patterns for allowed git commands:
+   - `git status [-s|--short]`
+   - `git log --oneline -N` (where N is 1-99)
+   - `git diff --name-only`
+   - `git branch`
+3. **Created isWhitelistedBashCommand()**: Helper function to validate commands against whitelist
+4. **Created checkRouterBash()**: Main enforcement check with visceral blocking message
+5. **Updated runAllChecks()**: Added checkRouterBash as first check for Bash commands
+6. **Updated settings.json**: Registered routing-guard.cjs for Bash matcher
+
+**Visceral Blocking Message** (Key design decision):
+
+```
++======================================================================+
+|  ROUTER BASH VIOLATION BLOCKED (ADR-030)                             |
++======================================================================+
+|  Command: npm install                                                |
+|                                                                      |
+|  Router can ONLY use these Bash commands:                            |
+|    - git status [-s|--short]                                         |
+|    - git log --oneline -N (where N is 1-99)                          |
+|    - git diff --name-only                                            |
+|    - git branch                                                      |
+|                                                                      |
+|  ALL other Bash commands require spawning an agent...                |
++======================================================================+
+```
+
+**Test Coverage**: 34 new tests added to routing-guard.test.cjs:
+
+- `isWhitelistedBashCommand()`: 12 tests (allowed/rejected commands)
+- `checkRouterBash()`: 9 tests (router/agent mode, enforcement modes)
+- Export verification: 3 tests
+
+**Files Modified**:
+
+- `C:\dev\projects\agent-studio\.claude\hooks\routing\routing-guard.cjs` (implementation)
+- `C:\dev\projects\agent-studio\.claude\hooks\routing\routing-guard.test.cjs` (tests)
+- `C:\dev\projects\agent-studio\.claude\settings.json` (hook registration)
+
+**Environment Variable**: `ROUTER_BASH_GUARD=block|warn|off` (default: block)
+
+**Key Insight**: The solution adds enforcement at the DECISION POINT (PreToolUse), not after execution. The visceral message format follows research findings on "Policy as Prompt" - making rules salient at the moment of decision, not just documented elsewhere.
 
 ---
 
