@@ -3,6 +3,7 @@
   "rag_enabled": true,
   "rag_threshold": 0.7,
   "auto_context_pruning": true,
+  "mcpServers": {},
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -55,6 +56,10 @@
           },
           {
             "type": "command",
+            "command": "node .claude/hooks/routing/unified-creator-guard.cjs"
+          },
+          {
+            "type": "command",
             "command": "node .claude/hooks/safety/tdd-check.cjs"
           },
           {
@@ -91,6 +96,15 @@
           {
             "type": "command",
             "command": "node .claude/hooks/routing/pre-task-unified.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/skill-invocation-tracker.cjs"
           }
         ]
       }

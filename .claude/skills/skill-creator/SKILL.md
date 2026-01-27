@@ -119,11 +119,21 @@ node .claude/skills/skill-creator/scripts/create.cjs \
 
 Convert an MCP server (npm, PyPI, or Docker) into a Claude Code skill.
 
+**IMPORTANT: Auto-Registration Enabled**
+
+When converting MCP servers, the skill-creator automatically:
+
+1. Creates the skill definition (SKILL.md)
+2. **Registers the MCP server in settings.json** (no user action needed)
+3. Assigns skill to relevant agents
+4. Updates CLAUDE.md and skill catalog
+
 ```bash
 node .claude/skills/skill-creator/scripts/convert.cjs \
   --server "server-name" \
   [--source npm|pypi|docker|github] \
   [--test]  # Test the converted skill
+  [--no-register]  # Skip auto-registration in settings.json
 ```
 
 **Known MCP Servers (Auto-detected):**
@@ -155,6 +165,123 @@ node .claude/skills/skill-creator/scripts/convert.cjs \
 # Convert from GitHub
 node .claude/skills/skill-creator/scripts/convert.cjs \
   --server "https://github.com/owner/mcp-server" --source github
+```
+
+### MCP-to-Skill Conversion (PREFERRED APPROACH)
+
+**BEFORE adding an MCP server, check if existing tools can do the same job!**
+
+Many MCP servers are just API wrappers. Using existing tools (WebFetch, Exa) is **preferred** because:
+
+| MCP Server Approach                  | Skill with Existing Tools |
+| ------------------------------------ | ------------------------- |
+| ❌ Requires uvx/npm/pip installation | ✅ Works immediately      |
+| ❌ Requires session restart          | ✅ No restart needed      |
+| ❌ External dependency failures      | ✅ Self-contained         |
+| ❌ Platform-specific issues          | ✅ Cross-platform         |
+
+**Example: arXiv - Use WebFetch instead of mcp-arxiv server**
+
+```javascript
+// INSTEAD of requiring mcp-arxiv server, use WebFetch directly:
+WebFetch({
+  url: 'http://export.arxiv.org/api/query?search_query=ti:transformer&max_results=10',
+  prompt: 'Extract paper titles, authors, abstracts',
+});
+
+// Or use Exa for semantic search:
+mcp__Exa__web_search_exa({
+  query: 'site:arxiv.org transformer attention mechanism',
+  numResults: 10,
+});
+```
+
+**When to use existing tools (PREFERRED):**
+
+- MCP server wraps a public REST API
+- No authentication required
+- Simple request/response patterns
+
+**When MCP server is actually needed:**
+
+- Complex state management required
+- Streaming/websocket connections
+- Local file system access needed
+- OAuth/authentication flows required
+
+### MCP Server Auto-Registration (ONLY IF NECESSARY)
+
+**If existing tools won't work and MCP server is truly required, you MUST register it.**
+
+This ensures users don't need to manually configure MCP servers - skills "just work".
+
+#### Step 10: Register MCP Server in settings.json (BLOCKING for MCP skills)
+
+If your skill uses tools prefixed with `mcp__<server>__*`, add the server to `.claude/settings.json`:
+
+1. **Determine the MCP server config** based on source:
+
+   | Source | Config Template                                             |
+   | ------ | ----------------------------------------------------------- |
+   | npm    | `{ "command": "npx", "args": ["-y", "<package-name>"] }`    |
+   | PyPI   | `{ "command": "uvx", "args": ["<package-name>"] }`          |
+   | Docker | `{ "command": "docker", "args": ["run", "-i", "<image>"] }` |
+
+2. **Read current settings.json:**
+
+   ```bash
+   cat .claude/settings.json
+   ```
+
+3. **Add mcpServers section if missing, or add to existing:**
+
+   ```json
+   {
+     "mcpServers": {
+       "<server-name>": {
+         "command": "<command>",
+         "args": ["<args>"]
+       }
+     }
+   }
+   ```
+
+4. **Verify registration:**
+   ```bash
+   grep "<server-name>" .claude/settings.json || echo "ERROR: MCP not registered!"
+   ```
+
+#### Known MCP Server Configurations
+
+| Server Name | Package                                 | Source | Config                                                                            |
+| ----------- | --------------------------------------- | ------ | --------------------------------------------------------------------------------- |
+| arxiv       | mcp-arxiv                               | PyPI   | `{ "command": "uvx", "args": ["mcp-arxiv"] }`                                     |
+| filesystem  | @modelcontextprotocol/server-filesystem | npm    | `{ "command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem"] }` |
+| memory      | @modelcontextprotocol/server-memory     | npm    | `{ "command": "npx", "args": ["-y", "@modelcontextprotocol/server-memory"] }`     |
+| github      | @modelcontextprotocol/server-github     | npm    | `{ "command": "npx", "args": ["-y", "@modelcontextprotocol/server-github"] }`     |
+| slack       | @modelcontextprotocol/server-slack      | npm    | `{ "command": "npx", "args": ["-y", "@modelcontextprotocol/server-slack"] }`      |
+| git         | mcp-server-git                          | PyPI   | `{ "command": "uvx", "args": ["mcp-server-git"] }`                                |
+| time        | mcp-server-time                         | PyPI   | `{ "command": "uvx", "args": ["mcp-server-time"] }`                               |
+| sentry      | mcp-server-sentry                       | PyPI   | `{ "command": "uvx", "args": ["mcp-server-sentry"] }`                             |
+
+#### Iron Law: NO MCP SKILL WITHOUT SERVER REGISTRATION
+
+```
++======================================================================+
+|  ⛔ MCP REGISTRATION IRON LAW - VIOLATION = BROKEN SKILL             |
++======================================================================+
+|                                                                      |
+|  If skill uses tools matching: mcp__<server>__*                      |
+|  Then MUST add to .claude/settings.json mcpServers                   |
+|                                                                      |
+|  WITHOUT registration:                                               |
+|    - Tools appear in skill definition                                |
+|    - But tools don't exist at runtime                                |
+|    - Skill invocation FAILS silently                                 |
+|                                                                      |
+|  BLOCKING: MCP skills are INCOMPLETE without server registration     |
+|                                                                      |
++======================================================================+
 ```
 
 ### `validate` - Validate Skill Definition
@@ -796,6 +923,13 @@ These rules are INVIOLABLE. Breaking them causes bugs that are hard to detect.
     - Update skill-catalog.md with proper categorization
     - Update creator-registry.json if skill is a creator
     - Verify routing keywords if skill introduces new domain
+
+11. PREFER EXISTING TOOLS OVER MCP SERVERS
+    - FIRST: Check if WebFetch/Exa can access the same API directly
+    - Many MCP servers are just API wrappers - use WebFetch instead!
+    - Existing tools work immediately (no uvx/npm, no restart)
+    - ONLY IF existing tools won't work: register MCP server
+    - See "MCP-to-Skill Conversion" section for guidance
 ```
 
 ## System Impact Analysis (MANDATORY)

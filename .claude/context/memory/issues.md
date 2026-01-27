@@ -4,16 +4,16 @@
 
 | Status Category | Count | Notes                                   |
 | --------------- | ----- | --------------------------------------- |
-| **OPEN**        | 48    | Active issues requiring attention       |
+| **OPEN**        | 49    | Active issues requiring attention       |
 | **RESOLVED**    | 60    | Archived in issues-archive.md           |
-| **Won't Fix**   | 1     | Documented as not requiring remediation |
-| **Total**       | 109   | All tracked issues                      |
+| **Won't Fix**   | 2     | Documented as not requiring remediation |
+| **Total**       | 111   | All tracked issues                      |
 
 **Historical issues**: See `issues-archive.md` for 60 resolved issues archived on 2026-01-27.
 
 ### Priority Breakdown (OPEN Issues)
 
-- **CRITICAL**: 3 (SEC-AUDIT-012, SEC-AUDIT-017, SEC-AUDIT-014)
+- **CRITICAL**: 4 (SEC-AUDIT-012, SEC-AUDIT-017, SEC-AUDIT-014, ENFORCEMENT-002)
 - **HIGH**: 8 (security audits, structural issues)
 - **MEDIUM**: 20 (documentation gaps, pointer gaps, process improvements)
 - **LOW**: 17 (future enhancements, recommendations)
@@ -33,6 +33,188 @@
 ---
 
 <!-- OPEN ISSUES BELOW THIS LINE -->
+
+## Reflection Agent Findings - Skill Creation Workflow (2026-01-27)
+
+### [WORKFLOW-VIOLATION-001] Router Bypassing Skill-Creator Workflow
+
+- **Date**: 2026-01-27
+- **Severity**: High
+- **Status**: Open
+- **Category**: routing_violation
+- **Description**: Router attempted to create ripgrep skill by directly copying archived files and writing SKILL.md manually, bypassing the entire skill-creator workflow. This skipped ALL mandatory post-creation steps: CLAUDE.md update, skill catalog update, agent assignment, validation, and memory update. The skill would have been invisible to Router and unusable by agents.
+- **Root Cause**: Optimization bias - Router perceived workflow as "unnecessary overhead" when archived files existed. This is a systems thinking failure where shortcuts are prioritized over process compliance.
+- **Detection**: User intervention caught the violation. No automated safeguards exist.
+- **Impact**:
+  - Skill not in CLAUDE.md → Invisible to Router
+  - Skill not in catalog → Hard to discover
+  - Skill not assigned to agents → Never invoked
+  - No validation → Broken references undetected
+- **Remediation** (P0 - Critical):
+  1. Add Gate 4 (Skill Creation Check) to router-decision.md
+  2. Update CLAUDE.md Section 7 with visceral "IRON LAW" language
+  3. Create skill-creation-guard.cjs hook to block direct SKILL.md writes
+  4. Add ASCII box warning to top of skill-creator SKILL.md
+  5. Add "Skill Creation Shortcut" anti-pattern to ROUTER_TRAINING_EXAMPLES.md
+- **Related Issues**: ROUTER-VIOLATION-001 (resolved), DOC-001 (pointer gaps)
+- **Reflection Score**: Iteration 1: 4.6/10 (Critical Fail), Iteration 2: 9.8/10 (Excellent after correction)
+
+### [ENFORCEMENT-001] No Hook to Prevent Direct SKILL.md Writes
+
+- **Date**: 2026-01-27
+- **Severity**: High
+- **Status**: Open (Partially Implemented)
+- **Category**: enforcement_gap
+- **Description**: No enforcement hook exists to prevent Router from writing SKILL.md files directly without invoking skill-creator. This allows workflow bypasses that create invisible skills.
+- **Root Cause**: Safety hooks focus on security (path traversal, Windows reserved names) but not workflow compliance.
+- **Detection**: Manual review during reflection discovered the gap.
+- **Remediation** (P0):
+  1. Create `.claude/hooks/safety/skill-creation-guard.cjs`
+  2. Block Write/Edit tools for `/skills/*/SKILL.md` paths
+  3. Check if skill-creator was invoked in recent history
+  4. Return BLOCKING error if not invoked
+  5. Register hook in settings.json
+  6. Add tests to skill-creation-guard.test.cjs
+- **Example Hook Logic**:
+  ```javascript
+  if (tool === 'Write' || tool === 'Edit') {
+    const filePath = extractFilePath(input);
+    if (filePath.includes('/skills/') && filePath.endsWith('SKILL.md')) {
+      const skillCreatorInvoked = checkRecentSkillInvocation();
+      if (!skillCreatorInvoked) {
+        return {
+          action: 'block',
+          error:
+            'BLOCKING: Cannot write SKILL.md directly. Invoke skill-creator first: Skill({ skill: "skill-creator" })',
+        };
+      }
+    }
+  }
+  ```
+- **Related Issues**: WORKFLOW-VIOLATION-001, ENFORCEMENT-002
+
+### [ENFORCEMENT-002] skill-creation-guard State Tracking Not Implemented (CRITICAL)
+
+- **Date**: 2026-01-27
+- **Severity**: CRITICAL
+- **Status**: Open (Security Review Complete 2026-01-27)
+- **Category**: enforcement_gap
+- **Description**: Security audit revealed that `skill-creation-guard.cjs` hook is registered and contains correct logic, BUT the state tracking mechanism is completely non-functional:
+  1. State file `.claude/context/runtime/skill-creator-active.json` is NEVER created
+  2. `markSkillCreatorActive()` function exists but is NEVER called
+  3. No Skill tool hook exists in settings.json to trigger state marking
+  4. skill-creator pre-execute.cjs hook contains only TODO placeholder
+- **Root Cause**: Incomplete implementation - the guard was designed with state tracking but the integration was never completed.
+- **Detection**: Security-Architect audit (Task #5) on 2026-01-27
+- **Impact**: The skill-creation-guard provides ZERO protection because `checkSkillCreatorActive()` always returns `{ active: false }`
+- **Remediation** (P0 - All Required):
+  1. Add Skill tool to settings.json PreToolUse hooks
+  2. Create `skill-invocation-tracker.cjs` to call `markSkillCreatorActive()` when skill-creator is invoked
+  3. Update skill-creator post-execute.cjs to call `clearSkillCreatorActive()` on completion
+  4. Implement specific skill name tracking (not just "active" flag)
+  5. Broaden guard scope to block ALL writes to `/skills/*/` directory
+- **Effort Estimate**: 8-10 hours
+- **Related Issues**: ENFORCEMENT-001, WORKFLOW-VIOLATION-001
+- **Audit Report**: `.claude/context/artifacts/reports/router-protocol-audit-2026-01-27.md`
+- **Security Review**: `.claude/context/artifacts/reports/remediation-security-review-2026-01-27.md`
+
+### [SEC-REMEDIATION-001] State File Tampering Risk (HIGH)
+
+- **Date**: 2026-01-27
+- **Severity**: HIGH
+- **Status**: Open
+- **Category**: security_gap
+- **Description**: Security review of ENFORCEMENT-002 remediation identified that the proposed state file (`skill-creator-active.json`) can be tampered with by an attacker to bypass the skill-creation-guard. Attack vectors include:
+  1. Pre-emptive state file creation before SKILL.md write
+  2. Time window exploitation (10-minute window is generous)
+  3. State file persistence (no automatic cleanup on failures)
+- **Root Cause**: State file relies on writable JSON with no integrity verification
+- **Detection**: Security-Architect parallel review (Task #3 remediation) 2026-01-27
+- **Impact**: Attacker with file system access can bypass skill-creation-guard entirely
+- **Remediation** (P0 - Critical):
+  1. Implement HMAC signature verification for state file
+  2. Reduce time window from 10 minutes to 3 minutes
+  3. Add automatic state file cleanup on TTL expiration
+- **Effort Estimate**: 2-3 hours
+- **Related Issues**: ENFORCEMENT-002
+- **Security Review**: `.claude/context/artifacts/reports/remediation-security-review-2026-01-27.md`
+
+### [SEC-REMEDIATION-002] bashPath Null Byte Injection (MEDIUM)
+
+- **Date**: 2026-01-27
+- **Severity**: MEDIUM
+- **Status**: Open
+- **Category**: security_gap
+- **Description**: The proposed `bashPath()` utility in `platform.cjs` lacks null byte sanitization. Null bytes (\0) are a common command injection vector that could be used to truncate paths or bypass validation.
+- **Root Cause**: Incomplete input sanitization in proposed implementation
+- **Detection**: Security-Architect parallel review (Task #3 remediation) 2026-01-27
+- **Impact**: Potential path injection via null bytes
+- **Remediation** (P0):
+  1. Add `filepath.replace(/\0/g, '')` before path normalization
+  2. Add input type and length validation
+  3. Log warning for shell metacharacters ($, `, !, etc.)
+- **Effort Estimate**: 30 minutes
+- **Related Issues**: Windows Bash Path Handling Pattern (learnings.md)
+- **Security Review**: `.claude/context/artifacts/reports/remediation-security-review-2026-01-27.md`
+
+### [SEC-REMEDIATION-003] Researcher Agent Data Exfiltration Risk (MEDIUM)
+
+- **Date**: 2026-01-27
+- **Severity**: MEDIUM
+- **Status**: Open
+- **Category**: security_gap
+- **Description**: Proposed researcher agent has WebFetch capability without URL allowlist. A malicious prompt could instruct the agent to read sensitive files and POST them to attacker-controlled URLs.
+- **Root Cause**: No URL domain allowlist for WebFetch in research context
+- **Detection**: Security-Architect parallel review (Task #3 remediation) 2026-01-27
+- **Impact**: Potential data exfiltration via WebFetch
+- **Remediation** (P1):
+  1. Create URL domain allowlist for research (_.exa.ai, _.github.com, \*.arxiv.org)
+  2. Block RFC 1918 private network ranges
+  3. Implement rate limiting (20 requests/minute)
+  4. Document that researcher should NOT have Write/Edit tools
+- **Effort Estimate**: 4-6 hours
+- **Related Issues**: ADR-037 MCP Tool Access Control
+- **Security Review**: `.claude/context/artifacts/reports/remediation-security-review-2026-01-27.md`
+
+### [DOC-002] CLAUDE.md Section 7 Lacks Visceral Workflow Emphasis
+
+- **Date**: 2026-01-27
+- **Severity**: Medium
+- **Status**: Open
+- **Category**: documentation_gap
+- **Description**: CLAUDE.md Section 7 (Skill Invocation Protocol) mentions "invoke skill-creator" but doesn't emphasize the BLOCKING nature of post-creation steps. Router interpreted workflow as optional overhead.
+- **Root Cause**: Documentation doesn't convey that post-creation steps ARE the value, not just bureaucracy.
+- **Remediation** (P1):
+  1. Add "IRON LAW" subsection to Section 7
+  2. Include before/after violation example
+  3. Explain WHY workflow matters (discoverability, integration, validation)
+  4. Use visceral language: "INVISIBLE", "NEVER USED", "RUNTIME ERRORS"
+- **Proposed Addition**:
+
+  ```markdown
+  **IRON LAW**: When creating a skill, you MUST invoke skill-creator FIRST. Direct file creation bypasses critical integration steps and renders the skill INVISIBLE to the Router.
+
+  ❌ WRONG: Copy files, write SKILL.md directly
+  ✅ CORRECT: Skill({ skill: "skill-creator" })
+
+  **Why this matters**: Skills not in CLAUDE.md and skill catalog are invisible to Router. Skills not assigned to agents are never used. The workflow exists to prevent these failures.
+  ```
+
+- **Related Issues**: WORKFLOW-VIOLATION-001
+
+### [DOC-003] Router Training Examples Missing Skill Creation Anti-Pattern
+
+- **Date**: 2026-01-27
+- **Severity**: Low
+- **Status**: Open
+- **Category**: documentation_gap
+- **Description**: `.claude/docs/ROUTER_TRAINING_EXAMPLES.md` doesn't include "Skill Creation Shortcut" anti-pattern. Router needs explicit training that shortcuts are harmful.
+- **Remediation** (P1):
+  1. Add "Anti-Pattern: Skill Creation Shortcut" section
+  2. Show WRONG reasoning (copy files to save time)
+  3. Explain why it's wrong (invisible skill, never used)
+  4. Show CORRECT reasoning (invoke skill-creator for proper integration)
+- **Related Issues**: WORKFLOW-VIOLATION-001, DOC-002
 
 ## Architecture Review Findings (2026-01-27)
 
@@ -633,6 +815,29 @@
 - **Fix**: Add conditional debug logging with METRICS_DEBUG env var
 - **Priority**: P3
 - **Related**: CRITICAL-003 (partial resolution)
+
+---
+
+## 2026-01-27: CHROME-001 Claude-in-Chrome Native Messaging Host Conflict
+
+- **Date**: 2026-01-27
+- **Severity**: Medium
+- **Status**: Won't Fix (Known External Bug)
+- **Category**: external_dependency
+- **Description**: Claude-in-Chrome extension fails to connect when both Claude.app (desktop) and Claude Code are installed. Both applications register competing native messaging hosts at the same path, causing the extension to connect to whichever registered last.
+- **Detection**: User reported "Browser extension is not connected" error despite extension being installed and `--chrome` flag enabled.
+- **Root Cause**: Native Messaging Host registration conflict between Claude.app and Claude Code. Both write to:
+  - Windows: `%APPDATA%\Claude\ChromeNativeHost\com.anthropic.claude_browser_extension.json`
+  - macOS: `~/Library/Application Support/Claude/ChromeNativeHost/`
+- **GitHub Issues**:
+  - [#15336](https://github.com/anthropics/claude-code/issues/15336) - Windows Native Messaging Host not installing
+  - [#14894](https://github.com/anthropics/claude-code/issues/14894) - Reconnect extension fails on macOS
+  - [#20790](https://github.com/anthropics/claude-code/issues/20790) - Extension connects to Claude.app instead of Claude Code
+- **Workaround (macOS)**: Rename Claude.app's native host config to `.disabled` and restart Chrome
+- **Workaround (Windows)**: Similar rename approach, not fully tested
+- **Alternative**: Use Chrome DevTools MCP (`mcp__chrome-devtools__*`) instead - always available, no extension required
+- **Documentation**: Troubleshooting section added to `.claude/skills/chrome-browser/SKILL.md`
+- **Resolution**: External bug in Claude Code/Claude.app - requires Anthropic fix
 
 ---
 
