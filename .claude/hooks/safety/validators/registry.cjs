@@ -97,12 +97,100 @@ function getRegisteredCommands() {
 }
 
 /**
+ * Known-safe commands that don't need validators.
+ * These are common development and filesystem commands that are safe to run.
+ *
+ * Security rationale:
+ * - Read-only commands (ls, cat, grep, etc.) cannot modify system state
+ * - Development tools (git, npm, node, python) are essential for agent operations
+ * - Basic file operations (mkdir, touch, cp, mv, rm) have path validation elsewhere
+ *
+ * Commands NOT in this list require either:
+ * 1. A registered validator in VALIDATOR_REGISTRY, OR
+ * 2. Environment override: ALLOW_UNREGISTERED_COMMANDS=true
+ */
+const SAFE_COMMANDS_ALLOWLIST = [
+  // Read-only filesystem commands
+  'ls',
+  'dir',
+  'pwd',
+  'cd',
+  'echo',
+  'cat',
+  'head',
+  'tail',
+  'wc',
+  'grep',
+  'find',
+  'which',
+  'whoami',
+  'date',
+  'time',
+  'clear',
+
+  // Basic file operations (path validation happens in filesystem-validators.cjs)
+  'mkdir',
+  'touch',
+  'cp',
+  'mv',
+  'rm',
+
+  // Development tools (essential for agent operations)
+  'git',
+  'npm',
+  'pnpm',
+  'yarn',
+  'node',
+  'python',
+  'python3',
+  'pip',
+  'pip3',
+  'npx',
+  'deno',
+  'bun',
+
+  // Editors (safe - only modify files with explicit user intent)
+  'code',
+  'vim',
+  'nano',
+  'emacs',
+
+  // Build and test tools
+  'make',
+  'cmake',
+  'cargo',
+  'go',
+  'rustc',
+  'javac',
+  'mvn',
+  'gradle',
+  'gcc',
+  'g++',
+  'clang',
+  'dotnet',
+  'msbuild',
+
+  // Archive tools
+  'tar',
+  'zip',
+  'unzip',
+  'gzip',
+  'gunzip',
+];
+
+/**
  * Validate a command string.
  *
  * Extracts the command name and applies the appropriate validator.
  *
+ * SEC-AUDIT-017: Implements deny-by-default for unregistered commands.
+ * Commands must either:
+ * 1. Have a registered validator (see VALIDATOR_REGISTRY)
+ * 2. Be in the SAFE_COMMANDS_ALLOWLIST
+ * 3. Have override enabled (ALLOW_UNREGISTERED_COMMANDS=true)
+ *
  * @param {string} commandString - The full command string
- * @returns {{valid: boolean, error: string, hasValidator: boolean}} Validation result
+ * @returns {{valid: boolean, error: string, hasValidator: boolean, reason?: string}} Validation result
  */
 function validateCommand(commandString) {
   if (!commandString || typeof commandString !== 'string') {
@@ -124,8 +212,31 @@ function validateCommand(commandString) {
   const validator = getValidator(baseName);
 
   if (!validator) {
-    // No validator registered - allow by default
-    return { valid: true, error: '', hasValidator: false };
+    // No validator registered - check allowlist or deny by default
+
+    // Check if command is in safe allowlist
+    if (SAFE_COMMANDS_ALLOWLIST.includes(baseName)) {
+      return { valid: true, error: '', hasValidator: false, reason: 'allowlisted' };
+    }
+
+    // Check for override (development/debugging only)
+    if (process.env.ALLOW_UNREGISTERED_COMMANDS === 'true') {
+      console.error(
+        JSON.stringify({
+          type: 'security_override',
+          command: baseName,
+          reason: 'ALLOW_UNREGISTERED_COMMANDS=true',
+        })
+      );
+      return { valid: true, error: '', hasValidator: false, reason: 'override' };
+    }
+
+    // SEC-AUDIT-017: DENY by default
+    return {
+      valid: false,
+      error: `SEC-AUDIT-017: Unregistered command '${baseName}' blocked. Add to SAFE_COMMANDS_ALLOWLIST or create a validator.`,
+      hasValidator: false,
+    };
   }
 
   const result = validator(commandString);
@@ -147,6 +258,7 @@ function registerValidator(commandName, validator) {
 
 module.exports = {
   VALIDATOR_REGISTRY,
+  SAFE_COMMANDS_ALLOWLIST,
   getValidator,
   hasValidator,
   getRegisteredCommands,

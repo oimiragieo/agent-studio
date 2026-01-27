@@ -227,8 +227,8 @@
   ],
   "suggestions": [
     {
-      "id": "sug-1769493843240",
-      "detectedAt": "2026-01-27T06:04:03.241Z",
+      "id": "sug-1769495381298",
+      "detectedAt": "2026-01-27T06:29:41.298Z",
       "triggers": [
         {
           "type": "explicit_creation",
@@ -239,8 +239,8 @@
       "status": "pending"
     },
     {
-      "id": "sug-1769493843251",
-      "detectedAt": "2026-01-27T06:04:03.251Z",
+      "id": "sug-1769495381306",
+      "detectedAt": "2026-01-27T06:29:41.306Z",
       "triggers": [
         {
           "type": "capability_need",
@@ -251,8 +251,8 @@
       "status": "pending"
     },
     {
-      "id": "sug-1769493843261",
-      "detectedAt": "2026-01-27T06:04:03.261Z",
+      "id": "sug-1769495381314",
+      "detectedAt": "2026-01-27T06:29:41.314Z",
       "triggers": [
         {
           "type": "gap_detection",
@@ -263,8 +263,8 @@
       "status": "pending"
     },
     {
-      "id": "sug-1769493843360",
-      "detectedAt": "2026-01-27T06:04:03.360Z",
+      "id": "sug-1769495381395",
+      "detectedAt": "2026-01-27T06:29:41.395Z",
       "triggers": [
         {
           "type": "explicit_evolution",
@@ -275,5 +275,5 @@
       "status": "pending"
     }
   ],
-  "lastUpdated": "2026-01-27T06:04:03.360Z"
+  "lastUpdated": "2026-01-27T06:29:41.395Z"
 }

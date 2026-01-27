@@ -556,6 +556,14 @@ Phases 2 and 3 may run in parallel after Phase 1 completes.
 });
 ```
 
+## Related Skill
+
+This workflow implements the structured process for the corresponding skill:
+
+- **Skill**: `.claude/skills/architecture-review/SKILL.md`
+- **Invoke skill**: `Skill({ skill: "architecture-review" })`
+- **Relationship**: Workflow provides multi-agent orchestration; skill provides core capabilities
+
 ## Agent-Skill Mapping Reference
 
 | Phase | Agent              | Required Skills                   |

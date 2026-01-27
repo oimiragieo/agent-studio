@@ -187,6 +187,14 @@ Task({ description: 'Performance reviewing API', prompt: '...' });
 - Use structured handoff formats
 - Handle partial failures gracefully
 
+## Related Workflow
+
+This skill has a corresponding workflow for complex multi-agent scenarios:
+
+- **Workflow**: `.claude/workflows/enterprise/swarm-coordination-skill-workflow.md`
+- **When to use workflow**: For massively parallel task execution with Queen/Worker topology, fault tolerance, and distributed coordination (large-scale refactoring, parallel code review, multi-file implementation)
+- **When to use skill directly**: For simple parallel agent spawning or when integrating swarm patterns into other workflows
+
 ## Workflow Integration
 
 This skill powers multi-agent orchestration patterns across the framework:

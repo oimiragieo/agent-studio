@@ -207,6 +207,14 @@ to address developer's maintainability concerns.
 - Weight votes by domain expertise
 - Document dissenting opinions for future reference
 
+## Related Workflow
+
+This skill has a corresponding workflow for complex multi-agent scenarios:
+
+- **Workflow**: `.claude/workflows/consensus-voting-skill-workflow.md`
+- **When to use workflow**: For critical multi-agent decisions requiring Byzantine fault-tolerant consensus with Queen/Worker topology (architectural decisions, security reviews, technology selection)
+- **When to use skill directly**: For simple voting scenarios or when integrating consensus into other workflows
+
 ## Workflow Integration
 
 This skill enables decision-making in multi-agent orchestration:

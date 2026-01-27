@@ -497,6 +497,213 @@
 - **Severity**: MEDIUM
 - **Status**: RESOLVED (2026-01-26)
 - **File**: `.claude/hooks/routing/security-review-guard.cjs`
+
+---
+
+## Architecture Review Findings (2026-01-27)
+
+**Reviewer**: ARCHITECT agent
+**Scope**: Framework-wide pointer gaps, structural issues, configuration drift
+**Context**: Memory review shows ADR-015 (85% agents had NO skill guidance - now fixed), ADR-027 (CLAUDE.md doc drift - recently fixed), ADR-026 (hook consolidation complete)
+
+### POINTER GAPS
+
+### POINTER-001: Empty Diagrams Directory Despite Agent References
+
+- **Date**: 2026-01-27
+- **Category**: pointer_gap
+- **Impact**: silent_failure
+- **Status**: Open
+- **Description**: Architect agent references `.claude/context/artifacts/diagrams/` for diagram output (architect.md line 78). The diagram-generator skill exists and is invoked, but the directory contains only .gitkeep placeholders - zero actual diagrams have been generated.
+- **Remediation**:
+  1. Create example architecture diagrams for the framework itself (agents, hooks, workflows structure)
+  2. Update FILE_PLACEMENT_RULES.md with explicit diagram placement rules
+  3. Add diagram generation to evolution-orchestrator workflow as evidence of architectural decisions
+- **Evidence**:
+
+  ```bash
+  $ ls .claude/context/artifacts/diagrams/
+  # Output: . .. .gitkeep (empty)
+
+  # Architect.md line 78:
+  # "Diagrams Location: Architecture diagrams go to .claude/context/artifacts/diagrams/"
+  ```
+
+### POINTER-002: Workflow Skill References (VERIFIED OK)
+
+- **Date**: 2026-01-27
+- **Category**: pointer_gap (FALSE POSITIVE)
+- **Impact**: N/A
+- **Status**: Resolved
+- **Description**: Initial concern that workflows referenced non-existent skills (context-driven-development, consensus-voting, database-expert). Verification confirms ALL skill references in workflows exist as actual skill directories.
+- **Evidence**: All checked skills verified to exist.
+
+### POINTER-003: Architect Missing Workflow References
+
+- **Date**: 2026-01-27
+- **Category**: pointer_gap
+- **Impact**: maintainability
+- **Status**: Open
+- **Description**: Architect agent definition mentions "trade-off analysis using SequentialThinking" (line 56) but provides NO guidance on which workflows to use for architecture reviews. The framework HAS architecture-review-skill-workflow.md, consensus-voting-skill-workflow.md, and database-architect-skill-workflow.md, but architect.md doesn't reference them.
+- **Remediation**: Add "Related Workflows" section to architect.md:
+
+  ```markdown
+  ## Related Workflows
+
+  For complex architectural tasks, use these workflows:
+
+  - **Architecture Review**: `.claude/workflows/architecture-review-skill-workflow.md`
+  - **Consensus Decisions**: `.claude/workflows/consensus-voting-skill-workflow.md`
+  - **Database Design**: `.claude/workflows/database-architect-skill-workflow.md`
+  ```
+
+- **Evidence**:
+  ```
+  architect.md sections:
+  - Workflow (line 53-58): mentions process, no workflow files
+  - Implementation Standards (line 66-80): references DEVELOPER_WORKFLOW.md
+  - Skill Invocation Protocol (line 82-125): lists skills, not workflows
+  - NO mention of architecture-review-skill-workflow.md
+  ```
+
+### CONFIG DRIFT
+
+### CONFIG-001: Settings.json Hook Paths (VERIFIED OK)
+
+- **Date**: 2026-01-27
+- **Category**: config_drift (VERIFIED OK)
+- **Impact**: N/A
+- **Status**: Verified
+- **Description**: Cross-referenced all 24 hook command paths in settings.json against actual files in .claude/hooks/. All paths are valid.
+- **Evidence**:
+  ```
+  Sample verification:
+  ✓ "node .claude/hooks/routing/routing-guard.cjs" → file exists
+  ✓ "node .claude/hooks/safety/tdd-check.cjs" → file exists
+  ✓ "node .claude/hooks/evolution/unified-evolution-guard.cjs" → file exists
+  ```
+
+### CONFIG-002: CLAUDE.md Agent Count Accuracy
+
+- **Date**: 2026-01-27
+- **Category**: config_drift
+- **Impact**: maintainability
+- **Status**: Open (Needs Line-by-Line Verification)
+- **Description**: CLAUDE.md Section 3 routing table claims 45 agents. Glob of .claude/agents/ found 45 .md files. Counts match, but need to verify every table entry points to an actual file AND every agent file is in the table.
+- **Remediation**: Create validation script:
+  1. Extract agent names from CLAUDE.md routing table
+  2. Glob all .md files in .claude/agents/
+  3. Find agents in table but not in filesystem (broken pointers)
+  4. Find agents in filesystem but not in table (missing routing)
+- **Evidence**:
+  ```
+  CLAUDE.md Section 3 table: 45 entries (8 core + 22 domain + 11 specialized + 3 orchestrators + 1 meta)
+  Glob .claude/agents/**/*.md: 45 files
+  Match: Yes (counts align)
+  Line-by-line verification: NOT YET DONE
+  ```
+
+### STRUCTURAL ISSUES
+
+### ARCH-001: Import Paths Verification (VERIFIED OK)
+
+- **Date**: 2026-01-27
+- **Category**: structural (VERIFIED OK)
+- **Impact**: N/A
+- **Status**: Verified
+- **Description**: Grep found 42 hooks and 10 lib files using relative imports (../ pattern). Sample verification shows imports are correctly resolved.
+- **Evidence**:
+  ```javascript
+  // .claude/hooks/routing/routing-guard.cjs line 43:
+  const { parseHookInputAsync } = require('../../lib/utils/hook-input.cjs');
+  // Resolves to: .claude/lib/utils/hook-input.cjs ✓ (file exists)
+  ```
+
+### ARCH-002: Consolidated Hook File Confusion Risk
+
+- **Date**: 2026-01-27
+- **Category**: structural
+- **Impact**: maintainability
+- **Status**: Documented (Recommendation)
+- **Description**: Per ADR-026, individual hooks (planner-first-guard.cjs, task-create-guard.cjs, router-self-check.cjs, security-review-guard.cjs, router-write-guard.cjs) still exist as files but are NOT registered in settings.json. They were consolidated into routing-guard.cjs. Files kept for reference/testing, but could confuse future developers who might edit the wrong file.
+- **Remediation**: Two options:
+  1. **Preferred**: Move to `.claude/hooks/routing/_legacy/` subdirectory with README explaining consolidation
+  2. **Alternative**: Add header comment to each file: `// NOT REGISTERED - See routing-guard.cjs for active implementation`
+- **Evidence**:
+
+  ```bash
+  Files exist but not in settings.json:
+  ✓ .claude/hooks/routing/planner-first-guard.cjs
+  ✓ .claude/hooks/routing/task-create-guard.cjs
+  ✓ .claude/hooks/routing/router-self-check.cjs
+  ✓ .claude/hooks/routing/security-review-guard.cjs
+  ✓ .claude/hooks/safety/router-write-guard.cjs
+
+  Active unified hook in settings.json:
+  ✓ .claude/hooks/routing/routing-guard.cjs (PreToolUse multiple matchers)
+  ```
+
+### ARCH-003: Skill Catalog Count Audit Needed
+
+- **Date**: 2026-01-27
+- **Category**: structural
+- **Impact**: maintainability
+- **Status**: Open
+- **Description**: Skill catalog header claims "Total Skills: 426 (2 deprecated)" but category table totals need verification. The count includes 139 scientific sub-skills under scientific-skills parent.
+- **Remediation**: Run audit to count actual skill directories and update catalog header if discrepancy exists:
+  ```bash
+  find .claude/skills -name "SKILL.md" | wc -l
+  ```
+- **Evidence**:
+
+  ```
+  Catalog header line 2: "Total Skills: 426 (2 deprecated)"
+  Category breakdown (header):
+  - Scientific Research: 139 (sub-skills under scientific-skills/)
+  - Other categories: ~287 skills
+  Total claimed: 426
+
+  Verification needed: Count actual SKILL.md files
+  ```
+
+### DOCUMENTATION GAPS
+
+### DOC-001: Missing Skill-to-Workflow Cross-References
+
+- **Date**: 2026-01-27
+- **Category**: pointer_gap
+- **Impact**: maintainability
+- **Status**: Open
+- **Description**: Skills like architecture-review, consensus-voting, database-architect have corresponding workflow files (.claude/workflows/\*-skill-workflow.md), but the skill files don't reference the workflows and vice versa. This breaks discoverability.
+- **Remediation**: Add "Workflow Integration" section to each skill that has a corresponding workflow:
+
+  ```markdown
+  ## Workflow Integration
+
+  This skill is used in the following workflows:
+
+  - **Multi-Agent Architecture Review**: `.claude/workflows/architecture-review-skill-workflow.md`
+  ```
+
+  And add "Related Skills" to workflows:
+
+  ```markdown
+  ## Related Skills
+
+  This workflow uses:
+
+  - `architecture-review` - Core architecture evaluation
+  - `diagram-generator` - Visual documentation
+  ```
+
+- **Evidence**:
+  ```
+  Skills with workflows:
+  ✓ architecture-review → architecture-review-skill-workflow.md (NO cross-ref)
+  ✓ consensus-voting → consensus-voting-skill-workflow.md (NO cross-ref)
+  ✓ database-architect → database-architect-skill-workflow.md (NO cross-ref)
+  ✓ swarm-coordination → swarm-coordination-skill-workflow.md (NO cross-ref)
+  ```
 - **CWE**: CWE-755 (Improper Handling of Exceptional Conditions)
 - **STRIDE Category**: Spoofing
 - **Description**: The `readState()` function silently returns permissive defaults (`requiresSecurityReview: false`) on any error.
@@ -2606,3 +2813,137 @@ After fixes, verify:
 - After consolidation: ~25 unique hook processes
 
 **Total Effort**: 11-16 hours for all consolidations
+
+---
+
+## Security Audit Findings (2026-01-27)
+
+The following issues were identified during the security-focused audit of hooks, state files, and self-healing system.
+
+### [SEC-AUDIT-012] Regex-Based Command Validation Bypass Risk
+
+- **Date**: 2026-01-27
+- **Severity**: CRITICAL
+- **Status**: OPEN
+- **Location**: `.claude/hooks/safety/validators/shell-validators.cjs:25-77`
+- **Description**: The custom `parseCommand()` tokenizer does not account for:
+  1. Here-documents (`<<EOF`)
+  2. Command substitution with backticks
+  3. ANSI-C quoting (`$'...'`)
+  4. Brace expansion
+
+  Attackers could craft commands that parse differently than expected.
+
+- **PoC**: `bash -c $'rm\x20-rf\x20/'` bypasses tokenizer
+- **Remediation**:
+  1. Use proper shell parser library (shell-quote)
+  2. Blocklist ANSI-C quoting patterns
+  3. Block command substitution patterns
+- **Effort**: 4-8 hours
+
+### [SEC-AUDIT-013] Atomic Write Race Window on Windows
+
+- **Date**: 2026-01-27
+- **Severity**: HIGH
+- **Status**: OPEN
+- **Location**: `.claude/lib/utils/atomic-write.cjs:39-65`
+- **Description**: `fs.renameSync()` is not atomic on Windows NTFS. On Windows, rename fails if destination exists, potentially causing state corruption during concurrent operations.
+- **Remediation**: Add Windows-specific fallback with retry logic
+- **Effort**: 2-4 hours
+
+### [SEC-AUDIT-014] TOCTOU in Lock File Mechanism
+
+- **Date**: 2026-01-27
+- **Severity**: HIGH
+- **Status**: OPEN
+- **Location**: `.claude/hooks/self-healing/loop-prevention.cjs:177-211`
+- **Description**: TOCTOU vulnerability in stale lock cleanup - two processes checking simultaneously could both delete the "stale" lock and proceed.
+- **Remediation**: Use `proper-lockfile` package or remove stale lock cleanup
+- **Effort**: 2-3 hours
+
+### [SEC-AUDIT-015] Safe JSON Schema Allowlist Incomplete
+
+- **Date**: 2026-01-27
+- **Severity**: HIGH
+- **Status**: OPEN
+- **Location**: `.claude/lib/utils/safe-json.cjs:35-129`
+- **Description**: `router-state` schema missing many actual fields (taskDescription, sessionId, etc.). Incomplete schemas could allow unexpected data injection.
+- **Remediation**: Audit and complete all state file schemas
+- **Effort**: 4-6 hours
+
+### [SEC-AUDIT-016] Environment Variable Override Logging Inconsistent
+
+- **Date**: 2026-01-27
+- **Severity**: MEDIUM
+- **Status**: OPEN
+- **Location**: Multiple hooks
+- **Description**: Security override env vars logged inconsistently - some JSON to stderr (good), some console.warn, some not at all. `ROUTER_WRITE_GUARD=off` in router-state.cjs has no audit logging.
+- **Remediation**: Create centralized `auditSecurityOverride()` function
+- **Effort**: 2-3 hours
+
+### [SEC-AUDIT-017] Validator Registry Allows Unvalidated Commands
+
+- **Date**: 2026-01-27
+- **Severity**: MEDIUM
+- **Status**: OPEN
+- **Location**: `.claude/hooks/safety/validators/registry.cjs:126-129`
+- **Description**: Commands without registered validator allowed by default. Unregistered interpreters (perl -e, ruby -e, awk) could execute arbitrary code.
+- **Remediation**: Implement deny-by-default for unregistered commands
+- **Effort**: 4-8 hours
+
+### [SEC-AUDIT-018] Evolution State Tampering Could Bypass Budget
+
+- **Date**: 2026-01-27
+- **Severity**: MEDIUM
+- **Status**: OPEN
+- **Location**: `.claude/context/evolution-state.json`
+- **Description**: Evolution state file writable by agents. Malicious prompt could reset evolutionCount or bypass cooldowns. Current validation is structural only, not semantic.
+- **Remediation**: Add HMAC signature to state file
+- **Effort**: 6-10 hours
+
+### [SEC-AUDIT-019] Rollback Manager Manifest Injection
+
+- **Date**: 2026-01-27
+- **Severity**: MEDIUM
+- **Status**: MITIGATED
+- **Location**: `.claude/lib/self-healing/rollback-manager.cjs:288-320`
+- **Description**: Manifest paths could be tampered before rollback. Mitigation: Path validation (SEC-006) blocks escaping project root.
+- **Remediation**: Add HMAC signing to manifests for complete fix
+- **Effort**: 4-6 hours
+
+### [SEC-AUDIT-020] Busy-Wait CPU Exhaustion
+
+- **Date**: 2026-01-27
+- **Severity**: LOW
+- **Status**: OPEN
+- **Location**: loop-prevention.cjs:200-202, router-state.cjs:250-253
+- **Description**: Busy-wait loops for synchronous sleep consume CPU and could cause resource exhaustion.
+- **Remediation**: Use `Atomics.wait()` for proper synchronous blocking
+- **Effort**: 1-2 hours
+
+### [SEC-AUDIT-021] Debug Override Discovery Risk
+
+- **Date**: 2026-01-27
+- **Severity**: LOW
+- **Status**: OPEN
+- **Location**: Multiple hooks
+- **Description**: Override env vars documented in error messages, making them discoverable by attackers.
+- **Remediation**: Remove override hints from user-facing messages
+- **Effort**: 1-2 hours
+
+### Security Audit Summary
+
+| Priority | Issue                                | Effort |
+| -------- | ------------------------------------ | ------ |
+| P0       | SEC-AUDIT-012 (Command Bypass)       | 4-8h   |
+| P0       | SEC-AUDIT-017 (Unvalidated Commands) | 4-8h   |
+| P1       | SEC-AUDIT-014 (Lock TOCTOU)          | 2-3h   |
+| P1       | SEC-AUDIT-015 (Schema Completeness)  | 4-6h   |
+| P1       | SEC-AUDIT-016 (Audit Logging)        | 2-3h   |
+| P2       | SEC-AUDIT-013 (Windows Atomic)       | 2-4h   |
+| P2       | SEC-AUDIT-018 (Evolution Signing)    | 6-10h  |
+| P2       | SEC-AUDIT-019 (Manifest Signing)     | 4-6h   |
+
+**Total Estimated Effort**: 29-50 hours
+
+**Full Report**: `.claude/context/reports/security-audit-2026-01-27.md`

@@ -812,6 +812,14 @@ Ensure parallel spawning where indicated (Phase 2.1, Phase 4.2).
 
 ---
 
+## Related Skill
+
+This workflow implements the structured process for the corresponding skill:
+
+- **Skill**: `.claude/skills/database-architect/SKILL.md`
+- **Invoke skill**: `Skill({ skill: "database-architect" })`
+- **Relationship**: Workflow provides multi-agent orchestration; skill provides core capabilities
+
 ## Agent-Skill Mapping Reference
 
 | Phase                  | Agent              | Required Skills                                         |

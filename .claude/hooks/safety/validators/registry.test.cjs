@@ -166,4 +166,70 @@ describe('registry', () => {
       assert.strictEqual(result.valid, true);
     });
   });
+
+  describe('SEC-AUDIT-017: Deny-by-Default for Unregistered Commands', () => {
+    test('BLOCKS unregistered command: perl -e', () => {
+      const result = validateCommand('perl -e "print 1"');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-017'));
+      assert.ok(result.error.includes('perl'));
+      assert.strictEqual(result.hasValidator, false);
+    });
+
+    test('BLOCKS unregistered command: ruby -e', () => {
+      const result = validateCommand('ruby -e "puts 1"');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-017'));
+      assert.ok(result.error.includes('ruby'));
+    });
+
+    test('BLOCKS unregistered command: awk', () => {
+      const result = validateCommand('awk "{print $1}" file.txt');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-017'));
+      assert.ok(result.error.includes('awk'));
+    });
+
+    test('ALLOWS allowlisted command: ls -la', () => {
+      const result = validateCommand('ls -la');
+      assert.strictEqual(result.valid, true);
+      assert.strictEqual(result.hasValidator, false);
+    });
+
+    test('ALLOWS allowlisted command: npm test', () => {
+      const result = validateCommand('npm test');
+      assert.strictEqual(result.valid, true);
+      assert.strictEqual(result.hasValidator, false);
+    });
+
+    test('ALLOWS allowlisted command: git status', () => {
+      // This also has a validator, but should still pass
+      const result = validateCommand('git status');
+      assert.strictEqual(result.valid, true);
+      assert.strictEqual(result.hasValidator, true);
+    });
+
+    test('ALLOWS override with env var', () => {
+      const originalEnv = process.env.ALLOW_UNREGISTERED_COMMANDS;
+      process.env.ALLOW_UNREGISTERED_COMMANDS = 'true';
+
+      const result = validateCommand('perl -e "print 1"');
+      assert.strictEqual(result.valid, true);
+      assert.strictEqual(result.hasValidator, false);
+
+      // Restore env
+      if (originalEnv === undefined) {
+        delete process.env.ALLOW_UNREGISTERED_COMMANDS;
+      } else {
+        process.env.ALLOW_UNREGISTERED_COMMANDS = originalEnv;
+      }
+    });
+
+    test('registered validators still work normally', () => {
+      // Registered command with validator should still validate
+      const result = validateCommand('sudo apt install');
+      assert.strictEqual(result.valid, false);
+      assert.strictEqual(result.hasValidator, true);
+    });
+  });
 });

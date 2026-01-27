@@ -636,6 +636,14 @@ After swarm completion, clean up session files:
 .claude/context/sessions/swarm-$SWARM_ID-final.json
 ```
 
+## Related Skill
+
+This workflow implements the structured process for the corresponding skill:
+
+- **Skill**: `.claude/skills/swarm-coordination/SKILL.md`
+- **Invoke skill**: `Skill({ skill: "swarm-coordination" })`
+- **Relationship**: Workflow provides multi-agent orchestration; skill provides core capabilities
+
 ## Memory Protocol
 
 All agents in swarm MUST follow Memory Protocol:

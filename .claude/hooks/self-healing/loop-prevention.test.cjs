@@ -597,6 +597,103 @@ describe('SEC-007: Prototype Pollution Protection', () => {
 // Run Tests
 // ==========================================
 
+// SEC-AUDIT-014: TOCTOU in Lock File Cleanup
+describe('SEC-AUDIT-014: Lock Mechanism', () => {
+  cleanupTestState();
+
+  it('should acquire and release lock', () => {
+    loopPrevention.resetState(TEST_STATE_FILE);
+    const state = loopPrevention.getState(TEST_STATE_FILE);
+    expect(state).toBeTruthy();
+
+    // Lock should be released after operation
+    const lockFile = TEST_STATE_FILE + '.lock';
+    expect(fs.existsSync(lockFile)).toBeFalsy();
+  });
+
+  it('should handle stale locks from dead processes', () => {
+    loopPrevention.resetState(TEST_STATE_FILE);
+    const lockFile = TEST_STATE_FILE + '.lock';
+
+    // Create stale lock with non-existent PID
+    const stalePid = 999999;
+    fs.writeFileSync(
+      lockFile,
+      JSON.stringify({
+        pid: stalePid,
+        time: Date.now(),
+      })
+    );
+
+    // Should detect dead process and remove lock
+    const state = loopPrevention.getState(TEST_STATE_FILE);
+    expect(state).toBeTruthy();
+
+    // Lock should be removed
+    expect(fs.existsSync(lockFile)).toBeFalsy();
+  });
+
+  it('should not use time-based lock cleanup (SEC-AUDIT-014 fix)', () => {
+    loopPrevention.resetState(TEST_STATE_FILE);
+    const lockFile = TEST_STATE_FILE + '.lock';
+
+    // Create lock with old timestamp but current PID
+    fs.writeFileSync(
+      lockFile,
+      JSON.stringify({
+        pid: process.pid,
+        time: Date.now() - 10000, // Old timestamp
+      })
+    );
+
+    // Should NOT remove lock just because it's old
+    // (would timeout waiting for lock to be released)
+    const startTime = Date.now();
+    let timedOut = false;
+
+    try {
+      // This should wait/timeout, not immediately succeed
+      loopPrevention.getState(TEST_STATE_FILE);
+    } catch {
+      timedOut = true;
+    }
+
+    const elapsed = Date.now() - startTime;
+
+    // Should have waited (indicating it didn't remove lock)
+    // If it removed the lock immediately, elapsed would be < 10ms
+    expect(elapsed).toBeGreaterThan(50);
+  });
+
+  it('should handle concurrent state access', () => {
+    loopPrevention.resetState(TEST_STATE_FILE);
+
+    // Rapidly read/write state
+    for (let i = 0; i < 10; i++) {
+      const state = loopPrevention.getState(TEST_STATE_FILE);
+      state.evolutionCount = i;
+      loopPrevention._saveState(state, TEST_STATE_FILE);
+    }
+
+    // State should be consistent - this is the critical assertion
+    const final = loopPrevention.getState(TEST_STATE_FILE);
+    expect(final.evolutionCount).toBe(9);
+
+    // Clean up any lingering locks (Windows can be slow to release)
+    const lockFile = TEST_STATE_FILE + '.lock';
+    if (fs.existsSync(lockFile)) {
+      try {
+        fs.unlinkSync(lockFile);
+      } catch {
+        // Lock might be held briefly - not a test failure
+        console.log('Note: Lock file existed after test, cleaned up');
+      }
+    }
+  });
+
+  cleanupTestState();
+});
+
 console.log('\n========================================');
 console.log('Loop Prevention Hook Tests');
 console.log('========================================');

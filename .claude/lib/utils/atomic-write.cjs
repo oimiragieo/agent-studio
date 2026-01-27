@@ -36,6 +36,17 @@ const crypto = require('crypto');
  * @param {Object|string} [options] - fs.writeFileSync options (encoding, mode, flag)
  * @throws {Error} If write or rename fails
  */
+/**
+ * Sleep for a given number of milliseconds (busy wait for sync context)
+ * @param {number} ms - Milliseconds to sleep
+ */
+function sleep(ms) {
+  const start = Date.now();
+  while (Date.now() - start < ms) {
+    // Busy wait
+  }
+}
+
 function atomicWriteSync(filePath, content, options = {}) {
   const dir = path.dirname(filePath);
   const tempFile = path.join(dir, `.tmp-${crypto.randomBytes(4).toString('hex')}`);
@@ -48,6 +59,29 @@ function atomicWriteSync(filePath, content, options = {}) {
 
     // Write to temp file
     fs.writeFileSync(tempFile, content, options);
+
+    // SEC-AUDIT-013 FIX: Windows-specific handling for atomic rename
+    if (process.platform === 'win32') {
+      // On Windows, fs.renameSync can fail if destination exists or is locked
+      // Strategy: unlink destination first, with retry on EBUSY/EPERM
+      if (fs.existsSync(filePath)) {
+        let retries = 3;
+        while (retries > 0) {
+          try {
+            fs.unlinkSync(filePath);
+            break;
+          } catch (unlinkErr) {
+            if ((unlinkErr.code === 'EBUSY' || unlinkErr.code === 'EPERM') && retries > 1) {
+              // File is locked, wait and retry
+              sleep(50);
+              retries--;
+            } else {
+              throw unlinkErr;
+            }
+          }
+        }
+      }
+    }
 
     // Atomic rename
     fs.renameSync(tempFile, filePath);

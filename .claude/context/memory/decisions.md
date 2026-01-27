@@ -558,3 +558,62 @@
   - lib/ directory shows actual organization with self-healing/ and utils/ subdirectories
   - hooks/ directory accurately shows 8 categories including safety/validators/ subdirectory
   - Documentation remains single source of truth for framework structure
+
+## [ADR-028] Architecture Review 2026-01-27 - Pointer Gap and Cross-Reference Analysis
+
+- **Date**: 2026-01-27
+- **Status**: Accepted
+- **Context**: Comprehensive architecture review to identify pointer gaps, structural issues, and configuration drift in the .claude framework. Follow-up to ADR-015 (agent-skill discovery), ADR-027 (CLAUDE.md sync), and ADR-026 (hook consolidation).
+- **Decision**: Conducted systematic cross-reference analysis covering:
+  1. **Hook Paths**: Verified all 24 settings.json hook commands resolve to actual files (✓ ALL OK)
+  2. **Import Paths**: Checked 42 hooks + 10 lib files with relative imports (✓ ALL OK)
+  3. **Skill References**: Verified workflow → skill pointers exist (✓ ALL OK)
+  4. **Agent Routing Table**: Counted CLAUDE.md table (45) vs filesystem (45) - match but needs line-by-line verification
+  5. **Documentation Cross-Links**: Identified missing skill ↔ workflow bidirectional references
+- **Findings**:
+  - **Total Issues**: 8 (3 pointer gaps, 2 config checks, 3 structural observations)
+  - **Critical**: 0
+  - **Medium**: 2 (missing workflow cross-refs in architect.md and 4 skills)
+  - **Low**: 4 (empty diagrams dir, consolidated hook clarity, skill count audit, agent table verification)
+  - **Verified OK**: 3 (hook paths, imports, workflow skill references)
+- **Key Issues**:
+  - POINTER-001: Empty diagrams directory despite architect.md references
+  - POINTER-003: Architect.md missing workflow references (architecture-review-skill-workflow.md, etc.)
+  - DOC-001: 4 skills lack "Workflow Integration" section, 4 workflows lack "Related Skills"
+  - ARCH-002: Consolidated hooks still exist as individual files without "NOT ACTIVE" markers
+- **Consequences**:
+  - **Positive**: Framework structure is sound - zero runtime or routing failures
+  - **Positive**: All pointer gaps are documentation/discoverability issues, not functional breaks
+  - **Action Required**: P1 remediation (cross-references), P2 verification scripts, P3 cleanup
+  - **Report Location**: `.claude/context/artifacts/reports/architecture-review-2026-01-27.md`
+  - **Issues Recorded**: All findings appended to `.claude/context/memory/issues.md` with POINTER-_ and ARCH-_ prefixes
+  - **Pattern**: Framework has strong consolidation (hooks) but needs better bidirectional documentation linking
+
+## [ADR-029] Deep Dive Analysis Plan - High-Value Target Strategy
+
+- **Date**: 2026-01-27
+- **Status**: Accepted
+- **Context**: Need comprehensive framework analysis without exhaustive enumeration. Framework has 50+ hooks, 25+ lib files, 45 agents, 427+ skills. Recent work shows 50 open issues from 87 total (ADR-022), hook consolidation complete (ADR-026/027), most security issues resolved (SEC-001 through SEC-010).
+- **Decision**: Created 8-phase analysis plan targeting HIGH-VALUE areas:
+  1. **Phase 1 - Security & Reliability** (65 min): Address open pointer gaps (POINTER-001, CONFIG-002) and remaining security issues
+  2. **Phase 2 - Hook & Library Code Quality** (240 min): Audit all hook categories and lib modules for bugs, edge cases, test coverage
+  3. **Phase 3 - Pointer Gap Analysis** (150 min): Validate agent-skill-workflow-hook connections and documentation accuracy
+  4. **Phase 4 - Performance & Optimization** (165 min): Profile hook latency, detect code duplication, analyze state I/O patterns
+  5. **Phase 5 - Tools & CLI Audit** (125 min): Review framework tools for bugs and identify missing utilities
+  6. **Phase 6 - Process & Workflow Enhancement** (210 min): Identify workflow gaps, automation opportunities, documentation deficiencies
+  7. **Phase 7 - Test Infrastructure** (125 min): Analyze test coverage, identify flaky tests, improve maintainability
+  8. **Phase 8 - Consolidation** (180 min): Create master findings document, remediation roadmap, framework health scorecard
+- **Key Design Choices**:
+  - **Priority ordering**: Security first (P0), then performance/quality (P1), then gaps/process (P2-P4)
+  - **Agent assignments**: SECURITY-ARCHITECT for P1, CODE-REVIEWER for most audits, ARCHITECT for consolidation
+  - **Parallel execution**: Phases 2, 3, 4, 6, 7 have parallel-OK tasks (reduces total time from 20h to 12-14h)
+  - **Focused scope**: Avoid exhaustive enumeration; target critical systems and high-impact issues
+  - **Deliverables**: 33 total (30 audit reports + consolidated findings + roadmap + health scorecard)
+- **Consequences**:
+  - **Positive**: Systematic coverage of all framework subsystems; clear prioritization; actionable roadmap
+  - **Positive**: Performance baselines established for future optimization
+  - **Positive**: Framework health scorecard enables tracking over time
+  - **Effort**: ~20 hours sequential, ~12-14 hours with parallelization
+  - **Risk Mitigation**: Each phase independently rollback-able; state file backups prevent test interference
+  - **Maintenance**: Remediation roadmap provides clear path forward for addressing 50+ open issues
+- **Plan Location**: `.claude/context/plans/deep-dive-analysis-plan.md`

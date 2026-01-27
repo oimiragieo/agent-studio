@@ -169,8 +169,25 @@ const MAX_LOCK_WAIT_MS = 2000;
 const LOCK_RETRY_MS = 50;
 
 /**
- * SEC-AUDIT-005 FIX: Acquire a lock file for atomic operations
+ * SEC-AUDIT-014 FIX: Check if a process is alive
+ * @param {number} pid - Process ID to check
+ * @returns {boolean} True if process exists
+ */
+function isProcessAlive(pid) {
+  try {
+    // Signal 0 doesn't send a signal, just checks if process exists
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    // ESRCH: No such process
+    return false;
+  }
+}
+
+/**
+ * SEC-AUDIT-014 FIX: Acquire a lock file for atomic operations
  * Uses exclusive file creation (O_EXCL equivalent via wx flag)
+ * Fixed TOCTOU by checking process liveness instead of time
  * @param {string} filePath - Path to the file to lock
  * @returns {boolean} True if lock acquired, false otherwise
  */
@@ -181,22 +198,24 @@ function acquireLock(filePath) {
   while (Date.now() - startTime < MAX_LOCK_WAIT_MS) {
     try {
       // Attempt exclusive creation - fails if lock exists
-      fs.writeFileSync(lockFile, String(process.pid), { flag: 'wx' });
+      fs.writeFileSync(lockFile, JSON.stringify({ pid: process.pid, time: Date.now() }), {
+        flag: 'wx',
+      });
       return true;
     } catch (e) {
       if (e.code === 'EEXIST') {
-        // Lock exists, check if stale (older than 5 seconds)
+        // Lock exists, check if the process that created it is still alive
         try {
-          const stats = fs.statSync(lockFile);
-          if (Date.now() - stats.mtimeMs > 5000) {
-            // Stale lock, remove it
+          const lockData = JSON.parse(fs.readFileSync(lockFile, 'utf8'));
+          if (lockData.pid && !isProcessAlive(lockData.pid)) {
+            // Process is dead, safe to remove lock
             fs.unlinkSync(lockFile);
             continue;
           }
-        } catch {
-          // Stats failed, retry
+        } catch (readErr) {
+          // Could not read lock file, wait and retry
         }
-        // Wait and retry
+        // Process is alive, wait and retry
         const waitStart = Date.now();
         while (Date.now() - waitStart < LOCK_RETRY_MS) {
           // Busy wait (Node.js doesn't have sleep)

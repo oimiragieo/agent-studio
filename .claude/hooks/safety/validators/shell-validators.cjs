@@ -7,6 +7,10 @@
  * Validates shell interpreter commands (bash, sh, zsh) that execute
  * inline commands via the -c flag. Prevents security bypass where
  * `bash -c "rm -rf /"` could execute arbitrary commands.
+ *
+ * SEC-AUDIT-012: Added detection for dangerous shell syntax patterns
+ * that can bypass the tokenizer (ANSI-C quoting, backticks, here-docs,
+ * command substitution).
  */
 
 /**
@@ -16,13 +20,88 @@
 const SHELL_INTERPRETERS = new Set(['bash', 'sh', 'zsh']);
 
 /**
+ * SEC-AUDIT-012: Dangerous shell syntax patterns that bypass tokenization.
+ * These patterns can inject arbitrary commands or escape the validator.
+ * @type {Array<{pattern: RegExp, name: string, reason: string}>}
+ */
+const DANGEROUS_PATTERNS = [
+  {
+    pattern: /\$'/,
+    name: 'ANSI-C quoting',
+    reason: "Can bypass tokenizer via hex escapes (e.g., $'rm\\x20-rf\\x20/')",
+  },
+  {
+    pattern: /`[^`]*`/,
+    name: 'Backtick command substitution',
+    reason: 'Command substitution can execute arbitrary code',
+  },
+  {
+    pattern: /\$\([^)]*\)/,
+    name: 'Command substitution',
+    reason: 'Can execute arbitrary nested commands',
+  },
+  {
+    pattern: /<<-?\s*\w/,
+    name: 'Here-document',
+    reason: 'Here-docs can inject multiline commands',
+  },
+  {
+    pattern: /\{[^}]*,[^}]*\}/,
+    name: 'Brace expansion with commands',
+    reason: 'Brace expansion can execute multiple variants of commands',
+  },
+];
+
+/**
+ * SEC-AUDIT-012: Check for dangerous shell syntax patterns that can bypass tokenization.
+ *
+ * This function MUST be called BEFORE parseCommand() to detect patterns
+ * that the simple tokenizer cannot safely handle.
+ *
+ * @param {string} command - The shell command to check
+ * @returns {{valid: boolean, error: string}} Validation result
+ */
+function checkDangerousPatterns(command) {
+  if (!command || typeof command !== 'string') {
+    return { valid: true, error: '' };
+  }
+
+  for (const { pattern, name, reason } of DANGEROUS_PATTERNS) {
+    if (pattern.test(command)) {
+      return {
+        valid: false,
+        error: `SEC-AUDIT-012: ${name} blocked - ${reason}`,
+      };
+    }
+  }
+
+  return { valid: true, error: '' };
+}
+
+/**
  * Parse a shell command string into tokens, handling quotes.
  * Simple implementation that handles common quoting patterns.
  *
+ * SEC-AUDIT-012: Now includes pre-tokenization check for dangerous patterns.
+ * The tokenizer is not designed to handle complex shell syntax like ANSI-C
+ * quoting, backticks, here-docs, or command substitution - these are blocked
+ * before parsing to prevent security bypasses.
+ *
  * @param {string} commandString - The command string to parse
- * @returns {string[]|null} Array of tokens or null if parsing fails
+ * @param {Object} [options] - Parsing options
+ * @param {boolean} [options.skipDangerousCheck=false] - Skip dangerous pattern check (for testing only)
+ * @returns {{tokens: string[]|null, error: string|null}} Parse result with tokens or error
  */
-function parseCommand(commandString) {
+function parseCommand(commandString, options = {}) {
+  // SEC-AUDIT-012: Check for dangerous patterns BEFORE tokenizing
+  if (!options.skipDangerousCheck) {
+    const dangerCheck = checkDangerousPatterns(commandString);
+    if (!dangerCheck.valid) {
+      // Return null tokens with the error to signal blocked input
+      return { tokens: null, error: dangerCheck.error };
+    }
+  }
+
   const tokens = [];
   let current = '';
   let inSingleQuote = false;
@@ -66,14 +145,25 @@ function parseCommand(commandString) {
 
   // Check for unclosed quotes
   if (inSingleQuote || inDoubleQuote) {
-    return null;
+    return { tokens: null, error: null };
   }
 
   if (current.length > 0) {
     tokens.push(current);
   }
 
-  return tokens;
+  return { tokens, error: null };
+}
+
+/**
+ * Legacy wrapper for parseCommand that returns just tokens for backward compatibility.
+ * @param {string} commandString - The command string to parse
+ * @returns {string[]|null} Array of tokens or null if parsing fails
+ * @deprecated Use parseCommand() directly for full error context
+ */
+function parseCommandLegacy(commandString) {
+  const result = parseCommand(commandString, { skipDangerousCheck: true });
+  return result.tokens;
 }
 
 /**
@@ -87,15 +177,20 @@ function parseCommand(commandString) {
  * - bash -xc "command" (combined flags)
  * - bash -ec "command" (combined flags)
  *
+ * SEC-AUDIT-012: Now returns error context when dangerous patterns detected.
+ *
  * @param {string} commandString - The full shell command (e.g., "bash -c 'npm test'")
- * @returns {string|null} The command string after -c, or null if not a -c invocation
+ * @returns {{command: string|null, error: string|null}} The command string after -c, or null if not a -c invocation or blocked
  */
 function extractCArgument(commandString) {
-  const tokens = parseCommand(commandString);
+  // Use legacy parser (no dangerous check) since we check at validation time
+  const result = parseCommand(commandString, { skipDangerousCheck: true });
 
-  if (tokens === null || tokens.length < 3) {
-    return null;
+  if (result.tokens === null || result.tokens.length < 3) {
+    return { command: null, error: result.error };
   }
+
+  const tokens = result.tokens;
 
   // Look for -c flag (standalone or combined with other flags like -xc, -ec, -ic)
   for (let i = 0; i < tokens.length; i++) {
@@ -109,11 +204,22 @@ function extractCArgument(commandString) {
 
     if (isCFlag && i + 1 < tokens.length) {
       // The next token is the command to execute
-      return tokens[i + 1];
+      return { command: tokens[i + 1], error: null };
     }
   }
 
-  return null;
+  return { command: null, error: null };
+}
+
+/**
+ * Legacy wrapper for extractCArgument that returns just the command for backward compatibility.
+ * @param {string} commandString - The full shell command
+ * @returns {string|null} The command string after -c, or null
+ * @deprecated Use extractCArgument() directly for full error context
+ */
+function extractCArgumentLegacy(commandString) {
+  const result = extractCArgument(commandString);
+  return result.command;
 }
 
 /**
@@ -121,20 +227,36 @@ function extractCArgument(commandString) {
  *
  * This prevents using shell interpreters to bypass the security allowlist.
  *
+ * SEC-AUDIT-012: Now includes detection and blocking of dangerous shell syntax
+ * patterns (ANSI-C quoting, backticks, here-docs, command substitution).
+ *
  * @param {string} commandString - The full shell command (e.g., "bash -c 'npm test'")
  * @returns {{valid: boolean, error: string}} Validation result
  */
 function validateShellCommand(commandString) {
+  // SEC-AUDIT-012: Check for dangerous patterns FIRST, before any parsing
+  const dangerCheck = checkDangerousPatterns(commandString);
+  if (!dangerCheck.valid) {
+    return dangerCheck;
+  }
+
   // Extract the command after -c
-  const innerCommand = extractCArgument(commandString);
+  const extractResult = extractCArgument(commandString);
+
+  // If extraction returned an error (e.g., from dangerous pattern check), propagate it
+  if (extractResult.error) {
+    return { valid: false, error: extractResult.error };
+  }
+
+  const innerCommand = extractResult.command;
 
   if (innerCommand === null) {
     // Not a -c invocation (e.g., "bash script.sh")
     // Block dangerous shell constructs that could bypass sandbox restrictions:
     // - Process substitution: <(...) or >(...)
-    const dangerousPatterns = ['<(', '>('];
+    const processSubPatterns = ['<(', '>('];
 
-    for (const pattern of dangerousPatterns) {
+    for (const pattern of processSubPatterns) {
       if (commandString.includes(pattern)) {
         return {
           valid: false,
@@ -150,6 +272,15 @@ function validateShellCommand(commandString) {
   // Handle empty -c command (harmless)
   if (!innerCommand.trim()) {
     return { valid: true, error: '' };
+  }
+
+  // SEC-AUDIT-012: Also check inner command for dangerous patterns
+  const innerDangerCheck = checkDangerousPatterns(innerCommand);
+  if (!innerDangerCheck.valid) {
+    return {
+      valid: false,
+      error: `Inner command blocked: ${innerDangerCheck.error}`,
+    };
   }
 
   // SECURITY FIX: Re-validate inner command through the registry
@@ -175,10 +306,14 @@ const validateZshCommand = validateShellCommand;
 
 module.exports = {
   SHELL_INTERPRETERS,
+  DANGEROUS_PATTERNS,
+  checkDangerousPatterns,
   extractCArgument,
+  extractCArgumentLegacy, // Backward compatibility
   validateShellCommand,
   validateBashCommand,
   validateShCommand,
   validateZshCommand,
-  parseCommand, // Exported for testing
+  parseCommand,
+  parseCommandLegacy, // Backward compatibility
 };

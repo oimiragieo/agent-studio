@@ -5,12 +5,16 @@ const assert = require('node:assert');
 
 const {
   SHELL_INTERPRETERS,
+  DANGEROUS_PATTERNS,
+  checkDangerousPatterns,
   extractCArgument,
+  extractCArgumentLegacy,
   validateShellCommand,
   validateBashCommand,
   validateShCommand,
   validateZshCommand,
   parseCommand,
+  parseCommandLegacy,
 } = require('./shell-validators.cjs');
 
 describe('shell-validators', () => {
@@ -28,56 +32,202 @@ describe('shell-validators', () => {
     });
   });
 
-  describe('parseCommand', () => {
-    test('parses simple command', () => {
-      const tokens = parseCommand('echo hello');
-      assert.deepStrictEqual(tokens, ['echo', 'hello']);
+  describe('DANGEROUS_PATTERNS', () => {
+    test('includes ANSI-C quoting pattern', () => {
+      const pattern = DANGEROUS_PATTERNS.find(p => p.name === 'ANSI-C quoting');
+      assert.ok(pattern, 'ANSI-C quoting pattern should exist');
+      assert.ok(pattern.pattern.test("$'test'"), "Pattern should match $'...'");
     });
 
-    test('handles double quotes', () => {
-      const tokens = parseCommand('echo "hello world"');
-      assert.deepStrictEqual(tokens, ['echo', 'hello world']);
+    test('includes backtick pattern', () => {
+      const pattern = DANGEROUS_PATTERNS.find(p => p.name === 'Backtick command substitution');
+      assert.ok(pattern, 'Backtick pattern should exist');
+      assert.ok(pattern.pattern.test('`whoami`'), 'Pattern should match `...`');
     });
 
-    test('returns null for unclosed double quote', () => {
-      const tokens = parseCommand('echo "unclosed');
-      assert.strictEqual(tokens, null);
+    test('includes command substitution pattern', () => {
+      const pattern = DANGEROUS_PATTERNS.find(p => p.name === 'Command substitution');
+      assert.ok(pattern, 'Command substitution pattern should exist');
+      assert.ok(pattern.pattern.test('$(whoami)'), 'Pattern should match $(...)');
+    });
+
+    test('includes here-document pattern', () => {
+      const pattern = DANGEROUS_PATTERNS.find(p => p.name === 'Here-document');
+      assert.ok(pattern, 'Here-document pattern should exist');
+      assert.ok(pattern.pattern.test('cat <<EOF'), 'Pattern should match <<WORD');
+      assert.ok(pattern.pattern.test('cat <<-EOF'), 'Pattern should match <<-WORD');
+    });
+
+    test('includes brace expansion pattern', () => {
+      const pattern = DANGEROUS_PATTERNS.find(p => p.name === 'Brace expansion with commands');
+      assert.ok(pattern, 'Brace expansion pattern should exist');
+      assert.ok(pattern.pattern.test('{a,b,c}'), 'Pattern should match {a,b,c}');
+    });
+  });
+
+  describe('checkDangerousPatterns (SEC-AUDIT-012)', () => {
+    test('allows safe commands', () => {
+      const result = checkDangerousPatterns('ls -la');
+      assert.strictEqual(result.valid, true);
+      assert.strictEqual(result.error, '');
+    });
+
+    test('blocks ANSI-C quoting', () => {
+      const result = checkDangerousPatterns("bash -c $'rm\\x20-rf\\x20/'");
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+      assert.ok(result.error.includes('ANSI-C quoting'));
+    });
+
+    test('blocks backtick command substitution', () => {
+      const result = checkDangerousPatterns('echo `whoami`');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+      assert.ok(result.error.includes('Backtick command substitution'));
+    });
+
+    test('blocks $() command substitution', () => {
+      const result = checkDangerousPatterns('echo $(id)');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+      assert.ok(result.error.includes('Command substitution'));
+    });
+
+    test('blocks here-documents', () => {
+      const result = checkDangerousPatterns('cat <<EOF');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+      assert.ok(result.error.includes('Here-document'));
+    });
+
+    test('blocks here-documents with dash', () => {
+      const result = checkDangerousPatterns('cat <<-EOF');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('Here-document'));
+    });
+
+    test('blocks brace expansion with commas', () => {
+      const result = checkDangerousPatterns('rm file{1,2,3}');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+      assert.ok(result.error.includes('Brace expansion'));
+    });
+
+    test('handles null input', () => {
+      const result = checkDangerousPatterns(null);
+      assert.strictEqual(result.valid, true);
+    });
+
+    test('handles undefined input', () => {
+      const result = checkDangerousPatterns(undefined);
+      assert.strictEqual(result.valid, true);
     });
 
     test('handles empty string', () => {
-      const tokens = parseCommand('');
-      assert.deepStrictEqual(tokens, []);
+      const result = checkDangerousPatterns('');
+      assert.strictEqual(result.valid, true);
+    });
+
+    test('handles non-string input', () => {
+      const result = checkDangerousPatterns(123);
+      assert.strictEqual(result.valid, true);
+    });
+  });
+
+  describe('parseCommand', () => {
+    test('parses simple command and returns object', () => {
+      const result = parseCommand('echo hello', { skipDangerousCheck: true });
+      assert.deepStrictEqual(result.tokens, ['echo', 'hello']);
+      assert.strictEqual(result.error, null);
+    });
+
+    test('handles double quotes', () => {
+      const result = parseCommand('echo "hello world"', { skipDangerousCheck: true });
+      assert.deepStrictEqual(result.tokens, ['echo', 'hello world']);
+    });
+
+    test('returns null tokens for unclosed double quote', () => {
+      const result = parseCommand('echo "unclosed', { skipDangerousCheck: true });
+      assert.strictEqual(result.tokens, null);
+      assert.strictEqual(result.error, null);
+    });
+
+    test('handles empty string', () => {
+      const result = parseCommand('', { skipDangerousCheck: true });
+      assert.deepStrictEqual(result.tokens, []);
     });
 
     test('handles multiple spaces', () => {
-      const tokens = parseCommand('cmd   arg1    arg2');
-      assert.deepStrictEqual(tokens, ['cmd', 'arg1', 'arg2']);
+      const result = parseCommand('cmd   arg1    arg2', { skipDangerousCheck: true });
+      assert.deepStrictEqual(result.tokens, ['cmd', 'arg1', 'arg2']);
+    });
+
+    test('blocks dangerous patterns by default', () => {
+      const result = parseCommand('echo `whoami`');
+      assert.strictEqual(result.tokens, null);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+    });
+
+    test('allows dangerous patterns when skipDangerousCheck=true', () => {
+      const result = parseCommand('echo `whoami`', { skipDangerousCheck: true });
+      assert.deepStrictEqual(result.tokens, ['echo', '`whoami`']);
+    });
+  });
+
+  describe('parseCommandLegacy', () => {
+    test('returns just tokens for backward compatibility', () => {
+      const tokens = parseCommandLegacy('echo hello');
+      assert.deepStrictEqual(tokens, ['echo', 'hello']);
+    });
+
+    test('returns null for unclosed quote', () => {
+      const tokens = parseCommandLegacy('echo "unclosed');
+      assert.strictEqual(tokens, null);
+    });
+
+    test('skips dangerous check (legacy behavior)', () => {
+      const tokens = parseCommandLegacy('echo `whoami`');
+      assert.deepStrictEqual(tokens, ['echo', '`whoami`']);
     });
   });
 
   describe('extractCArgument', () => {
     test('extracts command from sh -c', () => {
-      const cmd = extractCArgument('sh -c "npm test"');
-      assert.strictEqual(cmd, 'npm test');
+      const result = extractCArgument('sh -c "npm test"');
+      assert.strictEqual(result.command, 'npm test');
+      assert.strictEqual(result.error, null);
     });
 
     test('handles combined flags like -xc', () => {
-      const cmd = extractCArgument('bash -xc "echo debug"');
-      assert.strictEqual(cmd, 'echo debug');
+      const result = extractCArgument('bash -xc "echo debug"');
+      assert.strictEqual(result.command, 'echo debug');
+    });
+
+    test('returns null command for non -c invocation', () => {
+      const result = extractCArgument('bash script.sh');
+      assert.strictEqual(result.command, null);
+      assert.strictEqual(result.error, null);
+    });
+
+    test('returns null command for simple bash', () => {
+      const result = extractCArgument('bash');
+      assert.strictEqual(result.command, null);
+    });
+
+    test('returns null command when -c has no argument', () => {
+      const result = extractCArgument('bash -c');
+      assert.strictEqual(result.command, null);
+    });
+  });
+
+  describe('extractCArgumentLegacy', () => {
+    test('returns just command for backward compatibility', () => {
+      const cmd = extractCArgumentLegacy('sh -c "npm test"');
+      assert.strictEqual(cmd, 'npm test');
     });
 
     test('returns null for non -c invocation', () => {
-      const cmd = extractCArgument('bash script.sh');
-      assert.strictEqual(cmd, null);
-    });
-
-    test('returns null for simple bash', () => {
-      const cmd = extractCArgument('bash');
-      assert.strictEqual(cmd, null);
-    });
-
-    test('returns null when -c has no argument', () => {
-      const cmd = extractCArgument('bash -c');
+      const cmd = extractCArgumentLegacy('bash script.sh');
       assert.strictEqual(cmd, null);
     });
   });
@@ -157,6 +307,85 @@ describe('shell-validators', () => {
         assert.strictEqual(result.valid, true);
       });
     });
+
+    describe('SEC-AUDIT-012: Tokenizer bypass patterns', () => {
+      test('blocks ANSI-C quoting bypass attempt', () => {
+        const result = validateShellCommand("bash -c $'rm\\x20-rf\\x20/'");
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+        assert.ok(result.error.includes('ANSI-C quoting'));
+      });
+
+      test('blocks backtick substitution', () => {
+        const result = validateShellCommand('echo `whoami`');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+        assert.ok(result.error.includes('Backtick'));
+      });
+
+      test('blocks backtick in -c command', () => {
+        const result = validateShellCommand('bash -c "echo `id`"');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+      });
+
+      test('blocks $() command substitution', () => {
+        const result = validateShellCommand('bash -c "echo $(cat /etc/passwd)"');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+      });
+
+      test('blocks here-document', () => {
+        const result = validateShellCommand('cat <<EOF');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+        assert.ok(result.error.includes('Here-document'));
+      });
+
+      test('blocks here-document in -c command', () => {
+        const result = validateShellCommand('bash -c "cat <<EOF"');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+      });
+
+      test('blocks dangerous brace expansion', () => {
+        const result = validateShellCommand('rm -rf /tmp/{a,b,c}');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+        assert.ok(result.error.includes('Brace expansion'));
+      });
+
+      test('allows safe commands without dangerous patterns', () => {
+        const result = validateShellCommand('ls -la');
+        assert.strictEqual(result.valid, true);
+      });
+
+      test('allows safe commands with simple braces (no comma)', () => {
+        // Single brace without comma is not brace expansion
+        const result = validateShellCommand('echo {hello}');
+        assert.strictEqual(result.valid, true);
+      });
+    });
+
+    describe('SEC-AUDIT-012: Inner command pattern detection', () => {
+      test('blocks inner command with backticks', () => {
+        const result = validateShellCommand('sh -c "`rm -rf /`"');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+      });
+
+      test('blocks inner command with command substitution', () => {
+        const result = validateShellCommand('sh -c "$(malicious_cmd)"');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+      });
+
+      test('blocks inner command with ANSI-C quoting', () => {
+        const result = validateShellCommand("sh -c $'echo\\x00evil'");
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+      });
+    });
   });
 
   describe('alias functions', () => {
@@ -176,6 +405,20 @@ describe('shell-validators', () => {
       const zshResult = validateZshCommand('zsh -c "ls"');
       const shellResult = validateShellCommand('zsh -c "ls"');
       assert.deepStrictEqual(zshResult, shellResult);
+    });
+
+    test('all aliases block SEC-AUDIT-012 patterns', () => {
+      const bashResult = validateBashCommand('echo `whoami`');
+      const shResult = validateShCommand('echo `whoami`');
+      const zshResult = validateZshCommand('echo `whoami`');
+
+      assert.strictEqual(bashResult.valid, false);
+      assert.strictEqual(shResult.valid, false);
+      assert.strictEqual(zshResult.valid, false);
+
+      assert.ok(bashResult.error.includes('SEC-AUDIT-012'));
+      assert.ok(shResult.error.includes('SEC-AUDIT-012'));
+      assert.ok(zshResult.error.includes('SEC-AUDIT-012'));
     });
   });
 });

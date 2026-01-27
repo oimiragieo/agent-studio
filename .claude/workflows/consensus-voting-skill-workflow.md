@@ -519,6 +519,14 @@ Follow the phased workflow in: .claude/workflows/consensus-voting-skill-workflow
 });
 ```
 
+## Related Skill
+
+This workflow implements the structured process for the corresponding skill:
+
+- **Skill**: `.claude/skills/consensus-voting/SKILL.md`
+- **Invoke skill**: `Skill({ skill: "consensus-voting" })`
+- **Relationship**: Workflow provides multi-agent orchestration; skill provides core capabilities
+
 ## Agent-Skill Mapping
 
 | Worker Role      | Agent              | Required Skills                      |

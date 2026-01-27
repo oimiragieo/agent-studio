@@ -168,6 +168,14 @@ CREATE INDEX idx_order_items_order ON order_items(order_id);
 - Include rollback strategy for all migrations
 - Document relationships and constraints
 
+## Related Workflow
+
+This skill has a corresponding workflow for complex multi-agent scenarios:
+
+- **Workflow**: `.claude/workflows/database-architect-skill-workflow.md`
+- **When to use workflow**: For comprehensive database design including requirements analysis, schema design, query optimization, migration planning, and testing (multi-phase, multi-agent)
+- **When to use skill directly**: For quick schema reviews or single-agent database tasks
+
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**

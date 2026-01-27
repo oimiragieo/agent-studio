@@ -179,4 +179,83 @@ describe('atomic-write', () => {
       }, /circular|convert/i);
     });
   });
+
+  describe('SEC-AUDIT-013: Windows atomic write race conditions', () => {
+    it('should handle overwriting existing file on Windows', () => {
+      const filePath = path.join(testDir, 'existing.txt');
+
+      // Pre-create file
+      fs.writeFileSync(filePath, 'original content');
+
+      // Should succeed even on Windows where renameSync can fail if target exists
+      atomicWrite.atomicWriteSync(filePath, 'new content');
+
+      assert.strictEqual(fs.readFileSync(filePath, 'utf8'), 'new content');
+    });
+
+    it('should clean up temp file on failure', () => {
+      const filePath = path.join(testDir, 'fail-test.txt');
+
+      // Mock fs.writeFileSync to fail
+      const original = fs.writeFileSync;
+      fs.writeFileSync = (path, content, options) => {
+        if (path.includes('.tmp-')) {
+          throw new Error('Simulated write failure');
+        }
+        return original(path, content, options);
+      };
+
+      try {
+        assert.throws(() => {
+          atomicWrite.atomicWriteSync(filePath, 'content');
+        }, /Simulated write failure/);
+
+        // Verify no temp files remain
+        const files = fs.readdirSync(testDir);
+        const tempFiles = files.filter(f => f.includes('.tmp-'));
+        assert.strictEqual(tempFiles.length, 0, 'Temp files should be cleaned up on failure');
+      } finally {
+        fs.writeFileSync = original;
+      }
+    });
+
+    it('should handle rapid overwrites without corruption', () => {
+      const filePath = path.join(testDir, 'rapid.txt');
+
+      // Rapidly overwrite the same file
+      for (let i = 0; i < 20; i++) {
+        atomicWrite.atomicWriteSync(filePath, `content-${i}`);
+      }
+
+      // Should contain last write
+      assert.strictEqual(fs.readFileSync(filePath, 'utf8'), 'content-19');
+
+      // No temp files should remain
+      const files = fs.readdirSync(testDir);
+      const tempFiles = files.filter(f => f.includes('.tmp-'));
+      assert.strictEqual(tempFiles.length, 0);
+    });
+
+    it('should retry on EBUSY/EPERM errors on Windows', function () {
+      if (process.platform !== 'win32') {
+        this.skip(); // Skip on non-Windows
+        return;
+      }
+
+      const filePath = path.join(testDir, 'busy.txt');
+      fs.writeFileSync(filePath, 'original');
+
+      // Try to trigger EBUSY by having file open
+      // This is best-effort as it's hard to reliably trigger
+      const fd = fs.openSync(filePath, 'r');
+
+      try {
+        atomicWrite.atomicWriteSync(filePath, 'new content');
+        const content = fs.readFileSync(filePath, 'utf8');
+        assert.strictEqual(content, 'new content');
+      } finally {
+        fs.closeSync(fd);
+      }
+    });
+  });
 });

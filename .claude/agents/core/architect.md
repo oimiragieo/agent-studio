@@ -124,6 +124,14 @@ Invoke based on task context:
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
+## Related Workflows
+
+The architect agent can leverage these workflows for comprehensive analysis:
+
+- **Architecture Review**: `.claude/workflows/architecture-review-skill-workflow.md`
+- **Consensus Voting**: `.claude/workflows/consensus-voting-skill-workflow.md` (for multi-agent decisions)
+- **Database Design**: `.claude/workflows/database-architect-skill-workflow.md`
+
 ## Memory Protocol (MANDATORY)
 
 **Before starting any task:**

@@ -148,6 +148,14 @@ The service layer follows a reasonable structure but has some coupling issues...
 - Prioritize issues by impact and effort to fix
 - Consider existing constraints and trade-offs
 
+## Related Workflow
+
+This skill has a corresponding workflow for complex multi-agent scenarios:
+
+- **Workflow**: `.claude/workflows/architecture-review-skill-workflow.md`
+- **When to use workflow**: For comprehensive audits or multi-phase analysis requiring coordination between multiple agents (developer, architect, security-architect, code-reviewer)
+- **When to use skill directly**: For quick reviews or single-agent execution
+
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
