@@ -57,6 +57,24 @@ Before EVERY response, Router MUST pass this decision tree:
 
 **If ANY YES → STOP. Spawn an agent instead.**
 
+### Gate 4: Creator Workflow Check
+
+1. Is this creating any artifact? (skill, agent, hook, workflow, template, schema)
+2. Am I about to write directly to any creator output path?
+   - `.claude/skills/**/SKILL.md` → requires skill-creator
+   - `.claude/agents/**/*.md` → requires agent-creator
+   - `.claude/hooks/**/*.cjs` → requires hook-creator
+   - `.claude/workflows/**/*.md` → requires workflow-creator
+   - `.claude/templates/**/*` → requires template-creator
+   - `.claude/schemas/**/*.json` → requires schema-creator
+3. Am I copying/restoring archived artifacts without invoking the creator?
+
+**If ANY YES → STOP. Invoke the appropriate creator skill FIRST.**
+
+**Why Gate 4 Exists (Reflection ADRs)**: Direct artifact creation bypasses critical post-creation steps (CLAUDE.md updates, catalog entries, agent assignments), resulting in "invisible" artifacts that are never discovered or invoked.
+
+**Enforcement**: `unified-creator-guard.cjs` blocks direct artifact writes. Override: `CREATOR_GUARD=warn|off`.
+
 ### TaskCreate Restriction
 
 **Router may use TaskCreate ONLY for:**
@@ -119,6 +137,42 @@ Router: Task({ prompt: "You are DEVELOPER. List all TypeScript files..." })
         [Spawn agent to explore codebase]
 ```
 
+**Example 4: Creator Workflow Violation (Gate 4)**
+
+```
+❌ WRONG (Skill):
+User: "Create a ripgrep skill"
+Router: Write({ file_path: ".claude/skills/ripgrep/SKILL.md", content: "..." })
+        [Router writing SKILL.md directly - INVISIBLE SKILL]
+
+❌ WRONG (Agent):
+User: "Create a Python expert agent"
+Router: Write({ file_path: ".claude/agents/domain/python-expert.md", content: "..." })
+        [Router writing agent directly - INVISIBLE AGENT]
+
+❌ WRONG (Hook):
+User: "Create an API rate limiter hook"
+Router: Write({ file_path: ".claude/hooks/safety/api-rate-limiter.cjs", content: "..." })
+        [Direct write bypasses hook-creator workflow]
+
+❌ WRONG (Workflow):
+User: "Create a security audit workflow"
+Router: Write({ file_path: ".claude/workflows/enterprise/security-audit.md", content: "..." })
+        [Router writing workflow directly - INVISIBLE WORKFLOW]
+
+✓ CORRECT:
+User: "Create a ripgrep skill"
+Router: [ROUTER] Artifact creation detected - invoking skill-creator first
+        Skill({ skill: "skill-creator" })
+        [skill-creator handles CLAUDE.md, catalog, agent assignments]
+
+✓ CORRECT:
+User: "Create a security audit workflow"
+Router: [ROUTER] Workflow creation detected - invoking workflow-creator first
+        Skill({ skill: "workflow-creator" })
+        [workflow-creator handles CLAUDE.md, validation, agent coordination]
+```
+
 **See:** `router-decision.md` Step 4 for complete self-check protocol with all gates and enforcement.
 
 ## 1.3 ENFORCEMENT HOOKS
@@ -136,6 +190,17 @@ The unified `routing-guard.cjs` consolidates 5 checks:
 - Security review guard (SECURITY_REVIEW_ENFORCEMENT)
 - Router self-check
 - Documentation routing guard
+
+The `unified-creator-guard.cjs` enforces Gate 4 for ALL artifact types:
+
+- Blocks direct writes to `.claude/skills/**/SKILL.md` without skill-creator
+- Blocks direct writes to `.claude/agents/**/*.md` without agent-creator
+- Blocks direct writes to `.claude/hooks/**/*.cjs` without hook-creator
+- Blocks direct writes to `.claude/workflows/**/*.md` without workflow-creator
+- Blocks direct writes to `.claude/templates/**/*` without template-creator
+- Blocks direct writes to `.claude/schemas/**/*.json` without schema-creator
+
+Override: `CREATOR_GUARD=warn|off`
 
 **Enforcement Modes:**
 
@@ -396,6 +461,7 @@ Task({
 | C4 Code level          | `c4-code`                    | `.claude/agents/specialized/c4-code.md`                  |
 | Context-driven dev     | `conductor-validator`        | `.claude/agents/specialized/conductor-validator.md`      |
 | Reverse engineering    | `reverse-engineer`           | `.claude/agents/specialized/reverse-engineer.md`         |
+| Research, fact-finding | `researcher`                 | `.claude/agents/specialized/researcher.md`               |
 | Python expert          | `python-pro`                 | `.claude/agents/domain/python-pro.md`                    |
 | Rust expert            | `rust-pro`                   | `.claude/agents/domain/rust-pro.md`                      |
 | Go expert              | `golang-pro`                 | `.claude/agents/domain/golang-pro.md`                    |
@@ -675,6 +741,73 @@ Read('.claude/skills/tdd/SKILL.md'); // Reading is not invoking
 - Frameworks (see catalog Frameworks section)
 - Creator Tools (agent-creator, skill-creator)
 
+### IRON LAW: NO ARTIFACT CREATION WITHOUT CREATOR
+
+```
++======================================================================+
+|  ⛔ CREATOR WORKFLOW IRON LAW - VIOLATION = INVISIBLE ARTIFACT       |
++======================================================================+
+|                                                                      |
+|  NEVER write directly to creator output paths:                       |
+|  - .claude/skills/**/SKILL.md     → use skill-creator                |
+|  - .claude/agents/**/*.md         → use agent-creator                |
+|  - .claude/hooks/**/*.cjs         → use hook-creator                 |
+|  - .claude/workflows/**/*.md      → use workflow-creator             |
+|  - .claude/templates/**/*         → use template-creator             |
+|  - .claude/schemas/**/*.json      → use schema-creator               |
+|                                                                      |
+|  ALWAYS invoke the appropriate creator skill FIRST:                  |
+|    Skill({ skill: "<creator-name>" })                                |
+|                                                                      |
+|  WHY? Direct writes create INVISIBLE artifacts that are:             |
+|    - Missing from CLAUDE.md routing table                            |
+|    - Missing from relevant catalogs                                  |
+|    - Not assigned to any agents                                      |
+|    - NEVER discovered or invoked by Router                           |
+|                                                                      |
+|  ENFORCEMENT: unified-creator-guard.cjs BLOCKS direct writes         |
+|                                                                      |
++======================================================================+
+```
+
+**Before/After: Creator Workflow Violation**
+
+```
+❌ BEFORE (VIOLATION - artifact is invisible):
+Router thinks: "I'll save time by writing the artifact directly"
+Action: Write({ file_path: ".claude/skills/my-skill/SKILL.md", ... })
+        OR Write({ file_path: ".claude/agents/domain/my-agent.md", ... })
+        OR Write({ file_path: ".claude/hooks/safety/my-hook.cjs", ... })
+Result: Artifact exists in filesystem but:
+  - NOT in CLAUDE.md
+  - NOT in relevant catalog
+  - NOT assigned to agents
+  - NEVER invoked because Router cannot find it
+
+✅ AFTER (CORRECT - artifact is fully integrated):
+Router thinks: "This is artifact creation, must use the creator"
+Action: Skill({ skill: "skill-creator" })   # for skills
+        Skill({ skill: "agent-creator" })   # for agents
+        Skill({ skill: "hook-creator" })    # for hooks
+        Skill({ skill: "workflow-creator" }) # for workflows
+Result: Creator workflow ensures:
+  - CLAUDE.md updated with artifact entry
+  - Relevant catalogs updated
+  - Relevant agents assigned
+  - Validation and testing completed
+  - Artifact is discoverable and invocable
+```
+
+**Post-Creation Steps are BLOCKING** - creators enforce ALL of these:
+
+1. **CLAUDE.md update** - Artifact appears in appropriate section
+2. **Catalog update** - Artifact is discoverable by category
+3. **Agent assignment** - At least one agent has artifact assigned
+4. **Validation** - Required structure and fields present
+5. **Memory update** - Creation recorded in learnings.md
+
+**Override (DANGEROUS)**: `CREATOR_GUARD=off` bypasses enforcement.
+
 ## 8. MEMORY PERSISTENCE
 
 All spawned agents MUST follow Memory Protocol:
@@ -712,6 +845,9 @@ All spawned agents MUST follow Memory Protocol:
 | `complexity-assessment`              | Analyzing task complexity                                        |
 | `insight-extraction`                 | Capturing learnings after coding                                 |
 | `qa-workflow`                        | Systematic testing with fix loops                                |
+| `ripgrep`                            | Enhanced code search for .mjs/.cjs/.mts/.cts files               |
+| `chrome-browser`                     | Browser automation for testing, debugging, and data extraction   |
+| `arxiv-mcp`                          | Search and retrieve academic papers from arXiv.org               |
 
 ## 8.6 ENTERPRISE WORKFLOWS
 

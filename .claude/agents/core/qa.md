@@ -28,7 +28,9 @@ skills:
   - rule-auditor
   - verification-before-completion
   - tdd
+  - ripgrep
   - code-analyzer
+  - chrome-browser
   - task-management-protocol
 ---
 

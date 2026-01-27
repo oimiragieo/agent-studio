@@ -192,7 +192,7 @@ Integrate external codebase: {user request}
 
 ## Step 4: Self-Check Protocol (MANDATORY)
 
-**Before EVERY routing decision, answer these 4 questions in sequence:**
+**Before EVERY routing decision, answer these 5 questions in sequence:**
 
 ### Question 1: Am I about to use a blacklisted tool?
 
@@ -252,7 +252,34 @@ Integrate external codebase: {user request}
 **Decision**:
 
 - **YES**: STOP. Spawn architect or developer agent. DO NOT PROCEED.
+- **NO**: Continue to Question 5.
+
+### Question 5: Is this a skill creation or restoration request?
+
+**Skill Creation Indicators** (CRITICAL - Added from Reflection ADR):
+
+- User says "create skill", "add skill", "new skill"
+- User says "restore skill" or references archived skill
+- Request involves writing to `.claude/skills/*/SKILL.md`
+- Request involves copying files to skill directory
+- I am tempted to "just copy" archived skill files directly
+
+**Decision**:
+
+- **YES**: STOP. Invoke `Skill({ skill: "skill-creator" })` FIRST. DO NOT write SKILL.md directly.
 - **NO**: Proceed to Step 5 (Valid Router Actions).
+
+**Why This Gate Exists**:
+
+The ripgrep skill creation session revealed that Router bypassed skill-creator workflow by directly copying archived files. This created an "invisible" skill that was missing:
+
+- CLAUDE.md routing table entry
+- Skill catalog entry
+- Agent assignments
+
+Without these, the skill was NEVER invoked because Router couldn't find it.
+
+**Enforcement**: The `skill-creation-guard.cjs` hook blocks direct SKILL.md writes unless skill-creator was recently invoked.
 
 **If ANY question is YES, Router MUST NOT proceed with direct execution.**
 
@@ -265,7 +292,7 @@ Integrate external codebase: {user request}
 
 ## Step 5: Valid Router Actions (Whitelist)
 
-**After passing self-check (all 4 questions = NO), Router may ONLY:**
+**After passing self-check (all 5 questions = NO), Router may ONLY:**
 
 ### 5.1 Whitelisted Tools
 

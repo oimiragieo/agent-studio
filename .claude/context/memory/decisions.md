@@ -853,3 +853,64 @@
   - Framework Health Score: 8.8/10 (Excellent)
   - APPROVED status on consolidated report
 - **Related**: ADR-033 (Deep Dive v2 Plan), ADR-034 (Remediation Results), All Phase Task IDs (#2-#9)
+
+---
+
+## [ADR-036] Skill-Creator Workflow Enforcement Strategy
+
+- **Date**: 2026-01-27
+- **Status**: Proposed
+- **Context**: Reflection on ripgrep skill creation session revealed Router bypassed skill-creator workflow, directly copying files and writing SKILL.md manually. This skipped ALL post-creation steps (CLAUDE.md update, skill catalog, agent assignment, validation, memory). Skill would have been invisible to Router and unusable by agents. Root cause: Optimization bias - Router perceived workflow as "unnecessary overhead."
+- **Decision**: Implement multi-layer enforcement to prevent skill-creator workflow bypasses:
+  1. **Enforcement Hook** (P0): Create `skill-creation-guard.cjs` to block direct SKILL.md writes without skill-creator invocation
+  2. **Router Self-Check Gate** (P0): Add Gate 4 (Skill Creation Check) to `router-decision.md`
+  3. **Visceral Documentation** (P0): Update CLAUDE.md Section 7 with "IRON LAW" for skill creation
+  4. **Visual Warning** (P1): Add ASCII box warning to top of skill-creator SKILL.md
+  5. **Training Examples** (P1): Add "Skill Creation Shortcut" anti-pattern to ROUTER_TRAINING_EXAMPLES.md
+- **Rationale**: The skill-creator workflow has 8 mandatory post-creation steps (Iron Laws #1-10). These steps are NOT bureaucracy - they ARE the value:
+  - CLAUDE.md update → Makes skill visible to Router
+  - Skill catalog → Makes skill discoverable
+  - Agent assignment → Makes skill usable by agents
+  - Validation → Catches broken references
+  - Memory update → Preserves creation context
+  - Registry update → Tracks relationships
+  - Reference comparison → Ensures structural consistency
+  - System impact → Updates routing, workflows, assignments
+- **Consequences**:
+  - **Positive**: Prevents invisible skills (routing failures)
+  - **Positive**: Ensures all skills properly integrated and discoverable
+  - **Positive**: Catches workflow violations automatically (no reliance on user intervention)
+  - **Neutral**: Adds one more safety hook (skill-creation-guard.cjs)
+  - **Maintenance**: Hook must check "recent skill-creator invocation" state
+- **Reflection Score**: Iteration 1 (bypassed workflow): 4.6/10 (Critical Fail), Iteration 2 (followed workflow): 9.8/10 (Excellent)
+- **Related Issues**: WORKFLOW-VIOLATION-001, ENFORCEMENT-001, DOC-002, DOC-003
+
+## [ADR-037] MCP Tool Access Control via Task Spawn Allowed_Tools
+
+- **Date**: 2026-01-27
+- **Status**: Proposed
+- **Context**: Developer agent was blocked from using Exa MCP tools (`mcp__Exa__*`) for research tasks. Investigation revealed this is by design - the Task tool's `allowed_tools` array is the enforcement point for tool permissions. Agent definition files declare tools, but the spawn `allowed_tools` determines what subagent can actually use. CLAUDE.md spawn examples never include `mcp__Exa__*` tools.
+- **Decision**: Implement least-privilege MCP tool access control:
+  1. **Separation of Concerns**: Research tasks route to dedicated agent(s) with Exa access
+  2. **Current Exa Access**: Only `evolution-orchestrator` and `scientific-research-expert` have explicit Exa tools in definitions
+  3. **Developer Agent**: Does NOT get Exa access (implementation focus, not research)
+  4. **Skills Prerequisites**: Skills requiring specific MCP tools (e.g., `research-synthesis`) document this in YAML frontmatter
+  5. **Spawn Template Update**: When spawning research-capable agents, include Exa tools in `allowed_tools`
+  6. **Option A (Recommended)**: Create dedicated `researcher` agent with Exa access for general research tasks
+  7. **Option B (Alternative)**: Update spawn templates to pass Exa when invoking `research-synthesis` skill
+- **Current Tool Distribution**:
+  | Agent | Has Exa? | Rationale |
+  |-------|----------|-----------|
+  | `developer` | No | Implementation focus, not research |
+  | `evolution-orchestrator` | Yes | EVOLVE workflow requires research |
+  | `scientific-research-expert` | Yes | Domain requires external sources |
+  | `researcher` (proposed) | Yes | Dedicated research agent |
+- **Consequences**:
+  - **Positive**: Least privilege enforced - agents only get tools they need
+  - **Positive**: Clear separation between research (external data) and implementation (internal code)
+  - **Positive**: Skill prerequisites documented in frontmatter for transparency
+  - **Negative**: Requires handoff between researcher and developer for research-then-implement flows
+  - **Negative**: Router logic slightly more complex (detect research intent)
+  - **Future**: Consider skill-based tool inheritance (if skill requires tool, spawn inherits it)
+- **Analysis Report**: `.claude/context/artifacts/reports/mcp-tool-permissions-analysis-2026-01-27.md`
+- **Related**: research-synthesis skill, evolution-orchestrator agent, Task tool spawn behavior

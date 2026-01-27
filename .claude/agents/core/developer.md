@@ -26,6 +26,7 @@ skills:
   - tdd
   - debugging
   - git-expert
+  - ripgrep
   - security-architect
   - context-compressor
   - github-mcp
@@ -33,6 +34,7 @@ skills:
   - code-analyzer
   - code-quality-expert
   - code-style-validator
+  - chrome-browser
   - commit-validator
 ---
 

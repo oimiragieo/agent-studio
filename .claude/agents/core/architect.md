@@ -28,6 +28,7 @@ skills:
   - database-architect
   - security-architect
   - swarm-coordination
+  - ripgrep
   - verification-before-completion
   - diagram-generator
   - project-analyzer

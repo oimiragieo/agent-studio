@@ -25,6 +25,7 @@ skills:
   - verification-before-completion
   - sentry-monitoring
   - recovery
+  - chrome-browser
   - logging-module-usage
 ---
 

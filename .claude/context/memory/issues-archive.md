@@ -9,72 +9,72 @@ Last archive date: 2026-01-27
 
 ## Archive Index
 
-| Issue ID | Title | Date Resolved | Original Severity |
-| --- | --- | --- | --- |
-| SEC-WIN-001 | Windows Reserved Device Name Protection Gap | 2026-01-27 | HIGH |
-| SEC-007 | Windows Path Regex Bypass in Filesystem Validators | 2026-01-27 | HIGH |
-| ROUTER-VIOLATION-001 | Router Bypassed Protocol Under User Pressure | 2026-01-27 | CRITICAL |
-| Test Infrastructure | Broken npm test command | 2026-01-26 | N/A |
-| External Integration | Phase 6 Rollback Assumes Uncommitted Changes | 2026-01-26 | HIGH |
-| External Integration | Security Review Missing Script Execution Checks | 2026-01-24 | HIGH |
-| External Integration | Version Comparison Logic Unspecified | 2026-01-26 | HIGH |
-| External Integration | Related Workflows Reference Non-Existent File | 2026-01-26 | MEDIUM |
-| SEC-001 | Bash Command Validator Fail-Open Vulnerability | 2026-01-25 | CRITICAL |
-| SEC-002 | Shell Validator Inner Command Bypass | 2026-01-25 | HIGH |
-| SEC-003 | Missing Network Command Validators | 2026-01-25 | HIGH |
-| SEC-004 | Security Review Guard Hook Implemented | 2026-01-25 | HIGH |
-| SEC-005 | Code Injection via new Function() in Workflow Engine | 2026-01-26 | CRITICAL |
-| SEC-006 | Missing Path Validation in Rollback Manager | 2026-01-26 | CRITICAL |
-| SEC-007 | State File Poisoning via Unvalidated JSON Parsing | 2026-01-26 | CRITICAL |
-| SEC-008 | Security Hooks Fail-Open on Errors | 2026-01-26 | HIGH |
-| SEC-009 | execSync Command Injection Risk | 2026-01-26 | HIGH |
-| BUG-001 | Nested .claude Folders Created by process.cwd() Default | 2026-01-26 | MEDIUM |
-| SEC-010 | Environment Variable Security Overrides | 2026-01-26 | HIGH (Mitigated) |
-| FIX-001 | File Placement Guard Default Mode | 2026-01-26 | MEDIUM |
-| FIX-002 | Test Parallelization Interference | 2026-01-26 | MEDIUM |
-| FIX-003 | Retroactive EVOLVE Compliance for Utility Files | 2026-01-26 | LOW |
-| SEC-AS-001 | Circuit Breaker State File Tampering | 2026-01-26 | HIGH |
-| SEC-AS-002 | Clock Manipulation Rate Limit Bypass | 2026-01-26 | MEDIUM |
-| SEC-AS-004 | Recursive Evolution Spawn Loop | 2026-01-26 | MEDIUM |
-| SEC-SF-001 | Evolution State JSON.parse Vulnerability | 2026-01-26 | HIGH |
-| SEC-IV-001 | Unsanitized Path in Spawn Prompt | 2026-01-26 | MEDIUM |
-| SEC-IV-002 | Sensitive Path Auto-Spawn | 2026-01-26 | MEDIUM |
-| SEC-AUDIT-001 | planner-first-guard.cjs Fail-Open | 2026-01-26 | CRITICAL |
-| SEC-AUDIT-002 | security-review-guard.cjs Fail-Open | 2026-01-26 | CRITICAL |
-| SEC-AUDIT-003 | router-write-guard.cjs Missing Error Handling | 2026-01-26 | HIGH |
-| SEC-AUDIT-004 | task-create-guard.cjs Fail-Open on No Input | 2026-01-26 | HIGH |
-| SEC-AUDIT-005 | loop-prevention.cjs TOCTOU Race Condition | 2026-01-26 | HIGH |
-| SEC-AUDIT-006 | safe-json.cjs Incomplete Deep Copy | 2026-01-26 | HIGH |
-| SEC-AUDIT-007 | security-review-guard.cjs Silent Fail | 2026-01-26 | MEDIUM |
-| SEC-AUDIT-008 | planner-first-guard.cjs Missing Audit Log for Off Mode | 2026-01-26 | MEDIUM |
-| SEC-AUDIT-009 | router-state.cjs Missing Audit Log for Override | 2026-01-26 | MEDIUM |
-| SEC-AUDIT-010 | file-placement-guard.cjs Unvalidated Command-Line JSON | 2026-01-26 | MEDIUM |
-| POINTER-002 | Workflow Skill References | 2026-01-27 | N/A (FALSE POSITIVE) |
-| CONFIG-002 | CLAUDE.md Agent Count Accuracy | 2026-01-27 | MEDIUM |
-| ARCH-001 | Missing ROUTER_KEYWORD_GUIDE.md File | 2026-01-26 | MEDIUM |
-| PERF-001 | Hook Consolidation - Routing Guards | 2026-01-27 | HIGH |
-| PERF-002 | Hook Consolidation - Evolution Guards | 2026-01-27 | MEDIUM |
-| HOOK-003 | research-enforcement.cjs Missing SEC-007 | 2026-01-26 | HIGH |
-| HOOK-005 | router-write-guard.cjs Exit Code | 2026-01-26 | LOW |
-| CRITICAL-001 | Path Traversal in memory-manager.cjs | 2026-01-26 | MEDIUM |
-| CRITICAL-003 | Silent Error Swallowing | 2026-01-27 | MEDIUM |
-| NEW-CRIT-001 | Unsafe JSON Parsing in anomaly-detector.cjs | 2026-01-27 | CRITICAL |
-| NEW-CRIT-002 | Unsafe JSON Parsing in auto-rerouter.cjs | 2026-01-27 | CRITICAL |
-| NEW-CRIT-003 | Inconsistent Exit Code in tdd-check.cjs | 2026-01-27 | HIGH |
-| NEW-HIGH-001 | Inconsistent Exit Code in enforce-claude-md-update.cjs | 2026-01-27 | HIGH |
-| NEW-HIGH-002 | Missing Safe JSON for Hook Input Parsing | 2026-01-26 | HIGH |
-| NEW-HIGH-003 | Missing Atomic Write in Self-Healing Hooks | 2026-01-26 | MEDIUM |
-| SEC-007 | Safe JSON Parsing | 2026-01-26 | HIGH |
-| SEC-008 | Fail-Closed Pattern | 2026-01-26 | HIGH |
-| SEC-009 | Command Injection Prevention | 2026-01-26 | HIGH |
-| PERF-NEW-002 | routing-guard.cjs Not Activated | 2026-01-26 | N/A |
-| DOC-001 | CLAUDE.md Section 1.3 Documents Deprecated Hook Architecture | 2026-01-27 | MEDIUM |
-| DOC-002 | Undocumented Workflows in CLAUDE.md Section 8.6 | 2026-01-27 | MEDIUM |
-| DOC-003 | Hooks Directory Structure Incomplete in Documentation | 2026-01-27 | LOW |
-| DOC-004 | lib/ Directory Structure Incomplete | 2026-01-27 | LOW |
-| ATOMIC-001 | Missing Atomic Writes in State-Modifying Hooks | 2026-01-27 | CRITICAL |
-| SEC-AUDIT-015 | Safe JSON Schema Incomplete | 2026-01-27 | HIGH |
-| ATOMIC-001d | reflection-queue-processor.cjs | 2026-01-27 | N/A |
+| Issue ID             | Title                                                        | Date Resolved | Original Severity    |
+| -------------------- | ------------------------------------------------------------ | ------------- | -------------------- |
+| SEC-WIN-001          | Windows Reserved Device Name Protection Gap                  | 2026-01-27    | HIGH                 |
+| SEC-007              | Windows Path Regex Bypass in Filesystem Validators           | 2026-01-27    | HIGH                 |
+| ROUTER-VIOLATION-001 | Router Bypassed Protocol Under User Pressure                 | 2026-01-27    | CRITICAL             |
+| Test Infrastructure  | Broken npm test command                                      | 2026-01-26    | N/A                  |
+| External Integration | Phase 6 Rollback Assumes Uncommitted Changes                 | 2026-01-26    | HIGH                 |
+| External Integration | Security Review Missing Script Execution Checks              | 2026-01-24    | HIGH                 |
+| External Integration | Version Comparison Logic Unspecified                         | 2026-01-26    | HIGH                 |
+| External Integration | Related Workflows Reference Non-Existent File                | 2026-01-26    | MEDIUM               |
+| SEC-001              | Bash Command Validator Fail-Open Vulnerability               | 2026-01-25    | CRITICAL             |
+| SEC-002              | Shell Validator Inner Command Bypass                         | 2026-01-25    | HIGH                 |
+| SEC-003              | Missing Network Command Validators                           | 2026-01-25    | HIGH                 |
+| SEC-004              | Security Review Guard Hook Implemented                       | 2026-01-25    | HIGH                 |
+| SEC-005              | Code Injection via new Function() in Workflow Engine         | 2026-01-26    | CRITICAL             |
+| SEC-006              | Missing Path Validation in Rollback Manager                  | 2026-01-26    | CRITICAL             |
+| SEC-007              | State File Poisoning via Unvalidated JSON Parsing            | 2026-01-26    | CRITICAL             |
+| SEC-008              | Security Hooks Fail-Open on Errors                           | 2026-01-26    | HIGH                 |
+| SEC-009              | execSync Command Injection Risk                              | 2026-01-26    | HIGH                 |
+| BUG-001              | Nested .claude Folders Created by process.cwd() Default      | 2026-01-26    | MEDIUM               |
+| SEC-010              | Environment Variable Security Overrides                      | 2026-01-26    | HIGH (Mitigated)     |
+| FIX-001              | File Placement Guard Default Mode                            | 2026-01-26    | MEDIUM               |
+| FIX-002              | Test Parallelization Interference                            | 2026-01-26    | MEDIUM               |
+| FIX-003              | Retroactive EVOLVE Compliance for Utility Files              | 2026-01-26    | LOW                  |
+| SEC-AS-001           | Circuit Breaker State File Tampering                         | 2026-01-26    | HIGH                 |
+| SEC-AS-002           | Clock Manipulation Rate Limit Bypass                         | 2026-01-26    | MEDIUM               |
+| SEC-AS-004           | Recursive Evolution Spawn Loop                               | 2026-01-26    | MEDIUM               |
+| SEC-SF-001           | Evolution State JSON.parse Vulnerability                     | 2026-01-26    | HIGH                 |
+| SEC-IV-001           | Unsanitized Path in Spawn Prompt                             | 2026-01-26    | MEDIUM               |
+| SEC-IV-002           | Sensitive Path Auto-Spawn                                    | 2026-01-26    | MEDIUM               |
+| SEC-AUDIT-001        | planner-first-guard.cjs Fail-Open                            | 2026-01-26    | CRITICAL             |
+| SEC-AUDIT-002        | security-review-guard.cjs Fail-Open                          | 2026-01-26    | CRITICAL             |
+| SEC-AUDIT-003        | router-write-guard.cjs Missing Error Handling                | 2026-01-26    | HIGH                 |
+| SEC-AUDIT-004        | task-create-guard.cjs Fail-Open on No Input                  | 2026-01-26    | HIGH                 |
+| SEC-AUDIT-005        | loop-prevention.cjs TOCTOU Race Condition                    | 2026-01-26    | HIGH                 |
+| SEC-AUDIT-006        | safe-json.cjs Incomplete Deep Copy                           | 2026-01-26    | HIGH                 |
+| SEC-AUDIT-007        | security-review-guard.cjs Silent Fail                        | 2026-01-26    | MEDIUM               |
+| SEC-AUDIT-008        | planner-first-guard.cjs Missing Audit Log for Off Mode       | 2026-01-26    | MEDIUM               |
+| SEC-AUDIT-009        | router-state.cjs Missing Audit Log for Override              | 2026-01-26    | MEDIUM               |
+| SEC-AUDIT-010        | file-placement-guard.cjs Unvalidated Command-Line JSON       | 2026-01-26    | MEDIUM               |
+| POINTER-002          | Workflow Skill References                                    | 2026-01-27    | N/A (FALSE POSITIVE) |
+| CONFIG-002           | CLAUDE.md Agent Count Accuracy                               | 2026-01-27    | MEDIUM               |
+| ARCH-001             | Missing ROUTER_KEYWORD_GUIDE.md File                         | 2026-01-26    | MEDIUM               |
+| PERF-001             | Hook Consolidation - Routing Guards                          | 2026-01-27    | HIGH                 |
+| PERF-002             | Hook Consolidation - Evolution Guards                        | 2026-01-27    | MEDIUM               |
+| HOOK-003             | research-enforcement.cjs Missing SEC-007                     | 2026-01-26    | HIGH                 |
+| HOOK-005             | router-write-guard.cjs Exit Code                             | 2026-01-26    | LOW                  |
+| CRITICAL-001         | Path Traversal in memory-manager.cjs                         | 2026-01-26    | MEDIUM               |
+| CRITICAL-003         | Silent Error Swallowing                                      | 2026-01-27    | MEDIUM               |
+| NEW-CRIT-001         | Unsafe JSON Parsing in anomaly-detector.cjs                  | 2026-01-27    | CRITICAL             |
+| NEW-CRIT-002         | Unsafe JSON Parsing in auto-rerouter.cjs                     | 2026-01-27    | CRITICAL             |
+| NEW-CRIT-003         | Inconsistent Exit Code in tdd-check.cjs                      | 2026-01-27    | HIGH                 |
+| NEW-HIGH-001         | Inconsistent Exit Code in enforce-claude-md-update.cjs       | 2026-01-27    | HIGH                 |
+| NEW-HIGH-002         | Missing Safe JSON for Hook Input Parsing                     | 2026-01-26    | HIGH                 |
+| NEW-HIGH-003         | Missing Atomic Write in Self-Healing Hooks                   | 2026-01-26    | MEDIUM               |
+| SEC-007              | Safe JSON Parsing                                            | 2026-01-26    | HIGH                 |
+| SEC-008              | Fail-Closed Pattern                                          | 2026-01-26    | HIGH                 |
+| SEC-009              | Command Injection Prevention                                 | 2026-01-26    | HIGH                 |
+| PERF-NEW-002         | routing-guard.cjs Not Activated                              | 2026-01-26    | N/A                  |
+| DOC-001              | CLAUDE.md Section 1.3 Documents Deprecated Hook Architecture | 2026-01-27    | MEDIUM               |
+| DOC-002              | Undocumented Workflows in CLAUDE.md Section 8.6              | 2026-01-27    | MEDIUM               |
+| DOC-003              | Hooks Directory Structure Incomplete in Documentation        | 2026-01-27    | LOW                  |
+| DOC-004              | lib/ Directory Structure Incomplete                          | 2026-01-27    | LOW                  |
+| ATOMIC-001           | Missing Atomic Writes in State-Modifying Hooks               | 2026-01-27    | CRITICAL             |
+| SEC-AUDIT-015        | Safe JSON Schema Incomplete                                  | 2026-01-27    | HIGH                 |
+| ATOMIC-001d          | reflection-queue-processor.cjs                               | 2026-01-27    | N/A                  |
 
 ---
 
@@ -1120,7 +1120,7 @@ Created `unified-evolution-guard.cjs` that consolidates 4 checks into 1:
 - **Description**: Hook input from Claude Code is parsed with raw JSON.parse() without validation
 - **Impact**: Malformed or malicious hook input could crash hooks or inject prototype pollution
 - **Lines Removed**: ~600+ lines of duplicated parseHookInput functions eliminated
-- **Security Improvement**: All hook input now goes through sanitizeObject() which filters __proto__, constructor, prototype keys
+- **Security Improvement**: All hook input now goes through sanitizeObject() which filters **proto**, constructor, prototype keys
 
 ### [NEW-HIGH-003] Missing Atomic Write in Self-Healing Hooks
 
@@ -1132,7 +1132,7 @@ Created `unified-evolution-guard.cjs` that consolidates 4 checks into 1:
 - **Files Modified**:
   - `.claude/hooks/self-healing/anomaly-detector.cjs` - saveState() now uses atomicWriteJSONSync
   - `.claude/hooks/self-healing/auto-rerouter.cjs` - saveState() now uses atomicWriteJSONSync
-  - `.claude/hooks/self-healing/loop-prevention.cjs` - _saveState() now uses atomicWriteJSONSync
+  - `.claude/hooks/self-healing/loop-prevention.cjs` - \_saveState() now uses atomicWriteJSONSync
 - **Verification**: All 103 tests pass (35+33+35)
 - **CWE**: CWE-362 (Concurrent Execution Using Shared Resource with Improper Synchronization)
 - **STRIDE**: Tampering

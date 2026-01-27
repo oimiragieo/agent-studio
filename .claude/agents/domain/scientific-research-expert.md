@@ -30,6 +30,7 @@ skills:
   - doc-generator
   - tdd
   - verification-before-completion
+  - arxiv-mcp
 context_files:
   - .claude/context/memory/learnings.md
   - .claude/context/memory/decisions.md

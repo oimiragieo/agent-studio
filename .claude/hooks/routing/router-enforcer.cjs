@@ -144,8 +144,11 @@ const ROUTING_TABLE = {
   mobiledesign: 'mobile-ux-reviewer',
   // Scientific
   scientific: 'scientific-research-expert',
-  research: 'scientific-research-expert',
   academic: 'scientific-research-expert',
+  // Research & fact-finding
+  investigate: 'researcher',
+  factcheck: 'researcher',
+  lookup: 'researcher',
   // AI/ML
   ai: 'ai-ml-specialist',
   ml: 'ai-ml-specialist',
@@ -1812,6 +1815,54 @@ const intentKeywords = {
     'anndata',
   ],
 
+  // === RESEARCHER INTENT (general research and fact-finding) ===
+  researcher: [
+    'investigate',
+    'find out',
+    'look up',
+    'fact-check',
+    'gather information',
+    'web search',
+    'external sources',
+    'best practices',
+    'industry standards',
+    'analyze options',
+    'compare',
+    'verify',
+    'validate',
+    'research before',
+    'pre-creation research',
+    'what are the best',
+    'how does X work',
+    'is this the standard',
+    'find information about',
+    'documentation gathering',
+    'competitive analysis',
+    // Browser automation research keywords
+    'browser test',
+    'web automation',
+    'scrape',
+    'extract from page',
+    'read page',
+    'fill form',
+    'data extraction',
+    'web scraping',
+    // Academic/arxiv research keywords
+    'arxiv',
+    'academic paper',
+    'academic papers',
+    'research paper',
+    'research papers',
+    'scientific paper',
+    'scientific papers',
+    'preprint',
+    'preprints',
+    'publication trends',
+    'citation',
+    'citations',
+    'bibtex',
+  ],
+
   // === WEB3/BLOCKCHAIN INTENT (routes to web3-blockchain-expert) ===
   web3: [
     'web3',
@@ -1955,6 +2006,7 @@ const INTENT_TO_AGENT = {
   devops_troubleshooter: 'devops-troubleshooter',
   incident_responder: 'incident-responder',
   reverse_engineer: 'reverse-engineer',
+  researcher: 'researcher',
   security_architect: 'security-architect',
 
   // Orchestrators

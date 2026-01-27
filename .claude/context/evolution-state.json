@@ -211,6 +211,50 @@
       },
       "outcome": "success",
       "notes": "Retroactive EVOLVE compliance for utility modules created during SEC-007/BUG-001 fixes. Includes project-root.cjs (BUG-001 fix for nested .claude folders), safe-json.cjs (SEC-007 JSON parsing security), and atomic-write.cjs (reliable file writes)."
+    },
+    {
+      "id": "hook-skill-creation-guard-2026-01-27",
+      "type": "hook",
+      "name": "skill-creation-guard",
+      "path": ".claude/hooks/routing/skill-creation-guard.cjs",
+      "completedAt": "2026-01-27T16:00:00.000Z",
+      "description": "PreToolUse hook that blocks direct SKILL.md writes without skill-creator workflow invocation. Implements Gate 4 of Router Self-Check Protocol.",
+      "registrations": [
+        "settings.json (Edit|Write|NotebookEdit matcher)",
+        "CLAUDE.md Section 1.2 (Gate 4)",
+        "CLAUDE.md Section 1.3 (enforcement hooks table)",
+        "CLAUDE.md Section 7 (Iron Law)",
+        "router-decision.md Step 4 (Question 5)"
+      ],
+      "phases": {
+        "evaluate": {
+          "completed": true,
+          "note": "P0 remediation from reflection analysis - Router bypassing skill-creator creating invisible skills"
+        },
+        "validate": {
+          "completed": true,
+          "note": "No conflicts with existing hooks"
+        },
+        "obtain": {
+          "completed": true,
+          "note": "Researched existing hook patterns (routing-guard.cjs, validate-skill-invocation.cjs)"
+        },
+        "lock": {
+          "completed": true,
+          "note": "Created skill-creation-guard.cjs with state tracking mechanism and test file"
+        },
+        "verify": {
+          "completed": true,
+          "note": "Tests written in skill-creation-guard.test.cjs"
+        },
+        "enable": {
+          "completed": true,
+          "note": "Registered in settings.json, documented in CLAUDE.md and router-decision.md"
+        }
+      },
+      "outcome": "success",
+      "relatedADR": "ADR-036",
+      "notes": "P0 remediation from ripgrep skill reflection analysis. Root cause: Router bypassed skill-creator by directly copying files, creating invisible skill (missing CLAUDE.md, catalog, agent assignments). Solution: Hook blocks direct SKILL.md writes, requires skill-creator invocation first. Uses state file at .claude/context/runtime/skill-creator-active.json for tracking."
     }
   ],
   "patterns": [
@@ -223,6 +267,11 @@
       "name": "Retroactive EVOLVE compliance",
       "description": "When artifacts are integrated without EVOLVE, create retroactive research reports and history entries to maintain audit trail",
       "source": "scientific-skills integration 2026-01-25"
+    },
+    {
+      "name": "Reflection-driven remediation",
+      "description": "When reflection analysis identifies workflow violations, create enforcement hooks to prevent recurrence. Pattern: (1) Identify root cause from reflection, (2) Create blocking hook with state tracking, (3) Update Self-Check Protocol with new gate, (4) Add Iron Law documentation",
+      "source": "skill-creation-guard P0 remediation 2026-01-27"
     }
   ],
   "suggestions": [
@@ -275,5 +324,5 @@
       "status": "pending"
     }
   ],
-  "lastUpdated": "2026-01-27T15:32:50.059Z"
+  "lastUpdated": "2026-01-27T16:05:00.000Z"
 }

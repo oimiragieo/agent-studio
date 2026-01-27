@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 
 /**
- * agent-creator - Pre-Execute Hook
- * Runs before the skill executes to validate input and mark agent-creator as active.
+ * template-creator - Pre-Execute Hook
+ * Runs before the skill executes to validate input and mark template-creator as active.
  *
  * CRITICAL: This hook creates the state file that unified-creator-guard.cjs checks.
- * Without this, the guard has no way to know agent-creator was invoked.
+ * Without this, the guard has no way to know template-creator was invoked.
  *
  * State file: .claude/context/runtime/active-creators.json
- * Format: { "agent-creator": { "active": true, "invokedAt": "ISO string", "ttl": 600000 } }
+ * Format: { "template-creator": { "active": true, "invokedAt": "ISO string", "ttl": 600000 } }
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const CREATOR_NAME = 'agent-creator';
+const CREATOR_NAME = 'template-creator';
 
 // Parse hook input
 const input = JSON.parse(process.argv[2] || '{}');
@@ -43,8 +43,8 @@ const PROJECT_ROOT = findProjectRoot();
 const STATE_FILE = path.join(PROJECT_ROOT, '.claude/context/runtime/active-creators.json');
 
 /**
- * Mark agent-creator as active by updating unified state file.
- * This allows unified-creator-guard.cjs to know that agent writes are legitimate.
+ * Mark template-creator as active by updating unified state file.
+ * This allows unified-creator-guard.cjs to know that template writes are legitimate.
  */
 function markCreatorActive() {
   try {
@@ -89,19 +89,17 @@ function markCreatorActive() {
 function validateInput(input) {
   const errors = [];
 
-  // Basic validation - agent-creator can work with minimal input
-  // The actual agent name is typically determined during the workflow
+  // Basic validation - template-creator can work with minimal input
+  // The actual template name is typically determined during the workflow
 
   return errors;
 }
 
-// Mark agent-creator as active FIRST (critical for unified-creator-guard)
+// Mark template-creator as active FIRST (critical for unified-creator-guard)
 const stateCreated = markCreatorActive();
 
 if (!stateCreated) {
-  console.warn(
-    `[${CREATOR_NAME.toUpperCase()}] Warning: Could not create state file. unified-creator-guard may block agent writes.`
-  );
+  console.warn(`[${CREATOR_NAME.toUpperCase()}] Warning: Could not create state file. unified-creator-guard may block template writes.`);
 }
 
 // Run validation
@@ -113,7 +111,5 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log(
-  `[${CREATOR_NAME.toUpperCase()}] Pre-execute complete. Agent-creator workflow is now active.`
-);
+console.log(`[${CREATOR_NAME.toUpperCase()}] Pre-execute complete. Template-creator workflow is now active.`);
 process.exit(0);
