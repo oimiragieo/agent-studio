@@ -1,0 +1,818 @@
+#!/usr/bin/env node
+/**
+ * Unified UserPromptSubmit Hook
+ *
+ * Consolidates 5 UserPromptSubmit hooks into a single file for reduced I/O and process spawning:
+ * 1. router-mode-reset.cjs - Resets router state on new prompts
+ * 2. router-enforcer.cjs - Analyzes prompts for routing recommendations
+ * 3. memory-reminder.cjs - Reminds agents to read memory files
+ * 4. evolution-trigger-detector.cjs - Detects evolution trigger patterns
+ * 5. memory-health-check.cjs - Checks memory system health
+ *
+ * Performance: Reduces 5 processes to 1, shares state reads across checks.
+ *
+ * Exit codes:
+ * - 0: Always (all checks are advisory, never block)
+ */
+
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+
+// Import shared utilities
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const { parseHookInputSync } = require('../../lib/utils/hook-input.cjs');
+const { getCachedState, invalidateCache } = require('../../lib/utils/state-cache.cjs');
+const { atomicWriteJSONSync } = require('../../lib/utils/atomic-write.cjs');
+
+// Import router state module
+const routerState = require('./router-state.cjs');
+
+// =============================================================================
+// Constants
+// =============================================================================
+
+const AGENTS_DIR = path.join(PROJECT_ROOT, '.claude', 'agents');
+const MEMORY_DIR = path.join(PROJECT_ROOT, '.claude', 'context', 'memory');
+const EVOLUTION_STATE_PATH = path.join(PROJECT_ROOT, '.claude', 'context', 'evolution-state.json');
+
+// Agent cache (shared across calls within same process)
+let agentCache = null;
+let agentCacheTime = 0;
+const AGENT_CACHE_TTL = 300000; // 5 minutes
+
+// =============================================================================
+// Check 1: Router Mode Reset (from router-mode-reset.cjs)
+// =============================================================================
+
+/**
+ * Reset router state on new user prompt.
+ * Skips for slash commands and active agent contexts.
+ *
+ * @param {Object} hookInput - Parsed hook input
+ * @returns {Object} Result with skipped, reason, stateReset
+ */
+function checkRouterModeReset(hookInput) {
+  const result = { skipped: false, reason: null, stateReset: false };
+
+  // Get prompt
+  const userPrompt = hookInput?.prompt || hookInput?.message || '';
+
+  // Skip for slash commands
+  if (userPrompt && userPrompt.trim().startsWith('/')) {
+    result.skipped = true;
+    result.reason = 'slash_command';
+    return result;
+  }
+
+  // Check if in active agent context (recent task spawn)
+  const currentState = routerState.getState();
+  if (currentState.mode === 'agent' && currentState.taskSpawned) {
+    const taskSpawnedAt = currentState.taskSpawnedAt ? new Date(currentState.taskSpawnedAt).getTime() : 0;
+    const isRecentTask = Date.now() - taskSpawnedAt < 30 * 60 * 1000; // 30 minutes
+    if (isRecentTask) {
+      result.skipped = true;
+      result.reason = 'active_agent_context';
+      if (process.env.ROUTER_DEBUG === 'true') {
+        console.log('[user-prompt-unified:reset] Skipping reset - active agent context');
+      }
+      return result;
+    }
+  }
+
+  // Reset to router mode
+  routerState.resetToRouterMode();
+  result.stateReset = true;
+
+  if (process.env.ROUTER_DEBUG === 'true') {
+    console.log('[user-prompt-unified:reset] State reset to router mode');
+  }
+
+  return result;
+}
+
+// =============================================================================
+// Check 2: Router Enforcer (from router-enforcer.cjs)
+// =============================================================================
+
+/**
+ * ROUTING_TABLE - Maps intent keywords to agent names
+ * (Subset for common cases - full table in original hook)
+ */
+const ROUTING_TABLE = {
+  bug: 'developer',
+  coding: 'developer',
+  feature: 'developer',
+  test: 'qa',
+  testing: 'qa',
+  documentation: 'technical-writer',
+  docs: 'technical-writer',
+  security: 'security-architect',
+  architecture: 'architect',
+  design: 'architect',
+  plan: 'planner',
+  planning: 'planner',
+  devops: 'devops',
+  infrastructure: 'devops',
+  review: 'code-reviewer',
+  pr: 'code-reviewer',
+  python: 'python-pro',
+  typescript: 'typescript-pro',
+  rust: 'rust-pro',
+  go: 'golang-pro',
+};
+
+/**
+ * Keywords for complexity detection
+ */
+const COMPLEXITY_KEYWORDS = {
+  trivial: ['hello', 'hi', 'thanks', 'thank you', 'bye', 'goodbye', 'what is', 'how are you'],
+  low: ['typo', 'rename', 'fix typo', 'small fix', 'minor fix', 'quick fix'],
+  high: [
+    'auth',
+    'authentication',
+    'authorization',
+    'security',
+    'encryption',
+    'password',
+    'token',
+    'jwt',
+    'oauth',
+    'payment',
+    'integrate',
+    'integration',
+    'migrate',
+    'migration',
+    'architecture',
+    'refactor',
+  ],
+  epic: ['rewrite', 'rebuild', 'new system', 'platform', 'framework', 'all hooks', 'all agents', 'system-wide'],
+};
+
+/**
+ * Parse YAML frontmatter from agent file
+ */
+function parseFrontmatter(content) {
+  if (!content || content.length > 50000) return null;
+
+  const match = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!match) return null;
+
+  const yaml = match[1];
+  const result = {};
+  const lines = yaml.split('\n');
+  let currentKey = null;
+  let inArray = false;
+
+  for (const line of lines) {
+    if (line.match(/^[a-z_]+:/i)) {
+      const colonIndex = line.indexOf(':');
+      currentKey = line.slice(0, colonIndex).trim();
+      const value = line.slice(colonIndex + 1).trim();
+
+      if (value === '') {
+        result[currentKey] = [];
+        inArray = true;
+      } else if (value.startsWith('[')) {
+        result[currentKey] = value
+          .slice(1, -1)
+          .split(',')
+          .map((s) => s.trim());
+        inArray = false;
+      } else {
+        result[currentKey] = value;
+        inArray = false;
+      }
+    } else if (inArray && line.match(/^\s+-\s/)) {
+      result[currentKey].push(line.replace(/^\s+-\s/, '').trim());
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Load agents from disk (with caching)
+ */
+function loadAgents() {
+  const now = Date.now();
+  if (agentCache && now - agentCacheTime < AGENT_CACHE_TTL) {
+    return agentCache;
+  }
+
+  const agents = [];
+
+  function scanDir(dir) {
+    if (!fs.existsSync(dir)) return;
+
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanDir(fullPath);
+      } else if (entry.name.endsWith('.md')) {
+        try {
+          const content = fs.readFileSync(fullPath, 'utf-8');
+          const frontmatter = parseFrontmatter(content);
+          if (frontmatter && frontmatter.name) {
+            agents.push({
+              name: frontmatter.name,
+              description: frontmatter.description || '',
+              skills: frontmatter.skills || [],
+              priority: frontmatter.priority || 'medium',
+              path: path.relative(PROJECT_ROOT, fullPath),
+            });
+          }
+        } catch (e) {
+          // Skip invalid files
+        }
+      }
+    }
+  }
+
+  scanDir(AGENTS_DIR);
+
+  agentCache = agents;
+  agentCacheTime = now;
+  return agents;
+}
+
+/**
+ * Detect complexity level and planning requirements
+ */
+function detectPlanningRequirement(prompt) {
+  const promptLower = prompt.toLowerCase();
+
+  let complexity = 'trivial';
+  let requiresArchitectReview = false;
+  let requiresSecurityReview = false;
+
+  // Check for epic
+  const epicMatches = COMPLEXITY_KEYWORDS.epic.filter((k) => promptLower.includes(k)).length;
+  if (epicMatches >= 1) {
+    complexity = 'epic';
+    requiresArchitectReview = true;
+  }
+  // Check for high
+  else {
+    const highMatches = COMPLEXITY_KEYWORDS.high.filter((k) => promptLower.includes(k)).length;
+    if (highMatches >= 2) {
+      complexity = 'high';
+      requiresArchitectReview = true;
+    } else if (highMatches >= 1) {
+      complexity = 'medium';
+    }
+  }
+
+  // Security check
+  const securityKeywords = ['auth', 'authentication', 'authorization', 'password', 'token', 'jwt', 'oauth', 'security', 'encrypt', 'credential', 'secret', 'payment'];
+  const securityMatches = securityKeywords.filter((k) => promptLower.includes(k)).length;
+  if (securityMatches >= 1) {
+    requiresSecurityReview = true;
+  }
+
+  // Check for low/trivial override
+  const trivialMatches = COMPLEXITY_KEYWORDS.trivial.filter((k) => promptLower.includes(k)).length;
+  const lowMatches = COMPLEXITY_KEYWORDS.low.filter((k) => promptLower.includes(k)).length;
+  if (trivialMatches > 0 && complexity === 'trivial') {
+    complexity = 'trivial';
+  } else if (lowMatches > 0 && complexity === 'trivial') {
+    complexity = 'low';
+  }
+
+  // Save complexity to router state
+  routerState.setComplexity(complexity);
+  if (requiresSecurityReview) {
+    routerState.setSecurityRequired(true);
+  }
+
+  return {
+    complexity,
+    requiresArchitectReview,
+    requiresSecurityReview,
+    multiAgentRequired: requiresArchitectReview || requiresSecurityReview,
+  };
+}
+
+/**
+ * Score agents against the user prompt
+ */
+function scoreAgents(prompt, agents) {
+  const promptLower = prompt.toLowerCase();
+  const scores = [];
+
+  // Detect intent from routing table
+  let detectedIntent = 'general';
+  for (const [keyword, agent] of Object.entries(ROUTING_TABLE)) {
+    if (promptLower.includes(keyword)) {
+      detectedIntent = keyword;
+      break;
+    }
+  }
+
+  // Score each agent
+  for (const agent of agents) {
+    let score = 0;
+    const agentDesc = (agent.description + ' ' + agent.name).toLowerCase();
+    const agentName = agent.name.toLowerCase();
+
+    // Match by description keywords
+    const promptWords = promptLower.split(/\s+/);
+    for (const word of promptWords) {
+      if (word.length > 3 && agentDesc.includes(word)) {
+        score += 1;
+      }
+    }
+
+    // Direct routing table match
+    const preferredAgent = ROUTING_TABLE[detectedIntent];
+    if (preferredAgent && agent.name === preferredAgent) {
+      score += 5;
+    }
+
+    // Priority boost
+    if (agent.priority === 'high') score += 1;
+
+    scores.push({ agent, score, intent: detectedIntent });
+  }
+
+  scores.sort((a, b) => b.score - a.score);
+  return { candidates: scores.slice(0, 3), intent: detectedIntent };
+}
+
+/**
+ * Analyze prompt for routing recommendations.
+ * Advisory only - never blocks.
+ *
+ * @param {Object} hookInput - Parsed hook input
+ * @returns {Object} Result with skipped, candidates, planningReq
+ */
+function checkRouterEnforcement(hookInput) {
+  const result = { skipped: false, candidates: [], planningReq: null, intent: 'general' };
+
+  const userPrompt = hookInput?.prompt || hookInput?.message || '';
+
+  // Skip for very short prompts
+  if (!userPrompt || userPrompt.length < 10) {
+    result.skipped = true;
+    result.reason = 'too_short';
+    return result;
+  }
+
+  // Skip for slash commands
+  if (userPrompt.trim().startsWith('/')) {
+    result.skipped = true;
+    result.reason = 'slash_command';
+    return result;
+  }
+
+  // Load agents and score
+  const agents = loadAgents();
+  if (agents.length === 0) {
+    result.skipped = true;
+    result.reason = 'no_agents';
+    return result;
+  }
+
+  const { candidates, intent } = scoreAgents(userPrompt, agents);
+  const planningReq = detectPlanningRequirement(userPrompt);
+
+  result.candidates = candidates;
+  result.planningReq = planningReq;
+  result.intent = intent;
+
+  // Output routing info if clear recommendation
+  if (candidates.length > 0 && candidates[0].score > 2) {
+    console.log('\n+--------------------------------------------------+');
+    console.log('| ROUTER ANALYSIS                                  |');
+    console.log('+--------------------------------------------------+');
+    console.log(`| Intent: ${intent.padEnd(39)} |`);
+    console.log(`| Complexity: ${planningReq.complexity.padEnd(36)} |`);
+    console.log('| Recommended agents:                              |');
+    for (let i = 0; i < Math.min(3, candidates.length); i++) {
+      const c = candidates[i];
+      if (c.score > 0) {
+        const line = `|  ${i + 1}. ${c.agent.name} (score: ${c.score})`.padEnd(50) + '|';
+        console.log(line);
+      }
+    }
+
+    if (planningReq.multiAgentRequired) {
+      console.log('+--------------------------------------------------+');
+      console.log('| MULTI-AGENT PLANNING REQUIRED                    |');
+      if (planningReq.requiresArchitectReview) {
+        console.log('|  -> Architect review: REQUIRED                   |');
+      }
+      if (planningReq.requiresSecurityReview) {
+        console.log('|  -> Security review: REQUIRED                    |');
+      }
+    }
+
+    console.log('|                                                  |');
+    console.log('| Use Task tool to spawn: ' + candidates[0].agent.name.padEnd(24) + '|');
+    console.log('+--------------------------------------------------+\n');
+  }
+
+  return result;
+}
+
+// =============================================================================
+// Check 3: Memory Reminder (from memory-reminder.cjs)
+// =============================================================================
+
+/**
+ * Check memory files and remind if content exists.
+ *
+ * @param {Object} hookInput - Parsed hook input
+ * @param {string} projectRoot - Project root path
+ * @returns {Object} Result with show, files
+ */
+function checkMemoryReminder(hookInput, projectRoot = PROJECT_ROOT) {
+  const result = { show: false, files: [] };
+
+  const memoryDir = path.join(projectRoot, '.claude', 'context', 'memory');
+
+  if (!fs.existsSync(memoryDir)) {
+    return result;
+  }
+
+  const expectedFiles = [
+    { name: 'learnings.md', description: 'Patterns, solutions, preferences' },
+    { name: 'decisions.md', description: 'Architecture Decision Records' },
+    { name: 'issues.md', description: 'Known issues, blockers' },
+    { name: 'active_context.md', description: 'Long task scratchpad' },
+  ];
+
+  for (const file of expectedFiles) {
+    const filePath = path.join(memoryDir, file.name);
+    try {
+      const stats = fs.statSync(filePath);
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const lineCount = content.split('\n').length;
+      const lastModified = stats.mtime.toISOString().split('T')[0];
+
+      result.files.push({
+        ...file,
+        exists: true,
+        lines: lineCount,
+        modified: lastModified,
+      });
+    } catch (error) {
+      result.files.push({
+        ...file,
+        exists: false,
+      });
+    }
+  }
+
+  // Check if there's meaningful content
+  const hasContent = result.files.some((f) => f.exists && f.lines > 5);
+  if (!hasContent) {
+    return result;
+  }
+
+  result.show = true;
+
+  // Output reminder
+  console.log('\n+--------------------------------------------------+');
+  console.log('| MEMORY PROTOCOL REMINDER                         |');
+  console.log('+--------------------------------------------------+');
+  console.log('| Read memory files BEFORE starting work:          |');
+  console.log('|                                                  |');
+
+  for (const file of result.files) {
+    if (file.exists && file.lines > 5) {
+      const status = `${file.lines} lines, ${file.modified}`;
+      console.log(`|  - ${file.name.padEnd(20)} (${status.padEnd(20)})|`);
+    }
+  }
+
+  console.log('|                                                  |');
+  console.log('| Path: .claude/context/memory/                    |');
+  console.log('|                                                  |');
+  console.log('| "If it is not in memory, it did not happen."    |');
+  console.log('+--------------------------------------------------+\n');
+
+  return result;
+}
+
+// =============================================================================
+// Check 4: Evolution Trigger Detection (from evolution-trigger-detector.cjs)
+// =============================================================================
+
+/**
+ * Evolution trigger patterns
+ */
+const EVOLUTION_TRIGGERS = [
+  { pattern: /create\s+(a\s+)?new\s+(agent|skill|workflow|hook)/i, type: 'explicit_creation', priority: 'high' },
+  { pattern: /need\s+(a|an)\s+\w+\s+(agent|skill)/i, type: 'capability_need', priority: 'high' },
+  { pattern: /no\s+(matching|suitable|existing)\s+(agent|skill)/i, type: 'gap_detection', priority: 'high' },
+  { pattern: /can('t|not)\s+find\s+(an?\s+)?(agent|skill)\s+for/i, type: 'gap_detection', priority: 'medium' },
+  { pattern: /missing\s+(agent|skill|capability)/i, type: 'gap_detection', priority: 'medium' },
+  { pattern: /add\s+(support|capability)\s+for/i, type: 'capability_request', priority: 'medium' },
+  { pattern: /evolve\s+(the\s+)?(system|framework|ecosystem)/i, type: 'explicit_evolution', priority: 'high' },
+  { pattern: /self[- ]evolv(e|ing)/i, type: 'explicit_evolution', priority: 'high' },
+  { pattern: /extend\s+(the\s+)?(agent|skill)\s+(system|ecosystem)/i, type: 'extension_request', priority: 'medium' },
+];
+
+/**
+ * Extract context around a match
+ */
+function extractContext(text, index, radius) {
+  const start = Math.max(0, index - radius);
+  const end = Math.min(text.length, index + radius);
+  let context = text.substring(start, end);
+
+  if (start > 0) context = '...' + context;
+  if (end < text.length) context = context + '...';
+
+  return context.replace(/\n/g, ' ').trim();
+}
+
+/**
+ * Detect evolution triggers in text
+ */
+function detectTriggers(text) {
+  if (!text || typeof text !== 'string') {
+    return [];
+  }
+
+  const triggers = [];
+
+  EVOLUTION_TRIGGERS.forEach(({ pattern, type, priority }) => {
+    const match = text.match(pattern);
+    if (match) {
+      triggers.push({
+        pattern: pattern.source,
+        type,
+        priority,
+        match: match[0],
+        context: extractContext(text, match.index, 100),
+      });
+    }
+  });
+
+  return triggers;
+}
+
+/**
+ * Get evolution state with caching
+ */
+function getEvolutionState() {
+  const defaultState = {
+    version: '1.0.0',
+    state: 'idle',
+    currentEvolution: null,
+    evolutions: [],
+    patterns: [],
+    suggestions: [],
+    lastUpdated: new Date().toISOString(),
+  };
+
+  return getCachedState(EVOLUTION_STATE_PATH, defaultState);
+}
+
+/**
+ * Save evolution state with cache invalidation
+ */
+function saveEvolutionState(state) {
+  try {
+    const dir = path.dirname(EVOLUTION_STATE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    atomicWriteJSONSync(EVOLUTION_STATE_PATH, state);
+    invalidateCache(EVOLUTION_STATE_PATH);
+  } catch (e) {
+    if (process.env.DEBUG_HOOKS) {
+      console.error('Failed to save evolution state:', e.message);
+    }
+  }
+}
+
+/**
+ * Check for evolution triggers in prompt.
+ * Advisory only - writes suggestions to state.
+ *
+ * @param {Object} hookInput - Parsed hook input
+ * @returns {Object} Result with enabled, triggers
+ */
+function checkEvolutionTrigger(hookInput) {
+  const result = { enabled: true, triggers: [], suggestionAdded: false };
+
+  // Check if detection is enabled
+  const mode = process.env.EVOLUTION_TRIGGER_DETECTION || 'on';
+  if (mode === 'off') {
+    result.enabled = false;
+    return result;
+  }
+
+  const userPrompt = hookInput?.prompt || hookInput?.message || '';
+  if (!userPrompt) {
+    return result;
+  }
+
+  // Detect triggers
+  const triggers = detectTriggers(userPrompt);
+  result.triggers = triggers;
+
+  if (triggers.length === 0) {
+    return result;
+  }
+
+  // Get current state and add suggestion
+  const state = getEvolutionState();
+
+  // Don't add if evolution in progress
+  if (state.state !== 'idle') {
+    return result;
+  }
+
+  // Create suggestion
+  const suggestion = {
+    id: `sug-${Date.now()}`,
+    detectedAt: new Date().toISOString(),
+    triggers: triggers.map((t) => ({
+      type: t.type,
+      priority: t.priority,
+      match: t.match,
+    })),
+    status: 'pending',
+  };
+
+  // Avoid duplicates
+  const recentSuggestions = state.suggestions.filter((s) => {
+    const age = Date.now() - new Date(s.detectedAt).getTime();
+    return age < 5 * 60 * 1000;
+  });
+
+  const isDuplicate = recentSuggestions.some((s) => {
+    const existingTypes = new Set(s.triggers.map((t) => t.type));
+    const newTypes = new Set(triggers.map((t) => t.type));
+    return [...newTypes].every((t) => existingTypes.has(t));
+  });
+
+  if (!isDuplicate) {
+    state.suggestions = [...recentSuggestions, suggestion].slice(-10);
+    state.lastUpdated = new Date().toISOString();
+    saveEvolutionState(state);
+    result.suggestionAdded = true;
+
+    if (process.env.DEBUG_HOOKS) {
+      console.log('[user-prompt-unified:evolution] Evolution trigger detected:', triggers[0].match);
+    }
+  }
+
+  return result;
+}
+
+// =============================================================================
+// Check 5: Memory Health Check (from memory-health-check.cjs)
+// =============================================================================
+
+/**
+ * Check memory system health.
+ * Auto-archives and prunes if over thresholds.
+ *
+ * @param {Object} hookInput - Parsed hook input
+ * @param {string} projectRoot - Project root path
+ * @returns {Object} Result with status, warnings, metrics
+ */
+function checkMemoryHealth(hookInput, projectRoot = PROJECT_ROOT) {
+  const result = {
+    status: 'unavailable',
+    warnings: [],
+    metrics: {},
+    autoActions: [],
+  };
+
+  // Try to load memory manager
+  const memoryManagerPath = path.join(projectRoot, '.claude', 'lib', 'memory', 'memory-manager.cjs');
+  if (!fs.existsSync(memoryManagerPath)) {
+    return result;
+  }
+
+  try {
+    const { getMemoryHealth, checkAndArchiveLearnings, pruneCodebaseMap, CONFIG } = require(memoryManagerPath);
+
+    // Get health status
+    const health = getMemoryHealth(projectRoot);
+    result.status = health.status;
+    result.warnings = [...health.warnings];
+    result.metrics = {
+      learningsSizeKB: health.learningsSizeKB,
+      codebaseMapEntries: health.codebaseMapEntries,
+      sessionsCount: health.sessionsCount,
+    };
+
+    // Auto-remediation
+    if (health.learningsSizeKB > CONFIG.LEARNINGS_ARCHIVE_THRESHOLD_KB) {
+      const archiveResult = checkAndArchiveLearnings(projectRoot);
+      if (archiveResult.archived) {
+        result.autoActions.push(`Archived ${Math.round(archiveResult.archivedBytes / 1024)}KB of learnings.md`);
+      }
+    }
+
+    if (health.codebaseMapEntries > CONFIG.CODEBASE_MAP_MAX_ENTRIES) {
+      const pruneResult = pruneCodebaseMap(projectRoot);
+      if (pruneResult.totalPruned > 0) {
+        result.autoActions.push(`Pruned ${pruneResult.totalPruned} stale codebase_map entries`);
+      }
+    }
+
+    // Output if warnings or actions
+    if (result.warnings.length > 0 || result.autoActions.length > 0) {
+      console.log('[MEMORY HEALTH CHECK]');
+      if (result.warnings.length > 0) {
+        console.log('Warnings:');
+        for (const warning of result.warnings) {
+          console.log(`  - ${warning}`);
+        }
+      }
+      if (result.autoActions.length > 0) {
+        console.log('Auto-actions taken:');
+        for (const action of result.autoActions) {
+          console.log(`  - ${action}`);
+        }
+      }
+      console.log('');
+    }
+  } catch (e) {
+    if (process.env.DEBUG_HOOKS) {
+      console.error('[user-prompt-unified:health] Error:', e.message);
+    }
+  }
+
+  return result;
+}
+
+// =============================================================================
+// Combined Runner
+// =============================================================================
+
+/**
+ * Run all checks in order.
+ * All checks are advisory - never blocks.
+ *
+ * @param {Object} hookInput - Parsed hook input
+ * @param {string} projectRoot - Project root path
+ * @returns {Object} Combined results from all checks
+ */
+function runAllChecks(hookInput, projectRoot = PROJECT_ROOT) {
+  const input = hookInput || {};
+
+  const result = {
+    routerModeReset: checkRouterModeReset(input),
+    routerEnforcement: checkRouterEnforcement(input),
+    memoryReminder: checkMemoryReminder(input, projectRoot),
+    evolutionTrigger: checkEvolutionTrigger(input),
+    memoryHealth: checkMemoryHealth(input, projectRoot),
+    exitCode: 0, // Always allow (advisory)
+  };
+
+  return result;
+}
+
+// =============================================================================
+// Main Execution
+// =============================================================================
+
+function main() {
+  const hookInput = parseHookInputSync();
+  runAllChecks(hookInput, PROJECT_ROOT);
+  process.exit(0);
+}
+
+if (require.main === module) {
+  main();
+}
+
+// =============================================================================
+// Exports for testing
+// =============================================================================
+
+module.exports = {
+  // Individual check functions
+  checkRouterModeReset,
+  checkRouterEnforcement,
+  checkMemoryReminder,
+  checkEvolutionTrigger,
+  checkMemoryHealth,
+
+  // Combined runner
+  runAllChecks,
+
+  // Helper exports for testing
+  parseHookInput: parseHookInputSync,
+  detectTriggers,
+  detectPlanningRequirement,
+  scoreAgents,
+  loadAgents,
+
+  // Constants for testing
+  ROUTING_TABLE,
+  COMPLEXITY_KEYWORDS,
+  EVOLUTION_TRIGGERS,
+  PROJECT_ROOT,
+};

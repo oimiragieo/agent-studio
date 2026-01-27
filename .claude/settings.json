@@ -10,23 +10,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/routing/router-mode-reset.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/routing/router-enforcer.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/session/memory-reminder.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/evolution/evolution-trigger-detector.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/memory/memory-health-check.cjs"
+            "command": "node .claude/hooks/routing/user-prompt-unified.cjs"
           }
         ]
       }
@@ -102,19 +86,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/routing/agent-context-pre-tracker.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/routing/routing-guard.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/routing/documentation-routing-guard.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/self-healing/loop-prevention.cjs"
+            "command": "node .claude/hooks/routing/pre-task-unified.cjs"
           }
         ]
       }
@@ -161,23 +133,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/routing/agent-context-tracker.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/memory/extract-workflow-learnings.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/memory/session-memory-extractor.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/routing/task-completion-guard.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/evolution/evolution-audit.cjs"
+            "command": "node .claude/hooks/routing/post-task-unified.cjs"
           }
         ]
       },
