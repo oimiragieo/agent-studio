@@ -1372,3 +1372,158 @@ describe('SEC-PT-001: Path traversal validation', () => {
     assert.strictEqual(result.safe, false, 'Symlink-like paths escaping root should be rejected');
   });
 });
+
+// ============================================================================
+// SEC-WIN-001: Windows Reserved Device Name Validation Tests
+// ============================================================================
+
+describe('SEC-WIN-001: Windows reserved device name validation', () => {
+  beforeEach(() => {
+    delete require.cache[require.resolve('./file-placement-guard.cjs')];
+    guardModule = require('./file-placement-guard.cjs');
+  });
+
+  it('should have isWindowsReservedName function', () => {
+    assert.ok(
+      typeof guardModule.isWindowsReservedName === 'function',
+      'isWindowsReservedName function should be exported'
+    );
+  });
+
+  it('should have WINDOWS_RESERVED_NAMES constant', () => {
+    assert.ok(
+      Array.isArray(guardModule.WINDOWS_RESERVED_NAMES),
+      'WINDOWS_RESERVED_NAMES should be exported as an array'
+    );
+    assert.ok(guardModule.WINDOWS_RESERVED_NAMES.includes('NUL'), 'Should include NUL');
+    assert.ok(guardModule.WINDOWS_RESERVED_NAMES.includes('CON'), 'Should include CON');
+  });
+
+  // Basic reserved names
+  it('should detect NUL as reserved name', () => {
+    const result = guardModule.isWindowsReservedName('/project/nul');
+    assert.strictEqual(result.reserved, true, 'Should detect NUL');
+    assert.strictEqual(result.name, 'NUL', 'Should return uppercase name');
+  });
+
+  it('should detect CON as reserved name', () => {
+    const result = guardModule.isWindowsReservedName('/project/con');
+    assert.strictEqual(result.reserved, true, 'Should detect CON');
+  });
+
+  it('should detect PRN as reserved name', () => {
+    const result = guardModule.isWindowsReservedName('/project/prn');
+    assert.strictEqual(result.reserved, true, 'Should detect PRN');
+  });
+
+  it('should detect AUX as reserved name', () => {
+    const result = guardModule.isWindowsReservedName('/project/aux');
+    assert.strictEqual(result.reserved, true, 'Should detect AUX');
+  });
+
+  // Serial ports
+  it('should detect COM1 through COM9 as reserved names', () => {
+    for (let i = 1; i <= 9; i++) {
+      const result = guardModule.isWindowsReservedName(`/project/com${i}`);
+      assert.strictEqual(result.reserved, true, `Should detect COM${i}`);
+    }
+  });
+
+  // Parallel ports
+  it('should detect LPT1 through LPT9 as reserved names', () => {
+    for (let i = 1; i <= 9; i++) {
+      const result = guardModule.isWindowsReservedName(`/project/lpt${i}`);
+      assert.strictEqual(result.reserved, true, `Should detect LPT${i}`);
+    }
+  });
+
+  // Case insensitivity
+  it('should be case-insensitive for reserved names', () => {
+    const cases = ['NUL', 'nul', 'Nul', 'nUl', 'NuL'];
+    for (const name of cases) {
+      const result = guardModule.isWindowsReservedName(`/project/${name}`);
+      assert.strictEqual(result.reserved, true, `Should detect ${name}`);
+    }
+  });
+
+  // With extensions
+  it('should detect reserved names with extensions (nul.txt)', () => {
+    const result = guardModule.isWindowsReservedName('/project/nul.txt');
+    assert.strictEqual(result.reserved, true, 'Should detect NUL.txt');
+  });
+
+  it('should detect reserved names with multiple extensions (con.test.md)', () => {
+    const result = guardModule.isWindowsReservedName('/project/con.test.md');
+    assert.strictEqual(result.reserved, true, 'Should detect CON.test.md');
+  });
+
+  it('should detect reserved names with uppercase extensions (AUX.TXT)', () => {
+    const result = guardModule.isWindowsReservedName('/project/AUX.TXT');
+    assert.strictEqual(result.reserved, true, 'Should detect AUX.TXT');
+  });
+
+  // Paths with directories
+  it('should detect reserved names in nested paths', () => {
+    const result = guardModule.isWindowsReservedName('/project/.claude/agents/nul');
+    assert.strictEqual(result.reserved, true, 'Should detect NUL in nested path');
+  });
+
+  it('should detect reserved names in Windows-style paths', () => {
+    const result = guardModule.isWindowsReservedName('C:\\project\\.claude\\agents\\nul');
+    assert.strictEqual(result.reserved, true, 'Should detect NUL in Windows path');
+  });
+
+  // Non-reserved names that shouldn't be blocked
+  it('should NOT flag normal filenames', () => {
+    const normalNames = [
+      '/project/file.txt',
+      '/project/null.txt', // "null" is not reserved, only "nul"
+      '/project/console.log',
+      '/project/auxiliary.md',
+      '/project/printer.cfg',
+      '/project/com.json', // "com" alone is not reserved, only COM1-9
+      '/project/lpt.txt', // "lpt" alone is not reserved, only LPT1-9
+      '/project/com10.txt', // COM10+ are not reserved
+      '/project/lpt10.txt', // LPT10+ are not reserved
+    ];
+    for (const name of normalNames) {
+      const result = guardModule.isWindowsReservedName(name);
+      assert.strictEqual(result.reserved, false, `Should NOT flag ${name}`);
+    }
+  });
+
+  it('should NOT flag files starting with reserved name as prefix', () => {
+    // "nully" is not reserved, only "nul" exactly
+    // But our implementation uses split('.')[0], so "nully" would NOT match "NUL"
+    const result = guardModule.isWindowsReservedName('/project/nully.txt');
+    assert.strictEqual(result.reserved, false, 'Should NOT flag nully.txt');
+  });
+
+  it('should include descriptive reason in result', () => {
+    const result = guardModule.isWindowsReservedName('/project/nul.txt');
+    assert.ok(result.reason, 'Should include reason');
+    assert.ok(result.reason.includes('Windows reserved'), 'Reason should mention Windows reserved');
+    assert.ok(result.reason.includes('NUL'), 'Reason should include the reserved name');
+  });
+
+  // Edge cases
+  it('should handle empty path', () => {
+    const result = guardModule.isWindowsReservedName('');
+    assert.strictEqual(result.reserved, false, 'Empty path should not be reserved');
+  });
+
+  it('should handle null path', () => {
+    const result = guardModule.isWindowsReservedName(null);
+    assert.strictEqual(result.reserved, false, 'Null path should not be reserved');
+  });
+
+  it('should handle undefined path', () => {
+    const result = guardModule.isWindowsReservedName(undefined);
+    assert.strictEqual(result.reserved, false, 'Undefined path should not be reserved');
+  });
+
+  it('should handle path that is just the reserved name', () => {
+    const result = guardModule.isWindowsReservedName('nul');
+    assert.strictEqual(result.reserved, true, 'Should detect bare NUL');
+  });
+});

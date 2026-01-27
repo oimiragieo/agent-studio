@@ -160,6 +160,35 @@ const PATH_TRAVERSAL_PATTERNS = [
   /\x00/, // Null bytes
 ];
 
+// SEC-WIN-001: Windows reserved device names
+// These names cannot be used as file names on Windows and cause special behavior
+// Creating files with these names on Windows is a security risk (denial of service,
+// device access, or in the case of NUL creates regular files that shouldn't exist)
+const WINDOWS_RESERVED_NAMES = [
+  'CON', // Console device
+  'PRN', // Printer device
+  'AUX', // Auxiliary device
+  'NUL', // Null device (like /dev/null)
+  'COM1',
+  'COM2',
+  'COM3',
+  'COM4',
+  'COM5',
+  'COM6',
+  'COM7',
+  'COM8',
+  'COM9', // Serial ports
+  'LPT1',
+  'LPT2',
+  'LPT3',
+  'LPT4',
+  'LPT5',
+  'LPT6',
+  'LPT7',
+  'LPT8',
+  'LPT9', // Parallel ports
+];
+
 // Artifact directories requiring EVOLVE workflow for new files
 const ARTIFACT_DIRECTORIES = [
   '.claude/agents/',
@@ -197,6 +226,41 @@ function findProjectRoot(startPath) {
     current = path.dirname(current);
   }
   return null;
+}
+
+/**
+ * SEC-WIN-001: Check if a filename is a Windows reserved device name
+ * Windows reserved names cannot be used as file names. They have special meaning
+ * regardless of extension (e.g., NUL.txt, CON.anything are still reserved).
+ *
+ * @param {string} filePath - File path to check
+ * @returns {{reserved: boolean, name?: string, reason?: string}}
+ */
+function isWindowsReservedName(filePath) {
+  if (!filePath || typeof filePath !== 'string') {
+    return { reserved: false };
+  }
+
+  // Get the basename (filename only, no directory)
+  const basename = path.basename(filePath);
+
+  if (!basename) {
+    return { reserved: false };
+  }
+
+  // Extract name without extension (Windows reserves names regardless of extension)
+  // e.g., "NUL.txt" -> "NUL", "CON" -> "CON", "nul.test.md" -> "nul"
+  const nameWithoutExt = basename.split('.')[0].toUpperCase();
+
+  if (WINDOWS_RESERVED_NAMES.includes(nameWithoutExt)) {
+    return {
+      reserved: true,
+      name: nameWithoutExt,
+      reason: `"${basename}" uses Windows reserved device name "${nameWithoutExt}". These names cannot be used as files on Windows.`,
+    };
+  }
+
+  return { reserved: false };
 }
 
 /**
@@ -802,6 +866,45 @@ function main() {
     }
   }
 
+  // SEC-WIN-001: Windows reserved device name validation (CRITICAL - check early)
+  // This prevents creating files like "nul", "con", "prn" which cause issues on Windows
+  // Even on non-Windows platforms, block these to maintain cross-platform compatibility
+  const reservedNameCheck = isWindowsReservedName(filePath);
+  if (reservedNameCheck.reserved) {
+    // Audit log the blocked reserved name attempt
+    console.error(
+      JSON.stringify({
+        hook: 'file-placement-guard',
+        event: 'windows_reserved_name_blocked',
+        tool: toolName,
+        path: filePath.substring(0, 100),
+        reservedName: reservedNameCheck.name,
+        reason: reservedNameCheck.reason,
+        timestamp: new Date().toISOString(),
+        severity: 'HIGH',
+      })
+    );
+    // Output human-readable blocked message
+    console.error(`
++======================================================================+
+|  BLOCKED: Windows Reserved Device Name Detected                      |
++======================================================================+
+|  Tool: ${toolName.padEnd(60)}|
+|  File: ${path.basename(filePath).slice(0, 60).padEnd(60)}|
+|  Reserved Name: ${(reservedNameCheck.name || 'UNKNOWN').padEnd(52)}|
++----------------------------------------------------------------------+
+|  Windows reserved device names (CON, PRN, AUX, NUL, COM1-9, LPT1-9)  |
+|  cannot be used as file names. They have special OS-level meaning.   |
+|                                                                      |
+|  Creating files with these names causes:                             |
+|  - Denial of service (can't delete/access properly)                  |
+|  - Unexpected device interactions                                    |
+|  - Cross-platform compatibility issues                               |
++======================================================================+
+`);
+    process.exit(2);
+  }
+
   // Check if file is always allowed (framework internal)
   if (isAlwaysAllowed(filePath)) {
     if (process.env.PLACEMENT_DEBUG === 'true') {
@@ -1222,6 +1325,9 @@ module.exports = {
   // SEC-PT-001: Path traversal validation
   isPathSafe,
   PATH_TRAVERSAL_PATTERNS,
+  // SEC-WIN-001: Windows reserved device names validation
+  isWindowsReservedName,
+  WINDOWS_RESERVED_NAMES,
 };
 
 // Run if called directly
