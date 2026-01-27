@@ -69,7 +69,9 @@ describe('git-validators', () => {
       });
 
       it('should block committer.email config', () => {
-        const result = gitValidators.validateGitConfig('git config committer.email test@example.com');
+        const result = gitValidators.validateGitConfig(
+          'git config committer.email test@example.com'
+        );
         assert.strictEqual(result.valid, false);
       });
 
@@ -79,7 +81,9 @@ describe('git-validators', () => {
       });
 
       it('should block --local user.email', () => {
-        const result = gitValidators.validateGitConfig('git config --local user.email test@test.com');
+        const result = gitValidators.validateGitConfig(
+          'git config --local user.email test@test.com'
+        );
         assert.strictEqual(result.valid, false);
       });
     });
@@ -235,7 +239,10 @@ describe('git-validators', () => {
         const result = gitValidators.validateGitPush('git push "unclosed');
         // parseCommand returns null for unclosed quotes, which causes "Could not parse git command"
         assert.strictEqual(result.valid, false);
-        assert.ok(result.error.includes('Could not parse'), `Expected error to contain 'Could not parse', got: ${result.error}`);
+        assert.ok(
+          result.error.includes('Could not parse'),
+          `Expected error to contain 'Could not parse', got: ${result.error}`
+        );
       });
     });
   });
@@ -252,7 +259,9 @@ describe('git-validators', () => {
     });
 
     it('should validate -c inline config on any command', () => {
-      const result = gitValidators.validateGitCommand('git -c user.email=test@test.com commit -m "test"');
+      const result = gitValidators.validateGitCommand(
+        'git -c user.email=test@test.com commit -m "test"'
+      );
       assert.strictEqual(result.valid, false);
     });
 

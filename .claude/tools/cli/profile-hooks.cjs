@@ -165,7 +165,7 @@ const KEY_HOOKS = [
 async function executeHook(hookPath, input) {
   const fullPath = path.join(HOOKS_DIR, hookPath);
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const startTime = process.hrtime.bigint();
 
     const child = spawn('node', [fullPath], {
@@ -189,11 +189,11 @@ async function executeHook(hookPath, input) {
     let stdout = '';
     let stderr = '';
 
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       stdout += data.toString();
     });
 
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', data => {
       stderr += data.toString();
     });
 
@@ -201,7 +201,7 @@ async function executeHook(hookPath, input) {
     child.stdin.write(JSON.stringify(input));
     child.stdin.end();
 
-    child.on('close', (exitCode) => {
+    child.on('close', exitCode => {
       const endTime = process.hrtime.bigint();
       const latencyMs = Number(endTime - startTime) / 1_000_000; // Convert to ms
 
@@ -213,7 +213,7 @@ async function executeHook(hookPath, input) {
       });
     });
 
-    child.on('error', (err) => {
+    child.on('error', err => {
       const endTime = process.hrtime.bigint();
       const latencyMs = Number(endTime - startTime) / 1_000_000;
 
@@ -255,7 +255,7 @@ function calculatePercentiles(latencies) {
   const sorted = [...latencies].sort((a, b) => a - b);
   const n = sorted.length;
 
-  const percentile = (p) => {
+  const percentile = p => {
     const index = Math.ceil((p / 100) * n) - 1;
     return sorted[Math.max(0, Math.min(index, n - 1))];
   };
@@ -325,7 +325,7 @@ async function profileAllHooks(options = {}) {
   // Filter hooks if pattern provided
   if (hookFilter) {
     hooksToProfile = KEY_HOOKS.filter(
-      (h) => h.name.includes(hookFilter) || h.path.includes(hookFilter)
+      h => h.name.includes(hookFilter) || h.path.includes(hookFilter)
     );
   }
 
@@ -409,7 +409,7 @@ function generateMarkdownReport(results) {
 
 `;
 
-  const needsOptimization = sorted.filter((r) => r.p95 >= 100);
+  const needsOptimization = sorted.filter(r => r.p95 >= 100);
   if (needsOptimization.length === 0) {
     report += 'None - all hooks meet the P95 < 100ms threshold.\n';
   } else {
@@ -445,8 +445,8 @@ function generateJSONReport(results) {
       summary: {
         totalHooks: results.length,
         avgP95: results.reduce((a, r) => a + r.p95, 0) / results.length,
-        maxP95: Math.max(...results.map((r) => r.p95)),
-        hooksOver100ms: results.filter((r) => r.p95 >= 100).length,
+        maxP95: Math.max(...results.map(r => r.p95)),
+        hooksOver100ms: results.filter(r => r.p95 >= 100).length,
       },
     },
     null,
@@ -531,7 +531,7 @@ Options:
   }
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error('Error:', err.message);
   process.exit(1);
 });

@@ -5,6 +5,7 @@
 Refined analysis plan focusing on **remaining high-value work** after Phase 1 completion (ADR-029). This plan addresses the 23 open security issues (per open-security-issues.md) and completes the remediation roadmap established in architecture-review-2026-01-27.md.
 
 **Context**: Previous plan (ADR-029) defined 8 phases. Phase 1 (Security & Reliability) has been partially executed:
+
 - Architecture review completed (architecture-review-2026-01-27.md)
 - 4 pointer gaps identified (POINTER-001, POINTER-003, DOC-001, ARCH-002)
 - 10 security issues resolved (SEC-001 through SEC-010)
@@ -12,6 +13,7 @@ Refined analysis plan focusing on **remaining high-value work** after Phase 1 co
 - Router violation remediation in progress (ADR-030, ADR-031, ADR-032)
 
 **Remaining Scope**:
+
 - Complete remediation of identified pointer gaps
 - Address remaining HIGH severity issues (5 open)
 - Fix test coverage gaps (13 hooks without tests)
@@ -20,16 +22,16 @@ Refined analysis plan focusing on **remaining high-value work** after Phase 1 co
 
 ## Executive Summary - Remaining Work
 
-| Category | Open Issues | Effort Est. | Priority |
-|----------|-------------|-------------|----------|
-| Security (CRITICAL) | 0 (all resolved) | 0h | - |
-| Security (HIGH) | 5 | 12-18h | P0 |
-| Security (MEDIUM) | 9 | 22-35h | P1 |
-| Pointer Gaps | 4 | 4-6h | P1 |
-| Testing Gaps | 13 hooks | 11-18h | P1 |
-| Performance | 4 optimizations | 8-12h | P2 |
-| Process/Docs | 5 items | 10-15h | P2 |
-| **TOTAL** | **40 items** | **67-104h** | - |
+| Category            | Open Issues      | Effort Est. | Priority |
+| ------------------- | ---------------- | ----------- | -------- |
+| Security (CRITICAL) | 0 (all resolved) | 0h          | -        |
+| Security (HIGH)     | 5                | 12-18h      | P0       |
+| Security (MEDIUM)   | 9                | 22-35h      | P1       |
+| Pointer Gaps        | 4                | 4-6h        | P1       |
+| Testing Gaps        | 13 hooks         | 11-18h      | P1       |
+| Performance         | 4 optimizations  | 8-12h       | P2       |
+| Process/Docs        | 5 items          | 10-15h      | P2       |
+| **TOTAL**           | **40 items**     | **67-104h** | -        |
 
 ## Phases
 
@@ -65,6 +67,7 @@ Refined analysis plan focusing on **remaining high-value work** after Phase 1 co
 #### Phase 1 Error Handling
 
 If any task fails:
+
 1. Document error in `.claude/context/memory/issues.md` with `SEC-FIX-FAIL-XXX` prefix
 2. Continue with remaining tasks (independent fixes)
 3. Create follow-up task for failed fixes
@@ -79,6 +82,7 @@ grep "validatePathWithinRoot" .claude/lib/memory/memory-manager.cjs | wc -l  # s
 ```
 
 **Success Criteria**:
+
 - All 5 HIGH severity fixes implemented
 - All framework tests pass (685/685)
 - No new security regressions
@@ -105,7 +109,7 @@ grep "validatePathWithinRoot" .claude/lib/memory/memory-manager.cjs | wc -l  # s
    - **Command**: `Task({ agent: "technical-writer", prompt: "Add 'Workflow Integration' section to skills: architecture-review, consensus-voting, database-architect, swarm-coordination. Add 'Related Skill' section to corresponding workflows." })`
    - **Verify**: `grep -l "Workflow Integration" .claude/skills/architecture-review/SKILL.md .claude/skills/consensus-voting/SKILL.md .claude/skills/database-architect/SKILL.md .claude/skills/swarm-coordination/SKILL.md | wc -l` (should be 4)
 
-3. **Task 2.3**: Fix ARCH-002 - Move consolidated hooks to _legacy (~45m)
+3. **Task 2.3**: Fix ARCH-002 - Move consolidated hooks to \_legacy (~45m)
    - **Command**: `Task({ agent: "developer", prompt: "Move individual hooks (planner-first-guard.cjs, task-create-guard.cjs, router-self-check.cjs, security-review-guard.cjs) and their test files to .claude/hooks/routing/_legacy/. Create README.md explaining consolidation per ADR-026" })`
    - **Verify**: `ls .claude/hooks/routing/_legacy/*.cjs | wc -l` (should be >= 4)
    - **Rollback**: `git checkout -- .claude/hooks/routing/`
@@ -129,6 +133,7 @@ node .claude/tools/cli/validate-agent-routing.js 2>&1 | grep "OK"
 ```
 
 **Success Criteria**:
+
 - All 4 pointer gaps resolved
 - Validation script passes
 - Framework architecture diagrams generated
@@ -175,6 +180,7 @@ ls .claude/hooks/routing/agent-context-tracker.test.cjs
 ```
 
 **Success Criteria**:
+
 - All 13 hooks now have test files
 - Exit code bug fixed
 - Framework tests all pass
@@ -216,6 +222,7 @@ ls .claude/context/artifacts/reports/medium-severity-review.md
 ```
 
 **Success Criteria**:
+
 - All 9 MEDIUM severity issues addressed
 - Security architect sign-off obtained
 - No test regressions
@@ -257,6 +264,7 @@ pnpm test:framework --test-concurrency=1 2>&1 | grep "pass"
 ```
 
 **Success Criteria**:
+
 - Latency baseline established
 - P95 latency reduced by >= 20%
 - Code duplication reduced by >= 50%
@@ -303,6 +311,7 @@ grep "ADR-033" .claude/context/memory/decisions.md
 ```
 
 **Success Criteria**:
+
 - All documentation updated
 - ADRs created/updated
 - Health scorecard baseline established
@@ -339,6 +348,7 @@ pnpm test:framework --test-concurrency=1 2>&1 | grep "685/685"
 ```
 
 **Success Criteria**:
+
 - Consolidated report created with APPROVED status
 - All framework tests pass (685/685)
 - No P0/P1 items remain open
@@ -376,28 +386,29 @@ Task({
 
 ## Risks
 
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| Security fix introduces regression | High | Full test suite after each fix | `git revert HEAD` |
-| Hook consolidation breaks routing | High | Test routing scenarios before merge | Restore from `_legacy/` |
-| Performance optimization reduces stability | Medium | Profile before/after, keep baseline | Revert optimization commits |
-| Documentation updates conflict with recent changes | Low | Pull latest before doc updates | `git checkout -- .claude/docs/` |
+| Risk                                               | Impact | Mitigation                          | Rollback                        |
+| -------------------------------------------------- | ------ | ----------------------------------- | ------------------------------- |
+| Security fix introduces regression                 | High   | Full test suite after each fix      | `git revert HEAD`               |
+| Hook consolidation breaks routing                  | High   | Test routing scenarios before merge | Restore from `_legacy/`         |
+| Performance optimization reduces stability         | Medium | Profile before/after, keep baseline | Revert optimization commits     |
+| Documentation updates conflict with recent changes | Low    | Pull latest before doc updates      | `git checkout -- .claude/docs/` |
 
 ## Timeline Summary
 
-| Phase | Tasks | Est. Time | Parallel? | Dependencies |
-|-------|-------|-----------|-----------|--------------|
-| 1 | 5 | 9-13h | Partial | None |
-| 2 | 5 | 4-6h | Yes (with P1) | None |
-| 3 | 5 | 13-18h | Partial | P1 |
-| 4 | 4 | 9-12h | No | P1 |
-| 5 | 4 | 6-8h | Partial | P1-3 |
-| 6 | 5 | 7-9h | No | P1-4 |
-| 7 | 3 | 4-5h | Sequential | ALL |
-| FINAL | 1 | 30 min | No | P7 |
-| **Total** | **32** | **~52-71h** | | |
+| Phase     | Tasks  | Est. Time   | Parallel?     | Dependencies |
+| --------- | ------ | ----------- | ------------- | ------------ |
+| 1         | 5      | 9-13h       | Partial       | None         |
+| 2         | 5      | 4-6h        | Yes (with P1) | None         |
+| 3         | 5      | 13-18h      | Partial       | P1           |
+| 4         | 4      | 9-12h       | No            | P1           |
+| 5         | 4      | 6-8h        | Partial       | P1-3         |
+| 6         | 5      | 7-9h        | No            | P1-4         |
+| 7         | 3      | 4-5h        | Sequential    | ALL          |
+| FINAL     | 1      | 30 min      | No            | P7           |
+| **Total** | **32** | **~52-71h** |               |              |
 
 **Notes**:
+
 - Sequential execution: ~52-71 hours
 - Maximum parallelization: ~35-50 hours (Phases 1+2 parallel, Phase 3+4 overlapping)
 - Recommended approach: 3-4 focused sessions over 5-7 days

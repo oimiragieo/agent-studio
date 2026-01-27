@@ -278,7 +278,10 @@ describe('filesystem-validators', () => {
         const result = fsValidators.validateRmCommand('rm -rf ../secret');
         assert.strictEqual(result.valid, false);
         // The error says "not allowed" for dangerous patterns
-        assert.ok(result.error.includes('not allowed'), `Expected error to include 'not allowed', got: ${result.error}`);
+        assert.ok(
+          result.error.includes('not allowed'),
+          `Expected error to include 'not allowed', got: ${result.error}`
+        );
       });
     });
 

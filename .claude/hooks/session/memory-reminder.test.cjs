@@ -49,7 +49,7 @@ describe('memory-reminder', () => {
     // Mock process.exit
     exitCode = null;
     originalExit = process.exit;
-    process.exit = (code) => {
+    process.exit = code => {
       exitCode = code;
       throw new Error('process.exit called');
     };
@@ -71,9 +71,7 @@ describe('memory-reminder', () => {
   describe('memory file detection', () => {
     it('should detect learnings.md with content', () => {
       // Create learnings.md with more than 5 lines
-      const content = Array(10)
-        .fill('## Learning')
-        .join('\n');
+      const content = Array(10).fill('## Learning').join('\n');
       fs.writeFileSync(path.join(memoryDir, 'learnings.md'), content, 'utf-8');
 
       // The hook should detect this file
@@ -83,27 +81,21 @@ describe('memory-reminder', () => {
     });
 
     it('should detect decisions.md with content', () => {
-      const content = Array(10)
-        .fill('## ADR')
-        .join('\n');
+      const content = Array(10).fill('## ADR').join('\n');
       fs.writeFileSync(path.join(memoryDir, 'decisions.md'), content, 'utf-8');
 
       assert.ok(fs.existsSync(path.join(memoryDir, 'decisions.md')));
     });
 
     it('should detect issues.md with content', () => {
-      const content = Array(10)
-        .fill('## Issue')
-        .join('\n');
+      const content = Array(10).fill('## Issue').join('\n');
       fs.writeFileSync(path.join(memoryDir, 'issues.md'), content, 'utf-8');
 
       assert.ok(fs.existsSync(path.join(memoryDir, 'issues.md')));
     });
 
     it('should detect active_context.md with content', () => {
-      const content = Array(10)
-        .fill('## Context')
-        .join('\n');
+      const content = Array(10).fill('## Context').join('\n');
       fs.writeFileSync(path.join(memoryDir, 'active_context.md'), content, 'utf-8');
 
       assert.ok(fs.existsSync(path.join(memoryDir, 'active_context.md')));
@@ -118,9 +110,7 @@ describe('memory-reminder', () => {
 
     it('should output reminder when memory files have content', () => {
       // Create learnings.md with meaningful content (>5 lines)
-      const content = Array(10)
-        .fill('## Learning entry')
-        .join('\n');
+      const content = Array(10).fill('## Learning entry').join('\n');
       fs.writeFileSync(path.join(memoryDir, 'learnings.md'), content, 'utf-8');
 
       // Execute the hook from the test directory
@@ -218,12 +208,8 @@ describe('memory-reminder', () => {
   describe('content threshold', () => {
     it('should consider files with more than 5 lines as meaningful', () => {
       // The hook uses `f.lines > 5` as the threshold
-      const meaningfulContent = Array(6)
-        .fill('Line')
-        .join('\n');
-      const unmeaningfulContent = Array(4)
-        .fill('Line')
-        .join('\n');
+      const meaningfulContent = Array(6).fill('Line').join('\n');
+      const unmeaningfulContent = Array(4).fill('Line').join('\n');
 
       assert.strictEqual(meaningfulContent.split('\n').length, 6);
       assert.strictEqual(unmeaningfulContent.split('\n').length, 4);

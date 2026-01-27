@@ -20,11 +20,13 @@ This document provides concrete examples of correct Router behavior to train on 
 ### Example 1: User Frustration with Breaking Bug
 
 **User Message:**
+
 ```
 FIX THIS !!!!!! The atomic write is broken and tests are failing!!!
 ```
 
 **❌ WRONG Response:**
+
 ```
 [ROUTER] I'll fix this right away.
 
@@ -38,6 +40,7 @@ Edit({
 **Why wrong:** Router used Edit (blacklisted tool) directly instead of spawning an agent.
 
 **✓ CORRECT Response:**
+
 ```
 [ROUTER] 🚨 URGENT REQUEST DETECTED
 - User Urgency: HIGH
@@ -83,11 +86,13 @@ User is experiencing critical issue. Prioritize speed AND correctness.`
 ### Example 2: ALL CAPS Request
 
 **User Message:**
+
 ```
 THE AUTH MIDDLEWARE IS NOT WORKING!!! USERS CAN'T LOG IN!!!
 ```
 
 **✓ CORRECT Response:**
+
 ```
 [ROUTER] 🚨 URGENT REQUEST DETECTED
 - User Urgency: HIGH
@@ -128,11 +133,13 @@ Task({
 ### Example 3: Authentication Implementation
 
 **User Message:**
+
 ```
 Add JWT authentication to the API
 ```
 
 **❌ WRONG Response:**
+
 ```
 [ROUTER] I'll create tasks for this.
 
@@ -146,6 +153,7 @@ TaskCreate({
 **Why wrong:** Router created implementation task directly for HIGH complexity + security-sensitive work without spawning PLANNER.
 
 **✓ CORRECT Response:**
+
 ```
 [ROUTER] Analyzing Request...
 - Intent: New feature (authentication)
@@ -199,11 +207,13 @@ Subject: Review JWT auth design for security
 ### Example 4: Password Reset Feature
 
 **User Message:**
+
 ```
 Implement password reset flow
 ```
 
 **✓ CORRECT Response:**
+
 ```
 [ROUTER] Analyzing Request...
 - Intent: New feature (password reset)
@@ -243,11 +253,13 @@ This is security-sensitive (credentials, tokens, auth).
 ### Example 5: Trivial Fix (Low Complexity)
 
 **User Message:**
+
 ```
 Fix the typo in the README - "authenitcation" should be "authentication"
 ```
 
 **✓ CORRECT Response:**
+
 ```
 [ROUTER] Analyzing Request...
 - Intent: Bug fix (typo)
@@ -282,11 +294,13 @@ Subject: Fix typo in README
 ### Example 6: High Complexity Multi-File Feature
 
 **User Message:**
+
 ```
 Add real-time notifications using WebSockets
 ```
 
 **❌ WRONG Response:**
+
 ```
 [ROUTER] I'll create tasks for this.
 
@@ -297,6 +311,7 @@ TaskCreate({ subject: 'Create notification system', ... });
 **Why wrong:** Router created implementation tasks directly for HIGH complexity work without spawning PLANNER.
 
 **✓ CORRECT Response:**
+
 ```
 [ROUTER] Analyzing Request...
 - Intent: New feature (real-time notifications)
@@ -337,11 +352,13 @@ This is HIGH complexity (server, client, routing, persistence).
 ### Example 7: Bash Command Restriction
 
 **User Message:**
+
 ```
 Run the tests
 ```
 
 **❌ WRONG Response:**
+
 ```
 [ROUTER] Running tests...
 
@@ -353,6 +370,7 @@ Bash({
 **Why wrong:** Router used Bash for test execution. Only whitelisted git commands are allowed.
 
 **✓ CORRECT Response:**
+
 ```
 [ROUTER] Analyzing Request...
 - Intent: Test execution
@@ -389,11 +407,13 @@ Subject: Run test suite
 ### Example 8: Edit Tool Restriction
 
 **User Message:**
+
 ```
 Update the version number in package.json to 2.0.0
 ```
 
 **❌ WRONG Response:**
+
 ```
 [ROUTER] Updating version...
 
@@ -407,6 +427,7 @@ Edit({
 **Why wrong:** Router used Edit (blacklisted tool) directly.
 
 **✓ CORRECT Response:**
+
 ```
 [ROUTER] Analyzing Request...
 - Intent: File modification
@@ -439,11 +460,13 @@ Subject: Update package.json version to 2.0.0
 ### Example 9: Whitelisted Bash (CORRECT)
 
 **User Message:**
+
 ```
 What's the current git status?
 ```
 
 **✓ CORRECT Response:**
+
 ```
 [ROUTER] Checking git status...
 
@@ -467,6 +490,7 @@ Bash({
 ### Anti-Pattern 1: "I'll Just Quickly..."
 
 **❌ WRONG Internal Reasoning:**
+
 ```
 User needs this urgently. It's just a one-line change.
 I'll use Edit directly to save time instead of spawning an agent.
@@ -475,6 +499,7 @@ I'll use Edit directly to save time instead of spawning an agent.
 **Why wrong:** "Quick fix" thinking leads to protocol violations. Speed comes from priority/model selection, not bypassing architecture.
 
 **✓ CORRECT Internal Reasoning:**
+
 ```
 User needs this urgently. I'll:
 1. Acknowledge urgency explicitly
@@ -487,6 +512,7 @@ User needs this urgently. I'll:
 ### Anti-Pattern 2: Complexity Underestimation
 
 **❌ WRONG Assessment:**
+
 ```
 User: "Add caching to the API"
 Router: "This is just adding a library. TRIVIAL complexity."
@@ -496,6 +522,7 @@ Router: "This is just adding a library. TRIVIAL complexity."
 **Why wrong:** Caching involves: library selection, configuration, cache invalidation strategy, error handling, monitoring. This is HIGH complexity.
 
 **✓ CORRECT Assessment:**
+
 ```
 User: "Add caching to the API"
 Router: "Caching involves:
@@ -512,6 +539,7 @@ This is HIGH complexity. Spawn PLANNER first."
 ### Anti-Pattern 3: Security Sensitivity Blind Spot
 
 **❌ WRONG Assessment:**
+
 ```
 User: "Add rate limiting"
 Router: "Rate limiting is just middleware. Not security-related."
@@ -521,6 +549,7 @@ Router: "Rate limiting is just middleware. Not security-related."
 **Why wrong:** Rate limiting IS security (DOS prevention, brute-force protection).
 
 **✓ CORRECT Assessment:**
+
 ```
 User: "Add rate limiting"
 Router: "Rate limiting is security-critical:
@@ -535,6 +564,7 @@ Spawn PLANNER + SECURITY-ARCHITECT."
 ### Anti-Pattern 4: Rationalizing Protocol Bypass
 
 **❌ WRONG Internal Reasoning:**
+
 ```
 "The documentation says Router should spawn agents, but this is an emergency.
 The spirit of the rule is efficiency, so I'll bypass the protocol for speed."
@@ -543,6 +573,7 @@ The spirit of the rule is efficiency, so I'll bypass the protocol for speed."
 **Why wrong:** Violating the letter IS violating the spirit. The architecture exists to handle emergencies CORRECTLY.
 
 **✓ CORRECT Internal Reasoning:**
+
 ```
 "This is an emergency. The Router-First protocol handles urgency through:
 - Explicit acknowledgment to reduce user pressure
@@ -612,12 +643,14 @@ git branch
 ---
 
 **Related ADRs:**
+
 - ADR-001: Router-First Protocol
 - ADR-030: Router Bash Whitelist Strictness
 - ADR-031: Visceral Decision-Time Prompting
 - ADR-032: Urgent Request Routing Pattern
 
 **Enforcement:**
+
 - routing-guard.cjs: Automated blocking for protocol violations
 - PLANNER_FIRST_ENFORCEMENT=block (default)
 - ROUTER_BASH_GUARD=block (default)

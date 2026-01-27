@@ -69,13 +69,13 @@ function parseRoutingTable(content) {
     /## 3\.5/,
     /## 4\./,
     /### Creator Skills/,
-    /\*\*Routing Logic Source of Truth\*\*/  // Text after main table and router entry
+    /\*\*Routing Logic Source of Truth\*\*/, // Text after main table and router entry
   ];
 
   let endIndex = content.length;
   for (const pattern of section3EndPatterns) {
     const match = content.slice(startIndex + 30).match(pattern);
-    if (match && (startIndex + 30 + match.index) < endIndex) {
+    if (match && startIndex + 30 + match.index < endIndex) {
       endIndex = startIndex + 30 + match.index;
     }
   }
@@ -97,11 +97,13 @@ function parseRoutingTable(content) {
     file = file.replace(/\s*\([^)]*\)\s*$/, '').trim();
 
     // Skip header rows and separator rows
-    if (requestType === 'Request Type' ||
-        requestType.includes('---') ||
-        agent === 'Agent' ||
-        file === 'File' ||
-        requestType.includes('---')) {
+    if (
+      requestType === 'Request Type' ||
+      requestType.includes('---') ||
+      agent === 'Agent' ||
+      file === 'File' ||
+      requestType.includes('---')
+    ) {
       continue;
     }
 
@@ -167,7 +169,7 @@ function validateRouting(tableEntries, agentFiles, projectRoot) {
     ok: [],
     missing: [],
     notInTable: [],
-    mismatch: []
+    mismatch: [],
   };
 
   // Normalize paths for comparison (handle Windows backslashes)
@@ -186,7 +188,7 @@ function validateRouting(tableEntries, agentFiles, projectRoot) {
       results.ok.push({
         agent: entry.agent,
         file: entry.file,
-        requestType: entry.requestType
+        requestType: entry.requestType,
       });
       accountedFiles.add(normalizedPath);
     } else {
@@ -194,7 +196,7 @@ function validateRouting(tableEntries, agentFiles, projectRoot) {
       results.missing.push({
         agent: entry.agent,
         file: entry.file,
-        requestType: entry.requestType
+        requestType: entry.requestType,
       });
     }
   }
@@ -252,7 +254,8 @@ function formatOutput(results, verbose = false) {
   lines.push(`- Mismatch: ${results.mismatch.length}`);
   lines.push('');
 
-  const hasIssues = results.missing.length > 0 || results.notInTable.length > 0 || results.mismatch.length > 0;
+  const hasIssues =
+    results.missing.length > 0 || results.notInTable.length > 0 || results.mismatch.length > 0;
   if (hasIssues) {
     lines.push('Overall: FAIL (discrepancies found)');
   } else {
@@ -298,7 +301,8 @@ function main() {
   console.log(formatOutput(results, verbose));
 
   // Exit code
-  const hasIssues = results.missing.length > 0 || results.notInTable.length > 0 || results.mismatch.length > 0;
+  const hasIssues =
+    results.missing.length > 0 || results.notInTable.length > 0 || results.mismatch.length > 0;
   process.exit(hasIssues ? 1 : 0);
 }
 
@@ -308,7 +312,7 @@ module.exports = {
   scanAgentFiles,
   validateRouting,
   formatOutput,
-  findProjectRoot
+  findProjectRoot,
 };
 
 // Run if executed directly

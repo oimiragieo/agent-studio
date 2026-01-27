@@ -40,7 +40,7 @@ describe('memory-health-check', () => {
       // Mock process.exit
       exitCode = null;
       originalExit = process.exit;
-      process.exit = (code) => {
+      process.exit = code => {
         exitCode = code;
         throw new Error('process.exit called');
       };

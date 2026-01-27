@@ -42,7 +42,6 @@ Some content without a routing table.
 `;
 
 describe('validate-agent-routing', () => {
-
   describe('parseRoutingTable', () => {
     test('should parse a valid routing table from CLAUDE.md content', () => {
       // Load the module after it exists
@@ -62,7 +61,7 @@ describe('validate-agent-routing', () => {
       assert.deepStrictEqual(result[0], {
         requestType: 'Bug fixes',
         agent: 'developer',
-        file: '.claude/agents/core/developer.md'
+        file: '.claude/agents/core/developer.md',
       });
     });
 
@@ -124,7 +123,7 @@ describe('validate-agent-routing', () => {
       }
 
       const tableEntries = [
-        { requestType: 'Bug fixes', agent: 'developer', file: '.claude/agents/core/developer.md' }
+        { requestType: 'Bug fixes', agent: 'developer', file: '.claude/agents/core/developer.md' },
       ];
 
       const projectRoot = path.resolve(__dirname, '..', '..', '..');
@@ -132,8 +131,10 @@ describe('validate-agent-routing', () => {
 
       const result = validateAgentRouting.validateRouting(tableEntries, agentFiles, projectRoot);
 
-      assert.ok(result.ok.length > 0 || result.missing.length > 0 || result.notInTable.length > 0,
-        'Should have at least one result category');
+      assert.ok(
+        result.ok.length > 0 || result.missing.length > 0 || result.notInTable.length > 0,
+        'Should have at least one result category'
+      );
     });
 
     test('should detect missing agent files', () => {
@@ -145,7 +146,7 @@ describe('validate-agent-routing', () => {
       }
 
       const tableEntries = [
-        { requestType: 'Fantasy', agent: 'unicorn', file: '.claude/agents/core/unicorn.md' }
+        { requestType: 'Fantasy', agent: 'unicorn', file: '.claude/agents/core/unicorn.md' },
       ];
 
       const projectRoot = path.resolve(__dirname, '..', '..', '..');
@@ -153,8 +154,10 @@ describe('validate-agent-routing', () => {
 
       const result = validateAgentRouting.validateRouting(tableEntries, agentFiles, projectRoot);
 
-      assert.ok(result.missing.some(m => m.agent === 'unicorn'),
-        'Should detect unicorn as missing');
+      assert.ok(
+        result.missing.some(m => m.agent === 'unicorn'),
+        'Should detect unicorn as missing'
+      );
     });
 
     test('should detect agents not in routing table', () => {
@@ -173,8 +176,10 @@ describe('validate-agent-routing', () => {
 
       const result = validateAgentRouting.validateRouting(tableEntries, agentFiles, projectRoot);
 
-      assert.ok(result.notInTable.length > 0,
-        'Should find agents not in table when table is empty');
+      assert.ok(
+        result.notInTable.length > 0,
+        'Should find agents not in table when table is empty'
+      );
     });
   });
 
@@ -191,15 +196,21 @@ describe('validate-agent-routing', () => {
         ok: [{ agent: 'developer', file: '.claude/agents/core/developer.md' }],
         missing: [{ agent: 'unicorn', file: '.claude/agents/core/unicorn.md' }],
         notInTable: [{ file: '.claude/agents/domain/new-agent.md' }],
-        mismatch: []
+        mismatch: [],
       };
 
       const output = validateAgentRouting.formatOutput(results);
 
       assert.ok(output.includes('developer'), 'Should include OK agent');
       assert.ok(output.includes('unicorn'), 'Should include missing agent');
-      assert.ok(output.includes('MISSING') || output.includes('missing'), 'Should indicate missing status');
-      assert.ok(output.includes('NOT IN TABLE') || output.includes('not in table'), 'Should indicate not-in-table status');
+      assert.ok(
+        output.includes('MISSING') || output.includes('missing'),
+        'Should indicate missing status'
+      );
+      assert.ok(
+        output.includes('NOT IN TABLE') || output.includes('not in table'),
+        'Should indicate not-in-table status'
+      );
     });
   });
 
@@ -214,14 +225,22 @@ describe('validate-agent-routing', () => {
         return;
       }
 
-      assert.ok(typeof validateAgentRouting.parseRoutingTable === 'function',
-        'Should export parseRoutingTable');
-      assert.ok(typeof validateAgentRouting.scanAgentFiles === 'function',
-        'Should export scanAgentFiles');
-      assert.ok(typeof validateAgentRouting.validateRouting === 'function',
-        'Should export validateRouting');
-      assert.ok(typeof validateAgentRouting.formatOutput === 'function',
-        'Should export formatOutput');
+      assert.ok(
+        typeof validateAgentRouting.parseRoutingTable === 'function',
+        'Should export parseRoutingTable'
+      );
+      assert.ok(
+        typeof validateAgentRouting.scanAgentFiles === 'function',
+        'Should export scanAgentFiles'
+      );
+      assert.ok(
+        typeof validateAgentRouting.validateRouting === 'function',
+        'Should export validateRouting'
+      );
+      assert.ok(
+        typeof validateAgentRouting.formatOutput === 'function',
+        'Should export formatOutput'
+      );
     });
   });
 });

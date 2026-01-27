@@ -171,12 +171,16 @@ describe('database-validators', () => {
       });
 
       it('should allow INSERT statements', () => {
-        const result = dbValidators.containsDestructiveSql("INSERT INTO users (name) VALUES ('test');");
+        const result = dbValidators.containsDestructiveSql(
+          "INSERT INTO users (name) VALUES ('test');"
+        );
         assert.strictEqual(result.isDestructive, false);
       });
 
       it('should allow UPDATE statements', () => {
-        const result = dbValidators.containsDestructiveSql("UPDATE users SET name = 'test' WHERE id = 1;");
+        const result = dbValidators.containsDestructiveSql(
+          "UPDATE users SET name = 'test' WHERE id = 1;"
+        );
         assert.strictEqual(result.isDestructive, false);
       });
 
@@ -205,7 +209,9 @@ describe('database-validators', () => {
       });
 
       it('should allow dropping with flags', () => {
-        const result = dbValidators.validateDropdbCommand('dropdb -h localhost -U postgres test_db');
+        const result = dbValidators.validateDropdbCommand(
+          'dropdb -h localhost -U postgres test_db'
+        );
         assert.strictEqual(result.valid, true);
       });
     });
@@ -382,7 +388,9 @@ describe('database-validators', () => {
       });
 
       it('should block with host/port flags', () => {
-        const result = dbValidators.validateRedisCliCommand('redis-cli -h localhost -p 6379 FLUSHALL');
+        const result = dbValidators.validateRedisCliCommand(
+          'redis-cli -h localhost -p 6379 FLUSHALL'
+        );
         assert.strictEqual(result.valid, false);
       });
     });
@@ -429,7 +437,9 @@ describe('database-validators', () => {
       });
 
       it('should block deleteMany({})', () => {
-        const result = dbValidators.validateMongoshCommand('mongosh --eval "db.users.deleteMany({})"');
+        const result = dbValidators.validateMongoshCommand(
+          'mongosh --eval "db.users.deleteMany({})"'
+        );
         assert.strictEqual(result.valid, false);
       });
 
@@ -446,12 +456,16 @@ describe('database-validators', () => {
       });
 
       it('should allow insertOne()', () => {
-        const result = dbValidators.validateMongoshCommand('mongosh --eval "db.users.insertOne({name: \\"test\\"})"');
+        const result = dbValidators.validateMongoshCommand(
+          'mongosh --eval "db.users.insertOne({name: \\"test\\"})"'
+        );
         assert.strictEqual(result.valid, true);
       });
 
       it('should allow interactive mongosh', () => {
-        const result = dbValidators.validateMongoshCommand('mongosh mongodb://localhost:27017/mydb');
+        const result = dbValidators.validateMongoshCommand(
+          'mongosh mongodb://localhost:27017/mydb'
+        );
         assert.strictEqual(result.valid, true);
       });
     });

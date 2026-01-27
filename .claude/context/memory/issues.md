@@ -2,24 +2,21 @@
 
 ## Summary (as of 2026-01-27)
 
-| Status Category | Count | Notes                                    |
-| --------------- | ----- | ---------------------------------------- |
-| **OPEN**        | 47    | Active issues requiring attention        |
-| **RESOLVED**    | 58    | Fixed issues with documented resolutions |
-| **Won't Fix**   | 1     | Documented as not requiring remediation  |
-| **Total**       | 106   | All tracked issues                       |
+| Status Category | Count | Notes                                   |
+| --------------- | ----- | --------------------------------------- |
+| **OPEN**        | 48    | Active issues requiring attention       |
+| **RESOLVED**    | 60    | Archived in issues-archive.md           |
+| **Won't Fix**   | 1     | Documented as not requiring remediation |
+| **Total**       | 109   | All tracked issues                      |
 
-### Recent Resolutions (2026-01-27)
-
-- **SEC-007**: RESOLVED - Windows path regex security bypass in filesystem-validators.cjs
-- **ROUTER-VIOLATION-001**: RESOLVED - All P0/P1 remediation completed (ADR-030/031/032, training examples)
+**Historical issues**: See `issues-archive.md` for 60 resolved issues archived on 2026-01-27.
 
 ### Priority Breakdown (OPEN Issues)
 
-- **CRITICAL**: 0 (down from 1 after ROUTER-VIOLATION-001 resolution)
-- **HIGH**: Estimated 5-8 (security audits, structural issues)
-- **MEDIUM**: Estimated 15-20 (documentation gaps, pointer gaps)
-- **LOW**: Estimated 20-25 (future enhancements, recommendations)
+- **CRITICAL**: 3 (SEC-AUDIT-012, SEC-AUDIT-017, SEC-AUDIT-014)
+- **HIGH**: 8 (security audits, structural issues)
+- **MEDIUM**: 20 (documentation gaps, pointer gaps, process improvements)
+- **LOW**: 17 (future enhancements, recommendations)
 
 ## Format
 
@@ -35,698 +32,9 @@
 
 ---
 
-<!-- Add issues below this line -->
-
-## [SEC-007] RESOLVED: Windows Path Regex Bypass in Filesystem Validators
-
-- **Date**: 2026-01-27
-- **Date Resolved**: 2026-01-27
-- **Severity**: **HIGH**
-- **Status**: **RESOLVED**
-- **Category**: Security - Input Validation Bypass
-- **File**: `.claude/hooks/safety/validators/filesystem-validators.cjs`
-- **STRIDE Category**: Elevation of Privilege, Tampering
-
-### Description
-
-The `parseCommand()` function in filesystem-validators.cjs consumed backslash characters as escape sequences, causing Windows system paths like `C:\Windows` to become `C:Windows` after parsing. This bypassed all regex-based security checks for Windows system directories.
-
-**Attack Vector**:
-
-- Input: `rm -rf C:\Windows`
-- After parseCommand(): Token `C:Windows` (backslash consumed)
-- Pattern `/^C:\Windows/i` test against `C:Windows`: FALSE (no match)
-- Result: Dangerous command ALLOWED instead of BLOCKED
-
-**Root Cause**:
-Lines 82-85 in parseCommand():
-
-```javascript
-if (char === '\\' && !inSingleQuote) {
-  escaped = true;
-  continue;  // Backslash consumed, never added to token
-}
-```
-
-### Impact
-
-- Commands like `rm -rf C:\Windows`, `rm -rf C:\Program Files`, etc. would NOT be blocked
-- Windows system directories were completely unprotected despite having regex patterns
-- Unix paths (/home, /etc, /usr) were NOT affected (no backslash parsing issue)
-
-### Resolution
-
-Modified parseCommand() to preserve backslashes in tokens:
-
-```javascript
-if (escaped) {
-  // SECURITY FIX: Preserve the backslash in the token
-  current += '\\' + char;  // Keep both backslash AND escaped char
-  escaped = false;
-  continue;
-}
-```
-
-Also added handling for trailing backslash and added two new protected paths:
-
-- `C:\System32`
-- `C:\ProgramData`
-
-### Files Modified
-
-- `.claude/hooks/safety/validators/filesystem-validators.cjs` (parseCommand fix)
-- `.claude/hooks/safety/validators/filesystem-validators.test.cjs` (updated tests)
-
-### Verification
-
-All 60 tests pass including new Windows path tests:
-
-- `should block rm C:\Windows`
-- `should block rm C:\Windows\System32`
-- `should block rm C:\Program Files`
-- `should block rm C:\Users`
-- `should block rm C:\System32`
-- `should block rm C:\ProgramData`
-- `should be case-insensitive for Windows paths`
-
----
-
-## [ROUTER-VIOLATION-001] Router Bypassed Protocol Under User Pressure
-
-- **Date**: 2026-01-27
-- **Date Resolved**: 2026-01-27
-- **Severity**: **CRITICAL**
-- **Status**: **RESOLVED**
-- **Category**: Protocol Violation
-- **Detected By**: User feedback
-- **Router Iron Laws Score**: 2.5/10 (CRITICAL FAIL - Threshold: 4.0)
-
-### Description
-
-Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Section 1.1-1.2) by directly executing blacklisted tool operations instead of spawning appropriate agents.
-
-**Violations**:
-
-1. **Edit Tool**: Directly modified `.claude/lib/utils/atomic-write.cjs` (BLACKLISTED - Router may never use Edit)
-2. **Bash Tool**: Executed `pnpm test:framework:hooks` (NOT in whitelisted git commands)
-3. **Bash Tool**: Executed `pnpm test:framework:lib` (NOT in whitelisted git commands)
-
-**User Report**: "Somehow this last update you did broke our agent process. For some reason you as the router are running tests and making edits which violates our rules. FIX THIS !!!!!"
-
-### Root Cause
-
-**Primary**: Immediate task pressure (urgent bug fix + extreme user frustration) overrode documented protocol constraints. Router chose fastest path (direct action) over correct path (agent spawning).
-
-**Contributing Factors**:
-
-- **Availability Bias**: Direct tool use was cognitively "available" and faster
-- **Goal Prioritization**: "Fix bug" goal weighted higher than "Follow protocol" goal
-- **Rule Abstraction**: Router-First rules documented but not viscerally salient at decision moment
-- **Temporal Discount**: Future consequences (broken architecture) discounted vs immediate reward (bug fixed)
-
-### Impact
-
-- ❌ Framework architectural integrity compromised
-- ❌ Precedent set for future violations under urgency
-- ❌ User trust impacted ("you as the router are running tests and making edits")
-- ❌ Demonstrates enforcement gap: comprehensive docs/hooks insufficient under pressure
-
-### Remediation Plan
-
-**P0 - Immediate (24 Hours)**:
-
-1. ✅ Verify enforcement hooks active (ROUTER_WRITE_GUARD, PLANNER_FIRST_ENFORCEMENT modes)
-2. ✅ Add visceral decision-time prompts to router.md ("⚠️ CRITICAL: Before EVERY Response")
-3. ⏳ Audit recent git history for other violations
-4. ⏳ User confirm environment variable settings
-
-**P1 - Short-Term (1 Week)**:
-
-1. ✅ Strengthen Bash whitelist (exhaustive list, no ambiguity) - **COMPLETED via ADR-030**
-2. ⏳ Add decision logging to router-state.cjs
-3. ✅ Create "Urgent Request" routing pattern in router-decision.md - **COMPLETED via ADR-032**
-4. ✅ Update CLAUDE.md Sections 1.1-1.2 with strengthened rules - **COMPLETED via ADR-031**
-
-**P2 - Medium-Term (1 Month)**:
-
-1. ⏳ Implement Reflexion verification (pre-execution protocol check)
-2. ⏳ Create protocol violation audit log (`.claude/context/runtime/protocol-violations.jsonl`)
-3. ✅ Add router training examples (`.claude/docs/ROUTER_TRAINING_EXAMPLES.md`) - **COMPLETED**
-
-**P3 - Long-Term (3 Months)**:
-
-1. ⏳ Implement constrained decoding to prevent blacklisted tool generation
-2. ⏳ Implement RECE loop for router self-correction
-3. ⏳ Create dedicated "Protocol Guardian" agent for real-time monitoring
-
-### Success Criteria
-
-- ✅ Zero Router protocol violations in next 30 days
-- ✅ Urgent requests handled correctly (acknowledged + spawned with priority)
-- ✅ User trust restored through consistent architecture adherence
-
-### Resolution
-
-**Completed on 2026-01-27** via comprehensive remediation:
-
-1. **ADR-030: Router Bash Whitelist Strictness** - IMPLEMENTED
-   - Created exhaustive whitelist for Router Bash commands
-   - Added visceral blocking messages with allowed commands list
-   - Enforcement via routing-guard.cjs
-
-2. **ADR-031: Visceral Decision-Time Prompting** - IMPLEMENTED
-   - Added prominent self-check gates to CLAUDE.md
-   - Created violation examples with correct patterns
-   - Enhanced router.md with decision-time prompts
-
-3. **ADR-032: Urgent Request Routing Pattern** - IMPLEMENTED
-   - Created systematic handling for urgent user requests
-   - Documented acknowledgment + spawning pattern
-   - Integrated into router-decision.md workflow
-
-4. **ROUTER_TRAINING_EXAMPLES.md** - CREATED
-   - Comprehensive examples of correct routing patterns
-   - Common violation scenarios with corrections
-
-**Evidence**: All ADRs marked as "Implemented" in decisions.md (2026-01-27)
-
-### Related Artifacts
-
-- **Reflection Report**: `.claude/context/artifacts/reports/router-violation-reflection.md`
-- **Learning Entry**: See "Router Protocol Violation Pattern" in learnings.md
-- **ADRs**:
-  - ADR-030: Router Bash Whitelist Strictness (Implemented)
-  - ADR-031: Visceral Decision-Time Prompting (Implemented)
-  - ADR-032: Urgent Request Routing Pattern (Implemented)
-- **Training**: `.claude/docs/ROUTER_TRAINING_EXAMPLES.md`
-- **Enforcement**: routing-guard.cjs (consolidated hook)
-
-### Workaround
-
-**For Users Encountering Similar Issues**:
-
-1. Explicitly remind Router: "Please follow Router-First protocol - spawn agents, do not execute directly"
-2. Check environment variables: Ensure `ROUTER_WRITE_GUARD=block` and `PLANNER_FIRST_ENFORCEMENT=block`
-3. Report violations immediately for reflection analysis
-
-### Next Steps
-
-1. User to confirm environment variable settings
-2. Spawn DEVELOPER to implement P0 fixes (visceral prompts, Bash whitelist updates)
-3. Spawn REFLECTION-AGENT to review fixes after implementation
-4. Create follow-up tasks for P1, P2, P3 remediation phases
-
----
-
-## [2026-01-24] Test Infrastructure Issue
-
-### Issue: Broken npm test command
-
-- **File**: package.json
-- **Problem**: References non-existent .claude/tests/test-all-hooks.mjs
-- **Impact**: npm test fails completely
-- **Status**: RESOLVED (2026-01-26)
-- **Resolution**: Fixed by QA Agent (Task #10)
-  - Updated test:tools pattern to use recursive globs: ".claude/tools/**/\*.test.mjs" ".claude/tools/**/\*.test.cjs"
-  - Updated test:all to run: pnpm test && pnpm test:framework && pnpm test:tools
-  - Excluded .test.js files (Jest format) to avoid ESM/CJS conflicts
-  - All 203 tests now passing (21 main + 164 framework + 18 tools)
-
-## 2026-01-24: External Integration Workflow Issues
-
-**Source:** Code review of `.claude/workflows/core/external-integration.md`
-
-### Important Issues
-
-**1. Phase 6 Rollback Assumes Uncommitted Changes**
-
-- **Location:** Lines 902-1044 (Rollback Procedure section)
-- **Issue:** Uses `git restore` which only works for uncommitted changes
-- **Impact:** If agent commits mid-phase, rollback fails to revert changes
-- **Fix:** Add git status check, use git revert for commits, git restore for uncommitted
-- **Priority:** High
-- **Status:** RESOLVED (2026-01-26)
-- **Resolution:** Added Rollback Strategy Selection section with decision tree for committed vs uncommitted changes. Now uses git revert for committed changes and git restore for uncommitted. Added safety rules preventing destructive commands like git reset --hard. See lines 906-1044.
-
-**2. Security Review Missing Script Execution Checks**
-
-- **Location:** Lines 403-430 (security review checklist) - NOW ENHANCED
-- **Issue:** Checklist does not explicitly cover script command injection, permissions, sandboxing
-- **Impact:** Malicious scripts in external skills could execute arbitrary commands
-- **Fix:** Add checklist items for script review, command injection, eval/exec, sandboxing
-- **Priority:** High
-- **Status:** RESOLVED (2026-01-24)
-- **Resolution:** Enhanced Phase 4 Security Review with three new security check categories:
-  1. **Script Execution Security** - 5 checklist items + 8 dangerous patterns to flag
-  2. **Dependency Security** - 7 checklist items for supply chain protection
-  3. **Data Exfiltration Prevention** - 8 checklist items for data leakage detection
-  - Updated security-architect task prompt (steps 5-8) with explicit instructions
-  - Added BLOCKING severity rules: script execution vulns, CVSS>=7.0, data exfil patterns
-
-**3. Version Comparison Logic Unspecified**
-
-- **Location:** Lines 136-170 (Phase 0 pre-check)
-- **Issue:** Mentions version comparison but does not specify method or format
-- **Impact:** Incorrect artifact status determination (skip needed updates or duplicate integrations)
-- **Fix:** Specify semver comparison, fallback to SHA/date/checksum, document method
-- **Priority:** High
-- **Status:** RESOLVED (2026-01-26)
-- **Resolution:** Added Version Comparison Protocol section with 4-priority fallback system: semver (Priority 1) > Git commit SHA (Priority 2) > file modification date (Priority 3) > content checksum (Priority 4). Requires documenting comparison method used in pre-check-results.md. See lines 136-170.
-
-### Minor Issues
-
-**4. Related Workflows Reference Non-Existent File**
-
-- **Location:** Lines 1046-1052
-- **Issue:** References "Codebase Integration Workflow" which does not exist
-- **Fix:** Update to reference actual workflows: skill-lifecycle.md, feature-development-workflow.md, router-decision.md
-- **Priority:** Medium
-- **Status:** RESOLVED (2026-01-26)
-- **Resolution:** Updated Related Workflows section to reference existing workflows: skill-lifecycle.md, feature-development-workflow.md, router-decision.md. See lines 1046-1052.
-
----
-
-## [SEC-001] RESOLVED: Bash Command Validator Fail-Open Vulnerability
-
-- **Date**: 2026-01-25
-- **Severity**: Critical
-- **Status**: Resolved
-- **File**: `.claude/hooks/safety/bash-command-validator.cjs`
-- **Lines**: 166-173
-- **STRIDE Category**: Elevation of Privilege
-- **Description**: The bash command validator had a fail-open pattern where catch blocks would call `process.exit(0)`, allowing all commands through on any error. An attacker could craft malformed input to trigger errors and bypass security validation entirely.
-- **Resolution**: Changed `process.exit(0)` to `process.exit(2)` (block) in the catch block. Added security rationale comments explaining defense-in-depth principle: "deny by default when security state is unknown."
-
-## [SEC-002] RESOLVED: Shell Validator Inner Command Bypass
-
-- **Date**: 2026-01-25
-- **Severity**: High
-- **Status**: Resolved
-- **File**: `.claude/hooks/safety/validators/shell-validators.cjs`
-- **Lines**: 157-161
-- **STRIDE Category**: Tampering
-- **Description**: Shell commands like `bash -c "rm -rf /"` extracted the inner command but did not re-validate it through the validator registry. This allowed dangerous commands to bypass security checks by wrapping them in shell invocations.
-- **Resolution**: Added recursive validation using `const { validateCommand } = require('./registry.cjs')` to re-validate extracted inner commands. The inner command is now blocked if any validator rejects it.
-
-## [SEC-003] RESOLVED: Missing Network Command Validators
-
-- **Date**: 2026-01-25
-- **Severity**: High
-- **Status**: Resolved
-- **File**: `.claude/hooks/safety/validators/network-validators.cjs` (NEW)
-- **STRIDE Category**: Information Disclosure, Tampering, Elevation of Privilege
-- **Description**: Dangerous network and system commands had no validators:
-  - `curl`/`wget`: Data exfiltration, remote code execution via `curl | bash`
-  - `nc`/`netcat`: Reverse shells, data exfiltration
-  - `ssh`/`scp`: Remote access, unauthorized file transfer
-  - `sudo`: Privilege escalation
-  - `rsync`: Data exfiltration to remote hosts
-- **Resolution**: Created comprehensive `network-validators.cjs` with:
-  - `curl`/`wget`: Allowlist of safe package registry domains, block piping to shell
-  - `nc`/`netcat`: Blocked entirely (reverse shell risk)
-  - `ssh`/`scp`: Blocked entirely (remote access risk)
-  - `sudo`: Blocked entirely (privilege escalation)
-  - `rsync`: Block remote syncs, allow local-only operations
-- **Registry Update**: All 8 commands registered in `registry.cjs`
-
-## [SEC-004] RESOLVED: Security Review Guard Hook Implemented
-
-- **Date**: 2026-01-25
-- **Severity**: High
-- **Status**: Resolved
-- **STRIDE Category**: Elevation of Privilege
-- **Description**: Implementation agents (DEVELOPER, QA, DEVOPS) could be spawned without mandatory security review for security-sensitive tasks. This allowed developers to implement security-critical features without security architect oversight.
-- **Resolution**: Created `security-review-guard.cjs` PreToolUse(Task) hook that:
-  - Blocks DEVELOPER/QA/DEVOPS spawns when `requiresSecurityReview=true` and `securitySpawned=false`
-  - Allows SECURITY-ARCHITECT spawns even when security review not done (to enable the review)
-  - Supports enforcement modes: block (default), warn, off via `SECURITY_REVIEW_ENFORCEMENT` env var
-  - Registered in `.claude/settings.json` for PreToolUse(Task)
-- **Test Coverage**: 13 tests (7 unit + 6 integration), all passing
-  - ✓ Allow when security review not required
-  - ✓ Block DEVELOPER when security review required but not done
-  - ✓ Allow DEVELOPER when security review done
-  - ✓ Block QA when security review required but not done
-  - ✓ Allow SECURITY-ARCHITECT spawn even when security not done
-  - ✓ Warn mode allows but shows warning
-  - ✓ Off mode always allows
-- **Files Created**:
-  - `.claude/hooks/routing/security-review-guard.cjs`
-  - `.claude/hooks/routing/security-review-guard.test.cjs`
-  - `.claude/hooks/routing/security-review-guard.integration.test.cjs`
-- **Files Modified**: `.claude/settings.json` (registered hook)
-
----
-
-## [SEC-005] RESOLVED: Code Injection via new Function() in Workflow Engine
-
-- **Date**: 2026-01-25
-- **Severity**: Critical
-- **Status**: Resolved
-- **Files**:
-  - `.claude/lib/workflow/step-validators.cjs` (lines 388, 515)
-  - `.claude/lib/workflow/workflow-engine.cjs` (line 571)
-- **STRIDE Category**: Elevation of Privilege, Tampering
-- **Description**: The workflow engine uses `new Function()` (equivalent to `eval()`) to evaluate gate conditions and assertions. This allows arbitrary JavaScript code execution if workflow definitions contain malicious conditions. An attacker who can inject or modify workflow definitions can execute arbitrary code on the system.
-- **Attack Vector**: Malicious `gate.condition` like `"(function(){require('child_process').execSync('whoami')})() || true"`
-- **Workaround**: Manually review all workflow definitions before loading; do not allow untrusted workflow files
-- **Recommendation**: Replace `new Function()` with a safe expression parser (e.g., `expr-eval`); implement allowlist of permitted operations; validate workflow definitions against strict JSON Schema
-- **Resolution** (2026-01-26):
-  - Replaced `new Function()` with `SAFE_CONDITIONS` predefined evaluator map
-  - Added `safeEvaluateCondition()` function that uses whitelist lookup
-  - Created `step-validators.security.test.cjs` with 19 security tests
-  - All tests passing (19/19 security + 29/29 validators + 55/55 workflow engine)
-
-## [SEC-006] RESOLVED: Missing Path Validation in Rollback Manager
-
-- **Date**: 2026-01-25
-- **Severity**: Critical
-- **Status**: Resolved
-- **File**: `.claude/lib/self-healing/rollback-manager.cjs`
-- **STRIDE Category**: Tampering, Elevation of Privilege
-- **Description**: The `RollbackManager` class performs file read/write operations without validating that file paths are within the project root. The `_restoreFile()` method (line 268-269) writes to `fileEntry.path` without validation. The `_deleteCheckpoint()` method (line 438) uses `fs.rmSync(recursive: true)` without path validation.
-- **Attack Vector**: Malicious manifest with path `../../../../../../etc/cron.d/malicious` could write files outside PROJECT_ROOT. Malicious checkpointId like `../../important-data` could delete arbitrary directories.
-- **Workaround**: Do not use rollback manager with untrusted manifest files
-- **Recommendation**: Import and use `validatePath()` from `validator.cjs` before any file operation; validate checkpointId format (alphanumeric with hyphens only)
-- **Resolution** (2026-01-26):
-  - Added `validatePathWithinRoot()` function to check paths stay within PROJECT_ROOT
-  - Added `validateCheckpointId()` to validate alphanumeric + hyphens only
-  - Created 16 tests covering path traversal prevention
-
-## [SEC-007] RESOLVED: State File Poisoning via Unvalidated JSON Parsing
-
-- **Date**: 2026-01-25
-- **Severity**: Critical
-- **Status**: Resolved
-- **Files**:
-  - `.claude/hooks/routing/router-state.cjs`
-  - `.claude/hooks/self-healing/loop-prevention.cjs`
-  - `.claude/hooks/self-healing/auto-rerouter.cjs`
-  - `.claude/hooks/self-healing/anomaly-detector.cjs`
-- **STRIDE Category**: Tampering, Spoofing
-- **Description**: All state files are parsed with `JSON.parse()` without schema validation. The spread pattern `{ ...getDefaultState(), ...state }` allows property injection. Malicious state files can alter system behavior, including bypassing security guards.
-- **Attack Vector**: Poisoning `router-state.json` with `{"plannerSpawned": true}` bypasses task-create-guard.cjs enforcement
-- **Workaround**: Protect state files with filesystem permissions; monitor state files for unexpected modifications
-- **Recommendation**: Define JSON schemas for all state files; use `validateOutput()` from `validator.cjs`; implement integrity checks (checksums)
-- **Resolution** (2026-01-26):
-  - Created `.claude/lib/utils/safe-json.cjs` with schema validation
-  - Added `safeParseJSON()` that strips unknown properties and uses defaults
-  - Updated `router-state.cjs` with `safeJSONParse()` to prevent prototype pollution
-  - Created 17 tests covering JSON schema validation
-
-## [SEC-008] RESOLVED: Security Hooks Fail-Open on Errors
-
-- **Date**: 2026-01-25
-- **Severity**: High
-- **Status**: Resolved
-- **Files**:
-  - `.claude/hooks/routing/task-create-guard.cjs` (line 162-165)
-  - `.claude/hooks/self-healing/loop-prevention.cjs`
-  - `.claude/hooks/self-healing/auto-rerouter.cjs` (NOT FIXED - advisory hook, fail-open acceptable)
-- **STRIDE Category**: Elevation of Privilege
-- **Description**: Security hooks fail open (`process.exit(0)`, allowing action) when errors occur rather than fail-closed. Comment states "Fail open on errors to avoid blocking legitimate work" but this allows security bypass via induced errors.
-- **Attack Vector**: Attacker induces errors (malformed input, disk full) to bypass security checks
-- **Resolution** (2026-01-26):
-  - Changed `task-create-guard.cjs` catch block from `process.exit(0)` to `process.exit(2)` (fail closed)
-  - Changed `loop-prevention.cjs` catch block from `process.exit(0)` to `process.exit(2)` (fail closed)
-  - Added JSON audit logging for error events
-  - Added debug override: `TASK_CREATE_GUARD_FAIL_OPEN=true` and `LOOP_PREVENTION_FAIL_OPEN=true` for debugging
-  - Note: `auto-rerouter.cjs` is advisory-only (never blocks), fail-open is acceptable by design
-
-## [SEC-009] RESOLVED: execSync Command Injection Risk
-
-- **Date**: 2026-01-25
-- **Severity**: High
-- **Status**: RESOLVED
-- **Files**:
-  - `.claude/tools/runtime/swarm-coordination/swarm-coordination.cjs` (lines 155, 197) - FIXED
-  - `.claude/hooks/memory/format-memory.cjs` (lines 78, 87) - FIXED
-  - `.claude/skills/skill-creator/scripts/create.cjs` (6 execSync calls) - FIXED
-- **STRIDE Category**: Elevation of Privilege, Tampering
-- **Description**: Multiple files use `execSync()` with string interpolation that includes external input (paths, arguments). Shell metacharacters in input could execute arbitrary commands.
-- **Resolution** (2026-01-26):
-  - `swarm-coordination.cjs`: Replaced `execSync()` with `spawnSync()` using array args and `shell: false`
-  - `format-memory.cjs`: Replaced `execSync()` with `spawnSync()` using array args and `shell: false`
-  - Both files: Added `isPathSafe()` validation function to reject dangerous characters
-  - `skill-creator/scripts/create.cjs` (2026-01-26):
-    - Replaced ALL 6 `execSync()` calls with `spawnSync()` + `shell: false`
-    - Added `isPathSafe()` function with DANGEROUS_CHARS list
-    - Added `isUrlSafe()` function for git clone URL validation
-    - Fixed calls: formatFile(), formatDirectory(), installSkill() (git clone)
-    - Fixed generated code template: runSkill(), validateInputs()
-    - Updated documentation example to use spawnSync pattern
-- **Verification**: `grep -n execSync create.cjs` returns no matches
-
-## [BUG-001] RESOLVED: Nested .claude Folders Created by process.cwd() Default
-
-- **Date**: 2026-01-25
-- **Severity**: Medium
-- **Status**: Resolved
-- **Files**:
-  - `.claude/hooks/memory/session-memory-extractor.cjs` (lines 180, 186, 192)
-  - `.claude/lib/memory/memory-manager.cjs` (multiple functions with `projectRoot = process.cwd()`)
-- **Description**: Memory manager functions default to `process.cwd()` for project root. When hooks run from within the `.claude` folder (e.g., during tests or certain execution contexts), this creates nested `.claude/context/memory` folders inside `.claude` or `.claude/context/memory`.
-- **Evidence Found**:
-  1. `.claude/.claude/context/memory/learnings.md` - Auto-Extracted learnings
-  2. `.claude/.claude/context/runtime/router-state.json` - Router state
-  3. `.claude/.claude/context/self-healing/loop-state.json` - Loop state
-  4. `.claude/context/memory/.claude/context/memory/codebase_map.json` - Test file discoveries
-- **Resolution (Cleanup)**: Deleted nested folders on 2026-01-25
-- **Root Cause**: `session-memory-extractor.cjs` calls `recordPattern()`, `recordGotcha()`, `recordDiscovery()` without passing `projectRoot`, relying on `process.cwd()` default
-- **Recommendation**: Add `findProjectRoot()` to `session-memory-extractor.cjs` and pass it to all memory manager calls. Consider making `findProjectRoot()` a shared utility.
-- **Resolution** (2026-01-26):
-  - Created `.claude/lib/utils/project-root.cjs` with `findProjectRoot()` utility
-  - Replaced 38 `process.cwd()` defaults with `findProjectRoot()` in:
-    - memory-manager.cjs (11 functions)
-    - memory-scheduler.cjs (9 functions)
-    - memory-tiers.cjs (11 functions)
-    - memory-dashboard.cjs (7 functions)
-  - Created 6 tests for project root resolution
-
-## [SEC-010] MITIGATED: Environment Variable Security Overrides
-
-- **Date**: 2026-01-25
-- **Severity**: High
-- **Status**: Mitigated (Audit Logging Added)
-- **Files**:
-  - `.claude/hooks/safety/file-placement-guard.cjs` - AUDIT LOGGING ADDED
-  - `.claude/hooks/safety/router-write-guard.cjs` - AUDIT LOGGING ADDED
-  - `.claude/hooks/routing/task-create-guard.cjs` - AUDIT LOGGING ADDED
-  - `.claude/hooks/self-healing/loop-prevention.cjs` - AUDIT LOGGING ADDED
-- **STRIDE Category**: Elevation of Privilege
-- **Description**: Multiple security hooks can be completely disabled via environment variables (FILE_PLACEMENT_OVERRIDE, FILE_PLACEMENT_GUARD=off, ROUTER_WRITE_GUARD=off). While documented, this creates bypass mechanisms.
-- **Resolution** (2026-01-26):
-  - Added JSON audit logging when security overrides are used
-  - Each override logs: hook name, event type, override variable, timestamp, warning message
-  - Audit logs output to stderr in JSON format for easy aggregation
-  - Overrides remain functional (by design) but are now auditable
-- **Audit Log Format**:
-  ```json
-  {
-    "hook": "<hook-name>",
-    "event": "security_override_used",
-    "override": "<ENV_VAR>=<value>",
-    "timestamp": "...",
-    "warning": "..."
-  }
-  ```
-- **Remaining Risk**: Overrides still exist by design; recommendation to monitor audit logs in production
-
-## [FIX-001] RESOLVED: File Placement Guard Default Mode
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: Resolved
-- **File**: `.claude/hooks/safety/file-placement-guard.cjs`
-- **Description**: Default enforcement mode was 'warn' instead of 'block', allowing invalid file placements to bypass enforcement
-- **Resolution**: Changed default from 'warn' to 'block'. Added 4 tests for getEnforcementMode(). All 37 tests passing.
-
-## [FIX-002] RESOLVED: Test Parallelization Interference
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: Resolved
-- **Description**: Hook tests using shared state files (router-state.json) failed when run in parallel due to test interference
-- **Resolution**: Added `test:framework` scripts to package.json that use `--test-concurrency=1` to run tests sequentially. All 164 framework tests now pass.
-
-## [FIX-003] RESOLVED: Retroactive EVOLVE Compliance for Utility Files
-
-- **Date**: 2026-01-26
-- **Severity**: Low
-- **Status**: Resolved
-- **Description**: Utility files in .claude/lib/utils/ (project-root.cjs, safe-json.cjs, atomic-write.cjs) were created without going through EVOLVE workflow
-- **Resolution**: Added retroactive evolution entry to evolution-state.json documenting the utility module creation with phase completion notes.
-
----
-
-## EVOLVE Auto-Start Security Review Findings (2026-01-26)
-
-**Task**: #4 - Security review of EVOLVE auto-start feature (Task #2)
-**Report**: `.claude/context/artifacts/reports/security-review-evolve-auto-start.md`
-
-### SEC-AS-001: Circuit Breaker State File Tampering
-
-- **Date**: 2026-01-26
-- **Severity**: High
-- **Status**: RESOLVED (2026-01-26)
-- **Description**: Circuit breaker counter stored in evolution-state.json can be tampered with to bypass rate limits
-- **STRIDE Category**: Tampering
-- **Resolution**: Changed from counter-based to timestamp array-based circuit breaker. Each evolution attempt is tracked as an ISO timestamp. Timestamps are pruned on read - only those within the last hour count. This is more tamper-resistant because attackers cannot simply reset a counter; they must provide valid ISO timestamps within the time window.
-- **Files Modified**: `.claude/hooks/safety/file-placement-guard.cjs`
-- **Test Coverage**: 4 new tests in SEC-AS-001 test suite
-
-### SEC-AS-002: Clock Manipulation Rate Limit Bypass
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: RESOLVED (2026-01-26)
-- **Description**: Rate limit based on wall-clock time can be bypassed by manipulating system clock
-- **STRIDE Category**: Tampering
-- **Resolution**: Updated `checkCircuitBreaker()` to filter timestamps with `isNaN()` check and prune old timestamps on read. Combined with timestamp array approach, this mitigates clock manipulation by requiring valid timestamps that fall within the window at time of check.
-- **Files Modified**: `.claude/hooks/safety/file-placement-guard.cjs`
-
-### SEC-AS-004: Recursive Evolution Spawn Loop
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: RESOLVED (2026-01-26)
-- **Description**: Auto-spawned evolution-orchestrator could create artifact that triggers another auto-spawn, causing recursive loop
-- **STRIDE Category**: Denial of Service
-- **Resolution**: Added `checkSpawnDepth()` function that reads `spawnDepth` from evolution state. If `spawnDepth > 0`, auto-spawn is blocked. The `buildEvolveTriggerData()` function now checks spawn depth and includes it in trigger data. Evolution-orchestrator must increment spawnDepth when entering and decrement when exiting.
-- **Files Modified**: `.claude/hooks/safety/file-placement-guard.cjs`, `.claude/lib/utils/safe-json.cjs` (added spawnDepth to schema)
-- **Test Coverage**: 3 new tests in SEC-AS-004 test suite
-
-### SEC-SF-001: Evolution State JSON.parse Vulnerability
-
-- **Date**: 2026-01-26
-- **Severity**: High
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/safety/file-placement-guard.cjs`
-- **Description**: evolution-state.json parsed with raw JSON.parse() without prototype pollution protection
-- **STRIDE Category**: Tampering, Spoofing
-- **Resolution**:
-  1. Added `evolution-state` schema to `.claude/lib/utils/safe-json.cjs` with proper defaults
-  2. Updated `getEvolutionState()` to use `safeParseJSON()` with the evolution-state schema
-  3. The safe parser strips `__proto__`, `constructor`, and unknown properties
-  4. Returns safe defaults on parse error (fail closed)
-- **Files Modified**: `.claude/hooks/safety/file-placement-guard.cjs`, `.claude/lib/utils/safe-json.cjs`
-- **Test Coverage**: 4 new tests in SEC-SF-001 test suite
-
-### SEC-IV-001: Unsanitized Path in Spawn Prompt
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: RESOLVED (2026-01-26)
-- **Description**: Artifact path passed to evolution-orchestrator spawn prompt without sanitization (shell metacharacters, newlines)
-- **STRIDE Category**: Injection
-- **Resolution**: Added `sanitizePathForPrompt()` function that:
-  1. Strips all dangerous characters: `$`, backticks, `|`, `&`, `;`, `()`, `<>`, `!`, `*`, `?`, `[]`, `{}`, newlines, quotes
-  2. Truncates to 500 characters maximum
-  3. The `buildEvolveTriggerData()` function now sanitizes artifact path before including in trigger data
-- **Files Modified**: `.claude/hooks/safety/file-placement-guard.cjs`
-- **Test Coverage**: 7 new tests in SEC-IV-001 test suite
-
-### SEC-IV-002: Sensitive Path Auto-Spawn
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: RESOLVED (2026-01-26)
-- **Description**: No blocklist for sensitive paths (.env, credentials, security hooks) that should never trigger auto-spawn
-- **STRIDE Category**: Elevation of Privilege
-- **Resolution**:
-  1. Added `SENSITIVE_PATH_PATTERNS` constant with patterns for: `.env`, credentials, secrets, passwords, `.pem`, `.key`, safety hooks, routing hooks
-  2. Added `isSensitivePath()` function to check paths against blocklist
-  3. Updated `buildEvolveTriggerData()` to set `autoStart=false` for sensitive paths
-  4. This ensures safety and routing hooks cannot be auto-evolved, preventing privilege escalation
-- **Files Modified**: `.claude/hooks/safety/file-placement-guard.cjs`
-- **Test Coverage**: 12 new tests in SEC-IV-002 test suite
-
----
-
-## Security Audit Findings (2026-01-26) - Enforcement Hooks
-
-**Task**: #5 - Security audit of enforcement hooks and guards
-**Report**: `.claude/context/artifacts/security-audit-findings.md`
-
-### SEC-AUDIT-001: planner-first-guard.cjs Fail-Open
-
-- **Date**: 2026-01-26
-- **Severity**: CRITICAL
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/routing/planner-first-guard.cjs` (lines 263-280)
-- **CWE**: CWE-754 (Improper Check for Unusual or Exceptional Conditions)
-- **STRIDE Category**: Elevation of Privilege
-- **Description**: The `main()` function's catch block exits with code 0 (allow), enabling security bypass by inducing errors. An attacker could poison router-state.json with malformed data to trigger an exception and bypass planner-first enforcement.
-- **Resolution**: Changed catch block to fail closed with `process.exit(2)`. Added `HOOK_FAIL_OPEN=true` env var for debugging override. Added JSON audit logging for both error and override events.
-
-### SEC-AUDIT-002: security-review-guard.cjs Fail-Open
-
-- **Date**: 2026-01-26
-- **Severity**: CRITICAL
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/routing/security-review-guard.cjs` (lines 183-200)
-- **CWE**: CWE-754 (Improper Check for Unusual or Exceptional Conditions)
-- **STRIDE Category**: Elevation of Privilege
-- **Description**: The `main()` function's catch block exits with code 0, allowing security-sensitive DEVELOPER/QA/DEVOPS spawns without security review when errors occur.
-- **Resolution**: Changed catch block to fail closed with `process.exit(2)`. Added `HOOK_FAIL_OPEN=true` env var for debugging override. Added JSON audit logging for both error and override events.
-
-### SEC-AUDIT-003: router-write-guard.cjs Missing Error Handling
-
-- **Date**: 2026-01-26
-- **Severity**: HIGH
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/safety/router-write-guard.cjs`
-- **CWE**: CWE-754 (Improper Check for Unusual or Exceptional Conditions)
-- **STRIDE Category**: Tampering
-- **Description**: The `main()` function has no try-catch wrapper. Any thrown error will crash the hook with exit code 1 but loses audit trail.
-- **Resolution**: Wrapped entire main() body in try-catch with fail-closed behavior (`process.exit(2)`). Added `ROUTER_WRITE_GUARD_FAIL_OPEN=true` env var for debugging override. Added JSON audit logging for both error and override events.
-
-### SEC-AUDIT-004: task-create-guard.cjs Fail-Open on No Input
-
-- **Date**: 2026-01-26
-- **Severity**: HIGH
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/routing/task-create-guard.cjs`
-- **CWE**: CWE-754 (Improper Check for Unusual or Exceptional Conditions)
-- **STRIDE Category**: Elevation of Privilege
-- **Description**: When no hook input is provided (e.g., stdin closed prematurely), the guard exits with code 0 allowing all TaskCreate operations.
-- **Resolution**: Changed to fail closed with `process.exit(2)` when no input is available. Added `TASK_CREATE_GUARD_ALLOW_NO_INPUT=true` env var for debugging override. Added JSON audit logging for both no-input and override events.
-
-### SEC-AUDIT-005: loop-prevention.cjs TOCTOU Race Condition
-
-- **Date**: 2026-01-26
-- **Severity**: HIGH
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/self-healing/loop-prevention.cjs`
-- **CWE**: CWE-367 (Time-of-Check to Time-of-Use Race Condition)
-- **STRIDE Category**: Tampering
-- **Description**: State is read in `getState()`, checked, then modified in separate operations without locking. Concurrent hook executions could both pass budget checks before either records the evolution.
-- **Resolution**: Implemented file locking using exclusive file creation (`fs.writeFileSync` with `flag: 'wx'`). Added `acquireLock()` and `releaseLock()` functions. Lock operations use `.lock` suffix files with stale lock detection (5 second timeout) and retry logic (50ms intervals, 2s max wait).
-
-### SEC-AUDIT-006: safe-json.cjs Incomplete Deep Copy
-
-- **Date**: 2026-01-26
-- **Severity**: HIGH
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/lib/utils/safe-json.cjs`
-- **CWE**: CWE-20 (Improper Input Validation)
-- **STRIDE Category**: Tampering
-- **Description**: The `safeParseJSON()` function only deep-copies arrays. Nested objects are copied by reference, potentially allowing prototype pollution through nested object manipulation.
-- **Resolution**: Added deep copy for ALL nested objects using `JSON.parse(JSON.stringify())`. Both arrays and objects now use this pattern with try-catch fallback to schema defaults on circular reference errors.
-
-### SEC-AUDIT-007: security-review-guard.cjs Silent Fail
-
-- **Date**: 2026-01-26
-- **Severity**: MEDIUM
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/routing/security-review-guard.cjs`
-
----
+<!-- OPEN ISSUES BELOW THIS LINE -->
 
 ## Architecture Review Findings (2026-01-27)
-
-**Reviewer**: ARCHITECT agent
-**Scope**: Framework-wide pointer gaps, structural issues, configuration drift
-**Context**: Memory review shows ADR-015 (85% agents had NO skill guidance - now fixed), ADR-027 (CLAUDE.md doc drift - recently fixed), ADR-026 (hook consolidation complete)
 
 ### POINTER GAPS
 
@@ -741,24 +49,6 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
   1. Create example architecture diagrams for the framework itself (agents, hooks, workflows structure)
   2. Update FILE_PLACEMENT_RULES.md with explicit diagram placement rules
   3. Add diagram generation to evolution-orchestrator workflow as evidence of architectural decisions
-- **Evidence**:
-
-  ```bash
-  $ ls .claude/context/artifacts/diagrams/
-  # Output: . .. .gitkeep (empty)
-
-  # Architect.md line 78:
-  # "Diagrams Location: Architecture diagrams go to .claude/context/artifacts/diagrams/"
-  ```
-
-### POINTER-002: Workflow Skill References (VERIFIED OK)
-
-- **Date**: 2026-01-27
-- **Category**: pointer_gap (FALSE POSITIVE)
-- **Impact**: N/A
-- **Status**: Resolved
-- **Description**: Initial concern that workflows referenced non-existent skills (context-driven-development, consensus-voting, database-expert). Verification confirms ALL skill references in workflows exist as actual skill directories.
-- **Evidence**: All checked skills verified to exist.
 
 ### POINTER-003: Architect Missing Workflow References
 
@@ -767,84 +57,9 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Impact**: maintainability
 - **Status**: Open
 - **Description**: Architect agent definition mentions "trade-off analysis using SequentialThinking" (line 56) but provides NO guidance on which workflows to use for architecture reviews. The framework HAS architecture-review-skill-workflow.md, consensus-voting-skill-workflow.md, and database-architect-skill-workflow.md, but architect.md doesn't reference them.
-- **Remediation**: Add "Related Workflows" section to architect.md:
-
-  ```markdown
-  ## Related Workflows
-
-  For complex architectural tasks, use these workflows:
-
-  - **Architecture Review**: `.claude/workflows/architecture-review-skill-workflow.md`
-  - **Consensus Decisions**: `.claude/workflows/consensus-voting-skill-workflow.md`
-  - **Database Design**: `.claude/workflows/database-architect-skill-workflow.md`
-  ```
-
-- **Evidence**:
-  ```
-  architect.md sections:
-  - Workflow (line 53-58): mentions process, no workflow files
-  - Implementation Standards (line 66-80): references DEVELOPER_WORKFLOW.md
-  - Skill Invocation Protocol (line 82-125): lists skills, not workflows
-  - NO mention of architecture-review-skill-workflow.md
-  ```
-
-### CONFIG DRIFT
-
-### CONFIG-001: Settings.json Hook Paths (VERIFIED OK)
-
-- **Date**: 2026-01-27
-- **Category**: config_drift (VERIFIED OK)
-- **Impact**: N/A
-- **Status**: Verified
-- **Description**: Cross-referenced all 24 hook command paths in settings.json against actual files in .claude/hooks/. All paths are valid.
-- **Evidence**:
-  ```
-  Sample verification:
-  ✓ "node .claude/hooks/routing/routing-guard.cjs" → file exists
-  ✓ "node .claude/hooks/safety/tdd-check.cjs" → file exists
-  ✓ "node .claude/hooks/evolution/unified-evolution-guard.cjs" → file exists
-  ```
-
-### [RESOLVED] CONFIG-002: CLAUDE.md Agent Count Accuracy
-
-- **Date**: 2026-01-27
-- **Date Resolved**: 2026-01-27
-- **Category**: config_drift
-- **Impact**: maintainability
-- **Status**: RESOLVED (CLI Tool Created)
-- **Description**: CLAUDE.md Section 3 routing table claims 45 agents. Glob of .claude/agents/ found 45 .md files. Counts match, but need to verify every table entry points to an actual file AND every agent file is in the table.
-- **Remediation**: Create validation script:
-  1. Extract agent names from CLAUDE.md routing table
-  2. Glob all .md files in .claude/agents/
-  3. Find agents in table but not in filesystem (broken pointers)
-  4. Find agents in filesystem but not in table (missing routing)
-- **Resolution**: CLI tool created at `.claude/tools/cli/validate-agent-routing.js`
-  - Validates all agent routing entries against filesystem
-  - Can be run with: `node .claude/tools/cli/validate-agent-routing.js`
-  - Provides detailed report of broken pointers and missing routing entries
-- **Evidence**:
-  ```
-  CLAUDE.md Section 3 table: 45 entries (8 core + 22 domain + 11 specialized + 3 orchestrators + 1 meta)
-  Glob .claude/agents/**/*.md: 45 files
-  Match: Yes (counts align)
-  Validation tool: Created (task #9)
-  ```
+- **Remediation**: Add "Related Workflows" section to architect.md
 
 ### STRUCTURAL ISSUES
-
-### ARCH-001: Import Paths Verification (VERIFIED OK)
-
-- **Date**: 2026-01-27
-- **Category**: structural (VERIFIED OK)
-- **Impact**: N/A
-- **Status**: Verified
-- **Description**: Grep found 42 hooks and 10 lib files using relative imports (../ pattern). Sample verification shows imports are correctly resolved.
-- **Evidence**:
-  ```javascript
-  // .claude/hooks/routing/routing-guard.cjs line 43:
-  const { parseHookInputAsync } = require('../../lib/utils/hook-input.cjs');
-  // Resolves to: .claude/lib/utils/hook-input.cjs ✓ (file exists)
-  ```
 
 ### ARCH-002: Consolidated Hook File Confusion Risk
 
@@ -856,19 +71,6 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Remediation**: Two options:
   1. **Preferred**: Move to `.claude/hooks/routing/_legacy/` subdirectory with README explaining consolidation
   2. **Alternative**: Add header comment to each file: `// NOT REGISTERED - See routing-guard.cjs for active implementation`
-- **Evidence**:
-
-  ```bash
-  Files exist but not in settings.json:
-  ✓ .claude/hooks/routing/planner-first-guard.cjs
-  ✓ .claude/hooks/routing/task-create-guard.cjs
-  ✓ .claude/hooks/routing/router-self-check.cjs
-  ✓ .claude/hooks/routing/security-review-guard.cjs
-  ✓ .claude/hooks/safety/router-write-guard.cjs
-
-  Active unified hook in settings.json:
-  ✓ .claude/hooks/routing/routing-guard.cjs (PreToolUse multiple matchers)
-  ```
 
 ### ARCH-003: Skill Catalog Count Audit Needed
 
@@ -877,21 +79,7 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Impact**: maintainability
 - **Status**: Open
 - **Description**: Skill catalog header claims "Total Skills: 426 (2 deprecated)" but category table totals need verification. The count includes 139 scientific sub-skills under scientific-skills parent.
-- **Remediation**: Run audit to count actual skill directories and update catalog header if discrepancy exists:
-  ```bash
-  find .claude/skills -name "SKILL.md" | wc -l
-  ```
-- **Evidence**:
-
-  ```
-  Catalog header line 2: "Total Skills: 426 (2 deprecated)"
-  Category breakdown (header):
-  - Scientific Research: 139 (sub-skills under scientific-skills/)
-  - Other categories: ~287 skills
-  Total claimed: 426
-
-  Verification needed: Count actual SKILL.md files
-  ```
+- **Remediation**: Run audit to count actual skill directories and update catalog header if discrepancy exists
 
 ### DOCUMENTATION GAPS
 
@@ -902,99 +90,11 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Impact**: maintainability
 - **Status**: Open
 - **Description**: Skills like architecture-review, consensus-voting, database-architect have corresponding workflow files (.claude/workflows/\*-skill-workflow.md), but the skill files don't reference the workflows and vice versa. This breaks discoverability.
-- **Remediation**: Add "Workflow Integration" section to each skill that has a corresponding workflow:
-
-  ```markdown
-  ## Workflow Integration
-
-  This skill is used in the following workflows:
-
-  - **Multi-Agent Architecture Review**: `.claude/workflows/architecture-review-skill-workflow.md`
-  ```
-
-  And add "Related Skills" to workflows:
-
-  ```markdown
-  ## Related Skills
-
-  This workflow uses:
-
-  - `architecture-review` - Core architecture evaluation
-  - `diagram-generator` - Visual documentation
-  ```
-
-- **Evidence**:
-  ```
-  Skills with workflows:
-  ✓ architecture-review → architecture-review-skill-workflow.md (NO cross-ref)
-  ✓ consensus-voting → consensus-voting-skill-workflow.md (NO cross-ref)
-  ✓ database-architect → database-architect-skill-workflow.md (NO cross-ref)
-  ✓ swarm-coordination → swarm-coordination-skill-workflow.md (NO cross-ref)
-  ```
-- **CWE**: CWE-755 (Improper Handling of Exceptional Conditions)
-- **STRIDE Category**: Spoofing
-- **Description**: The `readState()` function silently returns permissive defaults (`requiresSecurityReview: false`) on any error.
-- **Resolution**: Changed `readState()` to fail closed - now returns `{requiresSecurityReview: true, securitySpawned: false}` on error, forcing security review when state is unknown. Added JSON audit logging for state read errors.
-
-### SEC-AUDIT-008: planner-first-guard.cjs Missing Audit Log for Off Mode
-
-- **Date**: 2026-01-26
-- **Severity**: MEDIUM
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/routing/planner-first-guard.cjs`
-- **CWE**: CWE-778 (Insufficient Logging)
-- **STRIDE Category**: Repudiation
-- **Description**: When PLANNER_FIRST_ENFORCEMENT=off, no audit log is emitted, making security bypass undetectable.
-- **Resolution**: Added JSON audit log to stderr when `PLANNER_FIRST_ENFORCEMENT=off`. Log includes hook name, event type (`security_override_used`), override variable, timestamp, and warning message. Consistent with SEC-010 audit pattern.
-
-### SEC-AUDIT-009: router-state.cjs Missing Audit Log for Override
-
-- **Date**: 2026-01-26
-- **Severity**: MEDIUM
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/routing/router-state.cjs`
-- **CWE**: CWE-778 (Insufficient Logging)
-- **STRIDE Category**: Repudiation
-- **Description**: The `checkWriteAllowed()` function returns success for `ALLOW_ROUTER_WRITE=true` without audit logging.
-- **Resolution**: Added JSON audit log to stderr when `ALLOW_ROUTER_WRITE=true`. Log includes hook name, event type (`security_override_used`), override variable, timestamp, and warning message. Consistent with SEC-010 audit pattern.
-
-### SEC-AUDIT-010: file-placement-guard.cjs Unvalidated Command-Line JSON
-
-- **Date**: 2026-01-26
-- **Severity**: MEDIUM
-- **Status**: RESOLVED (2026-01-26)
-- **File**: `.claude/hooks/safety/file-placement-guard.cjs`
-- **CWE**: CWE-20 (Improper Input Validation)
-- **STRIDE Category**: Tampering
-- **Description**: The `parseHookInput()` function directly parses command-line JSON without schema validation.
-- **Resolution**: Added `HOOK_INPUT_SCHEMA` constant with expected fields and defaults. Added `validateHookInput()` function that strips dangerous keys (`__proto__`, `constructor`, `prototype`), validates object structure, and deep-copies nested objects. Returns null on parse error (fail closed).
-
-### SEC-AUDIT-011: router-state.cjs Non-Atomic Read-Modify-Write
-
-- **Date**: 2026-01-26
-- **Severity**: LOW
-- **Status**: OPEN
-- **File**: `.claude/hooks/routing/router-state.cjs` (lines 393-399)
-- **CWE**: CWE-367 (Time-of-Check to Time-of-Use Race Condition)
-- **STRIDE Category**: Tampering
-- **Description**: The `recordTaskUpdate()` function performs a non-atomic read-modify-write sequence. Concurrent calls could lose updates.
-- **Recommendation**: Low priority as this is informational tracking, not security-critical.
+- **Remediation**: Add "Workflow Integration" section to each skill that has a corresponding workflow
 
 ---
 
 ## Architecture Review Pointer Gaps (2026-01-26)
-
-**Task**: #2 - Architecture review of agent definitions and routing
-**Report**: `.claude/context/artifacts/architecture-review-findings.md`
-
-### [ARCH-001] Missing ROUTER_KEYWORD_GUIDE.md File
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: RESOLVED (2026-01-26)
-- **Location**: Referenced in CLAUDE.md Section 3
-- **Description**: CLAUDE.md references `.claude/docs/ROUTER_KEYWORD_GUIDE.md` but the file did not exist
-- **Resolution**: File now exists at `.claude/docs/ROUTER_KEYWORD_GUIDE.md` (36873 bytes). Contains complete routing keyword documentation extracted from router-enforcer.cjs intentKeywords and INTENT_TO_AGENT mappings.
 
 ### [ARCH-002] Undocumented Skill Workflows
 
@@ -1034,9 +134,6 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 ---
 
 ## Implementation Task Security Review (2026-01-26)
-
-**Task**: Security review of 3 pending implementation tasks
-**Report**: `.claude/context/artifacts/security-review-implementation.md`
 
 ### [SEC-IMPL-001] Task #3 State Merging DoS Risk
 
@@ -1105,23 +202,9 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Description**: Async writes must preserve atomic write pattern (temp + rename) to prevent corruption
 - **Required Safeguard**: Implement async atomic write (await writeFile temp, await rename)
 
+---
+
 ## Library Code Quality Audit (2026-01-26)
-
-### Critical Issues Requiring Immediate Fix
-
-**CRITICAL-001: Missing Input Validation in CLI Interfaces**
-
-- **Files**: memory-manager.cjs, memory-scheduler.cjs, smart-pruner.cjs
-- **Risk**: Path traversal, command injection
-- **Fix**: Add path.normalize() and traversal checks before file operations
-- **Estimated Fix Time**: < 1 hour
-
-**CRITICAL-003: Silent Error Swallowing in Metrics Collection**
-
-- **File**: memory-dashboard.cjs (multiple catch blocks)
-- **Risk**: Failures invisible, incorrect health scores
-- **Fix**: Add debug logging with METRICS_DEBUG env var
-- **Estimated Fix Time**: < 30 minutes
 
 ### Important Issues for Next Sprint
 
@@ -1144,29 +227,12 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 
 ## Hook Code Quality Audit (2026-01-26)
 
-**Task**: #3 Phase 2 - Hook Code Quality Audit
-**Auditor**: CODE-REVIEWER Agent
-**Files Reviewed**: 80 hooks across 8 categories
-
-### Executive Summary
-
-**Overall Assessment:** GOOD - Functionally correct, security-hardened (95% compliance), 44% test coverage
-**Ready to Merge**: YES (with follow-up deduplication tasks)
-
-**Key Metrics:**
-
-- Dead Code: 0 instances
-- Code Duplication: ~45% (parseHookInput across 40+ files)
-- Security Compliance: 95% (5% legacy JSON.parse remaining)
-- Test Coverage: 44% (35/80 files)
-
 ### Important Issues (Should Fix)
 
 **HOOK-001: Massive Code Duplication - parseHookInput()**
 
 - **Severity**: High
 - **Impact**: ~2000 lines duplicated across 40+ hooks
-- **Files**: task-create-guard.cjs, session-memory-extractor.cjs, task-completion-reflection.cjs, loop-prevention.cjs, research-enforcement.cjs, +35 more
 - **Fix**: Extract to `.claude/lib/utils/hook-input.cjs` shared utility
 - **Estimated Effort**: 2 hours
 - **Status**: OPEN
@@ -1175,19 +241,8 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 
 - **Severity**: Medium
 - **Impact**: ~200 lines duplicated across 20+ hooks
-- **Files**: router-state.cjs, file-placement-guard.cjs, session-memory-extractor.cjs, task-completion-reflection.cjs, loop-prevention.cjs, +15 more
 - **Fix**: Use existing `.claude/lib/utils/project-root.cjs` or create if missing
 - **Estimated Effort**: 1 hour
-- **Status**: OPEN
-
-**HOOK-003: research-enforcement.cjs Missing SEC-007**
-
-- **Severity**: High
-- **CWE**: CWE-20 (Improper Input Validation)
-- **File**: `.claude/hooks/evolution/research-enforcement.cjs` line 88
-- **Issue**: Uses raw JSON.parse for evolution-state.json (prototype pollution risk)
-- **Fix**: Replace with `safeParseJSON(content, 'evolution-state')`
-- **Estimated Effort**: 30 minutes
 - **Status**: OPEN
 
 **HOOK-004: State Cache Integration Incomplete**
@@ -1198,17 +253,6 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Impact**: ~40% redundant I/O on state files
 - **Fix**: Add state-cache.cjs integration to getEvolutionState() and getLoopState()
 - **Estimated Effort**: 4 hours
-- **Status**: OPEN
-- **Note**: router-state.cjs already uses state cache internally, consumers benefit automatically
-
-**HOOK-005: Inconsistent Exit Code - router-write-guard.cjs**
-
-- **Severity**: Low
-- **File**: `.claude/hooks/safety/router-write-guard.cjs` line 207
-- **Issue**: Uses `process.exit(1)` instead of `process.exit(2)` for blocking
-- **Impact**: Inconsistency with all other blocking hooks
-- **Fix**: Change to `process.exit(2)`
-- **Estimated Effort**: 5 minutes
 - **Status**: OPEN
 
 **HOOK-006: Inconsistent Audit Logging Format**
@@ -1271,26 +315,9 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Effort**: 8-12 hours
 - **Status**: OPEN (future work)
 
-### Recommendations
-
-**Immediate (Priority 1):**
-
-1. Extract parseHookInput() to shared utility (HOOK-001)
-2. Apply SEC-007 to research-enforcement.cjs (HOOK-003)
-3. Fix router-write-guard.cjs exit code (HOOK-005)
-
-**Short-Term (Priority 2):** 4. Create hook-input.cjs, enforcement-mode.cjs shared utilities 5. Add tests for session-memory-extractor.cjs (HOOK-TEST-001) 6. Apply SEC-007 safe JSON parsing to ALL state file reads
-
-**Medium-Term (Priority 3):** 7. Consolidate related hooks (HOOK-PERF-001) 8. Create HOOK_DEVELOPMENT_GUIDE.md 9. Standardize audit logging format (HOOK-006)
-
-**Long-Term (Priority 4):** 10. Implement evolution-state.json and loop-state.json caching (HOOK-004) 11. Add JSDoc to all exported functions (HOOK-008)
-
 ---
 
 ## Process Enhancement Findings (2026-01-26)
-
-**Task**: #7 - Phase 6: Process Enhancement - Workflow Improvements
-**Analyst**: PLANNER Agent
 
 ### [PROC-001] Missing Hook Consolidation Workflow
 
@@ -1298,17 +325,10 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Severity**: Medium
 - **Status**: OPEN
 - **Category**: Workflow Gap
-- **Description**: No documented workflow exists for consolidating related hooks despite HOOK-PERF-001 and PERF-001/002/003 identifying significant consolidation opportunities. Current state: 80 hook files could be reduced to ~55 files, saving 200-400ms per Edit/Write operation.
+- **Description**: No documented workflow exists for consolidating related hooks despite HOOK-PERF-001 and PERF-001/002/003 identifying significant consolidation opportunities.
 - **Expected Benefit**: 40-60% latency reduction on Edit/Write operations, improved maintainability
 - **Implementation Complexity**: Medium
 - **Priority**: P1
-- **Recommendation**: Create `.claude/workflows/core/hook-consolidation-workflow.md` with:
-  1. Identification phase (group related hooks by trigger and purpose)
-  2. Analysis phase (map shared code, identify unique logic)
-  3. Design phase (unified hook architecture)
-  4. Implementation phase (create unified hook, migrate tests)
-  5. Validation phase (verify equivalent behavior)
-  6. Cleanup phase (remove deprecated hooks, update settings.json)
 
 ### [PROC-002] Missing Code Deduplication Process
 
@@ -1320,11 +340,6 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Expected Benefit**: 90% code reduction, single point of maintenance
 - **Implementation Complexity**: Low
 - **Priority**: P1
-- **Recommendation**: Create deduplication checklist:
-  1. Run `grep -r "function parseHookInput" .claude/hooks/ | wc -l` to quantify duplication
-  2. Create shared utility in `.claude/lib/utils/hook-input.cjs`
-  3. Update all hooks to import from shared utility
-  4. Add to code review checklist: "Check for duplicated utilities"
 
 ### [PROC-003] Missing Automated Security Review Trigger
 
@@ -1332,17 +347,10 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Severity**: High
 - **Status**: OPEN
 - **Category**: Workflow Gap
-- **Description**: SEC-004 implemented security-review-guard.cjs but the system lacks automated detection of security-sensitive changes. Currently relies on manual classification. Security review should auto-trigger for:
-  - Changes to `.claude/hooks/safety/` or `.claude/hooks/routing/`
-  - Files containing authentication, authorization, crypto keywords
-  - Changes to environment variable handling
+- **Description**: SEC-004 implemented security-review-guard.cjs but the system lacks automated detection of security-sensitive changes.
 - **Expected Benefit**: Reduced security review bypass, faster security issue detection
 - **Implementation Complexity**: Medium
 - **Priority**: P1
-- **Recommendation**: Enhance file-placement-guard.cjs or create dedicated hook to:
-  1. Detect security-sensitive file patterns
-  2. Auto-set `requiresSecurityReview=true` in router state
-  3. Log security-sensitive change detection to audit trail
 
 ### [PROC-004] Missing Error Recovery Standardization
 
@@ -1350,19 +358,10 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Severity**: Medium
 - **Status**: OPEN
 - **Category**: Process Gap
-- **Description**: Multiple patterns exist for error recovery across hooks:
-  - Some use fail-closed (exit 2) - correct
-  - Some use fail-open (exit 0) - incorrect for security hooks
-  - Some have no error handling - dangerous
-    Inconsistency documented in SEC-008, SEC-AUDIT-001 through SEC-AUDIT-004.
+- **Description**: Multiple patterns exist for error recovery across hooks - inconsistency documented in SEC-008, SEC-AUDIT-001 through SEC-AUDIT-004.
 - **Expected Benefit**: Consistent security posture, easier auditing
 - **Implementation Complexity**: Low
 - **Priority**: P1
-- **Recommendation**: Create `.claude/templates/hook-error-handling.md` with:
-  1. Standard try-catch pattern for security hooks (fail-closed)
-  2. Standard try-catch pattern for advisory hooks (fail-open with logging)
-  3. Audit logging format specification
-  4. Debug override pattern (HOOK_FAIL_OPEN env var)
 
 ### [PROC-005] Missing Agent Spawning Verification
 
@@ -1370,15 +369,10 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Severity**: Medium
 - **Status**: OPEN
 - **Category**: Process Gap
-- **Description**: No automated verification that spawned agents complete their assigned tasks. Agents may fail to call TaskUpdate({ status: "completed" }), leaving tasks perpetually "in_progress". Current mitigation is manual documentation in spawn prompts.
+- **Description**: No automated verification that spawned agents complete their assigned tasks. Agents may fail to call TaskUpdate({ status: "completed" }), leaving tasks perpetually "in_progress".
 - **Expected Benefit**: Better task tracking, reduced orphaned work
 - **Implementation Complexity**: Medium
 - **Priority**: P2
-- **Recommendation**: Create task-completion-guard.cjs enhancement:
-  1. Track task start time
-  2. Alert on tasks in_progress > threshold (e.g., 30 minutes)
-  3. Optionally auto-fail stale tasks
-  4. Generate report of completion rate by agent type
 
 ### [PROC-006] Missing Workflow Skill Documentation
 
@@ -1386,17 +380,10 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Severity**: Low
 - **Status**: OPEN (Related to ARCH-002)
 - **Category**: Documentation Gap
-- **Description**: 6 workflow files exist but are not documented in CLAUDE.md Section 8.6:
-  - security-architect-skill-workflow.md
-  - architecture-review-skill-workflow.md
-  - consensus-voting-skill-workflow.md
-  - swarm-coordination-skill-workflow.md
-  - database-architect-skill-workflow.md
-  - context-compressor-skill-workflow.md
+- **Description**: 6 workflow files exist but are not documented in CLAUDE.md Section 8.6
 - **Expected Benefit**: Better discoverability, reduced duplicate workflow creation
 - **Implementation Complexity**: Low
 - **Priority**: P3
-- **Recommendation**: Either add to CLAUDE.md Section 8.6 or create `.claude/workflows/skills/` directory to distinguish skill-specific workflows from core workflows.
 
 ### [PROC-007] Missing State Cache Integration for Evolution Hooks
 
@@ -1404,15 +391,10 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Severity**: Medium
 - **Status**: OPEN (Related to PERF-004)
 - **Category**: Performance Gap
-- **Description**: Evolution hooks (file-placement-guard, research-enforcement, evolution-state-guard, evolution-audit, quality-gate-validator) all read evolution-state.json independently without caching. State-cache.cjs exists and is integrated into router-state.cjs, but not evolution hooks.
+- **Description**: Evolution hooks all read evolution-state.json independently without caching. State-cache.cjs exists and is integrated into router-state.cjs, but not evolution hooks.
 - **Expected Benefit**: 83% reduction in evolution state I/O
 - **Implementation Complexity**: Low
 - **Priority**: P2
-- **Recommendation**: Update evolution hooks to use state-cache.cjs pattern:
-  ```javascript
-  const { getCachedState, invalidateCache } = require('../../lib/utils/state-cache.cjs');
-  const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
-  ```
 
 ### [PROC-008] Missing Test Isolation Pattern for State-Dependent Tests
 
@@ -1424,11 +406,6 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Expected Benefit**: Faster test execution, reliable parallel testing
 - **Implementation Complexity**: Medium
 - **Priority**: P3
-- **Recommendation**: Create test helper for state isolation:
-  1. `createTestStateDir()` - creates temp dir with unique suffix
-  2. `cleanupTestState()` - removes temp dir after test
-  3. Update state modules to accept optional basePath parameter
-  4. Update tests to use isolated state directories
 
 ### [PROC-009] Missing Pre-Commit Hook for Security Compliance
 
@@ -1436,18 +413,10 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Severity**: Medium
 - **Status**: OPEN
 - **Category**: Automation Gap
-- **Description**: Security fixes (SEC-001 through SEC-AUDIT-010) were applied manually. No automated check prevents regression. Git pre-commit hook could enforce:
-  - No fail-open catch blocks in security hooks
-  - No raw JSON.parse on state files
-  - No execSync with string interpolation
+- **Description**: Security fixes (SEC-001 through SEC-AUDIT-010) were applied manually. No automated check prevents regression.
 - **Expected Benefit**: Prevents security regression, shifts security left
 - **Implementation Complexity**: Medium
 - **Priority**: P2
-- **Recommendation**: Create `.claude/tools/cli/security-lint.cjs`:
-  1. Scan hooks for fail-open patterns
-  2. Scan for raw JSON.parse on state files
-  3. Scan for execSync with template literals
-  4. Integrate with git pre-commit hook
 
 ### [PROC-010] Missing Documentation for Hooks Development
 
@@ -1455,56 +424,14 @@ Router (main Claude instance) violated the Router-First protocol (CLAUDE.md Sect
 - **Severity**: Low
 - **Status**: OPEN (Related to HOOK-008)
 - **Category**: Documentation Gap
-- **Description**: 80 hooks exist but no developer guide explains:
-  - Exit code conventions (0 allow, 2 block)
-  - Audit logging format
-  - parseHookInput pattern
-  - State file access patterns
-  - Testing patterns
+- **Description**: 80 hooks exist but no developer guide explains exit code conventions, audit logging format, parseHookInput pattern, state file access patterns, testing patterns
 - **Expected Benefit**: Faster onboarding, consistent hook quality
 - **Implementation Complexity**: Low
 - **Priority**: P3
-- **Recommendation**: Create `.claude/docs/HOOK_DEVELOPMENT_GUIDE.md` covering:
-  1. Hook lifecycle and triggers
-  2. Exit code conventions
-  3. Audit logging standards
-  4. Shared utilities (parseHookInput, findProjectRoot, state-cache)
-  5. Testing patterns (isolation, mocking, coverage)
 
 ---
 
 ## Pointer Gap Analysis - Agent-Skill-Workflow Connections (2026-01-26)
-
-**Task**: #4 - Phase 4: Pointer Gap Analysis
-**Analyst**: Architect Agent
-
-### Executive Summary
-
-Cross-reference analysis of agent-skill-workflow connections identified 6 pointer gaps (4 broken references, 2 orphaned artifacts). Overall connectivity is good with 95%+ of referenced skills existing. Key finding: ARCH-001 (ROUTER_KEYWORD_GUIDE.md) has been resolved - file now exists.
-
-### Agent-Skill Connection Analysis
-
-**Skills Referenced by Agents (Complete List)**:
-
-- task-management-protocol (38 agents - UNIVERSAL)
-- verification-before-completion (35 agents)
-- tdd (23 agents)
-- debugging (13 agents)
-- git-expert (6 agents)
-- diagram-generator (8 agents)
-- doc-generator (8 agents)
-- context-compressor (4 agents)
-- code-analyzer (5 agents)
-- security-architect (3 agents)
-- api-development-expert (4 agents)
-- architecture-review (3 agents)
-- swarm-coordination (4 agents)
-- plan-generator (3 agents)
-- sequential-thinking (4 agents)
-- Many domain-specific skills (1-2 agents each)
-
-**Skills Confirmed Existing**:
-All major skills referenced by agents exist in `.claude/skills/` directory.
 
 ### [POINTER-001] Deprecated `writing` Skill Still Referenced
 
@@ -1517,206 +444,22 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 - **Recommended Fix**: Remove `writing` from skills list, keep only `writing-skills`
 - **Effort**: 5 minutes
 
-### [POINTER-002] `gamedev-expert` Skill Exists - VERIFIED
-
-- **Date**: 2026-01-26
-- **Severity**: None
-- **Status**: VERIFIED (Skill exists)
-- **File**: `.claude/agents/domain/gamedev-pro.md` line 31
-- **Evidence**: `.claude/skills/gamedev-expert/SKILL.md` exists (2745 bytes)
-- **Result**: No action needed - skill properly connected
-
-### [POINTER-003] `database-expert` Skill Exists - VERIFIED
-
-- **Date**: 2026-01-26
-- **Severity**: None
-- **Status**: VERIFIED (Skill exists)
-- **File**: `.claude/agents/specialized/database-architect.md` line 27
-- **Evidence**: `.claude/skills/database-expert/SKILL.md` exists (3524 bytes)
-- **Result**: No action needed - skill properly connected
-
-### [POINTER-004] `sentry-monitoring` Skill Exists - VERIFIED
-
-- **Date**: 2026-01-26
-- **Severity**: None
-- **Status**: VERIFIED (Skill exists)
-- **File**: `.claude/agents/specialized/devops-troubleshooter.md` line 26
-- **Evidence**: `.claude/skills/sentry-monitoring/SKILL.md` exists (6844 bytes)
-- **Result**: No action needed - skill properly connected
-
-### [POINTER-005] `recovery` Skill Exists - VERIFIED
-
-- **Date**: 2026-01-26
-- **Severity**: None
-- **Status**: VERIFIED (Skill exists)
-- **Files**:
-  - `.claude/agents/specialized/devops-troubleshooter.md` line 27
-  - `.claude/agents/orchestrators/master-orchestrator.md` line 16
-- **Evidence**: `.claude/skills/recovery/SKILL.md` exists (7267 bytes)
-- **Result**: No action needed - skill properly connected
-
 ### [POINTER-006] Orphaned Skills Not Referenced by Any Agent
 
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: INFORMATIONAL
 - **Description**: Several skills exist but are not referenced in any agent skills list
-- **Orphaned Skills Found**:
-  - Many specialized rule skills (e.g., `fiber-logging-and-project-structure`, `htmx-*` skills)
-  - Framework-specific skills available via Skill() invocation but not pre-loaded
 - **Impact**: Skills remain discoverable via skill catalog but not auto-loaded
 - **Action**: No action needed - skills are accessible via `Skill()` tool invocation
-
-### Agent-Workflow Connection Analysis
-
-**Workflows Referenced by Agents**:
-
-- Most agents do not directly reference workflows in frontmatter
-- Workflows are invoked via Router based on task type (see `router-decision.md`)
-- Core workflows (router-decision.md, skill-lifecycle.md) are properly connected
-
-### Skill-Workflow Dependencies
-
-**No Circular Dependencies Found**: Cross-reference analysis confirmed no circular skill-workflow dependencies.
-
-### Summary Statistics
-
-| Metric                  | Count                                         |
-| ----------------------- | --------------------------------------------- |
-| Total Agents            | 46                                            |
-| Total Skills Referenced | 85+ unique                                    |
-| Missing Skills          | 0 (all verified to exist)                     |
-| Deprecated References   | 1 (POINTER-001 - `writing` skill)             |
-| Orphaned Skills         | Many (by design - available via Skill() tool) |
-| Circular Dependencies   | 0                                             |
-| ARCH Issues Resolved    | 1 (ARCH-001)                                  |
-
-### Recommended Priority
-
-1. **Low**: Remove deprecated `writing` reference (POINTER-001) - 5 minutes
-2. **Low**: Update ARCH-004 status to reflect `writing` has alias to `writing-skills`
-
-### Overall Assessment
-
-**HEALTHY** - Agent-skill-workflow connections are well-maintained:
-
-- All referenced skills exist
-- ARCH-001 (ROUTER_KEYWORD_GUIDE.md) has been resolved
-- Only one deprecated reference found (minor)
-- No circular dependencies
-- No broken pointers
 
 ---
 
 ## Performance Optimization Analysis (2026-01-26)
 
-**Task**: #6 - Phase 5: Performance Optimization - Hook Consolidation and Cache Integration Analysis
-**Analyst**: Developer Agent (Performance Focus)
-
-### Executive Summary
-
-This analysis identifies performance optimization opportunities across the .claude framework infrastructure, specifically focusing on:
-
-1. Hook consolidation to reduce process spawn overhead
-2. State cache integration to reduce redundant I/O
-3. Code deduplication to improve maintainability
-4. Critical fixes for security and reliability
-
-**Overall Performance Estimate**: 50-60% latency reduction achievable for Edit/Write operations
-
----
-
-### [PERF-001] Hook Consolidation - Routing Guards
-
-**Status**: RESOLVED (2026-01-27)
-
-**Original State:**
-
-- 5 routing guard hooks fire on PreToolUse(Task): task-create-guard.cjs, planner-first-guard.cjs, security-review-guard.cjs, router-self-check.cjs, router-write-guard.cjs
-- Each hook spawned a separate Node.js process (~50-100ms startup)
-- All 5 hooks read the same router-state.json file
-- Total overhead: ~500-1000ms per Task spawn
-
-**Resolution:**
-
-- Created unified `.claude/hooks/routing/routing-guard.cjs` consolidating all 5 checks
-- Single process spawn for all routing validation
-- Shared state file read via router-state.cjs
-- Preserves individual enforcement modes via environment variables:
-  - ROUTER_SELF_CHECK=block|warn|off
-  - PLANNER_FIRST_ENFORCEMENT=block|warn|off
-  - SECURITY_REVIEW_ENFORCEMENT=block|warn|off
-  - ROUTER_WRITE_GUARD=block|warn|off
-
-**Achieved Improvement:**
-
-- Process spawns: 5 -> 1 (80% reduction)
-- Latency: ~500ms -> ~100ms (80% reduction)
-- I/O calls: 15 -> 3 (80% reduction)
-
-**Files:**
-
-- Primary: `.claude/hooks/routing/routing-guard.cjs` (583 lines)
-- Tests: `.claude/hooks/routing/routing-guard.test.cjs` (42 tests passing)
-- Legacy (not registered in settings.json): task-create-guard.cjs, planner-first-guard.cjs, security-review-guard.cjs, router-self-check.cjs, router-write-guard.cjs
-
-**ADR**: ADR-026 documents the architecture decision
-
-**Note**: documentation-routing-guard.cjs remains separate as it handles a distinct concern (documentation task routing to technical-writer agent)
-
----
-
-### [PERF-002] RESOLVED: Hook Consolidation - Evolution Guards
-
-- **Date**: 2026-01-27
-- **Severity**: Medium (Performance)
-- **Status**: RESOLVED
-
-**Problem:**
-
-- 4 evolution hooks fired on PreToolUse(Edit/Write): evolution-state-guard.cjs, conflict-detector.cjs, quality-gate-validator.cjs, research-enforcement.cjs
-- Note: evolution-trigger-detector.cjs fires on UserPromptSubmit (separate concern, not consolidated)
-- Each read evolution-state.json independently (no caching)
-- Total overhead: ~300-500ms per Edit/Write
-
-**Resolution:**
-
-Created `unified-evolution-guard.cjs` that consolidates 4 checks into 1:
-
-1. Evolution state transitions (from evolution-state-guard.cjs)
-2. Naming conflicts (from conflict-detector.cjs)
-3. Quality gates in VERIFY phase (from quality-gate-validator.cjs)
-4. Research enforcement (from research-enforcement.cjs)
-
-**Files Created:**
-
-- `.claude/hooks/evolution/unified-evolution-guard.cjs` (450 lines)
-- `.claude/hooks/evolution/unified-evolution-guard.test.cjs` (21 tests)
-
-**Files Modified:**
-
-- `.claude/settings.json` - Replaced 4 individual hooks with unified hook
-
-**Achieved Improvement:**
-
-- Process spawns: 4 -> 1 (75% reduction)
-- State file reads: 4 -> 1 (cached via state-cache.cjs)
-- Latency: ~300ms -> ~80ms (73% reduction)
-- All 149 evolution hook tests passing
-
-**Individual Overrides Still Work:**
-
-- `UNIFIED_EVOLUTION_GUARD=off` - Disable all checks
-- `EVOLUTION_STATE_GUARD=off` - Disable state transition check only
-- `CONFLICT_DETECTOR=off` - Disable conflict check only
-- `QUALITY_GATE_ENFORCEMENT=off` - Disable quality gate check only
-- `RESEARCH_ENFORCEMENT=off` - Disable research check only
-
-**Effort**: ~2 hours
-
----
-
 ### [PERF-003] Hook Consolidation - Reflection/Memory Hooks
+
+**Status**: Open
 
 **Current State:**
 
@@ -1740,44 +483,17 @@ Created `unified-evolution-guard.cjs` that consolidates 4 checks into 1:
 
 ### [PERF-004] State Cache Integration - evolution-state.json
 
+**Status**: Open
+
 **Current State (from HOOK-004):**
 
-- `.claude/hooks/safety/file-placement-guard.cjs` - getEvolutionState() reads without caching
-- `.claude/hooks/evolution/research-enforcement.cjs` - reads evolution-state.json without caching
-- `.claude/hooks/evolution/evolution-state-guard.cjs` - getEvolutionState() without caching
-- `.claude/hooks/evolution/evolution-audit.cjs` - reads without caching
-- `.claude/hooks/evolution/quality-gate-validator.cjs` - reads without caching
-
-**Files Reading evolution-state.json Without Caching:**
-
-1. file-placement-guard.cjs (line 173)
-2. research-enforcement.cjs (line 88)
-3. evolution-state-guard.cjs (line 110)
-4. evolution-audit.cjs (line varies)
-5. quality-gate-validator.cjs (line varies)
-6. evolution-trigger-detector.cjs (line varies)
-
-**Target State:**
-
-- All evolution hooks use getCachedState() from state-cache.cjs
-- Single read per TTL window (1 second default)
+- Multiple hooks read evolution-state.json without caching
+- ~40% redundant I/O on state files
 
 **Estimated Improvement:**
 
 - I/O reduction: 5-6 reads -> 1 read per TTL (83% reduction)
 - Latency per hook: ~10ms -> ~2ms
-
-**Implementation:**
-
-```javascript
-// Before (each hook)
-const content = fs.readFileSync(EVOLUTION_STATE_PATH, 'utf8');
-const state = JSON.parse(content);
-
-// After (shared cached read)
-const { getCachedState } = require('../../lib/utils/state-cache.cjs');
-const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
-```
 
 **Effort**: 2 hours
 
@@ -1785,20 +501,12 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 
 ### [PERF-005] State Cache Integration - loop-state.json
 
+**Status**: Open
+
 **Current State:**
 
 - `.claude/hooks/self-healing/loop-prevention.cjs` - getState() reads synchronously with locking
 - File locking adds ~100-200ms overhead per read
-
-**Target State:**
-
-- Use state-cache.cjs with TTL for frequently-read state
-- Keep file locking only for writes (already atomic)
-
-**Estimated Improvement:**
-
-- Read latency: 100-200ms -> 10ms (when cached)
-- Note: Write operations must remain locked for concurrency safety
 
 **Effort**: 1 hour
 
@@ -1806,38 +514,12 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 
 ### [PERF-006] Code Deduplication - parseHookInput()
 
+**Status**: Open
+
 **Current State (from HOOK-001):**
 
 - ~40 files contain nearly identical parseHookInput() function
 - ~50 lines x 40 files = 2000 duplicated lines
-- Patterns vary slightly (timeout values, error handling)
-
-**Files with parseHookInput() Duplication:**
-
-1. task-create-guard.cjs (lines 36-90)
-2. planner-first-guard.cjs (lines 79-133)
-3. security-review-guard.cjs (lines 87-141)
-4. evolution-state-guard.cjs (lines 155-192)
-5. loop-prevention.cjs (lines 653-695)
-6. research-enforcement.cjs (lines 43-95)
-7. task-completion-reflection.cjs
-8. error-recovery-reflection.cjs
-9. session-end-reflection.cjs
-10. session-memory-extractor.cjs
-11. (30+ more hooks)
-
-**Target State:**
-
-- Create `.claude/lib/utils/hook-input.cjs` with:
-  - parseHookInput(options) - stdin/argv JSON parsing
-  - validateHookInput(input, schema) - schema validation
-  - getToolInput(hookInput) - extract tool_input safely
-
-**Estimated Improvement:**
-
-- Code reduction: 2000 lines -> 200 lines (90% reduction)
-- Maintenance: Single point of change for input handling
-- Testing: Single test file for shared utility
 
 **Effort**: 3-4 hours
 
@@ -1845,31 +527,12 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 
 ### [PERF-007] Code Deduplication - findProjectRoot()
 
+**Status**: Open
+
 **Current State (from HOOK-002):**
 
 - ~20 files contain findProjectRoot() function
-- ~15 lines x 20 files = 300 duplicated lines
 - `.claude/lib/utils/project-root.cjs` already exists but not used in hooks
-
-**Files with findProjectRoot() Duplication:**
-
-1. router-state.cjs (lines 69-78)
-2. file-placement-guard.cjs
-3. evolution-state-guard.cjs (lines 62-71)
-4. loop-prevention.cjs (lines 80-89)
-5. research-enforcement.cjs
-6. session-memory-extractor.cjs
-7. (14+ more hooks)
-
-**Target State:**
-
-- All hooks import from `.claude/lib/utils/project-root.cjs`
-- Remove duplicated findProjectRoot() functions
-
-**Estimated Improvement:**
-
-- Code reduction: 300 lines -> 20 lines (93% reduction)
-- Consistency: Single source of truth for project root
 
 **Effort**: 1.5 hours
 
@@ -1877,38 +540,12 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 
 ### [PERF-008] Critical Fix - Silent Error Swallowing in Metrics
 
+**Status**: Open
+
 **Location (from CRITICAL-003):**
 
 - File: `.claude/lib/memory/memory-dashboard.cjs`
 - Multiple catch blocks with empty or minimal handling
-
-**Current State:**
-
-```javascript
-} catch (e) {
-  // Empty catch or console.error only
-}
-```
-
-**Target State:**
-
-```javascript
-} catch (e) {
-  if (process.env.METRICS_DEBUG === 'true') {
-    console.error(JSON.stringify({
-      module: 'memory-dashboard',
-      error: e.message,
-      stack: e.stack
-    }));
-  }
-  // Return safe default
-}
-```
-
-**Impact:**
-
-- Debugging: Errors visible when METRICS_DEBUG=true
-- Production: Silent failure with safe defaults (current behavior)
 
 **Effort**: 30 minutes
 
@@ -1916,675 +553,33 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 
 ### [PERF-009] Critical Fix - Path Traversal in CLI
 
+**Status**: Open
+
 **Location (from CRITICAL-001):**
 
 - Files: memory-manager.cjs, memory-scheduler.cjs, smart-pruner.cjs
 - Functions accepting file paths without validation
 
-**Current State:**
-
-```javascript
-function readMemoryFile(filePath) {
-  const content = fs.readFileSync(filePath, 'utf8');
-  // No path validation
-}
-```
-
-**Target State:**
-
-```javascript
-function readMemoryFile(filePath) {
-  const normalized = path.normalize(filePath);
-  const resolved = path.resolve(PROJECT_ROOT, normalized);
-  if (!resolved.startsWith(PROJECT_ROOT)) {
-    throw new Error('Path traversal detected');
-  }
-  const content = fs.readFileSync(resolved, 'utf8');
-}
-```
-
-**Impact:**
-
-- Security: Prevents ../../../etc/passwd style attacks
-- Compatibility: No behavior change for legitimate paths
-
 **Effort**: 1 hour
 
 ---
 
-### Optimization Priority Matrix
+## Security Audit Findings (2026-01-26)
 
-| ID       | Optimization                    | Impact                     | Effort | Priority |
-| -------- | ------------------------------- | -------------------------- | ------ | -------- |
-| PERF-001 | Routing Guard Consolidation     | High (80% spawn reduction) | 4-6h   | **P1**   |
-| PERF-006 | parseHookInput() Deduplication  | High (maintainability)     | 3-4h   | **P1**   |
-| PERF-004 | evolution-state.json Caching    | Medium (83% I/O reduction) | 2h     | **P1**   |
-| PERF-002 | Evolution Guard Consolidation   | High (73% latency)         | 4-6h   | **P2**   |
-| PERF-007 | findProjectRoot() Deduplication | Medium (maintainability)   | 1.5h   | **P2**   |
-| PERF-009 | CLI Path Traversal Fix          | High (security)            | 1h     | **P2**   |
-| PERF-003 | Reflection/Memory Consolidation | Medium (60% spawn)         | 3-4h   | **P3**   |
-| PERF-005 | loop-state.json Caching         | Low (single file)          | 1h     | **P3**   |
-| PERF-008 | Metrics Error Logging           | Low (debugging)            | 30m    | **P3**   |
-
----
-
-### Implementation Roadmap
-
-**Phase 1: Quick Wins (1 day)**
-
-1. PERF-006: Create hook-input.cjs shared utility
-2. PERF-007: Consolidate findProjectRoot() usage
-3. PERF-008: Add debug logging to metrics
-
-**Phase 2: Cache Integration (0.5 days)**
-
-1. PERF-004: Add state-cache to evolution hooks
-2. PERF-005: Add state-cache to loop-prevention
-
-**Phase 3: Hook Consolidation (2-3 days)**
-
-1. PERF-001: Create unified-routing-guard.cjs
-2. PERF-002: Create unified-evolution-guard.cjs
-3. Update settings.json hook registrations
-
-**Phase 4: Security Fixes (0.5 days)**
-
-1. PERF-009: Add path traversal protection
-
----
-
-### Total Estimated Savings
-
-| Metric                     | Before      | After     | Improvement |
-| -------------------------- | ----------- | --------- | ----------- |
-| Edit/Write latency         | ~1000ms     | ~400ms    | **60%**     |
-| Task spawn latency         | ~500ms      | ~100ms    | **80%**     |
-| State file I/O             | 15-20 reads | 3-5 reads | **75%**     |
-| Duplicated code lines      | ~2300       | ~220      | **90%**     |
-| Hook processes per session | 80+         | ~35       | **56%**     |
-
----
-
-### Related Issues
-
-- HOOK-001: parseHookInput duplication (incorporated as PERF-006)
-- HOOK-002: findProjectRoot duplication (incorporated as PERF-007)
-- HOOK-004: State cache integration (incorporated as PERF-004, PERF-005)
-- HOOK-PERF-001: Hook consolidation (expanded as PERF-001, PERF-002, PERF-003)
-- CRITICAL-001: CLI path traversal (incorporated as PERF-009)
-- CRITICAL-003: Silent error swallowing (incorporated as PERF-008)
-
----
-
-## Security Review - Phase 1 (2026-01-26)
-
-**Reviewer**: SECURITY-ARCHITECT Agent
-**Review Type**: Pre-Implementation Security Assessment
-**Scope**: Phase 1 Critical Security & Reliability Issues (SEC-AUDIT-011, HOOK-003, CRITICAL-001, CRITICAL-003, HOOK-005)
-
-### Executive Summary
-
-Phase 1 targets 5 issues with significant security implications. This review provides security guidance for the DEVELOPER implementing these fixes. Overall risk mitigation strategy is sound; implementation details require careful attention.
-
----
-
-### 1. SEC-AUDIT-011 Review: Non-Atomic State Operations in router-state.cjs
-
-**Current State Analysis:**
-
-The file at `C:\dev\projects\agent-studio\.claude\hooks\routing\router-state.cjs` has ALREADY implemented significant security improvements:
-
-- **Lines 26-27**: Uses `atomicWriteJSONSync()` from atomic-write.cjs for crash-safe writes
-- **Lines 98-138**: Defines `MAX_RETRIES=5` and `BASE_BACKOFF=100` for optimistic concurrency
-- **Lines 207-228**: Implements `validateVersion()` with security safeguards against NaN, Infinity, negative values
-- **Lines 286-331**: Implements `saveStateWithRetry()` with full optimistic concurrency control
-
-**Security Assessment: PARTIALLY RESOLVED**
-
-The atomic write pattern is correctly implemented using temp file + rename (POSIX atomic). However, there is a TOCTOU (Time-of-Check-Time-of-Use) window in `saveStateWithRetry()`:
-
-```javascript
-// Lines 295-315: The window between step 5 (recheck) and step 6 (write) is vulnerable
-const recheck = loadStateFromFile();
-const recheckVersion = validateVersion(recheck.version);
-if (recheckVersion !== currentVersion) {
-  continue; // Conflict detected, retry
-}
-// TOCTOU WINDOW HERE - another process could write between check and write
-atomicWriteJSONSync(STATE_FILE, merged);
-```
-
-**Risk Level**: LOW (single-user CLI tool, not high-concurrency server)
-
-**Recommendations for DEVELOPER**:
-
-1. The current implementation is ACCEPTABLE for the use case (CLI tool)
-2. If stricter guarantees needed in future, use file locking via `proper-lockfile` npm package
-3. Consider adding audit logging when retry exhaustion occurs (currently throws, but could leak)
-
-**Verification Command (for DEVELOPER)**:
-
-```bash
-node -e "const rs = require('./.claude/hooks/routing/router-state.cjs'); console.log('MAX_RETRIES:', rs.MAX_RETRIES); console.log('saveStateWithRetry exists:', typeof rs.saveStateWithRetry === 'function');"
-```
-
----
-
-### 2. HOOK-003 Review: research-enforcement.cjs Missing SEC-007
-
-**Current State Analysis:**
-
-File: `C:\dev\projects\agent-studio\.claude\hooks\evolution\research-enforcement.cjs`
-
-**Line 88** contains the vulnerability:
-
-```javascript
-return JSON.parse(content);
-```
-
-This raw JSON.parse is susceptible to prototype pollution via malicious JSON like:
-
-```json
-{ "__proto__": { "isAdmin": true } }
-```
-
-**Risk Level**: HIGH for evolution system integrity
-
-**Required Fix Pattern**:
-
-The fix should import `safeParseJSON` from safe-json.cjs which already has the 'evolution-state' schema defined (lines 57-72 of safe-json.cjs). The correct import would be:
-
-```javascript
-const { safeParseJSON } = require('../../lib/utils/safe-json.cjs');
-```
-
-And replace line 88:
-
-```javascript
-// BEFORE (vulnerable):
-return JSON.parse(content);
-
-// AFTER (safe):
-return safeParseJSON(content, 'evolution-state');
-```
-
-**Security Controls in safe-json.cjs**:
-
-- Creates objects with `Object.create(null)` to prevent prototype chain pollution
-- Only copies known schema properties (strips **proto**, constructor, prototype)
-- Uses deep copy via JSON.parse(JSON.stringify()) for nested objects
-- Returns schema defaults on parse error (fail-safe)
-
-**Verification Command (for DEVELOPER)**:
-
-```bash
-node -e "require('./.claude/hooks/evolution/research-enforcement.cjs'); console.log('import ok')" && grep -n "safeParseJSON" .claude/hooks/evolution/research-enforcement.cjs
-```
-
----
-
-### 3. CRITICAL-001 Review: Path Traversal Validation
-
-**Current State Analysis:**
-
-Files affected:
-
-- `C:\dev\projects\agent-studio\.claude\lib\memory\memory-manager.cjs`
-- `C:\dev\projects\agent-studio\.claude\lib\memory\memory-scheduler.cjs`
-- `C:\dev\projects\agent-studio\.claude\lib\memory\smart-pruner.cjs`
-
-These files use `PROJECT_ROOT` from project-root.cjs (good), but functions like `getMemoryDir(projectRoot)` accept external `projectRoot` parameter without validation.
-
-**Attack Vector**:
-
-```javascript
-// Malicious call could escape memory directory:
-getMemoryDir('../../etc');
-// Results in: ../../etc/.claude/context/memory
-```
-
-**Required Fix Pattern**:
-
-Create or use a path validation utility:
-
-```javascript
-/**
- * Validate path is within PROJECT_ROOT
- * @param {string} targetPath - Path to validate
- * @param {string} projectRoot - Expected root directory
- * @returns {boolean} True if path is safe
- */
-function validatePathWithinRoot(targetPath, projectRoot) {
-  const normalizedTarget = path.resolve(targetPath);
-  const normalizedRoot = path.resolve(projectRoot);
-  return (
-    normalizedTarget.startsWith(normalizedRoot + path.sep) || normalizedTarget === normalizedRoot
-  );
-}
-```
-
-Apply to all functions accepting external paths:
-
-- `saveSession(insights, projectRoot)`
-- `checkAndArchiveLearnings(projectRoot)`
-- `getMemoryDir(projectRoot)`
-- All scheduler and pruner functions with `projectRoot` parameter
-
-**Risk Level**: MEDIUM (CLI tool, but memory contains sensitive context)
-
-**OWASP Reference**: A01:2021-Broken Access Control, CWE-22 (Path Traversal)
-
-**Verification Command (for DEVELOPER)**:
-
-```bash
-pnpm test:framework -- --test-name-pattern "path"
-```
-
----
-
-### 4. CRITICAL-003 Review: Silent Error Swallowing
-
-**Current State Analysis:**
-
-File: `C:\dev\projects\agent-studio\.claude\lib\memory\memory-dashboard.cjs`
-
-Multiple catch blocks with empty or minimal handling (lines 82-83, 99-101, 113-114):
-
-```javascript
-} catch (e) { /* ignore */ }
-```
-
-**Risk Level**: MEDIUM - Silent failures lead to incorrect health scores, masking real issues
-
-**Required Fix Pattern**:
-
-Replace empty catches with conditional debug logging:
-
-```javascript
-} catch (e) {
-  if (process.env.METRICS_DEBUG === 'true') {
-    console.error(JSON.stringify({
-      module: 'memory-dashboard',
-      function: 'getFileSizeKB', // or relevant function name
-      error: e.message,
-      path: filePath, // relevant context
-      timestamp: new Date().toISOString()
-    }));
-  }
-}
-```
-
-**Key Requirements**:
-
-1. Use JSON format to stderr (consistent with hook audit logging)
-2. Never log sensitive data (file contents, credentials)
-3. Include context (function name, file path, timestamp)
-4. Make debug logging opt-in via `METRICS_DEBUG` env var
-
-**Verification Command (for DEVELOPER)**:
-
-```bash
-METRICS_DEBUG=true node -e "require('./.claude/lib/memory/memory-dashboard.cjs')" 2>&1 | head -5
-```
-
----
-
-### 5. HOOK-005 Review: Exit Code Inconsistency
-
-**Current State Analysis:**
-
-File: `C:\dev\projects\agent-studio\.claude\hooks\safety\router-write-guard.cjs`
-
-**Line 207** (in block mode):
-
-```javascript
-process.exit(1);
-```
-
-However, **line 236** (fail-closed error handling) correctly uses:
-
-```javascript
-process.exit(2);
-```
-
-**Hook Exit Code Convention**:
-
-- `0` = Allow operation (continue)
-- `2` = Block operation (halt execution)
-- `1` = Generic error (ambiguous in hook context)
-
-**Risk Level**: LOW - Inconsistency may cause confusion but both codes block
-
-**Required Fix**:
-
-Change line 207 from `process.exit(1)` to `process.exit(2)` for consistency with:
-
-- Line 236 (same file, fail-closed behavior)
-- research-enforcement.cjs line 215 (blocking exit)
-- Other hooks using exit(2) for blocking
-
-**Verification Command (for DEVELOPER)**:
-
-```bash
-grep -n "process.exit(1)" .claude/hooks/safety/router-write-guard.cjs
-# Should return 0 lines after fix
-
-grep -n "process.exit(2)" .claude/hooks/safety/router-write-guard.cjs
-# Should show lines 207 and 236
-```
-
----
-
-### Security Review Summary
-
-| Issue         | Severity | Current State                                     | Required Action                                  |
-| ------------- | -------- | ------------------------------------------------- | ------------------------------------------------ |
-| SEC-AUDIT-011 | LOW      | Partially fixed (atomic write done, minor TOCTOU) | Accept current implementation                    |
-| HOOK-003      | HIGH     | Open (raw JSON.parse)                             | Import safeParseJSON with evolution-state schema |
-| CRITICAL-001  | MEDIUM   | Open (no path validation)                         | Add validatePathWithinRoot() checks              |
-| CRITICAL-003  | MEDIUM   | Open (silent catches)                             | Add METRICS_DEBUG conditional logging            |
-| HOOK-005      | LOW      | Open (exit(1) vs exit(2))                         | Change line 207 to exit(2)                       |
-
-### Additional Security Observations
-
-1. **Positive Finding**: router-state.cjs already implements SEC-007 safe JSON parsing via `safeJSONParse()` (lines 41-66) and `sanitizeParsedState()` (lines 172-185). Good defense-in-depth.
-
-2. **Positive Finding**: atomic-write.cjs correctly implements temp file + rename pattern, essential for crash-safe state management.
-
-3. **Positive Finding**: Fail-closed error handling (SEC-008) is correctly implemented in router-write-guard.cjs (lines 213-236) with audit logging.
-
-4. **Positive Finding**: Security override audit logging (SEC-010) is implemented at lines 156-164 when ROUTER_WRITE_GUARD=off.
-
-5. **Watch Item**: The `recordTaskUpdate()` function (router-state.cjs lines 550-558) still uses simple `saveState()` instead of `saveStateWithRetry()`. This is the specific issue mentioned in SEC-AUDIT-011 (line 393-399 in the plan refers to older line numbers). DEVELOPER should verify if this needs updating.
-
-### Follow-Up Tasks
-
-If DEVELOPER encounters issues or makes design changes:
-
-1. Document in `.claude/context/memory/learnings.md`
-2. Update this review section with resolution details
-3. Run verification commands before marking complete
-
----
-
-**Review completed**: 2026-01-26
-**Next review**: After Phase 1 implementation complete
-
----
-
-## [RESOLVED] SEC-007: Safe JSON Parsing
-
-**Date Resolved**: 2026-01-26
-**Original Issue**: Raw JSON.parse without prototype pollution protection
-**Fix Applied**: safeReadJSON()/safeParseJSON() pattern
-**Files Fixed**: dashboard.cjs, system-registration-handler.cjs
-
-## [RESOLVED] SEC-008: Fail-Closed Pattern
-
-**Date Resolved**: 2026-01-26
-**Original Issue**: Security hooks exiting 0 on errors (fail-open)
-**Fix Applied**: Exit code 2 on all error paths
-**Files Fixed**: task-create-guard.cjs, router-write-guard.cjs
-
-## [RESOLVED] SEC-009: Command Injection Prevention
-
-**Date Resolved**: 2026-01-26
-**Original Issue**: execSync() with string commands
-**Fix Applied**: spawnSync() with array arguments and shell:false
-**Files Fixed**: convert.cjs, validate-all.cjs, skills-core.js
-
-## [RESOLVED] PERF-NEW-002: routing-guard.cjs Not Activated
-
-**Date Resolved**: 2026-01-26
-**Original Issue**: Hook created but not registered in settings.json
-**Fix Applied**: Added to settings.json hooks array
-**Result**: 80% Task spawn latency reduction
-
----
-
-## Framework Deep Dive Code Review - NEW Issues (2026-01-26)
-
-**Review**: Framework deep dive code review by CODE-REVIEWER Agent
-**Scope**: Hooks and lib directories
-**Files Analyzed**: 80+ hooks, 50+ lib files
-**Report**: `.claude/context/artifacts/reports/framework-deepdive-code-review.md`
-
-### [NEW-CRIT-001] Unsafe JSON Parsing in anomaly-detector.cjs
+### SEC-AUDIT-011: router-state.cjs Non-Atomic Read-Modify-Write
 
 - **Date**: 2026-01-26
-- **Severity**: Critical
-- **Status**: RESOLVED (2026-01-27)
-- **File**: `.claude/hooks/self-healing/anomaly-detector.cjs`
-- **Line**: 127
-- **CWE**: CWE-1321 (Improperly Controlled Modification of Object Prototype Attributes)
-- **STRIDE**: Tampering
-- **Description**: Uses raw `JSON.parse(content)` on anomaly-state.json without prototype pollution protection
-- **Impact**: State file poisoning could bypass anomaly detection thresholds or inject malicious behavior
-- **Resolution**:
-  - Added import for `safeParseJSON` from `../../lib/utils/safe-json.cjs`
-  - Replaced `JSON.parse(content)` with `safeParseJSON(content, 'anomaly-state')`
-  - Added 'anomaly-state' schema to safe-json.cjs SCHEMAS object
-- **Priority**: P1
-
-### [NEW-CRIT-002] Unsafe JSON Parsing in auto-rerouter.cjs
-
-- **Date**: 2026-01-26
-- **Severity**: Critical
-- **Status**: RESOLVED (2026-01-27)
-- **File**: `.claude/hooks/self-healing/auto-rerouter.cjs`
-- **Line**: 111
-- **CWE**: CWE-1321 (Improperly Controlled Modification of Object Prototype Attributes)
-- **STRIDE**: Tampering
-- **Description**: Uses raw `JSON.parse(content)` on rerouter-state.json without prototype pollution protection
-- **Impact**: State file poisoning could alter agent failure tracking, causing incorrect rerouting suggestions
-- **Resolution**:
-  - Added import for `safeParseJSON` from `../../lib/utils/safe-json.cjs`
-  - Replaced `JSON.parse(content)` with `safeParseJSON(content, 'rerouter-state')`
-  - Added 'rerouter-state' schema to safe-json.cjs SCHEMAS object
-- **Priority**: P1
-
-### [NEW-CRIT-003] Inconsistent Exit Code in tdd-check.cjs
-
-- **Date**: 2026-01-26
-- **Severity**: High
-- **Status**: RESOLVED (2026-01-27)
-- **File**: `.claude/hooks/safety/tdd-check.cjs`
-- **Line**: 226
-- **CWE**: CWE-758 (Reliance on Undefined, Unspecified, or Implementation-Defined Behavior)
-- **STRIDE**: Information Disclosure
-- **Description**: Uses `process.exit(1)` instead of `process.exit(2)` for blocking operations
-- **Impact**: Inconsistency with framework exit code convention (0=allow, 2=block)
-- **Resolution**: Changed `process.exit(1)` to `process.exit(2)` with comment explaining convention
-- **Priority**: P2
-
-### [NEW-HIGH-001] Inconsistent Exit Code in enforce-claude-md-update.cjs
-
-- **Date**: 2026-01-26
-- **Severity**: High
-- **Status**: RESOLVED (2026-01-27)
-- **File**: `.claude/hooks/safety/enforce-claude-md-update.cjs`
-- **Line**: 241
-- **CWE**: CWE-758 (Reliance on Undefined, Unspecified, or Implementation-Defined Behavior)
-- **STRIDE**: Information Disclosure
-- **Description**: Uses `process.exit(1)` instead of `process.exit(2)` for blocking
-- **Impact**: Inconsistent with framework exit code convention
-- **Resolution**: Changed `process.exit(1)` to `process.exit(2)` with comment explaining convention
-- **Priority**: P2
-
-### [NEW-HIGH-002] Missing Safe JSON for Hook Input Parsing
-
-- **Date**: 2026-01-26
-- **Severity**: High
-- **Status**: RESOLVED
-- **Resolved Date**: 2026-01-26
-- **Resolution**: Migrated all hooks to use shared hook-input.cjs utility with sanitizeObject() for prototype pollution prevention
-- **Files Modified** (15 hooks total):
-  - `.claude/hooks/safety/enforce-claude-md-update.cjs` - Now uses parseHookInputSync, getToolName, getToolInput, extractFilePath
-  - `.claude/hooks/routing/router-mode-reset.cjs` - Now uses parseHookInputSync
-  - `.claude/hooks/safety/file-placement-guard.cjs` - Now uses validateHookInput, sharedGetToolName, sharedGetToolInput, sharedExtractFilePath
-  - `.claude/hooks/safety/windows-null-sanitizer.cjs` - Now uses parseHookInputAsync, getToolName, getToolInput
-  - `.claude/hooks/self-healing/anomaly-detector.cjs` - Now uses PROJECT_ROOT, parseHookInputAsync, getToolName, getToolOutput
-  - `.claude/hooks/routing/task-completion-guard.cjs` - Now uses parseHookInputAsync, getToolOutput
-  - `.claude/hooks/routing/task-update-tracker.cjs` - Now uses parseHookInputAsync, getToolInput
-  - `.claude/hooks/routing/router-enforcer.cjs` - Now uses PROJECT_ROOT, parseHookInputSync
-  - `.claude/hooks/self-healing/auto-rerouter.cjs` - Now uses PROJECT_ROOT, parseHookInputAsync, getToolName, getToolInput
-  - `.claude/hooks/safety/validate-skill-invocation.cjs` - Now uses parseHookInputAsync, getToolName, getToolInput, extractFilePath
-  - `.claude/hooks/routing/documentation-routing-guard.cjs` - Previously migrated
-  - `.claude/hooks/reflection/task-completion-reflection.cjs` - Previously migrated
-  - `.claude/hooks/reflection/error-recovery-reflection.cjs` - Previously migrated
-  - `.claude/hooks/reflection/session-end-reflection.cjs` - Previously migrated
-  - `.claude/hooks/memory/session-memory-extractor.cjs` - Previously migrated
-- **CWE**: CWE-20 (Improper Input Validation)
-- **STRIDE**: Tampering
-- **Description**: Hook input from Claude Code is parsed with raw JSON.parse() without validation
-- **Impact**: Malformed or malicious hook input could crash hooks or inject prototype pollution
-- **Lines Removed**: ~600+ lines of duplicated parseHookInput functions eliminated
-- **Security Improvement**: All hook input now goes through sanitizeObject() which filters **proto**, constructor, prototype keys
-- **Priority**: P2
-
-### [NEW-HIGH-003] Missing Atomic Write in Self-Healing Hooks
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: RESOLVED
-- **Resolved Date**: 2026-01-26
-- **Resolution**: Added atomic write pattern to all 3 self-healing hooks
-- **Files Modified**:
-  - `.claude/hooks/self-healing/anomaly-detector.cjs` - saveState() now uses atomicWriteJSONSync
-  - `.claude/hooks/self-healing/auto-rerouter.cjs` - saveState() now uses atomicWriteJSONSync
-  - `.claude/hooks/self-healing/loop-prevention.cjs` - \_saveState() now uses atomicWriteJSONSync
-- **Verification**: All 103 tests pass (35+33+35)
-- **CWE**: CWE-362 (Concurrent Execution Using Shared Resource with Improper Synchronization)
-- **STRIDE**: Tampering
-- **Description**: Both hooks use direct `fs.writeFileSync()` instead of atomic write pattern
-- **Impact**: Process crash mid-write can corrupt state files
-- **Comparison**: router-state.cjs correctly uses `atomicWriteJSONSync()` from atomic-write.cjs
-- **Fix**: Import and use `atomicWriteJSONSync(STATE_FILE, state)`
-- **Priority**: P2
-
-### [NEW-MED-001] Duplicated findProjectRoot in Self-Healing Hooks
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
+- **Severity**: LOW
 - **Status**: OPEN
-- **Files**:
-  - `.claude/hooks/self-healing/anomaly-detector.cjs` lines 35-44
-  - `.claude/hooks/self-healing/auto-rerouter.cjs` lines 30-39
-- **Description**: Both hooks have duplicated findProjectRoot() function instead of using shared utility
-- **Impact**: Code duplication (~40 lines); inconsistency if logic changes
-- **Fix**: Import `PROJECT_ROOT` from `.claude/lib/utils/project-root.cjs`, remove duplicated functions
-- **Related**: HOOK-002, PERF-007 (same pattern across 20+ hooks)
-- **Priority**: P3
-
-### [NEW-MED-002] Missing Debug Logging for Silent Catch Blocks
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: OPEN
-- **File**: `.claude/lib/memory/memory-dashboard.cjs`
-- **Lines**: 82-84, 102-104, 116-118
-- **Description**: Empty catch blocks `catch (e) { /* ignore */ }` make debugging failures impossible
-- **Impact**: When getFileSizeKB() or getJsonEntryCount() fail, errors are silently swallowed
-- **Fix**: Add conditional debug logging with METRICS_DEBUG env var
-- **Priority**: P3
-- **Related**: CRITICAL-003 (partial resolution)
+- **File**: `.claude/hooks/routing/router-state.cjs` (lines 393-399)
+- **CWE**: CWE-367 (Time-of-Check to Time-of-Use Race Condition)
+- **STRIDE Category**: Tampering
+- **Description**: The `recordTaskUpdate()` function performs a non-atomic read-modify-write sequence. Concurrent calls could lose updates.
+- **Recommendation**: Low priority as this is informational tracking, not security-critical.
 
 ---
 
-## Verified Resolved Issues (2026-01-26)
-
-### [VERIFIED-RESOLVED] HOOK-003: research-enforcement.cjs Missing SEC-007
-
-- **Date Verified**: 2026-01-26
-- **Original Issue**: Missing safe JSON parsing for evolution-state.json
-- **Resolution**: Lines 40, 90 now use `safeReadJSON()` from safe-json.cjs with 'evolution-state' schema
-- **Evidence**: Import at line 40, usage at line 90
-- **Status**: RESOLVED
-
-### [VERIFIED-RESOLVED] HOOK-005: router-write-guard.cjs Exit Code
-
-- **Date Verified**: 2026-01-26
-- **Original Issue**: Used exit(1) instead of exit(2) for blocking
-- **Resolution**: Line 189 changed to `process.exit(2)` with comment "HOOK-005 FIX"
-- **Evidence**: Line 189 now uses exit(2)
-- **Status**: RESOLVED
-
-### [VERIFIED-RESOLVED] CRITICAL-001: Path Validation in memory-manager.cjs
-
-- **Date Verified**: 2026-01-26
-- **Original Issue**: No path validation for projectRoot parameter
-- **Resolution**: Added `validateProjectRoot()` function (lines 42-49) that calls `validatePathWithinProject()`
-- **Evidence**: Line 121 calls validateProjectRoot(projectRoot) before file operations
-- **Status**: RESOLVED
-
-### [VERIFIED-RESOLVED] CRITICAL-003: Silent Error Swallowing
-
-- **Date Verified**: 2026-01-26
-- **Date Fully Resolved**: 2026-01-27
-- **Original Issue**: Empty catch blocks with no logging
-- **Resolution**: All 7 empty catch blocks in memory-dashboard.cjs now have conditional debug logging with METRICS_DEBUG env var
-- **Functions Updated**: getFileSizeKB, getJsonEntryCount, countDirFiles, getFileLineCount, getMetricsHistory (2 catches), cleanupOldMetrics
-- **Debug Pattern**: `if (process.env.METRICS_DEBUG === 'true') { console.error(JSON.stringify({ module, function, error, timestamp })); }`
-- **Status**: RESOLVED
-
----
-
-## Framework Architecture Review (2026-01-26)
-
-**Task**: #1 - Framework Deep Dive - Architecture Review
-**Reviewer**: ARCHITECT Agent
-**Full Report**: `.claude/context/artifacts/reports/framework-deepdive-architecture-review.md`
-
-### [DOC-001] CLAUDE.md Section 1.3 Documents Deprecated Hook Architecture
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: RESOLVED (2026-01-27)
-- **File**: `.claude/CLAUDE.md` (lines 130-133)
-- **Description**: Section 1.3 Enforcement Hooks table documents 4 individual hooks (task-create-guard, planner-first-guard, security-review-guard, router-write-guard) as separately registered in settings.json. However, these have been consolidated into `routing-guard.cjs` which is the actual registered hook.
-- **Impact**: Developers may try to modify individual hook files thinking they're active, or register them separately causing duplicate enforcement.
-- **Resolution**: Updated CLAUDE.md Section 1.3 to document unified routing-guard.cjs architecture with explanation of consolidated checks and individual enforcement mode overrides.
-- **Priority**: P1 (This Sprint)
-
-### [DOC-002] Undocumented Workflows in CLAUDE.md Section 8.6
-
-- **Date**: 2026-01-26
-- **Severity**: Medium
-- **Status**: RESOLVED (2026-01-27)
-- **File**: `.claude/CLAUDE.md` Section 8.6
-- **Description**: 7 workflows exist in `.claude/workflows/` but are not documented in the Enterprise Workflows table:
-  1. `architecture-review-skill-workflow.md`
-  2. `consensus-voting-skill-workflow.md`
-  3. `context-compressor-skill-workflow.md`
-  4. `database-architect-skill-workflow.md`
-  5. `enterprise/swarm-coordination-skill-workflow.md`
-  6. `operations/hook-consolidation.md`
-  7. `security-architect-skill-workflow.md`
-- **Impact**: Workflows are not discoverable through CLAUDE.md reference.
-- **Resolution**: Added all 7 missing workflows to CLAUDE.md Section 8.6 Enterprise Workflows table. All workflow references verified via Glob before adding to documentation.
-- **Priority**: P1 (This Sprint)
-
-### [DOC-003] Hooks Directory Structure Incomplete in Documentation
-
-- **Date**: 2026-01-26
-- **Severity**: Low
-- **Status**: RESOLVED (2026-01-27)
-- **File**: `.claude/CLAUDE.md` Section 10.2
-- **Description**: Documentation shows 3 hook categories (routing/, safety/, validation/) but actual structure has 8 categories: evolution/, memory/, reflection/, routing/, safety/, self-healing/, session/, validation/.
-- **Impact**: New hook placement may be incorrect.
-- **Resolution**: Updated CLAUDE.md Section 10.2 hooks/ directory to show all 8 categories including safety/validators/ subdirectory. Structure now matches actual codebase organization.
-- **Priority**: P2 (Next Sprint)
-
-### [DOC-004] lib/ Directory Structure Incomplete
-
-- **Date**: 2026-01-26
-- **Severity**: Low
-- **Status**: RESOLVED (2026-01-27)
-- **File**: `.claude/CLAUDE.md` Section 10.2
-- **Description**: Missing directories: `_test-fixtures/`, `self-healing/`, `utils/`
-- **Impact**: Library file placement guidance incomplete.
-- **Resolution**: Updated CLAUDE.md Section 10.2 lib/ directory structure to include self-healing/ and utils/ subdirectories with descriptions of contained modules.
-- **Priority**: P2 (Next Sprint)
+## Structural Issues (2026-01-26)
 
 ### [STRUCT-001] Skill Workflows in Root Workflows Directory
 
@@ -2608,12 +603,38 @@ If DEVELOPER encounters issues or makes design changes:
 - **Fix**: Delete or add to .gitignore.
 - **Priority**: P3 (Backlog)
 
-### Verified Correct (Architecture Review)
+---
 
-1. **Agent Routing Table**: All 46 agents exist - PASS
-2. **Skill Catalog**: Accurate with proper deprecation aliases - PASS
-3. **Memory Protocol Files**: All exist - PASS
-4. **Settings.json Registrations**: All registered hooks exist - PASS
+## [NEW-MED-001] Duplicated findProjectRoot in Self-Healing Hooks
+
+- **Date**: 2026-01-26
+- **Severity**: Medium
+- **Status**: OPEN
+- **Files**:
+  - `.claude/hooks/self-healing/anomaly-detector.cjs` lines 35-44
+  - `.claude/hooks/self-healing/auto-rerouter.cjs` lines 30-39
+- **Description**: Both hooks have duplicated findProjectRoot() function instead of using shared utility
+- **Impact**: Code duplication (~40 lines); inconsistency if logic changes
+- **Fix**: Import `PROJECT_ROOT` from `.claude/lib/utils/project-root.cjs`, remove duplicated functions
+- **Related**: HOOK-002, PERF-007 (same pattern across 20+ hooks)
+- **Priority**: P3
+
+---
+
+## [NEW-MED-002] Missing Debug Logging for Silent Catch Blocks
+
+- **Date**: 2026-01-26
+- **Severity**: Medium
+- **Status**: OPEN
+- **File**: `.claude/lib/memory/memory-dashboard.cjs`
+- **Lines**: 82-84, 102-104, 116-118
+- **Description**: Empty catch blocks `catch (e) { /* ignore */ }` make debugging failures impossible
+- **Impact**: When getFileSizeKB() or getJsonEntryCount() fail, errors are silently swallowed
+- **Fix**: Add conditional debug logging with METRICS_DEBUG env var
+- **Priority**: P3
+- **Related**: CRITICAL-003 (partial resolution)
+
+---
 
 ## 2026-01-28: ROUTING-001 Agent Routing Table Path Errors
 
@@ -2625,17 +646,13 @@ If DEVELOPER encounters issues or makes design changes:
 
 **File**: C:\dev\projects\agent-studio\.claude\CLAUDE.md
 
-| Mapping in CLAUDE.md                                               | Actual Location                                    | Status    |
-| ------------------------------------------------------------------ | -------------------------------------------------- | --------- |
-| `code-reviewer` → `.claude/agents/core/code-reviewer.md`           | `.claude/agents/specialized/code-reviewer.md`      | **WRONG** |
-| `security-architect` → `.claude/agents/core/security-architect.md` | `.claude/agents/specialized/security-architect.md` | **WRONG** |
-| `devops` → `.claude/agents/core/devops.md`                         | `.claude/agents/specialized/devops.md`             | **WRONG** |
+| Mapping in CLAUDE.md                                                | Actual Location                                    | Status    |
+| ------------------------------------------------------------------- | -------------------------------------------------- | --------- |
+| `code-reviewer` -> `.claude/agents/core/code-reviewer.md`           | `.claude/agents/specialized/code-reviewer.md`      | **WRONG** |
+| `security-architect` -> `.claude/agents/core/security-architect.md` | `.claude/agents/specialized/security-architect.md` | **WRONG** |
+| `devops` -> `.claude/agents/core/devops.md`                         | `.claude/agents/specialized/devops.md`             | **WRONG** |
 
-**Action Required**: Update lines in CLAUDE.md Section 3 (Agent Routing Table):
-
-- Line 388: Change `.claude/agents/core/code-reviewer.md` → `.claude/agents/specialized/code-reviewer.md`
-- Line 389: Change `.claude/agents/core/security-architect.md` → `.claude/agents/specialized/security-architect.md`
-- Line 390: Change `.claude/agents/core/devops.md` → `.claude/agents/specialized/devops.md`
+**Action Required**: Update lines in CLAUDE.md Section 3 (Agent Routing Table)
 
 ### Audit Results Summary
 
@@ -2645,55 +662,9 @@ If DEVELOPER encounters issues or makes design changes:
 - In filesystem (.claude/agents): 46
 - Match: 100% (no missing agents, 3 path errors)
 
-**CLAUDE.md vs Filesystem**:
-
-- ✓ All 45 agents in routing table exist in filesystem
-- ✓ 26 agents in filesystem have routing table entries
-- ⚠️ 26 agents in filesystem have NO routing table entries (see below)
-
 ### Agents with NO Routing Table Entries (26)
 
-These agents exist but are NOT documented in CLAUDE.md Section 3:
-
-**Domain Specialists (11)**:
-
-- `ai-ml-specialist`
-- `android-pro`
-- `frontend-pro`
-- `gamedev-pro`
-- `graphql-pro`
-- `ios-pro`
-- `java-pro`
-- `nodejs-pro`
-- `php-pro`
-- `tauri-desktop-developer`
-- `expo-mobile-developer`
-
-**Core Agents (3)**:
-
-- `pm` (Product Management)
-- `reflection-agent` (Quality Reflection)
-- `context-compressor` (Context Compression)
-- `router` (System Routing - Meta)
-
-**Specialized Agents (2)**:
-
-- `conductor-validator` (Context-Driven Dev)
-- `database-architect` (Database Design)
-
-**Orchestrators (2)**:
-
-- `master-orchestrator` (Project Orchestration)
-- `swarm-coordinator` (Swarm Coordination)
-- `evolution-orchestrator` (Self-Evolution)
-
-**Other (5)**:
-
-- `data-engineer` (Data Engineering/ETL)
-- `mobile-ux-reviewer` (Mobile UX Review)
-- `scientific-research-expert` (Scientific Research)
-
-**Note**: These agents all exist as files and are functional, but lack documentation in CLAUDE.md routing table.
+These agents exist but are NOT documented in CLAUDE.md Section 3. See full list in issues-archive.md if needed.
 
 ### Router Intent Keyword Coverage (Important)
 
@@ -2704,46 +675,7 @@ These agents exist but are NOT documented in CLAUDE.md Section 3:
 - Agents with intent keywords: 20
 - Agents WITHOUT intent keywords: 26
 
-**Missing from ROUTING_TABLE**:
-
-- `ai-ml-specialist` (no keywords)
-- `android-pro` (no keywords)
-- `conductor-validator` (no keywords)
-- `context-compressor` (no keywords)
-- `database-architect` (no keywords)
-- `data-engineer` (no keywords)
-- `evolution-orchestrator` (no keywords)
-- `expo-mobile-developer` (no keywords)
-- `frontend-pro` (no keywords)
-- `gamedev-pro` (no keywords)
-- `graphql-pro` (no keywords)
-- `ios-pro` (no keywords)
-- `java-pro` (no keywords)
-- `master-orchestrator` (no keywords)
-- `mobile-ux-reviewer` (no keywords)
-- `nextjs-pro` (no keywords)
-- `nodejs-pro` (no keywords)
-- `php-pro` (no keywords)
-- `pm` (no keywords)
-- `reflection-agent` (no keywords)
-- `reverse-engineer` (no keywords)
-- `router` (no keywords)
-- `scientific-research-expert` (no keywords)
-- `sveltekit-expert` (no keywords)
-- `swarm-coordinator` (no keywords)
-- `tauri-desktop-developer` (no keywords)
-
 **Impact**: When users request work related to these domains, router-enforcer.cjs cannot recommend these agents because ROUTING_TABLE has no intent keywords for them.
-
-**Example**: User says "I need a React frontend component" but `frontend-pro` agent has no keywords mapping, so router cannot suggest it.
-
-### How This Breaks the System
-
-1. **CLAUDE.md Documentation**: Tells users "Use frontend-pro for React" (line 406)
-2. **Router Implementation**: router-enforcer.cjs has no intent keywords for frontend-pro
-3. **Result**: Users read CLAUDE.md, expect router to suggest frontend-pro, but router cannot detect "react/frontend" intent
-
-**System Consistency**: CLAUDE.md and router-enforcer.cjs are out of sync.
 
 ### Severity
 
@@ -2754,33 +686,8 @@ These agents exist but are NOT documented in CLAUDE.md Section 3:
 ### Recommended Fixes
 
 **Phase 1 (Critical)**: Fix 3 path errors in CLAUDE.md (10 minutes)
-
-- Update lines 388-390 with correct `.claude/agents/specialized/` paths
-
 **Phase 2 (Important)**: Add missing intent keywords to router-enforcer.cjs (2 hours)
-
-- Add ROUTING_TABLE entries for all 26 agents
-- Keywords examples:
-  - `frontend-pro`: "react", "vue", "frontend", "ui"
-  - `nodejs-pro`: "node.js", "express", "nestjs", "backend"
-  - `pm`: "product", "management", "roadmap"
-  - `database-architect`: "database", "schema", "sql"
-  - etc.
-
 **Phase 3 (Minor)**: Add missing agents to CLAUDE.md routing table (1 hour)
-
-- Add 26 agents to CLAUDE.md Section 3 table
-- Maintain alphabetical order by request type
-
-### Testing Recommendation
-
-After fixes, verify:
-
-1. `comm` comparison shows routing table agents match filesystem agents
-2. All agents in filesystem appear in CLAUDE.md
-3. All agents in CLAUDE.md have corresponding intent keywords in router-enforcer.cjs
-4. File paths in CLAUDE.md match actual file locations
-5. router-enforcer.cjs ROUTING_TABLE values match agent names
 
 ---
 
@@ -2796,45 +703,11 @@ After fixes, verify:
 
 ### CRITICAL Priority Hooks (5 hooks requiring 6-10 hours total)
 
-**TESTING-CRIT-001: enforce-claude-md-update.cjs**
-
-- **File**: `.claude/hooks/safety/enforce-claude-md-update.cjs`
-- **Issue**: No test file exists + exit code bug (line 241: exit(1) should be exit(2))
-- **Impact**: CLAUDE.md update validation not tested; blocking behavior broken
-- **Effort**: 1-2 hours (includes exit code fix)
-- **Test Cases**: Block mode (exit 2), Warn mode (exit 0 + message), Off mode
-
-**TESTING-CRIT-002: security-trigger.cjs**
-
-- **File**: `.claude/hooks/safety/security-trigger.cjs`
-- **Issue**: No test file exists
-- **Impact**: Security-sensitive file operation detection not verified
-- **Effort**: 1-2 hours
-- **Test Cases**: Credential detection, blocking behavior, warn mode
-
-**TESTING-CRIT-003: tdd-check.cjs**
-
-- **File**: `.claude/hooks/safety/tdd-check.cjs`
-- **Issue**: No test file exists
-- **Impact**: TDD enforcement not tested
-- **Effort**: 1 hour
-- **Test Cases**: Test file regex validation, blocking without tests, passing with tests
-
-**TESTING-CRIT-004: validate-skill-invocation.cjs**
-
-- **File**: `.claude/hooks/safety/validate-skill-invocation.cjs`
-- **Issue**: No test file exists
-- **Impact**: Skill() tool validation not verified
-- **Effort**: 1-2 hours
-- **Test Cases**: Valid/invalid skill names, blocking invalid, warn modes
-
-**TESTING-CRIT-005: agent-context-tracker.cjs**
-
-- **File**: `.claude/hooks/routing/agent-context-tracker.cjs`
-- **Issue**: No test file exists (only routing hook without tests)
-- **Impact**: Router state tracking for Task tool not verified - CRITICAL for router-first protocol
-- **Effort**: 2-3 hours (complex state tracking)
-- **Test Cases**: Task tool detection, state persistence, PLANNER/SECURITY-ARCHITECT detection, state accumulation
+**TESTING-CRIT-001: enforce-claude-md-update.cjs** (1-2 hours)
+**TESTING-CRIT-002: security-trigger.cjs** (1-2 hours)
+**TESTING-CRIT-003: tdd-check.cjs** (1 hour)
+**TESTING-CRIT-004: validate-skill-invocation.cjs** (1-2 hours)
+**TESTING-CRIT-005: agent-context-tracker.cjs** (2-3 hours)
 
 ### HIGH Priority Hooks (6 hooks requiring 5-8 hours total)
 
@@ -2863,85 +736,6 @@ After fixes, verify:
 
 **Total**: 49 hooks, 36 with tests, 13 without = 73.5% coverage
 
-### Implementation Roadmap
-
-**P0 (This Week)**: 6-10 hours - CRITICAL hooks
-**P1 (Next Week)**: 5-8 hours - HIGH hooks
-**P2 (Week After)**: 1.5 hours - MEDIUM hooks
-
-**Total**: 11-18 hours to reach 100% hook test coverage
-
-### Success Criteria
-
-- All 13 hooks have test files (HOOK_NAME.test.cjs)
-- CRITICAL hooks verified: exit(2) for blocking, exit(0) for warn/off
-- HIGH hooks verified: file I/O, pattern detection, thresholds
-- MEDIUM hooks verified: edge cases, platform-specific behavior
-- Test suite passes: `pnpm test:framework`
-- Coverage reaches 100% (49/49)
-
-### Related Issues
-
-- **HOOK-001**: Exit code bug in enforce-claude-md-update.cjs line 241 (change exit(1) to exit(2))
-
-### Framework Health Assessment
-
-**Status**: Safety-critical gaps exist - MUST fix before production
-**Estimated Completion**: 11-18 hours total work
-**Risk Level**: HIGH - 13 hooks (26.5%) lack verification
-
----
-
-## [ATOMIC-001] Missing Atomic Writes in State-Modifying Hooks
-
-- **Date**: 2026-01-28
-- **Date Resolved**: 2026-01-27
-- **Severity**: Critical
-- **Status**: RESOLVED
-- **Description**: Deep dive Task #4 found 3 hooks writing state files without atomic writes. If process crashes mid-write, state corruption occurs.
-- **Pattern**: Should use `atomicWriteJSONSync()` from `.claude/lib/utils/atomic-write.cjs`
-- **Resolution**: All 4 instances fixed (3 verified already fixed, 1 fixed in Phase 1):
-  - ATOMIC-001a: evolution-trigger-detector.cjs - Already fixed
-  - ATOMIC-001b: memory-health-check.cjs (patterns.json) - Already fixed
-  - ATOMIC-001c: memory-health-check.cjs (gotchas.json) - Already fixed
-  - ATOMIC-001d: reflection-queue-processor.cjs - Fixed in Phase 1 (temp+rename for JSONL)
-
-### Affected Files
-
-**ATOMIC-001a: evolution-trigger-detector.cjs**
-
-- **File**: `.claude/hooks/evolution/evolution-trigger-detector.cjs`
-- **Line**: 220
-- **Current**: `fs.writeFileSync(EVOLUTION_STATE_PATH, JSON.stringify(state, null, 2))`
-- **Fix**: `atomicWriteJSONSync(EVOLUTION_STATE_PATH, state)`
-- **Effort**: 15 minutes
-
-**ATOMIC-001b: memory-health-check.cjs (patterns.json)**
-
-- **File**: `.claude/hooks/memory/memory-health-check.cjs`
-- **Line**: 214
-- **Current**: `fs.writeFileSync(patternsPath, JSON.stringify(result.kept, null, 2))`
-- **Fix**: `atomicWriteJSONSync(patternsPath, result.kept)`
-- **Effort**: 15 minutes
-
-**ATOMIC-001c: memory-health-check.cjs (gotchas.json)**
-
-- **File**: `.claude/hooks/memory/memory-health-check.cjs`
-- **Line**: 254
-- **Current**: `fs.writeFileSync(gotchasPath, JSON.stringify(result.kept, null, 2))`
-- **Fix**: `atomicWriteJSONSync(gotchasPath, result.kept)`
-- **Effort**: 15 minutes
-
-**ATOMIC-001d: reflection-queue-processor.cjs (JSONL)**
-
-- **File**: `.claude/hooks/reflection/reflection-queue-processor.cjs`
-- **Line**: 249
-- **Current**: `fs.writeFileSync(queueFile, updatedLines.join('\n') + '\n')`
-- **Note**: JSONL file - use temp+rename pattern, not atomicWriteJSONSync
-- **Effort**: 30 minutes
-
-**Total Effort**: 1-1.5 hours
-
 ---
 
 ## [DEBUG-001] Empty Catch Blocks Without Conditional Debug Logging
@@ -2957,38 +751,16 @@ After fixes, verify:
 
 - **File**: `.claude/lib/memory/memory-manager.cjs`
 - **Lines**: 488, 502, 516, 539, 555, 921, 961, 973, 985
-- **Pattern Missing**: METRICS_DEBUG conditional logging
 
 **Memory Tiers (3 locations)**
 
 - **File**: `.claude/lib/memory/memory-tiers.cjs`
 - **Lines**: 124, 163, 188
-- **Pattern Missing**: METRICS_DEBUG conditional logging
 
 **Memory Scheduler (1 location)**
 
 - **File**: `.claude/lib/memory/memory-scheduler.cjs`
 - **Line**: 94
-- **Pattern Missing**: METRICS_DEBUG conditional logging
-
-**Hooks (4 locations)**
-
-- Various hooks with empty catches identified in Task #6
-
-### Correct Pattern (from memory-dashboard.cjs)
-
-```javascript
-} catch (e) {
-  if (process.env.METRICS_DEBUG === 'true') {
-    console.error(JSON.stringify({
-      module: 'memory-manager',
-      function: 'loadMemoryForContext',
-      error: e.message,
-      timestamp: new Date().toISOString()
-    }));
-  }
-}
-```
 
 **Total Effort**: 2-3 hours
 
@@ -3003,47 +775,14 @@ After fixes, verify:
 
 ### High Priority Consolidations (70% of gains)
 
-**1. task-pre-use-guard.cjs** (consolidate 4 hooks)
-
-- agent-context-pre-tracker.cjs
-- loop-prevention.cjs
-- anomaly-detector.cjs
-- auto-rerouter.cjs
-- **Impact**: 4→1 process spawns on PreToolUse(Task)
-- **Effort**: 2-3 hours
-
-**2. task-post-use-guard.cjs** (consolidate 5 hooks)
-
-- agent-context-tracker.cjs
-- task-update-tracker.cjs
-- task-completion-guard.cjs
-- session-memory-extractor.cjs
-- task-completion-reflection.cjs
-- **Impact**: 5→1 process spawns on PostToolUse(Task)
-- **Effort**: 3-4 hours
-
-**3. prompt-submit-guard.cjs** (consolidate 5 hooks)
-
-- evolution-trigger-detector.cjs
-- memory-reminder.cjs
-- router-mode-reset.cjs
-- router-enforcer.cjs
-- session-end-reflection.cjs
-- **Impact**: 5→1 process spawns on UserPromptSubmit
-- **Effort**: 2-3 hours
-
-### Medium Priority (3 consolidations, 20% of gains)
-
-- Edit tool safety hooks
-- Write tool safety hooks
-- Evolution hooks (already partially consolidated)
+**1. task-pre-use-guard.cjs** (consolidate 4 hooks) - Effort: 2-3 hours
+**2. task-post-use-guard.cjs** (consolidate 5 hooks) - Effort: 3-4 hours
+**3. prompt-submit-guard.cjs** (consolidate 5 hooks) - Effort: 2-3 hours
 
 ### Estimated Performance Improvement
 
 - Before: ~300ms average hook latency per event
 - After: ~80ms average (73% reduction, matches PERF-002)
-- Total hooks: 49
-- After consolidation: ~25 unique hook processes
 
 **Total Effort**: 11-16 hours for all consolidations
 
@@ -3051,27 +790,15 @@ After fixes, verify:
 
 ## Security Audit Findings (2026-01-27)
 
-The following issues were identified during the security-focused audit of hooks, state files, and self-healing system.
-
 ### [SEC-AUDIT-012] Regex-Based Command Validation Bypass Risk
 
 - **Date**: 2026-01-27
 - **Severity**: CRITICAL
 - **Status**: OPEN
 - **Location**: `.claude/hooks/safety/validators/shell-validators.cjs:25-77`
-- **Description**: The custom `parseCommand()` tokenizer does not account for:
-  1. Here-documents (`<<EOF`)
-  2. Command substitution with backticks
-  3. ANSI-C quoting (`$'...'`)
-  4. Brace expansion
-
-  Attackers could craft commands that parse differently than expected.
-
+- **Description**: The custom `parseCommand()` tokenizer does not account for here-documents, command substitution with backticks, ANSI-C quoting, or brace expansion. Attackers could craft commands that parse differently than expected.
 - **PoC**: `bash -c $'rm\x20-rf\x20/'` bypasses tokenizer
-- **Remediation**:
-  1. Use proper shell parser library (shell-quote)
-  2. Blocklist ANSI-C quoting patterns
-  3. Block command substitution patterns
+- **Remediation**: Use proper shell parser library (shell-quote), blocklist ANSI-C quoting patterns
 - **Effort**: 4-8 hours
 
 ### [SEC-AUDIT-013] Atomic Write Race Window on Windows
@@ -3110,7 +837,7 @@ The following issues were identified during the security-focused audit of hooks,
 - **Severity**: MEDIUM
 - **Status**: OPEN
 - **Location**: Multiple hooks
-- **Description**: Security override env vars logged inconsistently - some JSON to stderr (good), some console.warn, some not at all. `ROUTER_WRITE_GUARD=off` in router-state.cjs has no audit logging.
+- **Description**: Security override env vars logged inconsistently - some JSON to stderr (good), some console.warn, some not at all.
 - **Remediation**: Create centralized `auditSecurityOverride()` function
 - **Effort**: 2-3 hours
 
@@ -3130,7 +857,7 @@ The following issues were identified during the security-focused audit of hooks,
 - **Severity**: MEDIUM
 - **Status**: OPEN
 - **Location**: `.claude/context/evolution-state.json`
-- **Description**: Evolution state file writable by agents. Malicious prompt could reset evolutionCount or bypass cooldowns. Current validation is structural only, not semantic.
+- **Description**: Evolution state file writable by agents. Malicious prompt could reset evolutionCount or bypass cooldowns.
 - **Remediation**: Add HMAC signature to state file
 - **Effort**: 6-10 hours
 
@@ -3178,75 +905,3 @@ The following issues were identified during the security-focused audit of hooks,
 | P2       | SEC-AUDIT-019 (Manifest Signing)     | 4-6h   |
 
 **Total Estimated Effort**: 29-50 hours
-
-**Full Report**: `.claude/context/reports/security-audit-2026-01-27.md`
-
----
-
-## Phase 1 Security Fixes - Resolution Report (2026-01-27)
-
-**Task ID**: #3
-**Agent**: SECURITY-ARCHITECT
-**Date**: 2026-01-27
-
-### Issues Verified and Resolved
-
-### [RESOLVED] ATOMIC-001d: reflection-queue-processor.cjs
-
-- **Date Resolved**: 2026-01-27
-- **Original Issue**: Uses `fs.writeFileSync(tempFile, ...)` followed by `fs.renameSync` manually instead of atomicWriteSync utility
-- **Resolution**: Replaced manual temp+rename pattern with `atomicWriteSync(queueFile, ...)` from atomic-write.cjs
-- **Changes**:
-  - Added import: `const { atomicWriteSync } = require('../../lib/utils/atomic-write.cjs');`
-  - Replaced lines 249-251 with: `atomicWriteSync(queueFile, updatedLines.join('\n') + '\n');`
-- **Status**: RESOLVED
-
-### [VERIFIED-ALREADY-FIXED] ATOMIC-001a: evolution-trigger-detector.cjs
-
-- **Date Verified**: 2026-01-27
-- **Status**: Already uses `atomicWriteJSONSync` at line 221
-- **Evidence**: Imports at line 10, usage at line 221
-
-### [VERIFIED-ALREADY-FIXED] ATOMIC-001b,c: memory-health-check.cjs
-
-- **Date Verified**: 2026-01-27
-- **Status**: Already uses `atomicWriteJSONSync` at lines 215 and 255
-- **Evidence**: Imports at line 19, usage at lines 215 and 255
-
-### [VERIFIED-ALREADY-FIXED] HOOK-003: research-enforcement.cjs
-
-- **Date Verified**: 2026-01-27
-- **Status**: Already uses `safeReadJSON` from safe-json.cjs
-- **Evidence**: Import at line 40, usage at line 90 for evolution-state parsing
-
-### [VERIFIED-ALREADY-FIXED] CRITICAL-001: Path Traversal in Memory CLI
-
-- **Date Verified**: 2026-01-27
-- **Status**: Already fixed - memory-manager.cjs has `validatePathWithinProject` checks
-- **Evidence**: Import at line 34, validateProjectRoot function at lines 42-49, called in all functions accepting projectRoot
-
-### [RESOLVED] SEC-AUDIT-015: Safe JSON Schema Incomplete
-
-- **Date Resolved**: 2026-01-27
-- **Original Issue**: `router-state` schema in safe-json.cjs only had 3 fields (mode, complexity, plannerSpawned) but router-state.cjs has 16+ fields
-- **Resolution**: Updated router-state schema in safe-json.cjs to include all 16 fields from getDefaultState():
-  - mode, lastReset, taskSpawned, taskSpawnedAt, taskDescription, sessionId
-  - complexity, requiresPlannerFirst, plannerSpawned, requiresSecurityReview, securitySpawned
-  - lastTaskUpdateCall, lastTaskUpdateTaskId, lastTaskUpdateStatus, taskUpdatesThisSession, version
-- **Test Update**: Updated safe-json.test.cjs to expect `complexity: 'trivial'` (correct default) instead of `'unknown'`
-- **Status**: RESOLVED
-
-### Verification
-
-- **Test Suite**: All 714 framework tests pass (`pnpm test:framework --test-concurrency=1`)
-- **Files Modified**:
-  1. `C:\dev\projects\agent-studio\.claude\hooks\reflection\reflection-queue-processor.cjs`
-  2. `C:\dev\projects\agent-studio\.claude\lib\utils\safe-json.cjs`
-  3. `C:\dev\projects\agent-studio\.claude\lib\utils\safe-json.test.cjs`
-
-### Summary
-
-- **Total Issues in Task**: 5
-- **Already Fixed (Verified)**: 4 (ATOMIC-001a,b,c, HOOK-003, CRITICAL-001)
-- **Fixed This Session**: 2 (ATOMIC-001d, SEC-AUDIT-015)
-- **All Tests Pass**: Yes (714/714)

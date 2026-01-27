@@ -44,7 +44,11 @@ describe('format-memory', () => {
   });
 
   describe('memory path detection', () => {
-    const MEMORY_PATHS = ['.claude/context/memory', '.claude/context/reports', '.claude/context/plans'];
+    const MEMORY_PATHS = [
+      '.claude/context/memory',
+      '.claude/context/reports',
+      '.claude/context/plans',
+    ];
 
     it('should recognize .claude/context/memory as memory path', () => {
       const testPath = path.join(testDir, '.claude', 'context', 'memory', 'learnings.md');
