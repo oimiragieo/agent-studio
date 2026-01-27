@@ -183,15 +183,31 @@
           "retroactive": true,
           "note": "Created to fix SEC-007, BUG-001"
         },
-        "validate": { "completed": true, "retroactive": true, "note": "No conflicts" },
+        "validate": {
+          "completed": true,
+          "retroactive": true,
+          "note": "No conflicts"
+        },
         "obtain": {
           "completed": true,
           "retroactive": true,
           "note": "Based on security audit findings"
         },
-        "lock": { "completed": true, "retroactive": true, "note": "All files have tests" },
-        "verify": { "completed": true, "retroactive": true, "note": "Tests passing" },
-        "enable": { "completed": true, "retroactive": true, "note": "Integrated into hooks" }
+        "lock": {
+          "completed": true,
+          "retroactive": true,
+          "note": "All files have tests"
+        },
+        "verify": {
+          "completed": true,
+          "retroactive": true,
+          "note": "Tests passing"
+        },
+        "enable": {
+          "completed": true,
+          "retroactive": true,
+          "note": "Integrated into hooks"
+        }
       },
       "outcome": "success",
       "notes": "Retroactive EVOLVE compliance for utility modules created during SEC-007/BUG-001 fixes. Includes project-root.cjs (BUG-001 fix for nested .claude folders), safe-json.cjs (SEC-007 JSON parsing security), and atomic-write.cjs (reliable file writes)."
@@ -209,6 +225,55 @@
       "source": "scientific-skills integration 2026-01-25"
     }
   ],
-  "suggestions": [],
-  "lastUpdated": "2026-01-26T01:00:00.000Z"
+  "suggestions": [
+    {
+      "id": "sug-1769493843240",
+      "detectedAt": "2026-01-27T06:04:03.241Z",
+      "triggers": [
+        {
+          "type": "explicit_creation",
+          "priority": "high",
+          "match": "Create a new agent"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "sug-1769493843251",
+      "detectedAt": "2026-01-27T06:04:03.251Z",
+      "triggers": [
+        {
+          "type": "capability_need",
+          "priority": "high",
+          "match": "need a Python agent"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "sug-1769493843261",
+      "detectedAt": "2026-01-27T06:04:03.261Z",
+      "triggers": [
+        {
+          "type": "gap_detection",
+          "priority": "high",
+          "match": "no matching agent"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "sug-1769493843360",
+      "detectedAt": "2026-01-27T06:04:03.360Z",
+      "triggers": [
+        {
+          "type": "explicit_evolution",
+          "priority": "high",
+          "match": "evolve the system"
+        }
+      ],
+      "status": "pending"
+    }
+  ],
+  "lastUpdated": "2026-01-27T06:04:03.360Z"
 }

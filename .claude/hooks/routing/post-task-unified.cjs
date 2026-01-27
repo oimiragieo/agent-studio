@@ -356,7 +356,10 @@ function runSessionMemoryExtraction(toolOutput) {
   }
 
   for (const discovery of discoveries) {
-    if (mm.recordDiscovery && mm.recordDiscovery(discovery.path, discovery.description, 'general', PROJECT_ROOT)) {
+    if (
+      mm.recordDiscovery &&
+      mm.recordDiscovery(discovery.path, discovery.description, 'general', PROJECT_ROOT)
+    ) {
       recorded++;
     }
   }

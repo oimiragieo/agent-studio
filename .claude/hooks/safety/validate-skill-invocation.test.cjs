@@ -91,10 +91,7 @@ test('exports extractSkillName function', () => {
 });
 
 test('exports SKILL_PATH_PATTERN', () => {
-  assertTrue(
-    SKILL_PATH_PATTERN instanceof RegExp,
-    'Should export SKILL_PATH_PATTERN as RegExp'
-  );
+  assertTrue(SKILL_PATH_PATTERN instanceof RegExp, 'Should export SKILL_PATH_PATTERN as RegExp');
 });
 
 // ============================================================
@@ -300,11 +297,7 @@ test('validate warning mentions Skill() tool', () => {
     parameters: { file_path: '.claude/skills/debugging/SKILL.md' },
   };
   const result = validate(context);
-  assertIncludes(
-    result.warning.toLowerCase(),
-    'skill()',
-    'Warning should mention Skill() tool'
-  );
+  assertIncludes(result.warning.toLowerCase(), 'skill()', 'Warning should mention Skill() tool');
 });
 
 test('validate handles missing file_path parameter', () => {
@@ -341,11 +334,7 @@ test('validate extracts skill name correctly in warning', () => {
     parameters: { file_path: '.claude/skills/test-generator/SKILL.md' },
   };
   const result = validate(context);
-  assertIncludes(
-    result.warning,
-    'test-generator',
-    'Should extract hyphenated skill name'
-  );
+  assertIncludes(result.warning, 'test-generator', 'Should extract hyphenated skill name');
 });
 
 test('validate handles unknown skill name gracefully', () => {
@@ -364,11 +353,7 @@ test('validate warning includes workflow application note', () => {
     parameters: { file_path: '.claude/skills/tdd/SKILL.md' },
   };
   const result = validate(context);
-  assertIncludes(
-    result.warning.toLowerCase(),
-    'workflow',
-    'Should mention workflow application'
-  );
+  assertIncludes(result.warning.toLowerCase(), 'workflow', 'Should mention workflow application');
 });
 
 // ============================================================
@@ -483,17 +468,11 @@ test('validate does not warn for examples in skills directory', () => {
 console.log('\n--- SKILL_PATH_PATTERN Validation ---');
 
 test('SKILL_PATH_PATTERN matches valid skill path', () => {
-  assertTrue(
-    SKILL_PATH_PATTERN.test('.claude/skills/tdd/SKILL.md'),
-    'Should match valid path'
-  );
+  assertTrue(SKILL_PATH_PATTERN.test('.claude/skills/tdd/SKILL.md'), 'Should match valid path');
 });
 
 test('SKILL_PATH_PATTERN is case-insensitive', () => {
-  assertTrue(
-    SKILL_PATH_PATTERN.test('.claude/skills/tdd/skill.md'),
-    'Should be case-insensitive'
-  );
+  assertTrue(SKILL_PATH_PATTERN.test('.claude/skills/tdd/skill.md'), 'Should be case-insensitive');
   assertTrue(
     SKILL_PATH_PATTERN.test('.claude/SKILLS/tdd/SKILL.MD'),
     'Should be case-insensitive for entire pattern'
@@ -501,10 +480,7 @@ test('SKILL_PATH_PATTERN is case-insensitive', () => {
 });
 
 test('SKILL_PATH_PATTERN handles both slash types', () => {
-  assertTrue(
-    SKILL_PATH_PATTERN.test('.claude\\skills\\tdd\\SKILL.md'),
-    'Should match backslashes'
-  );
+  assertTrue(SKILL_PATH_PATTERN.test('.claude\\skills\\tdd\\SKILL.md'), 'Should match backslashes');
 });
 
 test('SKILL_PATH_PATTERN does not match non-SKILL.md files', () => {
@@ -530,11 +506,7 @@ test('warning message includes REMINDER prefix', () => {
     parameters: { file_path: '.claude/skills/tdd/SKILL.md' },
   };
   const result = validate(context);
-  assertIncludes(
-    result.warning.toUpperCase(),
-    'REMINDER',
-    'Should include REMINDER prefix'
-  );
+  assertIncludes(result.warning.toUpperCase(), 'REMINDER', 'Should include REMINDER prefix');
 });
 
 test('warning message includes proper Skill() syntax', () => {
@@ -566,11 +538,7 @@ test('warning message mentions workflow application', () => {
     parameters: { file_path: '.claude/skills/tdd/SKILL.md' },
   };
   const result = validate(context);
-  assertIncludes(
-    result.warning.toLowerCase(),
-    'workflow',
-    'Should mention workflow'
-  );
+  assertIncludes(result.warning.toLowerCase(), 'workflow', 'Should mention workflow');
 });
 
 // ============================================================

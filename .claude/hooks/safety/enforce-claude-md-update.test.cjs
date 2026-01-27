@@ -105,7 +105,9 @@ describe('enforce-claude-md-update', () => {
     it('should return true for agent files', () => {
       assert.ok(enforceClaudeMdUpdate, 'Module should be loadable');
 
-      const result = enforceClaudeMdUpdate.requiresClaudeMdUpdate('.claude/agents/core/developer.md');
+      const result = enforceClaudeMdUpdate.requiresClaudeMdUpdate(
+        '.claude/agents/core/developer.md'
+      );
       assert.strictEqual(result, true);
     });
 
@@ -119,7 +121,9 @@ describe('enforce-claude-md-update', () => {
     it('should return true for workflow files', () => {
       assert.ok(enforceClaudeMdUpdate, 'Module should be loadable');
 
-      const result = enforceClaudeMdUpdate.requiresClaudeMdUpdate('.claude/workflows/core/router-decision.md');
+      const result = enforceClaudeMdUpdate.requiresClaudeMdUpdate(
+        '.claude/workflows/core/router-decision.md'
+      );
       assert.strictEqual(result, true);
     });
 
@@ -133,14 +137,18 @@ describe('enforce-claude-md-update', () => {
     it('should return false for hook files', () => {
       assert.ok(enforceClaudeMdUpdate, 'Module should be loadable');
 
-      const result = enforceClaudeMdUpdate.requiresClaudeMdUpdate('.claude/hooks/safety/enforce-claude-md-update.cjs');
+      const result = enforceClaudeMdUpdate.requiresClaudeMdUpdate(
+        '.claude/hooks/safety/enforce-claude-md-update.cjs'
+      );
       assert.strictEqual(result, false);
     });
 
     it('should handle Windows paths', () => {
       assert.ok(enforceClaudeMdUpdate, 'Module should be loadable');
 
-      const result = enforceClaudeMdUpdate.requiresClaudeMdUpdate('.claude\\agents\\core\\developer.md');
+      const result = enforceClaudeMdUpdate.requiresClaudeMdUpdate(
+        '.claude\\agents\\core\\developer.md'
+      );
       assert.strictEqual(result, true);
     });
   });
@@ -163,7 +171,9 @@ describe('enforce-claude-md-update', () => {
     it('should return "workflow" for workflow files', () => {
       assert.ok(enforceClaudeMdUpdate, 'Module should be loadable');
 
-      const result = enforceClaudeMdUpdate.getArtifactType('.claude/workflows/core/router-decision.md');
+      const result = enforceClaudeMdUpdate.getArtifactType(
+        '.claude/workflows/core/router-decision.md'
+      );
       assert.strictEqual(result, 'workflow');
     });
 
@@ -187,13 +197,18 @@ describe('enforce-claude-md-update', () => {
       assert.ok(enforceClaudeMdUpdate, 'Module should be loadable');
 
       const result = enforceClaudeMdUpdate.getSectionToUpdate('.claude/skills/tdd/SKILL.md');
-      assert.strictEqual(result, 'Section 8.5+ (Workflow Enhancement Skills or Section 8.7 for new skills)');
+      assert.strictEqual(
+        result,
+        'Section 8.5+ (Workflow Enhancement Skills or Section 8.7 for new skills)'
+      );
     });
 
     it('should return correct section for workflow files', () => {
       assert.ok(enforceClaudeMdUpdate, 'Module should be loadable');
 
-      const result = enforceClaudeMdUpdate.getSectionToUpdate('.claude/workflows/core/router-decision.md');
+      const result = enforceClaudeMdUpdate.getSectionToUpdate(
+        '.claude/workflows/core/router-decision.md'
+      );
       assert.strictEqual(result, 'Section 8.6 (Enterprise Workflows)');
     });
 

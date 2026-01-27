@@ -401,10 +401,7 @@ test('Block mode should use exit(2) not exit(1)', () => {
   // The hook should exit with code 2 to block operations
   // Verified by reading the source code at line 208: process.exit(2)
   const tddCheckSource = fs.readFileSync(__filename.replace('.test.cjs', '.cjs'), 'utf8');
-  assertTrue(
-    tddCheckSource.includes('process.exit(2)'),
-    'Hook should use exit(2) for blocking'
-  );
+  assertTrue(tddCheckSource.includes('process.exit(2)'), 'Hook should use exit(2) for blocking');
   assertFalse(
     tddCheckSource.includes('process.exit(1)') && !tddCheckSource.includes('// exit 1'),
     'Hook should not use exit(1) for blocking'

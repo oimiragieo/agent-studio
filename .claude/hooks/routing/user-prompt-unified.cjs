@@ -69,7 +69,9 @@ function checkRouterModeReset(hookInput) {
   // Check if in active agent context (recent task spawn)
   const currentState = routerState.getState();
   if (currentState.mode === 'agent' && currentState.taskSpawned) {
-    const taskSpawnedAt = currentState.taskSpawnedAt ? new Date(currentState.taskSpawnedAt).getTime() : 0;
+    const taskSpawnedAt = currentState.taskSpawnedAt
+      ? new Date(currentState.taskSpawnedAt).getTime()
+      : 0;
     const isRecentTask = Date.now() - taskSpawnedAt < 30 * 60 * 1000; // 30 minutes
     if (isRecentTask) {
       result.skipped = true;
@@ -147,7 +149,16 @@ const COMPLEXITY_KEYWORDS = {
     'architecture',
     'refactor',
   ],
-  epic: ['rewrite', 'rebuild', 'new system', 'platform', 'framework', 'all hooks', 'all agents', 'system-wide'],
+  epic: [
+    'rewrite',
+    'rebuild',
+    'new system',
+    'platform',
+    'framework',
+    'all hooks',
+    'all agents',
+    'system-wide',
+  ],
 };
 
 /**
@@ -178,7 +189,7 @@ function parseFrontmatter(content) {
         result[currentKey] = value
           .slice(1, -1)
           .split(',')
-          .map((s) => s.trim());
+          .map(s => s.trim());
         inArray = false;
       } else {
         result[currentKey] = value;
@@ -249,14 +260,14 @@ function detectPlanningRequirement(prompt) {
   let requiresSecurityReview = false;
 
   // Check for epic
-  const epicMatches = COMPLEXITY_KEYWORDS.epic.filter((k) => promptLower.includes(k)).length;
+  const epicMatches = COMPLEXITY_KEYWORDS.epic.filter(k => promptLower.includes(k)).length;
   if (epicMatches >= 1) {
     complexity = 'epic';
     requiresArchitectReview = true;
   }
   // Check for high
   else {
-    const highMatches = COMPLEXITY_KEYWORDS.high.filter((k) => promptLower.includes(k)).length;
+    const highMatches = COMPLEXITY_KEYWORDS.high.filter(k => promptLower.includes(k)).length;
     if (highMatches >= 2) {
       complexity = 'high';
       requiresArchitectReview = true;
@@ -266,15 +277,28 @@ function detectPlanningRequirement(prompt) {
   }
 
   // Security check
-  const securityKeywords = ['auth', 'authentication', 'authorization', 'password', 'token', 'jwt', 'oauth', 'security', 'encrypt', 'credential', 'secret', 'payment'];
-  const securityMatches = securityKeywords.filter((k) => promptLower.includes(k)).length;
+  const securityKeywords = [
+    'auth',
+    'authentication',
+    'authorization',
+    'password',
+    'token',
+    'jwt',
+    'oauth',
+    'security',
+    'encrypt',
+    'credential',
+    'secret',
+    'payment',
+  ];
+  const securityMatches = securityKeywords.filter(k => promptLower.includes(k)).length;
   if (securityMatches >= 1) {
     requiresSecurityReview = true;
   }
 
   // Check for low/trivial override
-  const trivialMatches = COMPLEXITY_KEYWORDS.trivial.filter((k) => promptLower.includes(k)).length;
-  const lowMatches = COMPLEXITY_KEYWORDS.low.filter((k) => promptLower.includes(k)).length;
+  const trivialMatches = COMPLEXITY_KEYWORDS.trivial.filter(k => promptLower.includes(k)).length;
+  const lowMatches = COMPLEXITY_KEYWORDS.low.filter(k => promptLower.includes(k)).length;
   if (trivialMatches > 0 && complexity === 'trivial') {
     complexity = 'trivial';
   } else if (lowMatches > 0 && complexity === 'trivial') {
@@ -467,7 +491,7 @@ function checkMemoryReminder(hookInput, projectRoot = PROJECT_ROOT) {
   }
 
   // Check if there's meaningful content
-  const hasContent = result.files.some((f) => f.exists && f.lines > 5);
+  const hasContent = result.files.some(f => f.exists && f.lines > 5);
   if (!hasContent) {
     return result;
   }
@@ -505,15 +529,35 @@ function checkMemoryReminder(hookInput, projectRoot = PROJECT_ROOT) {
  * Evolution trigger patterns
  */
 const EVOLUTION_TRIGGERS = [
-  { pattern: /create\s+(a\s+)?new\s+(agent|skill|workflow|hook)/i, type: 'explicit_creation', priority: 'high' },
+  {
+    pattern: /create\s+(a\s+)?new\s+(agent|skill|workflow|hook)/i,
+    type: 'explicit_creation',
+    priority: 'high',
+  },
   { pattern: /need\s+(a|an)\s+\w+\s+(agent|skill)/i, type: 'capability_need', priority: 'high' },
-  { pattern: /no\s+(matching|suitable|existing)\s+(agent|skill)/i, type: 'gap_detection', priority: 'high' },
-  { pattern: /can('t|not)\s+find\s+(an?\s+)?(agent|skill)\s+for/i, type: 'gap_detection', priority: 'medium' },
+  {
+    pattern: /no\s+(matching|suitable|existing)\s+(agent|skill)/i,
+    type: 'gap_detection',
+    priority: 'high',
+  },
+  {
+    pattern: /can('t|not)\s+find\s+(an?\s+)?(agent|skill)\s+for/i,
+    type: 'gap_detection',
+    priority: 'medium',
+  },
   { pattern: /missing\s+(agent|skill|capability)/i, type: 'gap_detection', priority: 'medium' },
   { pattern: /add\s+(support|capability)\s+for/i, type: 'capability_request', priority: 'medium' },
-  { pattern: /evolve\s+(the\s+)?(system|framework|ecosystem)/i, type: 'explicit_evolution', priority: 'high' },
+  {
+    pattern: /evolve\s+(the\s+)?(system|framework|ecosystem)/i,
+    type: 'explicit_evolution',
+    priority: 'high',
+  },
   { pattern: /self[- ]evolv(e|ing)/i, type: 'explicit_evolution', priority: 'high' },
-  { pattern: /extend\s+(the\s+)?(agent|skill)\s+(system|ecosystem)/i, type: 'extension_request', priority: 'medium' },
+  {
+    pattern: /extend\s+(the\s+)?(agent|skill)\s+(system|ecosystem)/i,
+    type: 'extension_request',
+    priority: 'medium',
+  },
 ];
 
 /**
@@ -633,7 +677,7 @@ function checkEvolutionTrigger(hookInput) {
   const suggestion = {
     id: `sug-${Date.now()}`,
     detectedAt: new Date().toISOString(),
-    triggers: triggers.map((t) => ({
+    triggers: triggers.map(t => ({
       type: t.type,
       priority: t.priority,
       match: t.match,
@@ -642,15 +686,15 @@ function checkEvolutionTrigger(hookInput) {
   };
 
   // Avoid duplicates
-  const recentSuggestions = state.suggestions.filter((s) => {
+  const recentSuggestions = state.suggestions.filter(s => {
     const age = Date.now() - new Date(s.detectedAt).getTime();
     return age < 5 * 60 * 1000;
   });
 
-  const isDuplicate = recentSuggestions.some((s) => {
-    const existingTypes = new Set(s.triggers.map((t) => t.type));
-    const newTypes = new Set(triggers.map((t) => t.type));
-    return [...newTypes].every((t) => existingTypes.has(t));
+  const isDuplicate = recentSuggestions.some(s => {
+    const existingTypes = new Set(s.triggers.map(t => t.type));
+    const newTypes = new Set(triggers.map(t => t.type));
+    return [...newTypes].every(t => existingTypes.has(t));
   });
 
   if (!isDuplicate) {
@@ -688,13 +732,21 @@ function checkMemoryHealth(hookInput, projectRoot = PROJECT_ROOT) {
   };
 
   // Try to load memory manager
-  const memoryManagerPath = path.join(projectRoot, '.claude', 'lib', 'memory', 'memory-manager.cjs');
+  const memoryManagerPath = path.join(
+    projectRoot,
+    '.claude',
+    'lib',
+    'memory',
+    'memory-manager.cjs'
+  );
   if (!fs.existsSync(memoryManagerPath)) {
     return result;
   }
 
   try {
-    const { getMemoryHealth, checkAndArchiveLearnings, pruneCodebaseMap, CONFIG } = require(memoryManagerPath);
+    const { getMemoryHealth, checkAndArchiveLearnings, pruneCodebaseMap, CONFIG } = require(
+      memoryManagerPath
+    );
 
     // Get health status
     const health = getMemoryHealth(projectRoot);
@@ -710,7 +762,9 @@ function checkMemoryHealth(hookInput, projectRoot = PROJECT_ROOT) {
     if (health.learningsSizeKB > CONFIG.LEARNINGS_ARCHIVE_THRESHOLD_KB) {
       const archiveResult = checkAndArchiveLearnings(projectRoot);
       if (archiveResult.archived) {
-        result.autoActions.push(`Archived ${Math.round(archiveResult.archivedBytes / 1024)}KB of learnings.md`);
+        result.autoActions.push(
+          `Archived ${Math.round(archiveResult.archivedBytes / 1024)}KB of learnings.md`
+        );
       }
     }
 

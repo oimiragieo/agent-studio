@@ -31,7 +31,7 @@ let lastExitCode = null;
 
 beforeEach(() => {
   lastExitCode = null;
-  process.exit = (code) => {
+  process.exit = code => {
     lastExitCode = code;
   };
 });
@@ -49,17 +49,41 @@ describe('user-prompt-unified module exports', () => {
     const unified = require('./user-prompt-unified.cjs');
 
     // Core check functions
-    assert.strictEqual(typeof unified.checkRouterModeReset, 'function', 'checkRouterModeReset should be exported');
-    assert.strictEqual(typeof unified.checkRouterEnforcement, 'function', 'checkRouterEnforcement should be exported');
-    assert.strictEqual(typeof unified.checkMemoryReminder, 'function', 'checkMemoryReminder should be exported');
-    assert.strictEqual(typeof unified.checkEvolutionTrigger, 'function', 'checkEvolutionTrigger should be exported');
-    assert.strictEqual(typeof unified.checkMemoryHealth, 'function', 'checkMemoryHealth should be exported');
+    assert.strictEqual(
+      typeof unified.checkRouterModeReset,
+      'function',
+      'checkRouterModeReset should be exported'
+    );
+    assert.strictEqual(
+      typeof unified.checkRouterEnforcement,
+      'function',
+      'checkRouterEnforcement should be exported'
+    );
+    assert.strictEqual(
+      typeof unified.checkMemoryReminder,
+      'function',
+      'checkMemoryReminder should be exported'
+    );
+    assert.strictEqual(
+      typeof unified.checkEvolutionTrigger,
+      'function',
+      'checkEvolutionTrigger should be exported'
+    );
+    assert.strictEqual(
+      typeof unified.checkMemoryHealth,
+      'function',
+      'checkMemoryHealth should be exported'
+    );
 
     // Main entry point
     assert.strictEqual(typeof unified.runAllChecks, 'function', 'runAllChecks should be exported');
 
     // Helper for testing
-    assert.strictEqual(typeof unified.parseHookInput, 'function', 'parseHookInput should be exported');
+    assert.strictEqual(
+      typeof unified.parseHookInput,
+      'function',
+      'parseHookInput should be exported'
+    );
   });
 });
 
@@ -140,7 +164,7 @@ describe('checkRouterEnforcement', () => {
 
     assert.ok(result.candidates && result.candidates.length > 0, 'Should have candidates');
     // Developer should be among top candidates for bug fix
-    const hasDevAgent = result.candidates.some((c) => c.agent && c.agent.name === 'developer');
+    const hasDevAgent = result.candidates.some(c => c.agent && c.agent.name === 'developer');
     assert.ok(hasDevAgent || result.skipped === true, 'Developer should be a candidate or skipped');
   });
 
@@ -153,7 +177,8 @@ describe('checkRouterEnforcement', () => {
     // Security-related prompts should trigger high complexity
     if (!result.skipped) {
       assert.ok(
-        ['high', 'epic'].includes(result.planningReq?.complexity) || result.planningReq?.requiresSecurityReview,
+        ['high', 'epic'].includes(result.planningReq?.complexity) ||
+          result.planningReq?.requiresSecurityReview,
         'Should detect security-sensitive request'
       );
     }
@@ -198,7 +223,11 @@ describe('checkEvolutionTrigger', () => {
     const result = unified.checkEvolutionTrigger(hookInput);
 
     assert.ok(result.triggers && result.triggers.length > 0, 'Should detect creation trigger');
-    assert.strictEqual(result.triggers[0].type, 'explicit_creation', 'Type should be explicit_creation');
+    assert.strictEqual(
+      result.triggers[0].type,
+      'explicit_creation',
+      'Type should be explicit_creation'
+    );
   });
 
   it('should detect capability need trigger', () => {
@@ -255,7 +284,10 @@ describe('checkMemoryHealth', () => {
 
     // Should have status field
     assert.ok(result.status !== undefined, 'Should have status');
-    assert.ok(['healthy', 'warning', 'error', 'unavailable'].includes(result.status), 'Status should be valid');
+    assert.ok(
+      ['healthy', 'warning', 'error', 'unavailable'].includes(result.status),
+      'Status should be valid'
+    );
   });
 
   it('should return unavailable if memory manager not present', () => {
@@ -332,7 +364,10 @@ describe('backward compatibility', () => {
     // Router enforcement should produce analysis
     const enforcement = result.routerEnforcement;
     if (!enforcement.skipped) {
-      assert.ok(enforcement.candidates !== undefined || enforcement.intent !== undefined, 'Should have routing analysis');
+      assert.ok(
+        enforcement.candidates !== undefined || enforcement.intent !== undefined,
+        'Should have routing analysis'
+      );
     }
   });
 
@@ -350,7 +385,11 @@ describe('backward compatibility', () => {
     for (const tc of testCases) {
       const result = unified.checkEvolutionTrigger({ prompt: tc.prompt });
       if (result.triggers.length > 0) {
-        assert.strictEqual(result.triggers[0].type, tc.expectedType, `Should detect ${tc.expectedType} for: ${tc.prompt}`);
+        assert.strictEqual(
+          result.triggers[0].type,
+          tc.expectedType,
+          `Should detect ${tc.expectedType} for: ${tc.prompt}`
+        );
       }
     }
   });

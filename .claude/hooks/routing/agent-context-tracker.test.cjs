@@ -387,8 +387,7 @@ describe('agent-context-tracker', () => {
       };
 
       const firstLine = toolInput.prompt.split('\n')[0];
-      const description =
-        firstLine.length > 100 ? firstLine.slice(0, 100) + '...' : firstLine;
+      const description = firstLine.length > 100 ? firstLine.slice(0, 100) + '...' : firstLine;
 
       assert.strictEqual(description.length, 103); // 100 + '...'
       assert.ok(description.endsWith('...'));

@@ -66,9 +66,7 @@ function assertArrayIncludes(array, item, message) {
 
 function assertGreaterThan(actual, expected, message) {
   if (actual <= expected) {
-    throw new Error(
-      `${message || 'Assertion failed'}: expected ${actual} > ${expected}`
-    );
+    throw new Error(`${message || 'Assertion failed'}: expected ${actual} > ${expected}`);
   }
 }
 
@@ -786,15 +784,15 @@ test('SECURITY_FILE_PATTERNS has auth patterns', () => {
 });
 
 test('SECURITY_FILE_PATTERNS has crypto patterns', () => {
-  const hasCrypto = SECURITY_FILE_PATTERNS.some(p =>
-    p.toString().includes('crypt') || p.toString().includes('encrypt')
+  const hasCrypto = SECURITY_FILE_PATTERNS.some(
+    p => p.toString().includes('crypt') || p.toString().includes('encrypt')
   );
   assertTrue(hasCrypto, 'Should have crypto patterns');
 });
 
 test('SECURITY_FILE_PATTERNS has validation patterns', () => {
-  const hasValidation = SECURITY_FILE_PATTERNS.some(p =>
-    p.toString().includes('validat') || p.toString().includes('sanitiz')
+  const hasValidation = SECURITY_FILE_PATTERNS.some(
+    p => p.toString().includes('validat') || p.toString().includes('sanitiz')
   );
   assertTrue(hasValidation, 'Should have validation patterns');
 });

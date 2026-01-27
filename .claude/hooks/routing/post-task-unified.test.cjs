@@ -23,7 +23,7 @@ const originalArgv = [...process.argv];
 
 // Mock process.exit to prevent test termination
 let exitCode = null;
-process.exit = (code) => {
+process.exit = code => {
   exitCode = code;
 };
 
@@ -34,7 +34,6 @@ const unifiedHook = require('./post-task-unified.cjs');
 process.exit = originalExit;
 
 describe('post-task-unified.cjs', () => {
-
   beforeEach(() => {
     // Reset exit code
     exitCode = null;
@@ -125,12 +124,21 @@ describe('post-task-unified.cjs', () => {
       });
 
       it('should detect planner by description', () => {
-        assert.strictEqual(unifiedHook.isPlannerSpawn({ description: 'Planner designing feature' }), true);
+        assert.strictEqual(
+          unifiedHook.isPlannerSpawn({ description: 'Planner designing feature' }),
+          true
+        );
       });
 
       it('should detect planner by prompt', () => {
-        assert.strictEqual(unifiedHook.isPlannerSpawn({ prompt: 'You are PLANNER. Design...' }), true);
-        assert.strictEqual(unifiedHook.isPlannerSpawn({ prompt: 'You are the PLANNER agent.' }), true);
+        assert.strictEqual(
+          unifiedHook.isPlannerSpawn({ prompt: 'You are PLANNER. Design...' }),
+          true
+        );
+        assert.strictEqual(
+          unifiedHook.isPlannerSpawn({ prompt: 'You are the PLANNER agent.' }),
+          true
+        );
       });
 
       it('should return false for non-planner', () => {
@@ -142,15 +150,24 @@ describe('post-task-unified.cjs', () => {
     describe('isSecuritySpawn', () => {
       it('should detect security by subagent_type', () => {
         assert.strictEqual(unifiedHook.isSecuritySpawn({ subagent_type: 'security' }), true);
-        assert.strictEqual(unifiedHook.isSecuritySpawn({ subagent_type: 'security-architect' }), true);
+        assert.strictEqual(
+          unifiedHook.isSecuritySpawn({ subagent_type: 'security-architect' }),
+          true
+        );
       });
 
       it('should detect security by description', () => {
-        assert.strictEqual(unifiedHook.isSecuritySpawn({ description: 'Security reviewing auth' }), true);
+        assert.strictEqual(
+          unifiedHook.isSecuritySpawn({ description: 'Security reviewing auth' }),
+          true
+        );
       });
 
       it('should detect security by prompt', () => {
-        assert.strictEqual(unifiedHook.isSecuritySpawn({ prompt: 'You are SECURITY-ARCHITECT.' }), true);
+        assert.strictEqual(
+          unifiedHook.isSecuritySpawn({ prompt: 'You are SECURITY-ARCHITECT.' }),
+          true
+        );
       });
 
       it('should return false for non-security', () => {
@@ -262,7 +279,10 @@ describe('post-task-unified.cjs', () => {
         assert.strictEqual(unifiedHook.detectsCompletion('Task completed successfully'), true);
         assert.strictEqual(unifiedHook.detectsCompletion('All tests pass'), true);
         assert.strictEqual(unifiedHook.detectsCompletion('## Summary'), true);
-        assert.strictEqual(unifiedHook.detectsCompletion('I have successfully completed the task'), true);
+        assert.strictEqual(
+          unifiedHook.detectsCompletion('I have successfully completed the task'),
+          true
+        );
       });
 
       it('should not detect non-completion text', () => {
@@ -282,16 +302,18 @@ describe('post-task-unified.cjs', () => {
     describe('isEvolutionCompletion', () => {
       it('should detect enable phase', () => {
         const state = {
-          currentEvolution: { phase: 'enable' }
+          currentEvolution: { phase: 'enable' },
         };
         assert.strictEqual(unifiedHook.isEvolutionCompletion(state), true);
       });
 
       it('should detect recently completed evolution', () => {
         const state = {
-          evolutions: [{
-            createdAt: new Date().toISOString()
-          }]
+          evolutions: [
+            {
+              createdAt: new Date().toISOString(),
+            },
+          ],
         };
         assert.strictEqual(unifiedHook.isEvolutionCompletion(state), true);
       });
@@ -303,9 +325,11 @@ describe('post-task-unified.cjs', () => {
       it('should return false for old evolutions', () => {
         const oldDate = new Date(Date.now() - 10 * 60 * 1000).toISOString(); // 10 mins ago
         const state = {
-          evolutions: [{
-            createdAt: oldDate
-          }]
+          evolutions: [
+            {
+              createdAt: oldDate,
+            },
+          ],
         };
         assert.strictEqual(unifiedHook.isEvolutionCompletion(state), false);
       });
@@ -314,10 +338,7 @@ describe('post-task-unified.cjs', () => {
     describe('getLatestEvolution', () => {
       it('should get last evolution from array', () => {
         const state = {
-          evolutions: [
-            { name: 'first' },
-            { name: 'second' }
-          ]
+          evolutions: [{ name: 'first' }, { name: 'second' }],
         };
         const latest = unifiedHook.getLatestEvolution(state);
         assert.strictEqual(latest.name, 'second');
@@ -325,7 +346,7 @@ describe('post-task-unified.cjs', () => {
 
       it('should fall back to currentEvolution', () => {
         const state = {
-          currentEvolution: { name: 'current' }
+          currentEvolution: { name: 'current' },
         };
         const latest = unifiedHook.getLatestEvolution(state);
         assert.strictEqual(latest.name, 'current');
@@ -343,7 +364,7 @@ describe('post-task-unified.cjs', () => {
           type: 'agent',
           name: 'test-agent',
           path: '.claude/agents/test.md',
-          researchReport: 'research.md'
+          researchReport: 'research.md',
         };
         const entry = unifiedHook.formatAuditEntry(evolution);
         assert.ok(entry.includes('[EVOLUTION]'));
